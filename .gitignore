@@ -1,0 +1,67 @@
+## .NET / Visual Studio
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Build results
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+## Visual Studio cache/options
+.vs/
+*.ncrunch*
+*.DotSettings.user
+
+## NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Test / coverage
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+coverage*.json
+coverage*.xml
+coverage*.info
+*.cover
+*.coverage
+*.coveragexml
+
+## IDE
+.idea/
+*.swp
+*~
+
+## OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## Environment / secrets
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+secrets.json
