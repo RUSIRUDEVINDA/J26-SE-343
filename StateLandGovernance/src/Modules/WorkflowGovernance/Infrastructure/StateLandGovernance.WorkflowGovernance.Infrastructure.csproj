@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application\StateLandGovernance.WorkflowGovernance.Application.csproj" />
+    <ProjectReference Include="..\Domain\StateLandGovernance.WorkflowGovernance.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Infrastructure\StateLandGovernance.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\StateLandGovernance.BuildingBlocks.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
