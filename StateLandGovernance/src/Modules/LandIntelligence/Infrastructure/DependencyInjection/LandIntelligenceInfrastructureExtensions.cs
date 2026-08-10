@@ -8,17 +8,13 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjectio
 
 public static class LandIntelligenceInfrastructureExtensions
 {
-    public const string ConnectionStringKey = "LandIntelligence:Database";
-
     public static IServiceCollection AddLandIntelligenceInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration _)
     {
         var connectionString = Environment.GetEnvironmentVariable("LAND_INTELLIGENCE_CONNECTION")
-            ?? configuration.GetConnectionString("LandIntelligence")
-            ?? configuration[ConnectionStringKey]
             ?? throw new InvalidOperationException(
-                $"Set LAND_INTELLIGENCE_CONNECTION, 'ConnectionStrings:LandIntelligence', or '{ConnectionStringKey}'.");
+                "Set LAND_INTELLIGENCE_CONNECTION in .env at the repository root.");
 
         services.AddLandIntelligencePostGis(connectionString);
 

@@ -42,9 +42,23 @@ Api → Module Presentation + Module Infrastructure (composition root)
 
 ```bash
 cd StateLandGovernance
+
+# From repository root — copy and edit local secrets (never commit .env)
+cp ../.env.example ../.env
+
 dotnet build
 dotnet run --project src/Api/StateLandGovernance.Api.csproj
 ```
+
+### Environment variables
+
+Secrets and connection strings live in **`.env`** at the repository root (gitignored). See **`.env.example`** for required variables.
+
+| Variable | Purpose |
+|---|---|
+| `LAND_INTELLIGENCE_CONNECTION` | PostgreSQL/PostGIS connection for Component 1 |
+
+The API and integration tests load `.env` automatically via `EnvFileLoader`. Do not add connection strings to `appsettings*.json` or source code.
 
 ## Technology Placeholders
 

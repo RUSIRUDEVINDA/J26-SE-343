@@ -34,8 +34,7 @@ public sealed class LandIntelligencePostGisConnectionIntegrationTests : IAsyncLi
         Assert.True(
             canConnect,
             "LandIntelligence DbContext could not connect to PostgreSQL. " +
-            "Ensure PostgreSQL is running and ConnectionStrings:LandIntelligence is configured in src/Api/appsettings.Development.json " +
-            "or set LAND_INTELLIGENCE_CONNECTION.");
+            "Ensure PostgreSQL is running and LAND_INTELLIGENCE_CONNECTION is set in .env at the repository root.");
 
         await using var connection = _dbContext.Database.GetDbConnection();
         if (connection.State != System.Data.ConnectionState.Open)
