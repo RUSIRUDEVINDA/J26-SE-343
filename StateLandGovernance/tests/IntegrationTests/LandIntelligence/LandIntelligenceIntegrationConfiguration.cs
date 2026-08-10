@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using StateLandGovernance.Shared.Infrastructure.Configuration;
 
 namespace StateLandGovernance.IntegrationTests.LandIntelligence;
 
@@ -6,6 +7,8 @@ internal static class LandIntelligenceIntegrationConfiguration
 {
     public static IConfiguration LoadApiConfiguration()
     {
+        EnvFileLoader.LoadFromRepositoryRoot(AppContext.BaseDirectory);
+
         var apiSettingsDirectory = Path.GetFullPath(
             Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "Api"));
 
@@ -21,7 +24,7 @@ internal static class LandIntelligenceIntegrationConfiguration
         {
             throw new InvalidOperationException(
                 $"Development settings file was not found at '{developmentSettingsPath}'. " +
-                "Configure ConnectionStrings:LandIntelligence before running integration tests.");
+                "Configure LAND_INTELLIGENCE_CONNECTION in .env before running integration tests.");
         }
 
         return new ConfigurationBuilder()

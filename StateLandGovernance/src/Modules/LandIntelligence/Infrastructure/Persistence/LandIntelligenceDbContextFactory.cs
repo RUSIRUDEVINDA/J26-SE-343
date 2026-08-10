@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using StateLandGovernance.LandIntelligence.Infrastructure.PostGIS;
+using StateLandGovernance.Shared.Infrastructure.Configuration;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 
@@ -8,8 +9,11 @@ public sealed class LandIntelligenceDbContextFactory : IDesignTimeDbContextFacto
 {
     public LandIntelligenceDbContext CreateDbContext(string[] args)
     {
+        EnvFileLoader.LoadFromRepositoryRoot();
+
         var connectionString = Environment.GetEnvironmentVariable("LAND_INTELLIGENCE_CONNECTION")
-            ?? "Host=localhost;Port=5432;Database=state_land_governance;Username=postgres;Password=postgres";
+            ?? throw new InvalidOperationException(
+                "Set LAND_INTELLIGENCE_CONNECTION in .env before running EF Core design-time commands.");
 
         var optionsBuilder = new DbContextOptionsBuilder<LandIntelligenceDbContext>();
         optionsBuilder.UseNpgsql(

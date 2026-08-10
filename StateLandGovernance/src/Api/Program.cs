@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
+using StateLandGovernance.Shared.Infrastructure.Configuration;
+
+EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
 
