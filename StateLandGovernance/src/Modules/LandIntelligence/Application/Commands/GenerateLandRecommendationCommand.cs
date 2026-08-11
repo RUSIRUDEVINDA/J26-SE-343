@@ -1,0 +1,5 @@
+using StateLandGovernance.LandIntelligence.Application.DTOs;
+
+namespace StateLandGovernance.LandIntelligence.Application.Commands;
+
+public sealed record GenerateLandRecommendationCommand(LandRecommendationRequest Request);
