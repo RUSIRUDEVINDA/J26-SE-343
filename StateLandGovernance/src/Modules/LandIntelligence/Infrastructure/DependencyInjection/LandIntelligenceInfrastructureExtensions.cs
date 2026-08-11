@@ -20,6 +20,7 @@ public static class LandIntelligenceInfrastructureExtensions
 
         services.AddScoped<ILandParcelRepository, LandParcelRepository>();
         services.AddScoped<ISpatialConstraintRepository, SpatialConstraintRepository>();
+        services.AddScoped<ISpatialAnalysisService, PostGisSpatialAnalysisService>();
 
         return services;
     }
