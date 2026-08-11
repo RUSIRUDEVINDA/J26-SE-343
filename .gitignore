@@ -68,5 +68,5 @@ secrets.json
 
 /skill-creator
 
-## Antigravity local agent skills (local-only, must not be committed)
 .agents/skills/
+.Rules/rules/
