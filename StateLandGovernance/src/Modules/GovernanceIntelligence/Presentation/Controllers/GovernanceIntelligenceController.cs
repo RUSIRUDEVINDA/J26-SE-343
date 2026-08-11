@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -14,11 +15,15 @@ namespace StateLandGovernance.GovernanceIntelligence.Presentation.Controllers;
 [Route("api/governance-intelligence")]
 public class GovernanceIntelligenceController : ControllerBase
 {
-    private readonly EvaluateComplianceCommandHandler _handler;
+    private readonly EvaluateComplianceCommandHandler _complianceHandler;
+    private readonly DetectConflictsCommandHandler _conflictHandler;
 
-    public GovernanceIntelligenceController(EvaluateComplianceCommandHandler handler)
+    public GovernanceIntelligenceController(
+        EvaluateComplianceCommandHandler complianceHandler,
+        DetectConflictsCommandHandler conflictHandler)
     {
-        _handler = handler;
+        _complianceHandler = complianceHandler;
+        _conflictHandler = conflictHandler;
     }
 
     /// <summary>
@@ -36,7 +41,40 @@ public class GovernanceIntelligenceController : ControllerBase
             return BadRequest("Invalid command details provided.");
         }
 
-        var result = await _handler.HandleAsync(command, cancellationToken);
-        return Ok(result);
+        try
+        {
+            var result = await _complianceHandler.HandleAsync(command, cancellationToken);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Detects jurisdictional or regulatory conflicts across a set of decisions.
+    /// </summary>
+    [HttpPost("detect-conflicts")]
+    [ProducesResponseType(typeof(ConflictDetectionResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ConflictDetectionResultDto>> DetectConflicts(
+        [FromBody] DetectConflictsCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (command is null || string.IsNullOrWhiteSpace(command.ActionName))
+        {
+            return BadRequest("Invalid command details provided.");
+        }
+
+        try
+        {
+            var result = await _conflictHandler.HandleAsync(command, cancellationToken);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
