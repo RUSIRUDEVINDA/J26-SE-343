@@ -30,6 +30,14 @@ public sealed class GovernanceAuditRecord
     /// </summary>
     public static GovernanceAuditRecord Create(EngineType engineType, string actionName, string status, string details)
     {
+        return Create(engineType, actionName, status, details, DateTime.UtcNow);
+    }
+
+    /// <summary>
+    /// Factory method to create a new GovernanceAuditRecord with an explicit timestamp.
+    /// </summary>
+    public static GovernanceAuditRecord Create(EngineType engineType, string actionName, string status, string details, DateTime timestamp)
+    {
         if (string.IsNullOrWhiteSpace(actionName))
         {
             throw new ArgumentException("Action name cannot be empty.", nameof(actionName));
@@ -41,6 +49,6 @@ public sealed class GovernanceAuditRecord
             actionName,
             status ?? "Unknown",
             details ?? string.Empty,
-            DateTime.UtcNow);
+            timestamp);
     }
 }
