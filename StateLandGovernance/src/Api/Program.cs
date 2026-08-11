@@ -1,3 +1,9 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using StateLandGovernance.GovernanceIntelligence.Application.Commands;
+using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
@@ -13,7 +19,15 @@ builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
 // TODO: Register LandIntelligence Application handlers and Presentation
 // TODO: Register LeaseFeasibility module (Application + Infrastructure + Presentation)
 // TODO: Register WorkflowGovernance module (Application + Infrastructure + Presentation)
-// TODO: Register GovernanceIntelligence module (Application + Infrastructure + Presentation)
+
+// Register GovernanceIntelligence module (Application + Infrastructure + Presentation)
+builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
+builder.Services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRuleProvider>();
+builder.Services.AddSingleton<IGovernanceAuditRepository, InMemoryGovernanceAuditRepository>();
+builder.Services.AddTransient<EvaluateComplianceCommandHandler>();
+builder.Services.AddGovernanceConflictDetection();
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -25,6 +39,6 @@ if (app.Environment.IsDevelopment())
 }
 
 // TODO: Configure middleware pipeline (exception handling, authentication, etc.)
-// TODO: Map module controllers and endpoints
+app.MapControllers();
 
 app.Run();

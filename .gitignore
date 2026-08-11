@@ -65,3 +65,8 @@ Desktop.ini
 !.env.example
 appsettings.Local.json
 secrets.json
+
+/skill-creator
+
+## Antigravity local agent skills (local-only, must not be committed)
+.agents/skills/
