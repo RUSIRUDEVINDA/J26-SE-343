@@ -22,4 +22,16 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Registers Governance Intelligence Phase 4 risk and corruption intelligence services.
+    /// </summary>
+    public static IServiceCollection AddGovernanceRiskIntelligence(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IGovernanceRiskEngine, GovernanceRiskEngine>();
+        services.TryAddTransient<EvaluateGovernanceRiskCommandHandler>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
 }
