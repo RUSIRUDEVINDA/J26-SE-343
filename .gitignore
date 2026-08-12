@@ -65,3 +65,6 @@ Desktop.ini
 !.env.example
 appsettings.Local.json
 secrets.json
+
+## Cursor rules
+.rules/rules
