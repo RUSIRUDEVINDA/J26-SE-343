@@ -42,6 +42,7 @@ builder.Services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRulePro
 builder.Services.AddSingleton<IGovernanceAuditRepository, InMemoryGovernanceAuditRepository>();
 builder.Services.AddTransient<EvaluateComplianceCommandHandler>();
 builder.Services.AddGovernanceConflictDetection();
+builder.Services.AddGovernanceRiskIntelligence();
 
 builder.Services.AddControllers();
 

@@ -17,13 +17,16 @@ public class GovernanceIntelligenceController : ControllerBase
 {
     private readonly EvaluateComplianceCommandHandler _complianceHandler;
     private readonly DetectConflictsCommandHandler _conflictHandler;
+    private readonly EvaluateGovernanceRiskCommandHandler _riskHandler;
 
     public GovernanceIntelligenceController(
         EvaluateComplianceCommandHandler complianceHandler,
-        DetectConflictsCommandHandler conflictHandler)
+        DetectConflictsCommandHandler conflictHandler,
+        EvaluateGovernanceRiskCommandHandler riskHandler)
     {
         _complianceHandler = complianceHandler;
         _conflictHandler = conflictHandler;
+        _riskHandler = riskHandler;
     }
 
     /// <summary>
@@ -70,6 +73,32 @@ public class GovernanceIntelligenceController : ControllerBase
         try
         {
             var result = await _conflictHandler.HandleAsync(command, cancellationToken);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Evaluates governance risk observations and produces explainable risk indicators.
+    /// </summary>
+    [HttpPost("evaluate-risk")]
+    [ProducesResponseType(typeof(GovernanceRiskAssessmentResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<GovernanceRiskAssessmentResultDto>> EvaluateRisk(
+        [FromBody] EvaluateGovernanceRiskCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (command is null || string.IsNullOrWhiteSpace(command.ActionName) || command.Input is null)
+        {
+            return BadRequest("Invalid command or risk input details provided.");
+        }
+
+        try
+        {
+            var result = await _riskHandler.HandleAsync(command, cancellationToken);
             return Ok(result);
         }
         catch (ArgumentException ex)
