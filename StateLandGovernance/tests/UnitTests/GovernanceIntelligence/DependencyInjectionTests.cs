@@ -24,6 +24,7 @@ public class DependencyInjectionTests
         services.AddTransient<EvaluateComplianceCommandHandler>();
         services.AddGovernanceConflictDetection();
         services.AddGovernanceRiskIntelligence();
+        services.AddExplainableGovernanceEngine();
 
         // Register the controller itself
         services.AddTransient<GovernanceIntelligenceController>();
@@ -33,10 +34,14 @@ public class DependencyInjectionTests
         var controller = serviceProvider.GetService<GovernanceIntelligenceController>();
         var riskEngine = serviceProvider.GetService<IGovernanceRiskEngine>();
         var riskHandler = serviceProvider.GetService<EvaluateGovernanceRiskCommandHandler>();
+        var explanationEngine = serviceProvider.GetService<IExplainableGovernanceEngine>();
+        var explanationHandler = serviceProvider.GetService<GenerateGovernanceExplanationCommandHandler>();
 
         // Assert
         Assert.NotNull(controller);
         Assert.NotNull(riskEngine);
         Assert.NotNull(riskHandler);
+        Assert.NotNull(explanationEngine);
+        Assert.NotNull(explanationHandler);
     }
 }
