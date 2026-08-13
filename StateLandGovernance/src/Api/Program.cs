@@ -43,6 +43,8 @@ builder.Services.AddSingleton<IGovernanceAuditRepository, InMemoryGovernanceAudi
 builder.Services.AddTransient<EvaluateComplianceCommandHandler>();
 builder.Services.AddGovernanceConflictDetection();
 builder.Services.AddGovernanceRiskIntelligence();
+builder.Services.AddExplainableGovernanceEngine();
+
 
 builder.Services.AddControllers();
 

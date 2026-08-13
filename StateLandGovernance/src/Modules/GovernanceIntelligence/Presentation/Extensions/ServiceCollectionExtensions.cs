@@ -34,4 +34,16 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Registers Governance Intelligence Phase 5 explainable governance engine services.
+    /// </summary>
+    public static IServiceCollection AddExplainableGovernanceEngine(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IExplainableGovernanceEngine, ExplainableGovernanceEngine>();
+        services.TryAddTransient<GenerateGovernanceExplanationCommandHandler>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
 }
