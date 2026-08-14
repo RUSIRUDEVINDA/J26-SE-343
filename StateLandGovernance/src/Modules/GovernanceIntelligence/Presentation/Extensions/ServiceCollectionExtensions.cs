@@ -46,4 +46,16 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Registers Governance Intelligence Phase 6 multi-institution governance consensus services.
+    /// </summary>
+    public static IServiceCollection AddGovernanceConsensusEngine(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IGovernanceConsensusEngine, GovernanceConsensusEngine>();
+        services.TryAddTransient<EvaluateGovernanceConsensusCommandHandler>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
 }

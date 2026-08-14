@@ -19,17 +19,20 @@ public class GovernanceIntelligenceController : ControllerBase
     private readonly DetectConflictsCommandHandler _conflictHandler;
     private readonly EvaluateGovernanceRiskCommandHandler _riskHandler;
     private readonly GenerateGovernanceExplanationCommandHandler _explanationHandler;
+    private readonly EvaluateGovernanceConsensusCommandHandler _consensusHandler;
 
     public GovernanceIntelligenceController(
         EvaluateComplianceCommandHandler complianceHandler,
         DetectConflictsCommandHandler conflictHandler,
         EvaluateGovernanceRiskCommandHandler riskHandler,
-        GenerateGovernanceExplanationCommandHandler explanationHandler)
+        GenerateGovernanceExplanationCommandHandler explanationHandler,
+        EvaluateGovernanceConsensusCommandHandler consensusHandler)
     {
         _complianceHandler = complianceHandler;
         _conflictHandler = conflictHandler;
         _riskHandler = riskHandler;
         _explanationHandler = explanationHandler;
+        _consensusHandler = consensusHandler;
     }
 
     /// <summary>
@@ -128,6 +131,32 @@ public class GovernanceIntelligenceController : ControllerBase
         try
         {
             var result = await _explanationHandler.HandleAsync(command, cancellationToken);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Evaluates multi-institutional governance consensus across submitted positions and policy.
+    /// </summary>
+    [HttpPost("evaluate-consensus")]
+    [ProducesResponseType(typeof(GovernanceConsensusResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<GovernanceConsensusResultDto>> EvaluateConsensus(
+        [FromBody] EvaluateGovernanceConsensusCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (command is null || string.IsNullOrWhiteSpace(command.ActionName) || command.Input is null)
+        {
+            return BadRequest("Invalid command or consensus input details provided.");
+        }
+
+        try
+        {
+            var result = await _consensusHandler.HandleAsync(command, cancellationToken);
             return Ok(result);
         }
         catch (ArgumentException ex)
