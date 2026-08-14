@@ -44,6 +44,7 @@ builder.Services.AddTransient<EvaluateComplianceCommandHandler>();
 builder.Services.AddGovernanceConflictDetection();
 builder.Services.AddGovernanceRiskIntelligence();
 builder.Services.AddExplainableGovernanceEngine();
+builder.Services.AddGovernanceConsensusEngine();
 
 
 builder.Services.AddControllers();
