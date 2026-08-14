@@ -54,8 +54,10 @@ public class GovernanceIntelligenceControllerTests
         var riskHandler = new EvaluateGovernanceRiskCommandHandler(riskEngine, _spyAuditRepo, timeProvider);
         var explanationEngine = new ExplainableGovernanceEngine();
         var explanationHandler = new GenerateGovernanceExplanationCommandHandler(explanationEngine, _spyAuditRepo, timeProvider);
+        var consensusEngine = new GovernanceConsensusEngine();
+        var consensusHandler = new EvaluateGovernanceConsensusCommandHandler(consensusEngine, _spyAuditRepo, timeProvider);
 
-        _controller = new GovernanceIntelligenceController(complianceHandler, conflictHandler, riskHandler, explanationHandler);
+        _controller = new GovernanceIntelligenceController(complianceHandler, conflictHandler, riskHandler, explanationHandler, consensusHandler);
     }
 
     [Fact]

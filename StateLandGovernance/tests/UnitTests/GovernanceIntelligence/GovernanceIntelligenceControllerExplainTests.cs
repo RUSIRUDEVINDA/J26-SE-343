@@ -97,11 +97,17 @@ public class GovernanceIntelligenceControllerExplainTests
             _auditRepo,
             _testTimeProvider);
 
+        var consensusHandler = new EvaluateGovernanceConsensusCommandHandler(
+            new GovernanceConsensusEngine(),
+            _auditRepo,
+            _testTimeProvider);
+
         var controller = new GovernanceIntelligenceController(
             complianceHandler,
             conflictHandler,
             riskHandler,
-            _explanationHandler);
+            _explanationHandler,
+            consensusHandler);
 
         var inputDto = new GovernanceExplanationInputDto("PARCEL-301", null, null, null);
         var command = new GenerateGovernanceExplanationCommand("ExplainAction", inputDto);
@@ -130,11 +136,17 @@ public class GovernanceIntelligenceControllerExplainTests
             _auditRepo,
             _testTimeProvider);
 
+        var consensusHandler = new EvaluateGovernanceConsensusCommandHandler(
+            new GovernanceConsensusEngine(),
+            _auditRepo,
+            _testTimeProvider);
+
         var controller = new GovernanceIntelligenceController(
             complianceHandler,
             conflictHandler,
             riskHandler,
-            _explanationHandler);
+            _explanationHandler,
+            consensusHandler);
 
         var actionResultNullCommand = await controller.Explain(null!, CancellationToken.None);
         Assert.IsType<BadRequestObjectResult>(actionResultNullCommand.Result);
