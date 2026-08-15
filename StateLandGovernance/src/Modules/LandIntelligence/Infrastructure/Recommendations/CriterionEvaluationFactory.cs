@@ -1,0 +1,25 @@
+using StateLandGovernance.LandIntelligence.Application.DTOs;
+using StateLandGovernance.LandIntelligence.Domain.Enums;
+
+namespace StateLandGovernance.LandIntelligence.Infrastructure.Recommendations;
+
+internal static class CriterionEvaluationFactory
+{
+    public static CriterionEvaluationDto Create(
+        string key,
+        string name,
+        CriterionCategory category,
+        bool isMet,
+        decimal score,
+        decimal weight,
+        string summary) =>
+        new(
+            key,
+            name,
+            category,
+            isMet,
+            Math.Clamp(score, 0m, 100m),
+            weight,
+            Math.Clamp(score, 0m, 100m) * weight,
+            summary);
+}
