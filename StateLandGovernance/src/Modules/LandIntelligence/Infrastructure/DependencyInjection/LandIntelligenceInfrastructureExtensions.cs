@@ -1,7 +1,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
+using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j.Configuration;
 using StateLandGovernance.LandIntelligence.Infrastructure.PostGIS;
+using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Repositories;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
@@ -21,6 +24,18 @@ public static class LandIntelligenceInfrastructureExtensions
         services.AddScoped<ILandParcelRepository, LandParcelRepository>();
         services.AddScoped<ISpatialConstraintRepository, SpatialConstraintRepository>();
         services.AddScoped<ISpatialAnalysisService, PostGisSpatialAnalysisService>();
+        services.AddLandIntelligenceRecommendations();
+
+        if (Neo4jSettings.IsConfigured())
+        {
+            var neo4jSettings = Neo4jSettings.FromEnvironment();
+            services.AddLandIntelligenceNeo4j(neo4jSettings);
+            services.AddScoped<IKnowledgeGraphService, Neo4jKnowledgeGraphService>();
+        }
+        else
+        {
+            services.AddScoped<IKnowledgeGraphService, UnconfiguredKnowledgeGraphService>();
+        }
 
         return services;
     }

@@ -66,6 +66,8 @@ Desktop.ini
 appsettings.Local.json
 secrets.json
 
+## Cursor rules
+.rules/rules
 /skill-creator
 
 .agents
