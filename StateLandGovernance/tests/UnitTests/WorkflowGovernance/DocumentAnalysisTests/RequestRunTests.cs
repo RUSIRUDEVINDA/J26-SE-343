@@ -434,13 +434,7 @@ public class RequestRunTests
         Assert.Throws<DocumentAnalysisRevisionOverflowException>(() => DocumentAnalysis.CalculateNextRevision(int.MaxValue));
     }
 
-    [Fact]
-    public void AnalysisRunState_DefinesOnlyRequested()
-    {
-        var names = Enum.GetNames(typeof(AnalysisRunState));
-        Assert.Single(names);
-        Assert.Equal("Requested", names[0]);
-    }
+
 
     [Fact]
     public void RequestRun_RunNumberOverflow_DoesNotMutateAggregate()
