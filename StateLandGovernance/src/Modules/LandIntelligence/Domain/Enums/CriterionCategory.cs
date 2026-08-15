@@ -7,5 +7,14 @@ public enum CriterionCategory
     EnvironmentalCompatibility = 3,
     ZoningCompliance = 4,
     EconomicPotential = 5,
-    HistoricalPerformance = 6
+    HistoricalPerformance = 6,
+    RequiredArea = 7,
+    LandCategoryMatch = 8,
+    LandUseMatch = 9,
+    LocationPreference = 10,
+    AccessibilityRequirement = 11,
+    EnvironmentalRequirement = 12,
+    RegulatoryRequirement = 13,
+    SpatialConstraintImpact = 14,
+    CustomCriterion = 99
 }
