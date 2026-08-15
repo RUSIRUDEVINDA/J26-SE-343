@@ -1,0 +1,57 @@
+using System;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit;
+using StateLandGovernance.GovernanceIntelligence.Application.Commands;
+using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
+using StateLandGovernance.GovernanceIntelligence.Presentation.Controllers;
+
+namespace StateLandGovernance.UnitTests.GovernanceIntelligence;
+
+public class DependencyInjectionTests
+{
+    [Fact]
+    public void ServiceProvider_ShouldResolveGovernanceIntelligenceController_WhenDependenciesAreRegistered()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Register exactly as configured in Program.cs
+        services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
+        services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRuleProvider>();
+        services.AddSingleton<IGovernanceAuditRepository, InMemoryGovernanceAuditRepository>();
+        services.AddTransient<EvaluateComplianceCommandHandler>();
+        services.AddGovernanceConflictDetection();
+        services.AddGovernanceRiskIntelligence();
+        services.AddExplainableGovernanceEngine();
+        services.AddGovernanceConsensusEngine();
+        services.AddConditionalGovernanceVerification();
+
+        // Register the controller itself
+        services.AddTransient<GovernanceIntelligenceController>();
+
+        // Act
+        using var serviceProvider = services.BuildServiceProvider();
+        var controller = serviceProvider.GetService<GovernanceIntelligenceController>();
+        var riskEngine = serviceProvider.GetService<IGovernanceRiskEngine>();
+        var riskHandler = serviceProvider.GetService<EvaluateGovernanceRiskCommandHandler>();
+        var explanationEngine = serviceProvider.GetService<IExplainableGovernanceEngine>();
+        var explanationHandler = serviceProvider.GetService<GenerateGovernanceExplanationCommandHandler>();
+        var consensusEngine = serviceProvider.GetService<IGovernanceConsensusEngine>();
+        var consensusHandler = serviceProvider.GetService<EvaluateGovernanceConsensusCommandHandler>();
+        var verificationEngine = serviceProvider.GetService<IConditionalGovernanceVerificationEngine>();
+        var verificationHandler = serviceProvider.GetService<EvaluateConditionalVerificationCommandHandler>();
+
+        // Assert
+        Assert.NotNull(controller);
+        Assert.NotNull(riskEngine);
+        Assert.NotNull(riskHandler);
+        Assert.NotNull(explanationEngine);
+        Assert.NotNull(explanationHandler);
+        Assert.NotNull(consensusEngine);
+        Assert.NotNull(consensusHandler);
+        Assert.NotNull(verificationEngine);
+        Assert.NotNull(verificationHandler);
+    }
+}

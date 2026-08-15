@@ -68,3 +68,7 @@ secrets.json
 
 ## Cursor rules
 .rules/rules
+/skill-creator
+
+.agents
+.Rules/rules/
