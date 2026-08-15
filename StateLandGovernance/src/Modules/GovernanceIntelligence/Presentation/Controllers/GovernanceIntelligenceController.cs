@@ -20,19 +20,22 @@ public class GovernanceIntelligenceController : ControllerBase
     private readonly EvaluateGovernanceRiskCommandHandler _riskHandler;
     private readonly GenerateGovernanceExplanationCommandHandler _explanationHandler;
     private readonly EvaluateGovernanceConsensusCommandHandler _consensusHandler;
+    private readonly EvaluateConditionalVerificationCommandHandler _verificationHandler;
 
     public GovernanceIntelligenceController(
         EvaluateComplianceCommandHandler complianceHandler,
         DetectConflictsCommandHandler conflictHandler,
         EvaluateGovernanceRiskCommandHandler riskHandler,
         GenerateGovernanceExplanationCommandHandler explanationHandler,
-        EvaluateGovernanceConsensusCommandHandler consensusHandler)
+        EvaluateGovernanceConsensusCommandHandler consensusHandler,
+        EvaluateConditionalVerificationCommandHandler verificationHandler)
     {
         _complianceHandler = complianceHandler;
         _conflictHandler = conflictHandler;
         _riskHandler = riskHandler;
         _explanationHandler = explanationHandler;
         _consensusHandler = consensusHandler;
+        _verificationHandler = verificationHandler;
     }
 
     /// <summary>
@@ -157,6 +160,32 @@ public class GovernanceIntelligenceController : ControllerBase
         try
         {
             var result = await _consensusHandler.HandleAsync(command, cancellationToken);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Evaluates whether required prerequisite governance conditions are satisfied based on supplied evidence.
+    /// </summary>
+    [HttpPost("verify-conditions")]
+    [ProducesResponseType(typeof(ConditionalVerificationResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ConditionalVerificationResultDto>> VerifyConditions(
+        [FromBody] EvaluateConditionalVerificationCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (command is null || string.IsNullOrWhiteSpace(command.ActionName) || command.Input is null)
+        {
+            return BadRequest("Invalid command or verification input details provided.");
+        }
+
+        try
+        {
+            var result = await _verificationHandler.HandleAsync(command, cancellationToken);
             return Ok(result);
         }
         catch (ArgumentException ex)

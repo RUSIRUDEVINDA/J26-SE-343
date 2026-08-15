@@ -45,6 +45,7 @@ builder.Services.AddGovernanceConflictDetection();
 builder.Services.AddGovernanceRiskIntelligence();
 builder.Services.AddExplainableGovernanceEngine();
 builder.Services.AddGovernanceConsensusEngine();
+builder.Services.AddConditionalGovernanceVerification();
 
 
 builder.Services.AddControllers();

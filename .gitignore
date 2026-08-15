@@ -68,5 +68,5 @@ secrets.json
 
 /skill-creator
 
-.agents/skills/
+.agents
 .Rules/rules/
