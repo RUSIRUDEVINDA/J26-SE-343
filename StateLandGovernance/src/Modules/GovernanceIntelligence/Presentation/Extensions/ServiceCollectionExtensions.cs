@@ -58,4 +58,16 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Registers Governance Intelligence Phase 7 conditional governance verification services.
+    /// </summary>
+    public static IServiceCollection AddConditionalGovernanceVerification(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IConditionalGovernanceVerificationEngine, ConditionalGovernanceVerificationEngine>();
+        services.TryAddTransient<EvaluateConditionalVerificationCommandHandler>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
 }
