@@ -45,8 +45,10 @@ public class GovernanceIntelligenceControllerConsensusTests
         var riskHandler = new EvaluateGovernanceRiskCommandHandler(riskEngine, _auditRepo, _timeProvider);
         var explanationHandler = new GenerateGovernanceExplanationCommandHandler(explanationEngine, _auditRepo, _timeProvider);
         _handler = new EvaluateGovernanceConsensusCommandHandler(consensusEngine, _auditRepo, _timeProvider);
+        var verificationEngine = new ConditionalGovernanceVerificationEngine();
+        var verificationHandler = new EvaluateConditionalVerificationCommandHandler(verificationEngine, _auditRepo, _timeProvider);
 
-        _controller = new GovernanceIntelligenceController(complianceHandler, conflictHandler, riskHandler, explanationHandler, _handler);
+        _controller = new GovernanceIntelligenceController(complianceHandler, conflictHandler, riskHandler, explanationHandler, _handler, verificationHandler);
     }
 
     [Fact]
