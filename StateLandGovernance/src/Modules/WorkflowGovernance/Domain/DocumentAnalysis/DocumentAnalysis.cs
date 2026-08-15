@@ -169,4 +169,94 @@ public sealed class DocumentAnalysis
         Revision = nextRevision;
         _domainEvents.Add(evt);
     }
+
+    public void StartRun(AnalysisRunId analysisRunId, DateTime startedAt)
+    {
+        if (analysisRunId == default || analysisRunId.Value == Guid.Empty) throw new InvalidAnalysisRunTransitionException("AnalysisRunId cannot be empty.");
+        
+        var run = _runs.FirstOrDefault(r => r.Id.Value == analysisRunId.Value);
+        if (run == null) throw new AnalysisRunNotFoundException($"AnalysisRun with ID {analysisRunId.Value} was not found.");
+
+        var nextRevision = CalculateNextRevision(Revision);
+
+        var evt = new AnalysisRunStarted(
+            Guid.NewGuid(),
+            startedAt,
+            Id,
+            analysisRunId,
+            GovernedDocumentId,
+            DocumentVersionId,
+            DocumentChecksum.Algorithm,
+            DocumentChecksum.Value,
+            run.RunNumber,
+            nextRevision
+        );
+
+        run.MarkStarted(startedAt);
+
+        Revision = nextRevision;
+        _domainEvents.Add(evt);
+    }
+
+    public void FailRun(AnalysisRunId analysisRunId, AnalysisRunFailure failure, DateTime failedAt)
+    {
+        if (analysisRunId == default || analysisRunId.Value == Guid.Empty) throw new InvalidAnalysisRunTransitionException("AnalysisRunId cannot be empty.");
+        if (failure == null) throw new InvalidAnalysisRunTransitionException("Failure cannot be null.");
+        
+        var run = _runs.FirstOrDefault(r => r.Id.Value == analysisRunId.Value);
+        if (run == null) throw new AnalysisRunNotFoundException($"AnalysisRun with ID {analysisRunId.Value} was not found.");
+
+        var nextRevision = CalculateNextRevision(Revision);
+
+        var evt = new AnalysisRunFailed(
+            Guid.NewGuid(),
+            failedAt,
+            Id,
+            analysisRunId,
+            GovernedDocumentId,
+            DocumentVersionId,
+            DocumentChecksum.Algorithm,
+            DocumentChecksum.Value,
+            run.RunNumber,
+            failure.Code,
+            failure.Description,
+            nextRevision
+        );
+
+        run.MarkFailed(failure, failedAt);
+
+        Revision = nextRevision;
+        _domainEvents.Add(evt);
+    }
+
+    public void SupersedeRun(AnalysisRunId analysisRunId, string supersessionReason, DateTime supersededAt)
+    {
+        if (analysisRunId == default || analysisRunId.Value == Guid.Empty) throw new InvalidAnalysisRunTransitionException("AnalysisRunId cannot be empty.");
+        if (string.IsNullOrWhiteSpace(supersessionReason)) throw new InvalidAnalysisRunTransitionException("Supersession reason cannot be blank.");
+        
+        var trimmedReason = supersessionReason.Trim();
+        var run = _runs.FirstOrDefault(r => r.Id.Value == analysisRunId.Value);
+        if (run == null) throw new AnalysisRunNotFoundException($"AnalysisRun with ID {analysisRunId.Value} was not found.");
+
+        var nextRevision = CalculateNextRevision(Revision);
+
+        var evt = new AnalysisRunSuperseded(
+            Guid.NewGuid(),
+            supersededAt,
+            Id,
+            analysisRunId,
+            GovernedDocumentId,
+            DocumentVersionId,
+            DocumentChecksum.Algorithm,
+            DocumentChecksum.Value,
+            run.RunNumber,
+            trimmedReason,
+            nextRevision
+        );
+
+        run.MarkSuperseded(trimmedReason, supersededAt);
+
+        Revision = nextRevision;
+        _domainEvents.Add(evt);
+    }
 }
