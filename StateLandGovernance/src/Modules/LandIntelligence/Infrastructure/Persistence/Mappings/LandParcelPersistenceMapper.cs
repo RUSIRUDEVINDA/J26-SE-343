@@ -1,4 +1,3 @@
-using System.Reflection;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
@@ -6,7 +5,6 @@ using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities;
 using StateLandGovernance.LandIntelligence.Infrastructure.PostGIS;
-
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Mappings;
 
 internal static class LandParcelPersistenceMapper
@@ -67,12 +65,12 @@ internal static class LandParcelPersistenceMapper
                 ? null
                 : new LandCharacteristics(entity.SoilType, entity.TerrainDescription, entity.ElevationMeters));
 
-        SetEntityId(parcel, entity.Id);
+        PersistenceEntityIdHelper.SetEntityId(parcel, entity.Id);
 
         foreach (var constraint in entity.SpatialConstraints)
         {
             var domainConstraint = new SpatialConstraint(constraint.Type, constraint.Description, constraint.Severity);
-            SetEntityId(domainConstraint, constraint.Id);
+            PersistenceEntityIdHelper.SetEntityId(domainConstraint, constraint.Id);
             parcel.AddSpatialConstraint(domainConstraint);
         }
 
@@ -83,7 +81,7 @@ internal static class LandParcelPersistenceMapper
                 feature.Name,
                 feature.DistanceMeters,
                 feature.Description);
-            SetEntityId(domainFeature, feature.Id);
+            PersistenceEntityIdHelper.SetEntityId(domainFeature, feature.Id);
             parcel.AddInfrastructureFeature(domainFeature);
         }
 
@@ -91,7 +89,7 @@ internal static class LandParcelPersistenceMapper
     }
 
     public static SpatialConstraint ToDomain(SpatialConstraintEntity entity) =>
-        SetEntityId(
+        PersistenceEntityIdHelper.SetEntityId(
             new SpatialConstraint(entity.Type, entity.Description, entity.Severity),
             entity.Id);
 
@@ -140,14 +138,4 @@ internal static class LandParcelPersistenceMapper
 
     private static Point CreatePoint(double longitude, double latitude) =>
         GeometryFactory.CreatePoint(new Coordinate(longitude, latitude));
-
-    private static TEntity SetEntityId<TEntity>(TEntity entity, Guid id)
-        where TEntity : Entity
-    {
-        typeof(Entity)
-            .GetProperty(nameof(Entity.Id), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
-            .SetValue(entity, id);
-
-        return entity;
-    }
 }
