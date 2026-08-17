@@ -1,13 +1,11 @@
 using System;
-using StateLandGovernance.LeaseFeasibility.Domain.Enums;
 
 namespace StateLandGovernance.LeaseFeasibility.Domain.Events;
 
-public sealed record FinancialFeasibilityAssessmentFinalizedEvent(
+public sealed record FeasibilityAssessmentCompletedEvent(
     Guid AssessmentId,
     string ApplicationId,
-    FeasibilityGrade Grade
-) : IDomainEvent
+    string EligibilityGrade) : IDomainEvent
 {
     public DateTimeOffset OccurredAt { get; } = DateTimeOffset.UtcNow;
 }
