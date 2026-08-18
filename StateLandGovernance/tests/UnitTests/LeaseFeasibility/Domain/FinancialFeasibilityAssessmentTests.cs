@@ -54,7 +54,7 @@ public class FinancialFeasibilityAssessmentTests
         Assert.Throws<ArgumentNullException>(() => new FinancialFeasibilityAssessment(
             "APP-123",
             FeasibilityGrade.A,
-            null));
+            null!));
     }
 
     [Fact]
