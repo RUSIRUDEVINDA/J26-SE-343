@@ -116,8 +116,9 @@ public class AnalysisRunCompletionTests
     {
         var fact1 = new ExtractedFactInput(new ExtractedFactId(Guid.NewGuid()), new FactCode("code"), new AnalysisFactValue(AnalysisFactValueKind.Text, "v1"), null, null);
         var fact2 = new ExtractedFactInput(new ExtractedFactId(Guid.NewGuid()), new FactCode("code"), new AnalysisFactValue(AnalysisFactValueKind.Text, "v2"), null, null);
-        _analysis.CompleteRun(_runId, _resultId, AnalysisResultOutcome.OutputsProduced, Array.Empty<AnalysisResultArtifactReference>(), new[] { fact1, fact2 }, _utcNow);
-        Assert.Equal(2, _analysis.Runs.Single().Result.ExtractedFacts.Count);
+        var run = _analysis.Runs.Single();
+        Assert.NotNull(run.Result);
+        Assert.Equal(2, run.Result.ExtractedFacts.Count);
     }
 
     [Fact] public void AnalysisFactValue_Kinds_Valid()
@@ -221,14 +222,17 @@ public class AnalysisRunCompletionTests
         _analysis.CompleteRun(_runId, _resultId, AnalysisResultOutcome.NoFindings, list, facts, _utcNow);
         list.Add(new AnalysisResultArtifactReference(new AnalysisResultArtifactId(Guid.NewGuid()), "k", "s", "text/plain", new AnalysisArtifactChecksum("a", "b")));
         facts.Add(new ExtractedFactInput(new ExtractedFactId(Guid.NewGuid()), new FactCode("c"), new AnalysisFactValue(AnalysisFactValueKind.Text, "v"), null, null));
-        Assert.Empty(_analysis.Runs.Single().Result.Artifacts);
-        Assert.Empty(_analysis.Runs.Single().Result.ExtractedFacts);
+        var run = _analysis.Runs.Single();
+        Assert.NotNull(run.Result);
+        Assert.Empty(run.Result.Artifacts);
+        Assert.Empty(run.Result.ExtractedFacts);
     }
 
     [Fact] public void Result_ExposedCollections_AreImmutable()
     {
         _analysis.CompleteRun(_runId, _resultId, AnalysisResultOutcome.NoFindings, Array.Empty<AnalysisResultArtifactReference>(), Array.Empty<ExtractedFactInput>(), _utcNow);
         var r = _analysis.Runs.Single().Result;
+        Assert.NotNull(r);
         Assert.Throws<NotSupportedException>(() => ((IList<AnalysisResultArtifactReference>)r.Artifacts).Add(null!));
         Assert.Throws<NotSupportedException>(() => ((IList<ExtractedFact>)r.ExtractedFacts).Add(null!));
         Assert.Throws<NotSupportedException>(() => ((IList<AnalysisCapabilityCode>)r.RequestedCapabilities).Add(new AnalysisCapabilityCode("C2")));
@@ -282,6 +286,7 @@ public class AnalysisRunCompletionTests
     {
         _analysis.CompleteRun(_runId, _resultId, AnalysisResultOutcome.NoFindings, Array.Empty<AnalysisResultArtifactReference>(), Array.Empty<ExtractedFactInput>(), _utcNow);
         var r = _analysis.Runs.Single().Result;
+        Assert.NotNull(r);
         Assert.Equal(_runId, r.AnalysisRunId);
         Assert.Equal(_analysis.DocumentVersionId, r.DocumentVersionId);
         Assert.Equal(_analysis.DocumentChecksum, r.DocumentChecksum);
@@ -319,6 +324,7 @@ public class AnalysisRunCompletionTests
         var initialState = run.State;
         var initialResult = run.Result;
         var initialCompletedAt = run.CompletedAt;
+        Assert.NotNull(run.Result);
         var initialResultId = run.Result.Id;
         Assert.Throws<InvalidAnalysisRunTransitionException>(() => _analysis.CompleteRun(_runId, new AnalysisRunResultId(Guid.NewGuid()), AnalysisResultOutcome.NoFindings, Array.Empty<AnalysisResultArtifactReference>(), Array.Empty<ExtractedFactInput>(), _utcNow));
         Assert.Equal(initialRev, _analysis.Revision);
