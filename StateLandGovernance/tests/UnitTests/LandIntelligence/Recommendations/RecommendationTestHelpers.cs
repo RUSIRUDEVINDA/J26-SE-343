@@ -142,6 +142,33 @@ internal sealed class FakeLandParcelRepository : ILandParcelRepository
         return Task.FromResult<IReadOnlyList<LandParcel>>(query.ToList());
     }
 
+    public Task<int> CountSearchAsync(LandSearchRequest request, CancellationToken cancellationToken = default)
+    {
+        IEnumerable<LandParcel> query = _parcels;
+
+        if (!string.IsNullOrWhiteSpace(request.Province))
+        {
+            query = query.Where(p => p.Location.Province.Equals(request.Province, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.District))
+        {
+            query = query.Where(p => p.Location.District.Equals(request.District, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (request.CategoryType is not null)
+        {
+            query = query.Where(p => p.Category.Type == request.CategoryType);
+        }
+
+        if (request.CurrentUseType is not null)
+        {
+            query = query.Where(p => p.CurrentUse?.Type == request.CurrentUseType);
+        }
+
+        return Task.FromResult(query.Count());
+    }
+
     public Task AddAsync(LandParcel parcel, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     public Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default) => Task.CompletedTask;
