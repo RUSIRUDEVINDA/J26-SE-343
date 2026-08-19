@@ -7,6 +7,7 @@ using StateLandGovernance.WorkflowGovernance.Domain.DocumentAnalysis.Events;
 using System.Linq;
 using StateLandGovernance.WorkflowGovernance.Domain.Documents;
 using StateLandGovernance.WorkflowGovernance.Domain.Exceptions;
+using StateLandGovernance.WorkflowGovernance.Domain.Authority;
 
 public sealed class DocumentAnalysis
 {
@@ -24,6 +25,11 @@ public sealed class DocumentAnalysis
 
     private readonly List<AnalysisRun> _runs = new();
     public IReadOnlyCollection<AnalysisRun> Runs => _runs.AsReadOnly();
+
+    private readonly List<HumanFactVerification> _verifications = new();
+    public IReadOnlyCollection<HumanFactVerification> Verifications => _verifications.AsReadOnly();
+
+    private const string RequiredFactVerificationCapability = "FactVerifier";
 
     public DocumentAnalysis(
         DocumentAnalysisId id,
@@ -322,6 +328,146 @@ public sealed class DocumentAnalysis
         );
 
         run.MarkCompleted(result, completedAt);
+        Revision = nextRevision;
+        _domainEvents.Add(evt);
+    }
+
+    public void RecordFactVerification(
+        HumanFactVerificationId verificationId,
+        AnalysisRunResultId analysisRunResultId,
+        ExtractedFactId extractedFactId,
+        FactVerificationDecision decision,
+        AnalysisFactValue? correctedValue,
+        string? reason,
+        Guid verifyingActorId,
+        DateTime verifiedAt,
+        VerifiedAuthoritySnapshot authoritySnapshot)
+    {
+        if (verificationId.Value == Guid.Empty) throw new InvalidFactVerificationException("Verification ID cannot be empty.");
+        if (analysisRunResultId.Value == Guid.Empty) throw new InvalidFactVerificationException("AnalysisRunResultId cannot be empty.");
+        if (extractedFactId.Value == Guid.Empty) throw new InvalidFactVerificationException("ExtractedFactId cannot be empty.");
+        if (authoritySnapshot == null) throw new MissingVerifiedAuthorityException("Authority snapshot is required.");
+        if (verifiedAt.Kind != DateTimeKind.Utc) throw new InvalidFactVerificationException("VerifiedAt must be UTC.");
+
+        AnalysisRun? targetRun = null;
+        AnalysisRunResult? targetResult = null;
+        foreach (var run in _runs)
+        {
+            if (run.Result?.Id.Value == analysisRunResultId.Value)
+            {
+                targetRun = run;
+                targetResult = run.Result;
+                break;
+            }
+        }
+
+        if (targetRun == null || targetResult == null)
+            throw new AnalysisRunResultNotFoundException($"AnalysisRunResult {analysisRunResultId.Value} not found.");
+
+        var targetFact = targetResult.ExtractedFacts.FirstOrDefault(f => f.Id.Value == extractedFactId.Value);
+        if (targetFact == null)
+            throw new ExtractedFactNotFoundException($"ExtractedFact {extractedFactId.Value} not found in result {analysisRunResultId.Value}.");
+
+        if (verifiedAt < targetRun.CompletedAt!.Value)
+            throw new InvalidFactVerificationException("VerifiedAt cannot be before run completion time.");
+
+        if (verifiedAt < authoritySnapshot.VerificationTime)
+            throw new InvalidFactVerificationException("VerifiedAt cannot be before authority verification time.");
+
+        if (_runs.Any(r => r.RunNumber > targetRun.RunNumber && r.State == AnalysisRunState.Completed))
+            throw new StaleAnalysisResultException("A newer completed run makes this result stale.");
+
+        var requiredScope = new AuthorityScope(AuthorityScopeKind.GovernedDocument, GovernedDocumentId.Value.ToString("D"));
+        authoritySnapshot.EnsureAuthorizes(verifyingActorId, RequiredFactVerificationCapability, requiredScope, verifiedAt);
+
+        var candidate = new HumanFactVerification(
+            verificationId,
+            Id,
+            targetRun.Id,
+            analysisRunResultId,
+            extractedFactId,
+            DocumentVersionId,
+            DocumentChecksum,
+            targetRun.RunNumber,
+            targetRun.ModelReference,
+            targetFact.FactCode,
+            targetFact.FactValue,
+            decision,
+            correctedValue,
+            reason,
+            verifiedAt,
+            verifyingActorId,
+            RequiredFactVerificationCapability,
+            authoritySnapshot.Scope.Kind,
+            authoritySnapshot.Scope.TargetIdentifier,
+            requiredScope.Kind,
+            requiredScope.TargetIdentifier!,
+            authoritySnapshot.ValidFrom,
+            authoritySnapshot.VerificationTime,
+            authoritySnapshot.ValidUntil
+        );
+
+        foreach (var v in _verifications)
+        {
+            if (v.Id.Value == verificationId.Value)
+            {
+                bool isExactMatch = 
+                    v.AnalysisRunResultId.Value == analysisRunResultId.Value &&
+                    v.ExtractedFactId.Value == extractedFactId.Value &&
+                    v.Decision == decision &&
+                    (v.CorrectedValue == null && correctedValue == null || v.CorrectedValue != null && correctedValue != null && string.Equals(v.CorrectedValue.CanonicalValue, correctedValue.CanonicalValue, StringComparison.Ordinal) && v.CorrectedValue.Kind == correctedValue.Kind) &&
+                    string.Equals(v.Reason, candidate.Reason, StringComparison.Ordinal) &&
+                    v.VerifyingActorId == verifyingActorId &&
+                    v.GrantedAuthorityScopeKind == authoritySnapshot.Scope.Kind &&
+                    string.Equals(v.GrantedAuthorityScopeIdentifier, authoritySnapshot.Scope.TargetIdentifier, StringComparison.Ordinal) &&
+                    v.AuthorityVerificationTime == authoritySnapshot.VerificationTime &&
+                    v.AuthorityValidFrom == authoritySnapshot.ValidFrom &&
+                    v.AuthorityValidUntil == authoritySnapshot.ValidUntil &&
+                    v.VerifiedAt == verifiedAt;
+
+                if (isExactMatch)
+                {
+                    throw new DuplicateFactVerificationException("Duplicate verification ID with identical canonical data.");
+                }
+                else
+                {
+                    throw new ConflictingFactVerificationException("Verification ID already exists with conflicting canonical data.");
+                }
+            }
+
+            if (v.AnalysisRunResultId.Value == analysisRunResultId.Value && v.ExtractedFactId.Value == extractedFactId.Value)
+            {
+                throw new FactAlreadyVerifiedException("Fact is already verified in this result.");
+            }
+        }
+
+        var nextRevision = CalculateNextRevision(Revision);
+
+        var evt = new HumanFactVerificationRecorded(
+            Guid.NewGuid(),
+            verifiedAt,
+            Id,
+            targetRun.Id,
+            analysisRunResultId,
+            verificationId,
+            extractedFactId,
+            targetFact.FactCode.Value,
+            decision,
+            verifyingActorId,
+            RequiredFactVerificationCapability,
+            authoritySnapshot.Scope.Kind,
+            authoritySnapshot.Scope.TargetIdentifier,
+            requiredScope.Kind,
+            requiredScope.TargetIdentifier!,
+            authoritySnapshot.VerificationTime,
+            DocumentVersionId,
+            DocumentChecksum.Algorithm,
+            DocumentChecksum.Value,
+            targetRun.RunNumber,
+            nextRevision
+        );
+
+        _verifications.Add(candidate);
         Revision = nextRevision;
         _domainEvents.Add(evt);
     }

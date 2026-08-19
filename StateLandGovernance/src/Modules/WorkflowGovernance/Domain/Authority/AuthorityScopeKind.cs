@@ -6,5 +6,6 @@ public enum AuthorityScopeKind
     LeaseCase,
     Agency,
     WorkflowExecution,
-    ExecutionStage
+    ExecutionStage,
+    GovernedDocument
 }
