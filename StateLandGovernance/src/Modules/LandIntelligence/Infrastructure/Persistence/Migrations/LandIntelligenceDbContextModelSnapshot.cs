@@ -212,6 +212,52 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.ToTable("land_parcels", "land_intelligence");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandRecommendationEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CriteriaJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("EvidenceJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTimeOffset>("GeneratedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("LandParcelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("Rank")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RecommendedUseDescription")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int?>("RecommendedUseType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("SuitabilityScore")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GeneratedAt");
+
+                    b.HasIndex("LandParcelId");
+
+                    b.ToTable("land_recommendations", "land_intelligence");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandUseEntity", b =>
                 {
                     b.Property<Guid>("Id")
