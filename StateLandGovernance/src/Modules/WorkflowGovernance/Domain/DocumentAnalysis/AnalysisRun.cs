@@ -20,6 +20,8 @@ public sealed class AnalysisRun
     public AnalysisRunState State { get; private set; }
 
     public DateTime? StartedAt { get; private set; }
+    public DateTime? CompletedAt { get; private set; }
+    public AnalysisRunResult? Result { get; private set; }
     public DateTime? FailedAt { get; private set; }
     public DateTime? SupersededAt { get; private set; }
     public AnalysisRunFailure? Failure { get; private set; }
@@ -54,9 +56,21 @@ public sealed class AnalysisRun
         State = AnalysisRunState.Running;
     }
 
+    internal void MarkCompleted(AnalysisRunResult result, DateTime completedAt)
+    {
+        if (State != AnalysisRunState.Running) throw new InvalidAnalysisRunTransitionException($"Cannot complete a run from {State} state.");
+        if (result == null) throw new InvalidAnalysisRunTransitionException("Result cannot be null.");
+        if (completedAt.Kind != DateTimeKind.Utc) throw new InvalidAnalysisRunTransitionException("CompletedAt must be UTC.");
+        if (StartedAt.HasValue && completedAt < StartedAt.Value) throw new InvalidAnalysisRunTransitionException("CompletedAt cannot be before StartedAt.");
+
+        Result = result;
+        CompletedAt = completedAt;
+        State = AnalysisRunState.Completed;
+    }
+
     internal void MarkFailed(AnalysisRunFailure failure, DateTime failedAt)
     {
-        if (State == AnalysisRunState.Failed || State == AnalysisRunState.Superseded)
+        if (State == AnalysisRunState.Failed || State == AnalysisRunState.Superseded || State == AnalysisRunState.Completed)
             throw new InvalidAnalysisRunTransitionException($"Cannot fail a run from {State} state.");
         
         if (failure == null) throw new InvalidAnalysisRunTransitionException("Failure cannot be null.");
@@ -71,7 +85,7 @@ public sealed class AnalysisRun
 
     internal void MarkSuperseded(string supersessionReason, DateTime supersededAt)
     {
-        if (State == AnalysisRunState.Failed || State == AnalysisRunState.Superseded)
+        if (State == AnalysisRunState.Failed || State == AnalysisRunState.Superseded || State == AnalysisRunState.Completed)
             throw new InvalidAnalysisRunTransitionException($"Cannot supersede a run from {State} state.");
         
         if (string.IsNullOrWhiteSpace(supersessionReason)) throw new InvalidAnalysisRunTransitionException("Supersession reason cannot be blank.");
