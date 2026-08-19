@@ -259,4 +259,71 @@ public sealed class DocumentAnalysis
         Revision = nextRevision;
         _domainEvents.Add(evt);
     }
+
+    public void CompleteRun(
+        AnalysisRunId analysisRunId,
+        AnalysisRunResultId resultId,
+        AnalysisResultOutcome outcome,
+        IReadOnlyCollection<AnalysisResultArtifactReference> artifacts,
+        IReadOnlyCollection<ExtractedFactInput> facts,
+        DateTime completedAt)
+    {
+        if (analysisRunId.Value == Guid.Empty) throw new InvalidAnalysisRunTransitionException("AnalysisRunId empty.");
+        var run = _runs.FirstOrDefault(r => r.Id.Value == analysisRunId.Value);
+        if (run == null) throw new AnalysisRunNotFoundException($"Run {analysisRunId.Value} not found.");
+        
+        if (run.State != AnalysisRunState.Running) throw new InvalidAnalysisRunTransitionException("Run is not running.");
+        
+        if (completedAt.Kind != DateTimeKind.Utc) throw new InvalidAnalysisRunTransitionException("completedAt must be UTC.");
+        if (run.StartedAt.HasValue && completedAt < run.StartedAt.Value) throw new InvalidAnalysisRunTransitionException("Chronology violation.");
+        
+        foreach (var r in _runs)
+        {
+            if (r.Result != null && r.Result.Id.Value == resultId.Value)
+            {
+                throw new DuplicateAnalysisRunResultException("ResultId already exists.");
+            }
+        }
+
+        var result = new AnalysisRunResult(
+            resultId,
+            run.Id,
+            run.DocumentVersionId,
+            run.DocumentChecksum,
+            run.ModelReference,
+            run.RequestedCapabilities,
+            outcome,
+            artifacts,
+            facts,
+            completedAt
+        );
+
+        var nextRevision = CalculateNextRevision(Revision);
+
+        var evt = new AnalysisRunCompleted(
+            Guid.NewGuid(),
+            completedAt,
+            Id,
+            analysisRunId,
+            resultId,
+            GovernedDocumentId,
+            DocumentVersionId,
+            DocumentChecksum.Algorithm,
+            DocumentChecksum.Value,
+            run.RunNumber,
+            run.ModelReference.Provider,
+            run.ModelReference.ModelName,
+            run.ModelReference.ModelVersion,
+            result.RequestedCapabilities.Select(c => c.Value),
+            result.Outcome,
+            result.Artifacts.Count,
+            result.ExtractedFacts.Count,
+            nextRevision
+        );
+
+        run.MarkCompleted(result, completedAt);
+        Revision = nextRevision;
+        _domainEvents.Add(evt);
+    }
 }
+

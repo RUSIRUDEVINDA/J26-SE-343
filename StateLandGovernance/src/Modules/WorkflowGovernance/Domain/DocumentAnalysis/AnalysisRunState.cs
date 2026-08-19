@@ -4,6 +4,7 @@ public enum AnalysisRunState
 {
     Requested,
     Running,
+    Completed,
     Failed,
     Superseded
 }

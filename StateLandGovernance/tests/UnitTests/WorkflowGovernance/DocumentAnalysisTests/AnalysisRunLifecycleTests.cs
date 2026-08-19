@@ -310,17 +310,37 @@ public class AnalysisRunLifecycleTests
     }
 
     [Fact]
-    public void DocumentAnalysis_HasNoCompleteRunMethod()
+    public void CompleteRun_HasExactSignature_AndDoesNotAcceptBindingArguments()
     {
-        var methods = typeof(DocumentAnalysis).GetMethods();
-        Assert.DoesNotContain(methods, m => m.Name.Contains("CompleteRun"));
+        var method = typeof(DocumentAnalysis).GetMethod("CompleteRun");
+        Assert.NotNull(method);
+
+        var parameters = method.GetParameters();
+        
+        Assert.DoesNotContain(parameters, p => p.ParameterType == typeof(GovernedDocumentId));
+        Assert.DoesNotContain(parameters, p => p.ParameterType == typeof(DocumentVersionId));
+        Assert.DoesNotContain(parameters, p => p.ParameterType == typeof(DocumentChecksum));
+        Assert.DoesNotContain(parameters, p => p.ParameterType == typeof(AnalysisModelReference));
+
+        Assert.Equal(6, parameters.Length);
+        Assert.Equal(typeof(AnalysisRunId), parameters[0].ParameterType);
+        Assert.Equal(typeof(AnalysisRunResultId), parameters[1].ParameterType);
+        Assert.Equal(typeof(AnalysisResultOutcome), parameters[2].ParameterType);
+        Assert.Equal(typeof(IReadOnlyCollection<AnalysisResultArtifactReference>), parameters[3].ParameterType);
+        Assert.Equal(typeof(IReadOnlyCollection<ExtractedFactInput>), parameters[4].ParameterType);
+        Assert.Equal(typeof(DateTime), parameters[5].ParameterType);
     }
 
     [Fact]
-    public void AnalysisRunState_DoesNotContainCompleted()
+    public void AnalysisRunState_ContainsExactExpectedValues()
     {
         var names = Enum.GetNames(typeof(AnalysisRunState));
-        Assert.DoesNotContain(names, n => n == "Completed");
+        Assert.Equal(5, names.Length);
+        Assert.Contains("Requested", names);
+        Assert.Contains("Running", names);
+        Assert.Contains("Completed", names);
+        Assert.Contains("Failed", names);
+        Assert.Contains("Superseded", names);
     }
 
     [Fact]
