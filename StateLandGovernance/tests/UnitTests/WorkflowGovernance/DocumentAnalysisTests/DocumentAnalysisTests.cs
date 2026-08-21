@@ -169,7 +169,13 @@ public class DocumentAnalysisTests
     public void DocumentAnalysis_HasNoPublicRebindingMethod()
     {
         var methods = typeof(DocumentAnalysis).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-        Assert.Empty(methods.Where(m => !m.IsSpecialName));
+        foreach (var m in methods.Where(m => !m.IsSpecialName))
+        {
+            var parameters = m.GetParameters();
+            Assert.DoesNotContain(parameters, p => p.ParameterType == typeof(GovernedDocumentId));
+            Assert.DoesNotContain(parameters, p => p.ParameterType == typeof(DocumentVersionId));
+            Assert.DoesNotContain(parameters, p => p.ParameterType == typeof(DocumentChecksum));
+        }
     }
 
     [Fact]

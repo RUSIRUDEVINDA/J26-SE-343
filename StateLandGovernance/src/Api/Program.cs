@@ -8,6 +8,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
@@ -41,7 +42,7 @@ builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
 // Register GovernanceIntelligence module (Application + Infrastructure + Presentation)
 builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
 builder.Services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRuleProvider>();
-builder.Services.AddSingleton<IGovernanceAuditRepository, InMemoryGovernanceAuditRepository>();
+builder.Services.AddGovernanceIntelligenceInfrastructure(builder.Configuration, builder.Environment);
 builder.Services.AddTransient<EvaluateComplianceCommandHandler>();
 builder.Services.AddGovernanceConflictDetection();
 builder.Services.AddGovernanceRiskIntelligence();
