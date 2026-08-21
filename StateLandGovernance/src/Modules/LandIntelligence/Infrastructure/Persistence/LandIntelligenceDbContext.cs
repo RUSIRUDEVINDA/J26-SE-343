@@ -22,6 +22,8 @@ public class LandIntelligenceDbContext : DbContext
 
     public DbSet<InfrastructureFeatureEntity> InfrastructureFeatures => Set<InfrastructureFeatureEntity>();
 
+    public DbSet<LandRecommendationEntity> LandRecommendations => Set<LandRecommendationEntity>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);

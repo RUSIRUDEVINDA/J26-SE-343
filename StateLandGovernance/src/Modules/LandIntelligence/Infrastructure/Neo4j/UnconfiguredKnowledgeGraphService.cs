@@ -10,7 +10,7 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
 /// </summary>
 internal sealed class UnconfiguredKnowledgeGraphService : IKnowledgeGraphService
 {
-    private static InvalidOperationException CreateException() =>
+    private static ServiceConfigurationException CreateException() =>
         new(
             $"Neo4j is not configured. Set {Neo4jSettings.ConnectionEnvironmentVariable}, " +
             $"{Neo4jSettings.UsernameEnvironmentVariable}, and {Neo4jSettings.PasswordEnvironmentVariable} in .env.");

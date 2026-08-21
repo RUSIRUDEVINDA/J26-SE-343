@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\..\src\Modules\LandIntelligence\Domain\StateLandGovernance.LandIntelligence.Domain.csproj" />
     <ProjectReference Include="..\..\..\src\Modules\LandIntelligence\Application\StateLandGovernance.LandIntelligence.Application.csproj" />
     <ProjectReference Include="..\..\..\src\Modules\LandIntelligence\Infrastructure\StateLandGovernance.LandIntelligence.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\LandIntelligence\Presentation\StateLandGovernance.LandIntelligence.Presentation.csproj" />
   </ItemGroup>
 
 </Project>
