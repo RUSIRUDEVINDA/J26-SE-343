@@ -8,6 +8,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 using Xunit;
 
 namespace StateLandGovernance.UnitTests.GovernanceIntelligence;
@@ -47,9 +48,10 @@ public class EvaluateConditionalVerificationCommandHandlerTests
     public EvaluateConditionalVerificationCommandHandlerTests()
     {
         _spyAuditRepo = new SpyAuditRepository();
+        var evalStore = new InMemoryGovernanceEvaluationStore(_spyAuditRepo);
         _fixedTimeProvider = new FixedTimeProvider(new DateTimeOffset(2026, 8, 14, 12, 0, 0, TimeSpan.Zero));
         _engine = new ConditionalGovernanceVerificationEngine();
-        _handler = new EvaluateConditionalVerificationCommandHandler(_engine, _spyAuditRepo, _fixedTimeProvider);
+        _handler = new EvaluateConditionalVerificationCommandHandler(_engine, evalStore, _fixedTimeProvider);
     }
 
     [Fact]
