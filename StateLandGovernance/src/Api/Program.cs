@@ -62,8 +62,12 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "State Land Governance — Component 1 (Land Intelligence)",
         Version = "v1",
-        Description = "REST API for land parcels, search, constraints, relationships, and recommendations."
+        Description =
+            "REST API for land parcels, search, spatial constraints, knowledge graph relationships, and explainable land recommendations."
     });
+
+    options.DocInclusionPredicate((documentName, apiDescription) =>
+        string.Equals(apiDescription.GroupName, documentName, StringComparison.Ordinal));
 });
 
 var app = builder.Build();
