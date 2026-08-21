@@ -11,13 +11,16 @@ public sealed class UpdateLandParcelCommandHandler
     : ICommandHandler<UpdateLandParcelCommand, LandParcelDto>
 {
     private readonly ILandParcelRepository _landParcelRepository;
+    private readonly ILandParcelGraphSynchronizer _graphSynchronizer;
     private readonly UpdateLandParcelCommandValidator _validator;
 
     public UpdateLandParcelCommandHandler(
         ILandParcelRepository landParcelRepository,
+        ILandParcelGraphSynchronizer graphSynchronizer,
         UpdateLandParcelCommandValidator validator)
     {
         _landParcelRepository = landParcelRepository;
+        _graphSynchronizer = graphSynchronizer;
         _validator = validator;
     }
 
@@ -51,6 +54,7 @@ public sealed class UpdateLandParcelCommandHandler
         }
 
         await _landParcelRepository.UpdateAsync(parcel, cancellationToken);
+        await _graphSynchronizer.SynchronizeAfterPersistAsync(parcel, cancellationToken);
 
         return LandParcelMapper.ToDto(parcel);
     }

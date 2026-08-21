@@ -40,4 +40,12 @@ public sealed class KnowledgeGraphModelTests
         Assert.Contains($"[*1..{depth}]", query);
         Assert.Contains("relatedParcelId", query);
     }
+
+    [Fact]
+    public void ClearParcelRelationships_removes_outgoing_relationships_only()
+    {
+        Assert.Contains("MATCH (p:LandParcel { id: $parcelId })-[r]->()", KnowledgeGraphCypher.ClearParcelRelationships);
+        Assert.Contains("DELETE r", KnowledgeGraphCypher.ClearParcelRelationships);
+        Assert.DoesNotContain("DETACH DELETE p", KnowledgeGraphCypher.ClearParcelRelationships);
+    }
 }

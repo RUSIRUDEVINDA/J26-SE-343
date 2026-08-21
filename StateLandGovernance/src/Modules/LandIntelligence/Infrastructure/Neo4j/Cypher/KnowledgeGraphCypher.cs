@@ -165,6 +165,11 @@ internal static class KnowledgeGraphCypher
         DETACH DELETE p
         """;
 
+    public const string ClearParcelRelationships = """
+        MATCH (p:LandParcel { id: $parcelId })-[r]->()
+        DELETE r
+        """;
+
     /// <summary>
     /// Variable-length path depth cannot be parameterized in Cypher; depth is validated and injected server-side.
     /// </summary>

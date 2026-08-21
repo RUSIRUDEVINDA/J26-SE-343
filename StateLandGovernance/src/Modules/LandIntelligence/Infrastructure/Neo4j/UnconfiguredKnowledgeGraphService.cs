@@ -60,6 +60,9 @@ internal sealed class UnconfiguredKnowledgeGraphService : IKnowledgeGraphService
     public Task LinkParcelToEnvironmentalAreaAsync(Guid parcelId, Guid environmentalAreaId, CancellationToken cancellationToken = default) =>
         throw CreateException();
 
+    public Task SyncLandParcelGraphAsync(LandParcel parcel, CancellationToken cancellationToken = default) =>
+        throw CreateException();
+
     public Task SyncLandParcelGraphAsync(LandParcel parcel, Guid categoryId, Guid? landUseId, Guid administrativeAreaId, CancellationToken cancellationToken = default) =>
         throw CreateException();
 

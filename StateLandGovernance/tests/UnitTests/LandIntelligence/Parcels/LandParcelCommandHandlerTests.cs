@@ -1,8 +1,11 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using StateLandGovernance.LandIntelligence.Application.Commands;
+using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Application.Validators;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.Exceptions;
+using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
 using StateLandGovernance.UnitTests.LandIntelligence.Recommendations;
 
 namespace StateLandGovernance.UnitTests.LandIntelligence.Parcels;
@@ -15,6 +18,7 @@ public sealed class LandParcelCommandHandlerTests
         var repository = new InMemoryLandParcelRepository();
         var handler = new CreateLandParcelCommandHandler(
             repository,
+            new NoOpLandParcelGraphSynchronizer(),
             new CreateLandParcelCommandValidator());
 
         var result = await handler.HandleAsync(CreateValidCreateCommand());
@@ -31,6 +35,7 @@ public sealed class LandParcelCommandHandlerTests
     {
         var handler = new CreateLandParcelCommandHandler(
             new InMemoryLandParcelRepository(),
+            new NoOpLandParcelGraphSynchronizer(),
             new CreateLandParcelCommandValidator());
 
         var invalidCommand = CreateValidCreateCommand() with { CadastralNumber = "  " };
@@ -48,6 +53,7 @@ public sealed class LandParcelCommandHandlerTests
         var repository = new InMemoryLandParcelRepository(existing);
         var handler = new UpdateLandParcelCommandHandler(
             repository,
+            new NoOpLandParcelGraphSynchronizer(),
             new UpdateLandParcelCommandValidator());
 
         var result = await handler.HandleAsync(new UpdateLandParcelCommand(
@@ -71,6 +77,7 @@ public sealed class LandParcelCommandHandlerTests
         var existing = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-UPDATE-002");
         var handler = new UpdateLandParcelCommandHandler(
             new InMemoryLandParcelRepository(existing),
+            new NoOpLandParcelGraphSynchronizer(),
             new UpdateLandParcelCommandValidator());
 
         var exception = await Assert.ThrowsAsync<ValidationException>(() =>
@@ -84,6 +91,7 @@ public sealed class LandParcelCommandHandlerTests
     {
         var handler = new UpdateLandParcelCommandHandler(
             new InMemoryLandParcelRepository(),
+            new NoOpLandParcelGraphSynchronizer(),
             new UpdateLandParcelCommandValidator());
 
         var missingId = Guid.NewGuid();
@@ -96,6 +104,146 @@ public sealed class LandParcelCommandHandlerTests
                 null,
                 null,
                 null)));
+    }
+
+    [Fact]
+    public async Task CreateLandParcelCommandHandler_synchronizes_graph_after_successful_persist()
+    {
+        var repository = new InMemoryLandParcelRepository();
+        var graphSynchronizer = new RecordingLandParcelGraphSynchronizer();
+        var handler = new CreateLandParcelCommandHandler(
+            repository,
+            graphSynchronizer,
+            new CreateLandParcelCommandValidator());
+
+        var result = await handler.HandleAsync(CreateValidCreateCommand("SYNTH-GRAPH-CREATE-001"));
+
+        Assert.Equal(1, graphSynchronizer.SyncCallCount);
+        Assert.NotNull(graphSynchronizer.LastParcel);
+        Assert.Equal(result.Id, graphSynchronizer.LastParcel!.Id);
+        Assert.Equal(LandUseType.Agricultural, graphSynchronizer.LastParcel.CurrentUse?.Type);
+    }
+
+    [Fact]
+    public async Task UpdateLandParcelCommandHandler_synchronizes_graph_with_latest_parcel_state()
+    {
+        var existing = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-GRAPH-UPDATE-001");
+        var repository = new InMemoryLandParcelRepository(existing);
+        var graphSynchronizer = new RecordingLandParcelGraphSynchronizer();
+        var handler = new UpdateLandParcelCommandHandler(
+            repository,
+            graphSynchronizer,
+            new UpdateLandParcelCommandValidator());
+
+        var result = await handler.HandleAsync(new UpdateLandParcelCommand(
+            existing.Id,
+            LandUseType.Commercial,
+            "[SYNTHETIC] Updated commercial use",
+            null,
+            null,
+            null));
+
+        Assert.Equal(1, graphSynchronizer.SyncCallCount);
+        Assert.NotNull(graphSynchronizer.LastParcel);
+        Assert.Equal(result.Id, graphSynchronizer.LastParcel!.Id);
+        Assert.Equal(LandUseType.Commercial, graphSynchronizer.LastParcel.CurrentUse?.Type);
+    }
+
+    [Fact]
+    public async Task CreateLandParcelCommandHandler_does_not_sync_graph_when_persist_fails()
+    {
+        var graphSynchronizer = new RecordingLandParcelGraphSynchronizer();
+        var handler = new CreateLandParcelCommandHandler(
+            new FailingLandParcelRepository(),
+            graphSynchronizer,
+            new CreateLandParcelCommandValidator());
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            handler.HandleAsync(CreateValidCreateCommand("SYNTH-GRAPH-FAIL-CREATE")));
+
+        Assert.Equal(0, graphSynchronizer.SyncCallCount);
+    }
+
+    [Fact]
+    public async Task UpdateLandParcelCommandHandler_does_not_sync_graph_when_persist_fails()
+    {
+        var existing = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-GRAPH-FAIL-UPDATE");
+        var graphSynchronizer = new RecordingLandParcelGraphSynchronizer();
+        var handler = new UpdateLandParcelCommandHandler(
+            new FailingLandParcelRepository(existing),
+            graphSynchronizer,
+            new UpdateLandParcelCommandValidator());
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            handler.HandleAsync(new UpdateLandParcelCommand(
+                existing.Id,
+                LandUseType.Industrial,
+                "[SYNTHETIC] Industrial use",
+                null,
+                null,
+                null)));
+
+        Assert.Equal(0, graphSynchronizer.SyncCallCount);
+    }
+
+    [Fact]
+    public async Task CreateLandParcelCommandHandler_returns_created_parcel_when_graph_sync_is_unavailable()
+    {
+        var repository = new InMemoryLandParcelRepository();
+        var knowledgeGraph = new RecordingKnowledgeGraphService { ThrowServiceConfigurationOnSync = true };
+        var synchronizer = new LandParcelGraphSynchronizer(
+            knowledgeGraph,
+            NullLogger<LandParcelGraphSynchronizer>.Instance);
+        var handler = new CreateLandParcelCommandHandler(
+            repository,
+            synchronizer,
+            new CreateLandParcelCommandValidator());
+
+        var result = await handler.HandleAsync(CreateValidCreateCommand("SYNTH-GRAPH-UNAVAIL-CREATE"));
+
+        Assert.NotEqual(Guid.Empty, result.Id);
+        Assert.Equal(1, knowledgeGraph.SyncCallCount);
+        var persisted = await repository.SearchAsync(new LandSearchRequest());
+        Assert.Single(persisted);
+    }
+
+    [Fact]
+    public async Task UpdateLandParcelCommandHandler_returns_updated_parcel_when_graph_sync_is_unavailable()
+    {
+        var existing = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-GRAPH-UNAVAIL-UPDATE");
+        var repository = new InMemoryLandParcelRepository(existing);
+        var knowledgeGraph = new RecordingKnowledgeGraphService { ThrowServiceConfigurationOnSync = true };
+        var synchronizer = new LandParcelGraphSynchronizer(
+            knowledgeGraph,
+            NullLogger<LandParcelGraphSynchronizer>.Instance);
+        var handler = new UpdateLandParcelCommandHandler(
+            repository,
+            synchronizer,
+            new UpdateLandParcelCommandValidator());
+
+        var result = await handler.HandleAsync(new UpdateLandParcelCommand(
+            existing.Id,
+            LandUseType.Tourism,
+            "[SYNTHETIC] Tourism use",
+            null,
+            null,
+            null));
+
+        Assert.Equal(LandUseType.Tourism, result.CurrentUse?.Type);
+        Assert.Equal(1, knowledgeGraph.SyncCallCount);
+    }
+
+    [Fact]
+    public async Task SyncLandParcelGraphAsync_can_be_called_repeatedly_for_same_parcel()
+    {
+        var knowledgeGraph = new RecordingKnowledgeGraphService();
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-GRAPH-IDEMPOTENT");
+
+        await knowledgeGraph.SyncLandParcelGraphAsync(parcel);
+        await knowledgeGraph.SyncLandParcelGraphAsync(parcel);
+
+        Assert.Equal(2, knowledgeGraph.SyncCallCount);
+        Assert.Equal(parcel.Id, knowledgeGraph.LastSyncedParcel?.Id);
     }
 
     private static CreateLandParcelCommand CreateValidCreateCommand(string cadastralNumber = "SYNTH-CREATE-001") =>

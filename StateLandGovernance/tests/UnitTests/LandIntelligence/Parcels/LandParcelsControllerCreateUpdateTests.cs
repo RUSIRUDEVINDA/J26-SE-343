@@ -31,8 +31,14 @@ public sealed class LandParcelsControllerCreateUpdateTests
                 new EmptySpatialConstraintRepository(),
                 new FakeSpatialAnalysisService()),
             new GetLandRelationshipsQueryHandler(repository, new EmptyKnowledgeGraphService()),
-            new CreateLandParcelCommandHandler(repository, new CreateLandParcelCommandValidator()),
-            new UpdateLandParcelCommandHandler(repository, new UpdateLandParcelCommandValidator()));
+            new CreateLandParcelCommandHandler(
+                repository,
+                new NoOpLandParcelGraphSynchronizer(),
+                new CreateLandParcelCommandValidator()),
+            new UpdateLandParcelCommandHandler(
+                repository,
+                new NoOpLandParcelGraphSynchronizer(),
+                new UpdateLandParcelCommandValidator()));
     }
 
     [Fact]
@@ -172,6 +178,11 @@ public sealed class LandParcelsControllerCreateUpdateTests
             Task.CompletedTask;
 
         public Task LinkParcelToEnvironmentalAreaAsync(Guid parcelId, Guid environmentalAreaId, CancellationToken cancellationToken = default) =>
+            Task.CompletedTask;
+
+        public Task SyncLandParcelGraphAsync(
+            LandParcel parcel,
+            CancellationToken cancellationToken = default) =>
             Task.CompletedTask;
 
         public Task SyncLandParcelGraphAsync(
