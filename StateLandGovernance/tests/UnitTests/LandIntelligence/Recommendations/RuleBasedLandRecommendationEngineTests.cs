@@ -214,6 +214,26 @@ public sealed class RuleBasedLandRecommendationEngineTests
     }
 
     [Fact]
+    public async Task RecommendAsync_places_oversized_required_area_in_matching_criteria()
+    {
+        var parcel148 = SyntheticRecommendationParcelFactory.CreateParcelWithArea(14.8m, "SYNTH-AREA-148-MATCH");
+        var parcel225 = SyntheticRecommendationParcelFactory.CreateParcelWithArea(22.5m, "SYNTH-AREA-225-MATCH");
+        var engine = RecommendationEngineTestFactory.Create(parcel148, parcel225);
+
+        var response = await engine.RecommendAsync(CreateAreaFilterRequest(requiredAreaHectares: 10m));
+
+        foreach (var recommendation in response.Recommendations)
+        {
+            var requiredArea = Assert.Single(
+                recommendation.MatchingCriteria,
+                c => c.Key == "required-area");
+
+            Assert.True(requiredArea.IsMet);
+            Assert.DoesNotContain(recommendation.FailedCriteria, c => c.Key == "required-area");
+        }
+    }
+
+    [Fact]
     public async Task RecommendAsync_keeps_parcels_within_max_road_distance_threshold()
     {
         var parcelA = SyntheticRecommendationParcelFactory.CreateParcelWithRoadDistance(2000m, "SYNTH-ROAD-2KM");
@@ -331,6 +351,132 @@ public sealed class RuleBasedLandRecommendationEngineTests
         Assert.Equal(suitable.Id, response.Recommendations[0].ParcelId);
         Assert.True(response.Recommendations[0].SuitabilityScore > response.Recommendations[1].SuitabilityScore);
         Assert.Contains(response.Recommendations[1].FailedCriteria, c => c.Key == "environmental");
+    }
+
+    [Fact]
+    public async Task RecommendAsync_returns_unique_standard_criterion_keys()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
+        var engine = RecommendationEngineTestFactory.Create(parcel);
+
+        var response = await engine.RecommendAsync(CreateRequest() with
+        {
+            TargetParcelId = parcel.Id
+        });
+
+        var recommendation = Assert.Single(response.Recommendations);
+        var criterionKeys = recommendation.MatchingCriteria
+            .Concat(recommendation.FailedCriteria)
+            .Select(c => c.Key)
+            .ToList();
+
+        Assert.Equal(criterionKeys.Count, criterionKeys.Distinct(StringComparer.Ordinal).Count());
+    }
+
+    [Fact]
+    public async Task RecommendAsync_returns_unique_rule_based_evidence_per_criterion()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
+        var engine = RecommendationEngineTestFactory.Create(parcel);
+
+        var response = await engine.RecommendAsync(CreateRequest() with
+        {
+            TargetParcelId = parcel.Id
+        });
+
+        var recommendation = Assert.Single(response.Recommendations);
+        var ruleBasedEvidenceNames = recommendation.Evidence
+            .Where(e => e.Source == "RuleBasedCriterionEvaluator")
+            .Select(e => e.RelatedCriterionName)
+            .ToList();
+
+        Assert.Equal(
+            ruleBasedEvidenceNames.Count,
+            ruleBasedEvidenceNames.Distinct(StringComparer.Ordinal).Count());
+    }
+
+    [Fact]
+    public async Task RecommendAsync_evaluates_each_applicable_standard_criterion_once()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
+        var engine = RecommendationEngineTestFactory.Create(parcel);
+
+        var response = await engine.RecommendAsync(CreateRequest() with
+        {
+            TargetParcelId = parcel.Id
+        });
+
+        var recommendation = Assert.Single(response.Recommendations);
+        var evaluatedCriteria = recommendation.MatchingCriteria
+            .Concat(recommendation.FailedCriteria)
+            .ToList();
+
+        Assert.Equal(9, evaluatedCriteria.Count);
+        Assert.Contains(evaluatedCriteria, c => c.Key == "purpose-alignment");
+        Assert.Contains(evaluatedCriteria, c => c.Key == "required-area");
+        Assert.Contains(evaluatedCriteria, c => c.Key == "land-category");
+        Assert.Contains(evaluatedCriteria, c => c.Key == "land-use");
+        Assert.Contains(evaluatedCriteria, c => c.Key == "location-preference");
+        Assert.Contains(evaluatedCriteria, c => c.Key == "spatial-constraints");
+    }
+
+    [Fact]
+    public async Task RecommendAsync_preserves_multiple_custom_criteria_under_single_custom_evaluator()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
+        var engine = RecommendationEngineTestFactory.Create(parcel);
+
+        var response = await engine.RecommendAsync(CreateRequest() with
+        {
+            TargetParcelId = parcel.Id,
+            AdditionalCriteria =
+            [
+                new CustomCriterionCriteria
+                {
+                    Key = "soil-match",
+                    Name = "Soil Match",
+                    ParcelAttributePath = "characteristics.soiltype",
+                    ExpectedValue = parcel.Characteristics!.SoilType!,
+                    Weight = 0.05m
+                },
+                new CustomCriterionCriteria
+                {
+                    Key = "district-match",
+                    Name = "District Match",
+                    ParcelAttributePath = "location.district",
+                    ExpectedValue = parcel.Location.District,
+                    Weight = 0.05m
+                }
+            ]
+        });
+
+        var recommendation = Assert.Single(response.Recommendations);
+
+        Assert.Single(
+            recommendation.MatchingCriteria.Concat(recommendation.FailedCriteria),
+            c => c.Key == "custom-criteria");
+    }
+
+    [Fact]
+    public async Task RecommendAsync_duplicate_evaluator_injection_duplicates_criteria_but_preserves_score()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
+        var standardEvaluators = RecommendationEngineTestFactory.CreateStandardEvaluators();
+        var duplicatedEvaluators = standardEvaluators.Concat(standardEvaluators).ToList();
+
+        var singleEngine = RecommendationEngineTestFactory.CreateWithEvaluators(standardEvaluators, parcel);
+        var duplicatedEngine = RecommendationEngineTestFactory.CreateWithEvaluators(duplicatedEvaluators, parcel);
+
+        var request = CreateRequest() with { TargetParcelId = parcel.Id };
+
+        var singleResult = Assert.Single((await singleEngine.RecommendAsync(request)).Recommendations);
+        var duplicatedResult = Assert.Single((await duplicatedEngine.RecommendAsync(request)).Recommendations);
+
+        var singleCriteriaCount = singleResult.MatchingCriteria.Count + singleResult.FailedCriteria.Count;
+        var duplicatedCriteriaCount = duplicatedResult.MatchingCriteria.Count + duplicatedResult.FailedCriteria.Count;
+
+        Assert.Equal(singleCriteriaCount * 2, duplicatedCriteriaCount);
+        Assert.Equal(singleResult.SuitabilityScore, duplicatedResult.SuitabilityScore);
     }
 
     private static LandRecommendationSearchRequest CreateRoadDistanceFilterRequest(decimal maxRoadDistanceMeters) =>

@@ -15,7 +15,20 @@ public sealed record LandArea
             throw new InvalidLandAreaException("Land area must be greater than zero.");
         }
 
+        if (!Enum.IsDefined(unit))
+        {
+            throw new InvalidLandAreaException($"Unsupported area unit: {unit}.");
+        }
+
         Value = value;
         Unit = unit;
     }
+
+    public decimal ToHectares() => Unit switch
+    {
+        AreaUnit.Hectares => Value,
+        AreaUnit.Acres => Value * 0.404686m,
+        AreaUnit.SquareMeters => Value / 10_000m,
+        _ => throw new InvalidLandAreaException($"Unsupported area unit: {Unit}.")
+    };
 }

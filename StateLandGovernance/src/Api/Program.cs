@@ -34,10 +34,6 @@ builder.Services
     .AddWorkflowGovernancePresentation();
 
 // TODO: Register GovernanceIntelligence module (Application + Infrastructure + Presentation)
-builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
-// TODO: Register LandIntelligence Application handlers and Presentation
-// TODO: Register LeaseFeasibility module (Application + Infrastructure + Presentation)
-// TODO: Register WorkflowGovernance module (Application + Infrastructure + Presentation)
 
 // Register GovernanceIntelligence module (Application + Infrastructure + Presentation)
 builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();

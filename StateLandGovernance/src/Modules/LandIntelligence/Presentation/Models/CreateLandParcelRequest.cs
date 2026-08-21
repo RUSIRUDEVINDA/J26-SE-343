@@ -14,7 +14,7 @@ public sealed record CreateLandParcelRequest
 
     public decimal AreaValue { get; init; }
 
-    public AreaUnit AreaUnit { get; init; }
+    public AreaUnit AreaUnit { get; init; } = AreaUnit.Hectares;
 
     public string Province { get; init; } = string.Empty;
 

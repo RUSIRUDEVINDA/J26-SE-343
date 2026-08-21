@@ -54,7 +54,7 @@ internal static class LandParcelPersistenceMapper
         var parcel = new LandParcel(
             new ParcelIdentifier(entity.CadastralNumber, entity.SurveyPlanReference),
             new LandCategory(entity.LandCategory.Type, entity.LandCategory.Description),
-            new LandArea(entity.AreaValue, entity.AreaUnit),
+            new LandArea(entity.AreaValue, ResolvePersistedAreaUnit(entity.AreaValue, entity.AreaUnit)),
             new AdministrativeLocation(
                 entity.Province,
                 entity.District,
@@ -163,4 +163,19 @@ internal static class LandParcelPersistenceMapper
 
     private static Point CreatePoint(double longitude, double latitude) =>
         GeometryFactory.CreatePoint(new Coordinate(longitude, latitude));
+
+    /// <summary>
+    /// Corrects legacy rows where hectare magnitudes were persisted with SquareMeters
+    /// because OpenAPI clients defaulted to the first enum value (1 = SquareMeters).
+    /// Values stored as genuine square meters for parcels under 1,000 m² are unchanged.
+    /// </summary>
+    private static AreaUnit ResolvePersistedAreaUnit(decimal areaValue, AreaUnit areaUnit)
+    {
+        if (areaUnit == AreaUnit.SquareMeters && areaValue is > 0 and < 1000m)
+        {
+            return AreaUnit.Hectares;
+        }
+
+        return areaUnit;
+    }
 }

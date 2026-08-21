@@ -1,5 +1,6 @@
 using StateLandGovernance.LandIntelligence.Application.Commands;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Domain.Enums;
 
 namespace StateLandGovernance.LandIntelligence.Application.Validators;
 
@@ -17,6 +18,11 @@ public sealed class CreateLandParcelCommandValidator : IRequestValidator<CreateL
         if (request.AreaValue <= 0)
         {
             errors.Add("Area value must be greater than zero.");
+        }
+
+        if (!Enum.IsDefined(request.AreaUnit))
+        {
+            errors.Add("Area unit must be SquareMeters, Hectares, or Acres.");
         }
 
         if (string.IsNullOrWhiteSpace(request.Province))

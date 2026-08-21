@@ -297,22 +297,29 @@ internal sealed class FakeSpatialAnalysisService : ISpatialAnalysisService
 
 internal static class RecommendationEngineTestFactory
 {
+    public static IReadOnlyList<IRecommendationCriterionEvaluator> CreateStandardEvaluators() =>
+    [
+        new PurposeAlignmentCriterionEvaluator(),
+        new RequiredAreaCriterionEvaluator(),
+        new LandCategoryCriterionEvaluator(),
+        new LandUseCriterionEvaluator(),
+        new LocationPreferenceCriterionEvaluator(),
+        new AccessibilityCriterionEvaluator(),
+        new EnvironmentalCriterionEvaluator(),
+        new RegulatoryCriterionEvaluator(),
+        new SpatialConstraintCriterionEvaluator(),
+        new CustomCriteriaEvaluator()
+    ];
+
     public static RuleBasedLandRecommendationEngine Create(params LandParcel[] parcels)
     {
-        IRecommendationCriterionEvaluator[] evaluators =
-        [
-            new PurposeAlignmentCriterionEvaluator(),
-            new RequiredAreaCriterionEvaluator(),
-            new LandCategoryCriterionEvaluator(),
-            new LandUseCriterionEvaluator(),
-            new LocationPreferenceCriterionEvaluator(),
-            new AccessibilityCriterionEvaluator(),
-            new EnvironmentalCriterionEvaluator(),
-            new RegulatoryCriterionEvaluator(),
-            new SpatialConstraintCriterionEvaluator(),
-            new CustomCriteriaEvaluator()
-        ];
+        return CreateWithEvaluators(CreateStandardEvaluators(), parcels);
+    }
 
+    public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
+        IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
+        params LandParcel[] parcels)
+    {
         return new RuleBasedLandRecommendationEngine(
             new FakeLandParcelRepository(parcels),
             new FakeSpatialAnalysisService(parcels),
