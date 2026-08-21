@@ -103,9 +103,6 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             MinArea = request.RequiredAreaHectares is > 0
                 ? request.RequiredAreaHectares * (1m - request.AreaTolerancePercent / 100m)
                 : null,
-            MaxArea = request.RequiredAreaHectares is > 0
-                ? request.RequiredAreaHectares * (1m + request.AreaTolerancePercent / 100m)
-                : null,
             Page = 1,
             PageSize = Math.Max(request.MaxResults * 5, 50)
         };
@@ -144,9 +141,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             }
         }
 
-        return filteredIds.Count == 0
-            ? candidates
-            : candidates.Where(c => filteredIds.Contains(c.Id)).ToList();
+        return candidates.Where(c => filteredIds.Contains(c.Id)).ToList();
     }
 
     private IReadOnlyList<CriterionEvaluationDto> EvaluateParcel(
