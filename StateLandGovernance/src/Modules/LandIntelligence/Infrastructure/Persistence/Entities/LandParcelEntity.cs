@@ -48,4 +48,6 @@ public class LandParcelEntity
     public ICollection<SpatialConstraintEntity> SpatialConstraints { get; set; } = [];
 
     public ICollection<InfrastructureFeatureEntity> InfrastructureFeatures { get; set; } = [];
+
+    public ICollection<EnvironmentalRestrictionEntity> EnvironmentalRestrictions { get; set; } = [];
 }

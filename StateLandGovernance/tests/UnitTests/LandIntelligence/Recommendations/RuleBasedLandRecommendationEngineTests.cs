@@ -300,6 +300,39 @@ public sealed class RuleBasedLandRecommendationEngineTests
         Assert.Equal(0, response.CandidateCount);
     }
 
+    [Fact]
+    public async Task RecommendAsync_ranks_parcel_without_environmental_restrictions_above_prohibitive_parcel()
+    {
+        var suitable = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-ENV-RANK-SUITABLE");
+        var restricted = SyntheticRecommendationParcelFactory.CreateParcelWithEnvironmentalRestriction(
+            EnvironmentalRestrictionType.Wetland,
+            RestrictionSeverity.Prohibitive,
+            "SYNTH-ENV-RANK-RESTRICTED");
+        var engine = RecommendationEngineTestFactory.Create(suitable, restricted);
+
+        var response = await engine.RecommendAsync(new LandRecommendationSearchRequest
+        {
+            RequiredPurpose = LandUseType.Agricultural,
+            RequiredLandCategory = LandCategoryType.StateLand,
+            RequiredLandUse = LandUseType.Agricultural,
+            PreferredLocation = new PreferredLocationCriteria
+            {
+                Province = "Western"
+            },
+            Environmental = new EnvironmentalCriteria
+            {
+                MaxAllowedEnvironmentalSeverity = RestrictionSeverity.Medium,
+                RejectProhibitiveEnvironmentalRestrictions = true
+            },
+            MaxResults = 2
+        });
+
+        Assert.Equal(2, response.Recommendations.Count);
+        Assert.Equal(suitable.Id, response.Recommendations[0].ParcelId);
+        Assert.True(response.Recommendations[0].SuitabilityScore > response.Recommendations[1].SuitabilityScore);
+        Assert.Contains(response.Recommendations[1].FailedCriteria, c => c.Key == "environmental");
+    }
+
     private static LandRecommendationSearchRequest CreateRoadDistanceFilterRequest(decimal maxRoadDistanceMeters) =>
         new()
         {

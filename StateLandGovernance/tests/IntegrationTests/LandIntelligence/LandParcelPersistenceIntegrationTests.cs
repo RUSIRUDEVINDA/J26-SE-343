@@ -93,6 +93,90 @@ public sealed class LandParcelPersistenceIntegrationTests : IAsyncLifetime
         Assert.Contains("Point", persistedCentroid.GeometryType, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public async Task Can_persist_and_reload_environmental_restrictions_with_parcel()
+    {
+        Assert.NotNull(_repository);
+        Assert.NotNull(_dbContext);
+
+        var cadastralNumber = $"SYNTHETIC-ENV-{Guid.NewGuid():N}"[..28];
+
+        var parcel = new LandParcel(
+            new ParcelIdentifier(cadastralNumber, "SYNTHETIC-ENV-SURVEY-001"),
+            new LandCategory(LandCategoryType.StateLand, "[SYNTHETIC] Environmental persistence parcel"),
+            new LandArea(3.1m, AreaUnit.Hectares),
+            new AdministrativeLocation("Western", "Colombo", "Colombo DS", "GN-Env-Test"),
+            new SpatialReference(ExpectedLatitude, ExpectedLongitude, "EPSG:4326"),
+            new LandUse(LandUseType.Agricultural, "[SYNTHETIC] Test agricultural use"));
+
+        parcel.AddEnvironmentalRestriction(new EnvironmentalRestriction(
+            EnvironmentalRestrictionType.Wetland,
+            "[SYNTHETIC] High conservation restriction",
+            RestrictionSeverity.High));
+
+        parcel.AddEnvironmentalRestriction(new EnvironmentalRestriction(
+            EnvironmentalRestrictionType.WaterBodyBuffer,
+            "[SYNTHETIC] Moderate flood-risk restriction",
+            RestrictionSeverity.Medium));
+
+        _persistedParcelId = parcel.Id;
+
+        await _repository.AddAsync(parcel);
+
+        var reloaded = await _repository.GetByIdAsync(parcel.Id);
+
+        Assert.NotNull(reloaded);
+        Assert.Equal(2, reloaded.EnvironmentalRestrictions.Count);
+        Assert.Contains(
+            reloaded.EnvironmentalRestrictions,
+            r => r.Type == EnvironmentalRestrictionType.Wetland && r.Severity == RestrictionSeverity.High);
+        Assert.Contains(
+            reloaded.EnvironmentalRestrictions,
+            r => r.Description.Contains("[SYNTHETIC] Moderate flood-risk restriction", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Can_reload_updated_environmental_restriction_values()
+    {
+        Assert.NotNull(_repository);
+        Assert.NotNull(_dbContext);
+
+        var cadastralNumber = $"SYNTHETIC-ENV-UPD-{Guid.NewGuid():N}"[..28];
+
+        var parcel = new LandParcel(
+            new ParcelIdentifier(cadastralNumber, "SYNTHETIC-ENV-UPDATE-001"),
+            new LandCategory(LandCategoryType.StateLand, "[SYNTHETIC] Environmental update parcel"),
+            new LandArea(2.2m, AreaUnit.Hectares),
+            new AdministrativeLocation("Western", "Colombo", "Colombo DS"),
+            new SpatialReference(ExpectedLatitude, ExpectedLongitude, "EPSG:4326"));
+
+        parcel.AddEnvironmentalRestriction(new EnvironmentalRestriction(
+            EnvironmentalRestrictionType.ProtectedArea,
+            "[SYNTHETIC] Low erosion-risk restriction",
+            RestrictionSeverity.Low));
+
+        _persistedParcelId = parcel.Id;
+        await _repository.AddAsync(parcel);
+
+        var restrictionId = parcel.EnvironmentalRestrictions.Single().Id;
+        var persistedRestriction = await _dbContext.EnvironmentalRestrictions.FindAsync(restrictionId);
+        Assert.NotNull(persistedRestriction);
+
+        persistedRestriction.Description = "[SYNTHETIC] Updated high conservation restriction";
+        persistedRestriction.Severity = RestrictionSeverity.High;
+        persistedRestriction.Type = EnvironmentalRestrictionType.ForestReserve;
+        await _dbContext.SaveChangesAsync();
+
+        var reloaded = await _repository.GetByIdAsync(parcel.Id);
+        Assert.NotNull(reloaded);
+
+        var restriction = Assert.Single(reloaded.EnvironmentalRestrictions);
+        Assert.Equal(restrictionId, restriction.Id);
+        Assert.Equal(EnvironmentalRestrictionType.ForestReserve, restriction.Type);
+        Assert.Equal(RestrictionSeverity.High, restriction.Severity);
+        Assert.Equal("[SYNTHETIC] Updated high conservation restriction", restriction.Description);
+    }
+
     public async Task DisposeAsync()
     {
         if (_dbContext is not null && _persistedParcelId != Guid.Empty)

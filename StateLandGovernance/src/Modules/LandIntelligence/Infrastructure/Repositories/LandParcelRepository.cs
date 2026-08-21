@@ -88,7 +88,8 @@ public sealed class LandParcelRepository : ILandParcelRepository
             .Include(parcel => parcel.LandCategory)
             .Include(parcel => parcel.CurrentLandUse)
             .Include(parcel => parcel.SpatialConstraints)
-            .Include(parcel => parcel.InfrastructureFeatures);
+            .Include(parcel => parcel.InfrastructureFeatures)
+            .Include(parcel => parcel.EnvironmentalRestrictions);
 
     private IQueryable<LandParcelEntity> BuildSearchQuery(LandSearchRequest request)
     {

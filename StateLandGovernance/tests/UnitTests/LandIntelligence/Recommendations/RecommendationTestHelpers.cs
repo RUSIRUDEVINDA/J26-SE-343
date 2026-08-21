@@ -108,6 +108,19 @@ internal static class SyntheticRecommendationParcelFactory
         return parcel;
     }
 
+    public static LandParcel CreateParcelWithEnvironmentalRestriction(
+        EnvironmentalRestrictionType type,
+        RestrictionSeverity severity,
+        string cadastralNumber = "SYNTH-ENV-001")
+    {
+        var parcel = CreateSuitableParcel(cadastralNumber);
+        parcel.AddEnvironmentalRestriction(new EnvironmentalRestriction(
+            type,
+            "[SYNTHETIC] Environmental restriction for recommendation test",
+            severity));
+        return parcel;
+    }
+
     private static LandParcel CreateBaseParcel(
         string cadastralNumber,
         LandCategoryType category,

@@ -42,6 +42,9 @@ internal static class LandParcelPersistenceMapper
                 .ToList(),
             InfrastructureFeatures = parcel.InfrastructureFeatures
                 .Select(feature => ToPersistenceFeature(feature, parcel.Id))
+                .ToList(),
+            EnvironmentalRestrictions = parcel.EnvironmentalRestrictions
+                .Select(restriction => ToPersistenceEnvironmentalRestriction(restriction, parcel.Id))
                 .ToList()
         };
     }
@@ -85,8 +88,18 @@ internal static class LandParcelPersistenceMapper
             parcel.AddInfrastructureFeature(domainFeature);
         }
 
+        foreach (var restriction in entity.EnvironmentalRestrictions)
+        {
+            parcel.AddEnvironmentalRestriction(ToDomainEnvironmentalRestriction(restriction));
+        }
+
         return parcel;
     }
+
+    public static EnvironmentalRestriction ToDomainEnvironmentalRestriction(EnvironmentalRestrictionEntity entity) =>
+        PersistenceEntityIdHelper.SetEntityId(
+            new EnvironmentalRestriction(entity.Type, entity.Description, entity.Severity),
+            entity.Id);
 
     public static SpatialConstraint ToDomain(SpatialConstraintEntity entity) =>
         PersistenceEntityIdHelper.SetEntityId(
@@ -134,6 +147,18 @@ internal static class LandParcelPersistenceMapper
             DistanceMeters = feature.DistanceMeters,
             Description = feature.Description,
             SpatialReferenceSystemId = PostGisConfiguration.DefaultSpatialReferenceSystemId
+        };
+
+    private static EnvironmentalRestrictionEntity ToPersistenceEnvironmentalRestriction(
+        EnvironmentalRestriction restriction,
+        Guid parcelId) =>
+        new()
+        {
+            Id = restriction.Id,
+            LandParcelId = parcelId,
+            Type = restriction.Type,
+            Description = restriction.Description,
+            Severity = restriction.Severity
         };
 
     private static Point CreatePoint(double longitude, double latitude) =>

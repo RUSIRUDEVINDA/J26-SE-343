@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(LandIntelligenceDbContext))]
-    partial class LandIntelligenceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260821110623_AddEnvironmentalRestrictions")]
+    partial class AddEnvironmentalRestrictions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
