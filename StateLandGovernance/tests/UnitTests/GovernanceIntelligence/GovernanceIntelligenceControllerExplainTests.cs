@@ -11,6 +11,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 using StateLandGovernance.GovernanceIntelligence.Presentation.Controllers;
 using Xunit;
 
@@ -67,17 +68,19 @@ public class GovernanceIntelligenceControllerExplainTests
     private readonly TestTimeProvider _testTimeProvider;
     private readonly ExplainableGovernanceEngine _explanationEngine;
     private readonly GenerateGovernanceExplanationCommandHandler _explanationHandler;
+    private readonly InMemoryGovernanceEvaluationStore _evalStore;
 
     public GovernanceIntelligenceControllerExplainTests()
     {
         _auditRepo = new SpyAuditRepository();
+        _evalStore = new InMemoryGovernanceEvaluationStore(_auditRepo);
         _ruleProvider = new StubRegulatoryRuleProvider();
         _testTimeProvider = new TestTimeProvider(new DateTimeOffset(2026, 8, 14, 12, 0, 0, TimeSpan.Zero));
         _explanationEngine = new ExplainableGovernanceEngine();
 
         _explanationHandler = new GenerateGovernanceExplanationCommandHandler(
             _explanationEngine,
-            _auditRepo,
+            _evalStore,
             _testTimeProvider);
     }
 
@@ -85,26 +88,26 @@ public class GovernanceIntelligenceControllerExplainTests
     public async Task Controller_Explain_ValidRequest_ShouldReturnOkResult()
     {
         var complianceEngine = new RegulatoryComplianceEngine();
-        var complianceHandler = new EvaluateComplianceCommandHandler(_ruleProvider, complianceEngine, _auditRepo);
+        var complianceHandler = new EvaluateComplianceCommandHandler(_ruleProvider, complianceEngine, _evalStore);
 
         var conflictHandler = new DetectConflictsCommandHandler(
             new GovernanceConflictEngine(),
-            _auditRepo,
+            _evalStore,
             _testTimeProvider);
 
         var riskHandler = new EvaluateGovernanceRiskCommandHandler(
             new GovernanceRiskEngine(),
-            _auditRepo,
+            _evalStore,
             _testTimeProvider);
 
         var consensusHandler = new EvaluateGovernanceConsensusCommandHandler(
             new GovernanceConsensusEngine(),
-            _auditRepo,
+            _evalStore,
             _testTimeProvider);
 
         var verificationHandler = new EvaluateConditionalVerificationCommandHandler(
             new ConditionalGovernanceVerificationEngine(),
-            _auditRepo,
+            _evalStore,
             _testTimeProvider);
 
         var controller = new GovernanceIntelligenceController(
@@ -130,26 +133,26 @@ public class GovernanceIntelligenceControllerExplainTests
     public async Task Controller_Explain_InvalidRequest_ShouldReturnBadRequest()
     {
         var complianceEngine = new RegulatoryComplianceEngine();
-        var complianceHandler = new EvaluateComplianceCommandHandler(_ruleProvider, complianceEngine, _auditRepo);
+        var complianceHandler = new EvaluateComplianceCommandHandler(_ruleProvider, complianceEngine, _evalStore);
 
         var conflictHandler = new DetectConflictsCommandHandler(
             new GovernanceConflictEngine(),
-            _auditRepo,
+            _evalStore,
             _testTimeProvider);
 
         var riskHandler = new EvaluateGovernanceRiskCommandHandler(
             new GovernanceRiskEngine(),
-            _auditRepo,
+            _evalStore,
             _testTimeProvider);
 
         var consensusHandler = new EvaluateGovernanceConsensusCommandHandler(
             new GovernanceConsensusEngine(),
-            _auditRepo,
+            _evalStore,
             _testTimeProvider);
 
         var verificationHandler = new EvaluateConditionalVerificationCommandHandler(
             new ConditionalGovernanceVerificationEngine(),
-            _auditRepo,
+            _evalStore,
             _testTimeProvider);
 
         var controller = new GovernanceIntelligenceController(
@@ -175,6 +178,7 @@ public class GovernanceIntelligenceControllerExplainTests
     {
         var services = new ServiceCollection();
         services.AddSingleton<IGovernanceAuditRepository>(_auditRepo);
+        services.AddSingleton<IGovernanceEvaluationStore>(_evalStore);
         services.AddExplainableGovernanceEngine();
 
         var provider = services.BuildServiceProvider();

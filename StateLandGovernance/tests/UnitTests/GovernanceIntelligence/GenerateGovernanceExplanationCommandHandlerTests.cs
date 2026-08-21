@@ -9,6 +9,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 using Xunit;
 
 namespace StateLandGovernance.UnitTests.GovernanceIntelligence;
@@ -61,13 +62,14 @@ public class GenerateGovernanceExplanationCommandHandlerTests
     public GenerateGovernanceExplanationCommandHandlerTests()
     {
         _spyAuditRepository = new SpyAuditRepository();
+        var evalStore = new InMemoryGovernanceEvaluationStore(_spyAuditRepository);
         _testTime = new DateTimeOffset(2026, 8, 14, 11, 0, 0, TimeSpan.Zero);
         _testTimeProvider = new TestTimeProvider(_testTime);
         _domainEngine = new ExplainableGovernanceEngine();
 
         _handler = new GenerateGovernanceExplanationCommandHandler(
             _domainEngine,
-            _spyAuditRepository,
+            evalStore,
             _testTimeProvider);
     }
 
