@@ -50,4 +50,6 @@ public class LandParcelEntity
     public ICollection<InfrastructureFeatureEntity> InfrastructureFeatures { get; set; } = [];
 
     public ICollection<EnvironmentalRestrictionEntity> EnvironmentalRestrictions { get; set; } = [];
+
+    public ICollection<RegulatoryReferenceEntity> RegulatoryReferences { get; set; } = [];
 }

@@ -45,6 +45,9 @@ internal static class LandParcelPersistenceMapper
                 .ToList(),
             EnvironmentalRestrictions = parcel.EnvironmentalRestrictions
                 .Select(restriction => ToPersistenceEnvironmentalRestriction(restriction, parcel.Id))
+                .ToList(),
+            RegulatoryReferences = parcel.RegulatoryReferences
+                .Select(reference => ToPersistenceRegulatoryReference(reference, parcel.Id))
                 .ToList()
         };
     }
@@ -93,12 +96,26 @@ internal static class LandParcelPersistenceMapper
             parcel.AddEnvironmentalRestriction(ToDomainEnvironmentalRestriction(restriction));
         }
 
+        foreach (var reference in entity.RegulatoryReferences)
+        {
+            parcel.AddRegulatoryReference(ToDomainRegulatoryReference(reference));
+        }
+
         return parcel;
     }
 
     public static EnvironmentalRestriction ToDomainEnvironmentalRestriction(EnvironmentalRestrictionEntity entity) =>
         PersistenceEntityIdHelper.SetEntityId(
             new EnvironmentalRestriction(entity.Type, entity.Description, entity.Severity),
+            entity.Id);
+
+    public static RegulatoryReference ToDomainRegulatoryReference(RegulatoryReferenceEntity entity) =>
+        PersistenceEntityIdHelper.SetEntityId(
+            new RegulatoryReference(
+                entity.GazetteNumber,
+                entity.Title,
+                entity.EffectiveDate,
+                entity.Summary),
             entity.Id);
 
     public static SpatialConstraint ToDomain(SpatialConstraintEntity entity) =>
@@ -159,6 +176,19 @@ internal static class LandParcelPersistenceMapper
             Type = restriction.Type,
             Description = restriction.Description,
             Severity = restriction.Severity
+        };
+
+    private static RegulatoryReferenceEntity ToPersistenceRegulatoryReference(
+        RegulatoryReference reference,
+        Guid parcelId) =>
+        new()
+        {
+            Id = reference.Id,
+            LandParcelId = parcelId,
+            GazetteNumber = reference.GazetteNumber,
+            Title = reference.Title,
+            EffectiveDate = reference.EffectiveDate,
+            Summary = reference.Summary
         };
 
     private static Point CreatePoint(double longitude, double latitude) =>

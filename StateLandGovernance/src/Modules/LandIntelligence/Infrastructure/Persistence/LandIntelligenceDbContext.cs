@@ -24,6 +24,8 @@ public class LandIntelligenceDbContext : DbContext
 
     public DbSet<EnvironmentalRestrictionEntity> EnvironmentalRestrictions => Set<EnvironmentalRestrictionEntity>();
 
+    public DbSet<RegulatoryReferenceEntity> RegulatoryReferences => Set<RegulatoryReferenceEntity>();
+
     public DbSet<LandRecommendationEntity> LandRecommendations => Set<LandRecommendationEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
