@@ -136,6 +136,73 @@ public sealed class LandParcelPersistenceIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Can_persist_and_reload_regulatory_references_with_parcel()
+    {
+        Assert.NotNull(_repository);
+        Assert.NotNull(_dbContext);
+
+        var cadastralNumber = $"SYNTHETIC-REG-{Guid.NewGuid():N}"[..28];
+
+        var parcel = new LandParcel(
+            new ParcelIdentifier(cadastralNumber, "SYNTHETIC-REG-SURVEY-001"),
+            new LandCategory(LandCategoryType.StateLand, "[SYNTHETIC] Regulatory persistence parcel"),
+            new LandArea(3.4m, AreaUnit.Hectares),
+            new AdministrativeLocation("Western", "Colombo", "Colombo DS", "GN-Reg-Test"),
+            new SpatialReference(ExpectedLatitude, ExpectedLongitude, "EPSG:4326"),
+            new LandUse(LandUseType.Agricultural, "[SYNTHETIC] Test agricultural use"));
+
+        parcel.AddRegulatoryReference(new RegulatoryReference(
+            "SYNTH-GZ-001",
+            "[SYNTHETIC] Regulatory reference A",
+            new DateOnly(2026, 1, 10),
+            "[SYNTHETIC] Summary A"));
+
+        parcel.AddRegulatoryReference(new RegulatoryReference(
+            "SYNTH-GZ-002",
+            "[SYNTHETIC] Regulatory reference B",
+            new DateOnly(2026, 1, 20)));
+
+        _persistedParcelId = parcel.Id;
+
+        await _repository.AddAsync(parcel);
+
+        var reloaded = await _repository.GetByIdAsync(parcel.Id);
+
+        Assert.NotNull(reloaded);
+        Assert.Equal(2, reloaded.RegulatoryReferences.Count);
+        Assert.Contains(
+            reloaded.RegulatoryReferences,
+            r => r.GazetteNumber == "SYNTH-GZ-001" && r.Summary == "[SYNTHETIC] Summary A");
+        Assert.Contains(
+            reloaded.RegulatoryReferences,
+            r => r.Title == "[SYNTHETIC] Regulatory reference B");
+    }
+
+    [Fact]
+    public async Task Can_reload_parcel_with_no_regulatory_references()
+    {
+        Assert.NotNull(_repository);
+
+        var cadastralNumber = $"SYNTHETIC-REG-EMPTY-{Guid.NewGuid():N}"[..28];
+
+        var parcel = new LandParcel(
+            new ParcelIdentifier(cadastralNumber, "SYNTHETIC-REG-EMPTY-001"),
+            new LandCategory(LandCategoryType.StateLand, "[SYNTHETIC] Empty regulatory parcel"),
+            new LandArea(2.8m, AreaUnit.Hectares),
+            new AdministrativeLocation("Western", "Colombo", "Colombo DS"),
+            new SpatialReference(ExpectedLatitude, ExpectedLongitude, "EPSG:4326"));
+
+        _persistedParcelId = parcel.Id;
+        await _repository.AddAsync(parcel);
+
+        var reloaded = await _repository.GetByIdAsync(parcel.Id);
+
+        Assert.NotNull(reloaded);
+        Assert.NotNull(reloaded.RegulatoryReferences);
+        Assert.Empty(reloaded.RegulatoryReferences);
+    }
+
+    [Fact]
     public async Task Can_reload_updated_environmental_restriction_values()
     {
         Assert.NotNull(_repository);

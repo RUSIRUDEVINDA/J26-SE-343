@@ -121,6 +121,23 @@ internal static class SyntheticRecommendationParcelFactory
         return parcel;
     }
 
+    public static LandParcel CreateParcelWithRegulatoryReferenceCount(
+        int referenceCount,
+        string cadastralNumber = "SYNTH-REG-COUNT-001")
+    {
+        var parcel = CreateSuitableParcel(cadastralNumber);
+
+        for (var index = 1; index <= referenceCount; index++)
+        {
+            parcel.AddRegulatoryReference(new RegulatoryReference(
+                $"SYNTH-GZ-{index:000}",
+                $"[SYNTHETIC] Regulatory reference {index}",
+                new DateOnly(2026, 1, index)));
+        }
+
+        return parcel;
+    }
+
     private static LandParcel CreateBaseParcel(
         string cadastralNumber,
         LandCategoryType category,

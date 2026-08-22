@@ -354,6 +354,49 @@ public sealed class RuleBasedLandRecommendationEngineTests
     }
 
     [Fact]
+    public async Task RecommendAsync_applies_regulatory_reference_limits_from_persisted_counts()
+    {
+        var parcelNone = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-REG-RANK-000");
+        var parcelTwo = SyntheticRecommendationParcelFactory.CreateParcelWithRegulatoryReferenceCount(
+            2,
+            "SYNTH-REG-RANK-002");
+        var parcelFive = SyntheticRecommendationParcelFactory.CreateParcelWithRegulatoryReferenceCount(
+            5,
+            "SYNTH-REG-RANK-005");
+        var engine = RecommendationEngineTestFactory.Create(parcelNone, parcelTwo, parcelFive);
+
+        var response = await engine.RecommendAsync(new LandRecommendationSearchRequest
+        {
+            RequiredPurpose = LandUseType.Agricultural,
+            RequiredLandCategory = LandCategoryType.StateLand,
+            RequiredLandUse = LandUseType.Agricultural,
+            PreferredLocation = new PreferredLocationCriteria
+            {
+                Province = "Western"
+            },
+            Regulatory = new RegulatoryCriteria
+            {
+                MaxRegulatoryReferences = 3,
+                PenalizeMultipleReferences = true
+            },
+            MaxResults = 3
+        });
+
+        Assert.Equal(3, response.Recommendations.Count);
+
+        var noneResult = response.Recommendations.Single(r => r.ParcelId == parcelNone.Id);
+        var twoResult = response.Recommendations.Single(r => r.ParcelId == parcelTwo.Id);
+        var fiveResult = response.Recommendations.Single(r => r.ParcelId == parcelFive.Id);
+
+        Assert.Contains(noneResult.MatchingCriteria, c => c.Key == "regulatory");
+        Assert.Contains(twoResult.MatchingCriteria, c => c.Key == "regulatory");
+        Assert.Contains(fiveResult.FailedCriteria, c => c.Key == "regulatory");
+
+        Assert.True(noneResult.SuitabilityScore >= twoResult.SuitabilityScore);
+        Assert.True(twoResult.SuitabilityScore > fiveResult.SuitabilityScore);
+    }
+
+    [Fact]
     public async Task RecommendAsync_returns_unique_standard_criterion_keys()
     {
         var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
