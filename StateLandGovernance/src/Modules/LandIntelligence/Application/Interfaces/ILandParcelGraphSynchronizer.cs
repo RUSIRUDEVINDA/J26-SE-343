@@ -8,4 +8,6 @@ namespace StateLandGovernance.LandIntelligence.Application.Interfaces;
 public interface ILandParcelGraphSynchronizer
 {
     Task SynchronizeAfterPersistAsync(LandParcel parcel, CancellationToken cancellationToken = default);
+
+    Task RemoveAfterDeleteAsync(Guid parcelId, CancellationToken cancellationToken = default);
 }

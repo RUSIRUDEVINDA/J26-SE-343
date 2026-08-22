@@ -42,4 +42,29 @@ internal sealed class LandParcelGraphSynchronizer : ILandParcelGraphSynchronizer
                 parcel.Id);
         }
     }
+
+    public async Task RemoveAfterDeleteAsync(Guid parcelId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await _knowledgeGraphService.DeleteLandParcelGraphAsync(parcelId, cancellationToken);
+            _logger.LogInformation(
+                "Land parcel {ParcelId} successfully removed from knowledge graph.",
+                parcelId);
+        }
+        catch (ServiceConfigurationException ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Knowledge graph deletion skipped for parcel {ParcelId} because Neo4j is not configured.",
+                parcelId);
+        }
+        catch (Neo4jException ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Knowledge graph deletion failed for parcel {ParcelId} because Neo4j is unavailable.",
+                parcelId);
+        }
+    }
 }
