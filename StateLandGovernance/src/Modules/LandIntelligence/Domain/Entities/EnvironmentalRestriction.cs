@@ -1,4 +1,5 @@
 using StateLandGovernance.LandIntelligence.Domain.Enums;
+using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 
 namespace StateLandGovernance.LandIntelligence.Domain.Entities;
 
@@ -7,6 +8,7 @@ public class EnvironmentalRestriction : Entity
     public EnvironmentalRestrictionType Type { get; private set; }
     public string Description { get; private set; } = null!;
     public RestrictionSeverity Severity { get; private set; }
+    public AttributeProvenance? DataProvenance { get; private set; }
 
     private EnvironmentalRestriction()
     {
@@ -15,7 +17,8 @@ public class EnvironmentalRestriction : Entity
     public EnvironmentalRestriction(
         EnvironmentalRestrictionType type,
         string description,
-        RestrictionSeverity severity)
+        RestrictionSeverity severity,
+        AttributeProvenance? dataProvenance = null)
     {
         if (string.IsNullOrWhiteSpace(description))
         {
@@ -25,5 +28,6 @@ public class EnvironmentalRestriction : Entity
         Type = type;
         Description = description.Trim();
         Severity = severity;
+        DataProvenance = dataProvenance;
     }
 }
