@@ -82,6 +82,20 @@ public sealed class LandParcelRepository : ILandParcelRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _dbContext.LandParcels
+            .FirstOrDefaultAsync(parcel => parcel.Id == id, cancellationToken);
+
+        if (entity is null)
+        {
+            return;
+        }
+
+        _dbContext.LandParcels.Remove(entity);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
     private IQueryable<LandParcelEntity> BaseQuery() =>
         _dbContext.LandParcels
             .AsNoTracking()

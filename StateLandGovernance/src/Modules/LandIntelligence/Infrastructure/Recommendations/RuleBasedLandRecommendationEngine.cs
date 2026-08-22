@@ -1,6 +1,7 @@
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
+using StateLandGovernance.LandIntelligence.Domain.Enums;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Recommendations;
 
@@ -120,7 +121,13 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         var filteredIds = new HashSet<Guid>();
         foreach (var parcel in candidates)
         {
-            foreach (var feature in parcel.InfrastructureFeatures.Where(f => f.DistanceMeters.HasValue))
+            var roadAccessFeatures = GetRoadAccessFeatures(parcel).ToList();
+            if (roadAccessFeatures.Count == 0)
+            {
+                continue;
+            }
+
+            foreach (var feature in roadAccessFeatures.Where(f => f.DistanceMeters.HasValue))
             {
                 var distance = await _spatialAnalysisService.CalculateDistanceBetweenParcelAndInfrastructureAsync(
                     parcel.Id,
@@ -134,7 +141,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 }
             }
 
-            if (parcel.InfrastructureFeatures.Any(f =>
+            if (roadAccessFeatures.Any(f =>
                     f.DistanceMeters <= request.Accessibility.MaxRoadDistanceMeters))
             {
                 filteredIds.Add(parcel.Id);
@@ -143,6 +150,10 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
 
         return candidates.Where(c => filteredIds.Contains(c.Id)).ToList();
     }
+
+    private static IEnumerable<InfrastructureFeature> GetRoadAccessFeatures(LandParcel parcel) =>
+        parcel.InfrastructureFeatures
+            .Where(f => f.Type is InfrastructureFeatureType.Road or InfrastructureFeatureType.Railway);
 
     private IReadOnlyList<CriterionEvaluationDto> EvaluateParcel(
         LandParcel parcel,

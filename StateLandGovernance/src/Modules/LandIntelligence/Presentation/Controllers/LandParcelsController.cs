@@ -20,6 +20,7 @@ public sealed class LandParcelsController : ControllerBase
     private readonly GetLandRelationshipsQueryHandler _relationshipsHandler;
     private readonly CreateLandParcelCommandHandler _createHandler;
     private readonly UpdateLandParcelCommandHandler _updateHandler;
+    private readonly DeleteLandParcelCommandHandler _deleteHandler;
 
     public LandParcelsController(
         SearchLandParcelsQueryHandler searchHandler,
@@ -27,7 +28,8 @@ public sealed class LandParcelsController : ControllerBase
         GetSpatialConstraintsByParcelIdQueryHandler constraintsHandler,
         GetLandRelationshipsQueryHandler relationshipsHandler,
         CreateLandParcelCommandHandler createHandler,
-        UpdateLandParcelCommandHandler updateHandler)
+        UpdateLandParcelCommandHandler updateHandler,
+        DeleteLandParcelCommandHandler deleteHandler)
     {
         _searchHandler = searchHandler;
         _getByIdHandler = getByIdHandler;
@@ -35,6 +37,7 @@ public sealed class LandParcelsController : ControllerBase
         _relationshipsHandler = relationshipsHandler;
         _createHandler = createHandler;
         _updateHandler = updateHandler;
+        _deleteHandler = deleteHandler;
     }
 
     /// <summary>
@@ -89,6 +92,22 @@ public sealed class LandParcelsController : ControllerBase
             cancellationToken);
 
         return Ok(parcel);
+    }
+
+    /// <summary>
+    /// Deletes a land parcel from PostgreSQL/PostGIS and best-effort removes its knowledge graph projection.
+    /// </summary>
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> DeleteParcelAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        await _deleteHandler.HandleAsync(new DeleteLandParcelCommand(id), cancellationToken);
+        return NoContent();
     }
 
     /// <summary>

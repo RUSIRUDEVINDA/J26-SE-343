@@ -171,6 +171,47 @@ public sealed class Neo4jKnowledgeGraphIntegrationTests : IAsyncLifetime
         Assert.Single(hasCategoryRelationships);
     }
 
+    [Fact]
+    public async Task DeleteLandParcelGraphAsync_removes_parcel_but_preserves_shared_reference_nodes()
+    {
+        EnvFileLoader.LoadFromRepositoryRoot(AppContext.BaseDirectory);
+
+        if (!Neo4jSettings.IsConfigured())
+        {
+            return;
+        }
+
+        Assert.NotNull(_knowledgeGraphService);
+
+        var parcel = CreateSyntheticParcel();
+        _parcelId = parcel.Id;
+        var categoryId = KnowledgeGraphSeedData.GetCategoryId(LandCategoryType.StateLand);
+
+        await _knowledgeGraphService.UpsertLandCategoryAsync(
+            KnowledgeGraphSeedData.Categories.First(category => category.Id == categoryId));
+        await _knowledgeGraphService.UpsertAdministrativeAreaAsync(
+            KnowledgeGraphSeedData.SyntheticWesternColomboArea);
+
+        await _knowledgeGraphService.SyncLandParcelGraphAsync(
+            parcel,
+            categoryId,
+            KnowledgeGraphSeedData.GetLandUseId(LandUseType.Agricultural),
+            KnowledgeGraphSeedData.SyntheticWesternColomboAreaId);
+
+        var relationshipsBeforeDelete = await _knowledgeGraphService.GetRelationshipsAsync(parcel.Id);
+        Assert.NotEmpty(relationshipsBeforeDelete);
+
+        await _knowledgeGraphService.DeleteLandParcelGraphAsync(parcel.Id);
+
+        var relationshipsAfterDelete = await _knowledgeGraphService.GetRelationshipsAsync(parcel.Id);
+        Assert.Empty(relationshipsAfterDelete);
+
+        var remainingParcelIds = await _knowledgeGraphService.GetParcelIdsByCategoryAsync(categoryId);
+        Assert.DoesNotContain(parcel.Id, remainingParcelIds);
+
+        _parcelId = Guid.Empty;
+    }
+
     public async Task DisposeAsync()
     {
         if (_knowledgeGraphService is not null && _parcelId != Guid.Empty)
