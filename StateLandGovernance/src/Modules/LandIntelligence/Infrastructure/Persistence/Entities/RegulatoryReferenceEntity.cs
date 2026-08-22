@@ -15,4 +15,6 @@ public class RegulatoryReferenceEntity
     public DateOnly EffectiveDate { get; set; }
 
     public string? Summary { get; set; }
+
+    public string? DataProvenanceJson { get; set; }
 }

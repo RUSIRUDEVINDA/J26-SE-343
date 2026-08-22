@@ -169,15 +169,21 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
     {
         var evidence = evaluations
             .Select(e => new RecommendationEvidenceDto(
-                "RuleBasedCriterionEvaluator",
-                e.Summary,
-                e.Name))
+                e.DataProvenance is not null
+                    ? ProvenanceEvidenceFormatter.DescribeSource(e.DataProvenance)
+                    : "RuleBasedCriterionEvaluator",
+                ProvenanceEvidenceFormatter.AppendProvenance(e.Summary, e.DataProvenance),
+                e.Name,
+                e.DataProvenance))
             .ToList();
 
         evidence.AddRange(restrictions.Select(r => new RecommendationEvidenceDto(
-            r.Source,
-            r.Description,
-            r.RestrictionType)));
+            r.DataProvenance is not null
+                ? ProvenanceEvidenceFormatter.DescribeSource(r.DataProvenance)
+                : r.Source,
+            ProvenanceEvidenceFormatter.AppendProvenance(r.Description, r.DataProvenance),
+            r.RestrictionType,
+            r.DataProvenance)));
 
         return evidence;
     }

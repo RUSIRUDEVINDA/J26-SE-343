@@ -321,6 +321,85 @@ public sealed class RuleBasedLandRecommendationEngineTests
     }
 
     [Fact]
+    public async Task RecommendAsync_excludes_parcel_when_only_non_road_infrastructure_is_within_threshold()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithInfrastructureFeatures(
+            "SYNTH-HOSPITAL-500M-ROAD-8KM",
+            (InfrastructureFeatureType.WaterSupply, "[SYNTHETIC] Hospital", 500m),
+            (InfrastructureFeatureType.Road, "[SYNTHETIC] Access Road", 8000m));
+        var engine = RecommendationEngineTestFactory.Create(parcel);
+
+        var response = await engine.RecommendAsync(CreateRoadDistanceFilterRequest(maxRoadDistanceMeters: 5000m));
+
+        Assert.Empty(response.Recommendations);
+        Assert.Equal(0, response.CandidateCount);
+    }
+
+    [Fact]
+    public async Task RecommendAsync_includes_parcel_when_road_is_within_threshold_despite_distant_non_road_features()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithInfrastructureFeatures(
+            "SYNTH-ROAD-3KM-HOSPITAL-8KM",
+            (InfrastructureFeatureType.Road, "[SYNTHETIC] Access Road", 3000m),
+            (InfrastructureFeatureType.WaterSupply, "[SYNTHETIC] Hospital", 8000m));
+        var engine = RecommendationEngineTestFactory.Create(parcel);
+
+        var response = await engine.RecommendAsync(CreateRoadDistanceFilterRequest(maxRoadDistanceMeters: 5000m));
+
+        Assert.Single(response.Recommendations);
+        Assert.Equal(1, response.CandidateCount);
+    }
+
+    [Fact]
+    public async Task RecommendAsync_includes_parcel_when_railway_is_within_threshold()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithInfrastructureFeatures(
+            "SYNTH-RAIL-3KM",
+            (InfrastructureFeatureType.Railway, "[SYNTHETIC] Railway Line", 3000m));
+        var engine = RecommendationEngineTestFactory.Create(parcel);
+
+        var response = await engine.RecommendAsync(CreateRoadDistanceFilterRequest(maxRoadDistanceMeters: 5000m));
+
+        Assert.Single(response.Recommendations);
+        Assert.Equal(1, response.CandidateCount);
+    }
+
+    [Fact]
+    public async Task RecommendAsync_excludes_parcel_with_only_non_road_infrastructure_recorded()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithInfrastructureFeatures(
+            "SYNTH-ONLY-HOSPITAL",
+            (InfrastructureFeatureType.Other, "[SYNTHETIC] School", 500m),
+            (InfrastructureFeatureType.WaterSupply, "[SYNTHETIC] Hospital", 1200m));
+        var engine = RecommendationEngineTestFactory.Create(parcel);
+
+        var response = await engine.RecommendAsync(CreateRoadDistanceFilterRequest(maxRoadDistanceMeters: 5000m));
+
+        Assert.Empty(response.Recommendations);
+        Assert.Equal(0, response.CandidateCount);
+    }
+
+    [Fact]
+    public async Task RecommendAsync_mixed_infrastructure_keeps_only_parcels_with_road_access_within_threshold()
+    {
+        var pass = SyntheticRecommendationParcelFactory.CreateParcelWithInfrastructureFeatures(
+            "SYNTH-MIXED-PASS",
+            (InfrastructureFeatureType.WaterSupply, "[SYNTHETIC] Hospital", 500m),
+            (InfrastructureFeatureType.Road, "[SYNTHETIC] Access Road", 3000m));
+        var fail = SyntheticRecommendationParcelFactory.CreateParcelWithInfrastructureFeatures(
+            "SYNTH-MIXED-FAIL",
+            (InfrastructureFeatureType.WaterSupply, "[SYNTHETIC] Hospital", 500m),
+            (InfrastructureFeatureType.Road, "[SYNTHETIC] Access Road", 8000m));
+        var engine = RecommendationEngineTestFactory.Create(pass, fail);
+
+        var response = await engine.RecommendAsync(CreateRoadDistanceFilterRequest(maxRoadDistanceMeters: 5000m));
+
+        Assert.Equal(1, response.CandidateCount);
+        var recommendation = Assert.Single(response.Recommendations);
+        Assert.Equal(pass.Id, recommendation.ParcelId);
+    }
+
+    [Fact]
     public async Task RecommendAsync_ranks_parcel_without_environmental_restrictions_above_prohibitive_parcel()
     {
         var suitable = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-ENV-RANK-SUITABLE");
@@ -417,7 +496,7 @@ public sealed class RuleBasedLandRecommendationEngineTests
     }
 
     [Fact]
-    public async Task RecommendAsync_returns_unique_rule_based_evidence_per_criterion()
+    public async Task RecommendAsync_returns_unique_provenance_backed_evidence_per_criterion()
     {
         var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
         var engine = RecommendationEngineTestFactory.Create(parcel);
@@ -428,14 +507,15 @@ public sealed class RuleBasedLandRecommendationEngineTests
         });
 
         var recommendation = Assert.Single(response.Recommendations);
-        var ruleBasedEvidenceNames = recommendation.Evidence
-            .Where(e => e.Source == "RuleBasedCriterionEvaluator")
+        var provenanceBackedEvidence = recommendation.Evidence
+            .Where(e => e.DataProvenance is not null)
             .Select(e => e.RelatedCriterionName)
             .ToList();
 
+        Assert.NotEmpty(provenanceBackedEvidence);
         Assert.Equal(
-            ruleBasedEvidenceNames.Count,
-            ruleBasedEvidenceNames.Distinct(StringComparer.Ordinal).Count());
+            provenanceBackedEvidence.Count,
+            provenanceBackedEvidence.Distinct(StringComparer.Ordinal).Count());
     }
 
     [Fact]

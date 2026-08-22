@@ -27,6 +27,9 @@ internal sealed class RegulatoryReferenceConfiguration : IEntityTypeConfiguratio
         builder.Property(reference => reference.Summary)
             .HasMaxLength(1000);
 
+        builder.Property(reference => reference.DataProvenanceJson)
+            .HasColumnType("jsonb");
+
         builder.HasIndex(reference => reference.LandParcelId);
 
         builder.HasOne(reference => reference.LandParcel)

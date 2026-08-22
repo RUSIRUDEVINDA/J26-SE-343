@@ -37,6 +37,8 @@ internal static class LandParcelPersistenceMapper
             SoilType = parcel.Characteristics?.SoilType,
             TerrainDescription = parcel.Characteristics?.TerrainDescription,
             ElevationMeters = parcel.Characteristics?.ElevationMeters,
+            CharacteristicsProvenanceJson = AttributeProvenancePersistenceMapper.SerializeCharacteristicsProvenance(
+                parcel.Characteristics),
             SpatialConstraints = parcel.SpatialConstraints
                 .Select(constraint => ToPersistenceConstraint(constraint, parcel.Id))
                 .ToList(),
@@ -69,7 +71,7 @@ internal static class LandParcelPersistenceMapper
                 : new LandUse(entity.CurrentLandUse.Type, entity.CurrentLandUse.Description),
             entity.SoilType is null && entity.TerrainDescription is null && entity.ElevationMeters is null
                 ? null
-                : new LandCharacteristics(entity.SoilType, entity.TerrainDescription, entity.ElevationMeters));
+                : BuildCharacteristics(entity));
 
         PersistenceEntityIdHelper.SetEntityId(parcel, entity.Id);
 
@@ -86,7 +88,8 @@ internal static class LandParcelPersistenceMapper
                 feature.Type,
                 feature.Name,
                 feature.DistanceMeters,
-                feature.Description);
+                feature.Description,
+                AttributeProvenancePersistenceMapper.Deserialize(feature.DistanceProvenanceJson));
             PersistenceEntityIdHelper.SetEntityId(domainFeature, feature.Id);
             parcel.AddInfrastructureFeature(domainFeature);
         }
@@ -106,7 +109,11 @@ internal static class LandParcelPersistenceMapper
 
     public static EnvironmentalRestriction ToDomainEnvironmentalRestriction(EnvironmentalRestrictionEntity entity) =>
         PersistenceEntityIdHelper.SetEntityId(
-            new EnvironmentalRestriction(entity.Type, entity.Description, entity.Severity),
+            new EnvironmentalRestriction(
+                entity.Type,
+                entity.Description,
+                entity.Severity,
+                AttributeProvenancePersistenceMapper.Deserialize(entity.DataProvenanceJson)),
             entity.Id);
 
     public static RegulatoryReference ToDomainRegulatoryReference(RegulatoryReferenceEntity entity) =>
@@ -115,7 +122,8 @@ internal static class LandParcelPersistenceMapper
                 entity.GazetteNumber,
                 entity.Title,
                 entity.EffectiveDate,
-                entity.Summary),
+                entity.Summary,
+                AttributeProvenancePersistenceMapper.Deserialize(entity.DataProvenanceJson)),
             entity.Id);
 
     public static SpatialConstraint ToDomain(SpatialConstraintEntity entity) =>
@@ -131,6 +139,22 @@ internal static class LandParcelPersistenceMapper
         entity.SoilType = parcel.Characteristics?.SoilType;
         entity.TerrainDescription = parcel.Characteristics?.TerrainDescription;
         entity.ElevationMeters = parcel.Characteristics?.ElevationMeters;
+        entity.CharacteristicsProvenanceJson = AttributeProvenancePersistenceMapper.SerializeCharacteristicsProvenance(
+            parcel.Characteristics);
+    }
+
+    private static LandCharacteristics BuildCharacteristics(LandParcelEntity entity)
+    {
+        var (soil, terrain, elevation) = AttributeProvenancePersistenceMapper.DeserializeCharacteristicsProvenance(
+            entity.CharacteristicsProvenanceJson);
+
+        return new LandCharacteristics(
+            entity.SoilType,
+            entity.TerrainDescription,
+            entity.ElevationMeters,
+            soil,
+            terrain,
+            elevation);
     }
 
     private static SpatialReference ToSpatialReference(LandParcelEntity entity)
@@ -163,6 +187,7 @@ internal static class LandParcelPersistenceMapper
             Name = feature.Name,
             DistanceMeters = feature.DistanceMeters,
             Description = feature.Description,
+            DistanceProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(feature.DistanceProvenance),
             SpatialReferenceSystemId = PostGisConfiguration.DefaultSpatialReferenceSystemId
         };
 
@@ -175,7 +200,8 @@ internal static class LandParcelPersistenceMapper
             LandParcelId = parcelId,
             Type = restriction.Type,
             Description = restriction.Description,
-            Severity = restriction.Severity
+            Severity = restriction.Severity,
+            DataProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(restriction.DataProvenance)
         };
 
     private static RegulatoryReferenceEntity ToPersistenceRegulatoryReference(
@@ -188,7 +214,8 @@ internal static class LandParcelPersistenceMapper
             GazetteNumber = reference.GazetteNumber,
             Title = reference.Title,
             EffectiveDate = reference.EffectiveDate,
-            Summary = reference.Summary
+            Summary = reference.Summary,
+            DataProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(reference.DataProvenance)
         };
 
     private static Point CreatePoint(double longitude, double latitude) =>

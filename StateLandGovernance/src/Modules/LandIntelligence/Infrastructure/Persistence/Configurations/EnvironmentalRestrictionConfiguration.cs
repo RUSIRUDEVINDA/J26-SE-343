@@ -16,6 +16,9 @@ internal sealed class EnvironmentalRestrictionConfiguration : IEntityTypeConfigu
             .HasMaxLength(500)
             .IsRequired();
 
+        builder.Property(restriction => restriction.DataProvenanceJson)
+            .HasColumnType("jsonb");
+
         builder.HasIndex(restriction => restriction.LandParcelId);
 
         builder.HasOne(restriction => restriction.LandParcel)

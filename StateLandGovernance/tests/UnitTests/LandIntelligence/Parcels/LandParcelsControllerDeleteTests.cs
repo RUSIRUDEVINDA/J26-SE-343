@@ -13,17 +13,42 @@ using StateLandGovernance.UnitTests.LandIntelligence.Recommendations;
 
 namespace StateLandGovernance.UnitTests.LandIntelligence.Parcels;
 
-public sealed class LandParcelsControllerCreateUpdateTests
+public sealed class LandParcelsControllerDeleteTests
 {
-    private readonly LandParcelsController _controller;
-    private readonly LandParcel _seedParcel;
-
-    public LandParcelsControllerCreateUpdateTests()
+    [Fact]
+    public async Task DeleteParcelAsync_returns_no_content_for_existing_parcel()
     {
-        _seedParcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-CONTROLLER-001");
-        var repository = new InMemoryLandParcelRepository(_seedParcel);
+        var seedParcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-CONTROLLER-DELETE-001");
+        var repository = new InMemoryLandParcelRepository(seedParcel);
+        var controller = CreateController(repository);
 
-        _controller = new LandParcelsController(
+        var response = await controller.DeleteParcelAsync(seedParcel.Id, CancellationToken.None);
+
+        Assert.IsType<NoContentResult>(response);
+        Assert.Empty(await repository.SearchAsync(new LandSearchRequest()));
+    }
+
+    [Fact]
+    public async Task DeleteParcelAsync_throws_not_found_for_missing_parcel()
+    {
+        var controller = CreateController(new InMemoryLandParcelRepository());
+
+        await Assert.ThrowsAsync<LandParcelNotFoundException>(() =>
+            controller.DeleteParcelAsync(Guid.NewGuid(), CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task DeleteParcelAsync_throws_validation_exception_for_empty_identifier()
+    {
+        var controller = CreateController(new InMemoryLandParcelRepository());
+
+        await Assert.ThrowsAsync<ValidationException>(() =>
+            controller.DeleteParcelAsync(Guid.Empty, CancellationToken.None));
+    }
+
+    private static LandParcelsController CreateController(InMemoryLandParcelRepository repository)
+    {
+        return new LandParcelsController(
             new SearchLandParcelsQueryHandler(repository, new LandSearchRequestValidator()),
             new GetLandParcelByIdQueryHandler(repository),
             new GetSpatialConstraintsByParcelIdQueryHandler(
@@ -41,88 +66,8 @@ public sealed class LandParcelsControllerCreateUpdateTests
                 new UpdateLandParcelCommandValidator()),
             new DeleteLandParcelCommandHandler(
                 repository,
-                new NoOpLandParcelGraphSynchronizer(),
+                new RecordingLandParcelGraphSynchronizer(),
                 new DeleteLandParcelCommandValidator()));
-    }
-
-    [Fact]
-    public async Task CreateParcelAsync_returns_created_with_location_header()
-    {
-        var request = new CreateLandParcelRequest
-        {
-            CadastralNumber = "SYNTH-CONTROLLER-CREATE-001",
-            SurveyPlanReference = "SYNTH-SURVEY-002",
-            CategoryType = LandCategoryType.StateLand,
-            CategoryDescription = "[SYNTHETIC] Controller create test",
-            AreaValue = 3m,
-            AreaUnit = AreaUnit.Hectares,
-            Province = "Western",
-            District = "Colombo",
-            DivisionalSecretariat = "Colombo DS",
-            GramaNiladhariDivision = "GN-Controller",
-            CentroidLatitude = 6.9271,
-            CentroidLongitude = 79.8612,
-            CurrentUseType = LandUseType.Agricultural,
-            CurrentUseDescription = "[SYNTHETIC] Agricultural use"
-        };
-
-        var response = await _controller.CreateParcelAsync(request, CancellationToken.None);
-
-        var created = Assert.IsType<CreatedResult>(response.Result);
-        var parcel = Assert.IsType<LandParcelDto>(created.Value);
-        Assert.Equal($"/api/v1/land/parcels/{parcel.Id}", created.Location);
-        Assert.Equal("SYNTH-CONTROLLER-CREATE-001", parcel.Identifier.CadastralNumber);
-    }
-
-    [Fact]
-    public async Task CreateParcelAsync_throws_validation_exception_for_invalid_request()
-    {
-        var request = new CreateLandParcelRequest
-        {
-            CadastralNumber = " ",
-            AreaValue = 0m,
-            Province = "Western",
-            District = "Colombo",
-            DivisionalSecretariat = "Colombo DS"
-        };
-
-        await Assert.ThrowsAsync<ValidationException>(() =>
-            _controller.CreateParcelAsync(request, CancellationToken.None));
-    }
-
-    [Fact]
-    public async Task UpdateParcelAsync_returns_ok_for_existing_parcel()
-    {
-        var request = new UpdateLandParcelRequest
-        {
-            CurrentUseType = LandUseType.Industrial,
-            CurrentUseDescription = "[SYNTHETIC] Industrial use"
-        };
-
-        var response = await _controller.UpdateParcelAsync(_seedParcel.Id, request, CancellationToken.None);
-
-        var ok = Assert.IsType<OkObjectResult>(response.Result);
-        var parcel = Assert.IsType<LandParcelDto>(ok.Value);
-        Assert.Equal(LandUseType.Industrial, parcel.CurrentUse?.Type);
-    }
-
-    [Fact]
-    public async Task UpdateParcelAsync_throws_validation_exception_for_invalid_request()
-    {
-        await Assert.ThrowsAsync<ValidationException>(() =>
-            _controller.UpdateParcelAsync(_seedParcel.Id, new UpdateLandParcelRequest(), CancellationToken.None));
-    }
-
-    [Fact]
-    public async Task UpdateParcelAsync_throws_not_found_for_missing_parcel()
-    {
-        var request = new UpdateLandParcelRequest
-        {
-            CurrentUseType = LandUseType.Residential
-        };
-
-        await Assert.ThrowsAsync<LandParcelNotFoundException>(() =>
-            _controller.UpdateParcelAsync(Guid.NewGuid(), request, CancellationToken.None));
     }
 
     private sealed class EmptySpatialConstraintRepository : ISpatialConstraintRepository
@@ -184,9 +129,7 @@ public sealed class LandParcelsControllerCreateUpdateTests
         public Task LinkParcelToEnvironmentalAreaAsync(Guid parcelId, Guid environmentalAreaId, CancellationToken cancellationToken = default) =>
             Task.CompletedTask;
 
-        public Task SyncLandParcelGraphAsync(
-            LandParcel parcel,
-            CancellationToken cancellationToken = default) =>
+        public Task SyncLandParcelGraphAsync(LandParcel parcel, CancellationToken cancellationToken = default) =>
             Task.CompletedTask;
 
         public Task SyncLandParcelGraphAsync(

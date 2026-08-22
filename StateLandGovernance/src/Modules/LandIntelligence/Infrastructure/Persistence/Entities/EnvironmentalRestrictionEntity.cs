@@ -15,4 +15,6 @@ public class EnvironmentalRestrictionEntity
     public string Description { get; set; } = null!;
 
     public RestrictionSeverity Severity { get; set; }
+
+    public string? DataProvenanceJson { get; set; }
 }

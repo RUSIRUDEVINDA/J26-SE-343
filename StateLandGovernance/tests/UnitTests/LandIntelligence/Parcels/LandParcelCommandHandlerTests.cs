@@ -246,6 +246,118 @@ public sealed class LandParcelCommandHandlerTests
         Assert.Equal(parcel.Id, knowledgeGraph.LastSyncedParcel?.Id);
     }
 
+    [Fact]
+    public async Task DeleteLandParcelCommandHandler_deletes_existing_parcel()
+    {
+        var existing = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-DELETE-001");
+        var repository = new InMemoryLandParcelRepository(existing);
+        var graphSynchronizer = new RecordingLandParcelGraphSynchronizer();
+        var handler = new DeleteLandParcelCommandHandler(
+            repository,
+            graphSynchronizer,
+            new DeleteLandParcelCommandValidator());
+
+        await handler.HandleAsync(new DeleteLandParcelCommand(existing.Id));
+
+        Assert.Empty(await repository.SearchAsync(new LandSearchRequest()));
+        Assert.Equal(1, graphSynchronizer.RemoveCallCount);
+        Assert.Equal(existing.Id, graphSynchronizer.LastRemovedParcelId);
+    }
+
+    [Fact]
+    public async Task DeleteLandParcelCommandHandler_throws_when_parcel_not_found()
+    {
+        var handler = new DeleteLandParcelCommandHandler(
+            new InMemoryLandParcelRepository(),
+            new NoOpLandParcelGraphSynchronizer(),
+            new DeleteLandParcelCommandValidator());
+
+        var missingId = Guid.NewGuid();
+
+        await Assert.ThrowsAsync<LandParcelNotFoundException>(() =>
+            handler.HandleAsync(new DeleteLandParcelCommand(missingId)));
+    }
+
+    [Fact]
+    public async Task DeleteLandParcelCommandHandler_throws_for_empty_identifier()
+    {
+        var handler = new DeleteLandParcelCommandHandler(
+            new InMemoryLandParcelRepository(),
+            new NoOpLandParcelGraphSynchronizer(),
+            new DeleteLandParcelCommandValidator());
+
+        var exception = await Assert.ThrowsAsync<ValidationException>(() =>
+            handler.HandleAsync(new DeleteLandParcelCommand(Guid.Empty)));
+
+        Assert.Contains(exception.Errors, error => error.Contains("Land parcel identifier", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public async Task DeleteLandParcelCommandHandler_does_not_remove_graph_when_db_delete_fails()
+    {
+        var existing = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-DELETE-FAIL");
+        var graphSynchronizer = new RecordingLandParcelGraphSynchronizer();
+        var handler = new DeleteLandParcelCommandHandler(
+            new FailingDeleteLandParcelRepository(existing),
+            graphSynchronizer,
+            new DeleteLandParcelCommandValidator());
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            handler.HandleAsync(new DeleteLandParcelCommand(existing.Id)));
+
+        Assert.Equal(0, graphSynchronizer.RemoveCallCount);
+    }
+
+    [Fact]
+    public async Task DeleteLandParcelCommandHandler_completes_when_graph_delete_is_unavailable()
+    {
+        var existing = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-DELETE-GRAPH-UNAVAIL");
+        var repository = new InMemoryLandParcelRepository(existing);
+        var knowledgeGraph = new RecordingKnowledgeGraphService { ThrowServiceConfigurationOnDelete = true };
+        var synchronizer = new LandParcelGraphSynchronizer(
+            knowledgeGraph,
+            NullLogger<LandParcelGraphSynchronizer>.Instance);
+        var handler = new DeleteLandParcelCommandHandler(
+            repository,
+            synchronizer,
+            new DeleteLandParcelCommandValidator());
+
+        await handler.HandleAsync(new DeleteLandParcelCommand(existing.Id));
+
+        Assert.Empty(await repository.SearchAsync(new LandSearchRequest()));
+        Assert.Equal(1, knowledgeGraph.DeleteCallCount);
+        Assert.Equal(existing.Id, knowledgeGraph.LastDeletedParcelId);
+    }
+
+    [Fact]
+    public async Task RemoveAfterDeleteAsync_calls_delete_land_parcel_graph_once()
+    {
+        var parcelId = Guid.NewGuid();
+        var knowledgeGraph = new RecordingKnowledgeGraphService();
+        var synchronizer = new LandParcelGraphSynchronizer(
+            knowledgeGraph,
+            NullLogger<LandParcelGraphSynchronizer>.Instance);
+
+        await synchronizer.RemoveAfterDeleteAsync(parcelId);
+
+        Assert.Equal(1, knowledgeGraph.DeleteCallCount);
+        Assert.Equal(parcelId, knowledgeGraph.LastDeletedParcelId);
+    }
+
+    [Fact]
+    public async Task RemoveAfterDeleteAsync_swallows_neo4j_unavailability()
+    {
+        var parcelId = Guid.NewGuid();
+        var knowledgeGraph = new RecordingKnowledgeGraphService { ThrowNeo4jExceptionOnDelete = true };
+        var synchronizer = new LandParcelGraphSynchronizer(
+            knowledgeGraph,
+            NullLogger<LandParcelGraphSynchronizer>.Instance);
+
+        await synchronizer.RemoveAfterDeleteAsync(parcelId);
+
+        Assert.Equal(1, knowledgeGraph.DeleteCallCount);
+    }
+
     private static CreateLandParcelCommand CreateValidCreateCommand(string cadastralNumber = "SYNTH-CREATE-001") =>
         new(
             cadastralNumber,

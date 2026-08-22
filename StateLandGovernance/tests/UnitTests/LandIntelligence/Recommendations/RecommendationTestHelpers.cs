@@ -108,6 +108,27 @@ internal static class SyntheticRecommendationParcelFactory
         return parcel;
     }
 
+    public static LandParcel CreateParcelWithInfrastructureFeatures(
+        string cadastralNumber,
+        params (InfrastructureFeatureType Type, string Name, decimal? DistanceMeters)[] features)
+    {
+        var parcel = new LandParcel(
+            new ParcelIdentifier(cadastralNumber, "SYNTHETIC-PLAN"),
+            new LandCategory(LandCategoryType.StateLand, "[SYNTHETIC]"),
+            new LandArea(5m, AreaUnit.Hectares),
+            new AdministrativeLocation("Western", "Colombo", "Colombo DS"),
+            new SpatialReference(6.9271, 79.8612, "EPSG:4326"),
+            new LandUse(LandUseType.Agricultural, "[SYNTHETIC]"),
+            new LandCharacteristics("Loam", "Gently sloping", 25m));
+
+        foreach (var (type, name, distanceMeters) in features)
+        {
+            parcel.AddInfrastructureFeature(new InfrastructureFeature(type, name, distanceMeters));
+        }
+
+        return parcel;
+    }
+
     public static LandParcel CreateParcelWithEnvironmentalRestriction(
         EnvironmentalRestrictionType type,
         RestrictionSeverity severity,
@@ -254,6 +275,8 @@ internal sealed class FakeLandParcelRepository : ILandParcelRepository
     public Task AddAsync(LandParcel parcel, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     public Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
 }
 
 internal sealed class FakeSpatialAnalysisService : ISpatialAnalysisService

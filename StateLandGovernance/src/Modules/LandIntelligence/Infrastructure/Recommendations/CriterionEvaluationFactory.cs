@@ -1,4 +1,5 @@
 using StateLandGovernance.LandIntelligence.Application.DTOs;
+using StateLandGovernance.LandIntelligence.Application.Mappings;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Recommendations;
@@ -12,7 +13,9 @@ internal static class CriterionEvaluationFactory
         bool isMet,
         decimal score,
         decimal weight,
-        string summary) =>
+        string summary,
+        Domain.ValueObjects.AttributeProvenance? dataProvenance = null,
+        string? attributePath = null) =>
         new(
             key,
             name,
@@ -21,5 +24,7 @@ internal static class CriterionEvaluationFactory
             Math.Clamp(score, 0m, 100m),
             weight,
             Math.Clamp(score, 0m, 100m) * weight,
-            summary);
+            summary,
+            AttributeProvenanceMapper.ToDto(dataProvenance),
+            attributePath);
 }

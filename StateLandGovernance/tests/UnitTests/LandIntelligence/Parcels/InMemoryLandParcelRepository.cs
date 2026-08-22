@@ -48,4 +48,10 @@ internal sealed class InMemoryLandParcelRepository : ILandParcelRepository
 
         return Task.CompletedTask;
     }
+
+    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        _parcels.RemoveAll(parcel => parcel.Id == id);
+        return Task.CompletedTask;
+    }
 }

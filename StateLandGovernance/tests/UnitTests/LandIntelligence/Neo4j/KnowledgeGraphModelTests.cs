@@ -42,6 +42,15 @@ public sealed class KnowledgeGraphModelTests
     }
 
     [Fact]
+    public void DeleteLandParcelGraph_deletes_only_land_parcel_node()
+    {
+        Assert.Contains("MATCH (p:LandParcel { id: $parcelId })", KnowledgeGraphCypher.DeleteLandParcelGraph);
+        Assert.Contains("DETACH DELETE p", KnowledgeGraphCypher.DeleteLandParcelGraph);
+        Assert.DoesNotContain("LandCategory", KnowledgeGraphCypher.DeleteLandParcelGraph);
+        Assert.DoesNotContain("AdministrativeArea", KnowledgeGraphCypher.DeleteLandParcelGraph);
+    }
+
+    [Fact]
     public void ClearParcelRelationships_removes_outgoing_relationships_only()
     {
         Assert.Contains("MATCH (p:LandParcel { id: $parcelId })-[r]->()", KnowledgeGraphCypher.ClearParcelRelationships);

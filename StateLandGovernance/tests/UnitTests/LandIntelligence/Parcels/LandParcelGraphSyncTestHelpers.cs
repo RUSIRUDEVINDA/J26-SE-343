@@ -1,3 +1,4 @@
+using Neo4j.Driver;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
@@ -7,7 +8,9 @@ namespace StateLandGovernance.UnitTests.LandIntelligence.Parcels;
 internal sealed class RecordingLandParcelGraphSynchronizer : ILandParcelGraphSynchronizer
 {
     public int SyncCallCount { get; private set; }
+    public int RemoveCallCount { get; private set; }
     public LandParcel? LastParcel { get; private set; }
+    public Guid? LastRemovedParcelId { get; private set; }
 
     public Task SynchronizeAfterPersistAsync(LandParcel parcel, CancellationToken cancellationToken = default)
     {
@@ -15,11 +18,21 @@ internal sealed class RecordingLandParcelGraphSynchronizer : ILandParcelGraphSyn
         LastParcel = parcel;
         return Task.CompletedTask;
     }
+
+    public Task RemoveAfterDeleteAsync(Guid parcelId, CancellationToken cancellationToken = default)
+    {
+        RemoveCallCount++;
+        LastRemovedParcelId = parcelId;
+        return Task.CompletedTask;
+    }
 }
 
 internal sealed class NoOpLandParcelGraphSynchronizer : ILandParcelGraphSynchronizer
 {
     public Task SynchronizeAfterPersistAsync(LandParcel parcel, CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
+
+    public Task RemoveAfterDeleteAsync(Guid parcelId, CancellationToken cancellationToken = default) =>
         Task.CompletedTask;
 }
 
@@ -52,13 +65,51 @@ internal sealed class FailingLandParcelRepository : ILandParcelRepository
 
     public Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default) =>
         throw new InvalidOperationException("Simulated PostgreSQL persistence failure.");
+
+    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) =>
+        throw new InvalidOperationException("Simulated PostgreSQL persistence failure.");
+}
+
+internal sealed class FailingDeleteLandParcelRepository : ILandParcelRepository
+{
+    private readonly InMemoryLandParcelRepository _inner;
+
+    public FailingDeleteLandParcelRepository(params LandParcel[] seedParcels)
+    {
+        _inner = new InMemoryLandParcelRepository(seedParcels);
+    }
+
+    public Task<LandParcel?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+        _inner.GetByIdAsync(id, cancellationToken);
+
+    public Task<LandParcel?> GetByCadastralNumberAsync(string cadastralNumber, CancellationToken cancellationToken = default) =>
+        _inner.GetByCadastralNumberAsync(cadastralNumber, cancellationToken);
+
+    public Task<IReadOnlyList<LandParcel>> SearchAsync(LandSearchRequest request, CancellationToken cancellationToken = default) =>
+        _inner.SearchAsync(request, cancellationToken);
+
+    public Task<int> CountSearchAsync(LandSearchRequest request, CancellationToken cancellationToken = default) =>
+        _inner.CountSearchAsync(request, cancellationToken);
+
+    public Task AddAsync(LandParcel parcel, CancellationToken cancellationToken = default) =>
+        _inner.AddAsync(parcel, cancellationToken);
+
+    public Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default) =>
+        _inner.UpdateAsync(parcel, cancellationToken);
+
+    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) =>
+        throw new InvalidOperationException("Simulated PostgreSQL delete failure.");
 }
 
 internal sealed class RecordingKnowledgeGraphService : IKnowledgeGraphService
 {
     public int SyncCallCount { get; private set; }
+    public int DeleteCallCount { get; private set; }
     public LandParcel? LastSyncedParcel { get; private set; }
+    public Guid? LastDeletedParcelId { get; private set; }
     public bool ThrowServiceConfigurationOnSync { get; set; }
+    public bool ThrowServiceConfigurationOnDelete { get; set; }
+    public bool ThrowNeo4jExceptionOnDelete { get; set; }
 
     public Task SyncLandParcelGraphAsync(LandParcel parcel, CancellationToken cancellationToken = default)
     {
@@ -139,6 +190,21 @@ internal sealed class RecordingKnowledgeGraphService : IKnowledgeGraphService
     public Task<IReadOnlyList<Guid>> GetParcelIdsByCategoryAsync(Guid categoryId, CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<Guid>>([]);
 
-    public Task DeleteLandParcelGraphAsync(Guid parcelId, CancellationToken cancellationToken = default) =>
-        Task.CompletedTask;
+    public Task DeleteLandParcelGraphAsync(Guid parcelId, CancellationToken cancellationToken = default)
+    {
+        DeleteCallCount++;
+        LastDeletedParcelId = parcelId;
+
+        if (ThrowServiceConfigurationOnDelete)
+        {
+            throw new ServiceConfigurationException("Neo4j is not configured.");
+        }
+
+        if (ThrowNeo4jExceptionOnDelete)
+        {
+            throw new Neo4jException("Simulated Neo4j delete failure.");
+        }
+
+        return Task.CompletedTask;
+    }
 }
