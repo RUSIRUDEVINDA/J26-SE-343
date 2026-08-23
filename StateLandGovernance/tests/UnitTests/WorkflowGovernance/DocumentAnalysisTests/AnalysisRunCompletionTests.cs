@@ -119,6 +119,18 @@ public class AnalysisRunCompletionTests
         var run = _analysis.Runs.Single();
         Assert.NotNull(run.Result);
         Assert.Equal(2, run.Result.ExtractedFacts.Count);
+        _analysis.CompleteRun(
+            _runId,
+            _resultId,
+            AnalysisResultOutcome.OutputsProduced,
+            Array.Empty<AnalysisResultArtifactReference>(),
+            new[] { fact1, fact2 },
+            _utcNow);
+        var run = _analysis.Runs.Single();
+        Assert.NotNull(run.Result);
+        Assert.Equal(2, run.Result.ExtractedFacts.Count);
+        Assert.Contains(run.Result.ExtractedFacts, f => f.Id.Value == fact1.Id.Value && f.Code.Value == "code");
+        Assert.Contains(run.Result.ExtractedFacts, f => f.Id.Value == fact2.Id.Value && f.Code.Value == "code");
     }
 
     [Fact] public void AnalysisFactValue_Kinds_Valid()

@@ -50,6 +50,7 @@ public class DependencyInjectionTests
         using var serviceProvider = services.BuildServiceProvider();
         var controller = serviceProvider.GetService<GovernanceIntelligenceController>();
         var auditRepository = serviceProvider.GetService<IGovernanceAuditRepository>();
+        var evaluationStore = serviceProvider.GetService<IGovernanceEvaluationStore>();
         var riskEngine = serviceProvider.GetService<IGovernanceRiskEngine>();
         var riskHandler = serviceProvider.GetService<EvaluateGovernanceRiskCommandHandler>();
         var explanationEngine = serviceProvider.GetService<IExplainableGovernanceEngine>();
@@ -63,6 +64,8 @@ public class DependencyInjectionTests
         Assert.NotNull(controller);
         Assert.NotNull(auditRepository);
         Assert.IsType<InMemoryGovernanceAuditRepository>(auditRepository);
+        Assert.NotNull(evaluationStore);
+        Assert.IsType<InMemoryGovernanceEvaluationStore>(evaluationStore);
         Assert.NotNull(riskEngine);
         Assert.NotNull(riskHandler);
         Assert.NotNull(explanationEngine);
@@ -89,11 +92,14 @@ public class DependencyInjectionTests
         services.AddGovernanceIntelligenceInfrastructure(configuration, environment);
         using var serviceProvider = services.BuildServiceProvider();
         var repository = serviceProvider.GetService<IGovernanceAuditRepository>();
+        var evaluationStore = serviceProvider.GetService<IGovernanceEvaluationStore>();
         var dbContext = serviceProvider.GetService<GovernanceIntelligenceDbContext>();
 
         // Assert
         Assert.NotNull(repository);
         Assert.IsType<PostgresGovernanceAuditRepository>(repository);
+        Assert.NotNull(evaluationStore);
+        Assert.IsType<PostgresGovernanceEvaluationStore>(evaluationStore);
         Assert.NotNull(dbContext);
     }
 
@@ -109,11 +115,14 @@ public class DependencyInjectionTests
         services.AddGovernanceIntelligenceInfrastructure(configuration, environment);
         using var serviceProvider = services.BuildServiceProvider();
         var repository = serviceProvider.GetService<IGovernanceAuditRepository>();
+        var evaluationStore = serviceProvider.GetService<IGovernanceEvaluationStore>();
         var dbContext = serviceProvider.GetService<GovernanceIntelligenceDbContext>();
 
         // Assert
         Assert.NotNull(repository);
         Assert.IsType<InMemoryGovernanceAuditRepository>(repository);
+        Assert.NotNull(evaluationStore);
+        Assert.IsType<InMemoryGovernanceEvaluationStore>(evaluationStore);
         Assert.Null(dbContext);
     }
 

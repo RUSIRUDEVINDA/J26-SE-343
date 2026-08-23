@@ -9,6 +9,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.GovernanceIntelligence.Presentation.Controllers;
 
@@ -43,21 +44,22 @@ public class GovernanceIntelligenceControllerTests
     public GovernanceIntelligenceControllerTests()
     {
         _spyAuditRepo = new SpyAuditRepository();
+        var evalStore = new InMemoryGovernanceEvaluationStore(_spyAuditRepo);
         var ruleProvider = new InMemoryRegulatoryRuleProvider();
         var conflictEngine = new GovernanceConflictEngine();
         var riskEngine = new GovernanceRiskEngine();
         var timeProvider = new FixedTimeProvider();
         
         var complianceEngine = new RegulatoryComplianceEngine();
-        var complianceHandler = new EvaluateComplianceCommandHandler(ruleProvider, complianceEngine, _spyAuditRepo);
-        var conflictHandler = new DetectConflictsCommandHandler(conflictEngine, _spyAuditRepo, timeProvider);
-        var riskHandler = new EvaluateGovernanceRiskCommandHandler(riskEngine, _spyAuditRepo, timeProvider);
+        var complianceHandler = new EvaluateComplianceCommandHandler(ruleProvider, complianceEngine, evalStore);
+        var conflictHandler = new DetectConflictsCommandHandler(conflictEngine, evalStore, timeProvider);
+        var riskHandler = new EvaluateGovernanceRiskCommandHandler(riskEngine, evalStore, timeProvider);
         var explanationEngine = new ExplainableGovernanceEngine();
-        var explanationHandler = new GenerateGovernanceExplanationCommandHandler(explanationEngine, _spyAuditRepo, timeProvider);
+        var explanationHandler = new GenerateGovernanceExplanationCommandHandler(explanationEngine, evalStore, timeProvider);
         var consensusEngine = new GovernanceConsensusEngine();
-        var consensusHandler = new EvaluateGovernanceConsensusCommandHandler(consensusEngine, _spyAuditRepo, timeProvider);
+        var consensusHandler = new EvaluateGovernanceConsensusCommandHandler(consensusEngine, evalStore, timeProvider);
         var verificationEngine = new ConditionalGovernanceVerificationEngine();
-        var verificationHandler = new EvaluateConditionalVerificationCommandHandler(verificationEngine, _spyAuditRepo, timeProvider);
+        var verificationHandler = new EvaluateConditionalVerificationCommandHandler(verificationEngine, evalStore, timeProvider);
 
         _controller = new GovernanceIntelligenceController(complianceHandler, conflictHandler, riskHandler, explanationHandler, consensusHandler, verificationHandler);
     }
