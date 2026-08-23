@@ -5,6 +5,7 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
 using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j.Configuration;
 using StateLandGovernance.LandIntelligence.Infrastructure.PostGIS;
 using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.DependencyInjection;
+using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Enrichment;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Import;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Validation;
 using StateLandGovernance.LandIntelligence.Infrastructure.Repositories;
@@ -43,6 +44,7 @@ public static class LandIntelligenceInfrastructureExtensions
         services.AddScoped<ILandParcelGraphSynchronizer, LandParcelGraphSynchronizer>();
         services.AddScoped<IGisReferenceDataImportService, GisReferenceDataImportService>();
         services.AddScoped<IGisReferenceDataValidationService, GisReferenceDataValidationService>();
+        services.AddScoped<IAdministrativeLocationVerificationService, AdministrativeLocationVerificationService>();
 
         return services;
     }
