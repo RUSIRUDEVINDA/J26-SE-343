@@ -38,6 +38,8 @@ public static class LandIntelligenceInfrastructureExtensions
             services.AddScoped<IKnowledgeGraphService, UnconfiguredKnowledgeGraphService>();
         }
 
+        services.AddScoped<ILandParcelGraphSynchronizer, LandParcelGraphSynchronizer>();
+
         return services;
     }
 }

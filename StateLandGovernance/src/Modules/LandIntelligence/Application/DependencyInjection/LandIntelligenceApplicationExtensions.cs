@@ -11,6 +11,7 @@ public static class LandIntelligenceApplicationExtensions
     {
         services.AddScoped<CreateLandParcelCommandHandler>();
         services.AddScoped<UpdateLandParcelCommandHandler>();
+        services.AddScoped<DeleteLandParcelCommandHandler>();
         services.AddScoped<GenerateLandRecommendationCommandHandler>();
 
         services.AddScoped<GetLandParcelByIdQueryHandler>();
@@ -22,6 +23,7 @@ public static class LandIntelligenceApplicationExtensions
 
         services.AddScoped<CreateLandParcelCommandValidator>();
         services.AddScoped<UpdateLandParcelCommandValidator>();
+        services.AddScoped<DeleteLandParcelCommandValidator>();
         services.AddScoped<LandSearchRequestValidator>();
         services.AddScoped<LandRecommendationRequestValidator>();
         services.AddScoped<LandRecommendationSearchRequestValidator>();

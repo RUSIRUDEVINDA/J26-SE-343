@@ -10,12 +10,14 @@ public sealed record SpatialReference
     public double CentroidLongitude { get; }
     public string CoordinateSystem { get; }
     public string? BoundaryReference { get; }
+    public GeoBoundary? Boundary { get; }
 
     public SpatialReference(
         double centroidLatitude,
         double centroidLongitude,
         string coordinateSystem = "EPSG:4326",
-        string? boundaryReference = null)
+        string? boundaryReference = null,
+        GeoBoundary? boundary = null)
     {
         if (centroidLatitude is < -90 or > 90)
         {
@@ -38,5 +40,6 @@ public sealed record SpatialReference
         BoundaryReference = string.IsNullOrWhiteSpace(boundaryReference)
             ? null
             : boundaryReference.Trim();
+        Boundary = boundary;
     }
 }

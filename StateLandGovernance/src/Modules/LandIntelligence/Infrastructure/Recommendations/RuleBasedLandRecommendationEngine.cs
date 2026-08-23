@@ -1,6 +1,7 @@
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
+using StateLandGovernance.LandIntelligence.Domain.Enums;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Recommendations;
 
@@ -103,9 +104,6 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             MinArea = request.RequiredAreaHectares is > 0
                 ? request.RequiredAreaHectares * (1m - request.AreaTolerancePercent / 100m)
                 : null,
-            MaxArea = request.RequiredAreaHectares is > 0
-                ? request.RequiredAreaHectares * (1m + request.AreaTolerancePercent / 100m)
-                : null,
             Page = 1,
             PageSize = Math.Max(request.MaxResults * 5, 50)
         };
@@ -123,7 +121,13 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         var filteredIds = new HashSet<Guid>();
         foreach (var parcel in candidates)
         {
-            foreach (var feature in parcel.InfrastructureFeatures.Where(f => f.DistanceMeters.HasValue))
+            var roadAccessFeatures = GetRoadAccessFeatures(parcel).ToList();
+            if (roadAccessFeatures.Count == 0)
+            {
+                continue;
+            }
+
+            foreach (var feature in roadAccessFeatures.Where(f => f.DistanceMeters.HasValue))
             {
                 var distance = await _spatialAnalysisService.CalculateDistanceBetweenParcelAndInfrastructureAsync(
                     parcel.Id,
@@ -137,17 +141,19 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 }
             }
 
-            if (parcel.InfrastructureFeatures.Any(f =>
+            if (roadAccessFeatures.Any(f =>
                     f.DistanceMeters <= request.Accessibility.MaxRoadDistanceMeters))
             {
                 filteredIds.Add(parcel.Id);
             }
         }
 
-        return filteredIds.Count == 0
-            ? candidates
-            : candidates.Where(c => filteredIds.Contains(c.Id)).ToList();
+        return candidates.Where(c => filteredIds.Contains(c.Id)).ToList();
     }
+
+    private static IEnumerable<InfrastructureFeature> GetRoadAccessFeatures(LandParcel parcel) =>
+        parcel.InfrastructureFeatures
+            .Where(f => f.Type is InfrastructureFeatureType.Road or InfrastructureFeatureType.Railway);
 
     private IReadOnlyList<CriterionEvaluationDto> EvaluateParcel(
         LandParcel parcel,
@@ -163,15 +169,21 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
     {
         var evidence = evaluations
             .Select(e => new RecommendationEvidenceDto(
-                "RuleBasedCriterionEvaluator",
-                e.Summary,
-                e.Name))
+                e.DataProvenance is not null
+                    ? ProvenanceEvidenceFormatter.DescribeSource(e.DataProvenance)
+                    : "RuleBasedCriterionEvaluator",
+                ProvenanceEvidenceFormatter.AppendProvenance(e.Summary, e.DataProvenance),
+                e.Name,
+                e.DataProvenance))
             .ToList();
 
         evidence.AddRange(restrictions.Select(r => new RecommendationEvidenceDto(
-            r.Source,
-            r.Description,
-            r.RestrictionType)));
+            r.DataProvenance is not null
+                ? ProvenanceEvidenceFormatter.DescribeSource(r.DataProvenance)
+                : r.Source,
+            ProvenanceEvidenceFormatter.AppendProvenance(r.Description, r.DataProvenance),
+            r.RestrictionType,
+            r.DataProvenance)));
 
         return evidence;
     }

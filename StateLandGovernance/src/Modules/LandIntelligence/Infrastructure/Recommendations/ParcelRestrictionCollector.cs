@@ -1,4 +1,5 @@
 using StateLandGovernance.LandIntelligence.Application.DTOs;
+using StateLandGovernance.LandIntelligence.Application.Mappings;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 
@@ -20,13 +21,17 @@ internal static class ParcelRestrictionCollector
             r.Type.ToString(),
             r.Description,
             r.Severity,
-            "EnvironmentalRestriction")));
+            "EnvironmentalRestriction",
+            AttributeProvenanceMapper.ToDto(
+                ParcelAttributeProvenanceResolver.ResolveOrUnknown(r.DataProvenance)))));
 
         restrictions.AddRange(parcel.RegulatoryReferences.Select(r => new RestrictionSummaryDto(
             "RegulatoryReference",
             $"{r.Title} ({r.GazetteNumber})",
             RestrictionSeverity.Low,
-            "RegulatoryReference")));
+            "RegulatoryReference",
+            AttributeProvenanceMapper.ToDto(
+                ParcelAttributeProvenanceResolver.ResolveOrUnknown(r.DataProvenance)))));
 
         return restrictions;
     }

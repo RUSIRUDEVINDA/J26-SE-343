@@ -46,6 +46,9 @@ internal sealed class LandParcelConfiguration : IEntityTypeConfiguration<LandPar
         builder.Property(parcel => parcel.ElevationMeters)
             .HasPrecision(10, 2);
 
+        builder.Property(parcel => parcel.CharacteristicsProvenanceJson)
+            .HasColumnType("jsonb");
+
         builder.Property(parcel => parcel.Centroid)
             .HasColumnType("geometry (Point, 4326)")
             .IsRequired();

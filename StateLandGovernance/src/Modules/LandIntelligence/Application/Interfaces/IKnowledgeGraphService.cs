@@ -78,6 +78,14 @@ public interface IKnowledgeGraphService
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Projects a domain parcel and its owned relationships into the knowledge graph,
+    /// resolving reference node identifiers from domain state.
+    /// </summary>
+    Task SyncLandParcelGraphAsync(
+        LandParcel parcel,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Projects a domain parcel and its owned relationships into the knowledge graph.
     /// </summary>
     Task SyncLandParcelGraphAsync(

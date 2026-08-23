@@ -7,6 +7,7 @@ using StateLandGovernance.LandIntelligence.Presentation.Models;
 namespace StateLandGovernance.LandIntelligence.Presentation.Controllers;
 
 [ApiController]
+[ApiExplorerSettings(GroupName = "land-intelligence-v1")]
 [Route("api/v1/land")]
 [Produces("application/json")]
 public sealed class LandSearchController : ControllerBase

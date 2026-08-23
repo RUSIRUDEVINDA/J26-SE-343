@@ -71,6 +71,10 @@ public sealed class LandParcelRepository : ILandParcelRepository
     public async Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.LandParcels
+            .Include(p => p.SpatialConstraints)
+            .Include(p => p.InfrastructureFeatures)
+            .Include(p => p.EnvironmentalRestrictions)
+            .Include(p => p.RegulatoryReferences)
             .FirstOrDefaultAsync(p => p.Id == parcel.Id, cancellationToken);
 
         if (entity is null)
@@ -78,7 +82,21 @@ public sealed class LandParcelRepository : ILandParcelRepository
             return;
         }
 
-        LandParcelPersistenceMapper.ApplyUpdates(entity, parcel);
+        LandParcelPersistenceMapper.ApplyFullUpdate(entity, parcel);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _dbContext.LandParcels
+            .FirstOrDefaultAsync(parcel => parcel.Id == id, cancellationToken);
+
+        if (entity is null)
+        {
+            return;
+        }
+
+        _dbContext.LandParcels.Remove(entity);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -88,7 +106,9 @@ public sealed class LandParcelRepository : ILandParcelRepository
             .Include(parcel => parcel.LandCategory)
             .Include(parcel => parcel.CurrentLandUse)
             .Include(parcel => parcel.SpatialConstraints)
-            .Include(parcel => parcel.InfrastructureFeatures);
+            .Include(parcel => parcel.InfrastructureFeatures)
+            .Include(parcel => parcel.EnvironmentalRestrictions)
+            .Include(parcel => parcel.RegulatoryReferences);
 
     private IQueryable<LandParcelEntity> BuildSearchQuery(LandSearchRequest request)
     {

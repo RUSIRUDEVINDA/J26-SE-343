@@ -2,6 +2,7 @@ using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
+using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.Criteria;
 
@@ -28,11 +29,13 @@ internal sealed class EnvironmentalCriterionEvaluator : IRecommendationCriterion
                 isMet: true,
                 score: 100m,
                 DefaultWeight,
-                "No environmental restrictions are recorded for this parcel.");
+                "No environmental restrictions are recorded for this parcel.",
+                AttributeProvenance.Unknown("Environmental restrictions"));
         }
 
         var maxSeverity = restrictions.Max(r => r.Severity);
         var hasProhibitive = restrictions.Any(r => r.Severity == RestrictionSeverity.Prohibitive);
+        var environmentalProvenance = ParcelAttributeProvenanceResolver.ResolveEnvironmentalProvenance(parcel);
 
         if (criteria.RejectProhibitiveEnvironmentalRestrictions && hasProhibitive)
         {
@@ -43,7 +46,9 @@ internal sealed class EnvironmentalCriterionEvaluator : IRecommendationCriterion
                 isMet: false,
                 score: 0m,
                 DefaultWeight,
-                "Parcel has prohibitive environmental restrictions.");
+                "Parcel has prohibitive environmental restrictions.",
+                environmentalProvenance,
+                "environmental.restrictions");
         }
 
         if (maxSeverity <= criteria.MaxAllowedEnvironmentalSeverity)
@@ -55,7 +60,9 @@ internal sealed class EnvironmentalCriterionEvaluator : IRecommendationCriterion
                 isMet: true,
                 score: 85m,
                 DefaultWeight,
-                $"Highest environmental restriction severity ({maxSeverity}) is within allowed limit ({criteria.MaxAllowedEnvironmentalSeverity}).");
+                $"Highest environmental restriction severity ({maxSeverity}) is within allowed limit ({criteria.MaxAllowedEnvironmentalSeverity}).",
+                environmentalProvenance,
+                "environmental.restrictions");
         }
 
         var severityGap = (int)maxSeverity - (int)criteria.MaxAllowedEnvironmentalSeverity;
@@ -68,6 +75,8 @@ internal sealed class EnvironmentalCriterionEvaluator : IRecommendationCriterion
             isMet: false,
             score,
             DefaultWeight,
-            $"Highest environmental restriction severity ({maxSeverity}) exceeds allowed limit ({criteria.MaxAllowedEnvironmentalSeverity}).");
+            $"Highest environmental restriction severity ({maxSeverity}) exceeds allowed limit ({criteria.MaxAllowedEnvironmentalSeverity}).",
+            environmentalProvenance,
+            "environmental.restrictions");
     }
 }

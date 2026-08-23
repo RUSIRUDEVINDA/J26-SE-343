@@ -21,7 +21,8 @@ public sealed record RecommendationCriterionDto(
 public sealed record RecommendationEvidenceDto(
     string Source,
     string Description,
-    string? RelatedCriterionName);
+    string? RelatedCriterionName,
+    AttributeProvenanceDto? DataProvenance = null);
 
 public sealed record LandRecommendationDto(
     Guid Id,

@@ -23,4 +23,6 @@ public class InfrastructureFeatureEntity
     public Point? Location { get; set; }
 
     public int SpatialReferenceSystemId { get; set; } = 4326;
+
+    public string? DistanceProvenanceJson { get; set; }
 }

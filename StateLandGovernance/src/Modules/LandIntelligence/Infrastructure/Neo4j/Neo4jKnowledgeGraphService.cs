@@ -144,6 +144,16 @@ public sealed class Neo4jKnowledgeGraphService : IKnowledgeGraphService, IAsyncD
             KnowledgeGraphMapper.ToLinkParameters(parcelId, environmentalAreaId),
             cancellationToken);
 
+    public Task SyncLandParcelGraphAsync(
+        LandParcel parcel,
+        CancellationToken cancellationToken = default) =>
+        SyncLandParcelGraphAsync(
+            parcel,
+            KnowledgeGraphReferenceResolver.ResolveCategoryId(parcel),
+            KnowledgeGraphReferenceResolver.ResolveLandUseId(parcel),
+            KnowledgeGraphReferenceResolver.ResolveAdministrativeAreaId(parcel.Location),
+            cancellationToken);
+
     public async Task SyncLandParcelGraphAsync(
         LandParcel parcel,
         Guid categoryId,
@@ -151,6 +161,11 @@ public sealed class Neo4jKnowledgeGraphService : IKnowledgeGraphService, IAsyncD
         Guid administrativeAreaId,
         CancellationToken cancellationToken = default)
     {
+        await ExecuteWriteAsync(
+            KnowledgeGraphCypher.ClearParcelRelationships,
+            new { parcelId = parcel.Id.ToString() },
+            cancellationToken);
+
         await UpsertLandParcelAsync(KnowledgeGraphMapper.ToLandParcelNode(parcel), cancellationToken);
         await UpsertAdministrativeAreaAsync(
             KnowledgeGraphMapper.ToAdministrativeAreaNode(administrativeAreaId, parcel.Location),

@@ -45,7 +45,13 @@ public class LandParcelEntity
 
     public decimal? ElevationMeters { get; set; }
 
+    public string? CharacteristicsProvenanceJson { get; set; }
+
     public ICollection<SpatialConstraintEntity> SpatialConstraints { get; set; } = [];
 
     public ICollection<InfrastructureFeatureEntity> InfrastructureFeatures { get; set; } = [];
+
+    public ICollection<EnvironmentalRestrictionEntity> EnvironmentalRestrictions { get; set; } = [];
+
+    public ICollection<RegulatoryReferenceEntity> RegulatoryReferences { get; set; } = [];
 }

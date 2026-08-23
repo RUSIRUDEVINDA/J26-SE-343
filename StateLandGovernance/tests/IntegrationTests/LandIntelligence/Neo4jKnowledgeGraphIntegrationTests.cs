@@ -109,6 +109,109 @@ public sealed class Neo4jKnowledgeGraphIntegrationTests : IAsyncLifetime
         Assert.Contains(parcel.Id, parcelIds);
     }
 
+    [Fact]
+    public async Task Sync_replaces_stale_has_use_relationship_after_update()
+    {
+        EnvFileLoader.LoadFromRepositoryRoot(AppContext.BaseDirectory);
+
+        if (!Neo4jSettings.IsConfigured())
+        {
+            return;
+        }
+
+        Assert.NotNull(_knowledgeGraphService);
+
+        var parcel = CreateSyntheticParcel();
+        _parcelId = parcel.Id;
+
+        await _knowledgeGraphService.SyncLandParcelGraphAsync(
+            parcel,
+            KnowledgeGraphSeedData.GetCategoryId(LandCategoryType.StateLand),
+            KnowledgeGraphSeedData.GetLandUseId(LandUseType.Agricultural),
+            KnowledgeGraphSeedData.SyntheticWesternColomboAreaId);
+
+        parcel.UpdateCurrentUse(new LandUse(LandUseType.Commercial, "[SYNTHETIC] Updated commercial use"));
+
+        await _knowledgeGraphService.SyncLandParcelGraphAsync(parcel);
+
+        var relationships = await _knowledgeGraphService.GetRelationshipsAsync(parcel.Id);
+        var hasUseRelationships = relationships
+            .Where(r => r.RelationshipType == GraphRelationshipTypes.HasUse)
+            .ToList();
+
+        Assert.Single(hasUseRelationships);
+        Assert.Equal(
+            KnowledgeGraphSeedData.GetLandUseId(LandUseType.Commercial).ToString(),
+            hasUseRelationships[0].TargetNodeId);
+    }
+
+    [Fact]
+    public async Task Sync_twice_does_not_duplicate_has_category_relationship()
+    {
+        EnvFileLoader.LoadFromRepositoryRoot(AppContext.BaseDirectory);
+
+        if (!Neo4jSettings.IsConfigured())
+        {
+            return;
+        }
+
+        Assert.NotNull(_knowledgeGraphService);
+
+        var parcel = CreateSyntheticParcel();
+        _parcelId = parcel.Id;
+
+        await _knowledgeGraphService.SyncLandParcelGraphAsync(parcel);
+        await _knowledgeGraphService.SyncLandParcelGraphAsync(parcel);
+
+        var relationships = await _knowledgeGraphService.GetRelationshipsAsync(parcel.Id);
+        var hasCategoryRelationships = relationships
+            .Where(r => r.RelationshipType == GraphRelationshipTypes.HasCategory)
+            .ToList();
+
+        Assert.Single(hasCategoryRelationships);
+    }
+
+    [Fact]
+    public async Task DeleteLandParcelGraphAsync_removes_parcel_but_preserves_shared_reference_nodes()
+    {
+        EnvFileLoader.LoadFromRepositoryRoot(AppContext.BaseDirectory);
+
+        if (!Neo4jSettings.IsConfigured())
+        {
+            return;
+        }
+
+        Assert.NotNull(_knowledgeGraphService);
+
+        var parcel = CreateSyntheticParcel();
+        _parcelId = parcel.Id;
+        var categoryId = KnowledgeGraphSeedData.GetCategoryId(LandCategoryType.StateLand);
+
+        await _knowledgeGraphService.UpsertLandCategoryAsync(
+            KnowledgeGraphSeedData.Categories.First(category => category.Id == categoryId));
+        await _knowledgeGraphService.UpsertAdministrativeAreaAsync(
+            KnowledgeGraphSeedData.SyntheticWesternColomboArea);
+
+        await _knowledgeGraphService.SyncLandParcelGraphAsync(
+            parcel,
+            categoryId,
+            KnowledgeGraphSeedData.GetLandUseId(LandUseType.Agricultural),
+            KnowledgeGraphSeedData.SyntheticWesternColomboAreaId);
+
+        var relationshipsBeforeDelete = await _knowledgeGraphService.GetRelationshipsAsync(parcel.Id);
+        Assert.NotEmpty(relationshipsBeforeDelete);
+
+        await _knowledgeGraphService.DeleteLandParcelGraphAsync(parcel.Id);
+
+        var relationshipsAfterDelete = await _knowledgeGraphService.GetRelationshipsAsync(parcel.Id);
+        Assert.Empty(relationshipsAfterDelete);
+
+        var remainingParcelIds = await _knowledgeGraphService.GetParcelIdsByCategoryAsync(categoryId);
+        Assert.DoesNotContain(parcel.Id, remainingParcelIds);
+
+        _parcelId = Guid.Empty;
+    }
+
     public async Task DisposeAsync()
     {
         if (_knowledgeGraphService is not null && _parcelId != Guid.Empty)
