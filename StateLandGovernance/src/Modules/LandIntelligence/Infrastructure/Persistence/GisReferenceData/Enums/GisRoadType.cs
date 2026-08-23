@@ -6,5 +6,6 @@ public enum GisRoadType
     Primary = 1,
     Secondary = 2,
     Tertiary = 3,
-    Track = 4
+    Track = 4,
+    Expressway = 5
 }
