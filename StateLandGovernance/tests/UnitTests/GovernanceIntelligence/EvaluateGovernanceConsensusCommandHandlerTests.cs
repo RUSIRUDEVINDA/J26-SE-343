@@ -12,6 +12,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 
 public class EvaluateGovernanceConsensusCommandHandlerTests
 {
@@ -47,8 +48,9 @@ public class EvaluateGovernanceConsensusCommandHandlerTests
     {
         _engine = new GovernanceConsensusEngine();
         _spyAuditRepo = new SpyAuditRepository();
+        var evalStore = new InMemoryGovernanceEvaluationStore(_spyAuditRepo);
         _timeProvider = new FixedTimeProvider();
-        _handler = new EvaluateGovernanceConsensusCommandHandler(_engine, _spyAuditRepo, _timeProvider);
+        _handler = new EvaluateGovernanceConsensusCommandHandler(_engine, evalStore, _timeProvider);
     }
 
     [Fact]

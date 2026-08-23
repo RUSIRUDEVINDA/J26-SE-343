@@ -9,6 +9,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using Xunit;
 
@@ -50,7 +51,8 @@ public class EvaluateGovernanceRiskCommandHandlerTests
     public EvaluateGovernanceRiskCommandHandlerTests()
     {
         _timeProvider = new TestTimeProvider(_fixedTime);
-        _handler = new EvaluateGovernanceRiskCommandHandler(_engine, _auditRepository, _timeProvider);
+        var evalStore = new InMemoryGovernanceEvaluationStore(_auditRepository);
+        _handler = new EvaluateGovernanceRiskCommandHandler(_engine, evalStore, _timeProvider);
     }
 
     [Fact]
