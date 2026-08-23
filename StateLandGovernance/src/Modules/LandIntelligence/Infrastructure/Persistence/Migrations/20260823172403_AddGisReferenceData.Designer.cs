@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(LandIntelligenceDbContext))]
-    partial class LandIntelligenceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260823172403_AddGisReferenceData")]
+    partial class AddGisReferenceData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -472,14 +475,6 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("SourceFeatureId")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("SourceFingerprint")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("SourceLayer")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -498,19 +493,7 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 
                     b.HasIndex("BoundaryType");
 
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
-                        .IsUnique()
-                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
-
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
-                        .IsUnique()
-                        .HasDatabaseName("IX_gis_administrative_boundaries_SourceName_SourceLayer_Sourc~1")
-                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
-
-                    b.ToTable("gis_administrative_boundaries", "land_intelligence", t =>
-                        {
-                            t.HasCheckConstraint("CK_gis_administrative_boundaries_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
-                        });
+                    b.ToTable("gis_administrative_boundaries", "land_intelligence");
                 });
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisRoadEntity", b =>
@@ -533,14 +516,6 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.Property<int>("RoadType")
                         .HasColumnType("integer");
 
-                    b.Property<string>("SourceFeatureId")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("SourceFingerprint")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("SourceLayer")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -559,18 +534,7 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 
                     b.HasIndex("RoadType");
 
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
-                        .IsUnique()
-                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
-
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
-                        .IsUnique()
-                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
-
-                    b.ToTable("gis_roads", "land_intelligence", t =>
-                        {
-                            t.HasCheckConstraint("CK_gis_roads_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
-                        });
+                    b.ToTable("gis_roads", "land_intelligence");
                 });
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisSoilConservationAreaEntity", b =>
@@ -595,14 +559,6 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("SourceFeatureId")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("SourceFingerprint")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("SourceLayer")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -619,18 +575,7 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Boundary"), "GIST");
 
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
-                        .IsUnique()
-                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
-
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
-                        .IsUnique()
-                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
-
-                    b.ToTable("gis_soil_conservation_areas", "land_intelligence", t =>
-                        {
-                            t.HasCheckConstraint("CK_gis_soil_conservation_areas_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
-                        });
+                    b.ToTable("gis_soil_conservation_areas", "land_intelligence");
                 });
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisSoilErosionObservationEntity", b =>
@@ -658,14 +603,6 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<string>("SourceFeatureId")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("SourceFingerprint")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("SourceLayer")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -682,19 +619,7 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "GIST");
 
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
-                        .IsUnique()
-                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
-
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
-                        .IsUnique()
-                        .HasDatabaseName("IX_gis_soil_erosion_observations_SourceName_SourceLayer_Sourc~1")
-                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
-
-                    b.ToTable("gis_soil_erosion_observations", "land_intelligence", t =>
-                        {
-                            t.HasCheckConstraint("CK_gis_soil_erosion_observations_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
-                        });
+                    b.ToTable("gis_soil_erosion_observations", "land_intelligence");
                 });
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisSoilGroupEntity", b =>
@@ -715,14 +640,6 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("SourceFeatureId")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("SourceFingerprint")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("SourceLayer")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -739,18 +656,7 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Boundary"), "GIST");
 
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
-                        .IsUnique()
-                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
-
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
-                        .IsUnique()
-                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
-
-                    b.ToTable("gis_soil_groups", "land_intelligence", t =>
-                        {
-                            t.HasCheckConstraint("CK_gis_soil_groups_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
-                        });
+                    b.ToTable("gis_soil_groups", "land_intelligence");
                 });
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisWaterFeatureEntity", b =>
@@ -773,14 +679,6 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("SourceFeatureId")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("SourceFingerprint")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("SourceLayer")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -799,18 +697,7 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Geometry"), "GIST");
 
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
-                        .IsUnique()
-                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
-
-                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
-                        .IsUnique()
-                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
-
-                    b.ToTable("gis_water_features", "land_intelligence", t =>
-                        {
-                            t.HasCheckConstraint("CK_gis_water_features_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
-                        });
+                    b.ToTable("gis_water_features", "land_intelligence");
                 });
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.EnvironmentalRestrictionEntity", b =>
