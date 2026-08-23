@@ -1,5 +1,7 @@
 using StateLandGovernance.LandIntelligence.Application.Commands;
+using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Application.Mappings;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 
 namespace StateLandGovernance.LandIntelligence.Application.Validators;
@@ -50,8 +52,115 @@ public sealed class CreateLandParcelCommandValidator : IRequestValidator<CreateL
             errors.Add("Centroid longitude must be between -180 and 180.");
         }
 
+        if (request.BoundaryPolygon is not null && GeoJsonGeometryMapper.ToGeoBoundary(request.BoundaryPolygon) is null)
+        {
+            errors.Add("Boundary polygon must include at least three valid [longitude, latitude] positions.");
+        }
+
+        errors.AddRange(ValidateSpatialConstraints(request.SpatialConstraints));
+        errors.AddRange(ValidateEnvironmentalRestrictions(request.EnvironmentalRestrictions));
+        errors.AddRange(ValidateInfrastructureFeatures(request.InfrastructureFeatures));
+        errors.AddRange(ValidateRegulatoryReferences(request.RegulatoryReferences));
+
         return errors.Count == 0
             ? ValidationResult.Success()
             : ValidationResult.Failure(errors);
+    }
+
+    private static IEnumerable<string> ValidateSpatialConstraints(
+        IReadOnlyList<SpatialConstraintInputDto>? constraints)
+    {
+        if (constraints is null)
+        {
+            yield break;
+        }
+
+        for (var index = 0; index < constraints.Count; index++)
+        {
+            var item = constraints[index];
+            if (string.IsNullOrWhiteSpace(item.Description))
+            {
+                yield return $"Spatial constraint at index {index} requires a description.";
+            }
+
+            if (!Enum.IsDefined(item.Type))
+            {
+                yield return $"Spatial constraint at index {index} has an invalid type.";
+            }
+
+            if (!Enum.IsDefined(item.Severity))
+            {
+                yield return $"Spatial constraint at index {index} has an invalid severity.";
+            }
+
+            if (item.Geometry is not null && GeoJsonGeometryMapper.ToGeoBoundary(item.Geometry) is null)
+            {
+                yield return $"Spatial constraint at index {index} has invalid geometry.";
+            }
+        }
+    }
+
+    private static IEnumerable<string> ValidateEnvironmentalRestrictions(
+        IReadOnlyList<EnvironmentalRestrictionInputDto>? restrictions)
+    {
+        if (restrictions is null)
+        {
+            yield break;
+        }
+
+        for (var index = 0; index < restrictions.Count; index++)
+        {
+            var item = restrictions[index];
+            if (string.IsNullOrWhiteSpace(item.Description))
+            {
+                yield return $"Environmental restriction at index {index} requires a description.";
+            }
+        }
+    }
+
+    private static IEnumerable<string> ValidateInfrastructureFeatures(
+        IReadOnlyList<InfrastructureFeatureInputDto>? features)
+    {
+        if (features is null)
+        {
+            yield break;
+        }
+
+        for (var index = 0; index < features.Count; index++)
+        {
+            var item = features[index];
+            if (string.IsNullOrWhiteSpace(item.Name))
+            {
+                yield return $"Infrastructure feature at index {index} requires a name.";
+            }
+
+            if (item.DistanceMeters is < 0)
+            {
+                yield return $"Infrastructure feature at index {index} cannot have a negative distance.";
+            }
+        }
+    }
+
+    private static IEnumerable<string> ValidateRegulatoryReferences(
+        IReadOnlyList<RegulatoryReferenceInputDto>? references)
+    {
+        if (references is null)
+        {
+            yield break;
+        }
+
+        for (var index = 0; index < references.Count; index++)
+        {
+            var item = references[index];
+            if (string.IsNullOrWhiteSpace(item.GazetteNumber))
+            {
+                yield return $"Regulatory reference at index {index} requires a gazette number.";
+            }
+
+            if (string.IsNullOrWhiteSpace(item.Title))
+            {
+                yield return $"Regulatory reference at index {index} requires a title.";
+            }
+        }
     }
 }

@@ -19,7 +19,8 @@ public class RegulatoryReference : Entity
         string title,
         DateOnly effectiveDate,
         string? summary = null,
-        AttributeProvenance? dataProvenance = null)
+        AttributeProvenance? dataProvenance = null,
+        Guid? id = null) : base(id ?? Guid.NewGuid())
     {
         if (string.IsNullOrWhiteSpace(gazetteNumber))
         {

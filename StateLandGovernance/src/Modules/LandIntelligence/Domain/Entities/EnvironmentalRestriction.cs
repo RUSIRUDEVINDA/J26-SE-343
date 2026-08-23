@@ -18,7 +18,8 @@ public class EnvironmentalRestriction : Entity
         EnvironmentalRestrictionType type,
         string description,
         RestrictionSeverity severity,
-        AttributeProvenance? dataProvenance = null)
+        AttributeProvenance? dataProvenance = null,
+        Guid? id = null) : base(id ?? Guid.NewGuid())
     {
         if (string.IsNullOrWhiteSpace(description))
         {

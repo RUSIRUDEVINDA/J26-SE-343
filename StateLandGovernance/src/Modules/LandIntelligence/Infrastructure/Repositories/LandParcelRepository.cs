@@ -71,6 +71,10 @@ public sealed class LandParcelRepository : ILandParcelRepository
     public async Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.LandParcels
+            .Include(p => p.SpatialConstraints)
+            .Include(p => p.InfrastructureFeatures)
+            .Include(p => p.EnvironmentalRestrictions)
+            .Include(p => p.RegulatoryReferences)
             .FirstOrDefaultAsync(p => p.Id == parcel.Id, cancellationToken);
 
         if (entity is null)
@@ -78,7 +82,7 @@ public sealed class LandParcelRepository : ILandParcelRepository
             return;
         }
 
-        LandParcelPersistenceMapper.ApplyUpdates(entity, parcel);
+        LandParcelPersistenceMapper.ApplyFullUpdate(entity, parcel);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 

@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using StateLandGovernance.LandIntelligence.Application.Commands;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Application.Validators;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.Exceptions;
@@ -21,7 +22,7 @@ public sealed class LandParcelCommandHandlerTests
             new NoOpLandParcelGraphSynchronizer(),
             new CreateLandParcelCommandValidator());
 
-        var result = await handler.HandleAsync(CreateValidCreateCommand());
+        var result = await handler.HandleAsync(LandParcelCommandTestData.CreateValidCreateCommand());
 
         Assert.NotEqual(Guid.Empty, result.Id);
         Assert.Equal("SYNTH-CREATE-001", result.Identifier.CadastralNumber);
@@ -38,7 +39,7 @@ public sealed class LandParcelCommandHandlerTests
             new NoOpLandParcelGraphSynchronizer(),
             new CreateLandParcelCommandValidator());
 
-        var invalidCommand = CreateValidCreateCommand() with { CadastralNumber = "  " };
+        var invalidCommand = LandParcelCommandTestData.CreateValidCreateCommand() with { CadastralNumber = "  " };
 
         var exception = await Assert.ThrowsAsync<ValidationException>(() =>
             handler.HandleAsync(invalidCommand));
@@ -56,13 +57,18 @@ public sealed class LandParcelCommandHandlerTests
             new NoOpLandParcelGraphSynchronizer(),
             new UpdateLandParcelCommandValidator());
 
-        var result = await handler.HandleAsync(new UpdateLandParcelCommand(
-            existing.Id,
-            LandUseType.Commercial,
-            "[SYNTHETIC] Updated commercial use",
-            "Clay",
-            "Undulating terrain",
-            25m));
+        var result = await handler.HandleAsync(new UpdateLandParcelCommand
+        {
+            LandParcelId = existing.Id,
+            CurrentUseType = LandUseType.Commercial,
+            CurrentUseDescription = "[SYNTHETIC] Updated commercial use",
+            Characteristics = new LandCharacteristicsInputDto
+            {
+                SoilType = "Clay",
+                TerrainDescription = "Undulating terrain",
+                ElevationMeters = 25m
+            }
+        });
 
         Assert.Equal(existing.Id, result.Id);
         Assert.Equal(LandUseType.Commercial, result.CurrentUse?.Type);
@@ -81,7 +87,7 @@ public sealed class LandParcelCommandHandlerTests
             new UpdateLandParcelCommandValidator());
 
         var exception = await Assert.ThrowsAsync<ValidationException>(() =>
-            handler.HandleAsync(new UpdateLandParcelCommand(existing.Id, null, null, null, null, null)));
+            handler.HandleAsync(new UpdateLandParcelCommand { LandParcelId = existing.Id }));
 
         Assert.Contains(exception.Errors, error => error.Contains("At least one updatable field", StringComparison.OrdinalIgnoreCase));
     }
@@ -97,13 +103,12 @@ public sealed class LandParcelCommandHandlerTests
         var missingId = Guid.NewGuid();
 
         await Assert.ThrowsAsync<LandParcelNotFoundException>(() =>
-            handler.HandleAsync(new UpdateLandParcelCommand(
-                missingId,
-                LandUseType.Residential,
-                "[SYNTHETIC] Residential use",
-                null,
-                null,
-                null)));
+            handler.HandleAsync(new UpdateLandParcelCommand
+            {
+                LandParcelId = missingId,
+                CurrentUseType = LandUseType.Residential,
+                CurrentUseDescription = "[SYNTHETIC] Residential use"
+            }));
     }
 
     [Fact]
@@ -116,7 +121,7 @@ public sealed class LandParcelCommandHandlerTests
             graphSynchronizer,
             new CreateLandParcelCommandValidator());
 
-        var result = await handler.HandleAsync(CreateValidCreateCommand("SYNTH-GRAPH-CREATE-001"));
+        var result = await handler.HandleAsync(LandParcelCommandTestData.CreateValidCreateCommand("SYNTH-GRAPH-CREATE-001"));
 
         Assert.Equal(1, graphSynchronizer.SyncCallCount);
         Assert.NotNull(graphSynchronizer.LastParcel);
@@ -135,13 +140,12 @@ public sealed class LandParcelCommandHandlerTests
             graphSynchronizer,
             new UpdateLandParcelCommandValidator());
 
-        var result = await handler.HandleAsync(new UpdateLandParcelCommand(
-            existing.Id,
-            LandUseType.Commercial,
-            "[SYNTHETIC] Updated commercial use",
-            null,
-            null,
-            null));
+        var result = await handler.HandleAsync(new UpdateLandParcelCommand
+        {
+            LandParcelId = existing.Id,
+            CurrentUseType = LandUseType.Commercial,
+            CurrentUseDescription = "[SYNTHETIC] Updated commercial use"
+        });
 
         Assert.Equal(1, graphSynchronizer.SyncCallCount);
         Assert.NotNull(graphSynchronizer.LastParcel);
@@ -159,7 +163,7 @@ public sealed class LandParcelCommandHandlerTests
             new CreateLandParcelCommandValidator());
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            handler.HandleAsync(CreateValidCreateCommand("SYNTH-GRAPH-FAIL-CREATE")));
+            handler.HandleAsync(LandParcelCommandTestData.CreateValidCreateCommand("SYNTH-GRAPH-FAIL-CREATE")));
 
         Assert.Equal(0, graphSynchronizer.SyncCallCount);
     }
@@ -175,13 +179,12 @@ public sealed class LandParcelCommandHandlerTests
             new UpdateLandParcelCommandValidator());
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            handler.HandleAsync(new UpdateLandParcelCommand(
-                existing.Id,
-                LandUseType.Industrial,
-                "[SYNTHETIC] Industrial use",
-                null,
-                null,
-                null)));
+            handler.HandleAsync(new UpdateLandParcelCommand
+            {
+                LandParcelId = existing.Id,
+                CurrentUseType = LandUseType.Industrial,
+                CurrentUseDescription = "[SYNTHETIC] Industrial use"
+            }));
 
         Assert.Equal(0, graphSynchronizer.SyncCallCount);
     }
@@ -199,7 +202,7 @@ public sealed class LandParcelCommandHandlerTests
             synchronizer,
             new CreateLandParcelCommandValidator());
 
-        var result = await handler.HandleAsync(CreateValidCreateCommand("SYNTH-GRAPH-UNAVAIL-CREATE"));
+        var result = await handler.HandleAsync(LandParcelCommandTestData.CreateValidCreateCommand("SYNTH-GRAPH-UNAVAIL-CREATE"));
 
         Assert.NotEqual(Guid.Empty, result.Id);
         Assert.Equal(1, knowledgeGraph.SyncCallCount);
@@ -221,13 +224,12 @@ public sealed class LandParcelCommandHandlerTests
             synchronizer,
             new UpdateLandParcelCommandValidator());
 
-        var result = await handler.HandleAsync(new UpdateLandParcelCommand(
-            existing.Id,
-            LandUseType.Tourism,
-            "[SYNTHETIC] Tourism use",
-            null,
-            null,
-            null));
+        var result = await handler.HandleAsync(new UpdateLandParcelCommand
+        {
+            LandParcelId = existing.Id,
+            CurrentUseType = LandUseType.Tourism,
+            CurrentUseDescription = "[SYNTHETIC] Tourism use"
+        });
 
         Assert.Equal(LandUseType.Tourism, result.CurrentUse?.Type);
         Assert.Equal(1, knowledgeGraph.SyncCallCount);
@@ -357,26 +359,4 @@ public sealed class LandParcelCommandHandlerTests
 
         Assert.Equal(1, knowledgeGraph.DeleteCallCount);
     }
-
-    private static CreateLandParcelCommand CreateValidCreateCommand(string cadastralNumber = "SYNTH-CREATE-001") =>
-        new(
-            cadastralNumber,
-            "SYNTH-SURVEY-001",
-            LandCategoryType.StateLand,
-            "[SYNTHETIC] Test parcel",
-            2.5m,
-            AreaUnit.Hectares,
-            "Western",
-            "Colombo",
-            "Colombo DS",
-            "GN-Test",
-            6.9271,
-            79.8612,
-            "EPSG:4326",
-            null,
-            LandUseType.Agricultural,
-            "[SYNTHETIC] Agricultural use",
-            "Red Yellow Latosol",
-            "Flat terrain",
-            12m);
 }

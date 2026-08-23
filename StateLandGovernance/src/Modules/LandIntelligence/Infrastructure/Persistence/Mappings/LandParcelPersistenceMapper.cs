@@ -32,7 +32,7 @@ internal static class LandParcelPersistenceMapper
             DivisionalSecretariat = parcel.Location.DivisionalSecretariat,
             GramaNiladhariDivision = parcel.Location.GramaNiladhariDivision,
             Centroid = centroid,
-            Boundary = null,
+            Boundary = PostGisGeometryFactory.ToMultiPolygon(parcel.Spatial.Boundary),
             SpatialReferenceSystemId = PostGisConfiguration.DefaultSpatialReferenceSystemId,
             SoilType = parcel.Characteristics?.SoilType,
             TerrainDescription = parcel.Characteristics?.TerrainDescription,
@@ -77,8 +77,12 @@ internal static class LandParcelPersistenceMapper
 
         foreach (var constraint in entity.SpatialConstraints)
         {
-            var domainConstraint = new SpatialConstraint(constraint.Type, constraint.Description, constraint.Severity);
-            PersistenceEntityIdHelper.SetEntityId(domainConstraint, constraint.Id);
+            var domainConstraint = new SpatialConstraint(
+                constraint.Type,
+                constraint.Description,
+                constraint.Severity,
+                PostGisGeometryFactory.ToGeoBoundary(constraint.ConstraintGeometry),
+                constraint.Id);
             parcel.AddSpatialConstraint(domainConstraint);
         }
 
@@ -89,8 +93,9 @@ internal static class LandParcelPersistenceMapper
                 feature.Name,
                 feature.DistanceMeters,
                 feature.Description,
-                AttributeProvenancePersistenceMapper.Deserialize(feature.DistanceProvenanceJson));
-            PersistenceEntityIdHelper.SetEntityId(domainFeature, feature.Id);
+                AttributeProvenancePersistenceMapper.Deserialize(feature.DistanceProvenanceJson),
+                PostGisGeometryFactory.ToGeoCoordinate(feature.Location),
+                feature.Id);
             parcel.AddInfrastructureFeature(domainFeature);
         }
 
@@ -131,7 +136,7 @@ internal static class LandParcelPersistenceMapper
             new SpatialConstraint(entity.Type, entity.Description, entity.Severity),
             entity.Id);
 
-    public static void ApplyUpdates(LandParcelEntity entity, LandParcel parcel)
+    public static void ApplyFullUpdate(LandParcelEntity entity, LandParcel parcel)
     {
         entity.CurrentLandUseId = parcel.CurrentUse is null
             ? null
@@ -141,7 +146,16 @@ internal static class LandParcelPersistenceMapper
         entity.ElevationMeters = parcel.Characteristics?.ElevationMeters;
         entity.CharacteristicsProvenanceJson = AttributeProvenancePersistenceMapper.SerializeCharacteristicsProvenance(
             parcel.Characteristics);
+        entity.Boundary = PostGisGeometryFactory.ToMultiPolygon(parcel.Spatial.Boundary);
+
+        SyncSpatialConstraints(entity, parcel);
+        SyncInfrastructureFeatures(entity, parcel);
+        SyncEnvironmentalRestrictions(entity, parcel);
+        SyncRegulatoryReferences(entity, parcel);
     }
+
+    public static void ApplyUpdates(LandParcelEntity entity, LandParcel parcel) =>
+        ApplyFullUpdate(entity, parcel);
 
     private static LandCharacteristics BuildCharacteristics(LandParcelEntity entity)
     {
@@ -164,7 +178,8 @@ internal static class LandParcelPersistenceMapper
             entity.Centroid.Y,
             entity.Centroid.X,
             coordinateSystem,
-            boundaryReference: null);
+            boundaryReference: null,
+            PostGisGeometryFactory.ToGeoBoundary(entity.Boundary));
     }
 
     private static SpatialConstraintEntity ToPersistenceConstraint(SpatialConstraint constraint, Guid parcelId) =>
@@ -175,6 +190,7 @@ internal static class LandParcelPersistenceMapper
             Type = constraint.Type,
             Description = constraint.Description,
             Severity = constraint.Severity,
+            ConstraintGeometry = PostGisGeometryFactory.ToMultiPolygon(constraint.Geometry),
             SpatialReferenceSystemId = PostGisConfiguration.DefaultSpatialReferenceSystemId
         };
 
@@ -187,6 +203,7 @@ internal static class LandParcelPersistenceMapper
             Name = feature.Name,
             DistanceMeters = feature.DistanceMeters,
             Description = feature.Description,
+            Location = PostGisGeometryFactory.ToPoint(feature.Location),
             DistanceProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(feature.DistanceProvenance),
             SpatialReferenceSystemId = PostGisConfiguration.DefaultSpatialReferenceSystemId
         };
@@ -217,6 +234,109 @@ internal static class LandParcelPersistenceMapper
             Summary = reference.Summary,
             DataProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(reference.DataProvenance)
         };
+
+    private static void SyncSpatialConstraints(LandParcelEntity entity, LandParcel parcel)
+    {
+        var desired = parcel.SpatialConstraints.ToList();
+        var desiredIds = desired.Select(item => item.Id).ToHashSet();
+        foreach (var orphan in entity.SpatialConstraints.Where(item => !desiredIds.Contains(item.Id)).ToList())
+        {
+            entity.SpatialConstraints.Remove(orphan);
+        }
+
+        foreach (var domain in desired)
+        {
+            var existing = entity.SpatialConstraints.FirstOrDefault(item => item.Id == domain.Id);
+            if (existing is null)
+            {
+                entity.SpatialConstraints.Add(ToPersistenceConstraint(domain, entity.Id));
+                continue;
+            }
+
+            existing.Type = domain.Type;
+            existing.Description = domain.Description;
+            existing.Severity = domain.Severity;
+            existing.ConstraintGeometry = PostGisGeometryFactory.ToMultiPolygon(domain.Geometry);
+        }
+    }
+
+    private static void SyncInfrastructureFeatures(LandParcelEntity entity, LandParcel parcel)
+    {
+        var desired = parcel.InfrastructureFeatures.ToList();
+        var desiredIds = desired.Select(item => item.Id).ToHashSet();
+        foreach (var orphan in entity.InfrastructureFeatures.Where(item => !desiredIds.Contains(item.Id)).ToList())
+        {
+            entity.InfrastructureFeatures.Remove(orphan);
+        }
+
+        foreach (var domain in desired)
+        {
+            var existing = entity.InfrastructureFeatures.FirstOrDefault(item => item.Id == domain.Id);
+            if (existing is null)
+            {
+                entity.InfrastructureFeatures.Add(ToPersistenceFeature(domain, entity.Id));
+                continue;
+            }
+
+            existing.Type = domain.Type;
+            existing.Name = domain.Name;
+            existing.DistanceMeters = domain.DistanceMeters;
+            existing.Description = domain.Description;
+            existing.Location = PostGisGeometryFactory.ToPoint(domain.Location);
+            existing.DistanceProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(domain.DistanceProvenance);
+        }
+    }
+
+    private static void SyncEnvironmentalRestrictions(LandParcelEntity entity, LandParcel parcel)
+    {
+        var desired = parcel.EnvironmentalRestrictions.ToList();
+        var desiredIds = desired.Select(item => item.Id).ToHashSet();
+        foreach (var orphan in entity.EnvironmentalRestrictions.Where(item => !desiredIds.Contains(item.Id)).ToList())
+        {
+            entity.EnvironmentalRestrictions.Remove(orphan);
+        }
+
+        foreach (var domain in desired)
+        {
+            var existing = entity.EnvironmentalRestrictions.FirstOrDefault(item => item.Id == domain.Id);
+            if (existing is null)
+            {
+                entity.EnvironmentalRestrictions.Add(ToPersistenceEnvironmentalRestriction(domain, entity.Id));
+                continue;
+            }
+
+            existing.Type = domain.Type;
+            existing.Description = domain.Description;
+            existing.Severity = domain.Severity;
+            existing.DataProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(domain.DataProvenance);
+        }
+    }
+
+    private static void SyncRegulatoryReferences(LandParcelEntity entity, LandParcel parcel)
+    {
+        var desired = parcel.RegulatoryReferences.ToList();
+        var desiredIds = desired.Select(item => item.Id).ToHashSet();
+        foreach (var orphan in entity.RegulatoryReferences.Where(item => !desiredIds.Contains(item.Id)).ToList())
+        {
+            entity.RegulatoryReferences.Remove(orphan);
+        }
+
+        foreach (var domain in desired)
+        {
+            var existing = entity.RegulatoryReferences.FirstOrDefault(item => item.Id == domain.Id);
+            if (existing is null)
+            {
+                entity.RegulatoryReferences.Add(ToPersistenceRegulatoryReference(domain, entity.Id));
+                continue;
+            }
+
+            existing.GazetteNumber = domain.GazetteNumber;
+            existing.Title = domain.Title;
+            existing.EffectiveDate = domain.EffectiveDate;
+            existing.Summary = domain.Summary;
+            existing.DataProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(domain.DataProvenance);
+        }
+    }
 
     private static Point CreatePoint(double longitude, double latitude) =>
         GeometryFactory.CreatePoint(new Coordinate(longitude, latitude));

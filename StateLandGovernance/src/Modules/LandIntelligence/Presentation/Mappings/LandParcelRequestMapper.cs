@@ -6,33 +6,43 @@ namespace StateLandGovernance.LandIntelligence.Presentation.Mappings;
 internal static class LandParcelRequestMapper
 {
     public static CreateLandParcelCommand ToCreateCommand(CreateLandParcelRequest request) =>
-        new(
-            request.CadastralNumber,
-            request.SurveyPlanReference,
-            request.CategoryType,
-            request.CategoryDescription,
-            request.AreaValue,
-            request.AreaUnit,
-            request.Province,
-            request.District,
-            request.DivisionalSecretariat,
-            request.GramaNiladhariDivision,
-            request.CentroidLatitude,
-            request.CentroidLongitude,
-            request.CoordinateSystem,
-            request.BoundaryReference,
-            request.CurrentUseType,
-            request.CurrentUseDescription,
-            request.SoilType,
-            request.TerrainDescription,
-            request.ElevationMeters);
+        new()
+        {
+            CadastralNumber = request.CadastralNumber,
+            SurveyPlanReference = request.SurveyPlanReference,
+            CategoryType = request.CategoryType,
+            CategoryDescription = request.CategoryDescription,
+            AreaValue = request.AreaValue,
+            AreaUnit = request.AreaUnit,
+            Province = request.Province,
+            District = request.District,
+            DivisionalSecretariat = request.DivisionalSecretariat,
+            GramaNiladhariDivision = request.GramaNiladhariDivision,
+            CentroidLatitude = request.CentroidLatitude,
+            CentroidLongitude = request.CentroidLongitude,
+            CoordinateSystem = request.CoordinateSystem,
+            BoundaryReference = request.BoundaryReference,
+            BoundaryPolygon = request.BoundaryPolygon,
+            CurrentUseType = request.CurrentUseType,
+            CurrentUseDescription = request.CurrentUseDescription,
+            Characteristics = request.Characteristics,
+            SpatialConstraints = request.SpatialConstraints,
+            EnvironmentalRestrictions = request.EnvironmentalRestrictions,
+            InfrastructureFeatures = request.InfrastructureFeatures,
+            RegulatoryReferences = request.RegulatoryReferences
+        };
 
     public static UpdateLandParcelCommand ToUpdateCommand(Guid landParcelId, UpdateLandParcelRequest request) =>
-        new(
-            landParcelId,
-            request.CurrentUseType,
-            request.CurrentUseDescription,
-            request.SoilType,
-            request.TerrainDescription,
-            request.ElevationMeters);
+        new()
+        {
+            LandParcelId = landParcelId,
+            CurrentUseType = request.CurrentUseType,
+            CurrentUseDescription = request.CurrentUseDescription,
+            Characteristics = request.Characteristics,
+            BoundaryPolygon = request.BoundaryPolygon,
+            SpatialConstraints = request.SpatialConstraints,
+            EnvironmentalRestrictions = request.EnvironmentalRestrictions,
+            InfrastructureFeatures = request.InfrastructureFeatures,
+            RegulatoryReferences = request.RegulatoryReferences
+        };
 }
