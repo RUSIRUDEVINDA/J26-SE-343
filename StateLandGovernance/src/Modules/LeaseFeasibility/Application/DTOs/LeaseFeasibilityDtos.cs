@@ -16,6 +16,16 @@ public sealed record FinancialProfileDto(
 );
 
 /// <summary>
+/// Data Transfer Object representing structured data extracted from a bank statement.
+/// </summary>
+public sealed record BankStatementDataDto(
+    decimal AverageMonthlyIncome,
+    decimal AverageAccountBalance,
+    int OverdraftFrequency,
+    decimal SavingsToIncomeRatio
+);
+
+/// <summary>
 /// Data Transfer Object representing an individual factor contributing to the financial feasibility score.
 /// </summary>
 public sealed record FeasibilityFactorDto(

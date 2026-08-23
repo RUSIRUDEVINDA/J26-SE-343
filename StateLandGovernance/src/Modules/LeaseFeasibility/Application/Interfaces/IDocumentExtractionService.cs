@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using StateLandGovernance.LeaseFeasibility.Application.DTOs;
 
 namespace StateLandGovernance.LeaseFeasibility.Application.Interfaces;
 
@@ -13,4 +14,9 @@ public interface IDocumentExtractionService
     /// Extracts text from a document URI.
     /// </summary>
     Task<string> ExtractTextAsync(string documentUri, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Extracts structured financial fields from a bank statement document.
+    /// </summary>
+    Task<BankStatementDataDto> ExtractBankStatementDataAsync(string documentUri, CancellationToken cancellationToken = default);
 }

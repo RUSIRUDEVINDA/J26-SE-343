@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using Microsoft.Extensions.Configuration;
+using StateLandGovernance.LeaseFeasibility.Application.DTOs;
 using StateLandGovernance.LeaseFeasibility.Application.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace StateLandGovernance.LeaseFeasibility.Infrastructure.Services;
 
@@ -36,7 +38,7 @@ public sealed class DocumentOcrService : IDocumentExtractionService
         // Mock mode for local testing if dummy keys are used or if the file is mock-statement.txt
         if (documentUri.Contains("mock-statement.txt") || _endpointHost == "dummy.cognitiveservices.azure.com")
         {
-            return "MOCK OCR RESULT: [BANK STATEMENT] Average Monthly Income: 5000. Loan Obligation: 200. Verification: SUCCESS.";
+            return "MOCK OCR RESULT: [BANK STATEMENT] Average Monthly Income: 5000. Average Account Balance: 15000. Overdraft Frequency: 0. Savings To Income Ratio: 0.2. Loan Obligation: 200. Verification: SUCCESS.";
         }
 
         try
@@ -58,5 +60,36 @@ public sealed class DocumentOcrService : IDocumentExtractionService
         {
             throw new InvalidOperationException($"Failed to extract text from document using OCR: {ex.Message}", ex);
         }
+    }
+
+    public async Task<BankStatementDataDto> ExtractBankStatementDataAsync(string documentUri, CancellationToken cancellationToken = default)
+    {
+        var rawText = await ExtractTextAsync(documentUri, cancellationToken);
+
+        decimal avgIncome = ExtractDecimal(rawText, @"Average\s*Monthly\s*Income[\s:]+([\d,.]+)");
+        decimal avgBalance = ExtractDecimal(rawText, @"Average\s*Account\s*Balance[\s:]+([\d,.]+)");
+        int overdrafts = (int)ExtractDecimal(rawText, @"Overdraft\s*Frequency[\s:]+(\d+)");
+        decimal savingsRatio = ExtractDecimal(rawText, @"Savings\s*To\s*Income\s*Ratio[\s:]+([\d,.]+)");
+
+        return new BankStatementDataDto(
+            AverageMonthlyIncome: avgIncome,
+            AverageAccountBalance: avgBalance,
+            OverdraftFrequency: overdrafts,
+            SavingsToIncomeRatio: savingsRatio
+        );
+    }
+
+    private decimal ExtractDecimal(string text, string pattern)
+    {
+        var match = Regex.Match(text, pattern, RegexOptions.IgnoreCase);
+        if (match.Success)
+        {
+            var valStr = match.Groups[1].Value.Replace(",", "").TrimEnd('.');
+            if (decimal.TryParse(valStr, out var result))
+            {
+                return result;
+            }
+        }
+        return 0m;
     }
 }
