@@ -116,6 +116,9 @@ public class AnalysisRunCompletionTests
     {
         var fact1 = new ExtractedFactInput(new ExtractedFactId(Guid.NewGuid()), new FactCode("code"), new AnalysisFactValue(AnalysisFactValueKind.Text, "v1"), null, null);
         var fact2 = new ExtractedFactInput(new ExtractedFactId(Guid.NewGuid()), new FactCode("code"), new AnalysisFactValue(AnalysisFactValueKind.Text, "v2"), null, null);
+        var run = _analysis.Runs.Single();
+        Assert.NotNull(run.Result);
+        Assert.Equal(2, run.Result.ExtractedFacts.Count);
         _analysis.CompleteRun(
             _runId,
             _resultId,
