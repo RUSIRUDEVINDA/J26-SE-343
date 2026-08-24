@@ -28,16 +28,16 @@ public sealed class EvaluateComplianceCommandHandler
 {
     private readonly IRegulatoryRuleProvider _ruleProvider;
     private readonly IRegulatoryComplianceEngine _complianceEngine;
-    private readonly IGovernanceAuditRepository _auditRepository;
+    private readonly IGovernanceEvaluationStore _evaluationStore;
 
     public EvaluateComplianceCommandHandler(
         IRegulatoryRuleProvider ruleProvider,
         IRegulatoryComplianceEngine complianceEngine,
-        IGovernanceAuditRepository auditRepository)
+        IGovernanceEvaluationStore evaluationStore)
     {
-        _ruleProvider = ruleProvider;
-        _complianceEngine = complianceEngine;
-        _auditRepository = auditRepository;
+        _ruleProvider = ruleProvider ?? throw new System.ArgumentNullException(nameof(ruleProvider));
+        _complianceEngine = complianceEngine ?? throw new System.ArgumentNullException(nameof(complianceEngine));
+        _evaluationStore = evaluationStore ?? throw new System.ArgumentNullException(nameof(evaluationStore));
     }
 
     public async Task<ComplianceResultDto> HandleAsync(EvaluateComplianceCommand command, CancellationToken cancellationToken = default)
@@ -55,14 +55,14 @@ public sealed class EvaluateComplianceCommandHandler
         // 3. Evaluate compliance using domain compliance engine
         var result = _complianceEngine.Evaluate(input, rules);
 
-        // 4. Create and persist audit record
+        // 4. Create audit record and store evaluation output atomically
         var auditRecord = GovernanceAuditRecord.Create(
             EngineType.RegulatoryCompliance,
             command.ActionName,
             result.Status.ToString(),
             $"Violations: {result.Violations.Count}, Conditions: {result.Conditions.Count}");
 
-        await _auditRepository.AddAsync(auditRecord, cancellationToken);
+        await _evaluationStore.StoreComplianceEvaluationAsync(auditRecord, result, command.ActionName, cancellationToken);
 
         // 5. Map to result DTO
         var violationDtos = result.Violations

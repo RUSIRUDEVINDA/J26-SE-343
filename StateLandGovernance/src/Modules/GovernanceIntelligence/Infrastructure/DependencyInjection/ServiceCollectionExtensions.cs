@@ -11,7 +11,7 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.DependencyIn
 
 /// <summary>
 /// Infrastructure dependency injection extensions for Component 4 (GovernanceIntelligence).
-/// Configures PostgreSQL DbContext and IGovernanceAuditRepository persistence with environment-safe fallbacks.
+/// Configures PostgreSQL DbContext, IGovernanceAuditRepository, and IGovernanceEvaluationStore persistence with environment-safe fallbacks.
 /// </summary>
 public static class ServiceCollectionExtensions
 {
@@ -47,10 +47,12 @@ public static class ServiceCollectionExtensions
                 }));
 
             services.AddScoped<IGovernanceAuditRepository, PostgresGovernanceAuditRepository>();
+            services.AddScoped<IGovernanceEvaluationStore, PostgresGovernanceEvaluationStore>();
         }
         else if (environment.IsDevelopment() || environment.IsEnvironment("Testing"))
         {
             services.AddSingleton<IGovernanceAuditRepository, InMemoryGovernanceAuditRepository>();
+            services.AddSingleton<IGovernanceEvaluationStore, InMemoryGovernanceEvaluationStore>();
         }
         else
         {
