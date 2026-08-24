@@ -8,5 +8,7 @@ public enum ComplianceStatus
     Compliant = 1,
     NonCompliant = 2,
     Conditional = 3,
-    RequiresReview = 4
+    RequiresReview = 4,
+    RequiresHumanReview = 4,
+    InsufficientInformation = 5
 }
