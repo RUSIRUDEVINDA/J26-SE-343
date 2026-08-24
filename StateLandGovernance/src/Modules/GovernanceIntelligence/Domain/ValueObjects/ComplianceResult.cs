@@ -19,19 +19,19 @@ public sealed class ComplianceResult
 
     public ComplianceResult(
         ComplianceStatus status,
-        IReadOnlyList<Violation> violations,
-        IReadOnlyList<ComplianceCondition> conditions)
+        IReadOnlyList<Violation>? violations,
+        IReadOnlyList<ComplianceCondition>? conditions)
         : this(status, Array.Empty<ComplianceFinding>(), string.Empty, DateTime.UtcNow, violations, conditions)
     {
     }
 
     public ComplianceResult(
         ComplianceStatus status,
-        IReadOnlyList<ComplianceFinding> findings,
-        string deterministicEvaluationId,
+        IReadOnlyList<ComplianceFinding>? findings,
+        string? deterministicEvaluationId,
         DateTime evaluationTimestamp,
-        IReadOnlyList<Violation> violations = null,
-        IReadOnlyList<ComplianceCondition> conditions = null)
+        IReadOnlyList<Violation>? violations = null,
+        IReadOnlyList<ComplianceCondition>? conditions = null)
     {
         Status = status;
         Findings = findings ?? Array.Empty<ComplianceFinding>();

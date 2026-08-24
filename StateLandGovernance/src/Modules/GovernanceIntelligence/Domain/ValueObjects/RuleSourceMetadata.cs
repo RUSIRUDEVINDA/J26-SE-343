@@ -11,8 +11,8 @@ public sealed record RuleSourceMetadata(
     string SourceAuthority,
     string SourceDocument,
     string SourceSection,
-    string SourcePage,
-    string SourceVersion,
+    string? SourcePage = null,
+    string? SourceVersion = null,
     DateTime? EffectiveFrom = null,
     DateTime? EffectiveTo = null
 );

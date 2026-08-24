@@ -583,8 +583,10 @@ public class RegulatoryComplianceEngineNpdTests
 
         Assert.NotNull(result);
         Assert.Equal("NonCompliant", result.Status);
-        Assert.NotEmpty(result.Violations);
-        Assert.NotEmpty(result.Findings);
+        Assert.NotNull(result.Violations);
+        Assert.True(result.Violations.Count > 0);
+        Assert.NotNull(result.Findings);
+        Assert.True(result.Findings.Count > 0);
         Assert.NotNull(result.DeterministicEvaluationId);
     }
 

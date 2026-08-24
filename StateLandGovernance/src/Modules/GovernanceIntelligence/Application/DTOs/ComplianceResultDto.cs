@@ -19,6 +19,6 @@ public sealed record ComplianceResultDto(
     string Status,
     IReadOnlyList<ViolationDto> Violations,
     IReadOnlyList<ComplianceConditionDto> Conditions,
-    IReadOnlyList<ComplianceFindingDto> Findings = null,
-    string DeterministicEvaluationId = null
+    IReadOnlyList<ComplianceFindingDto>? Findings = null,
+    string? DeterministicEvaluationId = null
 );

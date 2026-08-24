@@ -18,10 +18,10 @@ namespace StateLandGovernance.GovernanceIntelligence.Application.Commands;
 public sealed record EvaluateComplianceCommand(
     string ActionName,
     int LeaseDurationYears = 0,
-    string ProposedUse = null,
+    string? ProposedUse = null,
     decimal LeaseAmount = 0m,
-    string ZoningArea = null,
-    ProposalComplianceInputDto Input = null
+    string? ZoningArea = null,
+    ProposalComplianceInputDto? Input = null
 );
 
 /// <summary>
@@ -38,7 +38,7 @@ public sealed class EvaluateComplianceCommandHandler
         IRegulatoryRuleProvider ruleProvider,
         IRegulatoryComplianceEngine complianceEngine,
         IGovernanceEvaluationStore evaluationStore,
-        TimeProvider timeProvider = null)
+        TimeProvider? timeProvider = null)
     {
         _ruleProvider = ruleProvider ?? throw new ArgumentNullException(nameof(ruleProvider));
         _complianceEngine = complianceEngine ?? throw new ArgumentNullException(nameof(complianceEngine));
@@ -64,9 +64,9 @@ public sealed class EvaluateComplianceCommandHandler
             var rules = await _ruleProvider.GetActiveRulesAsync(cancellationToken);
             var legacyInput = new LeaseEvaluationInput(
                 command.LeaseDurationYears,
-                command.ProposedUse,
+                command.ProposedUse ?? string.Empty,
                 command.LeaseAmount,
-                command.ZoningArea);
+                command.ZoningArea ?? string.Empty);
 
             result = _complianceEngine.Evaluate(legacyInput, rules);
         }

@@ -5,110 +5,110 @@ using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 namespace StateLandGovernance.GovernanceIntelligence.Domain.ValueObjects;
 
 public sealed record ProjectLocationInput(
-    string Province,
-    string District,
-    string DivisionalSecretariatDivision,
-    string GramaNiladhariDivision,
-    string Description
+    string? Province,
+    string? District,
+    string? DivisionalSecretariatDivision,
+    string? GramaNiladhariDivision,
+    string? Description
 );
 
 public sealed record LandRequirementInput(
     bool RequiresLand,
     decimal? ExtentHectares,
-    string LandType,
-    string AllocationDetails,
+    string? LandType,
+    string? AllocationDetails,
     bool? ResettlementApplicable
 );
 
 public sealed record PreliminaryAssessmentInput(
     bool? PreFeasibilityDone,
-    string PreFeasibilityRef,
+    string? PreFeasibilityRef,
     bool? EiaDone,
-    string EiaRef,
-    IReadOnlyList<string> AssessmentReportReferences
+    string? EiaRef,
+    IReadOnlyList<string>? AssessmentReportReferences
 );
 
 public sealed record PolicyAlignmentInput(
-    IReadOnlyList<string> DeclaredPolicies,
-    string AlignmentExplanation
+    IReadOnlyList<string>? DeclaredPolicies,
+    string? AlignmentExplanation
 );
 
 public sealed record StakeholderInput(
-    IReadOnlyList<string> ExpectedStakeholders,
-    IReadOnlyList<string> ConsultedStakeholders,
+    IReadOnlyList<string>? ExpectedStakeholders,
+    IReadOnlyList<string>? ConsultedStakeholders,
     bool? DuplicationAssessmentSupplied,
-    string OverlapMitigationRef
+    string? OverlapMitigationRef
 );
 
 public sealed record ResultFrameworkNodeInput(
-    string NodeId,
-    string NodeType, // Activity, Output, Outcome, Impact
-    string Title,
-    string ParentNodeId,
-    IReadOnlyList<string> KpiReferences
+    string? NodeId,
+    string? NodeType, // Activity, Output, Outcome, Impact
+    string? Title,
+    string? ParentNodeId,
+    IReadOnlyList<string>? KpiReferences
 );
 
 public sealed record ResultFrameworkInput(
-    IReadOnlyList<ResultFrameworkNodeInput> Nodes
+    IReadOnlyList<ResultFrameworkNodeInput>? Nodes
 );
 
 public sealed record NegativeImpactItemInput(
-    string ImpactId,
-    string Description,
-    string MitigationPlanRef
+    string? ImpactId,
+    string? Description,
+    string? MitigationPlanRef
 );
 
 public sealed record ImpactAssessmentInput(
     bool? ImpactAssessmentApplicable,
-    IReadOnlyList<NegativeImpactItemInput> NegativeImpacts
+    IReadOnlyList<NegativeImpactItemInput>? NegativeImpacts
 );
 
 public sealed record RiskItemInput(
-    string RiskId,
-    string Description,
-    string MitigationStrategy,
+    string? RiskId,
+    string? Description,
+    string? MitigationStrategy,
     bool IsAssumption
 );
 
 public sealed record RiskFrameworkInput(
-    IReadOnlyList<RiskItemInput> Risks
+    IReadOnlyList<RiskItemInput>? Risks
 );
 
 public sealed record KpiInput(
-    string KpiId,
-    string OutputOrOutcomeRef,
-    string UnitOfMeasure,
+    string? KpiId,
+    string? OutputOrOutcomeRef,
+    string? UnitOfMeasure,
     decimal? BaselineValue,
     int? BaselineYear,
     decimal? TargetValue,
-    string MeansOfVerification,
-    string DataSource,
-    string ResponsibleRole
+    string? MeansOfVerification,
+    string? DataSource,
+    string? ResponsibleRole
 );
 
 public sealed record MonitoringPlanInput(
-    IReadOnlyList<KpiInput> Kpis
+    IReadOnlyList<KpiInput>? Kpis
 );
 
 public sealed record CostComponentInput(
-    string ComponentId,
-    string Name,
+    string? ComponentId,
+    string? Name,
     decimal Amount
 );
 
 public sealed record BudgetInput(
     decimal SubmittedProjectBudget,
-    IReadOnlyList<CostComponentInput> CostComponents
+    IReadOnlyList<CostComponentInput>? CostComponents
 );
 
 public sealed record FinancingSourceInput(
-    string SourceId,
-    string Name,
+    string? SourceId,
+    string? Name,
     decimal Amount
 );
 
 public sealed record FinancingInput(
-    IReadOnlyList<FinancingSourceInput> FinancingSources,
+    IReadOnlyList<FinancingSourceInput>? FinancingSources,
     bool RevenueExpected,
     decimal? RevenueForecastAmount
 );
@@ -121,22 +121,22 @@ public sealed record SocialSafeguardInput(
 );
 
 public sealed record ImplementationActivityInput(
-    string ActivityId,
-    string Name,
-    string ResponsibleRole
+    string? ActivityId,
+    string? Name,
+    string? ResponsibleRole
 );
 
 public sealed record ImplementationInput(
-    IReadOnlyList<ImplementationActivityInput> Activities,
-    string OAndMArrangement,
+    IReadOnlyList<ImplementationActivityInput>? Activities,
+    string? OAndMArrangement,
     decimal? OAndMCost,
-    string OAndMFundingSource
+    string? OAndMFundingSource
 );
 
 public sealed record EconomicAppraisalInput(
-    string SelectedMethod,
+    string? SelectedMethod,
     decimal? DiscountRate,
-    IReadOnlyList<decimal> CashFlows,
+    IReadOnlyList<decimal>? CashFlows,
     CashFlowPeriod CashFlowPeriod,
     decimal? SubmittedNpv,
     decimal? SubmittedIrr,
@@ -148,8 +148,8 @@ public sealed record EconomicAppraisalInput(
 );
 
 public sealed record EvidenceReferenceInput(
-    string EvidenceId,
-    string ReferenceNumber,
+    string? EvidenceId,
+    string? ReferenceNumber,
     EvidenceStatus VerificationStatus
 );
 
@@ -158,19 +158,19 @@ public sealed record EvidenceReferenceInput(
 /// </summary>
 public sealed record ProposalComplianceInput(
     string ProposalId,
-    ProjectLocationInput Location,
-    LandRequirementInput LandRequirement,
-    PreliminaryAssessmentInput PreliminaryAssessment,
-    PolicyAlignmentInput PolicyAlignment,
-    StakeholderInput Stakeholders,
-    ResultFrameworkInput ResultFramework,
-    ImpactAssessmentInput ImpactAssessment,
-    RiskFrameworkInput RiskFramework,
-    MonitoringPlanInput MonitoringPlan,
-    BudgetInput Budget,
-    FinancingInput Financing,
-    SocialSafeguardInput SocialSafeguard,
-    ImplementationInput Implementation,
-    EconomicAppraisalInput EconomicAppraisal,
-    IReadOnlyList<EvidenceReferenceInput> EvidenceReferences
+    ProjectLocationInput? Location = null,
+    LandRequirementInput? LandRequirement = null,
+    PreliminaryAssessmentInput? PreliminaryAssessment = null,
+    PolicyAlignmentInput? PolicyAlignment = null,
+    StakeholderInput? Stakeholders = null,
+    ResultFrameworkInput? ResultFramework = null,
+    ImpactAssessmentInput? ImpactAssessment = null,
+    RiskFrameworkInput? RiskFramework = null,
+    MonitoringPlanInput? MonitoringPlan = null,
+    BudgetInput? Budget = null,
+    FinancingInput? Financing = null,
+    SocialSafeguardInput? SocialSafeguard = null,
+    ImplementationInput? Implementation = null,
+    EconomicAppraisalInput? EconomicAppraisal = null,
+    IReadOnlyList<EvidenceReferenceInput>? EvidenceReferences = null
 );

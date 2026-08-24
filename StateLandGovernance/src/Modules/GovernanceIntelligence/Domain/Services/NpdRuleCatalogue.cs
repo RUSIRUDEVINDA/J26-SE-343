@@ -223,13 +223,15 @@ public static class NpdRuleCatalogue
     // 6. NPD-POL-001
     private static ComplianceFinding EvaluatePolicyAlignment(ProposalComplianceInput input)
     {
-        bool hasPolicies = input.PolicyAlignment != null && input.PolicyAlignment.DeclaredPolicies != null && input.PolicyAlignment.DeclaredPolicies.Count > 0;
+        var pol = input.PolicyAlignment;
+        int count = pol?.DeclaredPolicies?.Count ?? 0;
+        bool hasPolicies = pol != null && count > 0;
 
         return new ComplianceFinding(
             "NPD-POL-001", "1.0", RuleEvaluationType.PolicyAlignmentDeclaration, RuleApplicability.Applicable,
             hasPolicies ? RuleResultStatus.RequiresHumanReview : RuleResultStatus.InsufficientInformation,
             "Low", false, true,
-            hasPolicies ? $"Declared {input.PolicyAlignment.DeclaredPolicies.Count} alignment policies." : "No national policy declarations found.",
+            hasPolicies ? $"Declared {count} alignment policies." : "No national policy declarations found.",
             "Relevant national policies, strategies, or master plans should be identified.",
             hasPolicies ? EvidenceStatus.Provided : EvidenceStatus.Missing, CalculationStatus.Calculated,
             NpdSource with { SourceSection = "Item 8 — Relationship to National Policies" },
@@ -302,11 +304,12 @@ public static class NpdRuleCatalogue
             );
         }
 
-        var duplicateIds = rf.Nodes.GroupBy(n => n.NodeId).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
-        var nodeMap = rf.Nodes.ToDictionary(n => n.NodeId, n => n);
+        var validNodes = rf.Nodes.Where(n => !string.IsNullOrWhiteSpace(n.NodeId)).ToList();
+        var duplicateIds = validNodes.GroupBy(n => n.NodeId!).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+        var nodeMap = validNodes.ToDictionary(n => n.NodeId!, n => n);
 
         var orphans = rf.Nodes.Where(n => !string.Equals(n.NodeType, "Impact", StringComparison.OrdinalIgnoreCase) &&
-                                          (string.IsNullOrWhiteSpace(n.ParentNodeId) || !nodeMap.ContainsKey(n.ParentNodeId))).ToList();
+                                          (string.IsNullOrWhiteSpace(n.ParentNodeId) || !nodeMap.ContainsKey(n.ParentNodeId!))).ToList();
 
         bool ok = duplicateIds.Count == 0 && orphans.Count == 0;
 
@@ -331,10 +334,10 @@ public static class NpdRuleCatalogue
             return new ComplianceFinding(
                 "NPD-IMPACT-001", "1.0", RuleEvaluationType.ImpactAssessment, RuleApplicability.Undetermined,
                 RuleResultStatus.InsufficientInformation, "Medium", false, true,
-                "Impact assessment applicability undetermined.", "Determine negative impact assessment applicability.",
+                "Negative impact assessment applicability is undetermined.", "Declare whether negative impact assessment applies.",
                 EvidenceStatus.Missing, CalculationStatus.MissingInputs,
                 NpdSource with { SourceSection = "Item 12 — Negative Impact Assessment" },
-                "Specify whether negative impact assessment applies."
+                "Specify negative impact assessment applicability."
             );
         }
 
@@ -350,14 +353,15 @@ public static class NpdRuleCatalogue
             );
         }
 
-        bool hasImpacts = imp.NegativeImpacts != null && imp.NegativeImpacts.Count > 0 &&
-                         imp.NegativeImpacts.All(i => !string.IsNullOrWhiteSpace(i.MitigationPlanRef));
+        int impactCount = imp.NegativeImpacts?.Count ?? 0;
+        bool hasImpacts = imp.NegativeImpacts != null && impactCount > 0 &&
+                          imp.NegativeImpacts.All(i => !string.IsNullOrWhiteSpace(i.MitigationPlanRef));
 
         return new ComplianceFinding(
             "NPD-IMPACT-001", "1.0", RuleEvaluationType.ImpactAssessment, RuleApplicability.Applicable,
             hasImpacts ? RuleResultStatus.Compliant : RuleResultStatus.InsufficientInformation,
             hasImpacts ? "Low" : "Medium", false, !hasImpacts,
-            hasImpacts ? $"Identified {imp.NegativeImpacts.Count} negative impacts with mitigations." : "Negative impacts or mitigation plan references missing.",
+            hasImpacts ? $"Identified {impactCount} negative impacts with mitigations." : "Negative impacts or mitigation plan references missing.",
             "All identified negative impacts must include mitigation plan references.",
             hasImpacts ? EvidenceStatus.Provided : EvidenceStatus.Missing, CalculationStatus.Calculated,
             NpdSource with { SourceSection = "Item 12 — Negative Impact Assessment" },
@@ -369,14 +373,15 @@ public static class NpdRuleCatalogue
     private static ComplianceFinding EvaluateRiskFramework(ProposalComplianceInput input)
     {
         var rf = input.RiskFramework;
-        bool ok = rf != null && rf.Risks != null && rf.Risks.Count > 0 &&
+        int riskCount = rf?.Risks?.Count ?? 0;
+        bool ok = rf != null && rf.Risks != null && riskCount > 0 &&
                   rf.Risks.All(r => !string.IsNullOrWhiteSpace(r.RiskId) && !string.IsNullOrWhiteSpace(r.Description));
 
         return new ComplianceFinding(
             "NPD-RISK-001", "1.0", RuleEvaluationType.RiskFramework, RuleApplicability.Applicable,
             ok ? RuleResultStatus.Compliant : RuleResultStatus.InsufficientInformation,
             ok ? "Low" : "Medium", false, false,
-            ok ? $"Risk framework defined with {rf.Risks.Count} entries." : "Risk framework incomplete or missing.",
+            ok ? $"Risk framework defined with {riskCount} entries." : "Risk framework incomplete or missing.",
             "Project risk framework must define risks, descriptions, and mitigations.",
             ok ? EvidenceStatus.Provided : EvidenceStatus.Missing, CalculationStatus.Calculated,
             NpdSource with { SourceSection = "Item 13 — Risk and Assumptions" },
@@ -555,13 +560,16 @@ public static class NpdRuleCatalogue
     private static ComplianceFinding EvaluateOperationMaintenanceCost(ProposalComplianceInput input)
     {
         var imp = input.Implementation;
-        bool ok = imp != null && !string.IsNullOrWhiteSpace(imp.OAndMArrangement) && imp.OAndMCost.HasValue && !string.IsNullOrWhiteSpace(imp.OAndMFundingSource);
+        string? arr = imp?.OAndMArrangement;
+        decimal? cost = imp?.OAndMCost;
+        string? src = imp?.OAndMFundingSource;
+        bool ok = !string.IsNullOrWhiteSpace(arr) && cost.HasValue && !string.IsNullOrWhiteSpace(src);
 
         return new ComplianceFinding(
             "NPD-SUST-001", "1.0", RuleEvaluationType.Sustainability, RuleApplicability.Applicable,
             ok ? RuleResultStatus.Compliant : RuleResultStatus.InsufficientInformation,
             ok ? "Low" : "Medium", false, false,
-            ok ? $"O&M Arrangement: {imp.OAndMArrangement}, Cost: {imp.OAndMCost}, Funding: {imp.OAndMFundingSource}" : "O&M arrangement or cost breakdown missing.",
+            ok ? $"O&M Arrangement: {arr}, Cost: {cost}, Funding: {src}" : "O&M arrangement or cost breakdown missing.",
             "Post-completion operation and maintenance arrangements must be specified.",
             ok ? EvidenceStatus.Provided : EvidenceStatus.Missing, CalculationStatus.Calculated,
             NpdSource with { SourceSection = "Items 17.3 & 22 — O&M Guidance" },
@@ -615,13 +623,14 @@ public static class NpdRuleCatalogue
     private static ComplianceFinding EvaluateGenderPerspective(ProposalComplianceInput input)
     {
         var soc = input.SocialSafeguard;
-        bool declared = soc != null && soc.GenderConsidered.HasValue;
+        bool? val = soc?.GenderConsidered;
+        bool declared = val.HasValue;
 
         return new ComplianceFinding(
             "NPD-SOC-002", "1.0", RuleEvaluationType.SocialSafeguard, RuleApplicability.Applicable,
             declared ? RuleResultStatus.RequiresHumanReview : RuleResultStatus.InsufficientInformation,
             "Low", false, true,
-            declared ? $"Gender consideration declared: {soc.GenderConsidered}." : "Gender consideration status missing.",
+            declared ? $"Gender consideration declared: {val}." : "Gender consideration status missing.",
             "Proposal should evaluate gender perspectives.",
             declared ? EvidenceStatus.Provided : EvidenceStatus.Missing, CalculationStatus.Calculated,
             NpdSource with { SourceSection = "Item 19 — Gender Perspective" },
@@ -633,13 +642,14 @@ public static class NpdRuleCatalogue
     private static ComplianceFinding EvaluateAccessibilityConsideration(ProposalComplianceInput input)
     {
         var soc = input.SocialSafeguard;
-        bool declared = soc != null && soc.AccessibilityConsidered.HasValue;
+        bool? val = soc?.AccessibilityConsidered;
+        bool declared = val.HasValue;
 
         return new ComplianceFinding(
             "NPD-SOC-003", "1.0", RuleEvaluationType.SocialSafeguard, RuleApplicability.Applicable,
             declared ? RuleResultStatus.Compliant : RuleResultStatus.InsufficientInformation,
             "Low", false, false,
-            declared ? $"Accessibility considered: {soc.AccessibilityConsidered}." : "Accessibility consideration status missing.",
+            declared ? $"Accessibility considered: {val}." : "Accessibility consideration status missing.",
             "Proposal should evaluate accessibility for differently-abled persons.",
             declared ? EvidenceStatus.Provided : EvidenceStatus.Missing, CalculationStatus.Calculated,
             NpdSource with { SourceSection = "Item 20 — Differently-Abled Persons" },
