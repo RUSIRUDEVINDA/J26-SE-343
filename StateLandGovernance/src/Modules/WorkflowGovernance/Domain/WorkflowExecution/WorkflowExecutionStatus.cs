@@ -3,5 +3,7 @@ namespace StateLandGovernance.WorkflowGovernance.Domain.WorkflowExecution;
 public enum WorkflowExecutionStatus
 {
     Active,
-    AwaitingConsensus
+    AwaitingConsensus,
+    ReadyForFinalDecision,
+    Completed
 }
