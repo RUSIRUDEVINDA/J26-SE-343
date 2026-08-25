@@ -326,4 +326,38 @@ public sealed class WorkflowPlan
         Revision = nextRevision;
         _domainEvents.Add(ev);
     }
+    public StateLandGovernance.WorkflowGovernance.Domain.WorkflowExecution.WorkflowExecutionDefinition CreateExecutionDefinition()
+    {
+        if (Status != WorkflowPlanStatus.Approved)
+            throw new StateLandGovernance.WorkflowGovernance.Domain.Exceptions.InvalidWorkflowPlanStateException("Cannot create execution from a non-Approved plan.");
+        if (!ApprovedAt.HasValue)
+            throw new StateLandGovernance.WorkflowGovernance.Domain.Exceptions.InvalidWorkflowPlanStateException("Approved plan must have an ApprovedAt timestamp.");
+
+        var stageDefs = _stages.Select(s => new StateLandGovernance.WorkflowGovernance.Domain.WorkflowExecution.WorkflowStageDefinition(
+            s.Id,
+            s.StageCode,
+            s.InstitutionCode,
+            s.StageType,
+            s.RequiredOfficerCapability,
+            s.RoutingReasonCode,
+            s.ReasonDescription,
+            s.TargetDurationDays,
+            s.IsFinalDecision,
+            s.Prerequisites.ToList().AsReadOnly()
+        )).ToList().AsReadOnly();
+
+        return new StateLandGovernance.WorkflowGovernance.Domain.WorkflowExecution.WorkflowExecutionDefinition(
+            Id,
+            Revision,
+            LeaseCaseId,
+            RuleSetReference,
+            CreatedAt,
+            ApprovedAt.Value,
+            stageDefs
+        );
+    }
 }
+
+
+
+
