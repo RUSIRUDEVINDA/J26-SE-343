@@ -19,4 +19,9 @@ public interface IRegulatoryComplianceEngine
     /// Evaluates structured proposal facts against source-backed NPD operational compliance rules.
     /// </summary>
     ComplianceResult EvaluateNpd(ProposalComplianceInput input, DateTime evaluationTimestamp);
+
+    /// <summary>
+    /// Evaluates structured proposal facts against loaded regulatory compliance rule definitions.
+    /// </summary>
+    ComplianceResult EvaluateNpd(ProposalComplianceInput input, IEnumerable<ComplianceRuleDefinition> activeRules, DateTime evaluationTimestamp);
 }

@@ -63,10 +63,16 @@ public sealed class RegulatoryComplianceEngine : IRegulatoryComplianceEngine
 
     public ComplianceResult EvaluateNpd(ProposalComplianceInput input, DateTime evaluationTimestamp)
     {
-        if (input is null) throw new ArgumentNullException(nameof(input));
+        return EvaluateNpd(input, NpdRuleCatalogue.GetDefaultRuleDefinitions(), evaluationTimestamp);
+    }
 
-        // 1. Evaluate all 24 NPD Operational Rules
-        var findings = NpdRuleCatalogue.EvaluateAll(input);
+    public ComplianceResult EvaluateNpd(ProposalComplianceInput input, IEnumerable<ComplianceRuleDefinition> activeRules, DateTime evaluationTimestamp)
+    {
+        if (input is null) throw new ArgumentNullException(nameof(input));
+        if (activeRules is null) throw new ArgumentNullException(nameof(activeRules));
+
+        // 1. Evaluate rules from active definitions
+        var findings = NpdRuleCatalogue.EvaluateAll(input, activeRules);
 
         // 2. Determine Overall Compliance Status Precedence:
         //    a. NonCompliant ONLY if a finding is NonCompliant AND IsBlocking == true
@@ -94,7 +100,7 @@ public sealed class RegulatoryComplianceEngine : IRegulatoryComplianceEngine
         }
         else if (findings.Any(f => f.Status == RuleResultStatus.NonCompliant))
         {
-            // Non-blocking non-compliant findings fall to RequiresHumanReview / Conditional for operational review
+            // Non-blocking non-compliant findings fall to RequiresHumanReview for operational review
             overallStatus = ComplianceStatus.RequiresHumanReview;
         }
         else
@@ -102,7 +108,7 @@ public sealed class RegulatoryComplianceEngine : IRegulatoryComplianceEngine
             overallStatus = ComplianceStatus.Compliant;
         }
 
-        // 3. Generate SHA-256 Deterministic Evaluation ID (Excludes raw EvaluationTimestamp)
+        // 3. Generate SHA-256 Deterministic Evaluation ID
         var deterministicId = GenerateDeterministicEvaluationId(input.ProposalId ?? "PROP-NPD", findings);
 
         return new ComplianceResult(overallStatus, findings, deterministicId, evaluationTimestamp);

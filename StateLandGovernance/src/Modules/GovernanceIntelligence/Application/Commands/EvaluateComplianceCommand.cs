@@ -32,17 +32,20 @@ public sealed class EvaluateComplianceCommandHandler
     private readonly IRegulatoryRuleProvider _ruleProvider;
     private readonly IRegulatoryComplianceEngine _complianceEngine;
     private readonly IGovernanceEvaluationStore _evaluationStore;
+    private readonly IComplianceRuleCatalogue? _ruleCatalogue;
     private readonly TimeProvider _timeProvider;
 
     public EvaluateComplianceCommandHandler(
         IRegulatoryRuleProvider ruleProvider,
         IRegulatoryComplianceEngine complianceEngine,
         IGovernanceEvaluationStore evaluationStore,
+        IComplianceRuleCatalogue? ruleCatalogue = null,
         TimeProvider? timeProvider = null)
     {
         _ruleProvider = ruleProvider ?? throw new ArgumentNullException(nameof(ruleProvider));
         _complianceEngine = complianceEngine ?? throw new ArgumentNullException(nameof(complianceEngine));
         _evaluationStore = evaluationStore ?? throw new ArgumentNullException(nameof(evaluationStore));
+        _ruleCatalogue = ruleCatalogue;
         _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
@@ -53,10 +56,51 @@ public sealed class EvaluateComplianceCommandHandler
         DateTime utcTimestamp = _timeProvider.GetUtcNow().UtcDateTime;
         ComplianceResult result;
 
+        string? proposalId = string.IsNullOrWhiteSpace(command.Input?.ProposalId) ? null : command.Input.ProposalId;
+        string catalogueSource = "InMemoryDefault";
+
         if (command.Input != null)
         {
             var domainInput = MapDtoToDomainInput(command.Input);
-            result = _complianceEngine.EvaluateNpd(domainInput, utcTimestamp);
+            if (_ruleCatalogue != null)
+            {
+                try
+                {
+                    var activeRules = await _ruleCatalogue.GetActiveRulesAsync(utcTimestamp, cancellationToken);
+                    catalogueSource = _ruleCatalogue.GetType().Name.Contains("Postgres", StringComparison.OrdinalIgnoreCase)
+                        ? "PostgreSQL"
+                        : "InMemoryTest";
+                    result = _complianceEngine.EvaluateNpd(domainInput, activeRules, utcTimestamp);
+                }
+                catch (Exception ex)
+                {
+                    catalogueSource = "PostgreSQL (Unavailable/Misconfigured)";
+                    var sysFinding = new ComplianceFinding(
+                        "SYS-CATALOGUE-001",
+                        "1.0",
+                        RuleEvaluationType.Completeness,
+                        RuleApplicability.Applicable,
+                        RuleResultStatus.RequiresHumanReview,
+                        "High",
+                        IsBlocking: true,
+                        RequiresHumanReview: true,
+                        ObservedValueSummary: $"Regulatory rule catalogue is unavailable or misconfigured: {ex.Message}",
+                        ExpectedRequirement: "PostgreSQL regulatory compliance rule catalogue must be available and valid.",
+                        EvidenceStatus: EvidenceStatus.Missing,
+                        CalculationStatus: CalculationStatus.MissingInputs,
+                        new RuleSourceMetadata(RuleSourceType.ResearchConfiguration, "System Infrastructure", "PostgresComplianceRuleCatalogue", "Configuration"),
+                        "Inspect PostgreSQL governance_intelligence.compliance_rules table configuration."
+                    );
+
+                    var hashBytes = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes($"SYS-CATALOGUE|{proposalId}|{ex.Message}"));
+                    var deterministicId = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                    result = new ComplianceResult(ComplianceStatus.RequiresReview, new[] { sysFinding }, deterministicId, utcTimestamp);
+                }
+            }
+            else
+            {
+                result = _complianceEngine.EvaluateNpd(domainInput, utcTimestamp);
+            }
         }
         else
         {
@@ -76,10 +120,10 @@ public sealed class EvaluateComplianceCommandHandler
             EngineType.RegulatoryCompliance,
             command.ActionName ?? "EvaluateCompliance",
             result.Status.ToString(),
-            $"Findings: {result.Findings.Count}, Violations: {result.Violations.Count}, Conditions: {result.Conditions.Count}",
+            $"Findings: {result.Findings.Count}, Violations: {result.Violations.Count}, Conditions: {result.Conditions.Count}, CatalogueSource={catalogueSource}",
             utcTimestamp);
 
-        await _evaluationStore.StoreComplianceEvaluationAsync(auditRecord, result, command.ActionName ?? "EvaluateCompliance", cancellationToken);
+        await _evaluationStore.StoreComplianceEvaluationAsync(auditRecord, result, command.ActionName ?? "EvaluateCompliance", proposalId, cancellationToken);
 
         // Map to result DTO
         var violationDtos = result.Violations
@@ -136,7 +180,7 @@ public sealed class EvaluateComplianceCommandHandler
     private static ProposalComplianceInput MapLegacyToProposalInput(EvaluateComplianceCommand cmd)
     {
         return new ProposalComplianceInput(
-            ProposalId: "LEGACY-PROP-001",
+            ProposalId: string.Empty,
             Location: new ProjectLocationInput("Western", "Colombo", "Colombo DSD", "GND-101", cmd.ZoningArea ?? "Zoning Area"),
             LandRequirement: new LandRequirementInput(true, 1.0m, cmd.ProposedUse ?? "Commercial", $"Legacy Lease {cmd.LeaseDurationYears} Years", false),
             PreliminaryAssessment: new PreliminaryAssessmentInput(true, "PRE-FEAS-LEGACY", true, "EIA-LEGACY", new[] { "DOC-LEGACY-01" }),
@@ -172,7 +216,7 @@ public sealed class EvaluateComplianceCommandHandler
         }
 
         return new ProposalComplianceInput(
-            dto.ProposalId ?? "PROP-NPD",
+            dto.ProposalId ?? string.Empty,
             dto.Location != null ? new ProjectLocationInput(dto.Location.Province, dto.Location.District, dto.Location.DivisionalSecretariatDivision, dto.Location.GramaNiladhariDivision, dto.Location.Description) : null,
             dto.LandRequirement != null ? new LandRequirementInput(dto.LandRequirement.RequiresLand, dto.LandRequirement.ExtentHectares, dto.LandRequirement.LandType, dto.LandRequirement.AllocationDetails, dto.LandRequirement.ResettlementApplicable) : null,
             dto.PreliminaryAssessment != null ? new PreliminaryAssessmentInput(dto.PreliminaryAssessment.PreFeasibilityDone, dto.PreliminaryAssessment.PreFeasibilityRef, dto.PreliminaryAssessment.EiaDone, dto.PreliminaryAssessment.EiaRef, dto.PreliminaryAssessment.AssessmentReportReferences) : null,
@@ -181,6 +225,7 @@ public sealed class EvaluateComplianceCommandHandler
             dto.ResultFramework != null && dto.ResultFramework.Nodes != null ? new ResultFrameworkInput(dto.ResultFramework.Nodes.Select(n => new ResultFrameworkNodeInput(n.NodeId, n.NodeType, n.Title, n.ParentNodeId, n.KpiReferences)).ToList()) : null,
             dto.ImpactAssessment != null ? new ImpactAssessmentInput(dto.ImpactAssessment.ImpactAssessmentApplicable, dto.ImpactAssessment.NegativeImpacts?.Select(i => new NegativeImpactItemInput(i.ImpactId, i.Description, i.MitigationPlanRef)).ToList()) : null,
             dto.RiskFramework != null && dto.RiskFramework.Risks != null ? new RiskFrameworkInput(dto.RiskFramework.Risks.Select(r => new RiskItemInput(r.RiskId, r.Description, r.MitigationStrategy, r.IsAssumption)).ToList()) : null,
+            dto.DisasterRiskAssessment != null ? new DisasterRiskAssessmentInput(dto.DisasterRiskAssessment.Applicable, dto.DisasterRiskAssessment.AssessmentCompleted, dto.DisasterRiskAssessment.AssessmentReference, dto.DisasterRiskAssessment.HazardsConsidered, dto.DisasterRiskAssessment.MitigationMeasures, dto.DisasterRiskAssessment.ResponsibleRole, dto.DisasterRiskAssessment.Remarks) : null,
             dto.MonitoringPlan != null && dto.MonitoringPlan.Kpis != null ? new MonitoringPlanInput(dto.MonitoringPlan.Kpis.Select(k => new KpiInput(k.KpiId, k.OutputOrOutcomeRef, k.UnitOfMeasure, k.BaselineValue, k.BaselineYear, k.TargetValue, k.MeansOfVerification, k.DataSource, k.ResponsibleRole)).ToList()) : null,
             dto.Budget != null ? new BudgetInput(dto.Budget.SubmittedProjectBudget, dto.Budget.CostComponents?.Select(c => new CostComponentInput(c.ComponentId, c.Name, c.Amount)).ToList()) : null,
             dto.Financing != null ? new FinancingInput(dto.Financing.FinancingSources?.Select(f => new FinancingSourceInput(f.SourceId, f.Name, f.Amount)).ToList(), dto.Financing.RevenueExpected, dto.Financing.RevenueForecastAmount) : null,
