@@ -24,37 +24,122 @@ public static class NpdRuleCatalogue
 
     public static List<ComplianceFinding> EvaluateAll(ProposalComplianceInput input)
     {
-        if (input == null) throw new ArgumentNullException(nameof(input));
+        return EvaluateAll(input, GetDefaultRuleDefinitions());
+    }
 
-        var findings = new List<ComplianceFinding>
+    public static List<ComplianceFinding> EvaluateAll(ProposalComplianceInput input, IEnumerable<ComplianceRuleDefinition> activeRules)
+    {
+        if (input == null) throw new ArgumentNullException(nameof(input));
+        if (activeRules == null) throw new ArgumentNullException(nameof(activeRules));
+
+        var findings = new List<ComplianceFinding>();
+
+        foreach (var ruleDef in activeRules.Where(r => r != null && r.Enabled))
         {
-            EvaluateProjectLocation(input),
-            EvaluateLandRequirement(input),
-            EvaluateProjectReadiness(input),
-            EvaluateFrameworkCoherence(input),
-            EvaluateRationaleNeed(input),
-            EvaluatePolicyAlignment(input),
-            EvaluateStakeholderCoordination(input),
-            EvaluateDuplicationConsideration(input),
-            EvaluateResultsFramework(input),
-            EvaluateNegativeImpactAssessment(input),
-            EvaluateRiskFramework(input),
-            EvaluateDisasterRiskReduction(input),
-            EvaluateMonitoringEvaluationPlan(input),
-            EvaluateBudgetCompleteness(input),
-            EvaluateFinancingReconciliation(input),
-            EvaluateRevenueForecastConsistency(input),
-            EvaluateOperationMaintenanceCost(input),
-            EvaluateResettlementSafeguard(input),
-            EvaluateGenderPerspective(input),
-            EvaluateAccessibilityConsideration(input),
-            EvaluateImplementationArrangements(input),
-            EvaluateSustainability(input),
-            EvaluateEconomicFinancialAppraisal(input),
-            EvaluateEvidenceTraceability(input)
-        };
+            ComplianceFinding finding = EvaluateSingleRule(input, ruleDef);
+            findings.Add(ApplyRuleDefinitionMetadata(finding, ruleDef));
+        }
 
         return findings;
+    }
+
+    private static ComplianceFinding EvaluateSingleRule(ProposalComplianceInput input, ComplianceRuleDefinition ruleDef)
+    {
+        return (ruleDef.CalculationKey ?? ruleDef.RuleCode) switch
+        {
+            "ProjectLocationCheck" or "NPD-LOC-001" => EvaluateProjectLocation(input),
+            "LandRequirementCheck" or "NPD-LAND-001" => EvaluateLandRequirement(input),
+            "ProjectReadinessCheck" or "NPD-READY-001" => EvaluateProjectReadiness(input),
+            "CrossFieldCoherence" or "NPD-CONS-001" => EvaluateFrameworkCoherence(input),
+            "ProblemRationaleCheck" or "NPD-RAT-001" => EvaluateRationaleNeed(input),
+            "PolicyAlignmentCheck" or "NPD-POL-001" => EvaluatePolicyAlignment(input),
+            "StakeholderConsultation" or "NPD-STK-001" => EvaluateStakeholderCoordination(input),
+            "DuplicationAssessment" or "NPD-STK-002" => EvaluateDuplicationConsideration(input),
+            "ResultsFrameworkLogic" or "NPD-RESULT-001" => EvaluateResultsFramework(input),
+            "NegativeImpactCheck" or "NPD-IMPACT-001" => EvaluateNegativeImpactAssessment(input),
+            "RiskFrameworkCheck" or "NPD-RISK-001" => EvaluateRiskFramework(input),
+            "DisasterRiskReduction" or "NPD-DRR-001" => EvaluateDisasterRiskReduction(input),
+            "MonitoringPlanKpis" or "NPD-ME-001" => EvaluateMonitoringEvaluationPlan(input),
+            "BudgetReconciliation" or "NPD-BUD-001" => EvaluateBudgetCompleteness(input),
+            "FinancingReconciliation" or "NPD-FIN-001" => EvaluateFinancingReconciliation(input),
+            "RevenueForecastCheck" or "NPD-FIN-002" => EvaluateRevenueForecastConsistency(input),
+            "OperationMaintenanceCost" or "NPD-SUST-001" => EvaluateOperationMaintenanceCost(input),
+            "ResettlementSafeguard" or "NPD-SOC-001" => EvaluateResettlementSafeguard(input),
+            "GenderPerspectiveCheck" or "NPD-SOC-002" => EvaluateGenderPerspective(input),
+            "AccessibilityCheck" or "NPD-SOC-003" => EvaluateAccessibilityConsideration(input),
+            "ImplementationRoles" or "NPD-IMP-001" => EvaluateImplementationArrangements(input),
+            "SustainabilityArrangements" or "NPD-SUST-002" => EvaluateSustainability(input),
+            "EconomicAppraisal" or "NPD-ECO-001" => EvaluateEconomicFinancialAppraisal(input),
+            "EvidenceTraceability" or "NPD-EVD-001" => EvaluateEvidenceTraceability(input),
+            _ => new ComplianceFinding(
+                ruleDef.RuleCode,
+                ruleDef.RuleVersion,
+                ruleDef.EvaluationType,
+                RuleApplicability.Applicable,
+                RuleResultStatus.RequiresHumanReview,
+                "High",
+                IsBlocking: true,
+                RequiresHumanReview: true,
+                ObservedValueSummary: $"Unmapped calculation key '{ruleDef.CalculationKey}' for rule '{ruleDef.RuleCode}'.",
+                ExpectedRequirement: "Rule must map to a valid C# deterministic evaluator.",
+                EvidenceStatus: EvidenceStatus.Missing,
+                CalculationStatus: CalculationStatus.MissingInputs,
+                ruleDef.SourceReference,
+                "Review rule configuration and calculation key mapping."
+            )
+        };
+    }
+
+    private static ComplianceFinding ApplyRuleDefinitionMetadata(ComplianceFinding finding, ComplianceRuleDefinition ruleDef)
+    {
+        return finding with
+        {
+            RuleCode = ruleDef.RuleCode,
+            RuleVersion = ruleDef.RuleVersion,
+            Category = ruleDef.EvaluationType,
+            Severity = ruleDef.Severity,
+            IsBlocking = ruleDef.IsBlocking,
+            SourceReference = ruleDef.SourceReference with
+            {
+                SourceAuthority = ruleDef.SourceReference.SourceAuthority,
+                SourceDocument = ruleDef.SourceReference.SourceDocument,
+                SourceSection = !string.IsNullOrWhiteSpace(finding.SourceReference?.SourceSection)
+                    ? finding.SourceReference.SourceSection
+                    : ruleDef.SourceReference.SourceSection
+            }
+        };
+    }
+
+    public static IReadOnlyList<ComplianceRuleDefinition> GetDefaultRuleDefinitions()
+    {
+        var emptyParams = new Dictionary<string, string>();
+        return new List<ComplianceRuleDefinition>
+        {
+            new("NPD-LOC-001", "1.0", "Project Location", RuleEvaluationType.Completeness, "Project location hierarchy check", "ProjectLocationCheck", "Medium", false, true, NpdSource with { SourceSection = "Item 3 — Project Location" }, emptyParams),
+            new("NPD-LAND-001", "1.0", "Land Requirement", RuleEvaluationType.Completeness, "Land requirement extent & allocation check", "LandRequirementCheck", "High", false, true, NpdSource with { SourceSection = "Item 4 — Land Requirement" }, emptyParams),
+            new("NPD-READY-001", "1.0", "Project Readiness", RuleEvaluationType.ProjectReadiness, "Project preliminary studies check", "ProjectReadinessCheck", "Medium", false, true, NpdSource with { SourceSection = "Item 5 — Project Preliminary Activities" }, emptyParams),
+            new("NPD-CONS-001", "1.0", "Cross-Field Coherence", RuleEvaluationType.CrossFieldConsistency, "Cross-field consistency check", "CrossFieldCoherence", "High", false, true, NpdSource with { SourceSection = "Items 6–16 — General Coherence Guidance" }, emptyParams),
+            new("NPD-RAT-001", "1.0", "Rationale of Project", RuleEvaluationType.Completeness, "Project problem & rationale check", "ProblemRationaleCheck", "Low", false, true, NpdSource with { SourceSection = "Item 7 — Rationale of Project" }, emptyParams),
+            new("NPD-POL-001", "1.0", "Policy Alignment", RuleEvaluationType.PolicyAlignmentDeclaration, "National policy alignment check", "PolicyAlignmentCheck", "Low", false, true, NpdSource with { SourceSection = "Item 8 — Relationship to National Policies" }, emptyParams),
+            new("NPD-STK-001", "1.0", "Stakeholder Coordination", RuleEvaluationType.StakeholderCoordinationEvidence, "Stakeholder consultation check", "StakeholderConsultation", "Medium", false, true, NpdSource with { SourceSection = "Item 9 — Stakeholder Coordination" }, emptyParams),
+            new("NPD-STK-002", "1.0", "Overlap Consideration", RuleEvaluationType.Completeness, "Duplication & overlap check", "DuplicationAssessment", "Medium", false, true, NpdSource with { SourceSection = "Item 9 — Overlap Consideration" }, emptyParams),
+            new("NPD-RESULT-001", "1.0", "Results Framework", RuleEvaluationType.ResultsFrameworkConsistency, "Results framework logic check", "ResultsFrameworkLogic", "High", false, true, NpdSource with { SourceSection = "Item 10 — Logic Model Guidance" }, emptyParams),
+            new("NPD-IMPACT-001", "1.0", "Negative Impact Assessment", RuleEvaluationType.ImpactAssessment, "Negative impacts check", "NegativeImpactCheck", "Medium", false, true, NpdSource with { SourceSection = "Item 12 — Negative Impact Assessment" }, emptyParams),
+            new("NPD-RISK-001", "1.0", "Risk Framework", RuleEvaluationType.RiskFramework, "Risk framework check", "RiskFrameworkCheck", "Medium", false, true, NpdSource with { SourceSection = "Item 13 — Risk and Assumptions" }, emptyParams),
+            new("NPD-DRR-001", "1.0", "Disaster Risk Reduction", RuleEvaluationType.ImpactAssessment, "DRR assessment check", "DisasterRiskReduction", "Low", false, true, NpdSource with { SourceSection = "Item 14 — Disaster Risk Reduction" }, emptyParams),
+            new("NPD-ME-001", "1.0", "Monitoring and Evaluation", RuleEvaluationType.MonitoringAndEvaluation, "M&E plan KPIs check", "MonitoringPlanKpis", "Medium", false, true, NpdSource with { SourceSection = "Item 15 — Monitoring and Evaluation" }, emptyParams),
+            new("NPD-BUD-001", "1.0", "Project Budget", RuleEvaluationType.Budget, "Budget reconciliation check", "BudgetReconciliation", "High", false, true, NpdSource with { SourceSection = "Item 16 — Project Budget" }, emptyParams),
+            new("NPD-FIN-001", "1.0", "Financing Plan", RuleEvaluationType.Financing, "Financing reconciliation check", "FinancingReconciliation", "High", false, true, NpdSource with { SourceSection = "Item 17 — Financing Plan" }, emptyParams),
+            new("NPD-FIN-002", "1.0", "Revenue Forecast", RuleEvaluationType.Financing, "Revenue forecast consistency check", "RevenueForecastCheck", "Medium", false, true, NpdSource with { SourceSection = "Item 17.2 — Revenue Forecast" }, emptyParams),
+            new("NPD-SUST-001", "1.0", "O&M Guidance", RuleEvaluationType.Sustainability, "Operation & maintenance cost check", "OperationMaintenanceCost", "Medium", false, true, NpdSource with { SourceSection = "Items 17.3 & 22 — O&M Guidance" }, emptyParams),
+            new("NPD-SOC-001", "1.0", "Resettlement", RuleEvaluationType.SocialSafeguard, "Resettlement safeguard check", "ResettlementSafeguard", "High", false, true, NpdSource with { SourceSection = "Item 18 — Resettlement" }, emptyParams),
+            new("NPD-SOC-002", "1.0", "Gender Perspective", RuleEvaluationType.SocialSafeguard, "Gender perspective check", "GenderPerspectiveCheck", "Low", false, true, NpdSource with { SourceSection = "Item 19 — Gender Perspective" }, emptyParams),
+            new("NPD-SOC-003", "1.0", "Differently-Abled Persons", RuleEvaluationType.SocialSafeguard, "Accessibility check", "AccessibilityCheck", "Low", false, true, NpdSource with { SourceSection = "Item 20 — Differently-Abled Persons" }, emptyParams),
+            new("NPD-IMP-001", "1.0", "Implementation Arrangements", RuleEvaluationType.ImplementationReadiness, "Implementation arrangements check", "ImplementationRoles", "Medium", false, true, NpdSource with { SourceSection = "Item 21 — Implementation Arrangements" }, emptyParams),
+            new("NPD-SUST-002", "1.0", "Sustainability", RuleEvaluationType.Sustainability, "Sustainability plan check", "SustainabilityArrangements", "Medium", false, true, NpdSource with { SourceSection = "Item 22 — Sustainability" }, emptyParams),
+            new("NPD-ECO-001", "1.0", "Economic / Financial Appraisal", RuleEvaluationType.EconomicFinancialAppraisal, "Economic financial appraisal recalculations", "EconomicAppraisal", "Low", false, true, NpdSource with { SourceSection = "Item 23 — Economic / Financial Appraisal" }, emptyParams),
+            new("NPD-EVD-001", "1.0", "Guidance on Annexes", RuleEvaluationType.AnnexTraceability, "Evidence traceability check", "EvidenceTraceability", "Low", false, true, NpdSource with { SourceSection = "Guidance on Annexes" }, emptyParams)
+        };
     }
 
     // 1. NPD-LOC-001
@@ -72,14 +157,14 @@ public static class NpdRuleCatalogue
             "1.0",
             RuleEvaluationType.Completeness,
             RuleApplicability.Applicable,
-            complete ? RuleResultStatus.Compliant : RuleResultStatus.NonCompliant,
+            complete ? RuleResultStatus.Compliant : RuleResultStatus.InsufficientInformation,
             complete ? "Low" : "Medium",
             IsBlocking: false,
-            RequiresHumanReview: false,
+            RequiresHumanReview: !complete,
             ObservedValueSummary: loc != null ? $"Province: {loc.Province}, District: {loc.District}, DSD: {loc.DivisionalSecretariatDivision}, GND: {loc.GramaNiladhariDivision}" : "Location missing",
             ExpectedRequirement: "Full project location hierarchy (Province, District, DSD, GND) must be specified.",
             EvidenceStatus: complete ? EvidenceStatus.Provided : EvidenceStatus.Missing,
-            CalculationStatus: CalculationStatus.Calculated,
+            CalculationStatus: complete ? CalculationStatus.Calculated : CalculationStatus.MissingInputs,
             SourceReference: NpdSource with { SourceSection = "Item 3 — Project Location" },
             RecommendedAction: complete ? "No action required." : "Complete missing location hierarchy fields."
         );
@@ -89,7 +174,7 @@ public static class NpdRuleCatalogue
     private static ComplianceFinding EvaluateLandRequirement(ProposalComplianceInput input)
     {
         var land = input.LandRequirement;
-        if (land == null)
+        if (land == null || !land.RequiresLand.HasValue)
         {
             return new ComplianceFinding(
                 "NPD-LAND-001", "1.0", RuleEvaluationType.Completeness, RuleApplicability.Applicable,
@@ -101,16 +186,17 @@ public static class NpdRuleCatalogue
             );
         }
 
-        if (land.RequiresLand)
+        if (land.RequiresLand == true)
         {
             bool detailsPresent = land.ExtentHectares.HasValue && land.ExtentHectares > 0 && !string.IsNullOrWhiteSpace(land.AllocationDetails);
             return new ComplianceFinding(
                 "NPD-LAND-001", "1.0", RuleEvaluationType.Completeness, RuleApplicability.Applicable,
-                detailsPresent ? RuleResultStatus.Compliant : RuleResultStatus.NonCompliant,
-                detailsPresent ? "Low" : "High", false, false,
+                detailsPresent ? RuleResultStatus.Compliant : RuleResultStatus.InsufficientInformation,
+                detailsPresent ? "Low" : "High", false, !detailsPresent,
                 $"RequiresLand: true, Extent: {land.ExtentHectares} ha, Allocation: {land.AllocationDetails}",
                 "Structured land extent and allocation details are required when land is required.",
-                detailsPresent ? EvidenceStatus.Provided : EvidenceStatus.Missing, CalculationStatus.Calculated,
+                detailsPresent ? EvidenceStatus.Provided : EvidenceStatus.Missing,
+                detailsPresent ? CalculationStatus.Calculated : CalculationStatus.MissingInputs,
                 NpdSource with { SourceSection = "Item 4 — Land Requirement" },
                 detailsPresent ? "No action required." : "Supply structured land extent and allocation details."
             );
@@ -165,12 +251,12 @@ public static class NpdRuleCatalogue
     {
         var issues = new List<string>();
 
-        if (input.LandRequirement != null && !input.LandRequirement.RequiresLand && input.LandRequirement.ExtentHectares.HasValue && input.LandRequirement.ExtentHectares > 0)
+        if (input.LandRequirement != null && input.LandRequirement.RequiresLand == false && input.LandRequirement.ExtentHectares.HasValue && input.LandRequirement.ExtentHectares > 0)
         {
             issues.Add("RequiresLand is false but positive LandExtent is declared.");
         }
 
-        if (input.Financing != null && !input.Financing.RevenueExpected && input.Financing.RevenueForecastAmount.HasValue && input.Financing.RevenueForecastAmount > 0)
+        if (input.Financing != null && input.Financing.RevenueExpected == false && input.Financing.RevenueForecastAmount.HasValue && input.Financing.RevenueForecastAmount > 0)
         {
             issues.Add("RevenueExpected is false but positive RevenueForecastAmount is declared.");
         }
@@ -180,12 +266,13 @@ public static class NpdRuleCatalogue
             issues.Add("ResettlementApplicable is false but positive ResettlementCost is declared.");
         }
 
-        if (input.Budget != null && input.Financing != null && input.Financing.FinancingSources != null)
+        if (input.Budget != null && input.Budget.SubmittedProjectBudget.HasValue &&
+            input.Financing != null && input.Financing.FinancingSources != null && input.Financing.FinancingSources.Count > 0 && input.Financing.FinancingSources.All(f => f.Amount.HasValue))
         {
-            decimal totalFinancing = input.Financing.FinancingSources.Sum(f => f.Amount);
-            if (totalFinancing != input.Budget.SubmittedProjectBudget)
+            decimal totalFinancing = input.Financing.FinancingSources.Sum(f => f.Amount!.Value);
+            if (totalFinancing != input.Budget.SubmittedProjectBudget.Value)
             {
-                issues.Add($"FinancingTotal ({totalFinancing}) differs from SubmittedProjectBudget ({input.Budget.SubmittedProjectBudget}).");
+                issues.Add($"FinancingTotal ({totalFinancing}) differs from SubmittedProjectBudget ({input.Budget.SubmittedProjectBudget.Value}).");
             }
         }
 
@@ -392,15 +479,71 @@ public static class NpdRuleCatalogue
     // 12. NPD-DRR-001
     private static ComplianceFinding EvaluateDisasterRiskReduction(ProposalComplianceInput input)
     {
-        // DRR applicability requires explicit data
+        var drr = input.DisasterRiskAssessment;
+        if (drr == null || drr.Applicable == null)
+        {
+            return new ComplianceFinding(
+                "NPD-DRR-001", "1.0", RuleEvaluationType.ImpactAssessment, RuleApplicability.Undetermined,
+                RuleResultStatus.InsufficientInformation, "Low", false, true,
+                "Disaster Risk Reduction applicability is undetermined from current input.",
+                "DRR assessment required when project is in disaster-prone area.",
+                EvidenceStatus.Missing, CalculationStatus.MissingInputs,
+                NpdSource with { SourceSection = "Item 14 — Disaster Risk Reduction" },
+                "Specify DRR applicability and provide assessment data if applicable."
+            );
+        }
+
+        if (drr.Applicable == false)
+        {
+            return new ComplianceFinding(
+                "NPD-DRR-001", "1.0", RuleEvaluationType.ImpactAssessment, RuleApplicability.NotApplicable,
+                RuleResultStatus.NotApplicable, "Low", false, false,
+                "Disaster Risk Reduction declared not applicable.",
+                "N/A is acceptable when project is not in a disaster-prone area.",
+                EvidenceStatus.NotRequired, CalculationStatus.Calculated,
+                NpdSource with { SourceSection = "Item 14 — Disaster Risk Reduction" },
+                "No action required."
+            );
+        }
+
+        if (drr.AssessmentCompleted == false)
+        {
+            return new ComplianceFinding(
+                "NPD-DRR-001", "1.0", RuleEvaluationType.ImpactAssessment, RuleApplicability.Applicable,
+                RuleResultStatus.NonCompliant, "Medium", false, true,
+                "Disaster Risk Reduction assessment is declared applicable but incomplete.",
+                "DRR assessment must be completed when DRR is applicable.",
+                EvidenceStatus.Missing, CalculationStatus.Calculated,
+                NpdSource with { SourceSection = "Item 14 — Disaster Risk Reduction" },
+                "Complete the Disaster Risk Reduction assessment."
+            );
+        }
+
+        bool hasRef = !string.IsNullOrWhiteSpace(drr.AssessmentReference);
+        bool hasHazards = drr.HazardsConsidered != null && drr.HazardsConsidered.Count > 0;
+        bool hasMitigation = drr.MitigationMeasures != null && drr.MitigationMeasures.Count > 0;
+
+        if (!hasRef || !hasHazards || !hasMitigation)
+        {
+            return new ComplianceFinding(
+                "NPD-DRR-001", "1.0", RuleEvaluationType.ImpactAssessment, RuleApplicability.Applicable,
+                RuleResultStatus.InsufficientInformation, "Medium", false, true,
+                $"DRR assessment completed but missing details (Reference: {hasRef}, Hazards: {hasHazards}, Mitigation: {hasMitigation}).",
+                "DRR assessment must provide reference number, hazards considered, and mitigation measures.",
+                EvidenceStatus.Missing, CalculationStatus.MissingInputs,
+                NpdSource with { SourceSection = "Item 14 — Disaster Risk Reduction" },
+                "Supply missing DRR assessment reference, hazards, or mitigation measures."
+            );
+        }
+
         return new ComplianceFinding(
-            "NPD-DRR-001", "1.0", RuleEvaluationType.ImpactAssessment, RuleApplicability.Undetermined,
-            RuleResultStatus.InsufficientInformation, "Low", false, true,
-            "Disaster Risk Reduction applicability is undetermined from current input.",
-            "DRR assessment required when project is in disaster-prone area.",
-            EvidenceStatus.Missing, CalculationStatus.MissingInputs,
+            "NPD-DRR-001", "1.0", RuleEvaluationType.ImpactAssessment, RuleApplicability.Applicable,
+            RuleResultStatus.Compliant, "Low", false, false,
+            $"DRR Assessment Reference: {drr.AssessmentReference}, Hazards: {drr.HazardsConsidered!.Count}, Mitigations: {drr.MitigationMeasures!.Count}",
+            "Disaster Risk Reduction assessment and mitigation measures supplied.",
+            EvidenceStatus.Provided, CalculationStatus.Calculated,
             NpdSource with { SourceSection = "Item 14 — Disaster Risk Reduction" },
-            "Specify DRR applicability and provide assessment data if applicable."
+            "No action required."
         );
     }
 
@@ -441,27 +584,27 @@ public static class NpdRuleCatalogue
     private static ComplianceFinding EvaluateBudgetCompleteness(ProposalComplianceInput input)
     {
         var b = input.Budget;
-        if (b == null || b.CostComponents == null || b.CostComponents.Count == 0)
+        if (b == null || !b.SubmittedProjectBudget.HasValue || b.CostComponents == null || b.CostComponents.Count == 0 || b.CostComponents.Any(c => !c.Amount.HasValue))
         {
             return new ComplianceFinding(
                 "NPD-BUD-001", "1.0", RuleEvaluationType.Budget, RuleApplicability.Applicable,
                 RuleResultStatus.InsufficientInformation, "High", false, true,
-                "Budget cost components missing.", "Project budget must equal SUM(CostComponents).",
+                "Submitted project budget or cost component amounts missing.", "Project budget must equal SUM(CostComponents).",
                 EvidenceStatus.Missing, CalculationStatus.MissingInputs,
                 NpdSource with { SourceSection = "Item 16 — Project Budget" },
-                "Supply itemized cost components."
+                "Supply submitted project budget and itemized cost component amounts."
             );
         }
 
-        decimal calculated = b.CostComponents.Sum(c => c.Amount);
-        decimal diff = Math.Abs(calculated - b.SubmittedProjectBudget);
+        decimal calculated = b.CostComponents.Sum(c => c.Amount!.Value);
+        decimal diff = Math.Abs(calculated - b.SubmittedProjectBudget.Value);
         bool balanced = diff <= 0.01m;
 
         return new ComplianceFinding(
             "NPD-BUD-001", "1.0", RuleEvaluationType.Budget, RuleApplicability.Applicable,
             balanced ? RuleResultStatus.Compliant : RuleResultStatus.NonCompliant,
             balanced ? "Low" : "High", false, false,
-            $"SubmittedBudget: {b.SubmittedProjectBudget}, CalculatedSum: {calculated}, Diff: {diff}",
+            $"SubmittedBudget: {b.SubmittedProjectBudget.Value}, CalculatedSum: {calculated}, Diff: {diff}",
             "Submitted budget must reconcile exactly with itemized cost component sum.",
             balanced ? EvidenceStatus.Provided : EvidenceStatus.Rejected, CalculationStatus.Calculated,
             NpdSource with { SourceSection = "Item 16 — Project Budget" },
@@ -475,31 +618,31 @@ public static class NpdRuleCatalogue
         var fin = input.Financing;
         var b = input.Budget;
 
-        if (fin == null || fin.FinancingSources == null || fin.FinancingSources.Count == 0 || b == null)
+        if (fin == null || fin.FinancingSources == null || fin.FinancingSources.Count == 0 || fin.FinancingSources.Any(f => !f.Amount.HasValue) || b == null || !b.SubmittedProjectBudget.HasValue)
         {
             return new ComplianceFinding(
                 "NPD-FIN-001", "1.0", RuleEvaluationType.Financing, RuleApplicability.Applicable,
                 RuleResultStatus.InsufficientInformation, "High", false, true,
-                "Financing sources or project budget missing.", "Financing total must equal project budget.",
+                "Financing sources, financing amounts, or project budget missing.", "Financing total must equal project budget.",
                 EvidenceStatus.Missing, CalculationStatus.MissingInputs,
                 NpdSource with { SourceSection = "Item 17 — Financing Plan" },
-                "Provide financing sources breakdown."
+                "Provide financing sources breakdown and project budget."
             );
         }
 
-        decimal totalFinancing = fin.FinancingSources.Sum(f => f.Amount);
-        decimal gap = b.SubmittedProjectBudget - totalFinancing;
+        decimal totalFinancing = fin.FinancingSources.Sum(f => f.Amount!.Value);
+        decimal gap = b.SubmittedProjectBudget.Value - totalFinancing;
         bool balanced = Math.Abs(gap) <= 0.01m;
 
         return new ComplianceFinding(
             "NPD-FIN-001", "1.0", RuleEvaluationType.Financing, RuleApplicability.Applicable,
             balanced ? RuleResultStatus.Compliant : RuleResultStatus.NonCompliant,
             balanced ? "Low" : "High", false, false,
-            $"ProjectBudget: {b.SubmittedProjectBudget}, TotalFinancing: {totalFinancing}, FundingGap: {gap}",
+            $"ProjectBudget: {b.SubmittedProjectBudget.Value}, TotalFinancing: {totalFinancing}, FundingGap: {gap}",
             "Financing total must reconcile with submitted project budget.",
             balanced ? EvidenceStatus.Provided : EvidenceStatus.Rejected, CalculationStatus.Calculated,
             NpdSource with { SourceSection = "Item 17 — Financing Plan" },
-            balanced ? "No action required." : $"Resolve funding gap of {gap:C}."
+            balanced ? "No action required." : $"Resolve funding gap of {gap:N2} in the proposal's monetary unit."
         );
     }
 
@@ -507,19 +650,19 @@ public static class NpdRuleCatalogue
     private static ComplianceFinding EvaluateRevenueForecastConsistency(ProposalComplianceInput input)
     {
         var fin = input.Financing;
-        if (fin == null)
+        if (fin == null || !fin.RevenueExpected.HasValue)
         {
             return new ComplianceFinding(
                 "NPD-FIN-002", "1.0", RuleEvaluationType.Financing, RuleApplicability.Applicable,
                 RuleResultStatus.InsufficientInformation, "Low", false, false,
-                "Financing input missing.", "Revenue forecast consistency must be declared.",
+                "Financing revenue expected declaration missing.", "Revenue forecast consistency must be declared.",
                 EvidenceStatus.Missing, CalculationStatus.MissingInputs,
                 NpdSource with { SourceSection = "Item 17.2 — Revenue Forecast" },
-                "Provide financing revenue forecast details."
+                "Provide financing revenue expected declaration and forecast details."
             );
         }
 
-        if (fin.RevenueExpected && (!fin.RevenueForecastAmount.HasValue || fin.RevenueForecastAmount <= 0))
+        if (fin.RevenueExpected.Value && (!fin.RevenueForecastAmount.HasValue || fin.RevenueForecastAmount <= 0))
         {
             return new ComplianceFinding(
                 "NPD-FIN-002", "1.0", RuleEvaluationType.CrossFieldConsistency, RuleApplicability.Applicable,
@@ -532,7 +675,7 @@ public static class NpdRuleCatalogue
             );
         }
 
-        if (!fin.RevenueExpected && fin.RevenueForecastAmount.HasValue && fin.RevenueForecastAmount > 0)
+        if (!fin.RevenueExpected.Value && fin.RevenueForecastAmount.HasValue && fin.RevenueForecastAmount > 0)
         {
             return new ComplianceFinding(
                 "NPD-FIN-002", "1.0", RuleEvaluationType.CrossFieldConsistency, RuleApplicability.Applicable,
@@ -548,7 +691,7 @@ public static class NpdRuleCatalogue
         return new ComplianceFinding(
             "NPD-FIN-002", "1.0", RuleEvaluationType.Financing, RuleApplicability.Applicable,
             RuleResultStatus.Compliant, "Low", false, false,
-            $"RevenueExpected: {fin.RevenueExpected}, ForecastAmount: {fin.RevenueForecastAmount}",
+            $"RevenueExpected: {fin.RevenueExpected.Value}, ForecastAmount: {fin.RevenueForecastAmount}",
             "Revenue expected status and forecast amounts are consistent.",
             EvidenceStatus.Provided, CalculationStatus.Calculated,
             NpdSource with { SourceSection = "Item 17.2 — Revenue Forecast" },

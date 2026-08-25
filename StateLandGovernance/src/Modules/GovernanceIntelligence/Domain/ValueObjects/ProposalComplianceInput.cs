@@ -13,11 +13,11 @@ public sealed record ProjectLocationInput(
 );
 
 public sealed record LandRequirementInput(
-    bool RequiresLand,
-    decimal? ExtentHectares,
-    string? LandType,
-    string? AllocationDetails,
-    bool? ResettlementApplicable
+    bool? RequiresLand = null,
+    decimal? ExtentHectares = null,
+    string? LandType = null,
+    string? AllocationDetails = null,
+    bool? ResettlementApplicable = null
 );
 
 public sealed record PreliminaryAssessmentInput(
@@ -67,7 +67,7 @@ public sealed record RiskItemInput(
     string? RiskId,
     string? Description,
     string? MitigationStrategy,
-    bool IsAssumption
+    bool? IsAssumption = null
 );
 
 public sealed record RiskFrameworkInput(
@@ -91,26 +91,26 @@ public sealed record MonitoringPlanInput(
 );
 
 public sealed record CostComponentInput(
-    string? ComponentId,
-    string? Name,
-    decimal Amount
+    string? ComponentId = null,
+    string? Name = null,
+    decimal? Amount = null
 );
 
 public sealed record BudgetInput(
-    decimal SubmittedProjectBudget,
-    IReadOnlyList<CostComponentInput>? CostComponents
+    decimal? SubmittedProjectBudget = null,
+    IReadOnlyList<CostComponentInput>? CostComponents = null
 );
 
 public sealed record FinancingSourceInput(
-    string? SourceId,
-    string? Name,
-    decimal Amount
+    string? SourceId = null,
+    string? Name = null,
+    decimal? Amount = null
 );
 
 public sealed record FinancingInput(
-    IReadOnlyList<FinancingSourceInput>? FinancingSources,
-    bool RevenueExpected,
-    decimal? RevenueForecastAmount
+    IReadOnlyList<FinancingSourceInput>? FinancingSources = null,
+    bool? RevenueExpected = null,
+    decimal? RevenueForecastAmount = null
 );
 
 public sealed record SocialSafeguardInput(
@@ -153,6 +153,16 @@ public sealed record EvidenceReferenceInput(
     EvidenceStatus VerificationStatus
 );
 
+public sealed record DisasterRiskAssessmentInput(
+    bool? Applicable,
+    bool? AssessmentCompleted,
+    string? AssessmentReference,
+    IReadOnlyList<string>? HazardsConsidered,
+    IReadOnlyList<string>? MitigationMeasures,
+    string? ResponsibleRole,
+    string? Remarks
+);
+
 /// <summary>
 /// Domain input value object containing structured facts for NPD compliance evaluation.
 /// </summary>
@@ -166,6 +176,7 @@ public sealed record ProposalComplianceInput(
     ResultFrameworkInput? ResultFramework = null,
     ImpactAssessmentInput? ImpactAssessment = null,
     RiskFrameworkInput? RiskFramework = null,
+    DisasterRiskAssessmentInput? DisasterRiskAssessment = null,
     MonitoringPlanInput? MonitoringPlan = null,
     BudgetInput? Budget = null,
     FinancingInput? Financing = null,

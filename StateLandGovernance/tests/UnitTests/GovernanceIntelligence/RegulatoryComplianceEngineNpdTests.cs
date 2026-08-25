@@ -29,6 +29,7 @@ public class RegulatoryComplianceEngineNpdTests
         ResultFrameworkInput rf = null,
         ImpactAssessmentInput imp = null,
         RiskFrameworkInput risk = null,
+        DisasterRiskAssessmentInput drr = null,
         MonitoringPlanInput mp = null,
         BudgetInput budget = null,
         FinancingInput fin = null,
@@ -47,14 +48,82 @@ public class RegulatoryComplianceEngineNpdTests
             rf ?? new ResultFrameworkInput(new[] { new ResultFrameworkNodeInput("N-1", "Impact", "Development", "", new[] { "KPI-1" }) }),
             imp ?? new ImpactAssessmentInput(false, Array.Empty<NegativeImpactItemInput>()),
             risk ?? new RiskFrameworkInput(new[] { new RiskItemInput("R-1", "Operational Risk", "Mitigated", false) }),
-            mp ?? new MonitoringPlanInput(new[] { new KpiInput("KPI-1", "N-1", "Units", 0, 2024, 100, "Inspection", "Registry", "Land Officer") }),
-            budget ?? new BudgetInput(100000m, new[] { new CostComponentInput("C-1", "CapEx", 100000m) }),
-            fin ?? new FinancingInput(new[] { new FinancingSourceInput("F-1", "Equity", 100000m) }, false, null),
-            soc ?? new SocialSafeguardInput(false, null, true, true),
-            impl ?? new ImplementationInput(new[] { new ImplementationActivityInput("A-1", "Execution", "Land Officer") }, "Standard O&M", 1000m, "Internal"),
-            eco ?? new EconomicAppraisalInput("NPV", 0.10m, new[] { -100000m, 30000m, 40000m, 50000m }, CashFlowPeriod.Annual, null, null, null, null, null, null, CostBenefitRatioConvention.BenefitsOverCosts),
-            evd ?? new[] { new EvidenceReferenceInput("EV-1", "REF-001", EvidenceStatus.Verified) }
+            DisasterRiskAssessment: drr,
+            MonitoringPlan: mp ?? new MonitoringPlanInput(new[] { new KpiInput("KPI-1", "N-1", "Units", 0, 2024, 100, "Inspection", "Registry", "Land Officer") }),
+            Budget: budget ?? new BudgetInput(100000m, new[] { new CostComponentInput("C-1", "CapEx", 100000m) }),
+            Financing: fin ?? new FinancingInput(new[] { new FinancingSourceInput("F-1", "Equity", 100000m) }, false, null),
+            SocialSafeguard: soc ?? new SocialSafeguardInput(false, null, true, true),
+            Implementation: impl ?? new ImplementationInput(new[] { new ImplementationActivityInput("A-1", "Execution", "Land Officer") }, "Standard O&M", 1000m, "Internal"),
+            EconomicAppraisal: eco ?? new EconomicAppraisalInput("NPV", 0.10m, new[] { -100000m, 30000m, 40000m, 50000m }, CashFlowPeriod.Annual, null, null, null, null, null, null, CostBenefitRatioConvention.BenefitsOverCosts),
+            EvidenceReferences: evd ?? new[] { new EvidenceReferenceInput("EV-1", "REF-001", EvidenceStatus.Verified) }
         );
+    }
+
+    [Fact]
+    public void Test46_NpdDrr001_NullApplicability_ReturnsUndeterminedAndInsufficientInformation()
+    {
+        var drr = new DisasterRiskAssessmentInput(null, null, null, null, null, null, null);
+        var result = _engine.EvaluateNpd(CreateBaseInput(drr: drr), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-DRR-001");
+        Assert.Equal(RuleApplicability.Undetermined, finding.Applicability);
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
+    }
+
+    [Fact]
+    public void Test47_NpdDrr001_NotApplicable_ReturnsNotApplicable()
+    {
+        var drr = new DisasterRiskAssessmentInput(false, null, null, null, null, null, null);
+        var result = _engine.EvaluateNpd(CreateBaseInput(drr: drr), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-DRR-001");
+        Assert.Equal(RuleApplicability.NotApplicable, finding.Applicability);
+        Assert.Equal(RuleResultStatus.NotApplicable, finding.Status);
+    }
+
+    [Fact]
+    public void Test48_NpdDrr001_ApplicableAssessmentIncomplete_ReturnsNonCompliant()
+    {
+        var drr = new DisasterRiskAssessmentInput(true, false, null, null, null, null, null);
+        var result = _engine.EvaluateNpd(CreateBaseInput(drr: drr), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-DRR-001");
+        Assert.Equal(RuleApplicability.Applicable, finding.Applicability);
+        Assert.Equal(RuleResultStatus.NonCompliant, finding.Status);
+    }
+
+    [Fact]
+    public void Test49_NpdDrr001_ApplicableMissingReferenceOrDetails_ReturnsInsufficientInformation()
+    {
+        var drr = new DisasterRiskAssessmentInput(true, true, "", new[] { "Flooding" }, new[] { "Drainage" }, "Engineer", "Remarks");
+        var result = _engine.EvaluateNpd(CreateBaseInput(drr: drr), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-DRR-001");
+        Assert.Equal(RuleApplicability.Applicable, finding.Applicability);
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
+    }
+
+    [Fact]
+    public void Test50_NpdDrr001_ApplicableCompletedWithDetails_ReturnsCompliant()
+    {
+        var drr = new DisasterRiskAssessmentInput(true, true, "DRR-REF-001", new[] { "Flooding", "Drought" }, new[] { "Drainage" }, "Engineer", "Remarks");
+        var result = _engine.EvaluateNpd(CreateBaseInput(drr: drr), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-DRR-001");
+        Assert.Equal(RuleApplicability.Applicable, finding.Applicability);
+        Assert.Equal(RuleResultStatus.Compliant, finding.Status);
+    }
+
+    [Fact]
+    public void Test51_NpdDrr001_DeterministicEvaluationId_ChangesWhenDrrInputChanges()
+    {
+        var drr1 = new DisasterRiskAssessmentInput(true, true, "DRR-REF-001", new[] { "Flooding" }, new[] { "Drainage" }, "Engineer", "Remarks");
+        var drr2 = new DisasterRiskAssessmentInput(true, true, "DRR-REF-002", new[] { "Flooding" }, new[] { "Drainage" }, "Engineer", "Remarks");
+
+        var r1 = _engine.EvaluateNpd(CreateBaseInput(drr: drr1), DateTime.UtcNow);
+        var r2 = _engine.EvaluateNpd(CreateBaseInput(drr: drr2), DateTime.UtcNow);
+
+        Assert.NotEqual(r1.DeterministicEvaluationId, r2.DeterministicEvaluationId);
     }
 
     [Fact]
@@ -68,14 +137,14 @@ public class RegulatoryComplianceEngineNpdTests
     }
 
     [Fact]
-    public void Test02_LandRequired_DetailsMissing_ReturnsNonCompliantFinding()
+    public void Test02_LandRequired_DetailsMissing_ReturnsInsufficientInformationFinding()
     {
         var land = new LandRequirementInput(true, null, "", "", null);
         var input = CreateBaseInput(land: land);
         var result = _engine.EvaluateNpd(input, DateTime.UtcNow);
 
         var finding = result.Findings.First(f => f.RuleCode == "NPD-LAND-001");
-        Assert.Equal(RuleResultStatus.NonCompliant, finding.Status);
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
         Assert.False(finding.IsBlocking); // Operational rule is non-blocking
     }
 
@@ -588,6 +657,168 @@ public class RegulatoryComplianceEngineNpdTests
         Assert.NotNull(result.Findings);
         Assert.True(result.Findings.Count > 0);
         Assert.NotNull(result.DeterministicEvaluationId);
+    }
+
+    [Fact]
+    public void Test52_EvaluateNpd_NullSubmittedProjectBudget_ReturnsInsufficientInformation()
+    {
+        var b = new BudgetInput(null, new[] { new CostComponentInput("C-1", "CapEx", 100000m) });
+        var result = _engine.EvaluateNpd(CreateBaseInput(budget: b), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-BUD-001");
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
+    }
+
+    [Fact]
+    public void Test53_EvaluateNpd_NullCostComponentAmount_ReturnsInsufficientInformation()
+    {
+        var b = new BudgetInput(100000m, new[] { new CostComponentInput("C-1", "CapEx", null) });
+        var result = _engine.EvaluateNpd(CreateBaseInput(budget: b), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-BUD-001");
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
+    }
+
+    [Fact]
+    public void Test54_EvaluateNpd_NullFinancingSourceAmount_ReturnsInsufficientInformation()
+    {
+        var b = new BudgetInput(100000m, new[] { new CostComponentInput("C-1", "CapEx", 100000m) });
+        var fin = new FinancingInput(new[] { new FinancingSourceInput("F-1", "Equity", null) }, false, null);
+
+        var result = _engine.EvaluateNpd(CreateBaseInput(budget: b, fin: fin), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-FIN-001");
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
+    }
+
+    [Fact]
+    public void Test55_EvaluateNpd_NullRevenueExpected_ReturnsInsufficientInformation()
+    {
+        var fin = new FinancingInput(new[] { new FinancingSourceInput("F-1", "Equity", 100000m) }, null, 50000m);
+        var result = _engine.EvaluateNpd(CreateBaseInput(fin: fin), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-FIN-002");
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
+    }
+
+    [Fact]
+    public void Test56_EvaluateNpd_CurrencyNeutralRecommendationWording()
+    {
+        var b = new BudgetInput(100000m, new[] { new CostComponentInput("C-1", "CapEx", 100000m) });
+        var fin = new FinancingInput(new[] { new FinancingSourceInput("F-1", "Equity", 60000m) }, false, null);
+
+        var result = _engine.EvaluateNpd(CreateBaseInput(budget: b, fin: fin), DateTime.UtcNow);
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-FIN-001");
+
+        Assert.Equal(RuleResultStatus.NonCompliant, finding.Status);
+        Assert.DoesNotContain("$", finding.RecommendedAction);
+        Assert.Contains("40,000.00 in the proposal's monetary unit", finding.RecommendedAction);
+    }
+
+    [Fact]
+    public async Task Test57_EvaluateComplianceCommandHandler_NullableDtoFieldsHandledSafely()
+    {
+        var ruleProvider = new InMemoryRuleProvider();
+        var evalStore = new InMemoryGovernanceEvaluationStore(new InMemoryGovernanceAuditRepository());
+        var handler = new EvaluateComplianceCommandHandler(ruleProvider, _engine, evalStore);
+
+        var dto = new ProposalComplianceInputDto(
+            ProposalId: "PROP-NULL-TEST",
+            Budget: new BudgetDto(SubmittedProjectBudget: null, CostComponents: new[] { new CostComponentDto("C-1", "CapEx", null) }),
+            Financing: new FinancingDto(FinancingSources: new[] { new FinancingSourceDto("F-1", "Equity", null) }, RevenueExpected: null, RevenueForecastAmount: null)
+        );
+
+        var cmd = new EvaluateComplianceCommand("EvaluateNpdProposalCompliance", Input: dto);
+        var result = await handler.HandleAsync(cmd, CancellationToken.None);
+
+        Assert.NotNull(result);
+        Assert.Contains(result.Findings, f => f.RuleCode == "NPD-BUD-001" && f.Status == "InsufficientInformation");
+        Assert.Contains(result.Findings, f => f.RuleCode == "NPD-FIN-001" && f.Status == "InsufficientInformation");
+        Assert.Contains(result.Findings, f => f.RuleCode == "NPD-FIN-002" && f.Status == "InsufficientInformation");
+    }
+
+    [Fact]
+    public void Test58_EvaluateNpd_MissingGramaNiladhariDivision_ReturnsInsufficientInformation()
+    {
+        var loc = new ProjectLocationInput("Western", "Colombo", "Colombo DSD", null, "Desc");
+        var result = _engine.EvaluateNpd(CreateBaseInput(loc: loc), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-LOC-001");
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
+    }
+
+    [Fact]
+    public void Test59_EvaluateNpd_MissingDivisionalSecretariatDivision_ReturnsInsufficientInformation()
+    {
+        var loc = new ProjectLocationInput("Western", "Colombo", null, "GND-101", "Desc");
+        var result = _engine.EvaluateNpd(CreateBaseInput(loc: loc), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-LOC-001");
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
+    }
+
+    [Fact]
+    public void Test60_EvaluateNpd_MissingAllocationDetails_RequiresLandTrue_ReturnsInsufficientInformation()
+    {
+        var land = new LandRequirementInput(true, 5.0m, "Commercial", null, false);
+        var result = _engine.EvaluateNpd(CreateBaseInput(land: land), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-LAND-001");
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
+    }
+
+    [Fact]
+    public void Test61_EvaluateNpd_MissingAllocationDetails_RequiresLandFalse_ReturnsCompliant()
+    {
+        var land = new LandRequirementInput(false, null, null, null, false);
+        var result = _engine.EvaluateNpd(CreateBaseInput(land: land), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-LAND-001");
+        Assert.Equal(RuleResultStatus.Compliant, finding.Status);
+    }
+
+    [Fact]
+    public void Test62_EvaluateNpd_MissingOverlapMitigationRef_BindsSafelyWithoutError()
+    {
+        var stk = new StakeholderInput(new[] { "CEA", "DS" }, new[] { "CEA", "DS" }, true, null);
+        var result = _engine.EvaluateNpd(CreateBaseInput(stk: stk), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-STK-001");
+        Assert.Equal(RuleResultStatus.Compliant, finding.Status);
+    }
+
+    [Fact]
+    public void Test63_EvaluateNpd_MissingSelectedMethod_ReturnsInsufficientInformation()
+    {
+        var eco = new EconomicAppraisalInput(null, 0.05m, new decimal[] { -100, 50, 70 }, CashFlowPeriod.Annual, null, null, null, null, null, null, CostBenefitRatioConvention.BenefitsOverCosts);
+        var result = _engine.EvaluateNpd(CreateBaseInput(eco: eco), DateTime.UtcNow);
+
+        var finding = result.Findings.First(f => f.RuleCode == "NPD-ECO-001");
+        Assert.Equal(RuleResultStatus.InsufficientInformation, finding.Status);
+    }
+
+    [Fact]
+    public async Task Test64_EvaluateComplianceCommandHandler_MissingFieldsInDtoBindAndEvaluateCleanly()
+    {
+        var ruleProvider = new InMemoryRuleProvider();
+        var evalStore = new InMemoryGovernanceEvaluationStore(new InMemoryGovernanceAuditRepository());
+        var handler = new EvaluateComplianceCommandHandler(ruleProvider, _engine, evalStore);
+
+        var dto = new ProposalComplianceInputDto(
+            ProposalId: "PROP-MISSING-FIELDS-TEST",
+            Location: new ProjectLocationDto(Province: "Western", District: "Colombo", DivisionalSecretariatDivision: null, GramaNiladhariDivision: null),
+            LandRequirement: new LandRequirementDto(RequiresLand: true, ExtentHectares: 2.5m, AllocationDetails: null),
+            Stakeholders: new StakeholderDto(ExpectedStakeholders: new[] { "LRA" }, ConsultedStakeholders: new[] { "LRA" }, OverlapMitigationRef: null),
+            EconomicAppraisal: new EconomicAppraisalDto(SelectedMethod: null)
+        );
+
+        var cmd = new EvaluateComplianceCommand("EvaluateNpdProposalCompliance", Input: dto);
+        var result = await handler.HandleAsync(cmd, CancellationToken.None);
+
+        Assert.NotNull(result);
+        Assert.Contains(result.Findings, f => f.RuleCode == "NPD-LOC-001" && f.Status == "InsufficientInformation");
+        Assert.Contains(result.Findings, f => f.RuleCode == "NPD-LAND-001" && f.Status == "InsufficientInformation");
+        Assert.Contains(result.Findings, f => f.RuleCode == "NPD-ECO-001" && f.Status == "InsufficientInformation");
     }
 
     private class InMemoryRuleProvider : IRegulatoryRuleProvider
