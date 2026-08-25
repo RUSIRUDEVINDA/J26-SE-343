@@ -41,16 +41,11 @@ public class PostgresGovernanceEvaluationStoreTests
         Assert.Equal("CheckCompliance", persistedAudit.ActionName);
 
         var persistedEval = await dbContext.ComplianceEvaluations
-            .Include(e => e.Violations)
-            .Include(e => e.Conditions)
             .FirstOrDefaultAsync(e => e.AuditRecordId == audit.Id);
 
         Assert.NotNull(persistedEval);
-        Assert.Equal("Compliant", persistedEval.Status);
-        Assert.Single(persistedEval.Violations);
-        Assert.Equal("RULE-101", persistedEval.Violations[0].RuleCode);
-        Assert.Single(persistedEval.Conditions);
-        Assert.Equal("Condition 1", persistedEval.Conditions[0].Description);
+        Assert.Equal("Compliant", persistedEval!.Status);
+        Assert.Equal("CheckCompliance", persistedEval.ActionName);
     }
 
     [Fact]

@@ -18,8 +18,9 @@ public class GovernanceIntelligenceDbContext : DbContext
 
     public DbSet<GovernanceAuditRecordEntity> GovernanceAuditRecords => Set<GovernanceAuditRecordEntity>();
     public DbSet<ComplianceEvaluationEntity> ComplianceEvaluations => Set<ComplianceEvaluationEntity>();
-    public DbSet<ComplianceViolationEntity> ComplianceViolations => Set<ComplianceViolationEntity>();
-    public DbSet<ComplianceConditionEntity> ComplianceConditions => Set<ComplianceConditionEntity>();
+    public DbSet<RegulatorySourceEntity> RegulatorySources => Set<RegulatorySourceEntity>();
+    public DbSet<ComplianceRuleEntity> ComplianceRules => Set<ComplianceRuleEntity>();
+    public DbSet<RuleParameterEntity> RuleParameters => Set<RuleParameterEntity>();
     public DbSet<ConflictEvaluationEntity> ConflictEvaluations => Set<ConflictEvaluationEntity>();
     public DbSet<ConflictFindingEntity> ConflictFindings => Set<ConflictFindingEntity>();
     public DbSet<RiskEvaluationEntity> RiskEvaluations => Set<RiskEvaluationEntity>();

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.ValueObjects;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities;
@@ -12,50 +13,49 @@ public static class ComplianceEvaluationMapper
     public static (GovernanceAuditRecordEntity auditEntity, ComplianceEvaluationEntity evaluationEntity) MapToEntities(
         GovernanceAuditRecord auditRecord,
         ComplianceResult result,
-        string actionName)
+        string actionName,
+        string? proposalId = null)
     {
         var auditEntity = GovernanceAuditRecordMapper.ToEntity(auditRecord);
+
+        string? findingsJson = null;
+        if (result.Findings != null && result.Findings.Count > 0)
+        {
+            var findingDtos = System.Linq.Enumerable.ToList(
+                System.Linq.Enumerable.Select(result.Findings, f => new ComplianceFindingDto(
+                    f.RuleCode,
+                    f.RuleVersion,
+                    f.Category.ToString(),
+                    f.Applicability.ToString(),
+                    f.Status.ToString(),
+                    f.Severity,
+                    f.IsBlocking,
+                    f.RequiresHumanReview,
+                    f.ObservedValueSummary,
+                    f.ExpectedRequirement,
+                    f.EvidenceStatus.ToString(),
+                    f.CalculationStatus.ToString(),
+                    f.SourceReference?.SourceAuthority ?? string.Empty,
+                    f.SourceReference?.SourceDocument ?? string.Empty,
+                    f.SourceReference?.SourceSection ?? string.Empty,
+                    f.RecommendedAction
+                )));
+
+            findingsJson = JsonSerializer.Serialize(findingDtos);
+        }
 
         var evaluationEntity = new ComplianceEvaluationEntity
         {
             Id = Guid.NewGuid(),
             AuditRecordId = auditEntity.Id,
+            ProposalId = proposalId,
             ActionName = actionName ?? string.Empty,
             Status = result.Status.ToString(),
+            DeterministicEvaluationId = result.DeterministicEvaluationId,
+            RuleSetVersion = "1.0.0",
+            FindingsJson = findingsJson,
             EvaluationTimestamp = auditRecord.Timestamp
         };
-
-        if (result.Violations != null)
-        {
-            for (int i = 0; i < result.Violations.Count; i++)
-            {
-                var v = result.Violations[i];
-                evaluationEntity.Violations.Add(new ComplianceViolationEntity
-                {
-                    Id = Guid.NewGuid(),
-                    ComplianceEvaluationId = evaluationEntity.Id,
-                    RuleCode = v.RuleCode ?? string.Empty,
-                    Message = v.Message ?? string.Empty,
-                    OrderIndex = i
-                });
-            }
-        }
-
-        if (result.Conditions != null)
-        {
-            for (int i = 0; i < result.Conditions.Count; i++)
-            {
-                var c = result.Conditions[i];
-                evaluationEntity.Conditions.Add(new ComplianceConditionEntity
-                {
-                    Id = Guid.NewGuid(),
-                    ComplianceEvaluationId = evaluationEntity.Id,
-                    Description = c.Description ?? string.Empty,
-                    RequiredByDate = c.RequiredByDate,
-                    OrderIndex = i
-                });
-            }
-        }
 
         return (auditEntity, evaluationEntity);
     }
