@@ -55,7 +55,7 @@ public class DocumentCompletenessAssessmentCoverageTests
     }
 
     [Fact]
-    public void Review_DuplicateId_ThrowsDuplicateOrConflicting()
+    public void Review_ExactDuplicateIdAndCanonicalData_ThrowsDuplicateClassificationReviewException()
     {
         var binding = CreateBinding(Guid.NewGuid());
         var doc = new ClassifiedDocument(new ClassifiedDocumentId(Guid.NewGuid()), binding, null, null, DocumentClassificationStatus.Unclassified, null, null, null, DateTime.UtcNow);
@@ -63,30 +63,45 @@ public class DocumentCompletenessAssessmentCoverageTests
         
         var reviewId = new ClassificationReviewId(Guid.NewGuid());
         var actorId = Guid.NewGuid();
+        var reviewedAt = DateTime.UtcNow;
         var authority = new VerifiedAuthoritySnapshot(actorId, new[] { "ClassificationReviewer" }, new AuthorityScope(AuthorityScopeKind.GovernedDocument, binding.GovernedDocumentId.Value.ToString("D")), DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow.AddMinutes(5));
 
-        sut.RecordHumanClassificationReview(reviewId, doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "R", actorId, DateTime.UtcNow, authority);
+        sut.RecordHumanClassificationReview(reviewId, doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "R", actorId, reviewedAt, authority);
 
-        // Identical
-        Assert.Throws<DuplicateClassificationReviewException>(() => sut.RecordHumanClassificationReview(reviewId, doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "R", actorId, DateTime.UtcNow, authority));
-        
-        // Conflicting
-        Assert.Throws<ConflictingClassificationReviewException>(() => sut.RecordHumanClassificationReview(reviewId, doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "R2", actorId, DateTime.UtcNow, authority));
+        Assert.Throws<DuplicateClassificationReviewException>(() => sut.RecordHumanClassificationReview(reviewId, doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "R", actorId, reviewedAt, authority));
     }
 
     [Fact]
-    public void Review_AlreadyReviewed_Throws()
+    public void Review_ReusedIdWithChangedCanonicalData_ThrowsConflictingClassificationReviewException()
+    {
+        var binding = CreateBinding(Guid.NewGuid());
+        var doc = new ClassifiedDocument(new ClassifiedDocumentId(Guid.NewGuid()), binding, null, null, DocumentClassificationStatus.Unclassified, null, null, null, DateTime.UtcNow);
+        var sut = new DocumentCompletenessAssessment(new DocumentCompletenessAssessmentId(Guid.NewGuid()), new LeaseCaseId(Guid.NewGuid()), "Set", "v1", new[] { binding }, new[] { doc }, Array.Empty<DocumentRequirementSnapshot>(), DateTime.UtcNow);
+        
+        var reviewId = new ClassificationReviewId(Guid.NewGuid());
+        var actorId = Guid.NewGuid();
+        var reviewedAt = DateTime.UtcNow;
+        var authority = new VerifiedAuthoritySnapshot(actorId, new[] { "ClassificationReviewer" }, new AuthorityScope(AuthorityScopeKind.GovernedDocument, binding.GovernedDocumentId.Value.ToString("D")), DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow.AddMinutes(5));
+
+        sut.RecordHumanClassificationReview(reviewId, doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "R", actorId, reviewedAt, authority);
+
+        Assert.Throws<ConflictingClassificationReviewException>(() => sut.RecordHumanClassificationReview(reviewId, doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "DIFFERENT", actorId, reviewedAt, authority));
+    }
+
+    [Fact]
+    public void Review_NewIdForAlreadyReviewedClassification_ThrowsClassificationAlreadyReviewedException()
     {
         var binding = CreateBinding(Guid.NewGuid());
         var doc = new ClassifiedDocument(new ClassifiedDocumentId(Guid.NewGuid()), binding, null, null, DocumentClassificationStatus.Unclassified, null, null, null, DateTime.UtcNow);
         var sut = new DocumentCompletenessAssessment(new DocumentCompletenessAssessmentId(Guid.NewGuid()), new LeaseCaseId(Guid.NewGuid()), "Set", "v1", new[] { binding }, new[] { doc }, Array.Empty<DocumentRequirementSnapshot>(), DateTime.UtcNow);
         
         var actorId = Guid.NewGuid();
+        var reviewedAt = DateTime.UtcNow;
         var authority = new VerifiedAuthoritySnapshot(actorId, new[] { "ClassificationReviewer" }, new AuthorityScope(AuthorityScopeKind.GovernedDocument, binding.GovernedDocumentId.Value.ToString("D")), DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow.AddMinutes(5));
 
-        sut.RecordHumanClassificationReview(new ClassificationReviewId(Guid.NewGuid()), doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "R", actorId, DateTime.UtcNow, authority);
+        sut.RecordHumanClassificationReview(new ClassificationReviewId(Guid.NewGuid()), doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "R", actorId, reviewedAt, authority);
         
-        Assert.Throws<ClassificationAlreadyReviewedException>(() => sut.RecordHumanClassificationReview(new ClassificationReviewId(Guid.NewGuid()), doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "R", actorId, DateTime.UtcNow, authority));
+        Assert.Throws<ClassificationAlreadyReviewedException>(() => sut.RecordHumanClassificationReview(new ClassificationReviewId(Guid.NewGuid()), doc.Id, ClassificationReviewDecision.Corrected, new DocumentClassificationCode("R"), "R", actorId, reviewedAt, authority));
     }
 
     [Fact]
