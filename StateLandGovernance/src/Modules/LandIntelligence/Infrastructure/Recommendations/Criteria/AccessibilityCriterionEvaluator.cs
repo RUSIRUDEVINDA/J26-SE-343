@@ -2,6 +2,7 @@ using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
+using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.Criteria;
 
@@ -30,12 +31,15 @@ internal sealed class AccessibilityCriterionEvaluator : IRecommendationCriterion
                 isMet: false,
                 score: 0m,
                 DefaultWeight,
-                "No road or railway infrastructure is recorded for this parcel.");
+                "No road or railway infrastructure is recorded for this parcel.",
+                ParcelAttributeProvenanceResolver.ResolveRoadDistanceProvenance(null),
+                "infrastructure.road.distanceMeters");
         }
 
         if (criteria.MaxRoadDistanceMeters is null or <= 0)
         {
             var hasRoad = roadFeatures.Count > 0;
+            var referenceFeature = roadFeatures.FirstOrDefault();
             return CriterionEvaluationFactory.Create(
                 Key,
                 "Accessibility",
@@ -45,7 +49,11 @@ internal sealed class AccessibilityCriterionEvaluator : IRecommendationCriterion
                 DefaultWeight,
                 hasRoad
                     ? "Infrastructure access is recorded near the parcel."
-                    : "No infrastructure proximity data is recorded.");
+                    : "No infrastructure proximity data is recorded.",
+                referenceFeature is null
+                    ? AttributeProvenance.Unknown("Road access")
+                    : ParcelAttributeProvenanceResolver.ResolveRoadDistanceProvenance(referenceFeature),
+                "infrastructure.road.distanceMeters");
         }
 
         var nearestRoad = roadFeatures
@@ -61,12 +69,15 @@ internal sealed class AccessibilityCriterionEvaluator : IRecommendationCriterion
                 isMet: false,
                 score: 40m,
                 DefaultWeight,
-                "Road distance is not recorded; accessibility could not be fully verified.");
+                "Road distance is not recorded; accessibility could not be fully verified.",
+                AttributeProvenance.Unknown("Road distance"),
+                "infrastructure.road.distanceMeters");
         }
 
         var distance = nearestRoad.DistanceMeters.Value;
         var maxDistance = criteria.MaxRoadDistanceMeters.Value;
         var withinLimit = distance <= maxDistance;
+        var roadProvenance = ParcelAttributeProvenanceResolver.ResolveRoadDistanceProvenance(nearestRoad);
 
         decimal score;
         if (withinLimit)
@@ -91,6 +102,8 @@ internal sealed class AccessibilityCriterionEvaluator : IRecommendationCriterion
             DefaultWeight,
             withinLimit
                 ? $"Nearest road ({nearestRoad.Name}) is {distance:F0} m away (within {maxDistance:F0} m limit)."
-                : $"Nearest road ({nearestRoad.Name}) is {distance:F0} m away (exceeds {maxDistance:F0} m limit).");
+                : $"Nearest road ({nearestRoad.Name}) is {distance:F0} m away (exceeds {maxDistance:F0} m limit).",
+            roadProvenance,
+            "infrastructure.road.distanceMeters");
     }
 }

@@ -76,6 +76,89 @@ internal static class SyntheticRecommendationParcelFactory
         return parcel;
     }
 
+    public static LandParcel CreateParcelWithArea(
+        decimal areaHectares,
+        string cadastralNumber = "SYNTH-AREA-001") =>
+        CreateBaseParcel(
+            cadastralNumber,
+            LandCategoryType.StateLand,
+            LandUseType.Agricultural,
+            areaHectares,
+            province: "Western",
+            district: "Colombo");
+
+    public static LandParcel CreateParcelWithRoadDistance(
+        decimal? roadDistanceMeters,
+        string cadastralNumber = "SYNTH-ROAD-001")
+    {
+        var parcel = new LandParcel(
+            new ParcelIdentifier(cadastralNumber, "SYNTHETIC-PLAN"),
+            new LandCategory(LandCategoryType.StateLand, "[SYNTHETIC]"),
+            new LandArea(5m, AreaUnit.Hectares),
+            new AdministrativeLocation("Western", "Colombo", "Colombo DS"),
+            new SpatialReference(6.9271, 79.8612, "EPSG:4326"),
+            new LandUse(LandUseType.Agricultural, "[SYNTHETIC]"),
+            new LandCharacteristics("Loam", "Gently sloping", 25m));
+
+        parcel.AddInfrastructureFeature(new InfrastructureFeature(
+            InfrastructureFeatureType.Road,
+            "[SYNTHETIC] Access Road",
+            roadDistanceMeters));
+
+        return parcel;
+    }
+
+    public static LandParcel CreateParcelWithInfrastructureFeatures(
+        string cadastralNumber,
+        params (InfrastructureFeatureType Type, string Name, decimal? DistanceMeters)[] features)
+    {
+        var parcel = new LandParcel(
+            new ParcelIdentifier(cadastralNumber, "SYNTHETIC-PLAN"),
+            new LandCategory(LandCategoryType.StateLand, "[SYNTHETIC]"),
+            new LandArea(5m, AreaUnit.Hectares),
+            new AdministrativeLocation("Western", "Colombo", "Colombo DS"),
+            new SpatialReference(6.9271, 79.8612, "EPSG:4326"),
+            new LandUse(LandUseType.Agricultural, "[SYNTHETIC]"),
+            new LandCharacteristics("Loam", "Gently sloping", 25m));
+
+        foreach (var (type, name, distanceMeters) in features)
+        {
+            parcel.AddInfrastructureFeature(new InfrastructureFeature(type, name, distanceMeters));
+        }
+
+        return parcel;
+    }
+
+    public static LandParcel CreateParcelWithEnvironmentalRestriction(
+        EnvironmentalRestrictionType type,
+        RestrictionSeverity severity,
+        string cadastralNumber = "SYNTH-ENV-001")
+    {
+        var parcel = CreateSuitableParcel(cadastralNumber);
+        parcel.AddEnvironmentalRestriction(new EnvironmentalRestriction(
+            type,
+            "[SYNTHETIC] Environmental restriction for recommendation test",
+            severity));
+        return parcel;
+    }
+
+    public static LandParcel CreateParcelWithRegulatoryReferenceCount(
+        int referenceCount,
+        string cadastralNumber = "SYNTH-REG-COUNT-001")
+    {
+        var parcel = CreateSuitableParcel(cadastralNumber);
+
+        for (var index = 1; index <= referenceCount; index++)
+        {
+            parcel.AddRegulatoryReference(new RegulatoryReference(
+                $"SYNTH-GZ-{index:000}",
+                $"[SYNTHETIC] Regulatory reference {index}",
+                new DateOnly(2026, 1, index)));
+        }
+
+        return parcel;
+    }
+
     private static LandParcel CreateBaseParcel(
         string cadastralNumber,
         LandCategoryType category,
@@ -139,16 +222,70 @@ internal sealed class FakeLandParcelRepository : ILandParcelRepository
             query = query.Where(p => p.CurrentUse?.Type == request.CurrentUseType);
         }
 
+        if (request.MinArea.HasValue)
+        {
+            query = query.Where(p => p.Area.Value >= request.MinArea.Value);
+        }
+
+        if (request.MaxArea.HasValue)
+        {
+            query = query.Where(p => p.Area.Value <= request.MaxArea.Value);
+        }
+
         return Task.FromResult<IReadOnlyList<LandParcel>>(query.ToList());
+    }
+
+    public Task<int> CountSearchAsync(LandSearchRequest request, CancellationToken cancellationToken = default)
+    {
+        IEnumerable<LandParcel> query = _parcels;
+
+        if (!string.IsNullOrWhiteSpace(request.Province))
+        {
+            query = query.Where(p => p.Location.Province.Equals(request.Province, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.District))
+        {
+            query = query.Where(p => p.Location.District.Equals(request.District, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (request.CategoryType is not null)
+        {
+            query = query.Where(p => p.Category.Type == request.CategoryType);
+        }
+
+        if (request.CurrentUseType is not null)
+        {
+            query = query.Where(p => p.CurrentUse?.Type == request.CurrentUseType);
+        }
+
+        if (request.MinArea.HasValue)
+        {
+            query = query.Where(p => p.Area.Value >= request.MinArea.Value);
+        }
+
+        if (request.MaxArea.HasValue)
+        {
+            query = query.Where(p => p.Area.Value <= request.MaxArea.Value);
+        }
+
+        return Task.FromResult(query.Count());
     }
 
     public Task AddAsync(LandParcel parcel, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     public Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
 }
 
 internal sealed class FakeSpatialAnalysisService : ISpatialAnalysisService
 {
+    private readonly IReadOnlyList<LandParcel> _parcels;
+
+    public FakeSpatialAnalysisService(IReadOnlyList<LandParcel>? parcels = null) =>
+        _parcels = parcels ?? Array.Empty<LandParcel>();
+
     public Task<PointInPolygonResultDto> IsPointInPolygonAsync(PointInPolygonRequest request, CancellationToken cancellationToken = default) =>
         throw new NotImplementedException();
 
@@ -161,14 +298,29 @@ internal sealed class FakeSpatialAnalysisService : ISpatialAnalysisService
     public Task<IReadOnlyList<ProximityResultDto>> FindParcelsNearPointAsync(ProximitySearchRequest request, CancellationToken cancellationToken = default) =>
         throw new NotImplementedException();
 
-    public Task<DistanceResultDto> CalculateDistanceBetweenParcelAndInfrastructureAsync(Guid landParcelId, Guid infrastructureFeatureId, CancellationToken cancellationToken = default) =>
-        Task.FromResult(new DistanceResultDto(
+    public Task<DistanceResultDto> CalculateDistanceBetweenParcelAndInfrastructureAsync(
+        Guid landParcelId,
+        Guid infrastructureFeatureId,
+        CancellationToken cancellationToken = default)
+    {
+        var parcel = _parcels.FirstOrDefault(p => p.Id == landParcelId);
+        var feature = parcel?.InfrastructureFeatures.FirstOrDefault(f => f.Id == infrastructureFeatureId);
+
+        if (feature?.DistanceMeters is not { } storedDistance)
+        {
+            throw new ValidationException([
+                "Parcel and infrastructure feature with a known location are required for distance analysis."
+            ]);
+        }
+
+        return Task.FromResult(new DistanceResultDto(
             landParcelId,
             infrastructureFeatureId,
-            "[SYNTHETIC]",
-            InfrastructureFeatureType.Road,
-            250,
+            feature.Name,
+            feature.Type,
+            (double)storedDistance,
             true));
+    }
 
     public Task<IReadOnlyList<SpatialFilterResultDto>> FilterParcelsAsync(SpatialFilterRequest request, CancellationToken cancellationToken = default) =>
         throw new NotImplementedException();
@@ -185,25 +337,32 @@ internal sealed class FakeSpatialAnalysisService : ISpatialAnalysisService
 
 internal static class RecommendationEngineTestFactory
 {
+    public static IReadOnlyList<IRecommendationCriterionEvaluator> CreateStandardEvaluators() =>
+    [
+        new PurposeAlignmentCriterionEvaluator(),
+        new RequiredAreaCriterionEvaluator(),
+        new LandCategoryCriterionEvaluator(),
+        new LandUseCriterionEvaluator(),
+        new LocationPreferenceCriterionEvaluator(),
+        new AccessibilityCriterionEvaluator(),
+        new EnvironmentalCriterionEvaluator(),
+        new RegulatoryCriterionEvaluator(),
+        new SpatialConstraintCriterionEvaluator(),
+        new CustomCriteriaEvaluator()
+    ];
+
     public static RuleBasedLandRecommendationEngine Create(params LandParcel[] parcels)
     {
-        IRecommendationCriterionEvaluator[] evaluators =
-        [
-            new PurposeAlignmentCriterionEvaluator(),
-            new RequiredAreaCriterionEvaluator(),
-            new LandCategoryCriterionEvaluator(),
-            new LandUseCriterionEvaluator(),
-            new LocationPreferenceCriterionEvaluator(),
-            new AccessibilityCriterionEvaluator(),
-            new EnvironmentalCriterionEvaluator(),
-            new RegulatoryCriterionEvaluator(),
-            new SpatialConstraintCriterionEvaluator(),
-            new CustomCriteriaEvaluator()
-        ];
+        return CreateWithEvaluators(CreateStandardEvaluators(), parcels);
+    }
 
+    public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
+        IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
+        params LandParcel[] parcels)
+    {
         return new RuleBasedLandRecommendationEngine(
             new FakeLandParcelRepository(parcels),
-            new FakeSpatialAnalysisService(),
+            new FakeSpatialAnalysisService(parcels),
             evaluators);
     }
 }

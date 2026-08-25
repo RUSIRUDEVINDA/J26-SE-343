@@ -10,7 +10,7 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
 /// </summary>
 internal sealed class UnconfiguredKnowledgeGraphService : IKnowledgeGraphService
 {
-    private static InvalidOperationException CreateException() =>
+    private static ServiceConfigurationException CreateException() =>
         new(
             $"Neo4j is not configured. Set {Neo4jSettings.ConnectionEnvironmentVariable}, " +
             $"{Neo4jSettings.UsernameEnvironmentVariable}, and {Neo4jSettings.PasswordEnvironmentVariable} in .env.");
@@ -58,6 +58,9 @@ internal sealed class UnconfiguredKnowledgeGraphService : IKnowledgeGraphService
         throw CreateException();
 
     public Task LinkParcelToEnvironmentalAreaAsync(Guid parcelId, Guid environmentalAreaId, CancellationToken cancellationToken = default) =>
+        throw CreateException();
+
+    public Task SyncLandParcelGraphAsync(LandParcel parcel, CancellationToken cancellationToken = default) =>
         throw CreateException();
 
     public Task SyncLandParcelGraphAsync(LandParcel parcel, Guid categoryId, Guid? landUseId, Guid administrativeAreaId, CancellationToken cancellationToken = default) =>

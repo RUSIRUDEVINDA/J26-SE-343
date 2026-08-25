@@ -23,6 +23,7 @@ public static class LandIntelligenceInfrastructureExtensions
 
         services.AddScoped<ILandParcelRepository, LandParcelRepository>();
         services.AddScoped<ISpatialConstraintRepository, SpatialConstraintRepository>();
+        services.AddScoped<ILandRecommendationRepository, LandRecommendationRepository>();
         services.AddScoped<ISpatialAnalysisService, PostGisSpatialAnalysisService>();
         services.AddLandIntelligenceRecommendations();
 
@@ -36,6 +37,8 @@ public static class LandIntelligenceInfrastructureExtensions
         {
             services.AddScoped<IKnowledgeGraphService, UnconfiguredKnowledgeGraphService>();
         }
+
+        services.AddScoped<ILandParcelGraphSynchronizer, LandParcelGraphSynchronizer>();
 
         return services;
     }

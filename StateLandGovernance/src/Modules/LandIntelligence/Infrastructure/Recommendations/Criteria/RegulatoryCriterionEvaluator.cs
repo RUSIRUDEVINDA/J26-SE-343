@@ -2,6 +2,7 @@ using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
+using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.Criteria;
 
@@ -18,6 +19,7 @@ internal sealed class RegulatoryCriterionEvaluator : IRecommendationCriterionEva
     {
         var criteria = request.Regulatory!;
         var referenceCount = parcel.RegulatoryReferences.Count;
+        var regulatoryProvenance = ParcelAttributeProvenanceResolver.ResolveRegulatoryProvenance(parcel);
 
         if (referenceCount == 0)
         {
@@ -28,7 +30,8 @@ internal sealed class RegulatoryCriterionEvaluator : IRecommendationCriterionEva
                 isMet: true,
                 score: 100m,
                 DefaultWeight,
-                "No regulatory references are recorded for this parcel.");
+                "No regulatory references are recorded for this parcel.",
+                AttributeProvenance.Unknown("Regulatory references"));
         }
 
         if (referenceCount <= criteria.MaxRegulatoryReferences)
@@ -40,7 +43,9 @@ internal sealed class RegulatoryCriterionEvaluator : IRecommendationCriterionEva
                 isMet: true,
                 score: 90m,
                 DefaultWeight,
-                $"{referenceCount} regulatory reference(s) recorded (within limit of {criteria.MaxRegulatoryReferences}).");
+                $"{referenceCount} regulatory reference(s) recorded (within limit of {criteria.MaxRegulatoryReferences}).",
+                regulatoryProvenance,
+                "regulatory.references");
         }
 
         if (!criteria.PenalizeMultipleReferences)
@@ -52,7 +57,9 @@ internal sealed class RegulatoryCriterionEvaluator : IRecommendationCriterionEva
                 isMet: true,
                 score: 80m,
                 DefaultWeight,
-                $"{referenceCount} regulatory references recorded.");
+                $"{referenceCount} regulatory references recorded.",
+                regulatoryProvenance,
+                "regulatory.references");
         }
 
         var excess = referenceCount - criteria.MaxRegulatoryReferences;
@@ -65,6 +72,8 @@ internal sealed class RegulatoryCriterionEvaluator : IRecommendationCriterionEva
             isMet: false,
             score,
             DefaultWeight,
-            $"{referenceCount} regulatory references exceed configured limit ({criteria.MaxRegulatoryReferences}).");
+            $"{referenceCount} regulatory references exceed configured limit ({criteria.MaxRegulatoryReferences}).",
+            regulatoryProvenance,
+            "regulatory.references");
     }
 }

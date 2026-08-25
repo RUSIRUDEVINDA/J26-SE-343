@@ -17,12 +17,18 @@ internal sealed class RequiredAreaCriterionEvaluator : IRecommendationCriterionE
     public CriterionEvaluationDto Evaluate(LandParcel parcel, LandRecommendationSearchRequest request)
     {
         var required = request.RequiredAreaHectares!.Value;
-        var parcelHectares = ConvertToHectares(parcel.Area.Value, parcel.Area.Unit);
+        var parcelHectares = parcel.Area.ToHectares();
         var tolerance = required * (request.AreaTolerancePercent / 100m);
         var difference = Math.Abs(parcelHectares - required);
 
         if (difference <= tolerance)
         {
+            var summary = parcelHectares == required
+                ? $"Parcel area ({parcelHectares:F2} ha) satisfies the required area."
+                : parcelHectares < required
+                    ? $"Parcel area ({parcelHectares:F2} ha) satisfies the minimum required area ({required:F2} ha within {request.AreaTolerancePercent}% tolerance)."
+                    : $"Parcel area ({parcelHectares:F2} ha) satisfies the required area.";
+
             return CriterionEvaluationFactory.Create(
                 Key,
                 "Required Area",
@@ -30,21 +36,25 @@ internal sealed class RequiredAreaCriterionEvaluator : IRecommendationCriterionE
                 isMet: true,
                 score: 100m,
                 DefaultWeight,
-                $"Parcel area ({parcelHectares:F2} ha) satisfies required area ({required:F2} ha within {request.AreaTolerancePercent}% tolerance).");
+                summary);
         }
 
         if (parcelHectares >= required)
         {
             var excessRatio = (parcelHectares - required) / required;
             var score = excessRatio <= 0.5m ? 75m : 50m;
+            var summary = excessRatio <= 0.5m
+                ? $"Parcel area ({parcelHectares:F2} ha) satisfies the minimum required area ({required:F2} ha) but exceeds the requested size."
+                : $"Parcel area ({parcelHectares:F2} ha) satisfies the minimum required area ({required:F2} ha), but substantially exceeds the requested size.";
+
             return CriterionEvaluationFactory.Create(
                 Key,
                 "Required Area",
                 CriterionCategory.RequiredArea,
-                isMet: score >= 60m,
+                isMet: true,
                 score,
                 DefaultWeight,
-                $"Parcel area ({parcelHectares:F2} ha) exceeds required area ({required:F2} ha).");
+                summary);
         }
 
         var shortfallRatio = (required - parcelHectares) / required;
@@ -56,14 +66,6 @@ internal sealed class RequiredAreaCriterionEvaluator : IRecommendationCriterionE
             isMet: false,
             shortScore,
             DefaultWeight,
-            $"Parcel area ({parcelHectares:F2} ha) is below required area ({required:F2} ha).");
+            $"Parcel area ({parcelHectares:F2} ha) is below the minimum required area ({required:F2} ha).");
     }
-
-    private static decimal ConvertToHectares(decimal value, AreaUnit unit) => unit switch
-    {
-        AreaUnit.Hectares => value,
-        AreaUnit.Acres => value * 0.404686m,
-        AreaUnit.SquareMeters => value / 10_000m,
-        _ => value
-    };
 }

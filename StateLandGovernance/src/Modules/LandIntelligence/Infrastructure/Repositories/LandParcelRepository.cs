@@ -47,6 +47,71 @@ public sealed class LandParcelRepository : ILandParcelRepository
         LandSearchRequest request,
         CancellationToken cancellationToken = default)
     {
+        var entities = await BuildSearchQuery(request)
+            .OrderBy(parcel => parcel.CadastralNumber)
+            .Skip((request.Page - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync(cancellationToken);
+
+        return entities.Select(LandParcelPersistenceMapper.ToDomain).ToList();
+    }
+
+    public Task<int> CountSearchAsync(
+        LandSearchRequest request,
+        CancellationToken cancellationToken = default) =>
+        BuildSearchQuery(request).CountAsync(cancellationToken);
+
+    public async Task AddAsync(LandParcel parcel, CancellationToken cancellationToken = default)
+    {
+        var entity = LandParcelPersistenceMapper.ToPersistence(parcel);
+        await _dbContext.LandParcels.AddAsync(entity, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default)
+    {
+        var entity = await _dbContext.LandParcels
+            .Include(p => p.SpatialConstraints)
+            .Include(p => p.InfrastructureFeatures)
+            .Include(p => p.EnvironmentalRestrictions)
+            .Include(p => p.RegulatoryReferences)
+            .FirstOrDefaultAsync(p => p.Id == parcel.Id, cancellationToken);
+
+        if (entity is null)
+        {
+            return;
+        }
+
+        LandParcelPersistenceMapper.ApplyFullUpdate(entity, parcel);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _dbContext.LandParcels
+            .FirstOrDefaultAsync(parcel => parcel.Id == id, cancellationToken);
+
+        if (entity is null)
+        {
+            return;
+        }
+
+        _dbContext.LandParcels.Remove(entity);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private IQueryable<LandParcelEntity> BaseQuery() =>
+        _dbContext.LandParcels
+            .AsNoTracking()
+            .Include(parcel => parcel.LandCategory)
+            .Include(parcel => parcel.CurrentLandUse)
+            .Include(parcel => parcel.SpatialConstraints)
+            .Include(parcel => parcel.InfrastructureFeatures)
+            .Include(parcel => parcel.EnvironmentalRestrictions)
+            .Include(parcel => parcel.RegulatoryReferences);
+
+    private IQueryable<LandParcelEntity> BuildSearchQuery(LandSearchRequest request)
+    {
         var query = BaseQuery();
 
         if (!string.IsNullOrWhiteSpace(request.Province))
@@ -99,41 +164,6 @@ public sealed class LandParcelRepository : ILandParcelRepository
             query = query.Where(parcel => parcel.Centroid.Intersects(boundingBox));
         }
 
-        var entities = await query
-            .OrderBy(parcel => parcel.CadastralNumber)
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .ToListAsync(cancellationToken);
-
-        return entities.Select(LandParcelPersistenceMapper.ToDomain).ToList();
+        return query;
     }
-
-    public async Task AddAsync(LandParcel parcel, CancellationToken cancellationToken = default)
-    {
-        var entity = LandParcelPersistenceMapper.ToPersistence(parcel);
-        await _dbContext.LandParcels.AddAsync(entity, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default)
-    {
-        var entity = await _dbContext.LandParcels
-            .FirstOrDefaultAsync(p => p.Id == parcel.Id, cancellationToken);
-
-        if (entity is null)
-        {
-            return;
-        }
-
-        LandParcelPersistenceMapper.ApplyUpdates(entity, parcel);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    private IQueryable<LandParcelEntity> BaseQuery() =>
-        _dbContext.LandParcels
-            .AsNoTracking()
-            .Include(parcel => parcel.LandCategory)
-            .Include(parcel => parcel.CurrentLandUse)
-            .Include(parcel => parcel.SpatialConstraints)
-            .Include(parcel => parcel.InfrastructureFeatures);
 }

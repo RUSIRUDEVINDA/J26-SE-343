@@ -64,13 +64,16 @@ public sealed record CriterionEvaluationDto(
     decimal Score,
     decimal Weight,
     decimal WeightedScore,
-    string Summary);
+    string Summary,
+    AttributeProvenanceDto? DataProvenance = null,
+    string? AttributePath = null);
 
 public sealed record RestrictionSummaryDto(
     string RestrictionType,
     string Description,
     RestrictionSeverity Severity,
-    string Source);
+    string Source,
+    AttributeProvenanceDto? DataProvenance = null);
 
 public sealed record LandParcelRecommendationResult(
     Guid ParcelId,

@@ -18,26 +18,15 @@ EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// TODO: Register shared infrastructure services (logging, persistence, security, storage)
-// TODO: Register BuildingBlocks (CQRS, events, observability)
 builder.Services.AddBuildingBlocks();
-
-// TODO: Register LandIntelligence module (Application + Infrastructure + Presentation)
-// TODO: Register LeaseFeasibility module (Application + Infrastructure + Presentation)
-// TODO: Register WorkflowGovernance module (Application + Infrastructure + Presentation)
 
 builder.Services
     .AddWorkflowGovernanceApplication()
     .AddWorkflowGovernanceInfrastructure()
     .AddWorkflowGovernancePresentation();
 
-// TODO: Register GovernanceIntelligence module (Application + Infrastructure + Presentation)
 builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
-// TODO: Register LandIntelligence Application handlers and Presentation
-// TODO: Register LeaseFeasibility module (Application + Infrastructure + Presentation)
-// TODO: Register WorkflowGovernance module (Application + Infrastructure + Presentation)
 
-// Register GovernanceIntelligence module (Application + Infrastructure + Presentation)
 builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
 builder.Services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRuleProvider>();
 builder.Services.AddGovernanceIntelligenceInfrastructure(builder.Configuration, builder.Environment);
@@ -84,7 +73,6 @@ else
     dbContext.Database.Migrate();
 }
 
-// TODO: Configure middleware pipeline (exception handling, authentication, etc.)
 app.MapControllers();
 
 app.Run();
