@@ -21,9 +21,6 @@ public sealed class WorkflowStageExecution
     {
         if (Status != WorkflowStageExecutionStatus.Ready)
             throw new InvalidWorkflowStageTransitionException("Only Ready stages can be started.");
-        
-        if (Definition.IsFinalDecision)
-            throw new InvalidWorkflowStageTransitionException("FinalDecision stage cannot be started in this batch.");
     }
 
     internal void Start(Guid actingOfficerId, DateTime startedAt)
@@ -39,9 +36,6 @@ public sealed class WorkflowStageExecution
     {
         if (Status != WorkflowStageExecutionStatus.InProgress)
             throw new InvalidWorkflowStageTransitionException("Decisions can only be recorded for InProgress stages.");
-            
-        if (Definition.IsFinalDecision)
-            throw new InvalidWorkflowStageTransitionException("FinalDecision stage cannot receive a decision in this batch.");
 
         if (decidedAt < StartedAt!.Value)
             throw new InvalidWorkflowStageTransitionException("Decision time cannot be before stage start time.");

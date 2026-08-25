@@ -1,10 +1,10 @@
-namespace StateLandGovernance.WorkflowGovernance.Domain.WorkflowExecution;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using StateLandGovernance.WorkflowGovernance.Domain.Exceptions;
 using StateLandGovernance.WorkflowGovernance.Domain.WorkflowPlanning;
+
+namespace StateLandGovernance.WorkflowGovernance.Domain.WorkflowExecution;
 
 public sealed class WorkflowStageDecision
 {
@@ -17,6 +17,7 @@ public sealed class WorkflowStageDecision
     public IReadOnlyCollection<string> Conditions => Array.AsReadOnly(_conditions);
     public Guid DecidingOfficerId { get; }
     public DateTime DecidedAt { get; }
+    public ConsensusAssessmentId? ConsensusAssessmentId { get; }
 
     internal WorkflowStageDecision(
         WorkflowStageDecisionId id,
@@ -26,7 +27,8 @@ public sealed class WorkflowStageDecision
         string? reason,
         IEnumerable<string>? conditions,
         Guid decidingOfficerId,
-        DateTime decidedAt)
+        DateTime decidedAt,
+        ConsensusAssessmentId? consensusAssessmentId = null)
     {
         if (id.Value == Guid.Empty) throw new InvalidWorkflowStageDecisionException("Decision ID cannot be empty.");
         if (workflowStageId.Value == Guid.Empty) throw new InvalidWorkflowStageDecisionException("WorkflowStageId cannot be empty.");
@@ -91,5 +93,6 @@ public sealed class WorkflowStageDecision
         _conditions = distinctConds;
         DecidingOfficerId = decidingOfficerId;
         DecidedAt = decidedAt;
+        ConsensusAssessmentId = consensusAssessmentId;
     }
 }
