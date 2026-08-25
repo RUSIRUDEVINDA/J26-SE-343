@@ -72,3 +72,9 @@ secrets.json
 
 .agents
 .Rules/rules/
+.research-log/
+scripts/export_research_log.py
+scripts/test_export_research_log.py
+scripts/run_research_log_export.bat
+*.xlsx
+scripts/__pycache__/export_research_log.cpython-313.pyc
