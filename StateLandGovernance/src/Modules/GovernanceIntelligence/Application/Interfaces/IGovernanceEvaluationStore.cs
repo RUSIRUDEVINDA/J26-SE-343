@@ -12,6 +12,7 @@ namespace StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 public interface IGovernanceEvaluationStore
 {
     Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, CancellationToken cancellationToken = default);
+    Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, string? proposalId, CancellationToken cancellationToken = default);
     Task StoreConflictEvaluationAsync(GovernanceAuditRecord auditRecord, IReadOnlyList<DetectedConflict> conflicts, string actionName, int totalEvaluatedDecisions, CancellationToken cancellationToken = default);
     Task StoreRiskEvaluationAsync(GovernanceAuditRecord auditRecord, GovernanceRiskAssessmentResult result, CancellationToken cancellationToken = default);
     Task StoreExplanationEvaluationAsync(GovernanceAuditRecord auditRecord, GovernanceExplanationResult result, CancellationToken cancellationToken = default);
