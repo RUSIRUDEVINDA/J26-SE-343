@@ -14,6 +14,7 @@ public abstract class RegulatoryRule
     public string Description { get; }
     public RuleCategory Category { get; }
     public bool IsActive { get; }
+    public RuleSourceType SourceType => RuleSourceType.ResearchConfiguration;
 
     protected RegulatoryRule(string code, string name, string description, RuleCategory category, bool isActive)
     {
