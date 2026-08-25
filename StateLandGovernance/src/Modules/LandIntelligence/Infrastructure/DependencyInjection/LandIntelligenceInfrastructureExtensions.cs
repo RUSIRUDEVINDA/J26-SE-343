@@ -47,6 +47,7 @@ public static class LandIntelligenceInfrastructureExtensions
         services.AddScoped<IAdministrativeLocationVerificationService, AdministrativeLocationVerificationService>();
         services.AddScoped<IRoadAccessibilityEnrichmentService, RoadAccessibilityEnrichmentService>();
         services.AddScoped<IWaterProximityEnrichmentService, WaterProximityEnrichmentService>();
+        services.AddScoped<ISoilGroupEnrichmentService, SoilGroupEnrichmentService>();
 
         return services;
     }
