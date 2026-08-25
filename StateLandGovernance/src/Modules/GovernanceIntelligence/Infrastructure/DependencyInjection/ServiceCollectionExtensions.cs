@@ -48,11 +48,13 @@ public static class ServiceCollectionExtensions
 
             services.AddScoped<IGovernanceAuditRepository, PostgresGovernanceAuditRepository>();
             services.AddScoped<IGovernanceEvaluationStore, PostgresGovernanceEvaluationStore>();
+            services.AddScoped<IComplianceRuleCatalogue, PostgresComplianceRuleCatalogue>();
         }
         else if (environment.IsDevelopment() || environment.IsEnvironment("Testing"))
         {
             services.AddSingleton<IGovernanceAuditRepository, InMemoryGovernanceAuditRepository>();
             services.AddSingleton<IGovernanceEvaluationStore, InMemoryGovernanceEvaluationStore>();
+            services.AddSingleton<IComplianceRuleCatalogue, InMemoryComplianceRuleCatalogue>();
         }
         else
         {

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(GovernanceIntelligenceDbContext))]
-    partial class GovernanceIntelligenceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260825131541_GovernanceIntelligence_AddRichComplianceSnapshot")]
+    partial class GovernanceIntelligence_AddRichComplianceSnapshot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,6 +25,31 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceConditionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ComplianceEvaluationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("RequiredByDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ComplianceEvaluationId");
+
+                    b.ToTable("compliance_conditions", "governance_intelligence");
+                });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceEvaluationEntity", b =>
                 {
@@ -145,6 +173,33 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .HasDatabaseName("idx_uniq_rule_code_version");
 
                     b.ToTable("compliance_rules", "governance_intelligence");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceViolationEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ComplianceEvaluationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RuleCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ComplianceEvaluationId");
+
+                    b.ToTable("compliance_violations", "governance_intelligence");
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ConditionResultEntity", b =>
@@ -837,6 +892,17 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                     b.ToTable("rule_parameters", "governance_intelligence");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceConditionEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceEvaluationEntity", "ComplianceEvaluation")
+                        .WithMany("Conditions")
+                        .HasForeignKey("ComplianceEvaluationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ComplianceEvaluation");
+                });
+
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceEvaluationEntity", b =>
                 {
                     b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceAuditRecordEntity", "AuditRecord")
@@ -856,6 +922,17 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Source");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceViolationEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceEvaluationEntity", "ComplianceEvaluation")
+                        .WithMany("Violations")
+                        .HasForeignKey("ComplianceEvaluationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ComplianceEvaluation");
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ConditionResultEntity", b =>
@@ -977,6 +1054,13 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .IsRequired();
 
                     b.Navigation("Rule");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceEvaluationEntity", b =>
+                {
+                    b.Navigation("Conditions");
+
+                    b.Navigation("Violations");
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceRuleEntity", b =>

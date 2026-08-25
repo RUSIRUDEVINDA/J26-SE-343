@@ -19,12 +19,17 @@ public class PostgresGovernanceEvaluationStore : IGovernanceEvaluationStore
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, CancellationToken cancellationToken = default)
+    public Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, CancellationToken cancellationToken = default)
+    {
+        return StoreComplianceEvaluationAsync(auditRecord, result, actionName, proposalId: null, cancellationToken);
+    }
+
+    public async Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, string? proposalId, CancellationToken cancellationToken = default)
     {
         if (auditRecord == null) throw new ArgumentNullException(nameof(auditRecord));
         if (result == null) throw new ArgumentNullException(nameof(result));
 
-        var (auditEntity, evalEntity) = ComplianceEvaluationMapper.MapToEntities(auditRecord, result, actionName);
+        var (auditEntity, evalEntity) = ComplianceEvaluationMapper.MapToEntities(auditRecord, result, actionName, proposalId);
 
         await _dbContext.GovernanceAuditRecords.AddAsync(auditEntity, cancellationToken);
         await _dbContext.ComplianceEvaluations.AddAsync(evalEntity, cancellationToken);
