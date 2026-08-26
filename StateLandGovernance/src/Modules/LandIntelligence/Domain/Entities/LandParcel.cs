@@ -17,6 +17,8 @@ public sealed class LandParcel : Entity
     public SpatialReference Spatial { get; private set; } = null!;
     public LandCharacteristics? Characteristics { get; private set; }
 
+    public ParcelGisDerivedIntelligence? GisDerivedIntelligence { get; private set; }
+
     public IReadOnlyCollection<SpatialConstraint> SpatialConstraints => _spatialConstraints.AsReadOnly();
     public IReadOnlyCollection<EnvironmentalRestriction> EnvironmentalRestrictions =>
         _environmentalRestrictions.AsReadOnly();
@@ -51,6 +53,9 @@ public sealed class LandParcel : Entity
 
     public void UpdateCharacteristics(LandCharacteristics characteristics) =>
         Characteristics = characteristics;
+
+    public void AttachGisDerivedIntelligence(ParcelGisDerivedIntelligence intelligence) =>
+        GisDerivedIntelligence = intelligence;
 
     public void UpdateSpatial(SpatialReference spatial) => Spatial = spatial;
 

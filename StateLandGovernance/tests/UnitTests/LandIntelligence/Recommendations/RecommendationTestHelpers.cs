@@ -1,6 +1,7 @@
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
+using StateLandGovernance.LandIntelligence.Application.GisAdministrativeVerification;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations;
@@ -156,6 +157,102 @@ internal static class SyntheticRecommendationParcelFactory
                 new DateOnly(2026, 1, index)));
         }
 
+        return parcel;
+    }
+
+    public static LandParcel CreateParcelWithGisDerivedRoad(
+        decimal roadDistanceMeters,
+        string cadastralNumber = "SYNTH-GIS-ROAD")
+    {
+        var parcel = CreateParcelWithRoadDistance(roadDistanceMeters, cadastralNumber);
+        parcel.ReplaceInfrastructureFeatures([
+            new InfrastructureFeature(
+                InfrastructureFeatureType.Road,
+                "[GIS-DERIVED] Mapped Access Road",
+                roadDistanceMeters,
+                "[GIS-DERIVED] Nearest mapped road from pilot GIS layer.",
+                AttributeProvenance.Derived(GisDerivedIntelligenceOwnership.SourceName))
+        ]);
+        parcel.AttachGisDerivedIntelligence(new ParcelGisDerivedIntelligence(
+            GisEnrichmentOverallStatus.Partial,
+            null));
+        return parcel;
+    }
+
+    public static LandParcel CreateParcelWithGisDerivedNaturalWaterOnly(
+        decimal waterDistanceMeters,
+        string cadastralNumber = "SYNTH-GIS-WATER")
+    {
+        var parcel = new LandParcel(
+            new ParcelIdentifier(cadastralNumber, "SYNTHETIC-PLAN"),
+            new LandCategory(LandCategoryType.StateLand, "[SYNTHETIC]"),
+            new LandArea(5m, AreaUnit.Hectares),
+            new AdministrativeLocation("Western", "Colombo", "Colombo DS"),
+            new SpatialReference(6.9271, 79.8612, "EPSG:4326"),
+            new LandUse(LandUseType.Agricultural, "[SYNTHETIC]"),
+            new LandCharacteristics("Loam", "Gently sloping", 25m));
+
+        parcel.AddInfrastructureFeature(new InfrastructureFeature(
+            InfrastructureFeatureType.Other,
+            "[GIS-DERIVED] Canal",
+            waterDistanceMeters,
+            "[GIS-DERIVED] Natural water proximity. This is not utility water supply.",
+            AttributeProvenance.Derived(GisDerivedIntelligenceOwnership.SourceName)));
+
+        parcel.AttachGisDerivedIntelligence(new ParcelGisDerivedIntelligence(
+            GisEnrichmentOverallStatus.Partial,
+            null));
+
+        return parcel;
+    }
+
+    public static LandParcel CreateParcelWithGisDerivedSoil(
+        string officialSoilType,
+        string gisSoilGroupName,
+        string cadastralNumber = "SYNTH-GIS-SOIL")
+    {
+        var parcel = CreateSuitableParcel(cadastralNumber);
+        parcel.UpdateCharacteristics(new LandCharacteristics(
+            officialSoilType,
+            "Gently sloping",
+            25m,
+            AttributeProvenance.Official("Land Commissioner"),
+            null,
+            null));
+
+        parcel.AttachGisDerivedIntelligence(new ParcelGisDerivedIntelligence(
+            GisEnrichmentOverallStatus.Partial,
+            new ParcelDerivedSoilGroupEvidence(
+                gisSoilGroupName,
+                92.5m,
+                AttributeProvenance.Derived(GisDerivedIntelligenceOwnership.SourceName))));
+
+        return parcel;
+    }
+
+    public static LandParcel CreateParcelWithGisConservationRestriction(
+        string cadastralNumber = "SYNTH-GIS-CONSERVATION")
+    {
+        var parcel = CreateSuitableParcel(cadastralNumber);
+        parcel.AddEnvironmentalRestriction(new EnvironmentalRestriction(
+            EnvironmentalRestrictionType.ProtectedArea,
+            "[GIS-DERIVED] Intersects soil conservation area 'Pilot Reserve'.",
+            RestrictionSeverity.Low,
+            AttributeProvenance.Derived(GisDerivedIntelligenceOwnership.SourceName)));
+
+        parcel.AttachGisDerivedIntelligence(new ParcelGisDerivedIntelligence(
+            GisEnrichmentOverallStatus.Partial,
+            null));
+
+        return parcel;
+    }
+
+    public static LandParcel CreateParcelWithUnavailableGisEnrichment(string cadastralNumber = "SYNTH-GIS-UNAVAIL")
+    {
+        var parcel = CreateSuitableParcel(cadastralNumber);
+        parcel.AttachGisDerivedIntelligence(new ParcelGisDerivedIntelligence(
+            GisEnrichmentOverallStatus.Unavailable,
+            null));
         return parcel;
     }
 

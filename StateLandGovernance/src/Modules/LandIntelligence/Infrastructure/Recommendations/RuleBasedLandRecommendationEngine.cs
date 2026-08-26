@@ -35,14 +35,16 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             var failed = criterionResults.Where(c => !c.IsMet).ToList();
             var restrictions = ParcelRestrictionCollector.Collect(parcel);
             var score = RecommendationScoreCalculator.Calculate(criterionResults);
-            var evidence = BuildEvidence(criterionResults, restrictions);
+            var gisSupplementarySummaries = GisDerivedRecommendationEvidenceCollector.CollectSupplementarySummaries(parcel);
+            var evidence = BuildEvidence(criterionResults, restrictions, parcel);
             var explanation = RecommendationExplanationBuilder.Build(
                 parcel.Identifier.CadastralNumber,
                 request.RequiredPurpose,
                 score,
                 matching,
                 failed,
-                restrictions);
+                restrictions,
+                gisSupplementarySummaries);
 
             evaluations.Add(new LandParcelRecommendationResult(
                 parcel.Id,
@@ -165,7 +167,8 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
 
     private static IReadOnlyList<RecommendationEvidenceDto> BuildEvidence(
         IReadOnlyList<CriterionEvaluationDto> evaluations,
-        IReadOnlyList<RestrictionSummaryDto> restrictions)
+        IReadOnlyList<RestrictionSummaryDto> restrictions,
+        LandParcel parcel)
     {
         var evidence = evaluations
             .Select(e => new RecommendationEvidenceDto(
@@ -184,6 +187,8 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             ProvenanceEvidenceFormatter.AppendProvenance(r.Description, r.DataProvenance),
             r.RestrictionType,
             r.DataProvenance)));
+
+        evidence.AddRange(GisDerivedRecommendationEvidenceCollector.CollectEvidence(parcel));
 
         return evidence;
     }

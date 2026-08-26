@@ -38,8 +38,8 @@ internal sealed class ParcelDerivedSoilGroupConfiguration : IEntityTypeConfigura
             .IsUnique();
 
         builder.HasOne(entity => entity.LandParcel)
-            .WithMany()
-            .HasForeignKey(entity => entity.LandParcelId)
+            .WithOne(parcel => parcel.DerivedSoilGroup)
+            .HasForeignKey<ParcelDerivedSoilGroupEntity>(entity => entity.LandParcelId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

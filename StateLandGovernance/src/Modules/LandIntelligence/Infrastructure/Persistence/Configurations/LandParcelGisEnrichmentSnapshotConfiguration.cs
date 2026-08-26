@@ -27,8 +27,8 @@ internal sealed class LandParcelGisEnrichmentSnapshotConfiguration
             .IsUnique();
 
         builder.HasOne(entity => entity.LandParcel)
-            .WithMany()
-            .HasForeignKey(entity => entity.LandParcelId)
+            .WithOne(parcel => parcel.GisEnrichmentSnapshot)
+            .HasForeignKey<LandParcelGisEnrichmentSnapshotEntity>(entity => entity.LandParcelId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

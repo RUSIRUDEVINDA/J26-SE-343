@@ -67,7 +67,12 @@ internal sealed class CustomCriteriaEvaluator : IRecommendationCriterionEvaluato
             return AttributeProvenance.Unknown(attributePath);
         }
 
-        var stored = ParcelAttributeProvenanceResolver.ResolveCharacteristicProvenance(parcel, attributePath);
+        var stored = attributePath?.Trim().ToLowerInvariant() switch
+        {
+            "characteristics.gisderivedsoilgroup" =>
+                ParcelAttributeProvenanceResolver.ResolveGisDerivedSoilProvenance(parcel),
+            _ => ParcelAttributeProvenanceResolver.ResolveCharacteristicProvenance(parcel, attributePath)
+        };
         return ParcelAttributeProvenanceResolver.ResolveOrUnknown(stored);
     }
 
@@ -85,6 +90,7 @@ internal sealed class CustomCriteriaEvaluator : IRecommendationCriterionEvaluato
             "location.province" => parcel.Location.Province,
             "location.district" => parcel.Location.District,
             "characteristics.soiltype" => parcel.Characteristics?.SoilType,
+            "characteristics.gisderivedsoilgroup" => parcel.GisDerivedIntelligence?.DerivedSoilGroup?.SoilGroupName,
             "characteristics.terraindescription" => parcel.Characteristics?.TerrainDescription,
             "characteristics.elevationmeters" => parcel.Characteristics?.ElevationMeters?.ToString(),
             _ => null
