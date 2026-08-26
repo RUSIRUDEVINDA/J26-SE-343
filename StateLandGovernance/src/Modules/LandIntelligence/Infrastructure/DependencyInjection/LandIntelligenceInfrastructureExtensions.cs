@@ -49,6 +49,7 @@ public static class LandIntelligenceInfrastructureExtensions
         services.AddScoped<IWaterProximityEnrichmentService, WaterProximityEnrichmentService>();
         services.AddScoped<ISoilGroupEnrichmentService, SoilGroupEnrichmentService>();
         services.AddScoped<IEnvironmentalSpatialConstraintEnrichmentService, EnvironmentalSpatialConstraintEnrichmentService>();
+        services.AddScoped<ILandParcelGisEnrichmentService, LandParcelGisEnrichmentService>();
 
         return services;
     }
