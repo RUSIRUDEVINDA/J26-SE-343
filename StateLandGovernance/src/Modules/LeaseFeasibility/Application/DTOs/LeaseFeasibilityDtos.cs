@@ -8,11 +8,31 @@ namespace StateLandGovernance.LeaseFeasibility.Application.DTOs;
 /// </summary>
 public sealed record FinancialProfileDto(
     string ApplicantId,
+    // Income & Employment
     decimal AverageMonthlyIncome,
     decimal IncomeConsistencyScore,
     int EmploymentTenureMonths,
     string EmploymentType,
-    string? EmployerOrBusinessName
+    string? EmployerOrBusinessName,
+    // Bank Statement
+    decimal AverageAccountBalance,
+    int OverdraftFrequency,
+    decimal SavingsToIncomeRatio,
+    // CRIB Report
+    string CreditRiskGrade,
+    decimal ActiveLoanObligations,
+    bool DefaultHistoryIndicator,
+    int RecentCreditInquiries
+);
+
+/// <summary>
+/// Data Transfer Object representing structured data extracted from a CRIB report.
+/// </summary>
+public sealed record CribReportDataDto(
+    string CreditRiskGrade,
+    decimal ActiveLoanObligations,
+    bool DefaultHistoryIndicator,
+    int RecentCreditInquiries
 );
 
 /// <summary>
@@ -23,6 +43,16 @@ public sealed record BankStatementDataDto(
     decimal AverageAccountBalance,
     int OverdraftFrequency,
     decimal SavingsToIncomeRatio
+);
+
+/// <summary>
+/// Data Transfer Object representing structured data extracted from a salary slip.
+/// </summary>
+public sealed record SalarySlipDataDto(
+    decimal AverageMonthlyIncome,
+    int EmploymentTenureMonths,
+    string EmploymentType,
+    string EmployerOrBusinessName
 );
 
 /// <summary>

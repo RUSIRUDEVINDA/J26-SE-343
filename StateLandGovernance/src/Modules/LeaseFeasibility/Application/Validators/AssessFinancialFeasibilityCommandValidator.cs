@@ -15,31 +15,24 @@ public sealed class AssessFinancialFeasibilityCommandValidator : IRequestValidat
             errors.Add("Application ID is required.");
         }
 
-        if (request.Input is null)
+        if (string.IsNullOrWhiteSpace(request.ApplicantId))
         {
-            errors.Add("Financial profile input cannot be null.");
+            errors.Add("Applicant ID is required.");
         }
-        else
+
+        if (string.IsNullOrWhiteSpace(request.BankStatementUri))
         {
-            if (string.IsNullOrWhiteSpace(request.Input.ApplicantId))
-            {
-                errors.Add("Applicant ID is required.");
-            }
+            errors.Add("Bank Statement URI is required.");
+        }
 
-            if (request.Input.AverageMonthlyIncome < 0)
-            {
-                errors.Add("Average monthly income cannot be negative.");
-            }
+        if (string.IsNullOrWhiteSpace(request.SalarySlipUri))
+        {
+            errors.Add("Salary Slip URI is required.");
+        }
 
-            if (request.Input.IncomeConsistencyScore is < 0 or > 1)
-            {
-                errors.Add("Income consistency score must be between 0 and 1.");
-            }
-
-            if (request.Input.EmploymentTenureMonths < 0)
-            {
-                errors.Add("Employment tenure months cannot be negative.");
-            }
+        if (string.IsNullOrWhiteSpace(request.CribReportUri))
+        {
+            errors.Add("CRIB Report URI is required.");
         }
 
         return errors.Count == 0

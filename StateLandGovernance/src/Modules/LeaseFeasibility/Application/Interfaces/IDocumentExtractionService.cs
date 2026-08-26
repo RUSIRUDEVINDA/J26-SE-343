@@ -19,4 +19,14 @@ public interface IDocumentExtractionService
     /// Extracts structured financial fields from a bank statement document.
     /// </summary>
     Task<BankStatementDataDto> ExtractBankStatementDataAsync(string documentUri, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Extracts structured employment and income fields from a salary slip document.
+    /// </summary>
+    Task<SalarySlipDataDto> ExtractSalarySlipDataAsync(string documentUri, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Extracts structured credit risk fields from a CRIB report document.
+    /// </summary>
+    Task<CribReportDataDto> ExtractCribReportDataAsync(string documentUri, CancellationToken cancellationToken = default);
 }
