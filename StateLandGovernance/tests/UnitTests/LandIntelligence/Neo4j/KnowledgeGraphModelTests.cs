@@ -16,6 +16,12 @@ public sealed class KnowledgeGraphModelTests
         Assert.Equal("Regulation", GraphNodeLabels.Regulation);
         Assert.Equal("InfrastructureFeature", GraphNodeLabels.InfrastructureFeature);
         Assert.Equal("EnvironmentalArea", GraphNodeLabels.EnvironmentalArea);
+        Assert.Equal("Province", GraphNodeLabels.Province);
+        Assert.Equal("District", GraphNodeLabels.District);
+        Assert.Equal("Road", GraphNodeLabels.Road);
+        Assert.Equal("WaterFeature", GraphNodeLabels.WaterFeature);
+        Assert.Equal("SoilGroup", GraphNodeLabels.SoilGroup);
+        Assert.Equal("ConservationArea", GraphNodeLabels.ConservationArea);
     }
 
     [Fact]
@@ -28,6 +34,10 @@ public sealed class KnowledgeGraphModelTests
         Assert.Equal("HAS_RESTRICTION", GraphRelationshipTypes.HasRestriction);
         Assert.Equal("NEAR", GraphRelationshipTypes.Near);
         Assert.Equal("RELATED_TO", GraphRelationshipTypes.RelatedTo);
+        Assert.Equal("NEAR_ROAD", GraphRelationshipTypes.NearRoad);
+        Assert.Equal("NEAR_WATER", GraphRelationshipTypes.NearWater);
+        Assert.Equal("HAS_DERIVED_SOIL", GraphRelationshipTypes.HasDerivedSoil);
+        Assert.Equal("INTERSECTS_CONSERVATION_AREA", GraphRelationshipTypes.IntersectsConservationArea);
     }
 
     [Theory]

@@ -45,6 +45,7 @@ internal static class LandParcelGisEnrichmentPersistenceMapper
             DistanceMeters = road.DistanceMeters is null ? null : Convert.ToDecimal(road.DistanceMeters.Value),
             Description =
                 $"[GIS-DERIVED] Nearest mapped {road.RoadType} from layer '{road.SourceLayer}'.",
+            GisReferenceId = road.RoadId,
             DistanceProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(
                 CreateDerivedDistanceProvenance(road.DistanceProvenance, result.CompletedAt))
         };
@@ -69,6 +70,7 @@ internal static class LandParcelGisEnrichmentPersistenceMapper
             Description =
                 $"[GIS-DERIVED] Natural water proximity ({water.FeatureType}) from layer '{water.SourceLayer}'. " +
                 "This is not utility water supply.",
+            GisReferenceId = water.FeatureId,
             DistanceProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(
                 CreateDerivedDistanceProvenance(water.DistanceProvenance, result.CompletedAt))
         };
@@ -125,6 +127,7 @@ internal static class LandParcelGisEnrichmentPersistenceMapper
                         ? "."
                         : $" ({area.OverlapPercentage:F2}% overlap)."),
                 Severity = RestrictionSeverity.Low,
+                GisReferenceId = area.Id,
                 DataProvenanceJson = AttributeProvenancePersistenceMapper.Serialize(
                     CreateDerivedConservationProvenance(environmental, result.CompletedAt, area.SourceLayer))
             })

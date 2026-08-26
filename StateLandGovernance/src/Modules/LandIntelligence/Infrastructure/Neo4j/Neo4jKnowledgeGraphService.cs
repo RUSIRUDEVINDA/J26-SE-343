@@ -4,6 +4,7 @@ using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j.Cypher;
 using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j.Mapping;
+using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j.Models;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
 
@@ -302,6 +303,165 @@ public sealed class Neo4jKnowledgeGraphService : IKnowledgeGraphService, IAsyncD
             KnowledgeGraphCypher.DeleteLandParcelGraph,
             new { parcelId = parcelId.ToString() },
             cancellationToken);
+
+    public async Task SyncGisDerivedParcelIntelligenceAsync(
+        GisDerivedParcelIntelligenceGraphSyncRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        await UpsertLandParcelAsync(
+            new LandParcelGraphNodeDto(
+                request.ParcelId,
+                request.CadastralNumber,
+                request.SurveyPlanReference),
+            cancellationToken);
+
+        await ExecuteWriteAsync(
+            GisKnowledgeGraphCypher.ClearGisDerivedParcelRelationships,
+            GisKnowledgeGraphMapper.ToOwnershipParameters(request.ParcelId),
+            cancellationToken);
+
+        if (request.OverallStatus == LandParcelGisEnrichmentOverallStatus.Unavailable)
+        {
+            return;
+        }
+
+        if (request.Administrative is not null)
+        {
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.UpsertProvince,
+                GisKnowledgeGraphMapper.ToProvinceParameters(
+                    new ProvinceGraphNodeDto(
+                        request.Administrative.ProvinceReferenceId,
+                        request.Administrative.ProvinceName,
+                        request.Administrative.SourceName)),
+                cancellationToken);
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.UpsertDistrict,
+                GisKnowledgeGraphMapper.ToDistrictParameters(
+                    new DistrictGraphNodeDto(
+                        request.Administrative.DistrictReferenceId,
+                        request.Administrative.DistrictName,
+                        request.Administrative.SourceName)),
+                cancellationToken);
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.LinkParcelToProvince,
+                GisKnowledgeGraphMapper.ToAdministrativeLinkParameters(
+                    request.ParcelId,
+                    request.Administrative.ProvinceReferenceId,
+                    request.Administrative.DerivedAt),
+                cancellationToken);
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.LinkParcelToDistrict,
+                GisKnowledgeGraphMapper.ToAdministrativeLinkParameters(
+                    request.ParcelId,
+                    request.Administrative.DistrictReferenceId,
+                    request.Administrative.DerivedAt),
+                cancellationToken);
+        }
+
+        if (request.Road is not null)
+        {
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.UpsertRoad,
+                GisKnowledgeGraphMapper.ToRoadParameters(
+                    new RoadGraphNodeDto(
+                        request.Road.RoadReferenceId,
+                        request.Road.RoadName,
+                        request.Road.RoadType,
+                        request.Road.SourceName)),
+                cancellationToken);
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.LinkParcelToRoad,
+                GisKnowledgeGraphMapper.ToRoadLinkParameters(request.ParcelId, request.Road),
+                cancellationToken);
+        }
+
+        if (request.Water is not null)
+        {
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.UpsertWaterFeature,
+                GisKnowledgeGraphMapper.ToWaterFeatureParameters(
+                    new WaterFeatureGraphNodeDto(
+                        request.Water.WaterReferenceId,
+                        request.Water.FeatureName,
+                        request.Water.FeatureType,
+                        request.Water.SourceName)),
+                cancellationToken);
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.LinkParcelToWaterFeature,
+                GisKnowledgeGraphMapper.ToWaterLinkParameters(request.ParcelId, request.Water),
+                cancellationToken);
+        }
+
+        if (request.Soil is not null)
+        {
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.UpsertSoilGroup,
+                GisKnowledgeGraphMapper.ToSoilGroupParameters(
+                    new SoilGroupGraphNodeDto(
+                        request.Soil.SoilGroupReferenceId,
+                        request.Soil.SoilGroupName,
+                        request.Soil.SourceName)),
+                cancellationToken);
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.LinkParcelToSoilGroup,
+                GisKnowledgeGraphMapper.ToSoilLinkParameters(request.ParcelId, request.Soil),
+                cancellationToken);
+        }
+
+        foreach (var conservation in request.ConservationAreas)
+        {
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.UpsertConservationArea,
+                GisKnowledgeGraphMapper.ToConservationAreaParameters(
+                    new ConservationAreaGraphNodeDto(
+                        conservation.ConservationAreaReferenceId,
+                        conservation.ConservationAreaName,
+                        conservation.SourceName)),
+                cancellationToken);
+            await ExecuteWriteAsync(
+                GisKnowledgeGraphCypher.LinkParcelToConservationArea,
+                GisKnowledgeGraphMapper.ToConservationLinkParameters(request.ParcelId, conservation),
+                cancellationToken);
+        }
+    }
+
+    public async Task<LandParcelGisGraphIntelligenceDto?> GetParcelGisGraphIntelligenceAsync(
+        Guid parcelId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var session = _driver.AsyncSession();
+        var cursor = await session.RunAsync(
+            GisKnowledgeGraphCypher.GetParcelGisGraphIntelligence,
+            GisKnowledgeGraphMapper.ToOwnershipParameters(parcelId));
+
+        var records = await cursor.ToListAsync();
+        if (records.Count == 0)
+        {
+            return null;
+        }
+
+        return GisKnowledgeGraphMapper.ToParcelGisGraphIntelligenceDto(records[0]);
+    }
+
+    public async Task<IReadOnlyList<Guid>> GetParcelIdsByDerivedSoilGroupAsync(
+        Guid soilGroupReferenceId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var session = _driver.AsyncSession();
+        var cursor = await session.RunAsync(
+            GisKnowledgeGraphCypher.GetParcelIdsByDerivedSoilGroup,
+            new
+            {
+                soilGroupId = soilGroupReferenceId.ToString(),
+                ownershipSource = GisGraphRelationshipOwnership.SourceName
+            });
+
+        var records = await cursor.ToListAsync();
+        return records
+            .Select(record => Guid.Parse(record["parcelId"].As<string>()))
+            .ToList();
+    }
 
     public ValueTask DisposeAsync()
     {
