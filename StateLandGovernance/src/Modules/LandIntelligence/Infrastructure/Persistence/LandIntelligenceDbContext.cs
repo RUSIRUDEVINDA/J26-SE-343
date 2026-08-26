@@ -44,6 +44,12 @@ public class LandIntelligenceDbContext : DbContext
     public DbSet<GisSoilErosionObservationEntity> GisSoilErosionObservations =>
         Set<GisSoilErosionObservationEntity>();
 
+    public DbSet<LandParcelGisEnrichmentSnapshotEntity> LandParcelGisEnrichmentSnapshots =>
+        Set<LandParcelGisEnrichmentSnapshotEntity>();
+
+    public DbSet<ParcelDerivedSoilGroupEntity> ParcelDerivedSoilGroups =>
+        Set<ParcelDerivedSoilGroupEntity>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
