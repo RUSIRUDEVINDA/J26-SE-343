@@ -160,4 +160,60 @@ public class DocumentOcrServiceTests
         Assert.Contains(ex.Errors, e => e.Contains("SALARY SLIP' indicator not found"));
         Assert.Contains(ex.Errors, e => e.Contains("Missing required field: Average Monthly Income"));
     }
+
+    [Fact]
+    public async Task ExtractBankStatementDataAsync_WithMissingFields_ThrowsValidationException()
+    {
+        // Arrange
+        var configMock = new Mock<IConfiguration>();
+        configMock.Setup(c => c["Azure:DocumentIntelligence:Endpoint"]).Returns("https://dummy.cognitiveservices.azure.com/");
+        var service = new DocumentOcrService(configMock.Object);
+        
+        string tempFile = System.IO.Path.GetTempFileName();
+        System.IO.File.WriteAllText(tempFile, "[BANK STATEMENT]\nAverage Monthly Income: 5000.\nOverdraft Frequency: 1"); // Missing Account Balance and Savings Ratio
+
+        try
+        {
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<StateLandGovernance.LeaseFeasibility.Application.Interfaces.ValidationException>(
+                () => service.ExtractBankStatementDataAsync(tempFile)
+            );
+
+            Assert.NotEmpty(ex.Errors);
+            Assert.Contains(ex.Errors, e => e.Contains("Missing required field: Average Account Balance"));
+            Assert.Contains(ex.Errors, e => e.Contains("Missing required field: Savings To Income Ratio"));
+        }
+        finally
+        {
+            System.IO.File.Delete(tempFile);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractCribReportDataAsync_WithMissingFields_ThrowsValidationException()
+    {
+        // Arrange
+        var configMock = new Mock<IConfiguration>();
+        configMock.Setup(c => c["Azure:DocumentIntelligence:Endpoint"]).Returns("https://dummy.cognitiveservices.azure.com/");
+        var service = new DocumentOcrService(configMock.Object);
+        
+        string tempFile = System.IO.Path.GetTempFileName();
+        System.IO.File.WriteAllText(tempFile, "[CRIB REPORT]\nActive Loan Obligations: 5000.\nDefault History Indicator: True"); // Missing Grade and Inquiries
+
+        try
+        {
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<StateLandGovernance.LeaseFeasibility.Application.Interfaces.ValidationException>(
+                () => service.ExtractCribReportDataAsync(tempFile)
+            );
+
+            Assert.NotEmpty(ex.Errors);
+            Assert.Contains(ex.Errors, e => e.Contains("Missing required field: Credit Risk Grade"));
+            Assert.Contains(ex.Errors, e => e.Contains("Missing required field: Recent Credit Inquiries"));
+        }
+        finally
+        {
+            System.IO.File.Delete(tempFile);
+        }
+    }
 }

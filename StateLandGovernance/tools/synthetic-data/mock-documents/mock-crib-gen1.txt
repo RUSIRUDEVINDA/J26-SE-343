@@ -1,0 +1,4 @@
+[CRIB REPORT]
+Active Loan Obligations: 16910
+Default History Indicator: True
+Recent Credit Inquiries: 3

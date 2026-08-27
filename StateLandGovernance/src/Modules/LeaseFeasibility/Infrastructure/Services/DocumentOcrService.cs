@@ -39,6 +39,11 @@ public sealed class DocumentOcrService : IDocumentExtractionService
         // Mock mode for local testing if dummy keys are used or if the file contains mock
         if (_endpointHost == "dummy.cognitiveservices.azure.com" || documentUri.Contains("mock-"))
         {
+            if (File.Exists(documentUri))
+            {
+                return File.ReadAllText(documentUri);
+            }
+
             if (documentUri.Contains("mock-salary"))
             {
                 if (documentUri.Contains("malformed")) return "MOCK OCR RESULT: Some random noise without any useful salary data...";
