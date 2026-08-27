@@ -9,6 +9,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 
 namespace StateLandGovernance.UnitTests.GovernanceIntelligence;
@@ -48,12 +49,13 @@ public class DetectConflictsCommandHandlerTests
     public DetectConflictsCommandHandlerTests()
     {
         _auditRepository = new SpyAuditRepository();
+        var evalStore = new InMemoryGovernanceEvaluationStore(_auditRepository);
         var conflictEngine = new GovernanceConflictEngine();
         _timeProvider = new FakeTimeProvider(_fixedTime);
 
         _handler = new DetectConflictsCommandHandler(
             conflictEngine,
-            _auditRepository,
+            evalStore,
             _timeProvider);
     }
 

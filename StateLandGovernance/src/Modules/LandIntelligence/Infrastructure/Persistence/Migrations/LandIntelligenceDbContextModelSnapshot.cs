@@ -25,6 +25,36 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.EnvironmentalRestrictionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DataProvenanceJson")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("LandParcelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LandParcelId");
+
+                    b.ToTable("environmental_restrictions", "land_intelligence");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.InfrastructureFeatureEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -38,6 +68,9 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.Property<decimal?>("DistanceMeters")
                         .HasPrecision(12, 2)
                         .HasColumnType("numeric(12,2)");
+
+                    b.Property<string>("DistanceProvenanceJson")
+                        .HasColumnType("jsonb");
 
                     b.Property<Guid>("LandParcelId")
                         .HasColumnType("uuid");
@@ -148,6 +181,9 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .IsRequired()
                         .HasColumnType("geometry (Point, 4326)");
 
+                    b.Property<string>("CharacteristicsProvenanceJson")
+                        .HasColumnType("jsonb");
+
                     b.Property<Guid?>("CurrentLandUseId")
                         .HasColumnType("uuid");
 
@@ -210,6 +246,52 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.HasIndex("LandCategoryId");
 
                     b.ToTable("land_parcels", "land_intelligence");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandRecommendationEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CriteriaJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("EvidenceJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTimeOffset>("GeneratedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("LandParcelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("Rank")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RecommendedUseDescription")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int?>("RecommendedUseType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("SuitabilityScore")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GeneratedAt");
+
+                    b.HasIndex("LandParcelId");
+
+                    b.ToTable("land_recommendations", "land_intelligence");
                 });
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandUseEntity", b =>
@@ -296,6 +378,42 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         });
                 });
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.RegulatoryReferenceEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DataProvenanceJson")
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateOnly>("EffectiveDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("GazetteNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("LandParcelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Summary")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LandParcelId");
+
+                    b.ToTable("regulatory_references", "land_intelligence");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.SpatialConstraintEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -333,6 +451,17 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.ToTable("spatial_constraints", "land_intelligence");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.EnvironmentalRestrictionEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", "LandParcel")
+                        .WithMany("EnvironmentalRestrictions")
+                        .HasForeignKey("LandParcelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LandParcel");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.InfrastructureFeatureEntity", b =>
                 {
                     b.HasOne("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", "LandParcel")
@@ -362,6 +491,17 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.Navigation("LandCategory");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.RegulatoryReferenceEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", "LandParcel")
+                        .WithMany("RegulatoryReferences")
+                        .HasForeignKey("LandParcelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LandParcel");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.SpatialConstraintEntity", b =>
                 {
                     b.HasOne("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", "LandParcel")
@@ -380,7 +520,11 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", b =>
                 {
+                    b.Navigation("EnvironmentalRestrictions");
+
                     b.Navigation("InfrastructureFeatures");
+
+                    b.Navigation("RegulatoryReferences");
 
                     b.Navigation("SpatialConstraints");
                 });

@@ -9,6 +9,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using Xunit;
 
@@ -50,7 +51,8 @@ public class EvaluateGovernanceRiskCommandHandlerTests
     public EvaluateGovernanceRiskCommandHandlerTests()
     {
         _timeProvider = new TestTimeProvider(_fixedTime);
-        _handler = new EvaluateGovernanceRiskCommandHandler(_engine, _auditRepository, _timeProvider);
+        var evalStore = new InMemoryGovernanceEvaluationStore(_auditRepository);
+        _handler = new EvaluateGovernanceRiskCommandHandler(_engine, evalStore, _timeProvider);
     }
 
     [Fact]
@@ -83,7 +85,8 @@ public class EvaluateGovernanceRiskCommandHandlerTests
         Assert.Equal(EngineType.RiskAndCorruption, log.EngineType);
         Assert.Equal("AssessLeaseRisk", log.ActionName);
         Assert.Equal("ElevatedRiskDetected", log.Status);
-        Assert.Contains("Evaluated subject 'SUBJ-101'", log.Details);
+        Assert.DoesNotContain("SUBJ-101", log.Details);
+        Assert.Contains("Evaluated risk across 2 observations", log.Details);
         Assert.Equal(_fixedTime.UtcDateTime, log.Timestamp);
     }
 
@@ -109,7 +112,7 @@ public class EvaluateGovernanceRiskCommandHandlerTests
         // Audit log must NOT contain raw decision IDs or confidential officer names
         Assert.DoesNotContain("DEC-SECRET-01", log.Details);
         Assert.DoesNotContain("OFFICER-CONFIDENTIAL", log.Details);
-        Assert.Contains("Evaluated 2 observations", log.Details);
+        Assert.Contains("Evaluated risk across 2 observations", log.Details);
     }
 
     [Fact]

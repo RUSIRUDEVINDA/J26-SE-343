@@ -1,3 +1,4 @@
+using StateLandGovernance.LandIntelligence.Application.Commands;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Application.Mappings;
@@ -5,7 +6,6 @@ using StateLandGovernance.LandIntelligence.Application.Validators;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.Exceptions;
-using StateLandGovernance.LandIntelligence.Domain.Services;
 using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 
 namespace StateLandGovernance.LandIntelligence.Application.Commands;
@@ -13,20 +13,17 @@ namespace StateLandGovernance.LandIntelligence.Application.Commands;
 public sealed class GenerateLandRecommendationCommandHandler
     : ICommandHandler<GenerateLandRecommendationCommand, LandRecommendationDto>
 {
-    private readonly ILandParcelRepository _landParcelRepository;
+    private readonly ILandRecommendationEngine _recommendationEngine;
     private readonly ILandRecommendationRepository _landRecommendationRepository;
-    private readonly ILandSuitabilityEvaluator _suitabilityEvaluator;
     private readonly LandRecommendationRequestValidator _validator;
 
     public GenerateLandRecommendationCommandHandler(
-        ILandParcelRepository landParcelRepository,
+        ILandRecommendationEngine recommendationEngine,
         ILandRecommendationRepository landRecommendationRepository,
-        ILandSuitabilityEvaluator suitabilityEvaluator,
         LandRecommendationRequestValidator validator)
     {
-        _landParcelRepository = landParcelRepository;
+        _recommendationEngine = recommendationEngine;
         _landRecommendationRepository = landRecommendationRepository;
-        _suitabilityEvaluator = suitabilityEvaluator;
         _validator = validator;
     }
 
@@ -41,16 +38,19 @@ public sealed class GenerateLandRecommendationCommandHandler
             throw new ValidationException(validation.Errors);
         }
 
-        var parcel = await _landParcelRepository.GetByIdAsync(request.LandParcelId, cancellationToken)
+        var searchRequest = new LandRecommendationSearchRequest
+        {
+            RequiredPurpose = request.TargetLandUseType ?? LandUseType.Other,
+            TargetParcelId = request.LandParcelId,
+            RequiredLandUse = request.TargetLandUseType,
+            MaxResults = 1
+        };
+
+        var response = await _recommendationEngine.RecommendAsync(searchRequest, cancellationToken);
+        var result = response.Recommendations.FirstOrDefault()
             ?? throw new LandParcelNotFoundException(request.LandParcelId);
 
-        var criteria = BuildDefaultCriteria();
-        var recommendation = _suitabilityEvaluator.Evaluate(parcel, criteria);
-
-        if (request.TargetLandUseType is not null)
-        {
-            recommendation = ApplyTargetLandUse(recommendation, request);
-        }
+        var recommendation = MapToDomainRecommendation(result, request);
 
         if (request.FinalizeRecommendation)
         {
@@ -62,37 +62,44 @@ public sealed class GenerateLandRecommendationCommandHandler
         return LandRecommendationMapper.ToDto(recommendation);
     }
 
-    private static LandRecommendation ApplyTargetLandUse(
-        LandRecommendation recommendation,
+    private static LandRecommendation MapToDomainRecommendation(
+        LandParcelRecommendationResult result,
         LandRecommendationRequest request)
     {
-        var targetUse = new LandUse(request.TargetLandUseType!.Value, request.TargetLandUseDescription);
-        var adjusted = new LandRecommendation(
-            recommendation.LandParcelId,
-            recommendation.SuitabilityScore,
-            targetUse,
-            recommendation.Status);
+        var recommendedUse = request.TargetLandUseType is not null
+            ? new LandUse(request.TargetLandUseType.Value, request.TargetLandUseDescription)
+            : null;
 
-        foreach (var criterion in recommendation.Criteria)
+        var recommendation = new LandRecommendation(
+            result.ParcelId,
+            result.SuitabilityScore,
+            recommendedUse);
+
+        recommendation.AssignRank(result.Rank);
+
+        foreach (var criterion in result.MatchingCriteria.Concat(result.FailedCriteria))
         {
-            adjusted.AddCriterion(criterion);
+            recommendation.AddCriterion(new RecommendationCriterion(
+                criterion.Category,
+                criterion.Name,
+                criterion.Weight,
+                criterion.Score,
+                criterion.Summary));
         }
 
-        foreach (var evidence in recommendation.Evidence)
+        foreach (var evidence in result.Evidence)
         {
-            adjusted.AddEvidence(evidence);
+            recommendation.AddEvidence(new RecommendationEvidence(
+                evidence.Source,
+                evidence.Description,
+                evidence.RelatedCriterionName));
         }
 
-        return adjusted;
+        recommendation.AddEvidence(new RecommendationEvidence(
+            "RecommendationExplanation",
+            result.Explanation,
+            null));
+
+        return recommendation;
     }
-
-    private static IReadOnlyList<RecommendationCriterion> BuildDefaultCriteria() =>
-    [
-        new(CriterionCategory.SoilSuitability, "Soil Suitability", 0.25m, 0m),
-        new(CriterionCategory.InfrastructureAccess, "Infrastructure Access", 0.20m, 0m),
-        new(CriterionCategory.EnvironmentalCompatibility, "Environmental Compatibility", 0.20m, 0m),
-        new(CriterionCategory.ZoningCompliance, "Zoning Compliance", 0.15m, 0m),
-        new(CriterionCategory.EconomicPotential, "Economic Potential", 0.10m, 0m),
-        new(CriterionCategory.HistoricalPerformance, "Historical Performance", 0.10m, 0m)
-    ];
 }

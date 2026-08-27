@@ -18,15 +18,24 @@ public class GovernanceIntelligenceController : ControllerBase
     private readonly EvaluateComplianceCommandHandler _complianceHandler;
     private readonly DetectConflictsCommandHandler _conflictHandler;
     private readonly EvaluateGovernanceRiskCommandHandler _riskHandler;
+    private readonly GenerateGovernanceExplanationCommandHandler _explanationHandler;
+    private readonly EvaluateGovernanceConsensusCommandHandler _consensusHandler;
+    private readonly EvaluateConditionalVerificationCommandHandler _verificationHandler;
 
     public GovernanceIntelligenceController(
         EvaluateComplianceCommandHandler complianceHandler,
         DetectConflictsCommandHandler conflictHandler,
-        EvaluateGovernanceRiskCommandHandler riskHandler)
+        EvaluateGovernanceRiskCommandHandler riskHandler,
+        GenerateGovernanceExplanationCommandHandler explanationHandler,
+        EvaluateGovernanceConsensusCommandHandler consensusHandler,
+        EvaluateConditionalVerificationCommandHandler verificationHandler)
     {
         _complianceHandler = complianceHandler;
         _conflictHandler = conflictHandler;
         _riskHandler = riskHandler;
+        _explanationHandler = explanationHandler;
+        _consensusHandler = consensusHandler;
+        _verificationHandler = verificationHandler;
     }
 
     /// <summary>
@@ -99,6 +108,84 @@ public class GovernanceIntelligenceController : ControllerBase
         try
         {
             var result = await _riskHandler.HandleAsync(command, cancellationToken);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Synthesizes transparent, explainable governance findings across sub-engine outcomes.
+    /// </summary>
+    [HttpPost("explain")]
+    [ProducesResponseType(typeof(GovernanceExplanationResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<GovernanceExplanationResultDto>> Explain(
+        [FromBody] GenerateGovernanceExplanationCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (command is null || string.IsNullOrWhiteSpace(command.ActionName) || command.Input is null)
+        {
+            return BadRequest("Invalid command or explanation input details provided.");
+        }
+
+        try
+        {
+            var result = await _explanationHandler.HandleAsync(command, cancellationToken);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Evaluates multi-institutional governance consensus across submitted positions and policy.
+    /// </summary>
+    [HttpPost("evaluate-consensus")]
+    [ProducesResponseType(typeof(GovernanceConsensusResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<GovernanceConsensusResultDto>> EvaluateConsensus(
+        [FromBody] EvaluateGovernanceConsensusCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (command is null || string.IsNullOrWhiteSpace(command.ActionName) || command.Input is null)
+        {
+            return BadRequest("Invalid command or consensus input details provided.");
+        }
+
+        try
+        {
+            var result = await _consensusHandler.HandleAsync(command, cancellationToken);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Evaluates whether required prerequisite governance conditions are satisfied based on supplied evidence.
+    /// </summary>
+    [HttpPost("verify-conditions")]
+    [ProducesResponseType(typeof(ConditionalVerificationResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ConditionalVerificationResultDto>> VerifyConditions(
+        [FromBody] EvaluateConditionalVerificationCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (command is null || string.IsNullOrWhiteSpace(command.ActionName) || command.Input is null)
+        {
+            return BadRequest("Invalid command or verification input details provided.");
+        }
+
+        try
+        {
+            var result = await _verificationHandler.HandleAsync(command, cancellationToken);
             return Ok(result);
         }
         catch (ArgumentException ex)
