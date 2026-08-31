@@ -53,8 +53,8 @@ public sealed class AssessFinancialFeasibilityCommandHandler
         var salaryData = await _extractionService.ExtractSalarySlipDataAsync(command.SalarySlipUri, cancellationToken);
         var cribData = await _extractionService.ExtractCribReportDataAsync(command.CribReportUri, cancellationToken);
 
-        // 2. Assemble Financial Profile
-        var profile = new FinancialProfileDto(
+        // 2. Assemble Financial Profile (Domain ValueObject)
+        var profile = new StateLandGovernance.LeaseFeasibility.Domain.ValueObjects.FinancialProfile(
             ApplicantId: command.ApplicantId,
             AverageMonthlyIncome: salaryData.AverageMonthlyIncome,
             IncomeConsistencyScore: 0.85m, // Based on business rules or synthesized
@@ -70,8 +70,16 @@ public sealed class AssessFinancialFeasibilityCommandHandler
             RecentCreditInquiries: cribData.RecentCreditInquiries
         );
 
+        // Map for PII Logger (Needs DTO)
+        var profileDto = new FinancialProfileDto(
+            command.ApplicantId, salaryData.AverageMonthlyIncome, 0.85m, salaryData.EmploymentTenureMonths,
+            salaryData.EmploymentType, salaryData.EmployerOrBusinessName, bankData.AverageAccountBalance,
+            bankData.OverdraftFrequency, bankData.SavingsToIncomeRatio, cribData.CreditRiskGrade,
+            cribData.ActiveLoanObligations, cribData.DefaultHistoryIndicator, cribData.RecentCreditInquiries
+        );
+
         // 3. PII-Masked Logging BEFORE processing
-        var maskedLogPayload = PiiMasker.GetMaskedLogPayload(profile);
+        var maskedLogPayload = PiiMasker.GetMaskedLogPayload(profileDto);
         _logger.LogInformation("Processing Financial Profile for Applicant: {MaskedPayload}", maskedLogPayload);
 
         // 4. Domain Engine Evaluation
@@ -83,10 +91,11 @@ public sealed class AssessFinancialFeasibilityCommandHandler
         // 6. Map back to DTO
         var factors = new System.Collections.Generic.List<FeasibilityFactorDto>
         {
-            new FeasibilityFactorDto("DTI", "DebtToIncome", (int)assessment.ScoreBreakdown.DebtToIncomeScore, "Debt to income score", false),
+            new FeasibilityFactorDto("ITC", "IncomeToLeaseCost", (int)assessment.ScoreBreakdown.IncomeToLeaseCostScore, "Income to lease cost ratio", false),
             new FeasibilityFactorDto("INC", "IncomeConsistency", (int)assessment.ScoreBreakdown.IncomeConsistencyScore, "Income consistency score", false),
-            new FeasibilityFactorDto("LIQ", "LiquidityBuffer", (int)assessment.ScoreBreakdown.LiquidityBufferScore, "Liquidity buffer score", false),
-            new FeasibilityFactorDto("CRD", "CreditHistory", (int)assessment.ScoreBreakdown.CreditHistoryScore, "Credit history score", false)
+            new FeasibilityFactorDto("DTI", "DebtToIncome", (int)assessment.ScoreBreakdown.DebtToIncomeScore, "Debt to income score", false),
+            new FeasibilityFactorDto("EMP", "EmploymentStability", (int)assessment.ScoreBreakdown.EmploymentStabilityScore, "Employment stability score", false),
+            new FeasibilityFactorDto("CRD", "CreditIndicator", (int)assessment.ScoreBreakdown.CreditIndicatorScore, "Credit indicator score", false)
         };
 
         if (assessment.ScoreBreakdown.PenaltyScore < 0)

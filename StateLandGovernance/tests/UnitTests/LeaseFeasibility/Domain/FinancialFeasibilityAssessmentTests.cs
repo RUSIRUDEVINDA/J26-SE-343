@@ -14,7 +14,7 @@ public class FinancialFeasibilityAssessmentTests
     public void Constructor_WithValidArguments_CreatesAssessment()
     {
         // Arrange
-        var scoreBreakdown = new FeasibilityScoreBreakdown(30, 20, 15, 15, 0, 80);
+        var scoreBreakdown = new FeasibilityScoreBreakdown(15, 15, 20, 10, 20, 0, 80);
         
         // Act
         var assessment = new FinancialFeasibilityAssessment(
@@ -38,7 +38,7 @@ public class FinancialFeasibilityAssessmentTests
     public void Constructor_WithInvalidApplicationId_ThrowsArgumentException(string invalidId)
     {
         // Arrange
-        var scoreBreakdown = new FeasibilityScoreBreakdown(30, 20, 15, 15, 0, 80);
+        var scoreBreakdown = new FeasibilityScoreBreakdown(15, 15, 20, 10, 20, 0, 80);
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() => new FinancialFeasibilityAssessment(
@@ -61,7 +61,7 @@ public class FinancialFeasibilityAssessmentTests
     public void FinalizeAssessment_RaisesDomainEventAndSetsFlag()
     {
         // Arrange
-        var scoreBreakdown = new FeasibilityScoreBreakdown(30, 20, 15, 15, 0, 80);
+        var scoreBreakdown = new FeasibilityScoreBreakdown(15, 15, 20, 10, 20, 0, 80);
         var assessment = new FinancialFeasibilityAssessment("APP-123", FeasibilityGrade.B, scoreBreakdown);
 
         // Act
