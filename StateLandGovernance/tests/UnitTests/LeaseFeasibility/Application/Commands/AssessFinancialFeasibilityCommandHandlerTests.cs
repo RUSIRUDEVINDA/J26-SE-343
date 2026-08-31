@@ -40,15 +40,16 @@ public class AssessFinancialFeasibilityCommandHandlerTests
         var scoringEngineMock = new Mock<IFinancialFeasibilityScoringEngine>();
         
         var breakdown = new StateLandGovernance.LeaseFeasibility.Domain.ValueObjects.FeasibilityScoreBreakdown(
-            debtToIncomeScore: 20m,
+            incomeToLeaseCostScore: 10m,
             incomeConsistencyScore: 20m,
-            liquidityBufferScore: 15m,
-            creditHistoryScore: 15m,
+            debtToIncomeScore: 20m,
+            employmentStabilityScore: 10m,
+            creditIndicatorScore: 10m,
             penaltyScore: 0m,
             totalScore: 70m
         );
         
-        scoringEngineMock.Setup(e => e.EvaluateFeasibility(It.IsAny<FinancialProfileDto>(), It.IsAny<DateTime>()))
+        scoringEngineMock.Setup(e => e.EvaluateFeasibility(It.IsAny<StateLandGovernance.LeaseFeasibility.Domain.ValueObjects.FinancialProfile>(), It.IsAny<DateTime>()))
             .Returns(new FinancialFeasibilityAssessment("APP-123", FeasibilityGrade.B, breakdown, null));
 
         var repoMock = new Mock<IFinancialFeasibilityRepository>();
@@ -86,7 +87,7 @@ public class AssessFinancialFeasibilityCommandHandlerTests
         extractionMock.Verify(e => e.ExtractSalarySlipDataAsync("mock-salary1.txt", It.IsAny<CancellationToken>()), Times.Once);
         extractionMock.Verify(e => e.ExtractCribReportDataAsync("mock-crib.txt", It.IsAny<CancellationToken>()), Times.Once);
         
-        scoringEngineMock.Verify(e => e.EvaluateFeasibility(It.Is<FinancialProfileDto>(p => p.ApplicantId == "APP-SYNTH-001"), It.IsAny<DateTime>()), Times.Once);
+        scoringEngineMock.Verify(e => e.EvaluateFeasibility(It.Is<StateLandGovernance.LeaseFeasibility.Domain.ValueObjects.FinancialProfile>(p => p.ApplicantId == "APP-SYNTH-001"), It.IsAny<DateTime>()), Times.Once);
         repoMock.Verify(r => r.AddAsync(It.Is<FinancialFeasibilityAssessment>(a => a.ApplicationId == "APP-123"), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

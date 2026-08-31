@@ -61,19 +61,19 @@ public class ValueObjectsTests
     [Fact]
     public void FeasibilityScoreBreakdown_WithValidScores_InitializesCorrectly()
     {
-        var score = new FeasibilityScoreBreakdown(20, 20, 10, 10, 0, 60);
+        var score = new FeasibilityScoreBreakdown(10, 10, 20, 10, 10, 0, 60);
         Assert.Equal(60, score.TotalScore);
     }
 
     [Fact]
     public void FeasibilityScoreBreakdown_WithPositivePenalty_ThrowsArgumentOutOfRangeException()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new FeasibilityScoreBreakdown(20, 20, 10, 10, 5, 60));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new FeasibilityScoreBreakdown(10, 10, 20, 10, 10, 5, 60));
     }
 
     [Fact]
     public void FeasibilityScoreBreakdown_WithOutOfBoundsTotal_ThrowsArgumentOutOfRangeException()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new FeasibilityScoreBreakdown(20, 20, 10, 10, 0, 105));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new FeasibilityScoreBreakdown(10, 10, 20, 10, 10, 0, 105));
     }
 }
