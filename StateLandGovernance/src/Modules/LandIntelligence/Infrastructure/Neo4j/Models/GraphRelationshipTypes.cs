@@ -12,4 +12,8 @@ public static class GraphRelationshipTypes
     public const string HasRestriction = "HAS_RESTRICTION";
     public const string Near = "NEAR";
     public const string RelatedTo = "RELATED_TO";
+    public const string NearRoad = "NEAR_ROAD";
+    public const string NearWater = "NEAR_WATER";
+    public const string HasDerivedSoil = "HAS_DERIVED_SOIL";
+    public const string IntersectsConservationArea = "INTERSECTS_CONSERVATION_AREA";
 }

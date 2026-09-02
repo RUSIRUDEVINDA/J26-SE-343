@@ -78,6 +78,10 @@ internal sealed class AccessibilityCriterionEvaluator : IRecommendationCriterion
         var maxDistance = criteria.MaxRoadDistanceMeters.Value;
         var withinLimit = distance <= maxDistance;
         var roadProvenance = ParcelAttributeProvenanceResolver.ResolveRoadDistanceProvenance(nearestRoad);
+        var isGisDerivedRoad = GisDerivedIntelligenceDetector.IsGisDerivedInfrastructure(nearestRoad);
+        var roadLabel = isGisDerivedRoad ? "Nearest mapped road" : "Nearest road";
+        var formattedDistance = FormatRoadDistance(distance);
+        var formattedLimit = FormatRoadDistance(maxDistance);
 
         decimal score;
         if (withinLimit)
@@ -101,9 +105,14 @@ internal sealed class AccessibilityCriterionEvaluator : IRecommendationCriterion
             score,
             DefaultWeight,
             withinLimit
-                ? $"Nearest road ({nearestRoad.Name}) is {distance:F0} m away (within {maxDistance:F0} m limit)."
-                : $"Nearest road ({nearestRoad.Name}) is {distance:F0} m away (exceeds {maxDistance:F0} m limit).",
+                ? $"{roadLabel} ({nearestRoad.Name}) is {formattedDistance} from the parcel (within {formattedLimit} limit)."
+                : $"{roadLabel} ({nearestRoad.Name}) is {formattedDistance} from the parcel (exceeds {formattedLimit} limit).",
             roadProvenance,
             "infrastructure.road.distanceMeters");
     }
+
+    private static string FormatRoadDistance(decimal distanceMeters) =>
+        distanceMeters >= 1000m
+            ? $"{distanceMeters / 1000m:F1} km"
+            : $"{distanceMeters:F0} m";
 }

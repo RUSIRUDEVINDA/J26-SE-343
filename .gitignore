@@ -59,6 +59,9 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
+## Local GIS reference datasets (not committed; imported via H2 pipeline)
+StateLandGovernance/data/gis/
+
 ## Environment / secrets
 .env
 .env.*

@@ -11,7 +11,8 @@ internal static class RecommendationExplanationBuilder
         decimal suitabilityScore,
         IReadOnlyList<CriterionEvaluationDto> matchingCriteria,
         IReadOnlyList<CriterionEvaluationDto> failedCriteria,
-        IReadOnlyList<RestrictionSummaryDto> restrictions)
+        IReadOnlyList<RestrictionSummaryDto> restrictions,
+        IReadOnlyList<string>? supplementarySummaries = null)
     {
         var positiveFactors = matchingCriteria
             .Select(c => c.Summary)
@@ -55,6 +56,11 @@ internal static class RecommendationExplanationBuilder
         if (restrictionSummaries.Count > 0)
         {
             explanation += " Restrictions: " + string.Join("; ", restrictionSummaries) + ".";
+        }
+
+        if (supplementarySummaries is { Count: > 0 })
+        {
+            explanation += " GIS context: " + string.Join("; ", supplementarySummaries) + ".";
         }
 
         if (suitabilityScore >= 80m)

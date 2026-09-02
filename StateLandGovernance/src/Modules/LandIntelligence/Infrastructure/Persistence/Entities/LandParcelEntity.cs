@@ -54,4 +54,8 @@ public class LandParcelEntity
     public ICollection<EnvironmentalRestrictionEntity> EnvironmentalRestrictions { get; set; } = [];
 
     public ICollection<RegulatoryReferenceEntity> RegulatoryReferences { get; set; } = [];
+
+    public ParcelDerivedSoilGroupEntity? DerivedSoilGroup { get; set; }
+
+    public LandParcelGisEnrichmentSnapshotEntity? GisEnrichmentSnapshot { get; set; }
 }

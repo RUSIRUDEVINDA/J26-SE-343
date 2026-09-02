@@ -17,4 +17,7 @@ public class EnvironmentalRestrictionEntity
     public RestrictionSeverity Severity { get; set; }
 
     public string? DataProvenanceJson { get; set; }
+
+    /// <summary>Stable GIS reference entity identifier when this record was derived from imported GIS layers.</summary>
+    public Guid? GisReferenceId { get; set; }
 }
