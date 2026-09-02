@@ -8,6 +8,7 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.Depend
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Enrichment;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Import;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Validation;
+using StateLandGovernance.LandIntelligence.Infrastructure.PilotValidation;
 using StateLandGovernance.LandIntelligence.Infrastructure.Repositories;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
@@ -52,6 +53,7 @@ public static class LandIntelligenceInfrastructureExtensions
         services.AddScoped<ILandParcelGisEnrichmentService, LandParcelGisEnrichmentService>();
         services.AddScoped<ILandParcelGisEnrichmentPersistenceService, LandParcelGisEnrichmentPersistenceService>();
         services.AddScoped<ILandParcelGisKnowledgeGraphSyncService, LandParcelGisKnowledgeGraphSyncService>();
+        services.AddScoped<IHambantotaPilotValidationService, HambantotaPilotValidationService>();
 
         return services;
     }
