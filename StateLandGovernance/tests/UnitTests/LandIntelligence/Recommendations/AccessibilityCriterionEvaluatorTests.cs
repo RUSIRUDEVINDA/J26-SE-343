@@ -16,7 +16,7 @@ public sealed class AccessibilityCriterionEvaluatorTests
         var result = _evaluator.Evaluate(parcel, CreateRequest(maxRoadDistanceMeters: 5000m));
 
         Assert.True(result.IsMet);
-        Assert.Contains("3000", result.Summary);
+        Assert.Contains("3.0 km", result.Summary);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public sealed class AccessibilityCriterionEvaluatorTests
         var result = _evaluator.Evaluate(parcel, CreateRequest(maxRoadDistanceMeters: 5000m));
 
         Assert.False(result.IsMet);
-        Assert.Contains("8000", result.Summary);
+        Assert.Contains("8.0 km", result.Summary);
     }
 
     [Fact]

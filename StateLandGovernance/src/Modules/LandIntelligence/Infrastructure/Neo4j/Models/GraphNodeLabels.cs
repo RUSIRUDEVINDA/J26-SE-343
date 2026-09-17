@@ -13,4 +13,10 @@ public static class GraphNodeLabels
     public const string Regulation = "Regulation";
     public const string InfrastructureFeature = "InfrastructureFeature";
     public const string EnvironmentalArea = "EnvironmentalArea";
+    public const string Province = "Province";
+    public const string District = "District";
+    public const string Road = "Road";
+    public const string WaterFeature = "WaterFeature";
+    public const string SoilGroup = "SoilGroup";
+    public const string ConservationArea = "ConservationArea";
 }

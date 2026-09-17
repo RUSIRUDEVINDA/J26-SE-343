@@ -77,4 +77,19 @@ internal sealed class UnconfiguredKnowledgeGraphService : IKnowledgeGraphService
 
     public Task DeleteLandParcelGraphAsync(Guid parcelId, CancellationToken cancellationToken = default) =>
         throw CreateException();
+
+    public Task SyncGisDerivedParcelIntelligenceAsync(
+        GisDerivedParcelIntelligenceGraphSyncRequest request,
+        CancellationToken cancellationToken = default) =>
+        throw CreateException();
+
+    public Task<LandParcelGisGraphIntelligenceDto?> GetParcelGisGraphIntelligenceAsync(
+        Guid parcelId,
+        CancellationToken cancellationToken = default) =>
+        throw CreateException();
+
+    public Task<IReadOnlyList<Guid>> GetParcelIdsByDerivedSoilGroupAsync(
+        Guid soilGroupReferenceId,
+        CancellationToken cancellationToken = default) =>
+        throw CreateException();
 }

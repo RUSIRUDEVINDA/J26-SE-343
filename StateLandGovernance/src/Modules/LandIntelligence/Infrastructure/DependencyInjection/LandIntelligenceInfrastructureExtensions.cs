@@ -5,6 +5,10 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
 using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j.Configuration;
 using StateLandGovernance.LandIntelligence.Infrastructure.PostGIS;
 using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.DependencyInjection;
+using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Enrichment;
+using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Import;
+using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Validation;
+using StateLandGovernance.LandIntelligence.Infrastructure.PilotValidation;
 using StateLandGovernance.LandIntelligence.Infrastructure.Repositories;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
@@ -39,6 +43,17 @@ public static class LandIntelligenceInfrastructureExtensions
         }
 
         services.AddScoped<ILandParcelGraphSynchronizer, LandParcelGraphSynchronizer>();
+        services.AddScoped<IGisReferenceDataImportService, GisReferenceDataImportService>();
+        services.AddScoped<IGisReferenceDataValidationService, GisReferenceDataValidationService>();
+        services.AddScoped<IAdministrativeLocationVerificationService, AdministrativeLocationVerificationService>();
+        services.AddScoped<IRoadAccessibilityEnrichmentService, RoadAccessibilityEnrichmentService>();
+        services.AddScoped<IWaterProximityEnrichmentService, WaterProximityEnrichmentService>();
+        services.AddScoped<ISoilGroupEnrichmentService, SoilGroupEnrichmentService>();
+        services.AddScoped<IEnvironmentalSpatialConstraintEnrichmentService, EnvironmentalSpatialConstraintEnrichmentService>();
+        services.AddScoped<ILandParcelGisEnrichmentService, LandParcelGisEnrichmentService>();
+        services.AddScoped<ILandParcelGisEnrichmentPersistenceService, LandParcelGisEnrichmentPersistenceService>();
+        services.AddScoped<ILandParcelGisKnowledgeGraphSyncService, LandParcelGisKnowledgeGraphSyncService>();
+        services.AddScoped<IHambantotaPilotValidationService, HambantotaPilotValidationService>();
 
         return services;
     }

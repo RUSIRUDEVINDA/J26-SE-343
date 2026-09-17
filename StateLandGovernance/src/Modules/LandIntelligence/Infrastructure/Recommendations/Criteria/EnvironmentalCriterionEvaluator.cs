@@ -33,6 +33,9 @@ internal sealed class EnvironmentalCriterionEvaluator : IRecommendationCriterion
                 AttributeProvenance.Unknown("Environmental restrictions"));
         }
 
+        var gisConservationRestrictions = restrictions
+            .Where(GisDerivedIntelligenceDetector.IsGisDerivedEnvironmentalRestriction)
+            .ToList();
         var maxSeverity = restrictions.Max(r => r.Severity);
         var hasProhibitive = restrictions.Any(r => r.Severity == RestrictionSeverity.Prohibitive);
         var environmentalProvenance = ParcelAttributeProvenanceResolver.ResolveEnvironmentalProvenance(parcel);
@@ -53,6 +56,13 @@ internal sealed class EnvironmentalCriterionEvaluator : IRecommendationCriterion
 
         if (maxSeverity <= criteria.MaxAllowedEnvironmentalSeverity)
         {
+            var summary = $"Highest environmental restriction severity ({maxSeverity}) is within allowed limit ({criteria.MaxAllowedEnvironmentalSeverity}).";
+            if (gisConservationRestrictions.Count > 0)
+            {
+                summary +=
+                    $" Parcel intersects {gisConservationRestrictions.Count} mapped conservation area(s).";
+            }
+
             return CriterionEvaluationFactory.Create(
                 Key,
                 "Environmental Requirements",
@@ -60,7 +70,7 @@ internal sealed class EnvironmentalCriterionEvaluator : IRecommendationCriterion
                 isMet: true,
                 score: 85m,
                 DefaultWeight,
-                $"Highest environmental restriction severity ({maxSeverity}) is within allowed limit ({criteria.MaxAllowedEnvironmentalSeverity}).",
+                summary,
                 environmentalProvenance,
                 "environmental.restrictions");
         }

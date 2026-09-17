@@ -48,4 +48,7 @@ internal static class ParcelAttributeProvenanceResolver
         feature is null
             ? AttributeProvenance.Unknown("Road distance")
             : ResolveOrUnknown(feature.DistanceProvenance);
+
+    public static AttributeProvenance ResolveGisDerivedSoilProvenance(LandParcel parcel) =>
+        ResolveOrUnknown(parcel.GisDerivedIntelligence?.DerivedSoilGroup?.Provenance);
 }

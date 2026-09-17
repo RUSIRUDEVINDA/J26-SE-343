@@ -111,4 +111,16 @@ public interface IKnowledgeGraphService
     Task DeleteLandParcelGraphAsync(
         Guid parcelId,
         CancellationToken cancellationToken = default);
+
+    Task SyncGisDerivedParcelIntelligenceAsync(
+        GisDerivedParcelIntelligenceGraphSyncRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<LandParcelGisGraphIntelligenceDto?> GetParcelGisGraphIntelligenceAsync(
+        Guid parcelId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Guid>> GetParcelIdsByDerivedSoilGroupAsync(
+        Guid soilGroupReferenceId,
+        CancellationToken cancellationToken = default);
 }

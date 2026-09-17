@@ -10,15 +10,18 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
     private readonly ILandParcelRepository _landParcelRepository;
     private readonly ISpatialAnalysisService _spatialAnalysisService;
     private readonly IEnumerable<IRecommendationCriterionEvaluator> _evaluators;
+    private readonly IMlSuitabilityClient _mlSuitabilityClient;
 
     public RuleBasedLandRecommendationEngine(
         ILandParcelRepository landParcelRepository,
         ISpatialAnalysisService spatialAnalysisService,
-        IEnumerable<IRecommendationCriterionEvaluator> evaluators)
+        IEnumerable<IRecommendationCriterionEvaluator> evaluators,
+        IMlSuitabilityClient mlSuitabilityClient)
     {
         _landParcelRepository = landParcelRepository;
         _spatialAnalysisService = spatialAnalysisService;
         _evaluators = evaluators.OrderBy(e => e.Order).ToList();
+        _mlSuitabilityClient = mlSuitabilityClient;
     }
 
     public async Task<LandRecommendationSearchResponse> RecommendAsync(
@@ -35,14 +38,17 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             var failed = criterionResults.Where(c => !c.IsMet).ToList();
             var restrictions = ParcelRestrictionCollector.Collect(parcel);
             var score = RecommendationScoreCalculator.Calculate(criterionResults);
-            var evidence = BuildEvidence(criterionResults, restrictions);
+            var gisSupplementarySummaries = GisDerivedRecommendationEvidenceCollector.CollectSupplementarySummaries(parcel);
+            var mlPrediction = await _mlSuitabilityClient.PredictAsync(parcel, request.RequiredPurpose, cancellationToken);
+            var evidence = BuildEvidence(criterionResults, restrictions, parcel, mlPrediction);
             var explanation = RecommendationExplanationBuilder.Build(
                 parcel.Identifier.CadastralNumber,
                 request.RequiredPurpose,
                 score,
                 matching,
                 failed,
-                restrictions);
+                restrictions,
+                gisSupplementarySummaries);
 
             evaluations.Add(new LandParcelRecommendationResult(
                 parcel.Id,
@@ -165,7 +171,9 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
 
     private static IReadOnlyList<RecommendationEvidenceDto> BuildEvidence(
         IReadOnlyList<CriterionEvaluationDto> evaluations,
-        IReadOnlyList<RestrictionSummaryDto> restrictions)
+        IReadOnlyList<RestrictionSummaryDto> restrictions,
+        LandParcel parcel,
+        MlSuitabilityPrediction? mlPrediction)
     {
         var evidence = evaluations
             .Select(e => new RecommendationEvidenceDto(
@@ -184,6 +192,22 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             ProvenanceEvidenceFormatter.AppendProvenance(r.Description, r.DataProvenance),
             r.RestrictionType,
             r.DataProvenance)));
+
+        evidence.AddRange(GisDerivedRecommendationEvidenceCollector.CollectEvidence(parcel));
+
+        if (mlPrediction is not null)
+        {
+            var confidence = mlPrediction.Probabilities.TryGetValue(mlPrediction.PredictedLabel, out var p)
+                ? p
+                : 0m;
+
+            evidence.Add(new RecommendationEvidenceDto(
+                Source: "RandomForestSuitabilityModel",
+                Description: $"ML model predicts '{mlPrediction.PredictedLabel}' suitability " +
+                             $"({confidence:P0} confidence). This is supplementary evidence and does " +
+                             "not override the rule-based hard constraints above.",
+                RelatedCriterionName: "MlSuitabilityPrediction"));
+        }
 
         return evidence;
     }

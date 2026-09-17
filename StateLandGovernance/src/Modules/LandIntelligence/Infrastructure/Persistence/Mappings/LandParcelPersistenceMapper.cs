@@ -109,6 +109,14 @@ internal static class LandParcelPersistenceMapper
             parcel.AddRegulatoryReference(ToDomainRegulatoryReference(reference));
         }
 
+        var gisDerivedIntelligence = ParcelGisDerivedIntelligencePersistenceMapper.ToDomain(
+            entity.GisEnrichmentSnapshot,
+            entity.DerivedSoilGroup);
+        if (gisDerivedIntelligence is not null)
+        {
+            parcel.AttachGisDerivedIntelligence(gisDerivedIntelligence);
+        }
+
         return parcel;
     }
 

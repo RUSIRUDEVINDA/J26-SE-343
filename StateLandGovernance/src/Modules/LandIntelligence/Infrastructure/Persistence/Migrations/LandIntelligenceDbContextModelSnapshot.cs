@@ -39,6 +39,9 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<Guid?>("GisReferenceId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("LandParcelId")
                         .HasColumnType("uuid");
 
@@ -71,6 +74,9 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 
                     b.Property<string>("DistanceProvenanceJson")
                         .HasColumnType("jsonb");
+
+                    b.Property<Guid?>("GisReferenceId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("LandParcelId")
                         .HasColumnType("uuid");
@@ -248,6 +254,54 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.ToTable("land_parcels", "land_intelligence");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelGisEnrichmentSnapshotEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("AdministrativeStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DetectedDistrict")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("DetectedProvince")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool?>("DistrictMatches")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("EnrichedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("GeometryBasis")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("LandParcelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("OverallStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("ProvinceMatches")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SourceName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LandParcelId")
+                        .IsUnique();
+
+                    b.ToTable("land_parcel_gis_enrichment_snapshots", "land_intelligence");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandRecommendationEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -378,6 +432,59 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         });
                 });
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.ParcelDerivedSoilGroupEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("DerivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("GeometryBasis")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("LandParcelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("OverlapAreaSquareMeters")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)");
+
+                    b.Property<decimal?>("OverlapPercentage")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("numeric(8,4)");
+
+                    b.Property<string>("ProvenanceJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("SoilGroupName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("SoilGroupReferenceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SourceLayer")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LandParcelId")
+                        .IsUnique();
+
+                    b.ToTable("parcel_derived_soil_groups", "land_intelligence");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.RegulatoryReferenceEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -451,6 +558,368 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.ToTable("spatial_constraints", "land_intelligence");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisAdministrativeBoundaryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<MultiPolygon>("Boundary")
+                        .IsRequired()
+                        .HasColumnType("geometry (MultiPolygon, 4326)");
+
+                    b.Property<int>("BoundaryType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("ImportedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceFeatureId")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("SourceFingerprint")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("SourceLayer")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Boundary");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Boundary"), "GIST");
+
+                    b.HasIndex("BoundaryType");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
+                        .IsUnique()
+                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
+                        .IsUnique()
+                        .HasDatabaseName("IX_gis_administrative_boundaries_SourceName_SourceLayer_Sourc~1")
+                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
+
+                    b.ToTable("gis_administrative_boundaries", "land_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_gis_administrative_boundaries_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
+                        });
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisRoadEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<MultiLineString>("Geometry")
+                        .IsRequired()
+                        .HasColumnType("geometry (MultiLineString, 4326)");
+
+                    b.Property<DateTimeOffset>("ImportedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("RoadType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SourceFeatureId")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("SourceFingerprint")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("SourceLayer")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Geometry");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Geometry"), "GIST");
+
+                    b.HasIndex("RoadType");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
+                        .IsUnique()
+                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
+                        .IsUnique()
+                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
+
+                    b.ToTable("gis_roads", "land_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_gis_roads_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
+                        });
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisSoilConservationAreaEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<MultiPolygon>("Boundary")
+                        .IsRequired()
+                        .HasColumnType("geometry (MultiPolygon, 4326)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTimeOffset>("ImportedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceFeatureId")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("SourceFingerprint")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("SourceLayer")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Boundary");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Boundary"), "GIST");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
+                        .IsUnique()
+                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
+                        .IsUnique()
+                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
+
+                    b.ToTable("gis_soil_conservation_areas", "land_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_gis_soil_conservation_areas_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
+                        });
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisSoilErosionObservationEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<decimal?>("ErosionRate")
+                        .HasPrecision(10, 4)
+                        .HasColumnType("numeric(10,4)");
+
+                    b.Property<DateTimeOffset>("ImportedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("geometry (Point, 4326)");
+
+                    b.Property<string>("ObservationClass")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("SourceFeatureId")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("SourceFingerprint")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("SourceLayer")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Location");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "GIST");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
+                        .IsUnique()
+                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
+                        .IsUnique()
+                        .HasDatabaseName("IX_gis_soil_erosion_observations_SourceName_SourceLayer_Sourc~1")
+                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
+
+                    b.ToTable("gis_soil_erosion_observations", "land_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_gis_soil_erosion_observations_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
+                        });
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisSoilGroupEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<MultiPolygon>("Boundary")
+                        .IsRequired()
+                        .HasColumnType("geometry (MultiPolygon, 4326)");
+
+                    b.Property<DateTimeOffset>("ImportedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceFeatureId")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("SourceFingerprint")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("SourceLayer")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Boundary");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Boundary"), "GIST");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
+                        .IsUnique()
+                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
+                        .IsUnique()
+                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
+
+                    b.ToTable("gis_soil_groups", "land_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_gis_soil_groups_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
+                        });
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Entities.GisWaterFeatureEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("FeatureType")
+                        .HasColumnType("integer");
+
+                    b.Property<Geometry>("Geometry")
+                        .IsRequired()
+                        .HasColumnType("geometry (Geometry, 4326)");
+
+                    b.Property<DateTimeOffset>("ImportedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceFeatureId")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("SourceFingerprint")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("SourceLayer")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("SourceName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeatureType");
+
+                    b.HasIndex("Geometry");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Geometry"), "GIST");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFeatureId")
+                        .IsUnique()
+                        .HasFilter("\"SourceFeatureId\" IS NOT NULL");
+
+                    b.HasIndex("SourceName", "SourceLayer", "SourceFingerprint")
+                        .IsUnique()
+                        .HasFilter("\"SourceFeatureId\" IS NULL AND \"SourceFingerprint\" IS NOT NULL");
+
+                    b.ToTable("gis_water_features", "land_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_gis_water_features_source_identity", "\"SourceFeatureId\" IS NOT NULL OR \"SourceFingerprint\" IS NOT NULL");
+                        });
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.EnvironmentalRestrictionEntity", b =>
                 {
                     b.HasOne("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", "LandParcel")
@@ -489,6 +958,28 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.Navigation("CurrentLandUse");
 
                     b.Navigation("LandCategory");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelGisEnrichmentSnapshotEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", "LandParcel")
+                        .WithMany()
+                        .HasForeignKey("LandParcelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LandParcel");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.ParcelDerivedSoilGroupEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", "LandParcel")
+                        .WithMany()
+                        .HasForeignKey("LandParcelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LandParcel");
                 });
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.RegulatoryReferenceEntity", b =>

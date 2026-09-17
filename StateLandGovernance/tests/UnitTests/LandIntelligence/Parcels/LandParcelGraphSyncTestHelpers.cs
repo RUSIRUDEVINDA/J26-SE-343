@@ -207,4 +207,19 @@ internal sealed class RecordingKnowledgeGraphService : IKnowledgeGraphService
 
         return Task.CompletedTask;
     }
+
+    public Task SyncGisDerivedParcelIntelligenceAsync(
+        GisDerivedParcelIntelligenceGraphSyncRequest request,
+        CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
+
+    public Task<LandParcelGisGraphIntelligenceDto?> GetParcelGisGraphIntelligenceAsync(
+        Guid parcelId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<LandParcelGisGraphIntelligenceDto?>(null);
+
+    public Task<IReadOnlyList<Guid>> GetParcelIdsByDerivedSoilGroupAsync(
+        Guid soilGroupReferenceId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<Guid>>([]);
 }

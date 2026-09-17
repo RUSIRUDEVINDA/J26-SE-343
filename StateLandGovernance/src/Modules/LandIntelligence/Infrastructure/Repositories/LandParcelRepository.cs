@@ -108,7 +108,9 @@ public sealed class LandParcelRepository : ILandParcelRepository
             .Include(parcel => parcel.SpatialConstraints)
             .Include(parcel => parcel.InfrastructureFeatures)
             .Include(parcel => parcel.EnvironmentalRestrictions)
-            .Include(parcel => parcel.RegulatoryReferences);
+            .Include(parcel => parcel.RegulatoryReferences)
+            .Include(parcel => parcel.DerivedSoilGroup)
+            .Include(parcel => parcel.GisEnrichmentSnapshot);
 
     private IQueryable<LandParcelEntity> BuildSearchQuery(LandSearchRequest request)
     {
