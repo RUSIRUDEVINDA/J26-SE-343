@@ -432,6 +432,24 @@ internal sealed class FakeSpatialAnalysisService : ISpatialAnalysisService
         throw new NotImplementedException();
 }
 
+internal sealed class NullMlSuitabilityClient : IMlSuitabilityClient
+{
+    public Task<MlSuitabilityPrediction?> PredictAsync(
+        LandParcel parcel,
+        LandUseType requestedPurpose,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<MlSuitabilityPrediction?>(null);
+}
+
+internal sealed class FixedMlSuitabilityClient(MlSuitabilityPrediction prediction) : IMlSuitabilityClient
+{
+    public Task<MlSuitabilityPrediction?> PredictAsync(
+        LandParcel parcel,
+        LandUseType requestedPurpose,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<MlSuitabilityPrediction?>(prediction);
+}
+
 internal static class RecommendationEngineTestFactory
 {
     public static IReadOnlyList<IRecommendationCriterionEvaluator> CreateStandardEvaluators() =>
@@ -448,18 +466,28 @@ internal static class RecommendationEngineTestFactory
         new CustomCriteriaEvaluator()
     ];
 
-    public static RuleBasedLandRecommendationEngine Create(params LandParcel[] parcels)
-    {
-        return CreateWithEvaluators(CreateStandardEvaluators(), parcels);
-    }
+    public static RuleBasedLandRecommendationEngine Create(params LandParcel[] parcels) =>
+        CreateWithEvaluators(CreateStandardEvaluators(), mlClient: null, parcels);
+
+    public static RuleBasedLandRecommendationEngine CreateWithMlClient(
+        IMlSuitabilityClient mlClient,
+        params LandParcel[] parcels) =>
+        CreateWithEvaluators(CreateStandardEvaluators(), mlClient, parcels);
 
     public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
         IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
+        params LandParcel[] parcels) =>
+        CreateWithEvaluators(evaluators, mlClient: null, parcels);
+
+    public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
+        IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
+        IMlSuitabilityClient? mlClient,
         params LandParcel[] parcels)
     {
         return new RuleBasedLandRecommendationEngine(
             new FakeLandParcelRepository(parcels),
             new FakeSpatialAnalysisService(parcels),
-            evaluators);
+            evaluators,
+            mlClient ?? new NullMlSuitabilityClient());
     }
 }
