@@ -12,6 +12,8 @@ using StateLandGovernance.WorkflowGovernance.Domain.ProposalContent;
 using StateLandGovernance.WorkflowGovernance.Domain.ProposalContent.Events;
 using StateLandGovernance.WorkflowGovernance.Domain.RequirementAssessment;
 using StateLandGovernance.WorkflowGovernance.Domain.RequirementAssessment.Events;
+using StateLandGovernance.WorkflowGovernance.Domain.Screening;
+using StateLandGovernance.WorkflowGovernance.Domain.Screening.Events;
 
 public sealed class LeaseCase
 {
@@ -23,6 +25,8 @@ public sealed class LeaseCase
     public DateTime CreatedAt { get; }
     public int Revision { get; private set; }
     public LeaseProposalIntake? ProposalIntake { get; private set; }
+    public Guid CurrentVerifiedFactSnapshotId { get; private set; }
+    public ScreeningResult? LatestScreening { get; private set; }
 
     private readonly List<RequirementAssessmentResult> _assessmentHistory = new();
     public IReadOnlyCollection<RequirementAssessmentResult> AssessmentHistory => _assessmentHistory.AsReadOnly();
@@ -40,7 +44,7 @@ public sealed class LeaseCase
         Guid actorId,
         DateTime actionTime,
         VerifiedAuthoritySnapshot authoritySnapshot)
-        : this(id, applicationReference, actorId, actionTime, authoritySnapshot, null)
+        : this(id, applicationReference, actorId, actionTime, authoritySnapshot, null, Guid.Empty)
     {
     }
 
@@ -51,6 +55,18 @@ public sealed class LeaseCase
         DateTime actionTime,
         VerifiedAuthoritySnapshot authoritySnapshot,
         LeaseProposalIntake? proposalIntake)
+        : this(id, applicationReference, actorId, actionTime, authoritySnapshot, proposalIntake, Guid.Empty)
+    {
+    }
+
+    public LeaseCase(
+        LeaseCaseId id,
+        string applicationReference,
+        Guid actorId,
+        DateTime actionTime,
+        VerifiedAuthoritySnapshot authoritySnapshot,
+        LeaseProposalIntake? proposalIntake,
+        Guid currentVerifiedFactSnapshotId)
     {
         if (id == default || id.Value == Guid.Empty)
         {
@@ -81,6 +97,7 @@ public sealed class LeaseCase
         CreatedByActorId = actorId;
         CreatedAt = actionTime;
         ProposalIntake = proposalIntake;
+        CurrentVerifiedFactSnapshotId = currentVerifiedFactSnapshotId;
         Revision = 1;
 
         _domainEvents.Add(new LeaseCaseInitialized(
@@ -643,5 +660,65 @@ public sealed class LeaseCase
             currentTemplateId,
             currentTemplateVersion,
             currentTemplateSnapshot.DefinitionDigest);
+    }
+
+    public void SetCurrentVerifiedFactSnapshot(Guid snapshotId)
+    {
+        CurrentVerifiedFactSnapshotId = snapshotId;
+    }
+
+    public void UpdateCurrentVerifiedFactSnapshot(Guid snapshotId)
+    {
+        SetCurrentVerifiedFactSnapshot(snapshotId);
+    }
+
+    public void RecordScreeningResult(ScreeningResult screening)
+    {
+        if (screening == null)
+        {
+            throw new ArgumentNullException(nameof(screening), "ScreeningResult cannot be null.");
+        }
+
+        if (!screening.LeaseCaseId.Equals(Id))
+        {
+            throw new InvalidOperationException("Screening result LeaseCaseId does not match this lease case.");
+        }
+
+        LatestScreening = screening;
+        _domainEvents.Add(new ScreeningResultRecorded(
+            Guid.NewGuid(),
+            screening.AssessedAtUtc,
+            Id,
+            screening.Id,
+            screening.VerifiedFactSnapshotId,
+            screening.Outcome));
+    }
+
+    private void EnsureScreeningGatePassed()
+    {
+        if (LatestScreening == null)
+        {
+            throw new MissingScreeningException("Screening result is missing for lease case.");
+        }
+
+        if (LatestScreening.IsStale(CurrentVerifiedFactSnapshotId))
+        {
+            throw new StaleScreeningException("Screening result is stale for the current verified fact snapshot.");
+        }
+
+        if (LatestScreening.Outcome == ScreeningOutcome.Blocked)
+        {
+            throw new BlockedScreeningException("Screening outcome is blocked.");
+        }
+    }
+
+    public void ProgressWorkflow()
+    {
+        EnsureScreeningGatePassed();
+    }
+
+    public void StartWorkflow()
+    {
+        ProgressWorkflow();
     }
 }
