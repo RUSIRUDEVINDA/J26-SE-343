@@ -18,6 +18,8 @@ using StateLandGovernance.WorkflowGovernance.Domain.WorkflowPlanning;
 using StateLandGovernance.WorkflowGovernance.Domain.DocumentCompleteness;
 using StateLandGovernance.WorkflowGovernance.Domain.Fulfillment;
 using StateLandGovernance.WorkflowGovernance.Domain.Handoff;
+using StateLandGovernance.WorkflowGovernance.Domain.Tracking;
+using StateLandGovernance.WorkflowGovernance.Domain.Tracking.Events;
 
 public sealed class LeaseCase
 {
@@ -43,6 +45,9 @@ public sealed class LeaseCase
 
     private readonly List<DocumentSubmissionRequirement> _documentSubmissionRequirements = new();
     public IReadOnlyCollection<DocumentSubmissionRequirement> DocumentSubmissionRequirements => _documentSubmissionRequirements.AsReadOnly();
+
+    private readonly List<EscalationRequest> _escalations = new();
+    public IReadOnlyCollection<EscalationRequest> Escalations => _escalations.AsReadOnly();
 
     private readonly List<RequirementAssessmentResult> _assessmentHistory = new();
     public IReadOnlyCollection<RequirementAssessmentResult> AssessmentHistory => _assessmentHistory.AsReadOnly();
@@ -937,5 +942,39 @@ public sealed class LeaseCase
         HandoffPackage = package;
         Status = LeaseCaseStatus.HandedOff;
         return package;
+    }
+
+    public void EscalateOverdueTask(Guid taskId, string reason, DateTime currentUtc)
+    {
+        if (Status == LeaseCaseStatus.HandedOff)
+        {
+            throw new InvalidEscalationException("Cannot escalate tasks for a lease case that has already been handed off.");
+        }
+
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            throw new InvalidEscalationException("Escalation reason cannot be empty.");
+        }
+
+        if (taskId == Guid.Empty)
+        {
+            throw new InvalidEscalationException("TaskId cannot be empty.");
+        }
+
+        var escalation = new EscalationRequest(
+            Guid.NewGuid(),
+            Id,
+            taskId,
+            reason.Trim(),
+            currentUtc);
+
+        _escalations.Add(escalation);
+
+        _domainEvents.Add(new TaskOverdueEscalated(
+            Guid.NewGuid(),
+            currentUtc,
+            Id,
+            taskId,
+            reason.Trim()));
     }
 }
