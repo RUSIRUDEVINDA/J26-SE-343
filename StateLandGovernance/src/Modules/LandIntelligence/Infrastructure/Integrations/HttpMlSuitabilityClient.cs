@@ -68,23 +68,26 @@ public sealed class HttpMlSuitabilityClient : IMlSuitabilityClient
 
     internal static MlPredictRequest BuildRequestPayload(LandParcel parcel, LandUseType requestedPurpose)
     {
-        var roadFeature = parcel.InfrastructureFeatures
+        var gisIntelligence = parcel.GisDerivedIntelligence;
+        var gisStatus = gisIntelligence?.EnrichmentStatus ?? GisEnrichmentOverallStatus.Unavailable;
+        var gisUnavailable = gisStatus == GisEnrichmentOverallStatus.Unavailable;
+
+        var gisRoadFeature = parcel.InfrastructureFeatures
             .Where(f => f.Type is InfrastructureFeatureType.Road or InfrastructureFeatureType.Railway)
+            .Where(GisDerivedIntelligenceDetector.IsGisDerivedInfrastructure)
             .OrderBy(f => f.DistanceMeters)
             .FirstOrDefault();
 
-        var waterFeature = parcel.InfrastructureFeatures
-            .Where(f =>
-                GisDerivedIntelligenceDetector.IsGisDerivedNaturalWater(f)
-                || f.Type == InfrastructureFeatureType.WaterSupply)
+        var gisWaterFeature = parcel.InfrastructureFeatures
+            .Where(GisDerivedIntelligenceDetector.IsGisDerivedNaturalWater)
             .OrderBy(f => f.DistanceMeters)
             .FirstOrDefault();
+
+        var derivedSoilGroupName = gisIntelligence?.DerivedSoilGroup?.SoilGroupName;
 
         var worstRestriction = parcel.EnvironmentalRestrictions
             .OrderByDescending(r => r.Severity)
             .FirstOrDefault();
-
-        var gisStatus = parcel.GisDerivedIntelligence?.EnrichmentStatus ?? GisEnrichmentOverallStatus.Unavailable;
 
         return new MlPredictRequest(
             RequestedPurpose: requestedPurpose.ToString(),
@@ -92,19 +95,29 @@ public sealed class HttpMlSuitabilityClient : IMlSuitabilityClient
             AreaHectares: (double)parcel.Area.Value,
             Province: parcel.Location.Province,
             District: parcel.Location.District,
-            ElevationMeters: (double?)parcel.Characteristics?.ElevationMeters,
-            DistanceToRoadM: (double?)roadFeature?.DistanceMeters,
-            DistanceToWaterM: (double?)waterFeature?.DistanceMeters,
+            ElevationMeters: ToNullableDouble(parcel.Characteristics?.ElevationMeters),
+            DistanceToRoadM: gisUnavailable ? null : ToNullableDouble(gisRoadFeature?.DistanceMeters),
+            DistanceToWaterM: gisUnavailable ? null : ToNullableDouble(gisWaterFeature?.DistanceMeters),
             GisEnrichmentStatus: gisStatus.ToString(),
-            DerivedSoilGroup: parcel.GisDerivedIntelligence?.DerivedSoilGroup?.SoilGroupName
-                ?? parcel.Characteristics?.SoilType
-                ?? "Unknown",
-            SoilOverlapPercentage: (double?)parcel.GisDerivedIntelligence?.DerivedSoilGroup?.OverlapPercentage,
-            TerrainDescription: parcel.Characteristics?.TerrainDescription ?? "Unknown",
+            DerivedSoilGroup: gisUnavailable || string.IsNullOrWhiteSpace(derivedSoilGroupName)
+                ? "Unknown"
+                : derivedSoilGroupName,
+            SoilOverlapPercentage: gisUnavailable || string.IsNullOrWhiteSpace(derivedSoilGroupName)
+                ? null
+                : ToNullableDouble(gisIntelligence?.DerivedSoilGroup?.OverlapPercentage),
+            TerrainDescription: gisUnavailable
+                ? "Unknown"
+                : ResolveUnknownString(parcel.Characteristics?.TerrainDescription),
             EnvironmentalRestrictionType: worstRestriction?.Type.ToString() ?? "None",
             EnvironmentalRestrictionSeverity: worstRestriction?.Severity.ToString() ?? "None",
             SpatialConstraintPresent: parcel.SpatialConstraints.Count > 0);
     }
+
+    private static double? ToNullableDouble(decimal? value) =>
+        value.HasValue ? (double)value.Value : null;
+
+    private static string ResolveUnknownString(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? "Unknown" : value;
 
     internal sealed record MlPredictRequest(
         [property: JsonPropertyName("requested_purpose")] string RequestedPurpose,

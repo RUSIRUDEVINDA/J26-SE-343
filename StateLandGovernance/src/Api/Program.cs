@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
+using StateLandGovernance.LandIntelligence.Presentation;
 using StateLandGovernance.LandIntelligence.Presentation.DependencyInjection;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
 
@@ -54,12 +55,20 @@ builder.Services.AddLandIntelligencePresentation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("land-intelligence-v1", new OpenApiInfo
+    options.SwaggerDoc(LandIntelligenceApiGroups.External, new OpenApiInfo
     {
-        Title = "State Land Governance — Component 1 (Land Intelligence)",
+        Title = "State Land Governance — Component 1 External Read API",
         Version = "v1",
         Description =
-            "REST API for land parcels, search, spatial constraints, knowledge graph relationships, and explainable land recommendations."
+            "Read-only REST contract for external platform modules: land parcel queries, search, spatial constraints, knowledge graph relationships, and explainable recommendations."
+    });
+
+    options.SwaggerDoc(LandIntelligenceApiGroups.Internal, new OpenApiInfo
+    {
+        Title = "State Land Governance — Component 1 Internal Maintenance API",
+        Version = "v1",
+        Description =
+            "Component 1 parcel persistence endpoints. Not for consumption by external platform modules."
     });
 
     options.DocInclusionPredicate((documentName, apiDescription) =>
@@ -73,7 +82,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/land-intelligence-v1/swagger.json", "Land Intelligence API v1");
+        options.SwaggerEndpoint(
+            $"/swagger/{LandIntelligenceApiGroups.External}/swagger.json",
+            "Land Intelligence External Read API v1");
+        options.SwaggerEndpoint(
+            $"/swagger/{LandIntelligenceApiGroups.Internal}/swagger.json",
+            "Land Intelligence Internal API v1");
     });
 
     using var scope = app.Services.CreateScope();
