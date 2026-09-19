@@ -49,12 +49,16 @@ public static class ServiceCollectionExtensions
             services.AddScoped<IGovernanceAuditRepository, PostgresGovernanceAuditRepository>();
             services.AddScoped<IGovernanceEvaluationStore, PostgresGovernanceEvaluationStore>();
             services.AddScoped<IComplianceRuleCatalogue, PostgresComplianceRuleCatalogue>();
+            services.AddScoped<IEarlyGovernanceScreeningStore, PostgresEarlyGovernanceScreeningStore>();
         }
         else if (environment.IsDevelopment() || environment.IsEnvironment("Testing"))
         {
             services.AddSingleton<IGovernanceAuditRepository, InMemoryGovernanceAuditRepository>();
             services.AddSingleton<IGovernanceEvaluationStore, InMemoryGovernanceEvaluationStore>();
             services.AddSingleton<IComplianceRuleCatalogue, InMemoryComplianceRuleCatalogue>();
+            services.AddScoped<IEarlyGovernanceScreeningStore>(_ =>
+                throw new InvalidOperationException(
+                    "Missing PostgreSQL configuration: Connection string 'GovernanceIntelligenceConnection' or environment variable 'GOVERNANCE_INTELLIGENCE_CONNECTION' is required for early governance screening persistence. In-memory storage is not supported."));
         }
         else
         {

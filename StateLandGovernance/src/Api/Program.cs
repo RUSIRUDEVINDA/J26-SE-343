@@ -36,6 +36,7 @@ builder.Services.AddGovernanceRiskIntelligence();
 builder.Services.AddExplainableGovernanceEngine();
 builder.Services.AddGovernanceConsensusEngine();
 builder.Services.AddConditionalGovernanceVerification();
+builder.Services.AddEarlyGovernanceScreening();
 
 if (builder.Environment.IsDevelopment())
 {
