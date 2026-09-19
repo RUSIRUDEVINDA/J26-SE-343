@@ -14,6 +14,7 @@ using StateLandGovernance.WorkflowGovernance.Domain.RequirementAssessment;
 using StateLandGovernance.WorkflowGovernance.Domain.RequirementAssessment.Events;
 using StateLandGovernance.WorkflowGovernance.Domain.Screening;
 using StateLandGovernance.WorkflowGovernance.Domain.Screening.Events;
+using StateLandGovernance.WorkflowGovernance.Domain.WorkflowPlanning;
 
 public sealed class LeaseCase
 {
@@ -27,6 +28,10 @@ public sealed class LeaseCase
     public LeaseProposalIntake? ProposalIntake { get; private set; }
     public Guid CurrentVerifiedFactSnapshotId { get; private set; }
     public ScreeningResult? LatestScreening { get; private set; }
+    public WorkflowPlan? ActiveWorkflowPlan { get; private set; }
+
+    private readonly List<WorkflowPlan> _workflowPlanHistory = new();
+    public IReadOnlyCollection<WorkflowPlan> WorkflowPlanHistory => _workflowPlanHistory.AsReadOnly();
 
     private readonly List<RequirementAssessmentResult> _assessmentHistory = new();
     public IReadOnlyCollection<RequirementAssessmentResult> AssessmentHistory => _assessmentHistory.AsReadOnly();
@@ -720,5 +725,73 @@ public sealed class LeaseCase
     public void StartWorkflow()
     {
         ProgressWorkflow();
+    }
+
+    public void ReviseWorkflowPlan(WorkflowPlan newPlan, VerifiedAuthoritySnapshot authority, string reason)
+    {
+        if (newPlan == null)
+        {
+            throw new ArgumentNullException(nameof(newPlan), "WorkflowPlan cannot be null.");
+        }
+
+        if (authority == null)
+        {
+            throw new MissingVerifiedAuthorityException("VerifiedAuthoritySnapshot is required to revise workflow plan.");
+        }
+
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            throw new InvalidWorkflowPlanException("Revision reason is required.");
+        }
+
+        if (!newPlan.LeaseCaseId.Equals(Id))
+        {
+            throw new InvalidWorkflowPlanException("New workflow plan does not belong to this lease case.");
+        }
+
+        if (newPlan.VerifiedFactSnapshotId.Value != CurrentVerifiedFactSnapshotId)
+        {
+            throw new InvalidWorkflowPlanException("New workflow plan VerifiedFactSnapshotId does not match the current verified fact snapshot of the lease case.");
+        }
+
+        var actionTime = DateTime.UtcNow;
+        if (actionTime < authority.ValidFrom || actionTime > authority.ValidUntil)
+        {
+            actionTime = authority.VerificationTime;
+        }
+
+        var requiredScope = new AuthorityScope(AuthorityScopeKind.LeaseCase, Id.Value.ToString("D"));
+        var capability = authority.Capabilities.Contains("WorkflowPlanSuperseder")
+            ? "WorkflowPlanSuperseder"
+            : "WorkflowPlanner";
+        authority.EnsureAuthorizes(authority.ActorId, capability, requiredScope, actionTime);
+
+        if (ActiveWorkflowPlan != null)
+        {
+            ActiveWorkflowPlan.SupersedePlan(authority.ActorId, reason, actionTime, authority);
+        }
+
+        ActiveWorkflowPlan = newPlan;
+        _workflowPlanHistory.Add(newPlan);
+        Revision++;
+    }
+
+    public void SetInitialWorkflowPlan(WorkflowPlan plan)
+    {
+        if (plan == null)
+        {
+            throw new ArgumentNullException(nameof(plan), "WorkflowPlan cannot be null.");
+        }
+
+        ActiveWorkflowPlan = plan;
+        if (!_workflowPlanHistory.Contains(plan))
+        {
+            _workflowPlanHistory.Add(plan);
+        }
+    }
+
+    public void AttachInitialWorkflowPlan(WorkflowPlan plan)
+    {
+        SetInitialWorkflowPlan(plan);
     }
 }
