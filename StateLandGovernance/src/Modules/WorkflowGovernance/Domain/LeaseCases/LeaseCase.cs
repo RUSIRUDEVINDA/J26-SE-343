@@ -17,6 +17,7 @@ using StateLandGovernance.WorkflowGovernance.Domain.Screening.Events;
 using StateLandGovernance.WorkflowGovernance.Domain.WorkflowPlanning;
 using StateLandGovernance.WorkflowGovernance.Domain.DocumentCompleteness;
 using StateLandGovernance.WorkflowGovernance.Domain.Fulfillment;
+using StateLandGovernance.WorkflowGovernance.Domain.Handoff;
 
 public sealed class LeaseCase
 {
@@ -31,6 +32,8 @@ public sealed class LeaseCase
     public Guid CurrentVerifiedFactSnapshotId { get; private set; }
     public ScreeningResult? LatestScreening { get; private set; }
     public WorkflowPlan? ActiveWorkflowPlan { get; private set; }
+    public LeaseCaseStatus Status { get; private set; } = LeaseCaseStatus.Draft;
+    public CaseHandoffPackage? HandoffPackage { get; private set; }
 
     private readonly List<WorkflowPlan> _workflowPlanHistory = new();
     public IReadOnlyCollection<WorkflowPlan> WorkflowPlanHistory => _workflowPlanHistory.AsReadOnly();
@@ -877,5 +880,62 @@ public sealed class LeaseCase
         }
 
         requirement.FulfillWithDocument(documentId, fulfilledAt);
+    }
+
+    public void EvaluateOverallReadiness()
+    {
+        if (Status == LeaseCaseStatus.HandedOff)
+        {
+            return;
+        }
+
+        if (ActiveWorkflowPlan != null && ActiveWorkflowPlan.Status == WorkflowPlanStatus.Approved)
+        {
+            var hasPendingConditions = _approvalConditions.Any(c => c.Status == FulfillmentStatus.Pending);
+            var hasPendingRequirements = _documentSubmissionRequirements.Any(r => r.Status == FulfillmentStatus.Pending);
+
+            if (hasPendingConditions || hasPendingRequirements)
+            {
+                Status = LeaseCaseStatus.ApprovedWithConditions;
+            }
+            else
+            {
+                Status = LeaseCaseStatus.ReadyForHandoff;
+            }
+        }
+        else if (ActiveWorkflowPlan != null)
+        {
+            Status = LeaseCaseStatus.InWorkflow;
+        }
+        else
+        {
+            Status = LeaseCaseStatus.Draft;
+        }
+    }
+
+    public CaseHandoffPackage GenerateHandoffPackage(DateTime? generatedAtUtc = null, Guid? packageId = null)
+    {
+        if (Status != LeaseCaseStatus.ReadyForHandoff)
+        {
+            throw new InvalidHandoffException(
+                $"Cannot generate handoff package when lease case is in status '{Status}'. Status must be '{LeaseCaseStatus.ReadyForHandoff}'.");
+        }
+
+        if (ActiveWorkflowPlan == null)
+        {
+            throw new InvalidHandoffException("Cannot generate handoff package without an active workflow plan.");
+        }
+
+        var package = new CaseHandoffPackage(
+            packageId ?? Guid.NewGuid(),
+            Id,
+            ActiveWorkflowPlan.Id.Value,
+            CurrentVerifiedFactSnapshotId,
+            generatedAtUtc ?? DateTime.UtcNow,
+            null);
+
+        HandoffPackage = package;
+        Status = LeaseCaseStatus.HandedOff;
+        return package;
     }
 }
