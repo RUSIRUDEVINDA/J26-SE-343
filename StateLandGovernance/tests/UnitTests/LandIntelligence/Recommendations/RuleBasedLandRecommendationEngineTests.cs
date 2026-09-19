@@ -43,11 +43,14 @@ public sealed class RuleBasedLandRecommendationEngineTests
 
         var recommendation = Assert.Single(response.Recommendations);
 
-        Assert.True(recommendation.SuitabilityScore < 70m);
+        Assert.Equal(0m, recommendation.SuitabilityScore);
+        Assert.True(recommendation.HardConstraintRejected);
+        Assert.NotEmpty(recommendation.HardConstraintReason);
         Assert.NotEmpty(recommendation.FailedCriteria);
         Assert.NotEmpty(recommendation.Restrictions);
         Assert.Contains(recommendation.Restrictions, r => r.Severity >= RestrictionSeverity.High);
-        Assert.Contains("Restrictions", recommendation.Explanation, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("rejected", recommendation.Explanation, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(recommendation.Evidence, e => e.RelatedCriterionName == "HardConstraintRejection");
     }
 
     [Fact]

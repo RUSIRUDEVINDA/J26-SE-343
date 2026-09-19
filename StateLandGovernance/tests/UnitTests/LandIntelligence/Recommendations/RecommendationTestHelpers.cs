@@ -450,6 +450,20 @@ internal sealed class FixedMlSuitabilityClient(MlSuitabilityPrediction predictio
         Task.FromResult<MlSuitabilityPrediction?>(prediction);
 }
 
+internal sealed class TrackingMlSuitabilityClient(MlSuitabilityPrediction prediction) : IMlSuitabilityClient
+{
+    public bool WasCalled { get; private set; }
+
+    public Task<MlSuitabilityPrediction?> PredictAsync(
+        LandParcel parcel,
+        LandUseType requestedPurpose,
+        CancellationToken cancellationToken = default)
+    {
+        WasCalled = true;
+        return Task.FromResult<MlSuitabilityPrediction?>(prediction);
+    }
+}
+
 internal static class RecommendationEngineTestFactory
 {
     public static IReadOnlyList<IRecommendationCriterionEvaluator> CreateStandardEvaluators() =>
