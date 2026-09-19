@@ -70,4 +70,15 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Registers Early Governance Screening engine and command handler.
+    /// </summary>
+    public static IServiceCollection AddEarlyGovernanceScreening(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IEarlyGovernanceScreeningEngine, EarlyGovernanceScreeningEngine>();
+        services.TryAddTransient<ScreenEarlyGovernanceCommandHandler>();
+
+        return services;
+    }
 }
