@@ -88,6 +88,28 @@ public class ScreeningGateTests
     }
 
     [Fact]
+    public void WorkflowProgression_Fails_When_Screening_Is_Pending()
+    {
+        var snapshotId = Guid.NewGuid();
+        var leaseCase = CreateLeaseCase(snapshotId);
+
+        var screening = new ScreeningResult(
+            Guid.NewGuid(),
+            leaseCase.Id,
+            snapshotId,
+            ScreeningOutcome.Pending,
+            "Screening in progress by Component 4",
+            DateTime.UtcNow);
+
+        leaseCase.RecordScreeningResult(screening);
+
+        Assert.NotNull(leaseCase.LatestScreening);
+        Assert.Equal(ScreeningOutcome.Pending, leaseCase.LatestScreening.Outcome);
+        var ex = Assert.Throws<PendingScreeningException>(() => leaseCase.ProgressWorkflow());
+        Assert.Contains("pending", ex.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void WorkflowProgression_Succeeds_When_Screening_Is_Cleared_And_Current()
     {
         var snapshotId = Guid.NewGuid();

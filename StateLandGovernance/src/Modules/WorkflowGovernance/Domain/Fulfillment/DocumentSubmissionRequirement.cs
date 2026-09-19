@@ -65,4 +65,12 @@ public sealed class DocumentSubmissionRequirement
         Status = FulfillmentStatus.Fulfilled;
         FulfilledAtUtc = fulfilledAt;
     }
+
+    public void MarkOverdue()
+    {
+        if (Status == FulfillmentStatus.Pending)
+        {
+            Status = FulfillmentStatus.Overdue;
+        }
+    }
 }

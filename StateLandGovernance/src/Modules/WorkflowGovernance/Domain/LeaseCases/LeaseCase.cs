@@ -20,6 +20,7 @@ using StateLandGovernance.WorkflowGovernance.Domain.Fulfillment;
 using StateLandGovernance.WorkflowGovernance.Domain.Handoff;
 using StateLandGovernance.WorkflowGovernance.Domain.Tracking;
 using StateLandGovernance.WorkflowGovernance.Domain.Tracking.Events;
+using StateLandGovernance.WorkflowGovernance.Domain.WorkflowExecution;
 
 public sealed class LeaseCase
 {
@@ -34,6 +35,7 @@ public sealed class LeaseCase
     public Guid CurrentVerifiedFactSnapshotId { get; private set; }
     public ScreeningResult? LatestScreening { get; private set; }
     public WorkflowPlan? ActiveWorkflowPlan { get; private set; }
+    public CompletedWorkflowDecision? CompletedWorkflow { get; private set; }
     public LeaseCaseStatus Status { get; private set; } = LeaseCaseStatus.Draft;
     public CaseHandoffPackage? HandoffPackage { get; private set; }
 
@@ -727,6 +729,11 @@ public sealed class LeaseCase
             throw new StaleScreeningException("Screening result is stale for the current verified fact snapshot.");
         }
 
+        if (LatestScreening.Outcome == ScreeningOutcome.Pending)
+        {
+            throw new PendingScreeningException("Screening result is pending and has not been cleared or evaluated.");
+        }
+
         if (LatestScreening.Outcome == ScreeningOutcome.Blocked)
         {
             throw new BlockedScreeningException("Screening outcome is blocked.");
@@ -887,6 +894,27 @@ public sealed class LeaseCase
         requirement.FulfillWithDocument(documentId, fulfilledAt);
     }
 
+    public void RecordCompletedWorkflow(CompletedWorkflowDecision completedWorkflow)
+    {
+        if (completedWorkflow == null)
+        {
+            throw new ArgumentNullException(nameof(completedWorkflow), "CompletedWorkflowDecision cannot be null.");
+        }
+
+        if (!completedWorkflow.LeaseCaseId.Equals(Id))
+        {
+            throw new InvalidWorkflowExecutionException("Completed workflow does not belong to this lease case.");
+        }
+
+        if (ActiveWorkflowPlan == null || !completedWorkflow.PlanId.Equals(ActiveWorkflowPlan.Id))
+        {
+            throw new InvalidWorkflowExecutionException("Completed workflow does not match active workflow plan.");
+        }
+
+        CompletedWorkflow = completedWorkflow;
+        EvaluateOverallReadiness();
+    }
+
     public void EvaluateOverallReadiness()
     {
         if (Status == LeaseCaseStatus.HandedOff)
@@ -894,10 +922,12 @@ public sealed class LeaseCase
             return;
         }
 
-        if (ActiveWorkflowPlan != null && ActiveWorkflowPlan.Status == WorkflowPlanStatus.Approved)
+        if (CompletedWorkflow != null &&
+            (CompletedWorkflow.FinalDecisionOutcome == WorkflowStageDecisionOutcome.Approved ||
+             CompletedWorkflow.FinalDecisionOutcome == WorkflowStageDecisionOutcome.ApprovedWithConditions))
         {
-            var hasPendingConditions = _approvalConditions.Any(c => c.Status == FulfillmentStatus.Pending);
-            var hasPendingRequirements = _documentSubmissionRequirements.Any(r => r.Status == FulfillmentStatus.Pending);
+            var hasPendingConditions = _approvalConditions.Any(c => c.Status == FulfillmentStatus.Pending || c.Status == FulfillmentStatus.Overdue);
+            var hasPendingRequirements = _documentSubmissionRequirements.Any(r => r.Status == FulfillmentStatus.Pending || r.Status == FulfillmentStatus.Overdue);
 
             if (hasPendingConditions || hasPendingRequirements)
             {
@@ -931,20 +961,32 @@ public sealed class LeaseCase
             throw new InvalidHandoffException("Cannot generate handoff package without an active workflow plan.");
         }
 
+        if (CompletedWorkflow == null)
+        {
+            throw new InvalidHandoffException("Cannot generate handoff package without a completed workflow execution.");
+        }
+
+        var fulfilledDocs = _documentSubmissionRequirements
+            .Where(r => r.FulfilledByDocumentId.HasValue)
+            .Select(r => r.FulfilledByDocumentId!.Value)
+            .ToList();
+
         var package = new CaseHandoffPackage(
             packageId ?? Guid.NewGuid(),
             Id,
             ActiveWorkflowPlan.Id.Value,
             CurrentVerifiedFactSnapshotId,
             generatedAtUtc ?? DateTime.UtcNow,
-            null);
+            null,
+            CompletedWorkflow.FinalDecisionId.Value,
+            fulfilledDocs);
 
         HandoffPackage = package;
         Status = LeaseCaseStatus.HandedOff;
         return package;
     }
 
-    public void EscalateOverdueTask(Guid taskId, string reason, DateTime currentUtc)
+    public void EscalateOverdueTask(Guid taskId, string reason, DateTime currentUtc, DateTime? stageStartedAtUtc = null)
     {
         if (Status == LeaseCaseStatus.HandedOff)
         {
@@ -959,6 +1001,51 @@ public sealed class LeaseCase
         if (taskId == Guid.Empty)
         {
             throw new InvalidEscalationException("TaskId cannot be empty.");
+        }
+
+        var docReq = _documentSubmissionRequirements.FirstOrDefault(r => r.Id == taskId);
+        var stage = ActiveWorkflowPlan?.Stages.FirstOrDefault(s => s.Id.Value == taskId);
+
+        if (docReq == null && stage == null)
+        {
+            throw new InvalidEscalationException($"Task with ID '{taskId}' was not found in lease case requirements or active workflow plan stages.");
+        }
+
+        if (docReq != null)
+        {
+            if (docReq.Status == FulfillmentStatus.Fulfilled || docReq.Status == FulfillmentStatus.Waived)
+            {
+                throw new InvalidEscalationException($"Task with ID '{taskId}' is already {docReq.Status} and cannot be escalated as overdue.");
+            }
+
+            if (currentUtc <= docReq.DueDateUtc)
+            {
+                throw new InvalidEscalationException($"Task with ID '{taskId}' due date '{docReq.DueDateUtc:u}' has not passed as of '{currentUtc:u}'.");
+            }
+
+            docReq.MarkOverdue();
+        }
+        else if (stage != null)
+        {
+            var durationDays = stage.TargetDurationDays ?? 14;
+            DateTime deadline;
+            if (stageStartedAtUtc.HasValue)
+            {
+                deadline = stageStartedAtUtc.Value.AddDays(durationDays);
+            }
+            else if (ActiveWorkflowPlan?.ApprovedAt.HasValue == true)
+            {
+                deadline = ActiveWorkflowPlan.ApprovedAt.Value.AddDays(durationDays);
+            }
+            else
+            {
+                deadline = ActiveWorkflowPlan!.CreatedAt.AddDays(durationDays);
+            }
+
+            if (currentUtc <= deadline)
+            {
+                throw new InvalidEscalationException($"Workflow stage task with ID '{taskId}' deadline '{deadline:u}' has not passed as of '{currentUtc:u}'.");
+            }
         }
 
         var escalation = new EscalationRequest(

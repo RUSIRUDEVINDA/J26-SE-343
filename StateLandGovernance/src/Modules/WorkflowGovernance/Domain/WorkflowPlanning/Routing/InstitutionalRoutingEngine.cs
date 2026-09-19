@@ -13,12 +13,15 @@ public static class InstitutionalRoutingEngine
 
     public static IReadOnlyCollection<WorkflowStage> GeneratePlanStages(
         IEnumerable<InstitutionCode> requiredInstitutions,
-        bool requiresCommissionerApproval)
+        bool requiresCommissionerApproval,
+        InstitutionalRoutingConfig? config = null)
     {
         if (requiredInstitutions == null)
         {
             throw new ArgumentNullException(nameof(requiredInstitutions), "Required institutions collection cannot be null.");
         }
+
+        config ??= InstitutionalRoutingConfig.Default;
 
         var standardCodes = requiredInstitutions
             .Where(i => !string.Equals(i.Value, DivisionalSecretariat.Value, StringComparison.OrdinalIgnoreCase) &&
@@ -36,10 +39,10 @@ public static class InstitutionalRoutingEngine
                 stageCode,
                 inst,
                 WorkflowStageType.Review,
-                "InstitutionalReviewer",
+                config.StandardCapability,
                 new RoutingReasonCode("MANDATORY_REVIEW"),
                 $"Mandatory review by institution {inst.Value}",
-                targetDurationDays: 14,
+                targetDurationDays: config.StandardStageDurationDays,
                 isFinalDecision: false,
                 prerequisites: Array.Empty<WorkflowStageId>()
             );
@@ -54,10 +57,10 @@ public static class InstitutionalRoutingEngine
             dsStageCode,
             DivisionalSecretariat,
             requiresCommissionerApproval ? WorkflowStageType.Recommendation : WorkflowStageType.FinalDecision,
-            "DivisionalSecretary",
+            config.DivisionalSecretaryCapability,
             new RoutingReasonCode("DS_CLEARANCE"),
             "Divisional Secretariat assessment and concurrence",
-            targetDurationDays: 14,
+            targetDurationDays: config.DivisionalSecretariatDurationDays,
             isFinalDecision: !requiresCommissionerApproval,
             prerequisites: dsPrereqs
         );
@@ -73,10 +76,10 @@ public static class InstitutionalRoutingEngine
                 commissionerStageCode,
                 LandCommissioner,
                 WorkflowStageType.FinalDecision,
-                "LandCommissioner",
+                config.CommissionerCapability,
                 new RoutingReasonCode("FINAL_STATUTORY_APPROVAL"),
                 "Final statutory lease approval by Land Commissioner",
-                targetDurationDays: 7,
+                targetDurationDays: config.CommissionerDurationDays,
                 isFinalDecision: true,
                 prerequisites: new[] { dsStageId }
             );
