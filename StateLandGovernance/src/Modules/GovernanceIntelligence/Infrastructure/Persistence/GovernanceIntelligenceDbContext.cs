@@ -31,6 +31,7 @@ public class GovernanceIntelligenceDbContext : DbContext
     public DbSet<InstitutionPositionEntity> InstitutionPositions => Set<InstitutionPositionEntity>();
     public DbSet<ConditionalVerificationEvaluationEntity> ConditionalVerificationEvaluations => Set<ConditionalVerificationEvaluationEntity>();
     public DbSet<ConditionResultEntity> ConditionResults => Set<ConditionResultEntity>();
+    public DbSet<EarlyGovernanceScreeningEvaluationEntity> EarlyGovernanceScreeningEvaluations => Set<EarlyGovernanceScreeningEvaluationEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
