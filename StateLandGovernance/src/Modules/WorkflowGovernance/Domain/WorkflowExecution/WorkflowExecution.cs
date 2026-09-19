@@ -604,5 +604,37 @@ public sealed class WorkflowExecution
 
         return true;
     }
+
+    public CompletedWorkflowDecision CreateCompletionRecord()
+    {
+        if (Status != WorkflowExecutionStatus.Completed)
+        {
+            throw new InvalidWorkflowExecutionException($"Workflow execution is not completed. Current status: '{Status}'.");
+        }
+
+        var finalStage = _stages.Single(s => s.Definition.IsFinalDecision);
+        if (finalStage.Decision == null)
+        {
+            throw new InvalidWorkflowExecutionException("Final decision stage has no decision recorded.");
+        }
+
+        if (ConsensusAssessment == null)
+        {
+            throw new InvalidWorkflowExecutionException("Consensus assessment is required for completion.");
+        }
+
+        return new CompletedWorkflowDecision(
+            Id,
+            WorkflowPlanId,
+            WorkflowPlanRevision,
+            LeaseCaseId,
+            ConsensusAssessment.AssessmentId,
+            finalStage.Decision.Id,
+            finalStage.Decision.Outcome,
+            finalStage.Definition.InstitutionCode,
+            finalStage.Decision.DecidingOfficerId,
+            finalStage.Decision.DecidedAt,
+            finalStage.Decision.Conditions);
+    }
 }
 

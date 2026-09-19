@@ -184,4 +184,34 @@ public class InstitutionalRoutingTests
 
         Assert.Contains("VerifiedFactSnapshotId", ex.Message, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void InstitutionalRoutingEngine_Generates_Stages_Using_Supplied_Config_Deterministically()
+    {
+        var customConfig = new InstitutionalRoutingConfig(
+            new WorkflowRuleSetReference("CUSTOM_LAND_POLICY", "2026.3"),
+            StandardStageDurationDays: 21,
+            DivisionalSecretariatDurationDays: 10,
+            CommissionerDurationDays: 5,
+            StandardCapability: "SeniorEnvironmentalOfficer",
+            DivisionalSecretaryCapability: "ActingDivisionalSecretary",
+            CommissionerCapability: "AdditionalLandCommissioner");
+
+        var stages = InstitutionalRoutingEngine.GeneratePlanStages(
+            new[] { new InstitutionCode("CEA") },
+            requiresCommissionerApproval: true,
+            config: customConfig);
+
+        var standardStage = stages.Single(s => s.InstitutionCode == new InstitutionCode("CEA"));
+        Assert.Equal(21, standardStage.TargetDurationDays);
+        Assert.Equal("SeniorEnvironmentalOfficer", standardStage.RequiredOfficerCapability);
+
+        var dsStage = stages.Single(s => s.InstitutionCode == InstitutionalRoutingEngine.DivisionalSecretariat);
+        Assert.Equal(10, dsStage.TargetDurationDays);
+        Assert.Equal("ActingDivisionalSecretary", dsStage.RequiredOfficerCapability);
+
+        var commStage = stages.Single(s => s.InstitutionCode == InstitutionalRoutingEngine.LandCommissioner);
+        Assert.Equal(5, commStage.TargetDurationDays);
+        Assert.Equal("AdditionalLandCommissioner", commStage.RequiredOfficerCapability);
+    }
 }
