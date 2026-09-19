@@ -15,6 +15,8 @@ using StateLandGovernance.WorkflowGovernance.Domain.RequirementAssessment.Events
 using StateLandGovernance.WorkflowGovernance.Domain.Screening;
 using StateLandGovernance.WorkflowGovernance.Domain.Screening.Events;
 using StateLandGovernance.WorkflowGovernance.Domain.WorkflowPlanning;
+using StateLandGovernance.WorkflowGovernance.Domain.DocumentCompleteness;
+using StateLandGovernance.WorkflowGovernance.Domain.Fulfillment;
 
 public sealed class LeaseCase
 {
@@ -32,6 +34,12 @@ public sealed class LeaseCase
 
     private readonly List<WorkflowPlan> _workflowPlanHistory = new();
     public IReadOnlyCollection<WorkflowPlan> WorkflowPlanHistory => _workflowPlanHistory.AsReadOnly();
+
+    private readonly List<ApprovalCondition> _approvalConditions = new();
+    public IReadOnlyCollection<ApprovalCondition> ApprovalConditions => _approvalConditions.AsReadOnly();
+
+    private readonly List<DocumentSubmissionRequirement> _documentSubmissionRequirements = new();
+    public IReadOnlyCollection<DocumentSubmissionRequirement> DocumentSubmissionRequirements => _documentSubmissionRequirements.AsReadOnly();
 
     private readonly List<RequirementAssessmentResult> _assessmentHistory = new();
     public IReadOnlyCollection<RequirementAssessmentResult> AssessmentHistory => _assessmentHistory.AsReadOnly();
@@ -793,5 +801,81 @@ public sealed class LeaseCase
     public void AttachInitialWorkflowPlan(WorkflowPlan plan)
     {
         SetInitialWorkflowPlan(plan);
+    }
+
+    public void AddApprovalCondition(ApprovalCondition condition)
+    {
+        if (condition == null)
+        {
+            throw new ArgumentNullException(nameof(condition));
+        }
+
+        if (!condition.LeaseCaseId.Equals(Id))
+        {
+            throw new InvalidFulfillmentException("ApprovalCondition does not belong to this lease case.");
+        }
+
+        if (_approvalConditions.Any(c => c.Id == condition.Id))
+        {
+            throw new InvalidFulfillmentException($"ApprovalCondition with ID '{condition.Id}' already exists.");
+        }
+
+        _approvalConditions.Add(condition);
+    }
+
+    public ApprovalCondition AddApprovalCondition(InstitutionCode institutionCode, string description, Guid? conditionId = null)
+    {
+        var condition = new ApprovalCondition(conditionId ?? Guid.NewGuid(), Id, institutionCode, description);
+        AddApprovalCondition(condition);
+        return condition;
+    }
+
+    public void AddDocumentSubmissionRequirement(DocumentSubmissionRequirement requirement)
+    {
+        if (requirement == null)
+        {
+            throw new ArgumentNullException(nameof(requirement));
+        }
+
+        if (!requirement.LeaseCaseId.Equals(Id))
+        {
+            throw new InvalidFulfillmentException("DocumentSubmissionRequirement does not belong to this lease case.");
+        }
+
+        if (_documentSubmissionRequirements.Any(r => r.Id == requirement.Id))
+        {
+            throw new InvalidFulfillmentException($"DocumentSubmissionRequirement with ID '{requirement.Id}' already exists.");
+        }
+
+        _documentSubmissionRequirements.Add(requirement);
+    }
+
+    public DocumentSubmissionRequirement AddDocumentSubmissionRequirement(DocumentClassificationCode classificationCode, DateTime dueDateUtc, Guid? requirementId = null)
+    {
+        var requirement = new DocumentSubmissionRequirement(requirementId ?? Guid.NewGuid(), Id, classificationCode, dueDateUtc);
+        AddDocumentSubmissionRequirement(requirement);
+        return requirement;
+    }
+
+    public void FulfillCondition(Guid conditionId, DateTime fulfilledAt)
+    {
+        var condition = _approvalConditions.FirstOrDefault(c => c.Id == conditionId);
+        if (condition == null)
+        {
+            throw new InvalidFulfillmentException($"Approval condition with ID '{conditionId}' was not found.");
+        }
+
+        condition.Fulfill(fulfilledAt);
+    }
+
+    public void FulfillDocumentRequirement(Guid requirementId, GovernedDocumentId documentId, DateTime fulfilledAt)
+    {
+        var requirement = _documentSubmissionRequirements.FirstOrDefault(r => r.Id == requirementId);
+        if (requirement == null)
+        {
+            throw new InvalidFulfillmentException($"Document submission requirement with ID '{requirementId}' was not found.");
+        }
+
+        requirement.FulfillWithDocument(documentId, fulfilledAt);
     }
 }
