@@ -29,6 +29,10 @@ public sealed class DocumentAnalysis
     private readonly List<HumanFactVerification> _verifications = new();
     public IReadOnlyCollection<HumanFactVerification> Verifications => _verifications.AsReadOnly();
 
+    private readonly List<VerifiedFactSnapshot> _verifiedFactSnapshots = new();
+    public IReadOnlyCollection<VerifiedFactSnapshot> VerifiedFactSnapshots => _verifiedFactSnapshots.AsReadOnly();
+
+
     private const string RequiredFactVerificationCapability = "FactVerifier";
 
     public DocumentAnalysis(
@@ -120,7 +124,7 @@ public sealed class DocumentAnalysis
                 throw new InvalidAnalysisRunException("Requested capabilities contain duplicates.");
             }
         }
-        
+
         var normalizedCapabilities = distinctCaps
             .OrderBy(c => c.Value, StringComparer.OrdinalIgnoreCase)
             .ToList();
@@ -179,7 +183,7 @@ public sealed class DocumentAnalysis
     public void StartRun(AnalysisRunId analysisRunId, DateTime startedAt)
     {
         if (analysisRunId == default || analysisRunId.Value == Guid.Empty) throw new InvalidAnalysisRunTransitionException("AnalysisRunId cannot be empty.");
-        
+
         var run = _runs.FirstOrDefault(r => r.Id.Value == analysisRunId.Value);
         if (run == null) throw new AnalysisRunNotFoundException($"AnalysisRun with ID {analysisRunId.Value} was not found.");
 
@@ -208,7 +212,7 @@ public sealed class DocumentAnalysis
     {
         if (analysisRunId == default || analysisRunId.Value == Guid.Empty) throw new InvalidAnalysisRunTransitionException("AnalysisRunId cannot be empty.");
         if (failure == null) throw new InvalidAnalysisRunTransitionException("Failure cannot be null.");
-        
+
         var run = _runs.FirstOrDefault(r => r.Id.Value == analysisRunId.Value);
         if (run == null) throw new AnalysisRunNotFoundException($"AnalysisRun with ID {analysisRunId.Value} was not found.");
 
@@ -239,7 +243,7 @@ public sealed class DocumentAnalysis
     {
         if (analysisRunId == default || analysisRunId.Value == Guid.Empty) throw new InvalidAnalysisRunTransitionException("AnalysisRunId cannot be empty.");
         if (string.IsNullOrWhiteSpace(supersessionReason)) throw new InvalidAnalysisRunTransitionException("Supersession reason cannot be blank.");
-        
+
         var trimmedReason = supersessionReason.Trim();
         var run = _runs.FirstOrDefault(r => r.Id.Value == analysisRunId.Value);
         if (run == null) throw new AnalysisRunNotFoundException($"AnalysisRun with ID {analysisRunId.Value} was not found.");
@@ -277,12 +281,12 @@ public sealed class DocumentAnalysis
         if (analysisRunId.Value == Guid.Empty) throw new InvalidAnalysisRunTransitionException("AnalysisRunId empty.");
         var run = _runs.FirstOrDefault(r => r.Id.Value == analysisRunId.Value);
         if (run == null) throw new AnalysisRunNotFoundException($"Run {analysisRunId.Value} not found.");
-        
+
         if (run.State != AnalysisRunState.Running) throw new InvalidAnalysisRunTransitionException("Run is not running.");
-        
+
         if (completedAt.Kind != DateTimeKind.Utc) throw new InvalidAnalysisRunTransitionException("completedAt must be UTC.");
         if (run.StartedAt.HasValue && completedAt < run.StartedAt.Value) throw new InvalidAnalysisRunTransitionException("Chronology violation.");
-        
+
         foreach (var r in _runs)
         {
             if (r.Result != null && r.Result.Id.Value == resultId.Value)
@@ -411,7 +415,7 @@ public sealed class DocumentAnalysis
         {
             if (v.Id.Value == verificationId.Value)
             {
-                bool isExactMatch = 
+                bool isExactMatch =
                     v.AnalysisRunResultId.Value == analysisRunResultId.Value &&
                     v.ExtractedFactId.Value == extractedFactId.Value &&
                     v.Decision == decision &&
@@ -471,5 +475,188 @@ public sealed class DocumentAnalysis
         Revision = nextRevision;
         _domainEvents.Add(evt);
     }
-}
 
+    public void PublishVerifiedFactSnapshot(
+        VerifiedFactSnapshotId snapshotId,
+        AnalysisRunResultId analysisRunResultId,
+        Guid publishingActorId,
+        DateTime publishedAt,
+        VerifiedAuthoritySnapshot authoritySnapshot)
+    {
+                if (snapshotId.Value == Guid.Empty) throw new InvalidVerifiedFactSnapshotException("SnapshotId cannot be empty.");
+        if (publishingActorId == Guid.Empty) throw new InvalidVerifiedFactSnapshotException("PublishingActorId cannot be empty.");
+        if (authoritySnapshot == null) throw new MissingVerifiedAuthorityException("Authority snapshot required.");
+
+        if (publishedAt.Kind != DateTimeKind.Utc) throw new InvalidVerifiedFactSnapshotException("PublishedAt must be UTC.");
+
+        var targetRun = _runs.FirstOrDefault(r => r.Result != null && r.Result.Id.Value == analysisRunResultId.Value)
+            ?? throw new AnalysisRunResultNotFoundException("Result not found in any run.");
+
+        var targetResult = targetRun.Result ?? throw new AnalysisRunResultNotFoundException("Result not found in any run.");
+
+        if (targetRun.State != AnalysisRunState.Completed)
+            throw new InvalidAnalysisRunTransitionException("Cannot publish from a run that is not completed.");
+
+        if (_runs.Any(r => r.RunNumber > targetRun.RunNumber && r.State == AnalysisRunState.Completed))
+            throw new StaleAnalysisResultException("A newer completed run exists.");
+
+        foreach (var fact in targetResult.ExtractedFacts)
+        {
+            var coverage = _verifications.Count(v => v.AnalysisRunResultId.Value == analysisRunResultId.Value && v.ExtractedFactId.Value == fact.Id.Value);
+            if (coverage != 1)
+                throw new IncompleteFactVerificationException("Incomplete or invalid fact verification coverage.");
+        }
+
+        if (publishedAt < targetRun.CompletedAt)
+            throw new InvalidVerifiedFactSnapshotException("PublishedAt cannot be before run CompletedAt.");
+
+        var relevantVerifications = _verifications.Where(v => v.AnalysisRunResultId.Value == analysisRunResultId.Value).ToList();
+
+        foreach (var v in relevantVerifications)
+        {
+            if (publishedAt < v.VerifiedAt)
+                throw new InvalidVerifiedFactSnapshotException("PublishedAt cannot be before verification VerifiedAt.");
+        }
+
+        if (publishedAt < authoritySnapshot.VerificationTime)
+            throw new InvalidVerifiedFactSnapshotException("PublishedAt cannot be before authority VerificationTime.");
+
+        var requiredScope = new AuthorityScope(
+            AuthorityScopeKind.GovernedDocument,
+            GovernedDocumentId.Value.ToString("D"));
+
+        authoritySnapshot.EnsureAuthorizes(
+            publishingActorId,
+            "FactSnapshotPublisher",
+            requiredScope,
+            publishedAt);
+
+        var entries = new List<VerifiedFactEntry>();
+        int confirmedCount = 0;
+        int correctedCount = 0;
+        int unsupportedCount = 0;
+
+        foreach (var fact in targetResult.ExtractedFacts)
+        {
+            var v = relevantVerifications.Single(v2 => v2.ExtractedFactId.Value == fact.Id.Value);
+            if (v.Decision == FactVerificationDecision.Confirmed)
+            {
+                entries.Add(new VerifiedFactEntry(fact.Id, v.Id, fact.FactCode, fact.FactValue, v.Decision, v.VerifyingActorId, v.VerifiedAt));
+                confirmedCount++;
+            }
+            else if (v.Decision == FactVerificationDecision.Corrected)
+            {
+                if (v.CorrectedValue == null) throw new InvalidVerifiedFactSnapshotException("Corrected fact missing value.");
+                entries.Add(new VerifiedFactEntry(fact.Id, v.Id, fact.FactCode, v.CorrectedValue, v.Decision, v.VerifyingActorId, v.VerifiedAt));
+                correctedCount++;
+            }
+            else if (v.Decision == FactVerificationDecision.Unsupported)
+            {
+                unsupportedCount++;
+            }
+        }
+
+        var sourceFactCount = confirmedCount + correctedCount + unsupportedCount;
+        var publishedFactCount = confirmedCount + correctedCount;
+
+        VerifiedFactSnapshotOutcome outcome;
+        if (targetResult.Outcome == AnalysisResultOutcome.NoFindings)
+        {
+            outcome = VerifiedFactSnapshotOutcome.NoFindings;
+        }
+        else
+        {
+            if (publishedFactCount > 0)
+                outcome = VerifiedFactSnapshotOutcome.VerifiedFacts;
+            else
+                outcome = VerifiedFactSnapshotOutcome.NoSupportedFacts;
+        }
+
+        var orderedEntries = entries
+            .OrderBy(e => e.FactCode.Value, StringComparer.Ordinal)
+            .ThenBy(e => e.SourceExtractedFactId.Value)
+            .ToList();
+
+        var candidate = new VerifiedFactSnapshot(
+            snapshotId,
+            Id,
+            GovernedDocumentId,
+            DocumentVersionId,
+            DocumentChecksum,
+            targetRun.Id,
+            analysisRunResultId,
+            targetRun.RunNumber,
+            targetResult.ModelReference,
+            targetResult.RequestedCapabilities,
+            targetResult.Outcome,
+            outcome,
+            orderedEntries,
+            sourceFactCount,
+            publishedFactCount,
+            confirmedCount,
+            correctedCount,
+            unsupportedCount,
+            publishedAt,
+            publishingActorId,
+            "FactSnapshotPublisher",
+            authoritySnapshot.Scope.Kind,
+            authoritySnapshot.Scope.TargetIdentifier ?? string.Empty,
+            requiredScope.Kind,
+            requiredScope.TargetIdentifier ?? string.Empty,
+            authoritySnapshot.ValidFrom,
+            authoritySnapshot.VerificationTime,
+            authoritySnapshot.ValidUntil
+        );
+
+        foreach (var existing in _verifiedFactSnapshots)
+        {
+            if (existing.Id.Value == snapshotId.Value)
+            {
+                bool isExactMatch = existing.IsCanonicallyEquivalentTo(candidate);
+
+                if (isExactMatch) throw new DuplicateVerifiedFactSnapshotException("Duplicate snapshot with identical canonical data.");
+                else throw new ConflictingVerifiedFactSnapshotException("Snapshot ID already exists with conflicting canonical data.");
+            }
+
+            if (existing.AnalysisRunResultId.Value == analysisRunResultId.Value)
+            {
+                throw new VerifiedFactSnapshotAlreadyPublishedException("Result already published under a different snapshot ID.");
+            }
+        }
+
+        var nextRevision = CalculateNextRevision(Revision);
+
+        var evt = new VerifiedFactSnapshotPublished(
+            Guid.NewGuid(),
+            publishedAt,
+            Id,
+            GovernedDocumentId,
+            DocumentVersionId,
+            DocumentChecksum.Algorithm,
+            DocumentChecksum.Value,
+            targetRun.Id,
+            analysisRunResultId,
+            snapshotId,
+            targetRun.RunNumber,
+            targetResult.Outcome,
+            outcome,
+            sourceFactCount,
+            publishedFactCount,
+            confirmedCount,
+            correctedCount,
+            unsupportedCount,
+            publishingActorId,
+            "FactSnapshotPublisher",
+            authoritySnapshot.Scope.Kind,
+            authoritySnapshot.Scope.TargetIdentifier,
+            requiredScope.Kind,
+            requiredScope.TargetIdentifier!,
+            authoritySnapshot.VerificationTime,
+            nextRevision
+        );
+
+        _verifiedFactSnapshots.Add(candidate);
+        Revision = nextRevision;
+        _domainEvents.Add(evt);
+    }
+}

@@ -10,7 +10,6 @@ using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
@@ -21,22 +20,15 @@ EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// TODO: Register shared infrastructure services (logging, persistence, security, storage)
-// TODO: Register BuildingBlocks (CQRS, events, observability)
 builder.Services.AddBuildingBlocks();
-
-// TODO: Register LandIntelligence module (Application + Infrastructure + Presentation)
-// TODO: Register LeaseFeasibility module (Application + Infrastructure + Presentation)
-// TODO: Register WorkflowGovernance module (Application + Infrastructure + Presentation)
 
 builder.Services
     .AddWorkflowGovernanceApplication()
     .AddWorkflowGovernanceInfrastructure()
     .AddWorkflowGovernancePresentation();
 
-// TODO: Register GovernanceIntelligence module (Application + Infrastructure + Presentation)
+builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
 
-// Register GovernanceIntelligence module (Application + Infrastructure + Presentation)
 builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
 builder.Services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRuleProvider>();
 builder.Services.AddGovernanceIntelligenceInfrastructure(builder.Configuration, builder.Environment);
@@ -46,14 +38,9 @@ builder.Services.AddGovernanceRiskIntelligence();
 builder.Services.AddExplainableGovernanceEngine();
 builder.Services.AddGovernanceConsensusEngine();
 builder.Services.AddConditionalGovernanceVerification();
+builder.Services.AddEarlyGovernanceScreening();
 
-
-builder.Services.AddControllers();
-builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
-builder.Services.AddLandIntelligencePresentation();
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+if (builder.Environment.IsDevelopment())
 {
     options.SwaggerDoc(LandIntelligenceApiGroups.External, new OpenApiInfo
     {
@@ -70,10 +57,11 @@ builder.Services.AddSwaggerGen(options =>
         Description =
             "Component 1 parcel persistence endpoints. Not for consumption by external platform modules."
     });
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+}
 
-    options.DocInclusionPredicate((documentName, apiDescription) =>
-        string.Equals(apiDescription.GroupName, documentName, StringComparison.Ordinal));
-});
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -89,13 +77,29 @@ if (app.Environment.IsDevelopment())
             $"/swagger/{LandIntelligenceApiGroups.Internal}/swagger.json",
             "Land Intelligence Internal API v1");
     });
+    app.UseSwaggerUI();
 
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetService<LandIntelligenceDbContext>();
+        if (dbContext != null && dbContext.Database.CanConnect())
+        {
+            dbContext.Database.Migrate();
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[Development] LandIntelligence migration skipped: {ex.Message}");
+    }
+}
+else
+{
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<LandIntelligenceDbContext>();
     dbContext.Database.Migrate();
 }
 
-app.UseLandIntelligenceExceptionHandling();
 app.MapControllers();
 
 app.Run();
