@@ -10,6 +10,7 @@ using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
@@ -27,8 +28,6 @@ builder.Services
     .AddWorkflowGovernanceInfrastructure()
     .AddWorkflowGovernancePresentation();
 
-builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
-
 builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
 builder.Services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRuleProvider>();
 builder.Services.AddGovernanceIntelligenceInfrastructure(builder.Configuration, builder.Environment);
@@ -40,7 +39,22 @@ builder.Services.AddGovernanceConsensusEngine();
 builder.Services.AddConditionalGovernanceVerification();
 builder.Services.AddEarlyGovernanceScreening();
 
-if (builder.Environment.IsDevelopment())
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "DevelopmentFrontend",
+        policy => policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
+builder.Services.AddControllers();
+builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
+builder.Services.AddLandIntelligencePresentation();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc(LandIntelligenceApiGroups.External, new OpenApiInfo
     {
@@ -57,11 +71,10 @@ if (builder.Environment.IsDevelopment())
         Description =
             "Component 1 parcel persistence endpoints. Not for consumption by external platform modules."
     });
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
-}
 
-builder.Services.AddControllers();
+    options.DocInclusionPredicate((documentName, apiDescription) =>
+        string.Equals(apiDescription.GroupName, documentName, StringComparison.Ordinal));
+});
 
 var app = builder.Build();
 
@@ -77,7 +90,6 @@ if (app.Environment.IsDevelopment())
             $"/swagger/{LandIntelligenceApiGroups.Internal}/swagger.json",
             "Land Intelligence Internal API v1");
     });
-    app.UseSwaggerUI();
 
     try
     {
@@ -98,6 +110,13 @@ else
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<LandIntelligenceDbContext>();
     dbContext.Database.Migrate();
+}
+
+app.UseLandIntelligenceExceptionHandling();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("DevelopmentFrontend");
 }
 
 app.MapControllers();
