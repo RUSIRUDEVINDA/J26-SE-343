@@ -20,16 +20,16 @@ public sealed record EvaluateGovernanceConsensusCommand(
 public sealed class EvaluateGovernanceConsensusCommandHandler
 {
     private readonly IGovernanceConsensusEngine _engine;
-    private readonly IGovernanceAuditRepository _auditRepository;
+    private readonly IGovernanceEvaluationStore _evaluationStore;
     private readonly TimeProvider _timeProvider;
 
     public EvaluateGovernanceConsensusCommandHandler(
         IGovernanceConsensusEngine engine,
-        IGovernanceAuditRepository auditRepository,
+        IGovernanceEvaluationStore evaluationStore,
         TimeProvider? timeProvider = null)
     {
         _engine = engine ?? throw new ArgumentNullException(nameof(engine));
-        _auditRepository = auditRepository ?? throw new ArgumentNullException(nameof(auditRepository));
+        _evaluationStore = evaluationStore ?? throw new ArgumentNullException(nameof(evaluationStore));
         _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
@@ -110,7 +110,7 @@ public sealed class EvaluateGovernanceConsensusCommandHandler
             timestamp: evaluationTimestamp
         );
 
-        await _auditRepository.AddAsync(auditRecord, cancellationToken);
+        await _evaluationStore.StoreConsensusEvaluationAsync(auditRecord, domainResult, domainPositions, cancellationToken);
 
         return new GovernanceConsensusResultDto(
             ConsensusEvaluationId: domainResult.ConsensusEvaluationId,

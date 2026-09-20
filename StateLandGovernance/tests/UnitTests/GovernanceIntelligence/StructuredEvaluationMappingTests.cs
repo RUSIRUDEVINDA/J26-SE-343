@@ -47,6 +47,41 @@ public class StructuredEvaluationMappingTests
     }
 
     [Fact]
+    public void RiskEvaluationMapper_OmitsOfficerIdentifiersFromInvolvedActorsJson()
+    {
+        var auditRecord = GovernanceAuditRecord.Create(EngineType.RiskAndCorruption, "AssessRisk", "ElevatedRiskDetected", "Details");
+        var indicator = new GovernanceRiskIndicator(
+            "IND-02",
+            GovernanceRiskCategory.RepeatedOverrideRisk,
+            30,
+            GovernanceRiskSeverity.High,
+            "SUBJ-123",
+            new[] { "OFF-101", "OFFICER_JOHN_DOE", "ROLE_APPROVER", "EMP-999" },
+            "RULE-PROC-2",
+            "Repeated override detected",
+            "Human review required",
+            "Raw officer notes");
+
+        var result = new GovernanceRiskAssessmentResult(
+            "SUBJ-123",
+            30,
+            GovernanceRiskSeverity.High,
+            new[] { indicator },
+            DateTime.UtcNow,
+            true);
+
+        var (_, evalEntity) = RiskEvaluationMapper.MapToEntities(auditRecord, result);
+
+        Assert.NotNull(evalEntity);
+        var mappedIndicator = evalEntity.RiskIndicators[0];
+
+        Assert.DoesNotContain("OFF-101", mappedIndicator.InvolvedActorsJson);
+        Assert.DoesNotContain("OFFICER_JOHN_DOE", mappedIndicator.InvolvedActorsJson);
+        Assert.DoesNotContain("EMP-999", mappedIndicator.InvolvedActorsJson);
+        Assert.Contains("ROLE_APPROVER", mappedIndicator.InvolvedActorsJson);
+    }
+
+    [Fact]
     public void GovernanceExplanationMapper_PreservesOrderIndexAndEnumStrings()
     {
         var auditRecord = GovernanceAuditRecord.Create(EngineType.ExplainableGovernance, "ExplainGov", "Generated", "Details");

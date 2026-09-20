@@ -25,16 +25,16 @@ public sealed record GenerateGovernanceExplanationCommand(
 public sealed class GenerateGovernanceExplanationCommandHandler
 {
     private readonly IExplainableGovernanceEngine _explanationEngine;
-    private readonly IGovernanceAuditRepository _auditRepository;
+    private readonly IGovernanceEvaluationStore _evaluationStore;
     private readonly TimeProvider _timeProvider;
 
     public GenerateGovernanceExplanationCommandHandler(
         IExplainableGovernanceEngine explanationEngine,
-        IGovernanceAuditRepository auditRepository,
+        IGovernanceEvaluationStore evaluationStore,
         TimeProvider timeProvider)
     {
         _explanationEngine = explanationEngine ?? throw new ArgumentNullException(nameof(explanationEngine));
-        _auditRepository = auditRepository ?? throw new ArgumentNullException(nameof(auditRepository));
+        _evaluationStore = evaluationStore ?? throw new ArgumentNullException(nameof(evaluationStore));
         _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
     }
 
@@ -83,7 +83,7 @@ public sealed class GenerateGovernanceExplanationCommandHandler
             auditDetails,
             utcTimestamp);
 
-        await _auditRepository.AddAsync(auditRecord, cancellationToken);
+        await _evaluationStore.StoreExplanationEvaluationAsync(auditRecord, domainResult, cancellationToken);
 
         // 4. Map Domain Result to DTO Response
         var itemDtos = domainResult.Explanations.Select(i => new GovernanceExplanationItemDto(

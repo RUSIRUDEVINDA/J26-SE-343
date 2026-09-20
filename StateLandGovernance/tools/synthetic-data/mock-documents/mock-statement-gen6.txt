@@ -1,0 +1,5 @@
+[BANK STATEMENT]
+Average Monthly Income: 9418.
+Average Account Balance : 5839.
+Overdraft Frequency: 3
+Savings To Income Ratio: 0.25
