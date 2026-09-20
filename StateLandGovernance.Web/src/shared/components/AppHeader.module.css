@@ -1,0 +1,120 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: #fff;
+  border-radius: 24px;
+  padding: 0.65rem 1.25rem;
+  box-shadow: var(--shadow-soft);
+  min-height: 82px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.emblem {
+  flex-shrink: 0;
+  object-fit: contain;
+  width: 58px;
+  height: 58px;
+}
+
+.titles {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.05rem;
+}
+
+.sinhala,
+.tamil {
+  margin: 0;
+  font-size: 0.62rem;
+  line-height: 1.25;
+  color: #000;
+  font-weight: 400;
+}
+
+.english {
+  margin: 0.1rem 0 0;
+  font-family: var(--font-display), "Times New Roman", Times, serif;
+  font-size: 0.92rem;
+  line-height: 1.25;
+  color: #000;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.language {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  min-width: 128px;
+  height: 40px;
+  padding: 0 0.65rem 0 0.85rem;
+  border: 1px solid #333;
+  border-radius: 100px;
+  background: #fff;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  cursor: default;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.language:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.profile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  cursor: default;
+  transition: filter 0.15s ease;
+}
+
+.profile:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: auto;
+  }
+
+  .actions {
+    justify-content: flex-end;
+  }
+
+  .sinhala,
+  .tamil {
+    font-size: 0.58rem;
+  }
+
+  .english {
+    font-size: 0.82rem;
+  }
+}
