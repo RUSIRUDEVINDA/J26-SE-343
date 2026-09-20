@@ -66,6 +66,11 @@ StateLandGovernance/data/gis/
 .env
 .env.*
 !.env.example
+!.env.local.example
+
+## Next.js (StateLandGovernance.Web)
+StateLandGovernance.Web/.next/
+StateLandGovernance.Web/node_modules/
 appsettings.Local.json
 secrets.json
 
