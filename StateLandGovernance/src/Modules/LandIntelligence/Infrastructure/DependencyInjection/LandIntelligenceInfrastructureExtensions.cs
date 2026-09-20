@@ -31,11 +31,15 @@ public static class LandIntelligenceInfrastructureExtensions
         services.AddScoped<ISpatialAnalysisService, PostGisSpatialAnalysisService>();
         services.AddLandIntelligenceRecommendations();
 
+        services.AddScoped<IGisGraphSyncRequestBuilder, GisGraphSyncRequestBuilder>();
+        services.AddScoped<IPostGisKnowledgeGraphBaselineProvider, PostGisKnowledgeGraphBaselineProvider>();
+
         if (Neo4jSettings.IsConfigured())
         {
             var neo4jSettings = Neo4jSettings.FromEnvironment();
             services.AddLandIntelligenceNeo4j(neo4jSettings);
-            services.AddScoped<IKnowledgeGraphService, Neo4jKnowledgeGraphService>();
+            services.AddScoped<INeo4jKnowledgeGraphService, Neo4jKnowledgeGraphService>();
+            services.AddScoped<IKnowledgeGraphService, ResilientKnowledgeGraphService>();
         }
         else
         {

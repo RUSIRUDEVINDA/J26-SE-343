@@ -37,18 +37,41 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             var matching = criterionResults.Where(c => c.IsMet).ToList();
             var failed = criterionResults.Where(c => !c.IsMet).ToList();
             var restrictions = ParcelRestrictionCollector.Collect(parcel);
-            var score = RecommendationScoreCalculator.Calculate(criterionResults);
+            var hardConstraint = HardConstraintEvaluator.Evaluate(parcel, request);
+            var score = hardConstraint.IsViolated
+                ? 0m
+                : RecommendationScoreCalculator.Calculate(criterionResults);
             var gisSupplementarySummaries = GisDerivedRecommendationEvidenceCollector.CollectSupplementarySummaries(parcel);
-            var mlPrediction = await _mlSuitabilityClient.PredictAsync(parcel, request.RequiredPurpose, cancellationToken);
-            var evidence = BuildEvidence(criterionResults, restrictions, parcel, mlPrediction);
-            var explanation = RecommendationExplanationBuilder.Build(
-                parcel.Identifier.CadastralNumber,
-                request.RequiredPurpose,
-                score,
-                matching,
-                failed,
+
+            MlSuitabilityPrediction? mlPrediction = null;
+            if (!hardConstraint.IsViolated)
+            {
+                mlPrediction = await _mlSuitabilityClient.PredictAsync(
+                    parcel,
+                    request.RequiredPurpose,
+                    cancellationToken);
+            }
+
+            var evidence = BuildEvidence(
+                criterionResults,
                 restrictions,
-                gisSupplementarySummaries);
+                parcel,
+                hardConstraint,
+                mlPrediction);
+            var explanation = hardConstraint.IsViolated
+                ? RecommendationExplanationBuilder.BuildHardConstraintRejection(
+                    parcel.Identifier.CadastralNumber,
+                    request.RequiredPurpose,
+                    hardConstraint.Summary,
+                    restrictions)
+                : RecommendationExplanationBuilder.Build(
+                    parcel.Identifier.CadastralNumber,
+                    request.RequiredPurpose,
+                    score,
+                    matching,
+                    failed,
+                    restrictions,
+                    gisSupplementarySummaries);
 
             evaluations.Add(new LandParcelRecommendationResult(
                 parcel.Id,
@@ -59,7 +82,9 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 failed,
                 restrictions,
                 evidence,
-                explanation));
+                explanation,
+                hardConstraint.IsViolated,
+                hardConstraint.IsViolated ? hardConstraint.Summary : null));
         }
 
         var ranked = evaluations
@@ -173,6 +198,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         IReadOnlyList<CriterionEvaluationDto> evaluations,
         IReadOnlyList<RestrictionSummaryDto> restrictions,
         LandParcel parcel,
+        HardConstraintEvaluation hardConstraint,
         MlSuitabilityPrediction? mlPrediction)
     {
         var evidence = evaluations
@@ -195,7 +221,16 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
 
         evidence.AddRange(GisDerivedRecommendationEvidenceCollector.CollectEvidence(parcel));
 
-        if (mlPrediction is not null)
+        if (hardConstraint.IsViolated)
+        {
+            evidence.Add(new RecommendationEvidenceDto(
+                Source: "HardConstraintEvaluator",
+                Description: "Parcel rejected due to hard legal or environmental restrictions: "
+                             + hardConstraint.Summary
+                             + " ML suitability prediction was not applied.",
+                RelatedCriterionName: "HardConstraintRejection"));
+        }
+        else if (mlPrediction is not null)
         {
             var confidence = mlPrediction.Probabilities.TryGetValue(mlPrediction.PredictedLabel, out var p)
                 ? p

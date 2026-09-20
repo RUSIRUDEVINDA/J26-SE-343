@@ -174,7 +174,7 @@ public sealed class GisDerivedRecommendationTests
     }
 
     [Fact]
-    public async Task RecommendAsync_gis_conservation_restriction_affects_environmental_criterion_only()
+    public async Task RecommendAsync_gis_conservation_restriction_triggers_hard_constraint_rejection()
     {
         var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithGisConservationRestriction();
         var engine = RecommendationEngineTestFactory.Create(parcel);
@@ -182,15 +182,13 @@ public sealed class GisDerivedRecommendationTests
         var response = await engine.RecommendAsync(CreateRequest() with { TargetParcelId = parcel.Id });
 
         var recommendation = Assert.Single(response.Recommendations);
-        var environmental = Assert.Single(
-            recommendation.MatchingCriteria.Concat(recommendation.FailedCriteria),
-            c => c.Key == "environmental");
-        Assert.Contains("mapped conservation area", environmental.Summary, StringComparison.OrdinalIgnoreCase);
-
-        var spatial = Assert.Single(
-            recommendation.MatchingCriteria.Concat(recommendation.FailedCriteria),
-            c => c.Key == "spatial-constraints");
-        Assert.Contains("No spatial constraints", spatial.Summary, StringComparison.OrdinalIgnoreCase);
+        Assert.True(recommendation.HardConstraintRejected);
+        Assert.Equal(0m, recommendation.SuitabilityScore);
+        Assert.Contains("conservation area", recommendation.HardConstraintReason, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(recommendation.Evidence, e => e.RelatedCriterionName == "HardConstraintRejection");
+        Assert.DoesNotContain(
+            recommendation.Evidence,
+            e => e.RelatedCriterionName == "MlSuitabilityPrediction");
     }
 
     [Fact]

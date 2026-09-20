@@ -46,16 +46,9 @@ public sealed class LandParcelsControllerDeleteTests
             controller.DeleteParcelAsync(Guid.Empty, CancellationToken.None));
     }
 
-    private static LandParcelsController CreateController(InMemoryLandParcelRepository repository)
+    private static LandParcelsInternalController CreateController(InMemoryLandParcelRepository repository)
     {
-        return new LandParcelsController(
-            new SearchLandParcelsQueryHandler(repository, new LandSearchRequestValidator()),
-            new GetLandParcelByIdQueryHandler(repository),
-            new GetSpatialConstraintsByParcelIdQueryHandler(
-                repository,
-                new EmptySpatialConstraintRepository(),
-                new FakeSpatialAnalysisService()),
-            new GetLandRelationshipsQueryHandler(repository, new EmptyKnowledgeGraphService()),
+        return new LandParcelsInternalController(
             new CreateLandParcelCommandHandler(
                 repository,
                 new NoOpLandParcelGraphSynchronizer(),

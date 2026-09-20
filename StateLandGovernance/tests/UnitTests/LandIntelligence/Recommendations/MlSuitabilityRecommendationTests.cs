@@ -12,7 +12,7 @@ namespace StateLandGovernance.UnitTests.LandIntelligence.Recommendations;
 public sealed class MlSuitabilityRecommendationTests
 {
     [Fact]
-    public void BuildRequestPayload_prefers_gis_derived_natural_water_over_water_supply()
+    public void BuildRequestPayload_uses_gis_derived_natural_water_and_ignores_water_supply()
     {
         var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithGisDerivedNaturalWaterOnly(150m);
         parcel.AddInfrastructureFeature(new InfrastructureFeature(
@@ -23,6 +23,55 @@ public sealed class MlSuitabilityRecommendationTests
         var payload = HttpMlSuitabilityClient.BuildRequestPayload(parcel, LandUseType.Agricultural);
 
         Assert.Equal(150d, payload.DistanceToWaterM);
+    }
+
+    [Fact]
+    public void BuildRequestPayload_does_not_substitute_official_soil_when_gis_soil_missing()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
+
+        var payload = HttpMlSuitabilityClient.BuildRequestPayload(parcel, LandUseType.Agricultural);
+
+        Assert.Equal("Unknown", payload.DerivedSoilGroup);
+        Assert.Null(payload.SoilOverlapPercentage);
+        Assert.Equal("Unavailable", payload.GisEnrichmentStatus);
+    }
+
+    [Fact]
+    public void BuildRequestPayload_nulls_gis_distances_when_enrichment_unavailable()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithUnavailableGisEnrichment();
+
+        var payload = HttpMlSuitabilityClient.BuildRequestPayload(parcel, LandUseType.Agricultural);
+
+        Assert.Null(payload.DistanceToRoadM);
+        Assert.Null(payload.DistanceToWaterM);
+        Assert.Equal("Unknown", payload.DerivedSoilGroup);
+        Assert.Null(payload.SoilOverlapPercentage);
+        Assert.Equal("Unknown", payload.TerrainDescription);
+    }
+
+    [Fact]
+    public void BuildRequestPayload_ignores_non_gis_road_distance()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateModerateParcel();
+
+        var payload = HttpMlSuitabilityClient.BuildRequestPayload(parcel, LandUseType.Agricultural);
+
+        Assert.Null(payload.DistanceToRoadM);
+    }
+
+    [Fact]
+    public void BuildRequestPayload_maps_gis_derived_soil_when_present()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithGisDerivedSoil(
+            officialSoilType: "Loam",
+            gisSoilGroupName: "Red Yellow Latosols");
+
+        var payload = HttpMlSuitabilityClient.BuildRequestPayload(parcel, LandUseType.Agricultural);
+
+        Assert.Equal("Red Yellow Latosols", payload.DerivedSoilGroup);
+        Assert.Equal(92.5d, payload.SoilOverlapPercentage);
     }
 
     [Fact]
@@ -79,6 +128,36 @@ public sealed class MlSuitabilityRecommendationTests
         Assert.DoesNotContain(
             baselineRecommendation.Evidence,
             evidence => evidence.RelatedCriterionName == "MlSuitabilityPrediction");
+    }
+
+    [Fact]
+    public async Task RecommendAsync_skips_ml_when_hard_constraint_rejected()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateRestrictedParcel();
+        var trackingMlClient = new TrackingMlSuitabilityClient(
+            new MlSuitabilityPrediction(
+                "Suitable",
+                new Dictionary<string, decimal> { ["Suitable"] = 0.95m }));
+        var engine = RecommendationEngineTestFactory.CreateWithMlClient(trackingMlClient, parcel);
+
+        var response = await engine.RecommendAsync(new LandRecommendationSearchRequest
+        {
+            RequiredPurpose = LandUseType.Agricultural,
+            RequiredLandCategory = LandCategoryType.StateLand,
+            RequiredLandUse = LandUseType.Agricultural,
+            RequiredAreaHectares = 5m,
+            TargetParcelId = parcel.Id,
+            MaxResults = 1
+        });
+
+        var recommendation = Assert.Single(response.Recommendations);
+        Assert.True(recommendation.HardConstraintRejected);
+        Assert.Equal(0m, recommendation.SuitabilityScore);
+        Assert.False(trackingMlClient.WasCalled);
+        Assert.Contains(recommendation.Evidence, e => e.RelatedCriterionName == "HardConstraintRejection");
+        Assert.DoesNotContain(
+            recommendation.Evidence,
+            e => e.RelatedCriterionName == "MlSuitabilityPrediction");
     }
 
     [Fact]
