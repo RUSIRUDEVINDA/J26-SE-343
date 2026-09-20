@@ -1,0 +1,176 @@
+{
+  "generated_at": "2026-09-19T20:57:17.950801+00:00",
+  "dataset_path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\data\\state_land_governance_confirmed_200.csv",
+  "row_count": 200,
+  "class_distribution": {
+    "Administrative / Procedural / Integrity": 50,
+    "Lease Revenue / Payment / Enforcement": 50,
+    "Unauthorized Allocation / Transfer / Use": 50,
+    "Protected / Environmental Lease Misuse": 50
+  },
+  "unique_group_count": 170,
+  "sklearn_version": "1.7.2",
+  "python_version": "3.13.1 (tags/v3.13.1:0671451, Dec  3 2024, 19:06:28) [MSC v.1942 64 bit (AMD64)]",
+  "label_order": [
+    "Administrative / Procedural / Integrity",
+    "Lease Revenue / Payment / Enforcement",
+    "Unauthorized Allocation / Transfer / Use",
+    "Protected / Environmental Lease Misuse"
+  ],
+  "tfidf_config": {
+    "lowercase": true,
+    "stop_words": "english",
+    "ngram_range": [
+      1,
+      2
+    ],
+    "sublinear_tf": true
+  },
+  "lr_config": {
+    "max_iter": 2000,
+    "class_weight": "balanced",
+    "random_state": 42,
+    "C": 1.0,
+    "penalty": "l2",
+    "solver": "lbfgs",
+    "multi_class": "auto"
+  },
+  "cv_config": {
+    "strategy": "StratifiedGroupKFold",
+    "n_splits": 5,
+    "shuffle": true,
+    "random_state": 42,
+    "group_field": "Source_Group_ID"
+  },
+  "fold_results": [
+    {
+      "Fold": 1,
+      "Train_Size": 163,
+      "Test_Size": 37,
+      "Accuracy": 0.7297,
+      "Macro_F1": 0.7228,
+      "Weighted_F1": 0.7224
+    },
+    {
+      "Fold": 2,
+      "Train_Size": 159,
+      "Test_Size": 41,
+      "Accuracy": 0.7561,
+      "Macro_F1": 0.7426,
+      "Weighted_F1": 0.7388
+    },
+    {
+      "Fold": 3,
+      "Train_Size": 158,
+      "Test_Size": 42,
+      "Accuracy": 0.8095,
+      "Macro_F1": 0.8013,
+      "Weighted_F1": 0.8163
+    },
+    {
+      "Fold": 4,
+      "Train_Size": 158,
+      "Test_Size": 42,
+      "Accuracy": 0.619,
+      "Macro_F1": 0.6184,
+      "Weighted_F1": 0.6174
+    },
+    {
+      "Fold": 5,
+      "Train_Size": 162,
+      "Test_Size": 38,
+      "Accuracy": 0.8158,
+      "Macro_F1": 0.8124,
+      "Weighted_F1": 0.8118
+    }
+  ],
+  "overall_metrics": {
+    "Accuracy": 0.745,
+    "Macro_Precision": 0.7455,
+    "Macro_Recall": 0.745,
+    "Macro_F1": 0.7402,
+    "Weighted_F1": 0.7402,
+    "Misclassified": 51
+  },
+  "per_class_metrics": {
+    "Administrative / Procedural / Integrity": {
+      "TP": 30,
+      "FP": 10,
+      "FN": 20,
+      "TN": 140,
+      "Precision": 0.75,
+      "Recall": 0.6,
+      "F1": 0.6667,
+      "FPR": 0.0667
+    },
+    "Lease Revenue / Payment / Enforcement": {
+      "TP": 41,
+      "FP": 16,
+      "FN": 9,
+      "TN": 134,
+      "Precision": 0.7193,
+      "Recall": 0.82,
+      "F1": 0.7664,
+      "FPR": 0.1067
+    },
+    "Unauthorized Allocation / Transfer / Use": {
+      "TP": 33,
+      "FP": 11,
+      "FN": 17,
+      "TN": 139,
+      "Precision": 0.75,
+      "Recall": 0.66,
+      "F1": 0.7021,
+      "FPR": 0.0733
+    },
+    "Protected / Environmental Lease Misuse": {
+      "TP": 45,
+      "FP": 14,
+      "FN": 5,
+      "TN": 136,
+      "Precision": 0.7627,
+      "Recall": 0.9,
+      "F1": 0.8257,
+      "FPR": 0.0933
+    }
+  },
+  "confusion_matrix": [
+    [
+      30,
+      12,
+      5,
+      3
+    ],
+    [
+      6,
+      41,
+      2,
+      1
+    ],
+    [
+      3,
+      4,
+      33,
+      10
+    ],
+    [
+      1,
+      0,
+      4,
+      45
+    ]
+  ],
+  "dummy_baseline": {
+    "strategy": "most_frequent",
+    "Accuracy": 0.205,
+    "Macro_F1": 0.2004,
+    "Weighted_F1": 0.2004
+  },
+  "historical_reference": {
+    "note": "Previous Colab run values for comparison only. Not reproduced exactly.",
+    "Accuracy": 0.745,
+    "Macro_F1": 0.7402,
+    "Weighted_F1": 0.7402,
+    "Misclassified": 51
+  }
+}
