@@ -81,3 +81,24 @@ scripts/test_export_research_log.py
 scripts/run_research_log_export.bat
 *.xlsx
 scripts/__pycache__/export_research_log.cpython-313.pyc
+
+## Python / ML module (GovernanceIntelligence ML)
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.ipynb_checkpoints/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Trained model binaries (generated artefacts — do not commit automatically)
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/models/*.joblib
+
+# Generated evaluation results (regenerated from dataset + code)
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/results/
