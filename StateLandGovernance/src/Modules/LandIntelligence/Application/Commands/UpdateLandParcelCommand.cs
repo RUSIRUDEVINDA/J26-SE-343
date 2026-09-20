@@ -9,6 +9,8 @@ public sealed record UpdateLandParcelCommand
     public LandUseType? CurrentUseType { get; init; }
     public string? CurrentUseDescription { get; init; }
     public LandCharacteristicsInputDto? Characteristics { get; init; }
+    public double? CentroidLatitude { get; init; }
+    public double? CentroidLongitude { get; init; }
     public GeoJsonPolygonDto? BoundaryPolygon { get; init; }
     public IReadOnlyList<SpatialConstraintInputDto>? SpatialConstraints { get; init; }
     public IReadOnlyList<EnvironmentalRestrictionInputDto>? EnvironmentalRestrictions { get; init; }

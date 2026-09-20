@@ -100,12 +100,19 @@ public static class LandParcelInputMapper
             parcel.UpdateCharacteristics(MergeCharacteristics(parcel.Characteristics, command.Characteristics));
         }
 
-        if (command.BoundaryPolygon is not null)
+        if (command.CentroidLatitude is not null
+            || command.CentroidLongitude is not null
+            || command.BoundaryPolygon is not null)
         {
-            var boundary = GeoJsonGeometryMapper.ToGeoBoundary(command.BoundaryPolygon);
+            var latitude = command.CentroidLatitude ?? parcel.Spatial.CentroidLatitude;
+            var longitude = command.CentroidLongitude ?? parcel.Spatial.CentroidLongitude;
+            var boundary = command.BoundaryPolygon is not null
+                ? GeoJsonGeometryMapper.ToGeoBoundary(command.BoundaryPolygon)
+                : parcel.Spatial.Boundary;
+
             parcel.UpdateSpatial(new SpatialReference(
-                parcel.Spatial.CentroidLatitude,
-                parcel.Spatial.CentroidLongitude,
+                latitude,
+                longitude,
                 parcel.Spatial.CoordinateSystem,
                 parcel.Spatial.BoundaryReference,
                 boundary));
