@@ -324,13 +324,13 @@ python src/predict.py
 
 Type a complaint text at the prompt. Type `exit` to quit.
 
-### Run Experiment 2 (leakage-sensitivity evaluation)
+### Run Experiment 2 (source-and-text-grouped sensitivity evaluation)
 
 ```bash
 python src/evaluate_experiment2.py
 ```
 
-Outputs: `results/experiment_2_combined_group/` (never overwrites Experiment 1 artefacts).
+Outputs: `results/experiment2_source_text/` (never overwrites Experiment 1 baseline artefacts).
 
 ### Run automated tests
 
@@ -344,10 +344,9 @@ Or with verbose output:
 pytest -v
 ```
 
-All three test files are discovered automatically:
-- `tests/test_classifier.py` — model and validation tests (33)
-- `tests/test_leakage.py` — template grouping and union-find tests (35)
-- `tests/test_cohort.py` — cohort assignment and skip-gracefully tests (17)
+Automated test suites:
+- `tests/test_classifier.py` — model, data validation, and fit-predict tests (33)
+- `tests/test_leakage_groups.py` — deterministic source-and-text grouping tests (17)
 
 ---
 
