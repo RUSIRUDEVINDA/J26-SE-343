@@ -1,0 +1,5 @@
+Label,Support,TP,FP,FN,TN,Precision,Recall,F1,FPR
+Administrative / Procedural / Integrity,50,37,8,13,142,0.8222,0.74,0.7789,0.0533
+Lease Revenue / Payment / Enforcement,50,42,12,8,138,0.7778,0.84,0.8077,0.08
+Unauthorized Allocation / Transfer / Use,50,33,12,17,138,0.7333,0.66,0.6947,0.08
+Protected / Environmental Lease Misuse,50,42,14,8,136,0.75,0.84,0.7925,0.0933
