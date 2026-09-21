@@ -4,21 +4,20 @@
 
 This ML module belongs to:
 
-**Component 4 — AI-Driven Governance, Compliance and Trust Infrastructure**
-Subcomponent: *Early Governance and Post-Workflow Anomaly Detection*
+**Component 4 — AI-Driven Governance, Compliance and Trust Infrastructure**Subcomponent: *Early Governance and Post-Workflow Anomaly Detection*
 
 Research project: *An Integrated Architectural Framework for a Decentralized and Intelligent Land Administration Ecosystem*
 
 ---
 
-## Classifier Purpose
+## Classifier Purpose 
 
-This classifier predicts the **reported governance-issue category** of an English
-state-land lease complaint written in the Sri Lanka context.
+This classifier predicts the **reported governance-issue category** of an English state-land lease complaint written in the Sri Lanka context.
 
 The output is **advisory classification intelligence** for subsequent human/governance processing.
 
 **The classifier does NOT:**
+
 - Determine whether an allegation is true
 - Determine guilt
 - Determine legal liability
@@ -41,15 +40,14 @@ Logistic Regression  (L2, C=1.0, class_weight='balanced', max_iter=2000)
 4-class governance prediction
 ```
 
-**No pretrained language model or pretrained classifier is used.**
-This classifier is trained entirely from the project dataset.
+**No pretrained language model or pretrained classifier is used**.This classifier is trained entirely from the project dataset.
 
 ---
 
 ## Fixed Four-Class Taxonomy
 
-| # | Label |
-|---|-------|
+| \# | Label |
+| --- | --- |
 | 1 | Administrative / Procedural / Integrity |
 | 2 | Lease Revenue / Payment / Enforcement |
 | 3 | Unauthorized Allocation / Transfer / Use |
@@ -62,7 +60,7 @@ Do not add, merge, or rename classes without revising the research protocol.
 ## Input / Target / Grouping Fields
 
 | Role | Field |
-|------|-------|
+| --- | --- |
 | **Text input** | `Canonical_English_Text` |
 | **Target** | `ML_Label_4Class` |
 | **Grouping** (CV only) | `Source_Group_ID` |
@@ -86,9 +84,7 @@ The classifier uses **text only**. The following fields are *never* used as mode
 
 ## Data Leakage Prevention
 
-Cross-validation uses **StratifiedGroupKFold** with `Source_Group_ID` as the grouping key.
-This prevents records from the same audit source (e.g., the same Auditor General report)
-from appearing in both the training and test portions of any fold.
+Cross-validation uses **StratifiedGroupKFold** with `Source_Group_ID` as the grouping key. This prevents records from the same audit source (e.g., the same Auditor General report) from appearing in both the training and test portions of any fold.
 
 TF-IDF is fitted **only on the training portion** of each fold. It is never fit on the full dataset before cross-validation begins.
 
@@ -101,15 +97,14 @@ StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)
 groups = Source_Group_ID
 ```
 
-Each fold builds a completely fresh pipeline. Out-of-fold (OOF) predictions are collected
-across all folds to compute overall metrics.
+Each fold builds a completely fresh pipeline. Out-of-fold (OOF) predictions are collected across all folds to compute overall metrics.
 
 ---
 
 ## Metrics
 
 | Metric | Description |
-|--------|-------------|
+| --- | --- |
 | **Macro-F1** | Primary performance metric |
 | Accuracy | Overall fraction correct |
 | Macro-Precision | Mean precision across classes |
@@ -123,9 +118,7 @@ FPR formula: `FP / (FP + TN)` — **not** `1 - Precision`.
 
 ## Baseline Comparison
 
-A `DummyClassifier(strategy='most_frequent')` is evaluated under the same
-cross-validation philosophy. This establishes whether the trained model
-meaningfully exceeds a trivial baseline.
+A `DummyClassifier(strategy='most_frequent')` is evaluated under the same cross-validation philosophy. This establishes whether the trained model meaningfully exceeds a trivial baseline.
 
 ---
 
@@ -141,11 +134,10 @@ Two evaluation experiments are maintained. They do NOT replace each other.
 
 **Grouping:** `groups = Source_Group_ID`
 
-Prevents leakage from records that share the same source document (e.g., the same Auditor General report).
-Does not detect records with shared narrative template language that happen to have different Source_Group_IDs.
+Prevents leakage from records that share the same source document (e.g., the same Auditor General report). Does not detect records with shared narrative template language that happen to have different Source_Group_IDs.
 
 | Metric | Value |
-|--------|-------|
+| --- | --- |
 | **Accuracy** | 0.7450 |
 | **Macro-F1** | **0.7402** |
 | Weighted-F1 | 0.7402 |
@@ -169,62 +161,52 @@ Combined_Group = Source_Group_ID relationships
               UNION detected shared-template relationships
 ```
 
-Shared-template relationships are detected by 8-word shingle overlap (see `src/leakage.py`).
-Transitive union-find merging is applied, so if A shares a source with B and B shares a template with C,
-all three end up in the same Combined_Group.
+Shared-template relationships are detected by 8-word shingle overlap (see `src/leakage.py`). Transitive union-find merging is applied, so if A shares a source with B and B shares a template with C, all three end up in the same Combined_Group.
 
 This is a **leakage-sensitivity / robustness evaluation**.
 
 It is **NOT** described as:
+
 - a corrected true score
 - a replacement for Experiment 1
 - a more accurate generalization estimate
 - a verified count of independent incidents
 
-The difference between Experiment 1 (Macro-F1 ≈ 0.7402) and Experiment 2
-comes from a stricter grouping assumption, not from a methodological error in Experiment 1.
+The difference between Experiment 1 (Macro-F1 ≈ 0.7402) and Experiment 2 comes from a stricter grouping assumption, not from a methodological error in Experiment 1.
 
 #### Combined_Group framing
 
-> Combined_Group count is a **heuristic leakage-control grouping count** used to make
-> cross-validation more conservative. It is not a claim about the true independent-incident
-> count in the underlying population.
+> Combined_Group count is a **heuristic leakage-control grouping count** used to make cross-validation more conservative. It is not a claim about the true independent-incident count in the underlying population.
 
 | Grouping statistic | Value |
-|-------------------|-------|
+| --- | --- |
 | Source groups (Experiment 1) | 170 |
 | Template clusters detected | 125 |
 | Combined groups (Experiment 2) | 109 |
 | Largest combined group size | 26 |
-| Combined groups with size > 1 | 14 |
+| Combined groups with size &gt; 1 | 14 |
 
-All other settings are **identical** to Experiment 1: same dataset, same text field, same target,
-same TF-IDF configuration, same Logistic Regression configuration, same random_state, same n_splits.
+All other settings are **identical** to Experiment 1: same dataset, same text field, same target, same TF-IDF configuration, same Logistic Regression configuration, same random_state, same n_splits.
 
 **Output artefacts:** `results/experiment_2_combined_group/` only. Never writes to `results/` root.
 
 #### Cohort subgroup diagnostics
 
-`src/cohort.py` assigns a `Dataset_Cohort` field based on `CV_Fold_5_GroupAware` nullity —
-a historical collection-order marker only. This is **not** a validity, verification, or label-quality field.
-`Gold_Label_Status` and `Verification_Status` are never consulted.
+`src/cohort.py` assigns a `Dataset_Cohort` field based on `CV_Fold_5_GroupAware` nullity — a historical collection-order marker only. This is **not** a validity, verification, or label-quality field. `Gold_Label_Status` and `Verification_Status` are never consulted.
 
-Cohort subgroup metrics are **OOF subgroup analysis** — predictions from the full 200-record
-cross-validation filtered post-hoc by cohort. They are NOT two separate models.
+Cohort subgroup metrics are **OOF subgroup analysis** — predictions from the full 200-record cross-validation filtered post-hoc by cohort. They are NOT two separate models.
 
 ---
 
 ## Evaluation vs. Full-Data Training
 
 | Script | Purpose |
-|--------|---------|
+| --- | --- |
 | `evaluate.py` | Experiment 1 — Source-Group-Aware Baseline (preserved) |
 | `evaluate_experiment2.py` | Experiment 2 — Template-Aware Combined-Group Evaluation |
 | `train.py` | Trains on ALL 200 records — produces the deployment artifact |
 
-Run `evaluate.py` first to understand Experiment 1 performance.
-Run `evaluate_experiment2.py` for the leakage-sensitivity evaluation.
-Run `train.py` after to produce the final artifact.
+Run `evaluate.py` first to understand Experiment 1 performance. Run `evaluate_experiment2.py` for the leakage-sensitivity evaluation. Run `train.py` after to produce the final artifact.
 
 ---
 
@@ -298,7 +280,7 @@ pip install -r requirements.txt
 
 ## Commands
 
-All commands are run from the **`ML/`** directory.
+All commands are run from the `ML/` directory.
 
 ### Run evaluation (group-aware cross-validation)
 
@@ -324,13 +306,13 @@ python src/predict.py
 
 Type a complaint text at the prompt. Type `exit` to quit.
 
-### Run Experiment 2 (leakage-sensitivity evaluation)
+### Run Experiment 2 (source-and-text-grouped sensitivity evaluation)
 
 ```bash
 python src/evaluate_experiment2.py
 ```
 
-Outputs: `results/experiment_2_combined_group/` (never overwrites Experiment 1 artefacts).
+Outputs: `results/experiment2_source_text/` (never overwrites Experiment 1 baseline artefacts).
 
 ### Run automated tests
 
@@ -344,17 +326,17 @@ Or with verbose output:
 pytest -v
 ```
 
-All three test files are discovered automatically:
-- `tests/test_classifier.py` — model and validation tests (33)
-- `tests/test_leakage.py` — template grouping and union-find tests (35)
-- `tests/test_cohort.py` — cohort assignment and skip-gracefully tests (17)
+Automated test suites:
+
+- `tests/test_classifier.py` — model, data validation, and fit-predict tests (33)
+- `tests/test_leakage_groups.py` — deterministic source-and-text grouping tests (17)
 
 ---
 
 ## Generated Outputs
 
 | File | Contents |
-|------|---------|
+| --- | --- |
 | `results/baseline_metrics.json` | Full evaluation summary, config, fold results, overall metrics, per-class metrics, confusion matrix, dummy baseline |
 | `results/fold_metrics.csv` | Accuracy and F1 for each of the 5 folds |
 | `results/per_class_metrics.csv` | TP, FP, FN, TN, Precision, Recall, F1, FPR per class |
@@ -382,6 +364,4 @@ All three test files are discovered automatically:
 
 Record verification ≠ independent ML-label review.
 
-Some records were confirmed as genuine incidents by the Land Commissioner.
-Incident existence confirmation does not automatically confirm the proposed ML label.
-All labels carry the `Gold_Label_Status = "Proposed research label — final human/domain review required"`.
+Some records were confirmed as genuine incidents by the Land Commissioner. Incident existence confirmation does not automatically confirm the proposed ML label. All labels carry the `Gold_Label_Status = "Proposed research label — final human/domain review required"`
