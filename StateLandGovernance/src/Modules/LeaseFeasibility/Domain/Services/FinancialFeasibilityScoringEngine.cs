@@ -56,7 +56,7 @@ public sealed class FinancialFeasibilityScoringEngine : IFinancialFeasibilitySco
             totalScore
         );
 
-        var grade = DeriveGrade(totalScore, penaltyScore);
+        var grade = penaltyScore <= -15m ? FeasibilityGrade.E : DeriveGrade((int)totalScore);
 
         // TODO: Map application ID appropriately. Since FinancialProfile does not have ApplicationId,
         // and we are creating the assessment, we will use ApplicantId for now or expect it to be handled outside.
@@ -180,13 +180,12 @@ public sealed class FinancialFeasibilityScoringEngine : IFinancialFeasibilitySco
         }
     }
 
-    private FeasibilityGrade DeriveGrade(decimal totalScore, decimal penaltyScore)
+    public static FeasibilityGrade DeriveGrade(int score) => score switch
     {
-        if (penaltyScore <= -15m) return FeasibilityGrade.E; // Auto-fail for bad history
-        if (totalScore >= 80) return FeasibilityGrade.A;
-        if (totalScore >= 60) return FeasibilityGrade.B;
-        if (totalScore >= 40) return FeasibilityGrade.C;
-        if (totalScore >= 20) return FeasibilityGrade.D;
-        return FeasibilityGrade.E;
-    }
+        >= 80 => FeasibilityGrade.A, // Strong
+        >= 60 => FeasibilityGrade.B, // Strong
+        >= 40 => FeasibilityGrade.C, // Moderate
+        >= 20 => FeasibilityGrade.D, // High-risk
+        _     => FeasibilityGrade.E  // High-risk
+    };
 }
