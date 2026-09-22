@@ -1,5 +1,5 @@
 using System;
-using StateLandGovernance.LeaseFeasibility.Domain.Entities;
+using System.Globalization;
 using StateLandGovernance.LeaseFeasibility.Domain.Enums;
 using StateLandGovernance.LeaseFeasibility.Domain.Services;
 using StateLandGovernance.LeaseFeasibility.Domain.ValueObjects;
@@ -9,186 +9,158 @@ namespace StateLandGovernance.UnitTests.LeaseFeasibility.Domain;
 
 public class FinancialFeasibilityScoringEngineTests
 {
-    private readonly DateTime _baseTime = new(2026, 8, 13, 10, 0, 0, DateTimeKind.Utc);
+    private static readonly DateTimeOffset EvaluationTime =
+        new(2026, 8, 13, 10, 0, 0, TimeSpan.FromHours(5.5));
 
-    [Fact]
-    public void EvaluateFeasibility_ScoreBoundaryAt19_ReturnsEGrade()
+    [Theory]
+    [InlineData("29.99", FeasibilityGrade.E, FeasibilityAction.Reject)]
+    [InlineData("30.00", FeasibilityGrade.D, FeasibilityAction.Escalate)]
+    [InlineData("49.99", FeasibilityGrade.D, FeasibilityAction.Escalate)]
+    [InlineData("50.00", FeasibilityGrade.C, FeasibilityAction.ManualReview)]
+    [InlineData("69.99", FeasibilityGrade.C, FeasibilityAction.ManualReview)]
+    [InlineData("70.00", FeasibilityGrade.B, FeasibilityAction.Proceed)]
+    [InlineData("84.99", FeasibilityGrade.B, FeasibilityAction.Proceed)]
+    [InlineData("85.00", FeasibilityGrade.A, FeasibilityAction.FastTrack)]
+    public void Component2V1_GradeBoundaries_MapToApprovedAction(
+        string scoreText,
+        FeasibilityGrade expectedGrade,
+        FeasibilityAction expectedAction)
     {
-        // Custom engine options: total weight = 19
-        var options = new LeaseFeasibilityScoringOptions(
-            IncomeToLeaseCostRatioWeight: 19,
-            IncomeConsistencyWeight: 0,
-            DebtToIncomeWeight: 0,
-            EmploymentStabilityWeight: 0,
-            CreditIndicatorWeight: 0);
+        var contract = LeaseFeasibilityScoringContract.Component2V1;
+        var score = decimal.Parse(scoreText, CultureInfo.InvariantCulture);
 
-        var engine = new FinancialFeasibilityScoringEngine(options);
+        var grade = contract.DeriveGrade(score);
 
-        var profile = CreateMaxScoringProfile();
-
-        var result = engine.EvaluateFeasibility(profile, _baseTime);
-
-        Assert.Equal(19, result.ScoreBreakdown.TotalScore);
-        Assert.Equal(FeasibilityGrade.E, result.Grade);
+        Assert.Equal(expectedGrade, grade);
+        Assert.Equal(expectedAction, contract.DeriveAction(grade));
     }
 
     [Fact]
-    public void EvaluateFeasibility_ScoreBoundaryAt20_ReturnsDGrade()
+    public void EvaluateFeasibility_WorkedExample_Returns65CAndManualReview()
     {
-        // Custom engine options: total weight = 20
-        var options = new LeaseFeasibilityScoringOptions(
-            IncomeToLeaseCostRatioWeight: 20,
-            IncomeConsistencyWeight: 0,
-            DebtToIncomeWeight: 0,
-            EmploymentStabilityWeight: 0,
-            CreditIndicatorWeight: 0);
+        var engine = new FinancialFeasibilityScoringEngine();
+        var input = CreateInput(
+            averageMonthlyIncomeLkr: 100_000m,
+            monthlyDebtObligationsLkr: 18_000m,
+            requestedMonthlyLeasePaymentLkr: 10_000m,
+            incomeConsistencyRatio: 1m,
+            averageAccountBalanceLkr: 40_000m,
+            overdraftCountLastSixMonths: 4,
+            creditRiskGrade: CreditRiskGrade.B);
 
-        var engine = new FinancialFeasibilityScoringEngine(options);
+        var result = engine.EvaluateFeasibility(input, EvaluationTime);
 
-        var profile = CreateMaxScoringProfile();
-
-        var result = engine.EvaluateFeasibility(profile, _baseTime);
-
-        Assert.Equal(20, result.ScoreBreakdown.TotalScore);
-        Assert.Equal(FeasibilityGrade.D, result.Grade);
-    }
-
-    [Fact]
-    public void EvaluateFeasibility_ScoreBoundaryAt39_ReturnsDGrade()
-    {
-        var options = new LeaseFeasibilityScoringOptions(
-            IncomeToLeaseCostRatioWeight: 39,
-            IncomeConsistencyWeight: 0,
-            DebtToIncomeWeight: 0,
-            EmploymentStabilityWeight: 0,
-            CreditIndicatorWeight: 0);
-
-        var engine = new FinancialFeasibilityScoringEngine(options);
-
-        var profile = CreateMaxScoringProfile();
-
-        var result = engine.EvaluateFeasibility(profile, _baseTime);
-
-        Assert.Equal(39, result.ScoreBreakdown.TotalScore);
-        Assert.Equal(FeasibilityGrade.D, result.Grade);
-    }
-
-    [Fact]
-    public void EvaluateFeasibility_ScoreBoundaryAt40_ReturnsCGrade()
-    {
-        var options = new LeaseFeasibilityScoringOptions(
-            IncomeToLeaseCostRatioWeight: 40,
-            IncomeConsistencyWeight: 0,
-            DebtToIncomeWeight: 0,
-            EmploymentStabilityWeight: 0,
-            CreditIndicatorWeight: 0);
-
-        var engine = new FinancialFeasibilityScoringEngine(options);
-
-        var profile = CreateMaxScoringProfile();
-
-        var result = engine.EvaluateFeasibility(profile, _baseTime);
-
-        Assert.Equal(40, result.ScoreBreakdown.TotalScore);
+        Assert.Equal(0.28m, result.ScoreBreakdown.DebtServiceRatio);
+        Assert.Equal(4m, result.ScoreBreakdown.LiquidityBufferMonths);
+        Assert.Equal(25m, result.ScoreBreakdown.DebtServiceRatioScore);
+        Assert.Equal(25m, result.ScoreBreakdown.IncomeConsistencyScore);
+        Assert.Equal(15m, result.ScoreBreakdown.LiquidityBufferScore);
+        Assert.Equal(15m, result.ScoreBreakdown.CreditHistoryScore);
+        Assert.Equal(-15m, result.ScoreBreakdown.PenaltyScore);
+        Assert.Equal(65m, result.ScoreBreakdown.TotalScore);
         Assert.Equal(FeasibilityGrade.C, result.Grade);
+        Assert.Equal(FeasibilityAction.ManualReview, result.Action);
+    }
+
+    [Theory]
+    [InlineData(10_000, 35)] // (10,000 debt + 10,000 lease) / 100,000 = 20%
+    [InlineData(10_001, 25)]
+    [InlineData(25_000, 25)] // 35%
+    [InlineData(25_001, 10)]
+    [InlineData(40_000, 10)] // 50%
+    [InlineData(40_001, 0)]
+    public void EvaluateFeasibility_DebtServiceBoundaries_AreInclusiveAtUpperLimit(
+        int monthlyDebtObligationsLkr,
+        int expectedPoints)
+    {
+        var result = new FinancialFeasibilityScoringEngine().EvaluateFeasibility(
+            CreateInput(monthlyDebtObligationsLkr: monthlyDebtObligationsLkr),
+            EvaluationTime);
+
+        Assert.Equal(expectedPoints, result.ScoreBreakdown.DebtServiceRatioScore);
+    }
+
+    [Theory]
+    [InlineData(9_999, 0)]
+    [InlineData(10_000, 5)]
+    [InlineData(29_999, 5)]
+    [InlineData(30_000, 15)]
+    [InlineData(59_999, 15)]
+    [InlineData(60_000, 20)]
+    public void EvaluateFeasibility_LiquidityBoundaries_UseRequestedLeasePayment(
+        int averageAccountBalanceLkr,
+        int expectedPoints)
+    {
+        var result = new FinancialFeasibilityScoringEngine().EvaluateFeasibility(
+            CreateInput(averageAccountBalanceLkr: averageAccountBalanceLkr),
+            EvaluationTime);
+
+        Assert.Equal(expectedPoints, result.ScoreBreakdown.LiquidityBufferScore);
+    }
+
+    [Theory]
+    [InlineData(3, 0)]
+    [InlineData(4, -15)]
+    public void EvaluateFeasibility_OverdraftPenalty_AppliesOnlyAboveApprovedThreshold(
+        int overdraftCountLastSixMonths,
+        int expectedPenalty)
+    {
+        var result = new FinancialFeasibilityScoringEngine().EvaluateFeasibility(
+            CreateInput(overdraftCountLastSixMonths: overdraftCountLastSixMonths),
+            EvaluationTime);
+
+        Assert.Equal(expectedPenalty, result.ScoreBreakdown.PenaltyScore);
     }
 
     [Fact]
-    public void EvaluateFeasibility_ScoreBoundaryAt59_ReturnsCGrade()
+    public void EvaluateFeasibility_PreservesDistinctIdsAndTimeProviderTimestamp()
     {
-        var options = new LeaseFeasibilityScoringOptions(
-            IncomeToLeaseCostRatioWeight: 59,
-            IncomeConsistencyWeight: 0,
-            DebtToIncomeWeight: 0,
-            EmploymentStabilityWeight: 0,
-            CreditIndicatorWeight: 0);
+        var result = new FinancialFeasibilityScoringEngine().EvaluateFeasibility(
+            CreateInput(applicationId: "LEASE-42", applicantId: "PERSON-7"),
+            EvaluationTime);
 
-        var engine = new FinancialFeasibilityScoringEngine(options);
-
-        var profile = CreateMaxScoringProfile();
-
-        var result = engine.EvaluateFeasibility(profile, _baseTime);
-
-        Assert.Equal(59, result.ScoreBreakdown.TotalScore);
-        Assert.Equal(FeasibilityGrade.C, result.Grade);
+        Assert.Equal("LEASE-42", result.ApplicationId);
+        Assert.Equal("PERSON-7", result.ApplicantId);
+        Assert.Equal(EvaluationTime.ToUniversalTime(), result.GeneratedAt);
+        Assert.Equal(LeaseFeasibilityScoringContract.Component2V1.Version, result.ContractVersion);
     }
 
     [Fact]
-    public void EvaluateFeasibility_ScoreBoundaryAt60_ReturnsBGrade()
+    public void EvaluateFeasibility_UsesExplicitMonthlyDebtWithoutFivePercentConversion()
     {
-        var options = new LeaseFeasibilityScoringOptions(
-            IncomeToLeaseCostRatioWeight: 60,
-            IncomeConsistencyWeight: 0,
-            DebtToIncomeWeight: 0,
-            EmploymentStabilityWeight: 0,
-            CreditIndicatorWeight: 0);
+        var result = new FinancialFeasibilityScoringEngine().EvaluateFeasibility(
+            CreateInput(
+                averageMonthlyIncomeLkr: 100_000m,
+                requestedMonthlyLeasePaymentLkr: 10_000m,
+                monthlyDebtObligationsLkr: 40_000m),
+            EvaluationTime);
 
-        var engine = new FinancialFeasibilityScoringEngine(options);
-
-        var profile = CreateMaxScoringProfile();
-
-        var result = engine.EvaluateFeasibility(profile, _baseTime);
-
-        Assert.Equal(60, result.ScoreBreakdown.TotalScore);
-        Assert.Equal(FeasibilityGrade.B, result.Grade);
+        Assert.Equal(0.50m, result.ScoreBreakdown.DebtServiceRatio);
+        Assert.Equal(10m, result.ScoreBreakdown.DebtServiceRatioScore);
     }
 
-    [Fact]
-    public void EvaluateFeasibility_ScoreBoundaryAt79_ReturnsBGrade()
+    private static FinancialFeasibilityScoringInput CreateInput(
+        string applicationId = "LEASE-001",
+        string applicantId = "PERSON-001",
+        decimal averageMonthlyIncomeLkr = 100_000m,
+        decimal incomeConsistencyRatio = 1m,
+        decimal requestedMonthlyLeasePaymentLkr = 10_000m,
+        decimal monthlyDebtObligationsLkr = 0m,
+        decimal averageAccountBalanceLkr = 60_000m,
+        int overdraftCountLastSixMonths = 0,
+        CreditRiskGrade creditRiskGrade = CreditRiskGrade.A,
+        bool hasDefaultHistory = false)
     {
-        var options = new LeaseFeasibilityScoringOptions(
-            IncomeToLeaseCostRatioWeight: 79,
-            IncomeConsistencyWeight: 0,
-            DebtToIncomeWeight: 0,
-            EmploymentStabilityWeight: 0,
-            CreditIndicatorWeight: 0);
-
-        var engine = new FinancialFeasibilityScoringEngine(options);
-
-        var profile = CreateMaxScoringProfile();
-
-        var result = engine.EvaluateFeasibility(profile, _baseTime);
-
-        Assert.Equal(79, result.ScoreBreakdown.TotalScore);
-        Assert.Equal(FeasibilityGrade.B, result.Grade);
-    }
-
-    [Fact]
-    public void EvaluateFeasibility_ScoreBoundaryAt80_ReturnsAGrade()
-    {
-        var options = new LeaseFeasibilityScoringOptions(
-            IncomeToLeaseCostRatioWeight: 80,
-            IncomeConsistencyWeight: 0,
-            DebtToIncomeWeight: 0,
-            EmploymentStabilityWeight: 0,
-            CreditIndicatorWeight: 0);
-
-        var engine = new FinancialFeasibilityScoringEngine(options);
-
-        var profile = CreateMaxScoringProfile();
-
-        var result = engine.EvaluateFeasibility(profile, _baseTime);
-
-        Assert.Equal(80, result.ScoreBreakdown.TotalScore);
-        Assert.Equal(FeasibilityGrade.A, result.Grade);
-    }
-
-    private FinancialProfile CreateMaxScoringProfile()
-    {
-        return new FinancialProfile(
-            ApplicantId: "APP-001",
-            AverageMonthlyIncome: 10000m,
-            IncomeConsistencyScore: 1.0m,
-            EmploymentTenureMonths: 36,
-            EmploymentType: "Full-Time",
-            EmployerOrBusinessName: "Corp Inc",
-            AverageAccountBalance: 50000m,
-            OverdraftFrequency: 0,
-            SavingsToIncomeRatio: 0.5m,
-            CreditRiskGrade: "A",
-            ActiveLoanObligations: 0m,
-            DefaultHistoryIndicator: false,
-            RecentCreditInquiries: 0
-        );
+        return new FinancialFeasibilityScoringInput(
+            applicationId,
+            applicantId,
+            averageMonthlyIncomeLkr,
+            incomeConsistencyRatio,
+            requestedMonthlyLeasePaymentLkr,
+            monthlyDebtObligationsLkr,
+            averageAccountBalanceLkr,
+            overdraftCountLastSixMonths,
+            creditRiskGrade,
+            hasDefaultHistory);
     }
 }

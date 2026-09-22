@@ -4,39 +4,57 @@ namespace StateLandGovernance.LeaseFeasibility.Domain.ValueObjects;
 
 public sealed record FeasibilityScoreBreakdown
 {
-    public decimal IncomeToLeaseCostScore { get; }
+    public decimal DebtServiceRatio { get; }
+    public decimal LiquidityBufferMonths { get; }
+    public decimal DebtServiceRatioScore { get; }
     public decimal IncomeConsistencyScore { get; }
-    public decimal DebtToIncomeScore { get; }
-    public decimal EmploymentStabilityScore { get; }
-    public decimal CreditIndicatorScore { get; }
+    public decimal LiquidityBufferScore { get; }
+    public decimal CreditHistoryScore { get; }
     public decimal PenaltyScore { get; }
     public decimal TotalScore { get; }
 
     public FeasibilityScoreBreakdown(
-        decimal incomeToLeaseCostScore,
+        decimal debtServiceRatio,
+        decimal liquidityBufferMonths,
+        decimal debtServiceRatioScore,
         decimal incomeConsistencyScore,
-        decimal debtToIncomeScore,
-        decimal employmentStabilityScore,
-        decimal creditIndicatorScore,
+        decimal liquidityBufferScore,
+        decimal creditHistoryScore,
         decimal penaltyScore,
         decimal totalScore)
     {
-        if (penaltyScore > 0)
+        if (debtServiceRatio < 0m) throw new ArgumentOutOfRangeException(nameof(debtServiceRatio));
+        if (liquidityBufferMonths < 0m) throw new ArgumentOutOfRangeException(nameof(liquidityBufferMonths));
+        ValidateContribution(debtServiceRatioScore, nameof(debtServiceRatioScore));
+        ValidateContribution(incomeConsistencyScore, nameof(incomeConsistencyScore));
+        ValidateContribution(liquidityBufferScore, nameof(liquidityBufferScore));
+        ValidateContribution(creditHistoryScore, nameof(creditHistoryScore));
+
+        if (penaltyScore > 0m)
         {
             throw new ArgumentOutOfRangeException(nameof(penaltyScore), "Penalty score cannot be positive.");
         }
 
-        if (totalScore is < 0 or > 100)
+        if (totalScore is < 0m or > 100m)
         {
             throw new ArgumentOutOfRangeException(nameof(totalScore), "Total score must be between 0 and 100.");
         }
 
-        IncomeToLeaseCostScore = incomeToLeaseCostScore;
+        DebtServiceRatio = debtServiceRatio;
+        LiquidityBufferMonths = liquidityBufferMonths;
+        DebtServiceRatioScore = debtServiceRatioScore;
         IncomeConsistencyScore = incomeConsistencyScore;
-        DebtToIncomeScore = debtToIncomeScore;
-        EmploymentStabilityScore = employmentStabilityScore;
-        CreditIndicatorScore = creditIndicatorScore;
+        LiquidityBufferScore = liquidityBufferScore;
+        CreditHistoryScore = creditHistoryScore;
         PenaltyScore = penaltyScore;
         TotalScore = totalScore;
+    }
+
+    private static void ValidateContribution(decimal score, string parameterName)
+    {
+        if (score < 0m)
+        {
+            throw new ArgumentOutOfRangeException(parameterName, "Positive score contributions cannot be negative.");
+        }
     }
 }

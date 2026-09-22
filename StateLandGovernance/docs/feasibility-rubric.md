@@ -1,78 +1,108 @@
-# Financial Feasibility Grading Rubric
+# Component 2 Deterministic Financial Feasibility Contract
 
-Based on the configurable, weighted-scoring pattern established by `GovernanceRiskEngineOptions`, this document defines the scoring mechanics, criteria weights, and grading bands for the AI-Driven Lease Feasibility Assessment model.
+`LeaseFeasibilityScoringContract.Component2V1` is the single executable contract for the deterministic Component 2 score. The engine must not introduce thresholds, conversions, weights, penalties, or actions outside this contract.
 
-## 1. Configurable Options Pattern
+Contract version: `component-2-financial-feasibility-v1`
 
-The feasibility scoring engine uses an options record to inject configurable thresholds and weights, ensuring the scoring logic remains deterministic, testable, and easily adjustable without changing core business logic.
+## Input units and formulae
 
-```csharp
-/// <summary>
-/// Configurable scoring options for the Financial Feasibility Assessment Engine.
-/// </summary>
-public sealed record FinancialFeasibilityEngineOptions(
-    decimal MaximumAcceptableDti = 0.50m,
-    int DebtToIncomeWeight = 35,
-    int IncomeConsistencyWeight = 25,
-    int LiquidityBufferWeight = 20,
-    int CreditHistoryWeight = 20,
-    int DefaultHistoryPenalty = -50,
-    int FrequentOverdraftPenalty = -15,
-    int OverdraftThresholdCount = 3
-)
-{
-    public static FinancialFeasibilityEngineOptions Default { get; } = new();
-}
-```
+| Input | Unit | Rule |
+| :--- | :--- | :--- |
+| Average monthly income | LKR/month | Must be greater than zero. |
+| Requested monthly lease payment | LKR/month | Must be greater than zero. This is supplied explicitly; savings are not used as a proxy. |
+| Monthly debt obligations | LKR/month | Must be zero or greater. It must be obtained from an approved monthly repayment source. Total debt is not converted to a monthly amount. |
+| Income consistency | Ratio from 0 to 1 | Supplied by an approved upstream calculation; the deterministic engine does not synthesize it. |
+| Average account balance | LKR | Must be zero or greater. |
+| Overdraft count | Count in the latest 6-month evidence window | A penalty applies only when the count exceeds 3. |
+| Credit risk grade | Enum A-E | Normalized from the CRIB result before scoring. |
+| Default history | Boolean | Applies the approved default penalty when true. |
 
-## 2. A-E Grading Bands
+The debt-service ratio is:
 
-The total base score adds up to 100 points, with penalties applied for significant negative indicators (e.g., past defaults). The final numeric score is mapped to the A-E classification system as required by the TAF.
+`(monthly debt obligations + requested monthly lease payment) / average monthly income`
 
-| Grade | Score Range | Feasibility Status | Action |
-| :--- | :--- | :--- | :--- |
-| **A** | 85 - 100 | Strong Eligibility | Fast-track for automated generative proposal creation. |
-| **B** | 70 - 84 | Strong Eligibility | Proceed with generative proposal creation. |
-| **C** | 50 - 69 | Moderate Risk | Requires manual review or conditional lease terms (e.g., higher deposit). |
-| **D** | 30 - 49 | High Risk | Flag for escalation; likely rejection unless strong mitigations exist. |
-| **E** | < 30 | High Risk | Immediate rejection; significant financial distress or severe default history. |
+The liquidity buffer is:
 
-## 3. Per-Criterion Weights
+`average account balance / requested monthly lease payment`
 
-The system evaluates the `FinancialProfile` evidence records against the following criteria to build the score:
+## Positive score: 100 points maximum
 
-### Positive Score Contributions (Max 100)
-- **Debt-to-Income (DTI) Ratio (Up to 35 pts):** 
-  - `< 20%` = 35 pts
-  - `20% - 35%` = 25 pts
-  - `36% - 50%` = 10 pts
-  - `> 50%` = 0 pts
-- **Income Consistency (Up to 25 pts):** Based on the `IncomeConsistencyScore` over 12 months. Highly stable income yields full points.
-- **Liquidity / Savings Buffer (Up to 20 pts):** Evaluates if the average bank balance can cover 3-6 months of lease payments.
-- **Credit Risk Grade (Up to 20 pts):** Based on CRIB reports. 
-  - `Excellent` = 20 pts
-  - `Good` = 15 pts
-  - `Fair` = 5 pts
+### Debt-service ratio: 35 points
 
-### Negative Penalties
-- **Default History Penalty (-50 pts):** Applied if a `DefaultHistoryIndicator` is true.
-- **Frequent Overdraft Penalty (-15 pts):** Applied if `OverdraftFrequency` exceeds the `OverdraftThresholdCount`.
+| Ratio | Points |
+| :--- | ---: |
+| `<= 20%` | 35 |
+| `> 20%` and `<= 35%` | 25 |
+| `> 35%` and `<= 50%` | 10 |
+| `> 50%` | 0 |
 
----
+### Income consistency: 25 points
 
-## 4. Worked Numeric Example
+`income consistency ratio x 25`, rounded to two decimal places using midpoint-away-from-zero rounding.
 
-**Applicant Profile:**
-- DTI Ratio: 28% (Yields **25 points**)
-- Income Consistency: Stable salaried employee (Yields **25 points**)
-- Liquidity Buffer: Covers 4 months of payments (Yields **15 points**)
-- Credit Grade: Good (Yields **15 points**)
-- Penalties: 4 overdrafts in 6 months (Exceeds threshold of 3, applies **-15 points** penalty). No defaults.
+### Liquidity buffer: 20 points
 
-**Score Calculation:**
-`25 (DTI) + 25 (Income) + 15 (Liquidity) + 15 (Credit) - 15 (Overdraft Penalty) = 65 points`
+| Requested lease-payment coverage | Points |
+| :--- | ---: |
+| `>= 6 months` | 20 |
+| `>= 3 months` and `< 6 months` | 15 |
+| `>= 1 month` and `< 3 months` | 5 |
+| `< 1 month` | 0 |
 
-**Final Grade:**
-A score of **65** falls into the **C (Moderate Risk)** band. 
+### Credit history: 20 points
 
-*Conclusion:* The applicant has steady income and manageable debt but struggles slightly with cash flow (indicated by overdrafts). The application is flagged for manual review or may require a larger upfront deposit to offset the moderate liquidity risk.
+| CRIB grade | Points |
+| :--- | ---: |
+| A | 20 |
+| B | 15 |
+| C | 5 |
+| D or E | 0 |
+
+## Approved penalties
+
+| Indicator | Penalty |
+| :--- | ---: |
+| Default history is true | -50 |
+| More than 3 overdrafts in the latest 6 months | -15 |
+
+The final score is clamped to 0-100. Recent credit inquiries, employment tenure, employment type, and savings-to-income ratio do not change this deterministic score because Component 2 V1 does not approve weights or penalties for them.
+
+## Grades and actions
+
+| Grade | Score | Deterministic action |
+| :--- | :--- | :--- |
+| A | 85-100 | `FastTrack` |
+| B | 70-84.99 | `Proceed` |
+| C | 50-69.99 | `ManualReview` |
+| D | 30-49.99 | `Escalate` |
+| E | 0-29.99 | `Reject` |
+
+## Worked example
+
+Inputs:
+
+- Average monthly income: LKR 100,000
+- Monthly debt obligations: LKR 18,000
+- Requested monthly lease payment: LKR 10,000
+- Income consistency ratio: 1.00
+- Average account balance: LKR 40,000
+- CRIB grade: B
+- Four overdrafts in the latest six months
+- No default history
+
+Calculation:
+
+- Debt-service ratio: `(18,000 + 10,000) / 100,000 = 28%` -> 25 points
+- Income consistency: `1.00 x 25` -> 25 points
+- Liquidity buffer: `40,000 / 10,000 = 4 months` -> 15 points
+- Credit grade B -> 15 points
+- Four overdrafts -> -15 points
+- Total: `25 + 25 + 15 + 15 - 15 = 65`
+
+Result: grade C, action `ManualReview`.
+
+## Identity and time rules
+
+- `ApplicationId` identifies the lease application.
+- `ApplicantId` identifies the person or organization applying and must never be substituted for `ApplicationId`.
+- The application layer obtains one `DateTimeOffset` from the injected `TimeProvider`. The engine passes that timestamp to the assessment, which stores it in UTC.

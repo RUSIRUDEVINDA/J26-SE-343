@@ -56,7 +56,7 @@ public sealed class DocumentOcrService : IDocumentExtractionService
                 return "MOCK OCR RESULT: [CRIB REPORT] Credit Risk Grade: A. Active Loan Obligations: 12000. Default History Indicator: False. Recent Credit Inquiries: 1.";
             }
 
-            return "MOCK OCR RESULT: [BANK STATEMENT] Average Monthly Income: 5000. Average Account Balance: 15000. Overdraft Frequency: 0. Savings To Income Ratio: 0.2. Loan Obligation: 200. Verification: SUCCESS.";
+            return "MOCK OCR RESULT: [BANK STATEMENT] Average Monthly Income: 5000. Average Account Balance: 15000. Overdraft Count Last 6 Months: 0. Savings To Income Ratio: 0.2. Loan Obligation: 200. Verification: SUCCESS.";
         }
 
         try
@@ -95,8 +95,8 @@ public sealed class DocumentOcrService : IDocumentExtractionService
         decimal? avgBalance = TryExtractDecimal(rawText, @"Average\s*Account\s*Balance[\s:]+([\d,.]+)");
         if (!avgBalance.HasValue) errors.Add("Missing required field: Average Account Balance.");
 
-        decimal? overdrafts = TryExtractDecimal(rawText, @"Overdraft\s*Frequency[\s:]+(\d+)");
-        if (!overdrafts.HasValue) errors.Add("Missing required field: Overdraft Frequency.");
+        decimal? overdrafts = TryExtractDecimal(rawText, @"Overdraft\s*Count\s*Last\s*6\s*Months[\s:]+(\d+)");
+        if (!overdrafts.HasValue) errors.Add("Missing required field: Overdraft Count Last 6 Months.");
 
         decimal? savingsRatio = TryExtractDecimal(rawText, @"Savings\s*To\s*Income\s*Ratio[\s:]+([\d,.]+)");
         if (!savingsRatio.HasValue) errors.Add("Missing required field: Savings To Income Ratio.");
@@ -109,7 +109,7 @@ public sealed class DocumentOcrService : IDocumentExtractionService
         return new BankStatementDataDto(
             AverageMonthlyIncome: avgIncome.Value,
             AverageAccountBalance: avgBalance.Value,
-            OverdraftFrequency: (int)overdrafts.Value,
+            OverdraftCountInEvidenceWindow: (int)overdrafts.Value,
             SavingsToIncomeRatio: savingsRatio.Value
         );
     }
