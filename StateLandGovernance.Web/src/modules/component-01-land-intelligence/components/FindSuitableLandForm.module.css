@@ -35,6 +35,23 @@
   color: var(--color-text);
 }
 
+.required {
+  color: var(--color-primary);
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
 .pending {
   font-size: 0.7rem;
   color: #850906;
