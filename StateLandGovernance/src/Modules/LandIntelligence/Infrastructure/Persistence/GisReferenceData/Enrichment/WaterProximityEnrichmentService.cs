@@ -1,6 +1,8 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using NetTopologySuite.Geometries;
+using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Application.Mappings;
@@ -13,16 +15,19 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisRef
 
 public sealed class WaterProximityEnrichmentService : IWaterProximityEnrichmentService
 {
-    private const int DistrictBoundaryType = 2;
     private const int CanalFeatureType = 1;
     private const int LakeFeatureType = 2;
     private const string DerivedDistanceSource = "GIS water feature nearest-neighbor spatial query";
 
     private readonly LandIntelligenceDbContext _dbContext;
+    private readonly GisEnrichmentCoverageOptions _coverageOptions;
 
-    public WaterProximityEnrichmentService(LandIntelligenceDbContext dbContext)
+    public WaterProximityEnrichmentService(
+        LandIntelligenceDbContext dbContext,
+        IOptions<GisEnrichmentCoverageOptions> coverageOptions)
     {
         _dbContext = dbContext;
+        _coverageOptions = coverageOptions.Value;
     }
 
     public async Task<WaterProximityEnrichmentResult> EnrichAsync(
@@ -48,8 +53,9 @@ public sealed class WaterProximityEnrichmentService : IWaterProximityEnrichmentS
         {
             evidence.Add("Parcel geometry unavailable: no boundary or centroid could be used for water proximity.");
 
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel.Id,
+                WaterProximityEnrichmentStatus.Unavailable,
                 evidence,
                 geometryBasis: null,
                 sourceName: GisReferenceDataPaths.SourceName,
@@ -62,18 +68,19 @@ public sealed class WaterProximityEnrichmentService : IWaterProximityEnrichmentS
                 ? "Proximity geometry basis: parcel boundary (preferred)."
                 : "Proximity geometry basis: parcel centroid (boundary unavailable).");
 
-        var withinPilotCoverage = await IsWithinHambantotaPilotCoverageAsync(
+        var coverage = await GisEnrichmentCoverageHelper.AssessAsync(
+            _dbContext,
             parcelGeometry,
             geometryBasis,
+            _coverageOptions,
             cancellationToken);
+        evidence.Add(coverage.EvidenceMessage);
 
-        if (!withinPilotCoverage)
+        if (!coverage.IsInsideCoverage)
         {
-            evidence.Add(
-                "Parcel is outside the imported Hambantota GIS pilot coverage; nearest water feature was not calculated.");
-
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel.Id,
+                WaterProximityEnrichmentStatus.OutsideCoverage,
                 evidence,
                 geometryBasis,
                 sourceName: GisReferenceDataPaths.SourceName,
@@ -83,10 +90,13 @@ public sealed class WaterProximityEnrichmentService : IWaterProximityEnrichmentS
         var nearestFeature = await FindNearestWaterFeatureAsync(parcelGeometry, cancellationToken);
         if (nearestFeature is null)
         {
-            evidence.Add("No GIS canal or lake geometry was available within the imported pilot dataset.");
+            evidence.Add(
+                "No GIS canal or lake geometry was available within coverage; distance was not fabricated. " +
+                "Utility WaterSupply is never substituted for natural-water proximity.");
 
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel.Id,
+                WaterProximityEnrichmentStatus.Unavailable,
                 evidence,
                 geometryBasis,
                 sourceName: GisReferenceDataPaths.SourceName,
@@ -148,36 +158,6 @@ public sealed class WaterProximityEnrichmentService : IWaterProximityEnrichmentS
          LIMIT 1
          """;
 
-    private async Task<bool> IsWithinHambantotaPilotCoverageAsync(
-        Geometry parcelGeometry,
-        AdministrativeLocationGeometryBasis geometryBasis,
-        CancellationToken cancellationToken)
-    {
-        var geometryWkt = parcelGeometry.AsText();
-        var spatialPredicate = geometryBasis == AdministrativeLocationGeometryBasis.Centroid
-            ? "ST_Covers(b.\"Boundary\", ST_SetSRID(ST_GeomFromText(@geometryWkt, 4326), 4326))"
-            : "ST_Intersects(b.\"Boundary\", ST_SetSRID(ST_GeomFromText(@geometryWkt, 4326), 4326))";
-
-        var sql = $"""
-                   SELECT EXISTS (
-                       SELECT 1
-                       FROM {QualifiedAdministrativeBoundariesTable()} b
-                       WHERE b."Name" = @districtName
-                         AND b."BoundaryType" = @districtType
-                         AND {spatialPredicate}
-                   )
-                   """;
-
-        var result = await ExecuteScalarAsync(
-            sql,
-            cancellationToken,
-            ("districtName", GisReferenceDataPaths.HambantotaDistrictName),
-            ("districtType", DistrictBoundaryType),
-            ("geometryWkt", geometryWkt));
-
-        return result is bool withinCoverage && withinCoverage;
-    }
-
     private async Task<NearestWaterFeatureRow?> FindNearestWaterFeatureAsync(
         Geometry parcelGeometry,
         CancellationToken cancellationToken)
@@ -206,8 +186,9 @@ public sealed class WaterProximityEnrichmentService : IWaterProximityEnrichmentS
             reader.GetDouble(reader.GetOrdinal("DistanceMeters")));
     }
 
-    private static WaterProximityEnrichmentResult BuildUnavailableResult(
+    private static WaterProximityEnrichmentResult BuildResult(
         Guid parcelId,
+        WaterProximityEnrichmentStatus status,
         IReadOnlyList<string> evidence,
         AdministrativeLocationGeometryBasis? geometryBasis,
         string sourceName,
@@ -220,7 +201,7 @@ public sealed class WaterProximityEnrichmentService : IWaterProximityEnrichmentS
             FeatureType = null,
             DistanceMeters = null,
             GeometryBasis = geometryBasis,
-            Status = WaterProximityEnrichmentStatus.Unavailable,
+            Status = status,
             Evidence = evidence,
             SourceName = sourceName,
             SourceLayer = sourceLayer,
@@ -233,30 +214,8 @@ public sealed class WaterProximityEnrichmentService : IWaterProximityEnrichmentS
             ? (GisReferenceWaterFeatureType)featureType
             : throw new InvalidOperationException($"Unsupported water feature type '{featureType}'.");
 
-    private async Task<object?> ExecuteScalarAsync(
-        string sql,
-        CancellationToken cancellationToken,
-        params (string Name, object Value)[] parameters)
-    {
-        var connection = _dbContext.Database.GetDbConnection();
-        await EnsureConnectionOpenAsync(connection, cancellationToken);
-
-        await using var command = connection.CreateCommand();
-        command.CommandText = sql;
-
-        foreach (var (name, value) in parameters)
-        {
-            AddParameter(command, name, value);
-        }
-
-        return await command.ExecuteScalarAsync(cancellationToken);
-    }
-
     private static string QualifiedWaterFeaturesTable() =>
         $"{LandIntelligenceDbContext.SchemaName}.gis_water_features";
-
-    private static string QualifiedAdministrativeBoundariesTable() =>
-        $"{LandIntelligenceDbContext.SchemaName}.gis_administrative_boundaries";
 
     private static async Task EnsureConnectionOpenAsync(
         System.Data.Common.DbConnection connection,
