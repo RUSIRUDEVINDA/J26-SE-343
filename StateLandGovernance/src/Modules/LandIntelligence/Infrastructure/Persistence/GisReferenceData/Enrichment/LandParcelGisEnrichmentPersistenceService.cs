@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
+using StateLandGovernance.LandIntelligence.Application.GisAdministrativeVerification;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities;
@@ -65,6 +66,74 @@ public sealed class LandParcelGisEnrichmentPersistenceService : ILandParcelGisEn
                 ex,
                 "Failed to persist GIS-derived intelligence for parcel {ParcelId}.",
                 result.ParcelId);
+            throw;
+        }
+    }
+
+    public async Task InvalidateLocationDependentEvidenceAsync(
+        Guid parcelId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            var parcelExists = await _dbContext.LandParcels
+                .AnyAsync(entity => entity.Id == parcelId, cancellationToken);
+            if (!parcelExists)
+            {
+                throw new KeyNotFoundException($"Land parcel '{parcelId}' was not found.");
+            }
+
+            var gisInfrastructure = await _dbContext.InfrastructureFeatures
+                .Where(feature => feature.LandParcelId == parcelId)
+                .ToListAsync(cancellationToken);
+            foreach (var feature in gisInfrastructure.Where(LandParcelGisEnrichmentPersistenceMapper.IsGisDerivedInfrastructure))
+            {
+                _dbContext.InfrastructureFeatures.Remove(feature);
+            }
+
+            var gisRestrictions = await _dbContext.EnvironmentalRestrictions
+                .Where(restriction => restriction.LandParcelId == parcelId)
+                .ToListAsync(cancellationToken);
+            foreach (var restriction in gisRestrictions.Where(
+                         LandParcelGisEnrichmentPersistenceMapper.IsGisDerivedEnvironmentalRestriction))
+            {
+                _dbContext.EnvironmentalRestrictions.Remove(restriction);
+            }
+
+            await RemoveDerivedSoilGroupAsync(parcelId, cancellationToken);
+
+            var snapshot = await _dbContext.LandParcelGisEnrichmentSnapshots
+                .FirstOrDefaultAsync(entity => entity.LandParcelId == parcelId, cancellationToken);
+            if (snapshot is not null)
+            {
+                // Mark stale until enrichment is re-run; do not invent replacement distances.
+                snapshot.OverallStatus = LandParcelGisEnrichmentOverallStatus.Unavailable;
+                snapshot.AdministrativeStatus = null;
+                snapshot.DetectedProvince = null;
+                snapshot.DetectedDistrict = null;
+                snapshot.ProvinceMatches = null;
+                snapshot.DistrictMatches = null;
+                snapshot.GeometryBasis = null;
+                snapshot.SourceName = GisDerivedIntelligenceOwnership.SourceName;
+                snapshot.EnrichedAt = DateTimeOffset.UtcNow;
+            }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+
+            _logger.LogInformation(
+                "Invalidated location-dependent GIS evidence for parcel {ParcelId} after spatial change.",
+                parcelId);
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            _logger.LogError(
+                ex,
+                "Failed to invalidate location-dependent GIS evidence for parcel {ParcelId}.",
+                parcelId);
             throw;
         }
     }

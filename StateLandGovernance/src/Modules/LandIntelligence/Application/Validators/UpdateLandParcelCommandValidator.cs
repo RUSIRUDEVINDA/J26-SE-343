@@ -18,6 +18,8 @@ public sealed class UpdateLandParcelCommandValidator : IRequestValidator<UpdateL
         if (request.CurrentUseType is null
             && request.CurrentUseDescription is null
             && request.Characteristics is null
+            && request.CentroidLatitude is null
+            && request.CentroidLongitude is null
             && request.BoundaryPolygon is null
             && request.SpatialConstraints is null
             && request.EnvironmentalRestrictions is null
@@ -25,6 +27,21 @@ public sealed class UpdateLandParcelCommandValidator : IRequestValidator<UpdateL
             && request.RegulatoryReferences is null)
         {
             errors.Add("At least one updatable field must be provided.");
+        }
+
+        if (request.CentroidLatitude is not null ^ request.CentroidLongitude is not null)
+        {
+            errors.Add("Centroid latitude and longitude must be provided together.");
+        }
+
+        if (request.CentroidLatitude is < -90 or > 90)
+        {
+            errors.Add("Centroid latitude must be between -90 and 90.");
+        }
+
+        if (request.CentroidLongitude is < -180 or > 180)
+        {
+            errors.Add("Centroid longitude must be between -180 and 180.");
         }
 
         if (request.BoundaryPolygon is not null && GeoJsonGeometryMapper.ToGeoBoundary(request.BoundaryPolygon) is null)

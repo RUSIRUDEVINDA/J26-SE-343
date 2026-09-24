@@ -154,7 +154,9 @@ internal static class LandParcelPersistenceMapper
         entity.ElevationMeters = parcel.Characteristics?.ElevationMeters;
         entity.CharacteristicsProvenanceJson = AttributeProvenancePersistenceMapper.SerializeCharacteristicsProvenance(
             parcel.Characteristics);
+        entity.Centroid = CreatePoint(parcel.Spatial.CentroidLongitude, parcel.Spatial.CentroidLatitude);
         entity.Boundary = PostGisGeometryFactory.ToMultiPolygon(parcel.Spatial.Boundary);
+        entity.SpatialReferenceSystemId = PostGisConfiguration.DefaultSpatialReferenceSystemId;
 
         SyncSpatialConstraints(entity, parcel);
         SyncInfrastructureFeatures(entity, parcel);

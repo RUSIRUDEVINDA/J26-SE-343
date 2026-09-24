@@ -1,6 +1,8 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using NetTopologySuite.Geometries;
+using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.GisAdministrativeVerification;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
@@ -17,17 +19,20 @@ public sealed class EnvironmentalSpatialConstraintEnrichmentService
 {
     internal const double ErosionObservationProximityRadiusMeters = 1000d;
 
-    private const int DistrictBoundaryType = 2;
     private const string DerivedConservationSource =
         "GIS soil conservation area spatial intersection query";
     private const string DerivedErosionSource =
         "GIS soil erosion observation proximity spatial query";
 
     private readonly LandIntelligenceDbContext _dbContext;
+    private readonly GisEnrichmentCoverageOptions _coverageOptions;
 
-    public EnvironmentalSpatialConstraintEnrichmentService(LandIntelligenceDbContext dbContext)
+    public EnvironmentalSpatialConstraintEnrichmentService(
+        LandIntelligenceDbContext dbContext,
+        IOptions<GisEnrichmentCoverageOptions> coverageOptions)
     {
         _dbContext = dbContext;
+        _coverageOptions = coverageOptions.Value;
     }
 
     public async Task<EnvironmentalSpatialConstraintEnrichmentResult> EnrichAsync(
@@ -58,31 +63,33 @@ public sealed class EnvironmentalSpatialConstraintEnrichmentService
             evidence.Add(
                 "Parcel geometry unavailable: no boundary or centroid could be used for environmental enrichment.");
 
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel.Id,
+                EnvironmentalSpatialConstraintEnrichmentStatus.Unavailable,
                 evidence,
                 geometryBasis: null,
                 erosionDataStatus: ErosionDataStatus.Unavailable);
         }
 
-        var (_, geometryBasis) = geometrySelection.Value;
+        var (parcelGeometry, geometryBasis) = geometrySelection.Value;
         evidence.Add(
             geometryBasis == AdministrativeLocationGeometryBasis.Boundary
                 ? "Environmental enrichment geometry basis: parcel boundary (preferred)."
                 : "Environmental enrichment geometry basis: parcel centroid (boundary unavailable).");
 
-        var withinPilotCoverage = await IsWithinHambantotaPilotCoverageAsync(
-            parcel.Id,
+        var coverage = await GisEnrichmentCoverageHelper.AssessAsync(
+            _dbContext,
+            parcelGeometry,
             geometryBasis,
+            _coverageOptions,
             cancellationToken);
+        evidence.Add(coverage.EvidenceMessage);
 
-        if (!withinPilotCoverage)
+        if (!coverage.IsInsideCoverage)
         {
-            evidence.Add(
-                "Parcel is outside the imported Hambantota GIS pilot coverage; environmental enrichment was not calculated.");
-
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel.Id,
+                EnvironmentalSpatialConstraintEnrichmentStatus.OutsideCoverage,
                 evidence,
                 geometryBasis,
                 erosionDataStatus: ErosionDataStatus.Unavailable);
@@ -120,7 +127,9 @@ public sealed class EnvironmentalSpatialConstraintEnrichmentService
             else
             {
                 evidence.Add(
-                    "No GIS soil conservation area polygon intersects the parcel boundary within the imported pilot dataset.");
+                    "No GIS soil conservation area polygon intersects the parcel boundary within the assessed layer. " +
+                    "This means no mapped intersection in that layer only — not absence of all possible constraints, " +
+                    "and not a legal prohibition assessment.");
             }
         }
         else
@@ -149,7 +158,8 @@ public sealed class EnvironmentalSpatialConstraintEnrichmentService
             else
             {
                 evidence.Add(
-                    "No GIS soil conservation area polygon covers the parcel centroid within the imported pilot dataset.");
+                    "No GIS soil conservation area polygon covers the parcel centroid within the assessed layer. " +
+                    "This means no mapped intersection in that layer only — not absence of all possible constraints.");
             }
         }
 
@@ -405,13 +415,22 @@ public sealed class EnvironmentalSpatialConstraintEnrichmentService
 
     private async Task<bool> HasErosionObservationsInPilotAsync(CancellationToken cancellationToken)
     {
-        var result = await ExecuteScalarAsync(
-            BuildErosionObservationsInPilotSql(),
-            cancellationToken,
-            ("districtName", GisReferenceDataPaths.HambantotaDistrictName),
-            ("districtType", DistrictBoundaryType));
+        var districts = GisEnrichmentCoverageHelper.ResolveSupportedDistricts(_coverageOptions);
+        foreach (var district in districts)
+        {
+            var result = await ExecuteScalarAsync(
+                BuildErosionObservationsInPilotSql(),
+                cancellationToken,
+                ("districtName", district),
+                ("districtType", 2));
 
-        return result is bool hasObservations && hasObservations;
+            if (result is bool hasObservations && hasObservations)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private async Task<IReadOnlyList<SoilErosionObservationCandidate>> FindBoundaryErosionObservationsAsync(
@@ -471,46 +490,16 @@ public sealed class EnvironmentalSpatialConstraintEnrichmentService
         return observations;
     }
 
-    private async Task<bool> IsWithinHambantotaPilotCoverageAsync(
+    private static EnvironmentalSpatialConstraintEnrichmentResult BuildResult(
         Guid parcelId,
-        AdministrativeLocationGeometryBasis geometryBasis,
-        CancellationToken cancellationToken)
-    {
-        var spatialPredicate = geometryBasis == AdministrativeLocationGeometryBasis.Centroid
-            ? "ST_Covers(b.\"Boundary\", p.\"Centroid\")"
-            : "ST_Intersects(b.\"Boundary\", ST_MakeValid(p.\"Boundary\"))";
-
-        var sql = $"""
-                   SELECT EXISTS (
-                       SELECT 1
-                       FROM {QualifiedAdministrativeBoundariesTable()} b
-                       INNER JOIN {QualifiedLandParcelsTable()} p
-                           ON p."Id" = @parcelId
-                       WHERE b."Name" = @districtName
-                         AND b."BoundaryType" = @districtType
-                         AND {spatialPredicate}
-                   )
-                   """;
-
-        var result = await ExecuteScalarAsync(
-            sql,
-            cancellationToken,
-            ("parcelId", parcelId),
-            ("districtName", GisReferenceDataPaths.HambantotaDistrictName),
-            ("districtType", DistrictBoundaryType));
-
-        return result is bool withinCoverage && withinCoverage;
-    }
-
-    private static EnvironmentalSpatialConstraintEnrichmentResult BuildUnavailableResult(
-        Guid parcelId,
+        EnvironmentalSpatialConstraintEnrichmentStatus status,
         IReadOnlyList<string> evidence,
         AdministrativeLocationGeometryBasis? geometryBasis,
         ErosionDataStatus erosionDataStatus) =>
         new()
         {
             ParcelId = parcelId,
-            Status = EnvironmentalSpatialConstraintEnrichmentStatus.Unavailable,
+            Status = status,
             GeometryBasis = geometryBasis,
             IntersectsSoilConservationArea = false,
             ConservationAreas = [],

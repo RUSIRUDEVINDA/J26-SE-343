@@ -44,10 +44,25 @@
 }
 
 .score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  line-height: 1;
+}
+
+.scoreValue {
   font-size: 1.65rem;
   font-weight: 800;
   color: var(--color-primary);
-  line-height: 1;
+}
+
+.scoreHint {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .explanation {
@@ -64,4 +79,18 @@
 
 .footer {
   margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.mapButton {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.mapButton:not(:disabled):hover {
+  background: #faf4f4;
+  filter: none;
 }

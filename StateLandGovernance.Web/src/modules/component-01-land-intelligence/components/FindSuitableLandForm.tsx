@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { searchRecommendations } from "../services/landIntelligenceApi";
 import {
+  FIND_SUITABLE_LAND_FORM_SESSION_KEY,
   LandUseType,
   RECOMMENDATIONS_SESSION_KEY,
   type FindSuitableLandFormState,
@@ -21,36 +22,111 @@ import {
 } from "../utils/enumMappings";
 import styles from "./FindSuitableLandForm.module.css";
 
+const FORM_STORE_EVENT = "component01.findSuitableLandForm";
+
 const initialState: FindSuitableLandFormState = {
   requiredPurpose: "",
   requiredAreaHectares: "",
+  preferredProvince: "",
   preferredDistrict: "",
+  preferredDivisionalSecretariat: "",
   requiredLandCategory: "",
   maxRoadDistanceMeters: "",
   requireRoadAccess: true,
   environmentalPreference: "conservation",
   rejectProhibitiveEnvironmentalRestrictions: true,
+  maxResults: "10",
   waterProximityPreference: "",
   soilGroupPreference: "",
   additionalRequirements: "",
 };
 
+type FormSnapshot = {
+  raw: string | null;
+  value: FindSuitableLandFormState;
+};
+
+let formSnapshot: FormSnapshot | null = null;
+
+function parseStoredForm(raw: string | null): FindSuitableLandFormState {
+  if (!raw) {
+    return initialState;
+  }
+  try {
+    return { ...initialState, ...(JSON.parse(raw) as FindSuitableLandFormState) };
+  } catch {
+    return initialState;
+  }
+}
+
+function getFormSnapshot(): FindSuitableLandFormState {
+  const raw = sessionStorage.getItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY);
+  if (formSnapshot && formSnapshot.raw === raw) {
+    return formSnapshot.value;
+  }
+  const value = parseStoredForm(raw);
+  formSnapshot = { raw, value };
+  return value;
+}
+
+function getServerFormSnapshot(): FindSuitableLandFormState {
+  return initialState;
+}
+
+function subscribeFormStore(onStoreChange: () => void) {
+  const handler = () => onStoreChange();
+  window.addEventListener("storage", handler);
+  window.addEventListener(FORM_STORE_EVENT, handler);
+  return () => {
+    window.removeEventListener("storage", handler);
+    window.removeEventListener(FORM_STORE_EVENT, handler);
+  };
+}
+
+function writeFormStore(next: FindSuitableLandFormState | null) {
+  try {
+    if (next === null) {
+      sessionStorage.removeItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY);
+      formSnapshot = { raw: null, value: initialState };
+    } else {
+      const raw = JSON.stringify(next);
+      sessionStorage.setItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY, raw);
+      formSnapshot = { raw, value: next };
+    }
+  } catch {
+    formSnapshot = { raw: null, value: next ?? initialState };
+  }
+  window.dispatchEvent(new Event(FORM_STORE_EVENT));
+}
+
 export function FindSuitableLandForm() {
   const router = useRouter();
-  const [form, setForm] = useState<FindSuitableLandFormState>(initialState);
+  const stored = useSyncExternalStore(
+    subscribeFormStore,
+    getFormSnapshot,
+    getServerFormSnapshot,
+  );
+  const [draft, setDraft] = useState<FindSuitableLandFormState | null>(null);
+  const form = draft ?? stored;
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  const persist = useCallback((next: FindSuitableLandFormState) => {
+    setDraft(next);
+    writeFormStore(next);
+  }, []);
 
   function updateField<K extends keyof FindSuitableLandFormState>(
     key: K,
     value: FindSuitableLandFormState[K],
   ) {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    persist({ ...form, [key]: value });
   }
 
   function handleClear() {
-    setForm(initialState);
+    setDraft(initialState);
+    writeFormStore(null);
     setError(null);
     setValidationError(null);
   }
@@ -69,7 +145,21 @@ export function FindSuitableLandForm() {
     const parsedArea =
       areaValue === "" ? undefined : Number.parseFloat(areaValue);
     if (areaValue !== "" && (Number.isNaN(parsedArea) || parsedArea! <= 0)) {
-      setValidationError("Minimum land area must be a positive number.");
+      setValidationError(
+        "Minimum land area must be a positive number (hectares).",
+      );
+      return;
+    }
+
+    const maxResultsRaw = form.maxResults.trim();
+    const parsedMaxResults = Number.parseInt(maxResultsRaw, 10);
+    if (
+      maxResultsRaw === "" ||
+      Number.isNaN(parsedMaxResults) ||
+      parsedMaxResults < 1 ||
+      parsedMaxResults > 100
+    ) {
+      setValidationError("Result limit must be an integer between 1 and 100.");
       return;
     }
 
@@ -81,12 +171,21 @@ export function FindSuitableLandForm() {
         (option) => option.value === form.environmentalPreference,
       ) ?? environmentalPreferenceOptions[0];
 
+    const province = form.preferredProvince.trim();
+    const district = form.preferredDistrict.trim();
+    const ds = form.preferredDivisionalSecretariat.trim();
+
     const request = {
       requiredPurpose: form.requiredPurpose as LandUseType,
       requiredAreaHectares: parsedArea ?? null,
-      preferredLocation: form.preferredDistrict.trim()
-        ? { district: form.preferredDistrict.trim() }
-        : null,
+      preferredLocation:
+        province || district || ds
+          ? {
+              province: province || null,
+              district: district || null,
+              divisionalSecretariat: ds || null,
+            }
+          : null,
       requiredLandCategory:
         form.requiredLandCategory === ""
           ? null
@@ -99,7 +198,7 @@ export function FindSuitableLandForm() {
         maxAllowedEnvironmentalSeverity: envOption.severity,
         rejectProhibitiveEnvironmentalRestrictions: envOption.rejectProhibitive,
       },
-      maxResults: 10,
+      maxResults: parsedMaxResults,
     };
 
     setSubmitting(true);
@@ -109,11 +208,14 @@ export function FindSuitableLandForm() {
         request,
         response,
         submittedAt: new Date().toISOString(),
+        formState: form,
       };
       sessionStorage.setItem(
         RECOMMENDATIONS_SESSION_KEY,
         JSON.stringify(payload),
       );
+      window.dispatchEvent(new Event("component01.recommendations"));
+      writeFormStore(form);
       router.push("/land-intelligence/recommendations");
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -129,11 +231,11 @@ export function FindSuitableLandForm() {
   }
 
   return (
-    <form className={styles.card} onSubmit={handleSubmit}>
+    <form className={styles.card} onSubmit={handleSubmit} noValidate>
       <div className={styles.grid}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="requiredPurpose">
-            Required purpose
+            Required purpose <span className={styles.required}>*</span>
           </label>
           <select
             id="requiredPurpose"
@@ -142,10 +244,13 @@ export function FindSuitableLandForm() {
             onChange={(e) =>
               updateField(
                 "requiredPurpose",
-                e.target.value === "" ? "" : (Number(e.target.value) as LandUseType),
+                e.target.value === ""
+                  ? ""
+                  : (Number(e.target.value) as LandUseType),
               )
             }
             required
+            aria-required="true"
           >
             <option value="">Select purpose</option>
             {landUseTypeOptions.map((option) => (
@@ -167,6 +272,38 @@ export function FindSuitableLandForm() {
             onChange={(e) => updateField("preferredDistrict", e.target.value)}
             placeholder="e.g. Hambantota"
           />
+          <p className={styles.hint}>Mapped to preferredLocation.district.</p>
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="preferredProvince">
+            Preferred province
+          </label>
+          <input
+            id="preferredProvince"
+            className={styles.input}
+            value={form.preferredProvince}
+            onChange={(e) => updateField("preferredProvince", e.target.value)}
+            placeholder="e.g. Southern"
+          />
+        </div>
+
+        <div className={styles.field}>
+          <label
+            className={styles.label}
+            htmlFor="preferredDivisionalSecretariat"
+          >
+            Preferred divisional secretariat
+          </label>
+          <input
+            id="preferredDivisionalSecretariat"
+            className={styles.input}
+            value={form.preferredDivisionalSecretariat}
+            onChange={(e) =>
+              updateField("preferredDivisionalSecretariat", e.target.value)
+            }
+            placeholder="Optional"
+          />
         </div>
 
         <div className={styles.field}>
@@ -180,8 +317,11 @@ export function FindSuitableLandForm() {
             value={form.requiredAreaHectares}
             onChange={(e) => updateField("requiredAreaHectares", e.target.value)}
             placeholder="e.g. 10"
+            aria-describedby="area-hint"
           />
-          <p className={styles.hint}>Enter minimum extent in hectares.</p>
+          <p id="area-hint" className={styles.hint}>
+            Enter minimum extent in hectares (ha).
+          </p>
         </div>
 
         <div className={styles.field}>
@@ -227,29 +367,25 @@ export function FindSuitableLandForm() {
               </option>
             ))}
           </select>
+          <p className={styles.hint}>
+            Sent as accessibility.maxRoadDistanceMeters (metres).
+          </p>
         </div>
 
         <div className={styles.field}>
-          <div className={styles.labelRow}>
-            <label className={styles.label} htmlFor="waterProximity">
-              Natural water proximity
-            </label>
-            <span className={styles.pending}>GIS preference — API support pending</span>
-          </div>
-          <select
-            id="waterProximity"
-            className={styles.select}
-            value={form.waterProximityPreference}
-            onChange={(e) =>
-              updateField("waterProximityPreference", e.target.value)
-            }
-            disabled
-            aria-disabled
-          >
-            <option value="">No preference</option>
-          </select>
-          <p className={styles.hint}>
-            Natural water proximity only; not utility WaterSupply.
+          <label className={styles.label} htmlFor="maxResults">
+            Result limit
+          </label>
+          <input
+            id="maxResults"
+            className={styles.input}
+            inputMode="numeric"
+            value={form.maxResults}
+            onChange={(e) => updateField("maxResults", e.target.value)}
+            aria-describedby="max-results-hint"
+          />
+          <p id="max-results-hint" className={styles.hint}>
+            maxResults — integer 1–100 (API default is 10).
           </p>
         </div>
 
@@ -274,21 +410,57 @@ export function FindSuitableLandForm() {
         </div>
 
         <div className={styles.field}>
+          <fieldset className={styles.fieldset}>
+            <legend className={styles.label}>Road access requirement</legend>
+            <label className={styles.checkLabel}>
+              <input
+                type="checkbox"
+                checked={form.requireRoadAccess}
+                onChange={(e) =>
+                  updateField("requireRoadAccess", e.target.checked)
+                }
+              />
+              Require road access (accessibility.requireRoadAccess)
+            </label>
+          </fieldset>
+        </div>
+
+        <div className={styles.field}>
+          <div className={styles.labelRow}>
+            <label className={styles.label} htmlFor="waterProximity">
+              Natural water proximity
+            </label>
+            <span className={styles.pending}>Not in recommendation API</span>
+          </div>
+          <select
+            id="waterProximity"
+            className={styles.select}
+            value={form.waterProximityPreference}
+            disabled
+            aria-disabled="true"
+          >
+            <option value="">No preference — not submitted</option>
+          </select>
+          <p className={styles.hint}>
+            Disabled: recommendation request DTO has no water-proximity filter.
+          </p>
+        </div>
+
+        <div className={styles.field}>
           <div className={styles.labelRow}>
             <label className={styles.label} htmlFor="soilGroupPreference">
-              Preferred GIS-derived soil group
+              Preferred soil group
             </label>
-            <span className={styles.pending}>GIS preference — API support pending</span>
+            <span className={styles.pending}>Not in recommendation API</span>
           </div>
           <select
             id="soilGroupPreference"
             className={styles.select}
             value={form.soilGroupPreference}
-            onChange={(e) => updateField("soilGroupPreference", e.target.value)}
             disabled
-            aria-disabled
+            aria-disabled="true"
           >
-            <option value="">No preference</option>
+            <option value="">No preference — not submitted</option>
           </select>
         </div>
 
@@ -297,26 +469,24 @@ export function FindSuitableLandForm() {
             <label className={styles.label} htmlFor="additionalRequirements">
               Additional land requirements
             </label>
-            <span className={styles.pending}>GIS preference — API support pending</span>
+            <span className={styles.pending}>Not in recommendation API</span>
           </div>
           <textarea
             id="additionalRequirements"
             className={styles.textarea}
             value={form.additionalRequirements}
-            onChange={(e) =>
-              updateField("additionalRequirements", e.target.value)
-            }
-            placeholder="Describe any additional requirements, preferred location characteristics, access needs, current use preferences, or other relevant information."
             disabled
-            aria-disabled
+            aria-disabled="true"
+            placeholder="Free-text requirements are not accepted by the current recommendation API."
           />
         </div>
       </div>
 
       <div className={styles.warning} role="note">
-        <strong>GIS data note:</strong> Unavailable spatial data will remain
-        unavailable and will not be treated as safe, low risk, or automatically
-        suitable.
+        <strong>GIS data note:</strong> Unavailable spatial data remains
+        unavailable and is not treated as safe, low risk, or automatically
+        suitable. Experimental Colombo ML stays disabled unless the API is
+        explicitly overridden locally.
       </div>
 
       {validationError ? (
