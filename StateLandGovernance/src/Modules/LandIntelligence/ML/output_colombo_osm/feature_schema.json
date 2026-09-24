@@ -1,0 +1,105 @@
+{
+  "target": "suitability_label",
+  "numeric_features": [
+    "area_hectares",
+    "distance_to_road_m",
+    "distance_to_water_m"
+  ],
+  "categorical_features": [
+    "requested_purpose",
+    "land_category",
+    "gis_enrichment_status",
+    "derived_soil_group",
+    "environmental_restriction_type",
+    "environmental_restriction_severity",
+    "spatial_constraint_present"
+  ],
+  "excluded_unusable": {
+    "elevation_meters": "100% missing \u2014 no DEM; SimpleImputer(median) would skip the column",
+    "soil_overlap_percentage": "100% missing \u2014 cannot infer parcel overlap from a point",
+    "terrain_description": "constant Unknown \u2014 no terrain layer; zero variance",
+    "province": "constant Western in Colombo-only experiment",
+    "district": "constant Colombo in Colombo-only experiment"
+  },
+  "audit_fields_excluded_from_predictors": [
+    "parcel_id",
+    "sample_kind",
+    "latitude",
+    "longitude",
+    "nearest_road_osm_id",
+    "nearest_road_highway",
+    "nearest_road_adm2_name",
+    "road_distance_method",
+    "road_projected_crs",
+    "water_feature_source",
+    "soil_source_layer",
+    "spatial_constraint_source",
+    "label_rule_version",
+    "simulated_fields"
+  ],
+  "expanded_feature_names_after_fit": [
+    "num__area_hectares",
+    "num__distance_to_road_m",
+    "num__distance_to_water_m",
+    "cat__requested_purpose_Agricultural",
+    "cat__requested_purpose_Commercial",
+    "cat__requested_purpose_Residential",
+    "cat__land_category_CrownLand",
+    "cat__land_category_Other",
+    "cat__land_category_ReservedLand",
+    "cat__land_category_StateLand",
+    "cat__gis_enrichment_status_AssessedComplete",
+    "cat__gis_enrichment_status_AssessedPartial",
+    "cat__derived_soil_group_Alluvial soils of variable drainage and texture; flat terrain",
+    "cat__derived_soil_group_Bog and Half-Bog soils; flat terrain",
+    "cat__derived_soil_group_Red-Yellow Podzolic soils with soft or hard laterite; rolling and undulating terrain",
+    "cat__derived_soil_group_Red-Yellow Podzolic soils with strongly mottled subsoil & Low Humic Gley soils; rolling and undulating terrain",
+    "cat__derived_soil_group_Red-Yellow Podzolic soils; steeply dissected, hilly and rolling terrain",
+    "cat__derived_soil_group_Regosols on Recent beach sands; flat terrain",
+    "cat__derived_soil_group_Unknown",
+    "cat__derived_soil_group_Water",
+    "cat__environmental_restriction_type_ForestReserve",
+    "cat__environmental_restriction_type_ProtectedArea",
+    "cat__environmental_restriction_type_Unknown",
+    "cat__environmental_restriction_type_WaterBodyBuffer",
+    "cat__environmental_restriction_type_Wetland",
+    "cat__environmental_restriction_type_WildlifeCorridor",
+    "cat__environmental_restriction_severity_High",
+    "cat__environmental_restriction_severity_Medium",
+    "cat__environmental_restriction_severity_Prohibitive",
+    "cat__environmental_restriction_severity_Unknown",
+    "cat__spatial_constraint_present_False",
+    "cat__spatial_constraint_present_True"
+  ],
+  "preprocessing": {
+    "numeric": "SimpleImputer(median) only; no StandardScaler for RF",
+    "categorical": "SimpleImputer(constant=Unknown) + OneHotEncoder(handle_unknown=ignore)",
+    "logistic_regression_numeric": "median imputer + StandardScaler",
+    "fitted_on": "training split only"
+  },
+  "gis_vs_simulated": {
+    "gis_derived_predictors": [
+      "distance_to_road_m",
+      "distance_to_water_m",
+      "derived_soil_group",
+      "spatial_constraint_present",
+      "gis_enrichment_status"
+    ],
+    "simulated_predictors": [
+      "area_hectares",
+      "requested_purpose",
+      "land_category",
+      "environmental_restriction_type",
+      "environmental_restriction_severity"
+    ],
+    "simulated_target": "suitability_label"
+  },
+  "semantic_notes": {
+    "distance_to_road_m": "Filtered OSM motor-road centreline proximity (metres), policy 2026-03-20-colombo-v1. Not live expressway enrichment.",
+    "distance_to_water_m": "Nearest mapped canal/lake geometry (metres).",
+    "spatial_constraint_present": "True=mapped intersection with imported soil conservation polygons; False=no intersection within that assessed layer (not Unknown).",
+    "labels": "Simulated rule-based labels. Metrics measure agreement with the simulator, not real-world suitability validity.",
+    "samples": "Generated locations inside Colombo district, not cadastral parcels.",
+    "live_compatibility": "Not production-activated. Feature-name match with live ML payload does not imply semantic compatibility with expressway-based enrichment."
+  }
+}
