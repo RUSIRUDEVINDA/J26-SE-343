@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Infrastructure.Integrations;
 using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations;
@@ -16,6 +17,15 @@ public static class RecommendationInfrastructureExtensions
             client.BaseAddress = new Uri(mlServiceUrl ?? "http://localhost:8500");
             client.Timeout = TimeSpan.FromSeconds(5);
         });
+
+        services.AddHttpClient<IExperimentalColomboMlClient, HttpExperimentalColomboMlClient>((sp, client) =>
+        {
+            var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<ExperimentalColomboMlOptions>>().Value;
+            client.BaseAddress = new Uri(options.ServiceBaseUrl);
+            client.Timeout = TimeSpan.FromSeconds(Math.Max(1, options.TimeoutSeconds));
+        });
+
+        services.AddScoped<IExperimentalColomboMlEvidenceService, ExperimentalColomboMlEvidenceService>();
 
         services.AddScoped<IRecommendationCriterionEvaluator, PurposeAlignmentCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, RequiredAreaCriterionEvaluator>();
