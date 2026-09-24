@@ -8,12 +8,16 @@ import {
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
 
-function isActive(pathname: string, href?: string): boolean {
-  if (!href) {
-    return false;
-  }
+function isActive(pathname: string, href: string): boolean {
   if (href === LAND_INTELLIGENCE_BASE) {
     return pathname === href;
+  }
+  if (href.endsWith("/parcels")) {
+    return (
+      pathname === href ||
+      pathname.startsWith(`${href}/`) ||
+      pathname.startsWith(`${LAND_INTELLIGENCE_BASE}/parcel-intelligence`)
+    );
   }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
@@ -22,23 +26,10 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className={styles.sidebar} aria-label="Component 1 navigation">
+    <aside className={styles.sidebar} aria-label="Land Intelligence navigation">
       <nav className={styles.nav}>
         {component01NavItems.map((item) => {
           const active = isActive(pathname, item.href);
-          if (item.disabled || !item.href) {
-            return (
-              <span
-                key={item.label}
-                className={`${styles.link} ${styles.disabled}`}
-                aria-disabled="true"
-                title={item.disabledReason}
-              >
-                {item.icon ? `${item.icon}  ` : null}
-                {item.label}
-              </span>
-            );
-          }
           return (
             <Link
               key={item.label}
@@ -46,7 +37,7 @@ export function Sidebar() {
               className={`${styles.link} ${active ? styles.active : styles.inactive}`}
               aria-current={active ? "page" : undefined}
             >
-              {item.icon ? `${item.icon}  ` : null}
+              <span aria-hidden="true">{item.icon} </span>
               {item.label}
             </Link>
           );

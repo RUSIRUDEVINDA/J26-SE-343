@@ -25,7 +25,7 @@ builder.Services.AddBuildingBlocks();
 
 builder.Services
     .AddWorkflowGovernanceApplication()
-    .AddWorkflowGovernanceInfrastructure()
+    .AddWorkflowGovernanceInfrastructure(builder.Environment)
     .AddWorkflowGovernancePresentation();
 
 builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
@@ -44,7 +44,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(
         "DevelopmentFrontend",
         policy => policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins(
+                "http://localhost:3000",
+                "http://127.0.0.1:3000")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -122,3 +124,6 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 
 app.Run();
+
+// Expose Program for WebApplicationFactory-based tests.
+public partial class Program;
