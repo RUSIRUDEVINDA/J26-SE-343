@@ -106,4 +106,5 @@ htmlcov/
 StateLandGovernance/src/Modules/GovernanceIntelligence/ML/models/*.joblib
 
 # Generated evaluation results (regenerated from dataset + code)
-StateLandGovernance/src/Modules/GovernanceIntelligence/ML/results/
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/state_land_governance_confirmed_200.csv
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/data/state_land_governance_confirmed_200.csv
