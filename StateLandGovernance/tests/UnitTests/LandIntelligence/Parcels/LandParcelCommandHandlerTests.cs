@@ -55,6 +55,7 @@ public sealed class LandParcelCommandHandlerTests
         var handler = new UpdateLandParcelCommandHandler(
             repository,
             new NoOpLandParcelGraphSynchronizer(),
+            new NoOpLandParcelGisEnrichmentPersistenceService(),
             new UpdateLandParcelCommandValidator());
 
         var result = await handler.HandleAsync(new UpdateLandParcelCommand
@@ -84,6 +85,7 @@ public sealed class LandParcelCommandHandlerTests
         var handler = new UpdateLandParcelCommandHandler(
             new InMemoryLandParcelRepository(existing),
             new NoOpLandParcelGraphSynchronizer(),
+            new NoOpLandParcelGisEnrichmentPersistenceService(),
             new UpdateLandParcelCommandValidator());
 
         var exception = await Assert.ThrowsAsync<ValidationException>(() =>
@@ -98,6 +100,7 @@ public sealed class LandParcelCommandHandlerTests
         var handler = new UpdateLandParcelCommandHandler(
             new InMemoryLandParcelRepository(),
             new NoOpLandParcelGraphSynchronizer(),
+            new NoOpLandParcelGisEnrichmentPersistenceService(),
             new UpdateLandParcelCommandValidator());
 
         var missingId = Guid.NewGuid();
@@ -138,6 +141,7 @@ public sealed class LandParcelCommandHandlerTests
         var handler = new UpdateLandParcelCommandHandler(
             repository,
             graphSynchronizer,
+            new NoOpLandParcelGisEnrichmentPersistenceService(),
             new UpdateLandParcelCommandValidator());
 
         var result = await handler.HandleAsync(new UpdateLandParcelCommand
@@ -176,6 +180,7 @@ public sealed class LandParcelCommandHandlerTests
         var handler = new UpdateLandParcelCommandHandler(
             new FailingLandParcelRepository(existing),
             graphSynchronizer,
+            new NoOpLandParcelGisEnrichmentPersistenceService(),
             new UpdateLandParcelCommandValidator());
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
@@ -222,6 +227,7 @@ public sealed class LandParcelCommandHandlerTests
         var handler = new UpdateLandParcelCommandHandler(
             repository,
             synchronizer,
+            new NoOpLandParcelGisEnrichmentPersistenceService(),
             new UpdateLandParcelCommandValidator());
 
         var result = await handler.HandleAsync(new UpdateLandParcelCommand
