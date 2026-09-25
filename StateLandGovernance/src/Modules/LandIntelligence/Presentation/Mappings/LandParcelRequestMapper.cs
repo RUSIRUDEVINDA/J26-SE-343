@@ -39,6 +39,8 @@ internal static class LandParcelRequestMapper
             CurrentUseType = request.CurrentUseType,
             CurrentUseDescription = request.CurrentUseDescription,
             Characteristics = request.Characteristics,
+            CentroidLatitude = request.CentroidLatitude,
+            CentroidLongitude = request.CentroidLongitude,
             BoundaryPolygon = request.BoundaryPolygon,
             SpatialConstraints = request.SpatialConstraints,
             EnvironmentalRestrictions = request.EnvironmentalRestrictions,
