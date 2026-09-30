@@ -16,6 +16,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="StateLandGovernance.UnitTests.LandIntelligence" />
     <InternalsVisibleTo Include="StateLandGovernance.IntegrationTests" />
+    <InternalsVisibleTo Include="ColomboExperimentalGisVerify" />
   </ItemGroup>
 
   <ItemGroup>

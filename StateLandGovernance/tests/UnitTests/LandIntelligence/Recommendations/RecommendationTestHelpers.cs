@@ -1,11 +1,14 @@
+using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Application.GisAdministrativeVerification;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
+using StateLandGovernance.LandIntelligence.Infrastructure.Integrations;
 using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations;
 using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.Criteria;
+using Microsoft.Extensions.Options;
 
 namespace StateLandGovernance.UnitTests.LandIntelligence.Recommendations;
 
@@ -496,12 +499,74 @@ internal static class RecommendationEngineTestFactory
     public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
         IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
         IMlSuitabilityClient? mlClient,
+        params LandParcel[] parcels) =>
+        CreateWithEvaluators(
+            evaluators,
+            mlClient,
+            experimentalEvidence: null,
+            experimentalOptions: null,
+            parcels);
+
+    public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
+        IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
+        IMlSuitabilityClient? mlClient,
+        IExperimentalColomboMlEvidenceService? experimentalEvidence,
+        ExperimentalColomboMlOptions? experimentalOptions,
         params LandParcel[] parcels)
     {
         return new RuleBasedLandRecommendationEngine(
             new FakeLandParcelRepository(parcels),
             new FakeSpatialAnalysisService(parcels),
             evaluators,
-            mlClient ?? new NullMlSuitabilityClient());
+            mlClient ?? new NullMlSuitabilityClient(),
+            experimentalEvidence ?? new NoOpExperimentalColomboMlEvidenceService(),
+            Options.Create(experimentalOptions ?? new ExperimentalColomboMlOptions { Enabled = false }));
+    }
+
+    public static RuleBasedLandRecommendationEngine CreateWithExperimental(
+        IExperimentalColomboMlEvidenceService experimentalEvidence,
+        ExperimentalColomboMlOptions options,
+        IMlSuitabilityClient? mlClient = null,
+        params LandParcel[] parcels) =>
+        CreateWithEvaluators(
+            CreateStandardEvaluators(),
+            mlClient,
+            experimentalEvidence,
+            options,
+            parcels);
+}
+
+/// <summary>
+/// Default for unit tests: experimental path disabled / never attempted.
+/// </summary>
+internal sealed class NoOpExperimentalColomboMlEvidenceService : IExperimentalColomboMlEvidenceService
+{
+    public Task<ExperimentalColomboMlEvidenceResult> CollectAsync(
+        LandParcel parcel,
+        LandUseType requestedPurpose,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(new ExperimentalColomboMlEvidenceResult
+        {
+            Attempted = false,
+            PredictionSupported = false,
+            Evidence = []
+        });
+}
+
+internal sealed class StubExperimentalColomboMlEvidenceService : IExperimentalColomboMlEvidenceService
+{
+    private readonly ExperimentalColomboMlEvidenceResult _result;
+    public int CallCount { get; private set; }
+
+    public StubExperimentalColomboMlEvidenceService(ExperimentalColomboMlEvidenceResult result) =>
+        _result = result;
+
+    public Task<ExperimentalColomboMlEvidenceResult> CollectAsync(
+        LandParcel parcel,
+        LandUseType requestedPurpose,
+        CancellationToken cancellationToken = default)
+    {
+        CallCount++;
+        return Task.FromResult(_result);
     }
 }
