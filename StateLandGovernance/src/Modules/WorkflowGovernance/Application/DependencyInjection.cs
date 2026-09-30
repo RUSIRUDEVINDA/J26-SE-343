@@ -42,6 +42,37 @@ public static class DependencyInjection
         services.AddScoped<IRequestValidator<AddDocumentVersionCommand>, AddDocumentVersionCommandValidator>();
         services.AddScoped<AddDocumentVersionCommandValidator>();
 
+        // 4A.3 Handlers & Validators (Document Analysis Run Orchestration)
+        services.AddScoped<ICommandHandler<RequestDocumentAnalysisCommand, DocumentAnalysisDto>, RequestDocumentAnalysisCommandHandler>();
+        services.AddScoped<RequestDocumentAnalysisCommandHandler>();
+
+        services.AddScoped<ICommandHandler<StartDocumentAnalysisRunCommand, DocumentAnalysisDto>, StartDocumentAnalysisRunCommandHandler>();
+        services.AddScoped<StartDocumentAnalysisRunCommandHandler>();
+
+        services.AddScoped<ICommandHandler<CompleteDocumentAnalysisCommand, DocumentAnalysisDto>, CompleteDocumentAnalysisCommandHandler>();
+        services.AddScoped<CompleteDocumentAnalysisCommandHandler>();
+
+        services.AddScoped<ICommandHandler<FailDocumentAnalysisCommand, DocumentAnalysisDto>, FailDocumentAnalysisCommandHandler>();
+        services.AddScoped<FailDocumentAnalysisCommandHandler>();
+
+        services.AddScoped<IQueryHandler<GetDocumentAnalysisByIdQuery, DocumentAnalysisDto>, GetDocumentAnalysisByIdQueryHandler>();
+        services.AddScoped<GetDocumentAnalysisByIdQueryHandler>();
+
+        services.AddScoped<IQueryHandler<GetDocumentAnalysisByVersionIdQuery, DocumentAnalysisDto>, GetDocumentAnalysisByVersionIdQueryHandler>();
+        services.AddScoped<GetDocumentAnalysisByVersionIdQueryHandler>();
+
+        services.AddScoped<IRequestValidator<RequestDocumentAnalysisCommand>, RequestDocumentAnalysisCommandValidator>();
+        services.AddScoped<RequestDocumentAnalysisCommandValidator>();
+
+        services.AddScoped<IRequestValidator<StartDocumentAnalysisRunCommand>, StartDocumentAnalysisRunCommandValidator>();
+        services.AddScoped<StartDocumentAnalysisRunCommandValidator>();
+
+        services.AddScoped<IRequestValidator<CompleteDocumentAnalysisCommand>, CompleteDocumentAnalysisCommandValidator>();
+        services.AddScoped<CompleteDocumentAnalysisCommandValidator>();
+
+        services.AddScoped<IRequestValidator<FailDocumentAnalysisCommand>, FailDocumentAnalysisCommandValidator>();
+        services.AddScoped<FailDocumentAnalysisCommandValidator>();
+
         return services;
     }
 }
