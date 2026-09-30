@@ -3,7 +3,10 @@ namespace StateLandGovernance.LandIntelligence.Application.DTOs;
 public enum WaterProximityEnrichmentStatus
 {
     Available = 1,
-    Unavailable = 2
+    /// <summary>Inside coverage but no canal/lake source data (or geometry missing).</summary>
+    Unavailable = 2,
+    /// <summary>Parcel is outside configured GIS enrichment district coverage.</summary>
+    OutsideCoverage = 3
 }
 
 public sealed class WaterProximityEnrichmentResult

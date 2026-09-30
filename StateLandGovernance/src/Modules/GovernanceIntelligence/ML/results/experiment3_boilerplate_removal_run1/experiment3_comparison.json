@@ -1,0 +1,224 @@
+{
+  "experiment_name": "Experiment 3 \u2014 Conservative Boilerplate Removal Preprocessing Comparison",
+  "generated_at": "2026-09-20T14:39:57.105164+00:00",
+  "important_caveat": "These are development cross-validation results using Experiment 2 fold assignments. They are not untouched held-out test results. Any improvement is a provisional signal only.",
+  "dataset": {
+    "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\data\\state_land_governance_confirmed_200.csv",
+    "sha256": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61",
+    "row_count": 200,
+    "classes": [
+      "Administrative / Procedural / Integrity",
+      "Lease Revenue / Payment / Enforcement",
+      "Unauthorized Allocation / Transfer / Use",
+      "Protected / Environmental Lease Misuse"
+    ]
+  },
+  "environment": {
+    "python_version": "3.13.1 (tags/v3.13.1:0671451, Dec  3 2024, 19:06:28) [MSC v.1942 64 bit (AMD64)]",
+    "sklearn_version": "1.7.2",
+    "pandas_version": "2.3.3",
+    "numpy_version": "2.3.1",
+    "git": {
+      "commit": "b72673a514a35efe99a043c0ef72b26a105c65c5",
+      "working_tree_clean": false
+    }
+  },
+  "boilerplate_removal": {
+    "phrases_removed": [
+      "was identified in official audit/report material as a government/state land lease case involving",
+      "The Land Commissioner has confirmed that this is a genuine, direct, distinct state-land lease incident.",
+      "File-level details should be retained from the Commissioner's records when available."
+    ],
+    "method": "Exact literal string replacement only. No regex, no broad semantic matching.",
+    "records_affected": 19,
+    "records_unchanged": 181
+  },
+  "fold_reuse": {
+    "source": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment2_source_text\\out_of_fold_predictions.csv",
+    "description": "Exact Experiment 2 fold assignments reused. No new grouping or splitting performed.",
+    "unique_folds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "arm_a_baseline_rerun": {
+    "description": "Baseline rerun: same TF-IDF + LR pipeline as Experiment 2, raw text, Experiment 2 folds.",
+    "pipeline": "TfidfVectorizer \u2192 LogisticRegression",
+    "overall_metrics": {
+      "Accuracy": 0.725,
+      "Macro_Precision": 0.7318,
+      "Macro_Recall": 0.725,
+      "Macro_F1": 0.7242,
+      "Weighted_F1": 0.7242,
+      "Misclassified": 55
+    },
+    "per_class_metrics": {
+      "Administrative / Procedural / Integrity": {
+        "Support": 50,
+        "TP": 36,
+        "FP": 10,
+        "FN": 14,
+        "TN": 140,
+        "Precision": 0.7826,
+        "Recall": 0.72,
+        "F1": 0.75,
+        "FPR": 0.0667
+      },
+      "Lease Revenue / Payment / Enforcement": {
+        "Support": 50,
+        "TP": 35,
+        "FP": 11,
+        "FN": 15,
+        "TN": 139,
+        "Precision": 0.7609,
+        "Recall": 0.7,
+        "F1": 0.7292,
+        "FPR": 0.0733
+      },
+      "Unauthorized Allocation / Transfer / Use": {
+        "Support": 50,
+        "TP": 32,
+        "FP": 12,
+        "FN": 18,
+        "TN": 138,
+        "Precision": 0.7273,
+        "Recall": 0.64,
+        "F1": 0.6809,
+        "FPR": 0.08
+      },
+      "Protected / Environmental Lease Misuse": {
+        "Support": 50,
+        "TP": 42,
+        "FP": 22,
+        "FN": 8,
+        "TN": 128,
+        "Precision": 0.6562,
+        "Recall": 0.84,
+        "F1": 0.7368,
+        "FPR": 0.1467
+      }
+    }
+  },
+  "arm_b_cleaned_text": {
+    "description": "Cleaned text: BoilerplateStripper + TF-IDF + LR, cleaned text, same Experiment 2 folds.",
+    "pipeline": "BoilerplateStripper \u2192 TfidfVectorizer \u2192 LogisticRegression",
+    "overall_metrics": {
+      "Accuracy": 0.77,
+      "Macro_Precision": 0.7708,
+      "Macro_Recall": 0.77,
+      "Macro_F1": 0.7685,
+      "Weighted_F1": 0.7685,
+      "Misclassified": 46
+    },
+    "per_class_metrics": {
+      "Administrative / Procedural / Integrity": {
+        "Support": 50,
+        "TP": 37,
+        "FP": 8,
+        "FN": 13,
+        "TN": 142,
+        "Precision": 0.8222,
+        "Recall": 0.74,
+        "F1": 0.7789,
+        "FPR": 0.0533
+      },
+      "Lease Revenue / Payment / Enforcement": {
+        "Support": 50,
+        "TP": 42,
+        "FP": 12,
+        "FN": 8,
+        "TN": 138,
+        "Precision": 0.7778,
+        "Recall": 0.84,
+        "F1": 0.8077,
+        "FPR": 0.08
+      },
+      "Unauthorized Allocation / Transfer / Use": {
+        "Support": 50,
+        "TP": 33,
+        "FP": 12,
+        "FN": 17,
+        "TN": 138,
+        "Precision": 0.7333,
+        "Recall": 0.66,
+        "F1": 0.6947,
+        "FPR": 0.08
+      },
+      "Protected / Environmental Lease Misuse": {
+        "Support": 50,
+        "TP": 42,
+        "FP": 14,
+        "FN": 8,
+        "TN": 136,
+        "Precision": 0.75,
+        "Recall": 0.84,
+        "F1": 0.7925,
+        "FPR": 0.0933
+      }
+    }
+  },
+  "delta_b_minus_a": {
+    "Accuracy": 0.045,
+    "Macro_F1": 0.0443,
+    "Weighted_F1": 0.0443,
+    "Misclassified": -9
+  },
+  "per_class_delta": {
+    "Administrative / Procedural / Integrity": {
+      "F1_delta": 0.0289,
+      "Precision_delta": 0.0396,
+      "Recall_delta": 0.02,
+      "Arm_A_F1": 0.75,
+      "Arm_B_F1": 0.7789
+    },
+    "Lease Revenue / Payment / Enforcement": {
+      "F1_delta": 0.0785,
+      "Precision_delta": 0.0169,
+      "Recall_delta": 0.14,
+      "Arm_A_F1": 0.7292,
+      "Arm_B_F1": 0.8077
+    },
+    "Unauthorized Allocation / Transfer / Use": {
+      "F1_delta": 0.0138,
+      "Precision_delta": 0.006,
+      "Recall_delta": 0.02,
+      "Arm_A_F1": 0.6809,
+      "Arm_B_F1": 0.6947
+    },
+    "Protected / Environmental Lease Misuse": {
+      "F1_delta": 0.0557,
+      "Precision_delta": 0.0938,
+      "Recall_delta": 0.0,
+      "Arm_A_F1": 0.7368,
+      "Arm_B_F1": 0.7925
+    }
+  },
+  "changed_records_analysis": {
+    "total_changed": 19,
+    "arm_a_correct_on_changed": 9,
+    "arm_b_correct_on_changed": 17,
+    "cleaning_helped_count": 9,
+    "cleaning_hurt_count": 0
+  },
+  "historical_reference": {
+    "experiment_2_original": {
+      "source": "results/experiment2_source_text/experiment2_metrics.json",
+      "strategy": "StratifiedGroupKFold (Combined_Group)",
+      "Accuracy": 0.725,
+      "Macro_F1": 0.7242,
+      "Misclassified": 55,
+      "note": "Original Experiment 2 run (saved artifact, not re-run here)"
+    },
+    "experiment_1_baseline": {
+      "source": "Historical record (Experiment 1 results/baseline_metrics.json)",
+      "strategy": "StratifiedGroupKFold (Source_Group_ID only)",
+      "Accuracy": 0.745,
+      "Macro_F1": 0.7402,
+      "Misclassified": 51
+    }
+  },
+  "output_directory": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment3_boilerplate_removal_run1"
+}

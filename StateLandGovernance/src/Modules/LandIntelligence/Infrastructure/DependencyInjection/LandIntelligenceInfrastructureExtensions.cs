@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StateLandGovernance.LandIntelligence.Application.Configuration;
+using StateLandGovernance.LandIntelligence.Application.GisAdministrativeVerification;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
 using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j.Configuration;
@@ -17,11 +19,16 @@ public static class LandIntelligenceInfrastructureExtensions
 {
     public static IServiceCollection AddLandIntelligenceInfrastructure(
         this IServiceCollection services,
-        IConfiguration _)
+        IConfiguration configuration)
     {
         var connectionString = Environment.GetEnvironmentVariable("LAND_INTELLIGENCE_CONNECTION")
             ?? throw new InvalidOperationException(
                 "Set LAND_INTELLIGENCE_CONNECTION in .env at the repository root.");
+
+        services.Configure<GisEnrichmentCoverageOptions>(
+            configuration.GetSection(GisEnrichmentCoverageOptions.SectionName));
+        services.Configure<ExperimentalColomboMlOptions>(
+            configuration.GetSection(ExperimentalColomboMlOptions.SectionName));
 
         services.AddLandIntelligencePostGis(connectionString);
 
@@ -31,11 +38,15 @@ public static class LandIntelligenceInfrastructureExtensions
         services.AddScoped<ISpatialAnalysisService, PostGisSpatialAnalysisService>();
         services.AddLandIntelligenceRecommendations();
 
+        services.AddScoped<IGisGraphSyncRequestBuilder, GisGraphSyncRequestBuilder>();
+        services.AddScoped<IPostGisKnowledgeGraphBaselineProvider, PostGisKnowledgeGraphBaselineProvider>();
+
         if (Neo4jSettings.IsConfigured())
         {
             var neo4jSettings = Neo4jSettings.FromEnvironment();
             services.AddLandIntelligenceNeo4j(neo4jSettings);
-            services.AddScoped<IKnowledgeGraphService, Neo4jKnowledgeGraphService>();
+            services.AddScoped<INeo4jKnowledgeGraphService, Neo4jKnowledgeGraphService>();
+            services.AddScoped<IKnowledgeGraphService, ResilientKnowledgeGraphService>();
         }
         else
         {
@@ -44,6 +55,9 @@ public static class LandIntelligenceInfrastructureExtensions
 
         services.AddScoped<ILandParcelGraphSynchronizer, LandParcelGraphSynchronizer>();
         services.AddScoped<IGisReferenceDataImportService, GisReferenceDataImportService>();
+        services.AddScoped<IOsmMotorRoadImportService, OsmMotorRoadImportService>();
+        services.AddScoped<ColomboExperimentGisImportService>();
+        services.AddScoped<IExperimentalColomboMlFeatureAdapter, ExperimentalColomboMlFeatureAdapter>();
         services.AddScoped<IGisReferenceDataValidationService, GisReferenceDataValidationService>();
         services.AddScoped<IAdministrativeLocationVerificationService, AdministrativeLocationVerificationService>();
         services.AddScoped<IRoadAccessibilityEnrichmentService, RoadAccessibilityEnrichmentService>();

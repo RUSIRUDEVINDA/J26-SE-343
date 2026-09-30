@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.Criteria;
@@ -20,6 +21,24 @@ public sealed class LandIntelligenceDependencyInjectionTests
                 "LAND_INTELLIGENCE_CONNECTION",
                 "Host=localhost;Port=5432;Database=land_intelligence_test;Username=test;Password=test");
         }
+    }
+
+    [Fact]
+    public async Task Knowledge_graph_services_resolve_without_circular_dependency()
+    {
+        EnsureLandIntelligenceConnectionConfigured();
+
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddLandIntelligenceInfrastructure(new ConfigurationBuilder().Build());
+
+        await using var provider = services.BuildServiceProvider(validateScopes: true);
+        await using var scope = provider.CreateAsyncScope();
+
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<IGisGraphSyncRequestBuilder>());
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<IPostGisKnowledgeGraphBaselineProvider>());
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<ILandParcelGisKnowledgeGraphSyncService>());
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<IKnowledgeGraphService>());
     }
 
     [Fact]

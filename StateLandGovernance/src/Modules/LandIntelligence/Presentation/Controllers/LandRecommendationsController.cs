@@ -2,12 +2,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Queries;
+using StateLandGovernance.LandIntelligence.Presentation.Mappings;
 using StateLandGovernance.LandIntelligence.Presentation.Models;
+using StateLandGovernance.LandIntelligence.Presentation.Models.Responses;
 
 namespace StateLandGovernance.LandIntelligence.Presentation.Controllers;
 
+/// <summary>
+/// Read-only recommendation query endpoints for external platform modules.
+/// </summary>
 [ApiController]
-[ApiExplorerSettings(GroupName = "land-intelligence-v1")]
+[ApiExplorerSettings(GroupName = LandIntelligenceApiGroups.External)]
 [Route("api/v1/land/recommendations")]
 [Produces("application/json")]
 public sealed class LandRecommendationsController : ControllerBase
@@ -24,13 +29,13 @@ public sealed class LandRecommendationsController : ControllerBase
     }
 
     /// <summary>
-    /// Generates explainable land recommendations for candidate parcels.
+    /// Evaluates explainable land recommendations for candidate parcels without mutating parcel data.
     /// </summary>
     [HttpPost]
-    [ProducesResponseType(typeof(LandRecommendationSearchResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(LandRecommendationSearchResultsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<LandRecommendationSearchResponse>> CreateRecommendationsAsync(
+    public async Task<ActionResult<LandRecommendationSearchResultsResponse>> EvaluateRecommendationsAsync(
         [FromBody] LandRecommendationSearchRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -38,17 +43,17 @@ public sealed class LandRecommendationsController : ControllerBase
             new SearchLandRecommendationsQuery(request),
             cancellationToken);
 
-        return Ok(response);
+        return Ok(LandIntelligenceApiResponseMapper.ToResponse(response));
     }
 
     /// <summary>
     /// Gets a persisted land recommendation by identifier.
     /// </summary>
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(LandRecommendationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(LandRecommendationResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<LandRecommendationDto>> GetRecommendationByIdAsync(
+    public async Task<ActionResult<LandRecommendationResponse>> GetRecommendationByIdAsync(
         Guid id,
         CancellationToken cancellationToken = default)
     {
@@ -56,6 +61,6 @@ public sealed class LandRecommendationsController : ControllerBase
             new GetLandRecommendationByIdQuery(id),
             cancellationToken);
 
-        return Ok(recommendation);
+        return Ok(LandIntelligenceApiResponseMapper.ToResponse(recommendation));
     }
 }

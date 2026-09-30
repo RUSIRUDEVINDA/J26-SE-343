@@ -1,6 +1,8 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using NetTopologySuite.Geometries;
+using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.GisAdministrativeVerification;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
@@ -15,14 +17,17 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisRef
 
 public sealed class SoilGroupEnrichmentService : ISoilGroupEnrichmentService
 {
-    private const int DistrictBoundaryType = 2;
     private const string DerivedSoilGroupSource = "GIS soil group spatial intersection query";
 
     private readonly LandIntelligenceDbContext _dbContext;
+    private readonly GisEnrichmentCoverageOptions _coverageOptions;
 
-    public SoilGroupEnrichmentService(LandIntelligenceDbContext dbContext)
+    public SoilGroupEnrichmentService(
+        LandIntelligenceDbContext dbContext,
+        IOptions<GisEnrichmentCoverageOptions> coverageOptions)
     {
         _dbContext = dbContext;
+        _coverageOptions = coverageOptions.Value;
     }
 
     public async Task<SoilGroupEnrichmentResult> EnrichAsync(
@@ -66,8 +71,9 @@ public sealed class SoilGroupEnrichmentService : ISoilGroupEnrichmentService
         {
             evidence.Add("Parcel geometry unavailable: no boundary or centroid could be used for soil enrichment.");
 
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel,
+                SoilGroupEnrichmentStatus.Unavailable,
                 evidence,
                 geometryBasis: null,
                 storedSoilProvenanceDto,
@@ -80,18 +86,19 @@ public sealed class SoilGroupEnrichmentService : ISoilGroupEnrichmentService
                 ? "Soil enrichment geometry basis: parcel boundary (preferred)."
                 : "Soil enrichment geometry basis: parcel centroid (boundary unavailable).");
 
-        var withinPilotCoverage = await IsWithinHambantotaPilotCoverageAsync(
-            parcel.Id,
+        var coverage = await GisEnrichmentCoverageHelper.AssessAsync(
+            _dbContext,
+            parcelGeometry,
             geometryBasis,
+            _coverageOptions,
             cancellationToken);
+        evidence.Add(coverage.EvidenceMessage);
 
-        if (!withinPilotCoverage)
+        if (!coverage.IsInsideCoverage)
         {
-            evidence.Add(
-                "Parcel is outside the imported Hambantota GIS pilot coverage; soil group enrichment was not calculated.");
-
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel,
+                SoilGroupEnrichmentStatus.OutsideCoverage,
                 evidence,
                 geometryBasis,
                 storedSoilProvenanceDto,
@@ -130,8 +137,9 @@ public sealed class SoilGroupEnrichmentService : ISoilGroupEnrichmentService
         {
             evidence.Add("No GIS soil group polygon covers the parcel geometry within the imported pilot dataset.");
 
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel,
+                SoilGroupEnrichmentStatus.Unavailable,
                 evidence,
                 geometryBasis,
                 storedSoilProvenanceDto,
@@ -282,39 +290,9 @@ public sealed class SoilGroupEnrichmentService : ISoilGroupEnrichmentService
             OverlapPercentage: 0);
     }
 
-    private async Task<bool> IsWithinHambantotaPilotCoverageAsync(
-        Guid parcelId,
-        AdministrativeLocationGeometryBasis geometryBasis,
-        CancellationToken cancellationToken)
-    {
-        var spatialPredicate = geometryBasis == AdministrativeLocationGeometryBasis.Centroid
-            ? "ST_Covers(b.\"Boundary\", p.\"Centroid\")"
-            : "ST_Intersects(b.\"Boundary\", ST_MakeValid(p.\"Boundary\"))";
-
-        var sql = $"""
-                   SELECT EXISTS (
-                       SELECT 1
-                       FROM {QualifiedAdministrativeBoundariesTable()} b
-                       INNER JOIN {QualifiedLandParcelsTable()} p
-                           ON p."Id" = @parcelId
-                       WHERE b."Name" = @districtName
-                         AND b."BoundaryType" = @districtType
-                         AND {spatialPredicate}
-                   )
-                   """;
-
-        var result = await ExecuteScalarAsync(
-            sql,
-            cancellationToken,
-            ("parcelId", parcelId),
-            ("districtName", GisReferenceDataPaths.HambantotaDistrictName),
-            ("districtType", DistrictBoundaryType));
-
-        return result is bool withinCoverage && withinCoverage;
-    }
-
-    private static SoilGroupEnrichmentResult BuildUnavailableResult(
+    private static SoilGroupEnrichmentResult BuildResult(
         ParcelSoilEnrichmentSnapshot parcel,
+        SoilGroupEnrichmentStatus status,
         IReadOnlyList<string> evidence,
         AdministrativeLocationGeometryBasis? geometryBasis,
         AttributeProvenanceDto? storedSoilProvenanceDto,
@@ -329,7 +307,7 @@ public sealed class SoilGroupEnrichmentService : ISoilGroupEnrichmentService
             PrimarySoilGroupId = null,
             OverlapPercentage = null,
             GeometryBasis = geometryBasis,
-            Status = SoilGroupEnrichmentStatus.Unavailable,
+            Status = status,
             Evidence = evidence,
             Overlaps = [],
             SourceName = GisReferenceDataPaths.SourceName,

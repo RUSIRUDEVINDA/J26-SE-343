@@ -26,17 +26,17 @@ public sealed record DetectConflictsCommand(
 public sealed class DetectConflictsCommandHandler
 {
     private readonly IGovernanceConflictEngine _conflictEngine;
-    private readonly IGovernanceAuditRepository _auditRepository;
+    private readonly IGovernanceEvaluationStore _evaluationStore;
     private readonly TimeProvider _timeProvider;
 
     public DetectConflictsCommandHandler(
         IGovernanceConflictEngine conflictEngine,
-        IGovernanceAuditRepository auditRepository,
+        IGovernanceEvaluationStore evaluationStore,
         TimeProvider timeProvider)
     {
-        _conflictEngine = conflictEngine;
-        _auditRepository = auditRepository;
-        _timeProvider = timeProvider;
+        _conflictEngine = conflictEngine ?? throw new ArgumentNullException(nameof(conflictEngine));
+        _evaluationStore = evaluationStore ?? throw new ArgumentNullException(nameof(evaluationStore));
+        _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
     }
 
     public async Task<ConflictDetectionResultDto> HandleAsync(DetectConflictsCommand command, CancellationToken cancellationToken = default)
@@ -116,7 +116,7 @@ public sealed class DetectConflictsCommandHandler
             auditDetails,
             evaluationTimestamp);
 
-        await _auditRepository.AddAsync(auditRecord, cancellationToken);
+        await _evaluationStore.StoreConflictEvaluationAsync(auditRecord, detectedConflicts, command.ActionName, snapshots.Count, cancellationToken);
 
         // 4. Map domain results back to DTOs
         var conflictDtos = detectedConflicts.Select(c => new DetectedConflictDto(

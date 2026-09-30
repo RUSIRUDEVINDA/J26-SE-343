@@ -36,6 +36,24 @@ internal sealed class NoOpLandParcelGraphSynchronizer : ILandParcelGraphSynchron
         Task.CompletedTask;
 }
 
+internal sealed class NoOpLandParcelGisEnrichmentPersistenceService : ILandParcelGisEnrichmentPersistenceService
+{
+    public int InvalidateCallCount { get; private set; }
+
+    public Task PersistAsync(
+        LandParcelGisEnrichmentResult result,
+        CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
+
+    public Task InvalidateLocationDependentEvidenceAsync(
+        Guid parcelId,
+        CancellationToken cancellationToken = default)
+    {
+        InvalidateCallCount++;
+        return Task.CompletedTask;
+    }
+}
+
 internal sealed class FailingLandParcelRepository : ILandParcelRepository
 {
     private readonly InMemoryLandParcelRepository _inner = new();

@@ -3,7 +3,10 @@ namespace StateLandGovernance.LandIntelligence.Application.DTOs;
 public enum EnvironmentalSpatialConstraintEnrichmentStatus
 {
     Available = 1,
-    Unavailable = 2
+    /// <summary>Inside coverage but assessment could not be completed from source layers.</summary>
+    Unavailable = 2,
+    /// <summary>Parcel is outside configured GIS enrichment district coverage.</summary>
+    OutsideCoverage = 3
 }
 
 public enum ErosionDataStatus

@@ -1,0 +1,4 @@
+[CRIB REPORT]
+Credit Risk Grade: A
+Active Loan Obligations: 29882
+Default History Indicator: Yes

@@ -28,16 +28,16 @@ public sealed class EvaluateGovernanceRiskCommandHandler
     private const string RiskDisclaimer = "This governance risk assessment is an automated decision-support indicator for human review and does not constitute a finding of legal wrongdoing or legal fraud.";
 
     private readonly IGovernanceRiskEngine _riskEngine;
-    private readonly IGovernanceAuditRepository _auditRepository;
+    private readonly IGovernanceEvaluationStore _evaluationStore;
     private readonly TimeProvider _timeProvider;
 
     public EvaluateGovernanceRiskCommandHandler(
         IGovernanceRiskEngine riskEngine,
-        IGovernanceAuditRepository auditRepository,
+        IGovernanceEvaluationStore evaluationStore,
         TimeProvider timeProvider)
     {
         _riskEngine = riskEngine ?? throw new ArgumentNullException(nameof(riskEngine));
-        _auditRepository = auditRepository ?? throw new ArgumentNullException(nameof(auditRepository));
+        _evaluationStore = evaluationStore ?? throw new ArgumentNullException(nameof(evaluationStore));
         _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
     }
 
@@ -80,7 +80,7 @@ public sealed class EvaluateGovernanceRiskCommandHandler
                                 (domainInput.InstitutionalValidations?.Count ?? 0);
 
         var auditStatus = domainResult.RequiresHumanReview ? "ElevatedRiskDetected" : "LowRisk";
-        var auditDetails = $"Evaluated subject '{domainResult.SubjectId}'. Evaluated {totalObservations} observations. Triggered indicators: {domainResult.TriggeredIndicators.Count}. Score: {domainResult.OverallRiskScore} ({domainResult.Severity}).";
+        var auditDetails = $"Evaluated risk across {totalObservations} observations. Triggered indicators: {domainResult.TriggeredIndicators.Count}. Score: {domainResult.OverallRiskScore} ({domainResult.Severity}).";
 
         var auditRecord = GovernanceAuditRecord.Create(
             EngineType.RiskAndCorruption,
@@ -89,7 +89,7 @@ public sealed class EvaluateGovernanceRiskCommandHandler
             auditDetails,
             utcTimestamp);
 
-        await _auditRepository.AddAsync(auditRecord, cancellationToken);
+        await _evaluationStore.StoreRiskEvaluationAsync(auditRecord, domainResult, cancellationToken);
 
         // 4. Map Domain Result to Response DTO
         var indicatorDtos = domainResult.TriggeredIndicators.Select(i => new GovernanceRiskIndicatorDto(

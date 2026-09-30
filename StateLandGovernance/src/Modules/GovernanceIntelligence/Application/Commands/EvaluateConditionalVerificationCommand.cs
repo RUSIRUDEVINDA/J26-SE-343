@@ -20,16 +20,16 @@ public sealed record EvaluateConditionalVerificationCommand(
 public sealed class EvaluateConditionalVerificationCommandHandler
 {
     private readonly IConditionalGovernanceVerificationEngine _engine;
-    private readonly IGovernanceAuditRepository _auditRepository;
+    private readonly IGovernanceEvaluationStore _evaluationStore;
     private readonly TimeProvider _timeProvider;
 
     public EvaluateConditionalVerificationCommandHandler(
         IConditionalGovernanceVerificationEngine engine,
-        IGovernanceAuditRepository auditRepository,
+        IGovernanceEvaluationStore evaluationStore,
         TimeProvider? timeProvider = null)
     {
         _engine = engine ?? throw new ArgumentNullException(nameof(engine));
-        _auditRepository = auditRepository ?? throw new ArgumentNullException(nameof(auditRepository));
+        _evaluationStore = evaluationStore ?? throw new ArgumentNullException(nameof(evaluationStore));
         _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
@@ -119,7 +119,7 @@ public sealed class EvaluateConditionalVerificationCommandHandler
             timestamp: evaluationTimestamp
         );
 
-        await _auditRepository.AddAsync(auditRecord, cancellationToken);
+        await _evaluationStore.StoreConditionalVerificationEvaluationAsync(auditRecord, domainResult, cancellationToken);
 
         var statusDtos = domainResult.ConditionStatuses
             .Select(s => new ConditionVerificationStatusDto(

@@ -78,4 +78,31 @@ internal static class RecommendationExplanationBuilder
 
         return explanation;
     }
+
+    public static string BuildHardConstraintRejection(
+        string cadastralNumber,
+        LandUseType requiredPurpose,
+        string hardConstraintReason,
+        IReadOnlyList<RestrictionSummaryDto> restrictions)
+    {
+        var restrictionSummaries = restrictions
+            .Where(r => r.Severity >= RestrictionSeverity.Medium)
+            .Select(r => r.Description)
+            .Distinct()
+            .Take(3)
+            .ToList();
+
+        var explanation =
+            $"Parcel {cadastralNumber} is rejected as unsuitable for {requiredPurpose} " +
+            $"due to hard legal or environmental restrictions (score 0/100). {hardConstraintReason}";
+
+        if (restrictionSummaries.Count > 0)
+        {
+            explanation += " Restrictions: " + string.Join("; ", restrictionSummaries) + ".";
+        }
+
+        explanation += " The ML suitability assessment was not applied and cannot upgrade this parcel.";
+
+        return explanation;
+    }
 }

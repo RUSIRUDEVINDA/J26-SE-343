@@ -8,7 +8,7 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j.Models;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
 
-public sealed class Neo4jKnowledgeGraphService : IKnowledgeGraphService, IAsyncDisposable
+public sealed class Neo4jKnowledgeGraphService : INeo4jKnowledgeGraphService, IAsyncDisposable
 {
     private readonly IDriver _driver;
 

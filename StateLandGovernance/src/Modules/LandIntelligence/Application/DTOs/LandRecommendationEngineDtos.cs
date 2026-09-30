@@ -84,7 +84,9 @@ public sealed record LandParcelRecommendationResult(
     IReadOnlyList<CriterionEvaluationDto> FailedCriteria,
     IReadOnlyList<RestrictionSummaryDto> Restrictions,
     IReadOnlyList<RecommendationEvidenceDto> Evidence,
-    string Explanation);
+    string Explanation,
+    bool HardConstraintRejected = false,
+    string? HardConstraintReason = null);
 
 public sealed record LandRecommendationSearchResponse(
     LandUseType RequiredPurpose,

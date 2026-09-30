@@ -1,3 +1,4 @@
+using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
@@ -11,17 +12,23 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
     private readonly ISpatialAnalysisService _spatialAnalysisService;
     private readonly IEnumerable<IRecommendationCriterionEvaluator> _evaluators;
     private readonly IMlSuitabilityClient _mlSuitabilityClient;
+    private readonly IExperimentalColomboMlEvidenceService _experimentalColomboMlEvidence;
+    private readonly ExperimentalColomboMlOptions _experimentalOptions;
 
     public RuleBasedLandRecommendationEngine(
         ILandParcelRepository landParcelRepository,
         ISpatialAnalysisService spatialAnalysisService,
         IEnumerable<IRecommendationCriterionEvaluator> evaluators,
-        IMlSuitabilityClient mlSuitabilityClient)
+        IMlSuitabilityClient mlSuitabilityClient,
+        IExperimentalColomboMlEvidenceService experimentalColomboMlEvidence,
+        Microsoft.Extensions.Options.IOptions<ExperimentalColomboMlOptions> experimentalOptions)
     {
         _landParcelRepository = landParcelRepository;
         _spatialAnalysisService = spatialAnalysisService;
         _evaluators = evaluators.OrderBy(e => e.Order).ToList();
         _mlSuitabilityClient = mlSuitabilityClient;
+        _experimentalColomboMlEvidence = experimentalColomboMlEvidence;
+        _experimentalOptions = experimentalOptions.Value;
     }
 
     public async Task<LandRecommendationSearchResponse> RecommendAsync(
@@ -37,18 +44,61 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             var matching = criterionResults.Where(c => c.IsMet).ToList();
             var failed = criterionResults.Where(c => !c.IsMet).ToList();
             var restrictions = ParcelRestrictionCollector.Collect(parcel);
-            var score = RecommendationScoreCalculator.Calculate(criterionResults);
+            var hardConstraint = HardConstraintEvaluator.Evaluate(parcel, request);
+            var score = hardConstraint.IsViolated
+                ? 0m
+                : RecommendationScoreCalculator.Calculate(criterionResults);
             var gisSupplementarySummaries = GisDerivedRecommendationEvidenceCollector.CollectSupplementarySummaries(parcel);
-            var mlPrediction = await _mlSuitabilityClient.PredictAsync(parcel, request.RequiredPurpose, cancellationToken);
-            var evidence = BuildEvidence(criterionResults, restrictions, parcel, mlPrediction);
-            var explanation = RecommendationExplanationBuilder.Build(
-                parcel.Identifier.CadastralNumber,
-                request.RequiredPurpose,
-                score,
-                matching,
-                failed,
+
+            MlSuitabilityPrediction? mlPrediction = null;
+            ExperimentalColomboMlEvidenceResult? experimentalEvidence = null;
+            if (!hardConstraint.IsViolated)
+            {
+                if (_experimentalOptions.Enabled)
+                {
+                    experimentalEvidence = await _experimentalColomboMlEvidence.CollectAsync(
+                        parcel,
+                        request.RequiredPurpose,
+                        cancellationToken);
+
+                    if (!_experimentalOptions.SuppressProductionMlWhenEnabled)
+                    {
+                        mlPrediction = await _mlSuitabilityClient.PredictAsync(
+                            parcel,
+                            request.RequiredPurpose,
+                            cancellationToken);
+                    }
+                }
+                else
+                {
+                    mlPrediction = await _mlSuitabilityClient.PredictAsync(
+                        parcel,
+                        request.RequiredPurpose,
+                        cancellationToken);
+                }
+            }
+
+            var evidence = BuildEvidence(
+                criterionResults,
                 restrictions,
-                gisSupplementarySummaries);
+                parcel,
+                hardConstraint,
+                mlPrediction,
+                experimentalEvidence);
+            var explanation = hardConstraint.IsViolated
+                ? RecommendationExplanationBuilder.BuildHardConstraintRejection(
+                    parcel.Identifier.CadastralNumber,
+                    request.RequiredPurpose,
+                    hardConstraint.Summary,
+                    restrictions)
+                : RecommendationExplanationBuilder.Build(
+                    parcel.Identifier.CadastralNumber,
+                    request.RequiredPurpose,
+                    score,
+                    matching,
+                    failed,
+                    restrictions,
+                    gisSupplementarySummaries);
 
             evaluations.Add(new LandParcelRecommendationResult(
                 parcel.Id,
@@ -59,7 +109,9 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 failed,
                 restrictions,
                 evidence,
-                explanation));
+                explanation,
+                hardConstraint.IsViolated,
+                hardConstraint.IsViolated ? hardConstraint.Summary : null));
         }
 
         var ranked = evaluations
@@ -173,7 +225,9 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         IReadOnlyList<CriterionEvaluationDto> evaluations,
         IReadOnlyList<RestrictionSummaryDto> restrictions,
         LandParcel parcel,
-        MlSuitabilityPrediction? mlPrediction)
+        HardConstraintEvaluation hardConstraint,
+        MlSuitabilityPrediction? mlPrediction,
+        ExperimentalColomboMlEvidenceResult? experimentalEvidence)
     {
         var evidence = evaluations
             .Select(e => new RecommendationEvidenceDto(
@@ -195,18 +249,35 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
 
         evidence.AddRange(GisDerivedRecommendationEvidenceCollector.CollectEvidence(parcel));
 
-        if (mlPrediction is not null)
+        if (hardConstraint.IsViolated)
         {
-            var confidence = mlPrediction.Probabilities.TryGetValue(mlPrediction.PredictedLabel, out var p)
-                ? p
-                : 0m;
-
             evidence.Add(new RecommendationEvidenceDto(
-                Source: "RandomForestSuitabilityModel",
-                Description: $"ML model predicts '{mlPrediction.PredictedLabel}' suitability " +
-                             $"({confidence:P0} confidence). This is supplementary evidence and does " +
-                             "not override the rule-based hard constraints above.",
-                RelatedCriterionName: "MlSuitabilityPrediction"));
+                Source: "HardConstraintEvaluator",
+                Description: "Parcel rejected due to hard legal or environmental restrictions: "
+                             + hardConstraint.Summary
+                             + " ML suitability prediction was not applied.",
+                RelatedCriterionName: "HardConstraintRejection"));
+        }
+        else
+        {
+            if (mlPrediction is not null)
+            {
+                var confidence = mlPrediction.Probabilities.TryGetValue(mlPrediction.PredictedLabel, out var p)
+                    ? p
+                    : 0m;
+
+                evidence.Add(new RecommendationEvidenceDto(
+                    Source: "RandomForestSuitabilityModel",
+                    Description: $"ML model predicts '{mlPrediction.PredictedLabel}' suitability " +
+                                 $"({confidence:P0} confidence). This is supplementary evidence and does " +
+                                 "not override the rule-based hard constraints above.",
+                    RelatedCriterionName: "MlSuitabilityPrediction"));
+            }
+
+            if (experimentalEvidence is { Attempted: true })
+            {
+                evidence.AddRange(experimentalEvidence.Evidence);
+            }
         }
 
         return evidence;
