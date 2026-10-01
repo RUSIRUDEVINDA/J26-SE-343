@@ -73,6 +73,73 @@ public static class DependencyInjection
         services.AddScoped<IRequestValidator<FailDocumentAnalysisCommand>, FailDocumentAnalysisCommandValidator>();
         services.AddScoped<FailDocumentAnalysisCommandValidator>();
 
+        // 4A.4 Handlers & Validators (Human Fact Verification, Snapshot, Dual Completeness)
+        services.AddScoped<ICommandHandler<VerifyCandidateFactCommand, HumanFactVerificationDto>, VerifyCandidateFactCommandHandler>();
+        services.AddScoped<VerifyCandidateFactCommandHandler>();
+
+        services.AddScoped<ICommandHandler<CreateVerifiedFactSnapshotCommand, VerifiedFactSnapshotDto>, CreateVerifiedFactSnapshotCommandHandler>();
+        services.AddScoped<CreateVerifiedFactSnapshotCommandHandler>();
+
+        services.AddScoped<ICommandHandler<LinkVerifiedFactSnapshotToCaseCommand, LeaseCaseDto>, LinkVerifiedFactSnapshotToCaseCommandHandler>();
+        services.AddScoped<LinkVerifiedFactSnapshotToCaseCommandHandler>();
+
+        services.AddScoped<ICommandHandler<AssessDocumentCompletenessCommand, DocumentCompletenessAssessmentDto>, AssessDocumentCompletenessCommandHandler>();
+        services.AddScoped<AssessDocumentCompletenessCommandHandler>();
+
+        services.AddScoped<ICommandHandler<ReviewDocumentClassificationCommand, DocumentCompletenessAssessmentDto>, ReviewDocumentClassificationCommandHandler>();
+        services.AddScoped<ReviewDocumentClassificationCommandHandler>();
+
+        services.AddScoped<ICommandHandler<AssessProposalContentCommand, ProposalContentAssessmentDto>, AssessProposalContentCommandHandler>();
+        services.AddScoped<AssessProposalContentCommandHandler>();
+
+        services.AddScoped<ICommandHandler<ConfirmProposalContentAssessmentCommand, ProposalContentAssessmentDto>, ConfirmProposalContentAssessmentCommandHandler>();
+        services.AddScoped<ConfirmProposalContentAssessmentCommandHandler>();
+
+        services.AddScoped<ICommandHandler<CorrectProposalContentAssessmentCommand, ProposalContentAssessmentDto>, CorrectProposalContentAssessmentCommandHandler>();
+        services.AddScoped<CorrectProposalContentAssessmentCommandHandler>();
+
+        services.AddScoped<IQueryHandler<GetVerifiedFactSnapshotByIdQuery, VerifiedFactSnapshotDto?>, GetVerifiedFactSnapshotByIdQueryHandler>();
+        services.AddScoped<GetVerifiedFactSnapshotByIdQueryHandler>();
+
+        services.AddScoped<IQueryHandler<GetCurrentVerifiedFactsForCaseQuery, VerifiedFactSnapshotDto?>, GetCurrentVerifiedFactsForCaseQueryHandler>();
+        services.AddScoped<GetCurrentVerifiedFactsForCaseQueryHandler>();
+
+        services.AddScoped<IQueryHandler<GetDocumentCompletenessAssessmentByIdQuery, DocumentCompletenessAssessmentDto?> , GetDocumentCompletenessAssessmentByIdQueryHandler>();
+        services.AddScoped<GetDocumentCompletenessAssessmentByIdQueryHandler>();
+
+        services.AddScoped<IQueryHandler<GetLatestDocumentCompletenessAssessmentByCaseIdQuery, DocumentCompletenessAssessmentDto?>, GetLatestDocumentCompletenessAssessmentByCaseIdQueryHandler>();
+        services.AddScoped<GetLatestDocumentCompletenessAssessmentByCaseIdQueryHandler>();
+
+        services.AddScoped<IQueryHandler<GetProposalContentAssessmentQuery, ProposalContentAssessmentDto?>, GetProposalContentAssessmentQueryHandler>();
+        services.AddScoped<GetProposalContentAssessmentQueryHandler>();
+
+        services.AddScoped<IQueryHandler<GetCurrentProposalContentAssessmentQuery, ProposalContentAssessmentDto?>, GetCurrentProposalContentAssessmentQueryHandler>();
+        services.AddScoped<GetCurrentProposalContentAssessmentQueryHandler>();
+
+        services.AddScoped<IRequestValidator<VerifyCandidateFactCommand>, VerifyCandidateFactCommandValidator>();
+        services.AddScoped<VerifyCandidateFactCommandValidator>();
+
+        services.AddScoped<IRequestValidator<CreateVerifiedFactSnapshotCommand>, CreateVerifiedFactSnapshotCommandValidator>();
+        services.AddScoped<CreateVerifiedFactSnapshotCommandValidator>();
+
+        services.AddScoped<IRequestValidator<LinkVerifiedFactSnapshotToCaseCommand>, LinkVerifiedFactSnapshotToCaseCommandValidator>();
+        services.AddScoped<LinkVerifiedFactSnapshotToCaseCommandValidator>();
+
+        services.AddScoped<IRequestValidator<AssessDocumentCompletenessCommand>, AssessDocumentCompletenessCommandValidator>();
+        services.AddScoped<AssessDocumentCompletenessCommandValidator>();
+
+        services.AddScoped<IRequestValidator<ReviewDocumentClassificationCommand>, ReviewDocumentClassificationCommandValidator>();
+        services.AddScoped<ReviewDocumentClassificationCommandValidator>();
+
+        services.AddScoped<IRequestValidator<AssessProposalContentCommand>, AssessProposalContentCommandValidator>();
+        services.AddScoped<AssessProposalContentCommandValidator>();
+
+        services.AddScoped<IRequestValidator<ConfirmProposalContentAssessmentCommand>, ConfirmProposalContentAssessmentCommandValidator>();
+        services.AddScoped<ConfirmProposalContentAssessmentCommandValidator>();
+
+        services.AddScoped<IRequestValidator<CorrectProposalContentAssessmentCommand>, CorrectProposalContentAssessmentCommandValidator>();
+        services.AddScoped<CorrectProposalContentAssessmentCommandValidator>();
+
         return services;
     }
 }

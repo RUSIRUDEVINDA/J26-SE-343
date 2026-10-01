@@ -22,5 +22,7 @@ public interface IDocumentAnalysisRepository
 {
     Task<DocumentAnalysis?> GetByIdAsync(DocumentAnalysisId id, CancellationToken cancellationToken = default);
     Task<DocumentAnalysis?> GetByDocumentVersionIdAsync(DocumentVersionId documentVersionId, CancellationToken cancellationToken = default);
+    Task<VerifiedFactSnapshot?> GetSnapshotByIdAsync(VerifiedFactSnapshotId snapshotId, CancellationToken cancellationToken = default)
+        => Task.FromResult<VerifiedFactSnapshot?>(null);
     Task AddAsync(DocumentAnalysis documentAnalysis, CancellationToken cancellationToken = default);
 }

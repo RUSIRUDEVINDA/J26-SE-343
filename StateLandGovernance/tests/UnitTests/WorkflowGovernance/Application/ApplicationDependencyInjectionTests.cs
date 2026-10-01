@@ -220,5 +220,123 @@ public class ApplicationDependencyInjectionTests
             d.ServiceType == typeof(FailDocumentAnalysisCommandValidator) &&
             d.ImplementationType == typeof(FailDocumentAnalysisCommandValidator) &&
             d.Lifetime == ServiceLifetime.Scoped);
+
+        // Assert: 4A.4 Command Handlers
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(ICommandHandler<VerifyCandidateFactCommand, HumanFactVerificationDto>) &&
+            d.ImplementationType == typeof(VerifyCandidateFactCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(ICommandHandler<CreateVerifiedFactSnapshotCommand, VerifiedFactSnapshotDto>) &&
+            d.ImplementationType == typeof(CreateVerifiedFactSnapshotCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(ICommandHandler<LinkVerifiedFactSnapshotToCaseCommand, LeaseCaseDto>) &&
+            d.ImplementationType == typeof(LinkVerifiedFactSnapshotToCaseCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(ICommandHandler<AssessDocumentCompletenessCommand, DocumentCompletenessAssessmentDto>) &&
+            d.ImplementationType == typeof(AssessDocumentCompletenessCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(ICommandHandler<ReviewDocumentClassificationCommand, DocumentCompletenessAssessmentDto>) &&
+            d.ImplementationType == typeof(ReviewDocumentClassificationCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(ICommandHandler<AssessProposalContentCommand, ProposalContentAssessmentDto>) &&
+            d.ImplementationType == typeof(AssessProposalContentCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(AssessProposalContentCommandHandler) &&
+            d.ImplementationType == typeof(AssessProposalContentCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(ICommandHandler<ConfirmProposalContentAssessmentCommand, ProposalContentAssessmentDto>) &&
+            d.ImplementationType == typeof(ConfirmProposalContentAssessmentCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(ICommandHandler<CorrectProposalContentAssessmentCommand, ProposalContentAssessmentDto>) &&
+            d.ImplementationType == typeof(CorrectProposalContentAssessmentCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        // Assert: 4A.4 Query Handlers
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IQueryHandler<GetVerifiedFactSnapshotByIdQuery, VerifiedFactSnapshotDto?>) &&
+            d.ImplementationType == typeof(GetVerifiedFactSnapshotByIdQueryHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IQueryHandler<GetCurrentVerifiedFactsForCaseQuery, VerifiedFactSnapshotDto?>) &&
+            d.ImplementationType == typeof(GetCurrentVerifiedFactsForCaseQueryHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IQueryHandler<GetDocumentCompletenessAssessmentByIdQuery, DocumentCompletenessAssessmentDto?>) &&
+            d.ImplementationType == typeof(GetDocumentCompletenessAssessmentByIdQueryHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IQueryHandler<GetLatestDocumentCompletenessAssessmentByCaseIdQuery, DocumentCompletenessAssessmentDto?>) &&
+            d.ImplementationType == typeof(GetLatestDocumentCompletenessAssessmentByCaseIdQueryHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IQueryHandler<GetProposalContentAssessmentQuery, ProposalContentAssessmentDto?>) &&
+            d.ImplementationType == typeof(GetProposalContentAssessmentQueryHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IQueryHandler<GetCurrentProposalContentAssessmentQuery, ProposalContentAssessmentDto?>) &&
+            d.ImplementationType == typeof(GetCurrentProposalContentAssessmentQueryHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        // Assert: 4A.4 Validators
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IRequestValidator<VerifyCandidateFactCommand>) &&
+            d.ImplementationType == typeof(VerifyCandidateFactCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IRequestValidator<CreateVerifiedFactSnapshotCommand>) &&
+            d.ImplementationType == typeof(CreateVerifiedFactSnapshotCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IRequestValidator<LinkVerifiedFactSnapshotToCaseCommand>) &&
+            d.ImplementationType == typeof(LinkVerifiedFactSnapshotToCaseCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IRequestValidator<AssessDocumentCompletenessCommand>) &&
+            d.ImplementationType == typeof(AssessDocumentCompletenessCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IRequestValidator<ReviewDocumentClassificationCommand>) &&
+            d.ImplementationType == typeof(ReviewDocumentClassificationCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IRequestValidator<AssessProposalContentCommand>) &&
+            d.ImplementationType == typeof(AssessProposalContentCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IRequestValidator<ConfirmProposalContentAssessmentCommand>) &&
+            d.ImplementationType == typeof(ConfirmProposalContentAssessmentCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IRequestValidator<CorrectProposalContentAssessmentCommand>) &&
+            d.ImplementationType == typeof(CorrectProposalContentAssessmentCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
     }
 }

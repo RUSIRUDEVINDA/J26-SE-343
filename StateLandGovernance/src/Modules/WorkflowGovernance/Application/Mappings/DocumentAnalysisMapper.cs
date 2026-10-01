@@ -21,6 +21,14 @@ public static class DocumentAnalysisMapper
 
         var activeRun = runs.LastOrDefault();
 
+        var verifications = analysis.Verifications
+            .Select(FactVerificationMapper.ToDto)
+            .ToList();
+
+        var snapshots = analysis.VerifiedFactSnapshots
+            .Select(FactVerificationMapper.ToDto)
+            .ToList();
+
         return new DocumentAnalysisDto(
             Id: analysis.Id.Value,
             GovernedDocumentId: analysis.GovernedDocumentId.Value,
@@ -33,7 +41,9 @@ public static class DocumentAnalysisMapper
             Revision: analysis.Revision,
             RunCount: analysis.Runs.Count,
             ActiveRun: activeRun,
-            Runs: runs
+            Runs: runs,
+            Verifications: verifications,
+            VerifiedFactSnapshots: snapshots
         );
     }
 
