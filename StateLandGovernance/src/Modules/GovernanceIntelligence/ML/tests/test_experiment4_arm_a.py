@@ -589,6 +589,7 @@ class TestValidateProbMatrix:
         with pytest.raises(ValueError, match=r"\[0, 1\]|outside"):
             _validate_prob_matrix(df, "test", EXPECTED_PROB_COLS)
 
+
     def test_row_sum_far_from_one_raises(self):
         # Set all values to 0 so row sums = 0.0 (way outside tolerance)
         df = pd.DataFrame({c: [0.0] * 4 for c in EXPECTED_PROB_COLS})
@@ -607,10 +608,231 @@ class TestValidateProbMatrix:
         arr = _validate_prob_matrix(df, "test", EXPECTED_PROB_COLS)
         assert arr.shape[1] == len(EXPECTED_PROB_COLS)
 
+    # -----------------------------------------------------------------------
+    # Boundary tests: 4-decimal-place rounding tolerance
+    # -----------------------------------------------------------------------
+    #
+    # Rationale for the chosen values:
+    #   PROB_ROW_SUM_TOLERANCE = 0.00021
+    #     = 4 × 0.00005 worst-case per-value rounding error + 1 ULP buffer
+    #   PROB_TOLERANCE = 0.0001
+    #     = 2 × 0.00005 = maximum diff between two 4-dp saved values of the
+    #                     same underlying float
+    #
+    # These tests use explicit numeric literals to document the precise
+    # boundary values; they must not be updated if the tolerances change
+    # without a corresponding review of the rationale.
+
+    def test_valid_four_decimal_place_distribution_passes_row_sum(self):
+        """
+        Four probabilities each stored to 4dp must pass the row-sum check.
+
+        Example: [0.2500, 0.2500, 0.2500, 0.2500] sums exactly to 1.0.
+        Example: [0.3333, 0.3333, 0.3333, 0.0001] sums to 1.0000.
+        Worst-case 4-dp rounding: each of 4 values off by 0.00005 in the
+        same direction → row sum off by 4 × 0.00005 = 0.0002 < 0.00021.
+        """
+        n_classes = len(EXPECTED_PROB_COLS)
+
+        # Exact uniform distribution — row sum = 1.0 exactly
+        val = round(1.0 / n_classes, 4)
+        uniform = pd.DataFrame({c: [val] * 4 for c in EXPECTED_PROB_COLS})
+        arr = _validate_prob_matrix(uniform, "test_uniform", EXPECTED_PROB_COLS)
+        assert arr is not None
+
+        # Worst-case 4-dp rounding in the same direction for all values:
+        # artificially build a row that sums to 1.0 + 0.0002 (within 0.00021).
+        # Set three values to 0.2501 and one to 0.2497 → sum = 1.0000.
+        mixed = {"first": 0.2501, "rest": 0.2499}
+        row = (
+            [mixed["first"]] * (n_classes - 1) + [1.0 - mixed["first"] * (n_classes - 1)]
+        )
+        df2 = pd.DataFrame(
+            {c: [row[i]] for i, c in enumerate(EXPECTED_PROB_COLS)}
+        )
+        _validate_prob_matrix(df2, "test_4dp_mixed", EXPECTED_PROB_COLS)
+
+    def test_row_sum_within_tolerance_passes(self):
+        """
+        A row sum of 1.0 + 0.0002 (= worst-case 4 × 0.00005) must pass.
+        PROB_ROW_SUM_TOLERANCE = 0.00021 > 0.0002.
+        """
+        from evaluate_experiment4 import PROB_ROW_SUM_TOLERANCE
+        n_classes = len(EXPECTED_PROB_COLS)
+        base = 1.0 / n_classes
+        # Distribute the excess evenly: 0.0002 / n_classes per value, rounded
+        excess_per_col = 0.0002 / n_classes
+        vals = [round(base + excess_per_col, 6)] * n_classes
+        # Normalise so exactly one row sums to 1.0 + 0.0002
+        vals[-1] = round(1.0 + 0.0002 - sum(vals[:-1]), 6)
+        df = pd.DataFrame({c: [vals[i]] for i, c in enumerate(EXPECTED_PROB_COLS)})
+        row_sum = sum(vals)
+        assert abs(row_sum - 1.0) <= PROB_ROW_SUM_TOLERANCE, (
+            f"Test setup error: constructed row sum {row_sum} exceeds tolerance "
+            f"{PROB_ROW_SUM_TOLERANCE}; adjust the test."
+        )
+        # Must pass validation
+        _validate_prob_matrix(df, "test_within_tol", EXPECTED_PROB_COLS)
+
+    def test_row_sum_exceeding_tolerance_fails(self):
+        """
+        A row sum of 1.0 + 0.0003 (> PROB_ROW_SUM_TOLERANCE 0.00021) must fail.
+        This is outside the valid range for any 4-dp distribution.
+        """
+        n_classes = len(EXPECTED_PROB_COLS)
+        base = round(1.0 / n_classes, 4)
+        # Push the sum beyond tolerance: add 0.0003 / n_classes to each value
+        excess_per_col = 0.0003 / n_classes
+        vals = [base + excess_per_col] * n_classes
+        df = pd.DataFrame({c: [vals[i]] for i, c in enumerate(EXPECTED_PROB_COLS)})
+        with pytest.raises(ValueError, match="row|sum"):
+            _validate_prob_matrix(df, "test_exceed_tol", EXPECTED_PROB_COLS)
+
 
 # ---------------------------------------------------------------------------
-# Tests: run_reproduction_check — all five PASS conditions
+# Boundary tests: PROB_TOLERANCE for per-value comparison
 # ---------------------------------------------------------------------------
+
+class TestProbToleranceBoundary:
+    """
+    Boundary tests for the per-value probability comparison tolerance.
+
+    PROB_TOLERANCE = 0.0001 (absolute, rtol=0).
+
+    Derivation:
+      - Each saved 4-dp value: |stored - true| <= 0.5 × 10^-4 = 0.00005
+      - Max diff between two 4-dp saved values: 2 × 0.00005 = 0.0001
+      - Differences > 0.0001 cannot be explained by 4-dp rounding alone.
+    """
+
+    def _make_oof_with_prob_shift(
+        self,
+        baseline_df,
+        exp2_oof_csv,
+        shift: float,
+        tmp_path: Path,
+        col_idx: int = 0,
+        adjust_col_idx: int = -1,
+    ) -> tuple[pd.DataFrame, Path]:
+        """
+        Build Arm A OOF and a reference CSV where column col_idx of the first
+        row has been shifted by +shift, and adjust_col_idx has been shifted by
+        -shift to keep the row sum valid.
+
+        Returns (arm_a_oof, repro_ref_path).
+        """
+        exp2 = pd.read_csv(exp2_oof_csv)
+        fold_map = dict(zip(exp2[ID_COLUMN], exp2["Fold"]))
+        base_prob = round(1.0 / len(EXPECTED_PROB_COLS), 4)
+
+        arm_a_rows = []
+        ref_rows = []
+        for i, (_, row) in enumerate(baseline_df.iterrows()):
+            rid  = row[ID_COLUMN]
+            lbl  = row[TARGET_COLUMN]
+            prob_arm_a = {c: base_prob for c in EXPECTED_PROB_COLS}
+            prob_ref   = {c: base_prob for c in EXPECTED_PROB_COLS}
+            if i == 0:
+                # Apply shift to first row only
+                shifted_col   = EXPECTED_PROB_COLS[col_idx]
+                adjusted_col  = EXPECTED_PROB_COLS[adjust_col_idx]
+                prob_ref[shifted_col]  = round(base_prob + shift, 6)
+                prob_ref[adjusted_col] = round(base_prob - shift, 6)
+            arm_a_rows.append({ID_COLUMN: rid, "Combined_Group": f"CG-{rid}",
+                                "True_Label": lbl, "Predicted_Label": lbl,
+                                "Fold": fold_map[rid], **prob_arm_a})
+            ref_rows.append({ID_COLUMN: rid, "Combined_Group": f"CG-{rid}",
+                             "True_Label": lbl, "Predicted_Label": lbl,
+                             "Fold": fold_map[rid], **prob_ref})
+
+        arm_a_oof = pd.DataFrame(arm_a_rows)
+        ref_path = tmp_path / f"repro_shift_{abs(shift):.6f}.csv"
+        pd.DataFrame(ref_rows).to_csv(ref_path, index=False)
+        return arm_a_oof, ref_path
+
+    def test_prob_diff_equal_to_tolerance_passes(
+        self, tmp_path, baseline_df, exp2_oof_csv
+    ):
+        """
+        A max |prob diff| exactly equal to PROB_TOLERANCE (0.0001) must PASS.
+        This is the upper boundary of the valid 4-dp rounding band.
+        """
+        from evaluate_experiment4 import PROB_TOLERANCE
+        arm_a, ref_path = self._make_oof_with_prob_shift(
+            baseline_df, exp2_oof_csv, shift=PROB_TOLERANCE, tmp_path=tmp_path
+        )
+        result = run_reproduction_check(
+            arm_a_oof=arm_a,
+            repro_path=ref_path,
+            output_path=tmp_path / "repro_at_tol.json",
+        )
+        assert result["probabilities_within_tolerance"] is True, (
+            f"Expected PASS at tolerance boundary {PROB_TOLERANCE}, "
+            f"got max_diff={result['max_abs_probability_diff']}"
+        )
+
+    def test_prob_diff_just_above_tolerance_fails(
+        self, tmp_path, baseline_df, exp2_oof_csv
+    ):
+        """
+        A max |prob diff| of PROB_TOLERANCE + 0.0001 (= 0.0002) must give
+        UNRESOLVED.  This is clearly above the 4-dp rounding band.
+        """
+        from evaluate_experiment4 import PROB_TOLERANCE
+        shift = PROB_TOLERANCE + 0.0001  # 0.0002 — two 4-dp rounding errors above
+        arm_a, ref_path = self._make_oof_with_prob_shift(
+            baseline_df, exp2_oof_csv, shift=shift, tmp_path=tmp_path
+        )
+        result = run_reproduction_check(
+            arm_a_oof=arm_a,
+            repro_path=ref_path,
+            output_path=tmp_path / "repro_above_tol.json",
+        )
+        assert result["reproduction_status"] == "UNRESOLVED", (
+            f"Expected UNRESOLVED for diff {shift} > PROB_TOLERANCE {PROB_TOLERANCE}"
+        )
+        assert result["probabilities_within_tolerance"] is False
+
+    def test_prob_diff_zero_passes(
+        self, tmp_path, baseline_df, exp2_oof_csv, repro_ref_csv, arm_a_oof
+    ):
+        """
+        When Arm A and Exp3B OOF store identical 4-dp values, max diff = 0.0
+        and the comparison must PASS.
+        """
+        result = run_reproduction_check(
+            arm_a_oof=arm_a_oof,
+            repro_path=repro_ref_csv,
+            output_path=tmp_path / "repro_zero.json",
+        )
+        assert result["max_abs_probability_diff"] == 0.0
+        assert result["probabilities_within_tolerance"] is True
+
+    def test_prob_tolerance_is_0_0001(self):
+        """
+        Verify the module-level constant matches the documented value.
+        This test fails if the constant is accidentally changed.
+        """
+        from evaluate_experiment4 import PROB_TOLERANCE
+        assert PROB_TOLERANCE == 0.0001, (
+            f"PROB_TOLERANCE should be 0.0001 (2 × 0.5 × 10^-4); got {PROB_TOLERANCE}. "
+            "Update this test only after reviewing the rounding-error rationale."
+        )
+
+    def test_prob_row_sum_tolerance_is_0_00021(self):
+        """
+        Verify the row-sum constant matches the documented value.
+        0.00021 = 4 × 0.00005 + 1 ULP buffer.
+        """
+        from evaluate_experiment4 import PROB_ROW_SUM_TOLERANCE
+        assert PROB_ROW_SUM_TOLERANCE == 0.00021, (
+            f"PROB_ROW_SUM_TOLERANCE should be 0.00021 (4 × 0.00005 + buffer); "
+            f"got {PROB_ROW_SUM_TOLERANCE}. "
+            "Update this test only after reviewing the row-sum derivation."
+        )
+
+
+
 
 class TestRunReproductionCheck:
     def test_all_conditions_pass_gives_pass_status(
