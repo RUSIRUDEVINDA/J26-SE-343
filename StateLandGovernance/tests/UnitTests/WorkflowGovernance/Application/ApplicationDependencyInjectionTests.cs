@@ -338,5 +338,58 @@ public class ApplicationDependencyInjectionTests
             d.ServiceType == typeof(IRequestValidator<CorrectProposalContentAssessmentCommand>) &&
             d.ImplementationType == typeof(CorrectProposalContentAssessmentCommandValidator) &&
             d.Lifetime == ServiceLifetime.Scoped);
+
+        // Assert: 4A.5 Command Handlers
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(ICommandHandler<RequestScreeningCommand, ScreeningResultDto>) &&
+            d.ImplementationType == typeof(RequestScreeningCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(RequestScreeningCommandHandler) &&
+            d.ImplementationType == typeof(RequestScreeningCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(ICommandHandler<RecordScreeningResultCommand, ScreeningResultDto>) &&
+            d.ImplementationType == typeof(RecordScreeningResultCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(RecordScreeningResultCommandHandler) &&
+            d.ImplementationType == typeof(RecordScreeningResultCommandHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        // Assert: 4A.5 Query Handlers
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IQueryHandler<GetCurrentScreeningStatusQuery, ScreeningResultDto?>) &&
+            d.ImplementationType == typeof(GetCurrentScreeningStatusQueryHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(GetCurrentScreeningStatusQueryHandler) &&
+            d.ImplementationType == typeof(GetCurrentScreeningStatusQueryHandler) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        // Assert: 4A.5 Validators
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IRequestValidator<RequestScreeningCommand>) &&
+            d.ImplementationType == typeof(RequestScreeningCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(RequestScreeningCommandValidator) &&
+            d.ImplementationType == typeof(RequestScreeningCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(IRequestValidator<RecordScreeningResultCommand>) &&
+            d.ImplementationType == typeof(RecordScreeningResultCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
+
+        Assert.Contains(services, d =>
+            d.ServiceType == typeof(RecordScreeningResultCommandValidator) &&
+            d.ImplementationType == typeof(RecordScreeningResultCommandValidator) &&
+            d.Lifetime == ServiceLifetime.Scoped);
     }
 }
