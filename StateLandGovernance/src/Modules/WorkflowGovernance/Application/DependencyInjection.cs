@@ -140,6 +140,23 @@ public static class DependencyInjection
         services.AddScoped<IRequestValidator<CorrectProposalContentAssessmentCommand>, CorrectProposalContentAssessmentCommandValidator>();
         services.AddScoped<CorrectProposalContentAssessmentCommandValidator>();
 
+        // 4A.5 Handlers, Queries & Validators (Component 4 Screening Orchestration)
+        services.AddScoped<ICommandHandler<RequestScreeningCommand, ScreeningResultDto>, RequestScreeningCommandHandler>();
+        services.AddScoped<RequestScreeningCommandHandler>();
+
+        services.AddScoped<ICommandHandler<RecordScreeningResultCommand, ScreeningResultDto>, RecordScreeningResultCommandHandler>();
+        services.AddScoped<RecordScreeningResultCommandHandler>();
+
+        services.AddScoped<IQueryHandler<GetCurrentScreeningStatusQuery, ScreeningResultDto?>, GetCurrentScreeningStatusQueryHandler>();
+        services.AddScoped<GetCurrentScreeningStatusQueryHandler>();
+
+
+        services.AddScoped<IRequestValidator<RequestScreeningCommand>, RequestScreeningCommandValidator>();
+        services.AddScoped<RequestScreeningCommandValidator>();
+
+        services.AddScoped<IRequestValidator<RecordScreeningResultCommand>, RecordScreeningResultCommandValidator>();
+        services.AddScoped<RecordScreeningResultCommandValidator>();
+
         return services;
     }
 }
