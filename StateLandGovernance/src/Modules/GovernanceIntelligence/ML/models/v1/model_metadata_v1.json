@@ -1,0 +1,87 @@
+{
+  "model_id": "governance_complaint_classifier_v1",
+  "model_version": "v1",
+  "component": "Component 4 - GovernanceIntelligence",
+  "trained_at_utc": "2026-10-07T11:22:05.128998+00:00",
+  "artifact_path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\models\\v1\\governance_classifier_v1.joblib",
+  "pipeline_description": "BoilerplateStripper -> TF-IDF (unigrams+bigrams) -> Logistic Regression (L2)",
+  "pipeline_factory": "boilerplate_transformer.build_pipeline_with_cleaner()",
+  "selected_arm": "Arm A (Experiment 4 run2) - cleaned-text baseline, no synthetic augmentation",
+  "dataset": {
+    "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\data\\state_land_governance_confirmed_200.csv",
+    "sha256": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61",
+    "row_count": 200,
+    "class_counts": {
+      "Administrative / Procedural / Integrity": 50,
+      "Lease Revenue / Payment / Enforcement": 50,
+      "Unauthorized Allocation / Transfer / Use": 50,
+      "Protected / Environmental Lease Misuse": 50
+    },
+    "unique_ids": 200,
+    "text_column": "Canonical_English_Text",
+    "target_column": "ML_Label_4Class",
+    "note": "All 200 'Existing baseline' records. No synthetic or source-derived records."
+  },
+  "pipeline_params": {
+    "tfidf_ngram_range": [
+      1,
+      2
+    ],
+    "tfidf_stop_words": "english",
+    "tfidf_sublinear_tf": true,
+    "tfidf_lowercase": true,
+    "clf_C": 1.0,
+    "clf_class_weight": "balanced",
+    "clf_max_iter": 2000,
+    "clf_penalty": "l2",
+    "clf_solver": "lbfgs",
+    "clf_random_state": 42
+  },
+  "fitted_classes_order": [
+    "Administrative / Procedural / Integrity",
+    "Lease Revenue / Payment / Enforcement",
+    "Protected / Environmental Lease Misuse",
+    "Unauthorized Allocation / Transfer / Use"
+  ],
+  "label_taxonomy": [
+    "Administrative / Procedural / Integrity",
+    "Lease Revenue / Payment / Enforcement",
+    "Unauthorized Allocation / Transfer / Use",
+    "Protected / Environmental Lease Misuse"
+  ],
+  "reference_arm_a": {
+    "run_dir": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment4_synthetic_augmentation_run2",
+    "oof_sha256": "ea681a6970d53eec8128733cc0229da376bba5383def1eb9d1dda136ae71e7bf",
+    "metrics_sha256": "ca6c9a35062a5ef477d0a4ddccd0a679ddf06eee35e7bc8689c01ca425ca328d",
+    "cv_metrics": {
+      "Accuracy": 0.77,
+      "Macro_F1": 0.7685,
+      "Weighted_F1": 0.7685,
+      "Misclassified": 46
+    },
+    "cv_metrics_note": "Development cross-validation results from Experiment 4 run2. 200 baseline records, frozen Experiment 2/3 fold assignments. NOT the accuracy of this full-data-fitted artifact on unseen complaints."
+  },
+  "environment": {
+    "python_version": "3.13.1 (tags/v3.13.1:0671451, Dec  3 2024, 19:06:28) [MSC v.1942 64 bit (AMD64)]",
+    "sklearn_version": "1.7.2",
+    "numpy_version": "2.3.1",
+    "scipy_version": "1.16.3",
+    "joblib_version": "1.5.2"
+  },
+  "git": {
+    "commit": "ca9486a2a94903313decc9f49c947da449ff791c",
+    "working_tree_clean": false,
+    "note": "working_tree_clean=False means uncommitted changes exist. git revision alone does not fully describe the running code."
+  },
+  "limitations": [
+    "English-language complaint text only. No multilingual support.",
+    "Closed-set 4-class classifier. No validated out-of-scope or unknown-category detector.",
+    "Development/demonstration artifact trained on 200 records.",
+    "No independent held-out evaluation was performed on this full-data-fitted artifact.",
+    "Probabilities are raw logistic-regression outputs. Calibration not demonstrated.",
+    "The 77% accuracy figure is the Experiment 4 Arm A development CV result, not a measured accuracy of this artifact on unseen complaints.",
+    "Output is advisory only. Does not determine guilt, legal liability, final approval, or any administrative action."
+  ],
+  "provenance": "Trained from the project dataset only. No pretrained language model or pretrained classifier was used.",
+  "advisory_note": "This model predicts the reported governance-issue category of an English state-land lease complaint. Output is advisory classification intelligence for subsequent human/governance processing. It does NOT determine guilt, legal liability, final approval, or administrative action."
+}

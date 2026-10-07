@@ -331,6 +331,42 @@ Automated test suites:
 - `tests/test_classifier.py` — model, data validation, and fit-predict tests (33)
 - `tests/test_leakage_groups.py` — deterministic source-and-text grouping tests (17)
 
+### Run the internal complaint-prediction HTTP service
+
+Install the ML requirements, then run this command from the `ML/` directory:
+
+```bash
+python -m uvicorn src.http_service:app --host 127.0.0.1 --port 8104
+```
+
+The service exposes only:
+
+- `GET /health` — readiness and the loaded `model_version`.
+- `POST /predict` — prediction for a nonblank English complaint.
+
+The model, metadata, and validation sidecar are loaded once during application
+startup through `predict_v1.load_versioned_artifact`. Startup fails if their
+validation fails. The service never fits or regenerates a model.
+
+Artifact locations can be configured for deployment with absolute paths:
+
+- `GOVERNANCE_MODEL_PATH`
+- `GOVERNANCE_MODEL_METADATA_PATH`
+- `GOVERNANCE_MODEL_VALIDATION_PATH`
+
+`GOVERNANCE_MAX_REQUEST_CHARS` controls the operational request-text limit and
+defaults to `10000`. Oversized input is rejected without truncation. This limit
+is operational and is not a research or governance rule.
+
+English input is expected. The service does not detect language and does not
+claim multilingual support. `case_id` is optional context and is not a model
+feature.
+
+The default development binding is loopback (`127.0.0.1`) for use by the local
+.NET backend. Loopback is a deployment boundary, not authentication. A future
+remote deployment requires an explicit access-control decision. This service
+does not enable browser CORS and should not be called directly from the frontend.
+
 ---
 
 ## Generated Outputs

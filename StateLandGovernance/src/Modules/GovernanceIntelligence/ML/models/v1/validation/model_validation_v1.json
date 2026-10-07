@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "verification_timestamp_utc": "2026-10-07T15:29:12.438165+00:00",
+  "overall_status": "PASS",
+  "model_version": "v1",
+  "artifact": {
+    "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\models\\v1\\governance_classifier_v1.joblib",
+    "sha256": "14e91be02ef9bdb2f5e440782503c8c89dfa479d010a3fc993e651aa7a9b25c6",
+    "size_bytes": 175308
+  },
+  "metadata": {
+    "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\models\\v1\\model_metadata_v1.json",
+    "sha256": "07b110dfd95087a0598c60e88ab5eec34aa3170e22f464b025df1222e9f95419",
+    "size_bytes": 4635
+  },
+  "references": {
+    "arm_a_run_metadata": {
+      "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment4_synthetic_augmentation_run2\\run_metadata.json",
+      "sha256": "281c275ff0596d44775e248888fd718dbafa6ec0d672c10e023679818bb8214a"
+    },
+    "arm_a_oof": {
+      "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment4_synthetic_augmentation_run2\\arm_a\\oof_predictions.csv",
+      "sha256": "ea681a6970d53eec8128733cc0229da376bba5383def1eb9d1dda136ae71e7bf"
+    },
+    "arm_a_metrics": {
+      "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment4_synthetic_augmentation_run2\\arm_a\\metrics.json",
+      "sha256": "ca6c9a35062a5ef477d0a4ddccd0a679ddf06eee35e7bc8689c01ca425ca328d"
+    },
+    "recorded_inputs": {
+      "candidate_dataset": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8",
+      "original_dataset": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61",
+      "frozen_fold_reference": "ac8476849840ca67061ac27c469dd6bab305aa7b51edc1443bf117bd07fe8491",
+      "reproduction_reference": "ea681a6970d53eec8128733cc0229da376bba5383def1eb9d1dda136ae71e7bf"
+    }
+  },
+  "pipeline": {
+    "steps": [
+      "boilerplate",
+      "tfidf",
+      "clf"
+    ],
+    "estimator_types": {
+      "boilerplate": "BoilerplateStripper",
+      "tfidf": "TfidfVectorizer",
+      "clf": "LogisticRegression"
+    },
+    "fitted_classes_order": [
+      "Administrative / Procedural / Integrity",
+      "Lease Revenue / Payment / Enforcement",
+      "Protected / Environmental Lease Misuse",
+      "Unauthorized Allocation / Transfer / Use"
+    ],
+    "stable_parameters": {
+      "clf__C": 1.0,
+      "clf__class_weight": "balanced",
+      "clf__fit_intercept": true,
+      "clf__max_iter": 2000,
+      "clf__penalty": "l2",
+      "clf__random_state": 42,
+      "clf__solver": "lbfgs",
+      "clf__tol": 0.0001,
+      "tfidf__analyzer": "word",
+      "tfidf__binary": false,
+      "tfidf__lowercase": true,
+      "tfidf__max_df": 1.0,
+      "tfidf__max_features": null,
+      "tfidf__min_df": 1,
+      "tfidf__ngram_range": [
+        1,
+        2
+      ],
+      "tfidf__norm": "l2",
+      "tfidf__smooth_idf": true,
+      "tfidf__stop_words": "english",
+      "tfidf__sublinear_tf": true
+    }
+  },
+  "checks": [
+    {
+      "name": "previously_verified_model_hash",
+      "status": "PASS"
+    },
+    {
+      "name": "model_metadata_pair_hashes",
+      "status": "PASS"
+    },
+    {
+      "name": "pipeline_steps_and_estimator_types",
+      "status": "PASS"
+    },
+    {
+      "name": "pipeline_fitted_state",
+      "status": "PASS"
+    },
+    {
+      "name": "four_class_taxonomy",
+      "status": "PASS"
+    },
+    {
+      "name": "fitted_class_order_matches_metadata",
+      "status": "PASS"
+    },
+    {
+      "name": "stable_parameters_match_arm_a_run2",
+      "status": "PASS"
+    },
+    {
+      "name": "dataset_ids_and_labels_match_arm_a_oof",
+      "status": "PASS"
+    },
+    {
+      "name": "raw_original_text_matches_candidate_baseline",
+      "status": "PASS"
+    },
+    {
+      "name": "recorded_reference_hashes",
+      "status": "PASS"
+    },
+    {
+      "name": "current_boilerplate_phrase_configuration_matches_recorded_metadata",
+      "status": "PASS"
+    }
+  ],
+  "historical_evidence_unavailable": [
+    "The joblib file does not provide an immutable historical snapshot of the custom BoilerplateStripper source. Deserialization resolves the currently installed class source, so source-code identity at the 2026-10-07 training instant cannot be recovered from joblib alone."
+  ],
+  "security_note": "SHA-256 values establish consistency with this reviewed local pair; they do not make an arbitrary joblib trustworthy. Only trusted local artifacts may be loaded."
+}
