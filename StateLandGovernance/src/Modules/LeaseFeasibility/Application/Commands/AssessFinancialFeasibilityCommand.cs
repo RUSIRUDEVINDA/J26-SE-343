@@ -24,7 +24,10 @@ public sealed record AssessFinancialFeasibilityCommand(
     decimal IncomeConsistencyRatio,
     string BankStatementUri,
     string SalarySlipUri,
-    string CribReportUri);
+    string CribReportUri,
+    // Human-verified total from all income sources; avoid counting transfers twice.
+    // Omission preserves the legacy salary-only calculation.
+    decimal? VerifiedTotalMonthlyIncomeLkr = null);
 
 public sealed class AssessFinancialFeasibilityCommandHandler
 {
@@ -68,23 +71,28 @@ public sealed class AssessFinancialFeasibilityCommandHandler
             command.CribReportUri,
             cancellationToken);
 
-        if (!Enum.TryParse<CreditRiskGrade>(cribData.CreditRiskGrade, true, out var creditRiskGrade) ||
+        if (!Enum.TryParse<CreditRiskGrade>(NormalizeBureauGrade(cribData.CreditRiskGrade), true, out var creditRiskGrade) ||
             !Enum.IsDefined(creditRiskGrade))
         {
-            throw new ValidationException(new[] { "CRIB credit risk grade must be A, B, C, D, or E." });
+            throw new ValidationException(new[] { "CRIB grade requires review: supported grades are A1-E3 (or legacy A-E); XX is insufficient information." });
+        }
+
+        if (!cribData.DefaultHistoryIndicator.HasValue || cribData.ActiveDisputes > 0)
+        {
+            throw new ValidationException(new[] { "Review CRIB repayment/default evidence and active disputes before scoring. Missing history cannot be treated as false." });
         }
 
         var input = new FinancialFeasibilityScoringInput(
             applicationId: command.ApplicationId,
             applicantId: command.ApplicantId,
-            averageMonthlyIncomeLkr: salaryData.AverageMonthlyIncome,
+            averageMonthlyIncomeLkr: command.VerifiedTotalMonthlyIncomeLkr ?? salaryData.AverageMonthlyIncome,
             incomeConsistencyRatio: command.IncomeConsistencyRatio,
             requestedMonthlyLeasePaymentLkr: command.RequestedMonthlyLeasePaymentLkr,
             monthlyDebtObligationsLkr: command.MonthlyDebtObligationsLkr,
             averageAccountBalanceLkr: bankData.AverageAccountBalance,
             overdraftCountInEvidenceWindow: bankData.OverdraftCountInEvidenceWindow,
             creditRiskGrade: creditRiskGrade,
-            hasDefaultHistory: cribData.DefaultHistoryIndicator);
+            hasDefaultHistory: cribData.DefaultHistoryIndicator.Value);
 
         var maskedLogPayload = PiiMasker.GetMaskedLogPayload(input, salaryData.EmployerOrBusinessName);
         _logger.LogInformation(
@@ -120,7 +128,7 @@ public sealed class AssessFinancialFeasibilityCommandHandler
                 "CRD",
                 "CreditHistory",
                 assessment.ScoreBreakdown.CreditHistoryScore,
-                $"Normalized CRIB credit grade is {creditRiskGrade}.",
+                $"CRIB bureau grade {cribData.CreditRiskGrade} maps to research credit band {creditRiskGrade}; this is separate from lease eligibility.",
                 false)
         };
 
@@ -144,6 +152,15 @@ public sealed class AssessFinancialFeasibilityCommandHandler
             RequiresManualReview: assessment.Action == FeasibilityAction.ManualReview,
             RequiresEscalation: assessment.Action == FeasibilityAction.Escalate,
             ContributingFactors: factors,
-            EvaluationTimestamp: assessment.GeneratedAt);
+            EvaluationTimestamp: assessment.GeneratedAt)
+        {
+            PaymentCapacity = assessment.PaymentCapacity
+        };
     }
+    private static string? NormalizeBureauGrade(string rawGrade)
+    {
+        var grade = rawGrade.Trim().ToUpperInvariant();
+        return System.Text.RegularExpressions.Regex.IsMatch(grade, "^[A-E][1-3]?$") ? grade[..1] : null;
+    }
+
 }
