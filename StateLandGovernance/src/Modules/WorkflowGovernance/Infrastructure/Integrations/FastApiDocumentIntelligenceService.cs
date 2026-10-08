@@ -98,18 +98,50 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
                 $"Document content stream not found for version {request.DocumentVersionId} at reference '{request.ContentReference}'.");
         }
 
+        byte[] contentBytes;
         await using (contentStream.ConfigureAwait(false))
         {
-            // 2. Prepare multipart/form-data request
-            var languageMode = ResolveLanguageMode(request.LanguageHint, _options.DefaultLanguageMode);
-            var sanitizedFileName = SanitizeFileName(request.OriginalFileName, request.DocumentVersionId);
+            using var ms = new MemoryStream();
+            var buffer = new byte[81920];
+            int bytesRead;
+            while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+            {
+                ms.Write(buffer, 0, bytesRead);
+                if (ms.Length > _options.MaxUploadBytes)
+                {
+                    throw new DocumentIntelligencePayloadTooLargeException(
+                        $"Document payload size ({ms.Length} bytes) exceeds maximum permitted threshold of {_options.MaxUploadBytes} bytes.");
+                }
+            }
+            contentBytes = ms.ToArray();
+        }
 
-            using var multipartContent = new MultipartFormDataContent();
+        // 2. Authoritative last-mile SHA-256 byte-integrity verification over exact bytes to be uploaded
+        var computedHash = Convert.ToHexString(SHA256.HashData(contentBytes)).ToLowerInvariant();
+        var expectedHash = (request.ChecksumValue ?? string.Empty).Trim().ToLowerInvariant();
 
-            var streamContent = new StreamContent(contentStream);
-            var mediaType = string.IsNullOrWhiteSpace(request.MediaType) ? "application/octet-stream" : request.MediaType;
-            streamContent.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
-            multipartContent.Add(streamContent, "file", sanitizedFileName);
+        if (!string.Equals(computedHash, expectedHash, StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.LogWarning(
+                "[{CorrelationId}] Source byte integrity failure for version {VersionId}. Expected SHA-256: {Expected}, Computed: {Computed}",
+                correlationId, request.DocumentVersionId, expectedHash, computedHash);
+
+            throw new DocumentContentIntegrityException(
+                "Source document content SHA-256 checksum does not match registered version checksum.",
+                expectedHash,
+                computedHash);
+        }
+
+        // 3. Prepare multipart/form-data request using the EXACT SAME verified contentBytes
+        var languageMode = ResolveLanguageMode(request.LanguageHint, _options.DefaultLanguageMode);
+        var sanitizedFileName = SanitizeFileName(request.OriginalFileName, request.DocumentVersionId);
+
+        using var multipartContent = new MultipartFormDataContent();
+
+        var byteArrayContent = new ByteArrayContent(contentBytes);
+        var mediaType = string.IsNullOrWhiteSpace(request.MediaType) ? "application/octet-stream" : request.MediaType;
+        byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
+        multipartContent.Add(byteArrayContent, "file", sanitizedFileName);
 
             // 3. Build target URL with query parameters
             var uriBuilder = new StringBuilder("v1/ocr");
@@ -186,7 +218,6 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
                 // 5. Persist OCR artifacts through mandatory IAnalysisArtifactWriter and map result
                 return await MapAndPersistArtifactsAsync(ocrResponse, request, correlationId, cancellationToken);
             }
-        }
     }
 
     private static string ResolveLanguageMode(string? hint, string fallback)
@@ -395,7 +426,7 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
 
             var docReceipt = await _artifactWriter.WriteAsync(
                 proposedDocKey,
-                "text/plain; charset=utf-8",
+                "text/plain",
                 fullBytes,
                 cancellationToken);
 
@@ -415,7 +446,7 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
                 ArtifactId: Guid.NewGuid(),
                 ArtifactKind: "OcrDocumentTranscript",
                 StorageReference: docReceipt.StorageReference,
-                ContentType: "text/plain; charset=utf-8",
+                ContentType: "text/plain",
                 ChecksumAlgorithm: docReceipt.ChecksumAlgorithm,
                 ChecksumValue: docReceipt.ChecksumValue
             ));

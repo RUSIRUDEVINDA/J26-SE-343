@@ -78,6 +78,8 @@ public static class DependencyInjection
             client.Timeout = TimeSpan.FromSeconds(options.RequestTimeoutSeconds);
         });
 
+        services.AddScoped<IDocumentAnalysisExecutionService, Services.DocumentAnalysisExecutionService>();
+
         return services;
     }
 

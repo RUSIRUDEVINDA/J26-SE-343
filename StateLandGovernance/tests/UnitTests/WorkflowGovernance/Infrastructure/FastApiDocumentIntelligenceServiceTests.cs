@@ -69,32 +69,41 @@ public sealed class FastApiDocumentIntelligenceServiceTests
 
     private FastApiDocumentIntelligenceService CreateService(
         FakeHttpMessageHandler handler,
-        IAnalysisArtifactWriter? artifactWriter = null)
+        IAnalysisArtifactWriter? artifactWriter = null,
+        IDocumentContentReader? contentReader = null,
+        DocumentIntelligenceOptions? options = null)
     {
+        var opts = options ?? _options;
         var httpClient = new HttpClient(handler)
         {
-            BaseAddress = new Uri(_options.BaseUrl)
+            BaseAddress = new Uri(opts.BaseUrl)
         };
-        var optionsWrapper = Options.Create(_options);
+        var optionsWrapper = Options.Create(opts);
         return new FastApiDocumentIntelligenceService(
             httpClient,
             optionsWrapper,
             NullLogger<FastApiDocumentIntelligenceService>.Instance,
-            _contentReader,
+            contentReader ?? _contentReader,
             artifactWriter ?? _artifactWriter);
     }
 
-    private static DocumentIntelligenceRequest CreateSampleRequest(
+    private DocumentIntelligenceRequest CreateSampleRequest(
+        byte[]? contentBytes = null,
         string? languageHint = null,
         string mediaType = "application/pdf",
-        string fileName = "deed.pdf")
+        string fileName = "deed.pdf",
+        string? explicitChecksum = null)
     {
+        var bytes = contentBytes ?? Encoding.UTF8.GetBytes("%PDF-1.4 default test stream");
+        _contentReader.StreamToReturn = new MemoryStream(bytes);
+        var checksum = explicitChecksum ?? Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+
         return new DocumentIntelligenceRequest(
             GovernedDocumentId: Guid.NewGuid(),
             DocumentVersionId: Guid.NewGuid(),
             ContentReference: "store://docs/deed-v1.pdf",
             ChecksumAlgorithm: "SHA-256",
-            ChecksumValue: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            ChecksumValue: checksum,
             OriginalFileName: fileName,
             MediaType: mediaType,
             LogicalCategory: "Deed",
@@ -105,9 +114,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
     [Fact]
     public async Task AnalyzeDocumentAsync_SendsCorrectMultipartRequestAndCorrelationHeaders()
     {
-        var request = CreateSampleRequest();
         var sampleBytes = Encoding.UTF8.GetBytes("%PDF-1.4 test document stream");
-        _contentReader.StreamToReturn = new MemoryStream(sampleBytes);
+        var request = CreateSampleRequest(sampleBytes);
 
         var handler = new FakeHttpMessageHandler
         {
@@ -192,8 +200,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
         }
         """;
 
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("fake-bytes"));
+        var sampleBytes = Encoding.UTF8.GetBytes("fake-bytes");
+        var request = CreateSampleRequest(sampleBytes);
 
         var handler = new FakeHttpMessageHandler
         {
@@ -238,8 +246,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
         string? inputHint,
         string expectedQueryMode)
     {
-        var request = CreateSampleRequest(languageHint: inputHint);
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("test"));
+        var sampleBytes = Encoding.UTF8.GetBytes("test");
+        var request = CreateSampleRequest(sampleBytes, languageHint: inputHint);
 
         var handler = new FakeHttpMessageHandler
         {
@@ -275,8 +283,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
     [Fact]
     public async Task AnalyzeDocumentAsync_MultiplePages_PreservesPageOrderAndProvenance()
     {
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("pdf"));
+        var sampleBytes = Encoding.UTF8.GetBytes("pdf");
+        var request = CreateSampleRequest(sampleBytes);
 
         // Pages in reverse order from service to verify client ordering
         var handler = new FakeHttpMessageHandler
@@ -333,8 +341,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
         // Core governance protection: OCR produces text recognition only.
         // It does NOT perform semantic classification or fact extraction.
         // Candidates must be strictly empty.
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("bytes"));
+        var sampleBytes = Encoding.UTF8.GetBytes("bytes");
+        var request = CreateSampleRequest(sampleBytes);
 
         var handler = new FakeHttpMessageHandler
         {
@@ -373,8 +381,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
         var sinhalaText = "ශ්‍රී ලංකා ප්‍රජාතාන්ත්‍රික සමාජවාදී ජනරජය";
         var mixedText = "Application No: APP-2026 / ලිපි අංකය: 2026/01";
 
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("unicode-stream"));
+        var sampleBytes = Encoding.UTF8.GetBytes("unicode-stream");
+        var request = CreateSampleRequest(sampleBytes);
 
         var handler = new FakeHttpMessageHandler
         {
@@ -429,8 +437,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
         HttpStatusCode statusCode,
         Type expectedExceptionType)
     {
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("sample"));
+        var sampleBytes = Encoding.UTF8.GetBytes("sample");
+        var request = CreateSampleRequest(sampleBytes);
 
         var handler = new FakeHttpMessageHandler
         {
@@ -458,8 +466,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
     [Fact]
     public async Task AnalyzeDocumentAsync_PythonTracebackInError_SanitizesMessageCompletely()
     {
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("sample"));
+        var sampleBytes = Encoding.UTF8.GetBytes("sample");
+        var request = CreateSampleRequest(sampleBytes);
 
         var rawTraceback = """
         Traceback (most recent call last):
@@ -490,8 +498,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
     [Fact]
     public async Task AnalyzeDocumentAsync_Timeout_ThrowsDocumentIntelligenceTimeoutException()
     {
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("content"));
+        var sampleBytes = Encoding.UTF8.GetBytes("content");
+        var request = CreateSampleRequest(sampleBytes);
 
         var handler = new FakeHttpMessageHandler
         {
@@ -509,8 +517,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
     [Fact]
     public async Task AnalyzeDocumentAsync_UserCancellation_PropagatesOperationCanceledException()
     {
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("content"));
+        var sampleBytes = Encoding.UTF8.GetBytes("content");
+        var request = CreateSampleRequest(sampleBytes);
 
         using var cts = new CancellationTokenSource();
         cts.Cancel();
@@ -605,8 +613,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
     public async Task AnalyzeDocumentAsync_SuccessfulOcr_PersistsDocumentTranscriptAndPageTranscriptsToWriter()
     {
         // 1. Arrange request and simulated OCR response
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("fake-bytes"));
+        var sampleBytes = Encoding.UTF8.GetBytes("fake-bytes");
+        var request = CreateSampleRequest(sampleBytes);
 
         var responsePayload = new
         {
@@ -653,7 +661,7 @@ public sealed class FastApiDocumentIntelligenceServiceTests
         var docArtifact = Assert.Single(result.Artifacts, a => a.ArtifactKind == "OcrDocumentTranscript");
         Assert.True(_artifactWriter.TryGetArtifact(docArtifact.StorageReference, out var storedDoc));
         Assert.NotNull(storedDoc);
-        Assert.Equal("text/plain; charset=utf-8", storedDoc.ContentType);
+        Assert.Equal("text/plain", storedDoc.ContentType);
         var storedDocText = Encoding.UTF8.GetString(storedDoc.Bytes);
         Assert.Equal("ශ්‍රී ලංකා රජයේ ඉඩම් බදු ගිවිසුම\nSTATE LAND LEASE", storedDocText);
 
@@ -682,8 +690,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
     [Fact]
     public async Task AnalyzeDocumentAsync_MultiplePages_PersistsSeparatelyAndOrdered()
     {
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("multi-page-bytes"));
+        var sampleBytes = Encoding.UTF8.GetBytes("multi-page-bytes");
+        var request = CreateSampleRequest(sampleBytes);
 
         var responsePayload = new
         {
@@ -756,8 +764,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
     [Fact]
     public async Task AnalyzeDocumentAsync_ArtifactWriterFails_ThrowsSanitizedExceptionAndReturnsNoResult()
     {
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("sample"));
+        var sampleBytes = Encoding.UTF8.GetBytes("sample");
+        var request = CreateSampleRequest(sampleBytes);
 
         var responsePayload = new
         {
@@ -804,8 +812,8 @@ public sealed class FastApiDocumentIntelligenceServiceTests
     [Fact]
     public async Task AnalyzeDocumentAsync_CancellationDuringWrite_PropagatesOperationCanceledException()
     {
-        var request = CreateSampleRequest();
-        _contentReader.StreamToReturn = new MemoryStream(Encoding.UTF8.GetBytes("sample"));
+        var sampleBytes = Encoding.UTF8.GetBytes("sample");
+        var request = CreateSampleRequest(sampleBytes);
 
         var responsePayload = new
         {
@@ -850,5 +858,146 @@ public sealed class FastApiDocumentIntelligenceServiceTests
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
             () => service.AnalyzeDocumentAsync(request, cts.Token));
+    }
+
+    [Fact]
+    public async Task AnalyzeDocumentAsync_ChecksumMismatch_ThrowsDocumentContentIntegrityExceptionWithoutCallingHttp()
+    {
+        var actualBytes = Encoding.UTF8.GetBytes("actual source content");
+        var wrongChecksum = "0000000000000000000000000000000000000000000000000000000000000000";
+        var request = CreateSampleRequest(actualBytes, explicitChecksum: wrongChecksum);
+
+        var httpCalled = false;
+        var handler = new FakeHttpMessageHandler
+        {
+            Handler = (_, _) =>
+            {
+                httpCalled = true;
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+            }
+        };
+
+        var service = CreateService(handler);
+
+        var ex = await Assert.ThrowsAsync<DocumentContentIntegrityException>(
+            () => service.AnalyzeDocumentAsync(request));
+
+        Assert.False(httpCalled, "HTTP upload must not occur when content integrity fails!");
+        Assert.Contains("does not match registered version checksum", ex.Message);
+    }
+
+    private sealed class MutatingContentReader : IDocumentContentReader
+    {
+        private int _callCount = 0;
+        public int CallCount => _callCount;
+        public byte[] BytesFirstRead { get; } = Encoding.UTF8.GetBytes("AUTHENTIC_BYTES_A");
+        public byte[] BytesSecondRead { get; } = Encoding.UTF8.GetBytes("MUTATED_MALICIOUS_BYTES_B");
+
+        public Task<Stream?> ReadContentAsync(
+            GovernedDocumentId documentId,
+            DocumentVersionId versionId,
+            string contentReference,
+            CancellationToken cancellationToken = default)
+        {
+            var count = Interlocked.Increment(ref _callCount);
+            var bytes = count == 1 ? BytesFirstRead : BytesSecondRead;
+            return Task.FromResult<Stream?>(new MemoryStream(bytes));
+        }
+    }
+
+    [Fact]
+    public async Task AnalyzeDocumentAsync_MutatingReader_GuaranteesSameExactBytesHashedAndUploaded_PreventsToctou()
+    {
+        var mutatingReader = new MutatingContentReader();
+        var authenticChecksum = Convert.ToHexString(SHA256.HashData(mutatingReader.BytesFirstRead)).ToLowerInvariant();
+
+        var request = new DocumentIntelligenceRequest(
+            GovernedDocumentId: Guid.NewGuid(),
+            DocumentVersionId: Guid.NewGuid(),
+            ContentReference: "store://docs/deed-v1.pdf",
+            ChecksumAlgorithm: "SHA-256",
+            ChecksumValue: authenticChecksum,
+            OriginalFileName: "deed.pdf",
+            MediaType: "application/pdf",
+            LogicalCategory: "Deed",
+            RequestedCapabilities: new[] { "Ocr" },
+            LanguageHint: "eng");
+
+        var handler = new FakeHttpMessageHandler
+        {
+            Handler = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(
+                    JsonSerializer.Serialize(new
+                    {
+                        request_id = request.DocumentVersionId.ToString("D"),
+                        language_mode = "eng",
+                        preprocessed = true,
+                        page_count = 1,
+                        pages = new[]
+                        {
+                            new { page_number = 1, raw_text = "text", clean_text = "text", text = "text", character_count = 4, confidence = (double?)90.0 }
+                        },
+                        total_character_count = 4,
+                        duration_ms = 40.0
+                    }),
+                    Encoding.UTF8,
+                    "application/json")
+            })
+        };
+
+        var service = CreateService(handler, contentReader: mutatingReader);
+        var result = await service.AnalyzeDocumentAsync(request);
+
+        Assert.NotNull(result);
+        Assert.Equal(1, mutatingReader.CallCount); // Exactly 1 source read - no TOCTOU reopen!
+        Assert.NotNull(handler.CapturedRequestBody);
+        var uploadedBody = Encoding.UTF8.GetString(handler.CapturedRequestBody);
+        Assert.Contains("AUTHENTIC_BYTES_A", uploadedBody);
+        Assert.DoesNotContain("MUTATED_MALICIOUS_BYTES_B", uploadedBody);
+    }
+
+    [Fact]
+    public async Task AnalyzeDocumentAsync_PayloadTooLarge_ThrowsDocumentIntelligencePayloadTooLargeException()
+    {
+        var customOptions = new DocumentIntelligenceOptions
+        {
+            BaseUrl = "http://127.0.0.1:8000",
+            MaxUploadBytes = 100
+        };
+
+        var largeBytes = new byte[150];
+        var request = CreateSampleRequest(largeBytes);
+
+        var httpCalled = false;
+        var handler = new FakeHttpMessageHandler
+        {
+            Handler = (_, _) =>
+            {
+                httpCalled = true;
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+            }
+        };
+
+        var service = CreateService(handler, options: customOptions);
+
+        var ex = await Assert.ThrowsAsync<DocumentIntelligencePayloadTooLargeException>(
+            () => service.AnalyzeDocumentAsync(request));
+
+        Assert.False(httpCalled, "HTTP call must not be made if payload exceeds MaxUploadBytes");
+        Assert.Contains("exceeds maximum permitted threshold", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void DocumentIntelligenceOptions_InvalidMaxUploadBytes_ThrowsArgumentOutOfRangeException(long maxBytes)
+    {
+        var options = new DocumentIntelligenceOptions
+        {
+            BaseUrl = "http://127.0.0.1:8000",
+            MaxUploadBytes = maxBytes
+        };
+        Assert.Throws<ArgumentOutOfRangeException>(() => options.Validate());
     }
 }

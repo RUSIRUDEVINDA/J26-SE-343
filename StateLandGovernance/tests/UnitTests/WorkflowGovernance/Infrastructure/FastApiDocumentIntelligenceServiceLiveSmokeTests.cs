@@ -3,6 +3,7 @@ namespace StateLandGovernance.UnitTests.WorkflowGovernance.Infrastructure;
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -93,13 +94,14 @@ public sealed class FastApiDocumentIntelligenceServiceLiveSmokeTests
             contentReader,
             artifactWriter);
 
+        var sampleChecksum = Convert.ToHexString(SHA256.HashData(samplePngBytes)).ToLowerInvariant();
         var versionGuid = Guid.NewGuid();
         var request = new DocumentIntelligenceRequest(
             GovernedDocumentId: Guid.NewGuid(),
             DocumentVersionId: versionGuid,
             ContentReference: "urn:document:test-lease.png",
             ChecksumAlgorithm: "SHA-256",
-            ChecksumValue: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            ChecksumValue: sampleChecksum,
             OriginalFileName: "test_lease.png",
             MediaType: "image/png",
             LogicalCategory: "LeaseApplication",
@@ -125,7 +127,7 @@ public sealed class FastApiDocumentIntelligenceServiceLiveSmokeTests
         // Verify document transcript artifact resolves and checksum matches exact bytes
         var docArtifact = Assert.Single(result.Artifacts, a => a.ArtifactKind == "OcrDocumentTranscript");
         Assert.Equal($"analysis-artifacts/{versionGuid:D}/document-transcript.txt", docArtifact.StorageReference);
-        Assert.Equal("text/plain; charset=utf-8", docArtifact.ContentType);
+        Assert.Equal("text/plain", docArtifact.ContentType);
         Assert.Equal("SHA-256", docArtifact.ChecksumAlgorithm);
 
         Assert.True(artifactWriter.TryGetArtifact(docArtifact.StorageReference, out var storedDoc));
@@ -193,13 +195,14 @@ public sealed class FastApiDocumentIntelligenceServiceLiveSmokeTests
             contentReader,
             artifactWriter);
 
+        var sampleChecksum = Convert.ToHexString(SHA256.HashData(samplePngBytes)).ToLowerInvariant();
         var versionGuid = Guid.NewGuid();
         var request = new DocumentIntelligenceRequest(
             GovernedDocumentId: Guid.NewGuid(),
             DocumentVersionId: versionGuid,
             ContentReference: "urn:document:test-sinhala.png",
             ChecksumAlgorithm: "SHA-256",
-            ChecksumValue: "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210",
+            ChecksumValue: sampleChecksum,
             OriginalFileName: "test_sinhala.png",
             MediaType: "image/png",
             LogicalCategory: "LeaseApplication",
