@@ -71,7 +71,7 @@ public class DocumentOcrServiceTests
         {
             Assert.Equal(5000m, result.AverageMonthlyIncome);
             Assert.Equal(15000m, result.AverageAccountBalance);
-            Assert.Equal(0, result.OverdraftFrequency);
+            Assert.Equal(0, result.OverdraftCountInEvidenceWindow);
             Assert.Equal(0.2m, result.SavingsToIncomeRatio);
         }
         else
@@ -126,7 +126,7 @@ public class DocumentOcrServiceTests
             EmploymentType: salaryData.EmploymentType,
             EmployerOrBusinessName: salaryData.EmployerOrBusinessName,
             AverageAccountBalance: bankData.AverageAccountBalance,
-            OverdraftFrequency: bankData.OverdraftFrequency,
+            OverdraftFrequency: bankData.OverdraftCountInEvidenceWindow,
             SavingsToIncomeRatio: bankData.SavingsToIncomeRatio,
             CreditRiskGrade: cribData.CreditRiskGrade,
             ActiveLoanObligations: cribData.ActiveLoanObligations,
@@ -170,7 +170,7 @@ public class DocumentOcrServiceTests
         var service = new DocumentOcrService(configMock.Object);
         
         string tempFile = System.IO.Path.GetTempFileName();
-        System.IO.File.WriteAllText(tempFile, "[BANK STATEMENT]\nAverage Monthly Income: 5000.\nOverdraft Frequency: 1"); // Missing Account Balance and Savings Ratio
+        System.IO.File.WriteAllText(tempFile, "[BANK STATEMENT]\nAverage Monthly Income: 5000.\nOverdraft Count Last 6 Months: 1"); // Missing Account Balance and Savings Ratio
 
         try
         {

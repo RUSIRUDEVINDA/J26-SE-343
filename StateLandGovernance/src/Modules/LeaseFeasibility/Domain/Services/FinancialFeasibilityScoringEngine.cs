@@ -6,187 +6,128 @@ using StateLandGovernance.LeaseFeasibility.Domain.ValueObjects;
 namespace StateLandGovernance.LeaseFeasibility.Domain.Services;
 
 /// <summary>
-/// Domain service implementation of the deterministic Financial Feasibility Scoring Engine.
+/// Pure deterministic implementation of the Component 2 scoring contract.
 /// </summary>
 public sealed class FinancialFeasibilityScoringEngine : IFinancialFeasibilityScoringEngine
 {
-    private readonly LeaseFeasibilityScoringOptions _options;
+    private readonly LeaseFeasibilityScoringContract _contract;
 
-    public FinancialFeasibilityScoringEngine() : this(LeaseFeasibilityScoringOptions.Default)
+    public FinancialFeasibilityScoringEngine()
+        : this(LeaseFeasibilityScoringContract.Component2V1)
     {
     }
 
-    public FinancialFeasibilityScoringEngine(LeaseFeasibilityScoringOptions options)
+    public FinancialFeasibilityScoringEngine(LeaseFeasibilityScoringContract contract)
     {
-        _options = options ?? throw new ArgumentNullException(nameof(options));
+        _contract = contract ?? throw new ArgumentNullException(nameof(contract));
+        _contract.Validate();
     }
 
-    public FinancialFeasibilityAssessment EvaluateFeasibility(FinancialProfile input, DateTime evaluationTimestamp)
+    public FinancialFeasibilityAssessment EvaluateFeasibility(
+        FinancialFeasibilityScoringInput input,
+        DateTimeOffset evaluationTimestamp)
     {
-        if (input is null)
-        {
-            throw new ArgumentNullException(nameof(input), "Financial profile input cannot be null.");
-        }
+        ArgumentNullException.ThrowIfNull(input);
 
-        var utcTimestamp = evaluationTimestamp.Kind == DateTimeKind.Utc ? evaluationTimestamp : evaluationTimestamp.ToUniversalTime();
+        var debtServiceRatio =
+            (input.MonthlyDebtObligationsLkr + input.RequestedMonthlyLeasePaymentLkr) /
+            input.AverageMonthlyIncomeLkr;
+        var liquidityBufferMonths = input.AverageAccountBalanceLkr / input.RequestedMonthlyLeasePaymentLkr;
 
-        decimal incomeToLeaseCostScore = 0;
-        decimal incomeConsistencyScore = 0;
-        decimal debtToIncomeScore = 0;
-        decimal employmentStabilityScore = 0;
-        decimal creditIndicatorScore = 0;
-        decimal penaltyScore = 0;
+        var debtServiceRatioScore = ScoreDebtServiceRatio(debtServiceRatio);
+        var incomeConsistencyScore = Math.Round(
+            input.IncomeConsistencyRatio * _contract.IncomeConsistencyWeight,
+            2,
+            MidpointRounding.AwayFromZero);
+        var liquidityBufferScore = ScoreLiquidityBuffer(liquidityBufferMonths);
+        var creditHistoryScore = ScoreCreditHistory(input.CreditRiskGrade);
+        var penaltyScore = ScorePenalties(input);
 
-        EvaluateIncomeToLeaseCost(input, ref incomeToLeaseCostScore);
-        EvaluateIncomeConsistency(input, ref incomeConsistencyScore);
-        EvaluateDebtToIncome(input, ref debtToIncomeScore);
-        EvaluateEmploymentStability(input, ref employmentStabilityScore);
-        EvaluateCreditIndicator(input, ref creditIndicatorScore, ref penaltyScore);
-
-        decimal rawScore = incomeToLeaseCostScore + incomeConsistencyScore + debtToIncomeScore + employmentStabilityScore + creditIndicatorScore + penaltyScore;
-        decimal totalScore = Math.Min(100m, Math.Max(0m, rawScore));
+        var rawScore = debtServiceRatioScore + incomeConsistencyScore + liquidityBufferScore +
+                       creditHistoryScore + penaltyScore;
+        var totalScore = Math.Clamp(rawScore, 0m, 100m);
+        var grade = _contract.DeriveGrade(totalScore);
+        var action = _contract.DeriveAction(grade);
 
         var breakdown = new FeasibilityScoreBreakdown(
-            incomeToLeaseCostScore,
+            debtServiceRatio,
+            liquidityBufferMonths,
+            debtServiceRatioScore,
             incomeConsistencyScore,
-            debtToIncomeScore,
-            employmentStabilityScore,
-            creditIndicatorScore,
+            liquidityBufferScore,
+            creditHistoryScore,
             penaltyScore,
-            totalScore
-        );
+            totalScore);
 
-        var grade = DeriveGrade(totalScore, penaltyScore);
-
-        // TODO: Map application ID appropriately. Since FinancialProfile does not have ApplicationId,
-        // and we are creating the assessment, we will use ApplicantId for now or expect it to be handled outside.
-        // Or we can add ApplicationId to FinancialProfile. I'll just use "UNKNOWN-APP" if not present.
         return new FinancialFeasibilityAssessment(
-            applicationId: input.ApplicantId ?? "UNKNOWN", // Just a fallback, technically should be passed if known.
+            applicationId: input.ApplicationId,
+            applicantId: input.ApplicantId,
+            contractVersion: _contract.Version,
             grade: grade,
+            action: action,
             scoreBreakdown: breakdown,
-            predictiveProbability: null
-        );
+            generatedAt: evaluationTimestamp,
+            predictiveProbability: null);
     }
 
-    private void EvaluateIncomeToLeaseCost(FinancialProfile input, ref decimal score)
+    private decimal ScoreDebtServiceRatio(decimal ratio)
     {
-        // Simple logic for income to lease cost. Since Lease Cost isn't directly in profile, we'll proxy it with SavingsToIncomeRatio.
-        if (input.SavingsToIncomeRatio > 0.3m)
+        if (ratio <= _contract.StrongDebtServiceRatioMaximum)
         {
-            score = _options.IncomeToLeaseCostRatioWeight;
+            return _contract.StrongDebtServiceRatioPoints;
         }
-        else if (input.SavingsToIncomeRatio > 0.15m)
+
+        if (ratio <= _contract.ManageableDebtServiceRatioMaximum)
         {
-            score = _options.IncomeToLeaseCostRatioWeight * 0.75m;
+            return _contract.ManageableDebtServiceRatioPoints;
         }
-        else if (input.SavingsToIncomeRatio > 0.05m)
+
+        if (ratio <= _contract.MarginalDebtServiceRatioMaximum)
         {
-            score = _options.IncomeToLeaseCostRatioWeight * 0.5m;
+            return _contract.MarginalDebtServiceRatioPoints;
         }
-        else
-        {
-            score = 0;
-        }
+
+        return 0m;
     }
 
-    private void EvaluateIncomeConsistency(FinancialProfile input, ref decimal score)
+    private decimal ScoreLiquidityBuffer(decimal months)
     {
-        score = input.IncomeConsistencyScore * _options.IncomeConsistencyWeight;
-        if (score > _options.IncomeConsistencyWeight) score = _options.IncomeConsistencyWeight;
-        if (score < 0) score = 0;
+        if (months >= _contract.FullLiquidityBufferMonths)
+        {
+            return _contract.FullLiquidityBufferPoints;
+        }
+
+        if (months >= _contract.AdequateLiquidityBufferMonths)
+        {
+            return _contract.AdequateLiquidityBufferPoints;
+        }
+
+        if (months >= _contract.MinimumLiquidityBufferMonths)
+        {
+            return _contract.MinimumLiquidityBufferPoints;
+        }
+
+        return 0m;
     }
 
-    private void EvaluateDebtToIncome(FinancialProfile input, ref decimal score)
+    private decimal ScoreCreditHistory(CreditRiskGrade grade) => grade switch
     {
-        // We calculate proxy DTI from ActiveLoanObligations vs AverageMonthlyIncome.
-        if (input.AverageMonthlyIncome <= 0)
-        {
-            score = 0;
-            return;
-        }
+        CreditRiskGrade.A => _contract.CreditGradeAPoints,
+        CreditRiskGrade.B => _contract.CreditGradeBPoints,
+        CreditRiskGrade.C => _contract.CreditGradeCPoints,
+        CreditRiskGrade.D or CreditRiskGrade.E => 0m,
+        _ => throw new ArgumentOutOfRangeException(nameof(grade), grade, "Unknown credit risk grade.")
+    };
 
-        // ActiveLoanObligations might be total debt. Let's assume 5% of total debt is monthly payment.
-        decimal monthlyDebtPayment = input.ActiveLoanObligations * 0.05m;
-        decimal dti = monthlyDebtPayment / input.AverageMonthlyIncome;
-
-        if (dti < 0.2m)
-        {
-            score = _options.DebtToIncomeWeight;
-        }
-        else if (dti < 0.35m)
-        {
-            score = _options.DebtToIncomeWeight * 0.75m;
-        }
-        else if (dti < 0.5m)
-        {
-            score = _options.DebtToIncomeWeight * 0.5m;
-        }
-        else
-        {
-            score = 0;
-        }
-    }
-
-    private void EvaluateEmploymentStability(FinancialProfile input, ref decimal score)
+    private decimal ScorePenalties(FinancialFeasibilityScoringInput input)
     {
-        if (input.EmploymentTenureMonths >= 24 && string.Equals(input.EmploymentType, "Full-Time", StringComparison.OrdinalIgnoreCase))
-        {
-            score = _options.EmploymentStabilityWeight;
-        }
-        else if (input.EmploymentTenureMonths >= 12)
-        {
-            score = _options.EmploymentStabilityWeight * 0.75m;
-        }
-        else if (input.EmploymentTenureMonths >= 6)
-        {
-            score = _options.EmploymentStabilityWeight * 0.5m;
-        }
-        else
-        {
-            score = 0;
-        }
-    }
+        var penalty = input.HasDefaultHistory ? _contract.DefaultHistoryPenalty : 0m;
 
-    private void EvaluateCreditIndicator(FinancialProfile input, ref decimal score, ref decimal penaltyScore)
-    {
-        switch (input.CreditRiskGrade?.ToUpperInvariant())
+        if (input.OverdraftCountInEvidenceWindow > _contract.FrequentOverdraftThreshold)
         {
-            case "A":
-                score = _options.CreditIndicatorWeight;
-                break;
-            case "B":
-                score = _options.CreditIndicatorWeight * 0.75m;
-                break;
-            case "C":
-                score = _options.CreditIndicatorWeight * 0.5m;
-                break;
-            case "D":
-                score = _options.CreditIndicatorWeight * 0.25m;
-                break;
-            default:
-                score = 0;
-                break;
+            penalty += _contract.FrequentOverdraftPenalty;
         }
 
-        if (input.DefaultHistoryIndicator)
-        {
-            penaltyScore -= 10m;
-        }
-
-        if (input.RecentCreditInquiries > 3)
-        {
-            penaltyScore -= 5m;
-        }
-    }
-
-    private FeasibilityGrade DeriveGrade(decimal totalScore, decimal penaltyScore)
-    {
-        if (penaltyScore <= -15m) return FeasibilityGrade.E; // Auto-fail for bad history
-        if (totalScore >= 80) return FeasibilityGrade.A;
-        if (totalScore >= 60) return FeasibilityGrade.B;
-        if (totalScore >= 40) return FeasibilityGrade.C;
-        if (totalScore >= 20) return FeasibilityGrade.D;
-        return FeasibilityGrade.E;
+        return penalty;
     }
 }

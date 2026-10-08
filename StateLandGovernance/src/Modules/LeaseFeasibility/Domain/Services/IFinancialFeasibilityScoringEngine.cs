@@ -12,8 +12,10 @@ public interface IFinancialFeasibilityScoringEngine
     /// <summary>
     /// Evaluates financial evidence and produces a feasibility assessment.
     /// </summary>
-    /// <param name="input">The financial profile input data.</param>
-    /// <param name="evaluationTimestamp">UTC evaluation timestamp.</param>
+    /// <param name="input">The typed, unit-explicit scoring input.</param>
+    /// <param name="evaluationTimestamp">Evaluation timestamp supplied by the caller's TimeProvider.</param>
     /// <returns>A deterministic financial feasibility assessment.</returns>
-    FinancialFeasibilityAssessment EvaluateFeasibility(FinancialProfile input, DateTime evaluationTimestamp);
+    FinancialFeasibilityAssessment EvaluateFeasibility(
+        FinancialFeasibilityScoringInput input,
+        DateTimeOffset evaluationTimestamp);
 }

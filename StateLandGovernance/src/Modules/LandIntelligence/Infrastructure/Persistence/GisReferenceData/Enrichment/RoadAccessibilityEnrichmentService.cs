@@ -1,6 +1,8 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using NetTopologySuite.Geometries;
+using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Application.Mappings;
@@ -13,14 +15,17 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisRef
 
 public sealed class RoadAccessibilityEnrichmentService : IRoadAccessibilityEnrichmentService
 {
-    private const int DistrictBoundaryType = 2;
-    private const string DerivedDistanceSource = "GIS road nearest-neighbor spatial query";
+    private const string DerivedDistanceSource = "GIS road nearest-neighbor spatial query (geography metres)";
 
     private readonly LandIntelligenceDbContext _dbContext;
+    private readonly GisEnrichmentCoverageOptions _coverageOptions;
 
-    public RoadAccessibilityEnrichmentService(LandIntelligenceDbContext dbContext)
+    public RoadAccessibilityEnrichmentService(
+        LandIntelligenceDbContext dbContext,
+        IOptions<GisEnrichmentCoverageOptions> coverageOptions)
     {
         _dbContext = dbContext;
+        _coverageOptions = coverageOptions.Value;
     }
 
     public async Task<RoadAccessibilityEnrichmentResult> EnrichAsync(
@@ -37,7 +42,8 @@ public sealed class RoadAccessibilityEnrichmentService : IRoadAccessibilityEnric
         var measuredAt = DateTimeOffset.UtcNow;
         var evidence = new List<string>
         {
-            $"Road accessibility evidence sourced exclusively from {QualifiedRoadsTable()} (GIS reference roads)."
+            $"Road accessibility evidence sourced exclusively from {QualifiedRoadsTable()}. " +
+            "Railway proximity is never used for this road distance feature."
         };
 
         var geometrySelection = ParcelEnrichmentGeometrySelector.Select(parcel.Boundary, parcel.Centroid);
@@ -45,8 +51,9 @@ public sealed class RoadAccessibilityEnrichmentService : IRoadAccessibilityEnric
         {
             evidence.Add("Parcel geometry unavailable: no boundary or centroid could be used for road distance.");
 
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel.Id,
+                RoadAccessibilityEnrichmentStatus.Unavailable,
                 evidence,
                 geometryBasis: null,
                 sourceName: GisReferenceDataPaths.SourceName,
@@ -59,40 +66,75 @@ public sealed class RoadAccessibilityEnrichmentService : IRoadAccessibilityEnric
                 ? "Distance geometry basis: parcel boundary (preferred)."
                 : "Distance geometry basis: parcel centroid (boundary unavailable).");
 
-        var withinPilotCoverage = await IsWithinHambantotaPilotCoverageAsync(
+        var coverage = await GisEnrichmentCoverageHelper.AssessAsync(
+            _dbContext,
             parcelGeometry,
             geometryBasis,
+            _coverageOptions,
             cancellationToken);
+        evidence.Add(coverage.EvidenceMessage);
 
-        if (!withinPilotCoverage)
+        var roadSourceLayer = ResolveRoadSourceLayer(coverage.MatchedDistrict);
+        evidence.Add(
+            $"Road SourceLayer filter for district '{coverage.MatchedDistrict ?? "(none)"}': " +
+            $"'{roadSourceLayer ?? "(all layers)"}'.");
+
+        if (!coverage.IsInsideCoverage)
         {
-            evidence.Add(
-                "Parcel is outside the imported Hambantota GIS pilot coverage; nearest-road distance was not calculated.");
-
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel.Id,
+                RoadAccessibilityEnrichmentStatus.OutsideCoverage,
                 evidence,
                 geometryBasis,
                 sourceName: GisReferenceDataPaths.SourceName,
-                sourceLayer: GisReferenceDataPaths.ExpresswaysLayer);
+                sourceLayer: roadSourceLayer ?? GisReferenceDataPaths.ExpresswaysLayer);
         }
 
-        var nearestRoad = await FindNearestRoadAsync(parcelGeometry, cancellationToken);
+        var nearestRoad = await FindNearestRoadAsync(parcelGeometry, roadSourceLayer, cancellationToken);
         if (nearestRoad is null)
         {
-            evidence.Add("No GIS road geometry was available within the imported pilot dataset.");
+            evidence.Add(
+                $"No GIS road geometry was available for SourceLayer '{roadSourceLayer ?? "(all layers)"}' " +
+                "inside coverage; distance was not fabricated.");
 
-            return BuildUnavailableResult(
+            return BuildResult(
                 parcel.Id,
+                RoadAccessibilityEnrichmentStatus.Unavailable,
                 evidence,
                 geometryBasis,
                 sourceName: GisReferenceDataPaths.SourceName,
-                sourceLayer: GisReferenceDataPaths.ExpresswaysLayer);
+                sourceLayer: roadSourceLayer ?? GisReferenceDataPaths.ExpresswaysLayer);
         }
+
+        var highwayClass = string.Equals(
+                nearestRoad.SourceLayer,
+                GisEnrichmentCoverageDefaults.OsmMotorRoadsLayer,
+                StringComparison.OrdinalIgnoreCase)
+            ? OsmMotorRoadAttributeEncoding.TryDecodeHighway(nearestRoad.RoadName)
+            : null;
+        var displayName = string.Equals(
+                nearestRoad.SourceLayer,
+                GisEnrichmentCoverageDefaults.OsmMotorRoadsLayer,
+                StringComparison.OrdinalIgnoreCase)
+            ? OsmMotorRoadAttributeEncoding.TryDecodeDisplayName(nearestRoad.RoadName)
+            : nearestRoad.RoadName;
+        var filterPolicyVersion = string.Equals(
+                nearestRoad.SourceLayer,
+                GisEnrichmentCoverageDefaults.OsmMotorRoadsLayer,
+                StringComparison.OrdinalIgnoreCase)
+            ? _coverageOptions.OsmMotorRoadFilterPolicyVersion
+            : null;
+
+        var provenanceSourceName = string.Equals(
+                nearestRoad.SourceLayer,
+                GisEnrichmentCoverageDefaults.OsmMotorRoadsLayer,
+                StringComparison.OrdinalIgnoreCase)
+            ? OsmMotorRoadAttributeEncoding.BuildProvenanceSourceName(filterPolicyVersion)
+            : nearestRoad.SourceName;
 
         var roadSourceProvenance = new AttributeProvenanceDto(
             AttributeProvenanceSourceType.ExternalAuthoritative,
-            nearestRoad.SourceName,
+            provenanceSourceName,
             Confidence: 1m,
             CollectedAt: measuredAt,
             Verified: true);
@@ -101,86 +143,88 @@ public sealed class RoadAccessibilityEnrichmentService : IRoadAccessibilityEnric
             AttributeProvenance.Derived(DerivedDistanceSource, confidence: 1m, collectedAt: measuredAt));
 
         evidence.Add(
-            $"Nearest road '{nearestRoad.RoadName ?? "(unnamed)"}' ({nearestRoad.RoadType}) selected from layer '{nearestRoad.SourceLayer}'.");
+            $"Nearest road '{displayName ?? "(unnamed)"}' ({nearestRoad.RoadType}" +
+            (highwayClass is null ? string.Empty : $", highway={highwayClass}") +
+            $") selected from layer '{nearestRoad.SourceLayer}'" +
+            (nearestRoad.SourceFeatureId is null ? "." : $" (SourceFeatureId={nearestRoad.SourceFeatureId})."));
         evidence.Add(
-            $"Geographic distance calculated with ST_Distance(parcel geometry::geography, road geometry::geography) = {nearestRoad.DistanceMeters:F2} m.");
+            $"Nearest-neighbour ordering and distance both use geography metres " +
+            $"(ORDER BY geom::geography <-> parcel::geography; ST_Distance geography) = {nearestRoad.DistanceMeters:F2} m.");
+        if (filterPolicyVersion is not null)
+        {
+            evidence.Add($"OSM motor-road filter policy version: {filterPolicyVersion}.");
+        }
+
         evidence.Add($"Road accessibility enrichment status: {RoadAccessibilityEnrichmentStatus.Available}.");
 
         return new RoadAccessibilityEnrichmentResult
         {
             ParcelId = parcel.Id,
             RoadId = nearestRoad.RoadId,
-            RoadName = nearestRoad.RoadName,
+            RoadName = displayName,
             RoadType = MapRoadType(nearestRoad.RoadType),
             DistanceMeters = nearestRoad.DistanceMeters,
             GeometryBasis = geometryBasis,
             Status = RoadAccessibilityEnrichmentStatus.Available,
             Evidence = evidence,
-            SourceName = nearestRoad.SourceName,
+            SourceName = provenanceSourceName,
             SourceLayer = nearestRoad.SourceLayer,
             RoadSourceProvenance = roadSourceProvenance,
-            DistanceProvenance = distanceProvenance
+            DistanceProvenance = distanceProvenance,
+            HighwayClass = highwayClass,
+            OsmId = nearestRoad.SourceFeatureId,
+            FilterPolicyVersion = filterPolicyVersion
         };
     }
 
-    internal static string BuildNearestRoadSql() =>
-        $"""
-         WITH parcel_geom AS (
-             SELECT ST_SetSRID(ST_GeomFromText(@geometryWkt, 4326), 4326) AS geom
-         )
-         SELECT
-             r."Id" AS "RoadId",
-             r."Name" AS "RoadName",
-             r."RoadType" AS "RoadType",
-             r."SourceName" AS "SourceName",
-             r."SourceLayer" AS "SourceLayer",
-             ST_Distance(p.geom::geography, r."Geometry"::geography) AS "DistanceMeters"
-         FROM parcel_geom p
-         INNER JOIN {QualifiedRoadsTable()} r ON r."Geometry" IS NOT NULL
-         ORDER BY r."Geometry"::geography <-> p.geom::geography
-         LIMIT 1
-         """;
-
-    private async Task<bool> IsWithinHambantotaPilotCoverageAsync(
-        Geometry parcelGeometry,
-        AdministrativeLocationGeometryBasis geometryBasis,
-        CancellationToken cancellationToken)
+    internal static string BuildNearestRoadSql(string? sourceLayerFilter = null)
     {
-        var geometryWkt = parcelGeometry.AsText();
-        var spatialPredicate = geometryBasis == AdministrativeLocationGeometryBasis.Centroid
-            ? "ST_Covers(b.\"Boundary\", ST_SetSRID(ST_GeomFromText(@geometryWkt, 4326), 4326))"
-            : "ST_Intersects(b.\"Boundary\", ST_SetSRID(ST_GeomFromText(@geometryWkt, 4326), 4326))";
+        var layerPredicate = string.IsNullOrWhiteSpace(sourceLayerFilter)
+            ? string.Empty
+            : """ AND r."SourceLayer" = @sourceLayer """;
 
-        var sql = $"""
-                   SELECT EXISTS (
-                       SELECT 1
-                       FROM {QualifiedAdministrativeBoundariesTable()} b
-                       WHERE b."Name" = @districtName
-                         AND b."BoundaryType" = @districtType
-                         AND {spatialPredicate}
-                   )
-                   """;
+        return $"""
+                WITH parcel_geom AS (
+                    SELECT ST_SetSRID(ST_GeomFromText(@geometryWkt, 4326), 4326) AS geom
+                )
+                SELECT
+                    r."Id" AS "RoadId",
+                    r."Name" AS "RoadName",
+                    r."RoadType" AS "RoadType",
+                    r."SourceName" AS "SourceName",
+                    r."SourceLayer" AS "SourceLayer",
+                    r."SourceFeatureId" AS "SourceFeatureId",
+                    ST_Distance(p.geom::geography, r."Geometry"::geography) AS "DistanceMeters"
+                FROM parcel_geom p
+                INNER JOIN {QualifiedRoadsTable()} r ON r."Geometry" IS NOT NULL
+                WHERE 1 = 1
+                {layerPredicate}
+                ORDER BY r."Geometry"::geography <-> p.geom::geography
+                LIMIT 1
+                """;
+    }
 
-        var result = await ExecuteScalarAsync(
-            sql,
-            cancellationToken,
-            ("districtName", GisReferenceDataPaths.HambantotaDistrictName),
-            ("districtType", DistrictBoundaryType),
-            ("geometryWkt", geometryWkt));
-
-        return result is bool withinCoverage && withinCoverage;
+    private string? ResolveRoadSourceLayer(string? matchedDistrict)
+    {
+        var resolved = _coverageOptions.ResolveRoadSourceLayerForDistrict(matchedDistrict);
+        return string.IsNullOrWhiteSpace(resolved) ? null : resolved;
     }
 
     private async Task<NearestRoadRow?> FindNearestRoadAsync(
         Geometry parcelGeometry,
+        string? sourceLayerFilter,
         CancellationToken cancellationToken)
     {
         var connection = _dbContext.Database.GetDbConnection();
         await EnsureConnectionOpenAsync(connection, cancellationToken);
 
         await using var command = connection.CreateCommand();
-        command.CommandText = BuildNearestRoadSql();
+        command.CommandText = BuildNearestRoadSql(sourceLayerFilter);
         AddParameter(command, "geometryWkt", parcelGeometry.AsText());
+        if (!string.IsNullOrWhiteSpace(sourceLayerFilter))
+        {
+            AddParameter(command, "sourceLayer", sourceLayerFilter);
+        }
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken))
@@ -196,11 +240,15 @@ public sealed class RoadAccessibilityEnrichmentService : IRoadAccessibilityEnric
             reader.GetInt32(reader.GetOrdinal("RoadType")),
             reader.GetString(reader.GetOrdinal("SourceName")),
             reader.GetString(reader.GetOrdinal("SourceLayer")),
+            reader.IsDBNull(reader.GetOrdinal("SourceFeatureId"))
+                ? null
+                : reader.GetString(reader.GetOrdinal("SourceFeatureId")),
             reader.GetDouble(reader.GetOrdinal("DistanceMeters")));
     }
 
-    private static RoadAccessibilityEnrichmentResult BuildUnavailableResult(
+    private static RoadAccessibilityEnrichmentResult BuildResult(
         Guid parcelId,
+        RoadAccessibilityEnrichmentStatus status,
         IReadOnlyList<string> evidence,
         AdministrativeLocationGeometryBasis? geometryBasis,
         string sourceName,
@@ -213,12 +261,15 @@ public sealed class RoadAccessibilityEnrichmentService : IRoadAccessibilityEnric
             RoadType = null,
             DistanceMeters = null,
             GeometryBasis = geometryBasis,
-            Status = RoadAccessibilityEnrichmentStatus.Unavailable,
+            Status = status,
             Evidence = evidence,
             SourceName = sourceName,
             SourceLayer = sourceLayer,
             RoadSourceProvenance = null,
-            DistanceProvenance = null
+            DistanceProvenance = null,
+            HighwayClass = null,
+            OsmId = null,
+            FilterPolicyVersion = null
         };
 
     private static GisReferenceRoadType MapRoadType(int roadType) =>
@@ -226,30 +277,8 @@ public sealed class RoadAccessibilityEnrichmentService : IRoadAccessibilityEnric
             ? (GisReferenceRoadType)roadType
             : GisReferenceRoadType.Unspecified;
 
-    private async Task<object?> ExecuteScalarAsync(
-        string sql,
-        CancellationToken cancellationToken,
-        params (string Name, object Value)[] parameters)
-    {
-        var connection = _dbContext.Database.GetDbConnection();
-        await EnsureConnectionOpenAsync(connection, cancellationToken);
-
-        await using var command = connection.CreateCommand();
-        command.CommandText = sql;
-
-        foreach (var (name, value) in parameters)
-        {
-            AddParameter(command, name, value);
-        }
-
-        return await command.ExecuteScalarAsync(cancellationToken);
-    }
-
     private static string QualifiedRoadsTable() =>
         $"{LandIntelligenceDbContext.SchemaName}.gis_roads";
-
-    private static string QualifiedAdministrativeBoundariesTable() =>
-        $"{LandIntelligenceDbContext.SchemaName}.gis_administrative_boundaries";
 
     private static async Task EnsureConnectionOpenAsync(
         System.Data.Common.DbConnection connection,
@@ -280,5 +309,6 @@ public sealed class RoadAccessibilityEnrichmentService : IRoadAccessibilityEnric
         int RoadType,
         string SourceName,
         string SourceLayer,
+        string? SourceFeatureId,
         double DistanceMeters);
 }

@@ -1,0 +1,173 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
+import { Button } from "@/shared/components/Button";
+import { EmptyState } from "@/shared/components/EmptyState";
+import { PageHeading } from "@/shared/components/PageLayout";
+import { RecommendationCard } from "@/modules/component-01-land-intelligence/components/RecommendationCard";
+import {
+  RECOMMENDATIONS_SESSION_KEY,
+  type RecommendationsSessionPayload,
+} from "@/modules/component-01-land-intelligence/types/landIntelligence";
+import {
+  landCategoryTypeLabels,
+  landUseTypeLabels,
+} from "@/modules/component-01-land-intelligence/utils/enumMappings";
+
+const REC_STORE_EVENT = "component01.recommendations";
+
+type PayloadSnapshot = {
+  raw: string | null;
+  value: RecommendationsSessionPayload | null;
+};
+
+let payloadSnapshot: PayloadSnapshot | null = null;
+
+function parsePayload(raw: string | null): RecommendationsSessionPayload | null {
+  if (!raw) {
+    return null;
+  }
+  try {
+    return JSON.parse(raw) as RecommendationsSessionPayload;
+  } catch {
+    return null;
+  }
+}
+
+function getPayloadSnapshot(): RecommendationsSessionPayload | null {
+  const raw = sessionStorage.getItem(RECOMMENDATIONS_SESSION_KEY);
+  if (payloadSnapshot && payloadSnapshot.raw === raw) {
+    return payloadSnapshot.value;
+  }
+  const value = parsePayload(raw);
+  payloadSnapshot = { raw, value };
+  return value;
+}
+
+function getServerPayloadSnapshot(): RecommendationsSessionPayload | null {
+  return null;
+}
+
+function subscribePayloadStore(onStoreChange: () => void) {
+  const handler = () => onStoreChange();
+  window.addEventListener("storage", handler);
+  window.addEventListener(REC_STORE_EVENT, handler);
+  return () => {
+    window.removeEventListener("storage", handler);
+    window.removeEventListener(REC_STORE_EVENT, handler);
+  };
+}
+
+export function RecommendationsView() {
+  const payload = useSyncExternalStore(
+    subscribePayloadStore,
+    getPayloadSnapshot,
+    getServerPayloadSnapshot,
+  );
+
+  if (!payload) {
+    return (
+      <>
+        <PageHeading
+          title="Suitable Land Results"
+          subtitle="Ranked parcels using the Component 1 recommendation API."
+        />
+        <EmptyState
+          title="No recommendation results yet"
+          description="Run a search from Find Suitable Land to load live API results."
+          action={
+            <Button
+              href="/land-intelligence/find-suitable-land"
+              variant="primary"
+            >
+              Find Suitable Land
+            </Button>
+          }
+        />
+      </>
+    );
+  }
+
+  const { request, response } = payload;
+
+  return (
+    <>
+      <PageHeading
+        title="Suitable Land Results"
+        subtitle="Rule-based suitability scores from the recommendation engine. Supplementary ML evidence (when present) is shown separately and is not a probability of legal suitability."
+        action={
+          <Button
+            href="/land-intelligence/find-suitable-land"
+            variant="primary"
+          >
+            Edit Search
+          </Button>
+        }
+      />
+
+      <div className="searchSummary">
+        <h3 style={{ margin: 0 }}>Search summary</h3>
+        <div className="chipRow">
+          <span className="chip">
+            Purpose: {landUseTypeLabels[response.requiredPurpose] ?? "Unknown"}
+          </span>
+          {request.preferredLocation?.province ? (
+            <span className="chip">
+              Province: {request.preferredLocation.province}
+            </span>
+          ) : null}
+          {request.preferredLocation?.district ? (
+            <span className="chip">
+              District: {request.preferredLocation.district}
+            </span>
+          ) : null}
+          {request.preferredLocation?.divisionalSecretariat ? (
+            <span className="chip">
+              DS: {request.preferredLocation.divisionalSecretariat}
+            </span>
+          ) : null}
+          {request.requiredAreaHectares != null ? (
+            <span className="chip">
+              Minimum area: {request.requiredAreaHectares} ha
+            </span>
+          ) : null}
+          {request.requiredLandCategory != null ? (
+            <span className="chip">
+              Category:{" "}
+              {landCategoryTypeLabels[request.requiredLandCategory] ??
+                "Unknown"}
+            </span>
+          ) : null}
+          {request.accessibility?.maxRoadDistanceMeters != null ? (
+            <span className="chip">
+              Max road distance: {request.accessibility.maxRoadDistanceMeters} m
+            </span>
+          ) : null}
+          {request.maxResults != null ? (
+            <span className="chip">Max results: {request.maxResults}</span>
+          ) : null}
+          <span className="chip">Candidates: {response.candidateCount}</span>
+        </div>
+        <p className="statHint" style={{ marginTop: "0.75rem" }}>
+          Results are generated by the explainable recommendation engine. Missing
+          GIS or ML evidence is shown as Unknown or Unavailable and must not be
+          treated as a legal suitability decision. Production ML is optional —
+          rule-based scores work without it.
+        </p>
+      </div>
+
+      {response.recommendations.length === 0 ? (
+        <EmptyState
+          title="No suitable parcels returned"
+          description="Adjust your search criteria and try again."
+        />
+      ) : (
+        <div className="stack" style={{ marginTop: "1rem" }}>
+          {response.recommendations.map((item) => (
+            <RecommendationCard key={item.parcelId} recommendation={item} />
+          ))}
+        </div>
+      )}
+    </>
+  );
+}

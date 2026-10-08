@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { ChevronDown, User } from "lucide-react";
 import {
   SYSTEM_TITLE,
   SYSTEM_TITLE_SINHALA,
@@ -13,7 +12,7 @@ export function AppHeader() {
       <div className={styles.brand}>
         <Image
           src="/images/sri-lanka-emblem.png"
-          alt="Sri Lanka emblem"
+          alt="Coat of arms of Sri Lanka"
           width={58}
           height={58}
           className={styles.emblem}
@@ -30,19 +29,6 @@ export function AppHeader() {
             {SYSTEM_TITLE}
           </p>
         </div>
-      </div>
-      <div className={styles.actions}>
-        <button type="button" className={styles.language} aria-label="Language">
-          <span>English</span>
-          <ChevronDown size={14} strokeWidth={2.25} aria-hidden />
-        </button>
-        <button
-          type="button"
-          className={styles.profile}
-          aria-label="Profile"
-        >
-          <User size={17} strokeWidth={2.25} aria-hidden />
-        </button>
       </div>
     </header>
   );

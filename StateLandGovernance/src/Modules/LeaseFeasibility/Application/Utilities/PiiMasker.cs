@@ -1,6 +1,7 @@
 using System;
 using System.Text.Json;
 using StateLandGovernance.LeaseFeasibility.Application.DTOs;
+using StateLandGovernance.LeaseFeasibility.Domain.ValueObjects;
 
 namespace StateLandGovernance.LeaseFeasibility.Application.Utilities;
 
@@ -58,6 +59,30 @@ public static class PiiMasker
             AverageMonthlyIncome = profile.AverageMonthlyIncome > 0 ? "[Provided]" : "[Missing]",
             CreditRiskGrade = profile.CreditRiskGrade,
             DataPointsEvaluated = 12,
+            Status = "Processed"
+        };
+
+        return JsonSerializer.Serialize(logObject);
+    }
+
+    /// <summary>
+    /// Produces a metadata-only log payload for the typed deterministic scoring input.
+    /// </summary>
+    public static string GetMaskedLogPayload(
+        FinancialFeasibilityScoringInput input,
+        string? employerOrBusinessName)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+
+        var logObject = new
+        {
+            ApplicationId = MaskId(input.ApplicationId),
+            ApplicantId = MaskId(input.ApplicantId),
+            EmployerOrBusinessName = MaskName(employerOrBusinessName),
+            AverageMonthlyIncomeLkr = input.AverageMonthlyIncomeLkr > 0m ? "[Provided]" : "[Missing]",
+            RequestedMonthlyLeasePaymentLkr = input.RequestedMonthlyLeasePaymentLkr > 0m ? "[Provided]" : "[Missing]",
+            MonthlyDebtObligationsLkr = "[Provided]",
+            CreditRiskGrade = input.CreditRiskGrade.ToString(),
             Status = "Processed"
         };
 

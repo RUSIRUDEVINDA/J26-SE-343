@@ -41,7 +41,7 @@ public sealed record CribReportDataDto(
 public sealed record BankStatementDataDto(
     decimal AverageMonthlyIncome,
     decimal AverageAccountBalance,
-    int OverdraftFrequency,
+    int OverdraftCountInEvidenceWindow,
     decimal SavingsToIncomeRatio
 );
 
@@ -61,7 +61,7 @@ public sealed record SalarySlipDataDto(
 public sealed record FeasibilityFactorDto(
     string FactorId,
     string Category,
-    int ScoreContribution,
+    decimal ScoreContribution,
     string Description,
     bool IsPenalty
 );
@@ -72,11 +72,14 @@ public sealed record FeasibilityFactorDto(
 public sealed record FeasibilityAssessmentDto(
     string ApplicationId,
     string ApplicantId,
-    int TotalScore,
+    string ContractVersion,
+    decimal TotalScore,
     string EligibilityGrade,
+    string RecommendedAction,
     bool RequiresManualReview,
+    bool RequiresEscalation,
     IReadOnlyList<FeasibilityFactorDto> ContributingFactors,
-    DateTime EvaluationTimestamp
+    DateTimeOffset EvaluationTimestamp
 );
 
 /// <summary>

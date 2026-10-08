@@ -1,5 +1,6 @@
 import type {
   LandParcelResponse,
+  LandRelationshipResponse,
   SpatialConstraintResponse,
 } from "../types/landIntelligence";
 import {
@@ -8,7 +9,7 @@ import {
   spatialConstraintTypeLabels,
   restrictionSeverityLabels,
 } from "../utils/enumMappings";
-import { displayOrUnknown, formatArea } from "../utils/formatters";
+import { displayOrUnavailable, displayOrUnknown, formatArea } from "../utils/formatters";
 import styles from "./ParcelDetails.module.css";
 import listStyles from "./Lists.module.css";
 
@@ -24,9 +25,15 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 export function ParcelDetails({
   parcel,
   constraints,
+  relationships,
+  relationshipsError,
+  relationshipsLoading,
 }: {
   parcel: LandParcelResponse;
   constraints: SpatialConstraintResponse[];
+  relationships?: LandRelationshipResponse[] | null;
+  relationshipsError?: string | null;
+  relationshipsLoading?: boolean;
 }) {
   return (
     <div>
@@ -38,10 +45,14 @@ export function ParcelDetails({
           />
           <DetailRow label="Parcel UUID" value={parcel.id} />
           <DetailRow
+            label="Survey plan reference"
+            value={displayOrUnavailable(parcel.identifier.surveyPlanReference)}
+          />
+          <DetailRow
             label="Category"
             value={
               landCategoryTypeLabels[parcel.category.type] ??
-              displayOrUnknown(parcel.category.description)
+              displayOrUnavailable(parcel.category.description)
             }
           />
           <DetailRow
@@ -49,8 +60,8 @@ export function ParcelDetails({
             value={
               parcel.currentUse
                 ? landUseTypeLabels[parcel.currentUse.type] ??
-                  displayOrUnknown(parcel.currentUse.description)
-                : "Unknown"
+                  displayOrUnavailable(parcel.currentUse.description)
+                : "Unavailable"
             }
           />
           <DetailRow
@@ -59,23 +70,47 @@ export function ParcelDetails({
           />
           <DetailRow
             label="Province"
-            value={displayOrUnknown(parcel.location.province)}
+            value={displayOrUnavailable(parcel.location.province)}
           />
           <DetailRow
             label="District"
-            value={displayOrUnknown(parcel.location.district)}
+            value={displayOrUnavailable(parcel.location.district)}
           />
           <DetailRow
             label="Divisional secretariat"
-            value={displayOrUnknown(parcel.location.divisionalSecretariat)}
+            value={displayOrUnavailable(parcel.location.divisionalSecretariat)}
+          />
+          <DetailRow
+            label="Grama Niladhari division"
+            value={displayOrUnavailable(
+              parcel.location.gramaNiladhariDivision,
+            )}
           />
           <DetailRow
             label="Soil type"
-            value={displayOrUnknown(parcel.characteristics?.soilType)}
+            value={displayOrUnavailable(parcel.characteristics?.soilType)}
+          />
+          <DetailRow
+            label="Terrain"
+            value={displayOrUnavailable(
+              parcel.characteristics?.terrainDescription,
+            )}
+          />
+          <DetailRow
+            label="Elevation (m)"
+            value={
+              parcel.characteristics?.elevationMeters == null
+                ? "Unavailable"
+                : String(parcel.characteristics.elevationMeters)
+            }
           />
           <DetailRow
             label="Centroid"
             value={`${parcel.spatial.centroidLatitude}, ${parcel.spatial.centroidLongitude}`}
+          />
+          <DetailRow
+            label="Coordinate system"
+            value={displayOrUnavailable(parcel.spatial.coordinateSystem)}
           />
           <DetailRow
             label="Spatial constraints (count)"
@@ -85,12 +120,27 @@ export function ParcelDetails({
             label="Environmental restrictions (count)"
             value={String(parcel.environmentalRestrictionCount)}
           />
+          <DetailRow
+            label="Infrastructure features (count)"
+            value={String(parcel.infrastructureFeatureCount)}
+          />
+          <DetailRow
+            label="Regulatory references (count)"
+            value={String(parcel.regulatoryReferenceCount)}
+          />
         </div>
       </div>
 
       <h3 className={styles.sectionTitle}>Spatial constraints</h3>
       {constraints.length === 0 ? (
-        <p className={listStyles.empty}>No spatial constraints returned.</p>
+        <div className={styles.note} role="note">
+          <p className={listStyles.empty}>No recorded constraints.</p>
+          <p className={styles.noteText}>
+            This does not mean the parcel is safe, unrestricted, or free of
+            constraints — only that none were returned by the API for this
+            record.
+          </p>
+        </div>
       ) : (
         <ul className={listStyles.list}>
           {constraints.map((constraint) => (
@@ -101,11 +151,54 @@ export function ParcelDetails({
                 </strong>{" "}
                 · {restrictionSeverityLabels[constraint.severity] ?? "Unknown"}
               </p>
-              <p>{displayOrUnknown(constraint.description)}</p>
+              <p>{displayOrUnavailable(constraint.description)}</p>
             </li>
           ))}
         </ul>
       )}
+
+      <h3 className={styles.sectionTitle}>Knowledge graph relationships</h3>
+      <p className={styles.noteText}>
+        Loaded independently from Neo4j. A graph failure does not block parcel
+        facts above. Neo4j is not required for search or recommendations.
+      </p>
+      {relationshipsLoading ? (
+        <p className={listStyles.empty}>Loading relationships…</p>
+      ) : null}
+      {relationshipsError ? (
+        <p className={styles.noteText} role="alert">
+          Relationships unavailable: {relationshipsError}
+        </p>
+      ) : null}
+      {!relationshipsLoading &&
+      !relationshipsError &&
+      relationships &&
+      relationships.length === 0 ? (
+        <p className={listStyles.empty}>No relationships returned.</p>
+      ) : null}
+      {relationships && relationships.length > 0 ? (
+        <ul className={listStyles.list}>
+          {relationships.map((item, index) => (
+            <li
+              key={`${item.relationshipType}-${item.sourceNodeId}-${index}`}
+              className={listStyles.item}
+            >
+              <p className={listStyles.meta}>
+                <strong>{item.relationshipType}</strong>
+              </p>
+              <p>
+                {item.sourceNodeType} ({item.sourceNodeId}) →{" "}
+                {item.targetNodeType} ({item.targetNodeId})
+              </p>
+              {item.description ? (
+                <p className={listStyles.meta}>
+                  {displayOrUnavailable(item.description)}
+                </p>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }

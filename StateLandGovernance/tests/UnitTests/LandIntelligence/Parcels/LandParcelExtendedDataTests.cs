@@ -63,6 +63,7 @@ public sealed class LandParcelExtendedDataTests
         var updateHandler = new UpdateLandParcelCommandHandler(
             repository,
             new NoOpLandParcelGraphSynchronizer(),
+            new NoOpLandParcelGisEnrichmentPersistenceService(),
             new UpdateLandParcelCommandValidator());
 
         var updated = await updateHandler.HandleAsync(new UpdateLandParcelCommand

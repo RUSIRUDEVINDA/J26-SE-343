@@ -10,9 +10,12 @@ public sealed class FinancialFeasibilityAssessment : Entity
 {
     private readonly List<FinancialDocumentEvidence> _evidence = new();
 
-    public string ApplicationId { get; private set; }
+    public string ApplicationId { get; private set; } = null!;
+    public string ApplicantId { get; private set; } = null!;
+    public string ContractVersion { get; private set; } = null!;
     public FeasibilityGrade Grade { get; private set; }
-    public FeasibilityScoreBreakdown ScoreBreakdown { get; private set; }
+    public FeasibilityAction Action { get; private set; }
+    public FeasibilityScoreBreakdown ScoreBreakdown { get; private set; } = null!;
     public ApprovalProbability? PredictiveProbability { get; private set; }
     public bool IsFinalized { get; private set; }
     public DateTimeOffset GeneratedAt { get; private set; }
@@ -25,13 +28,27 @@ public sealed class FinancialFeasibilityAssessment : Entity
 
     public FinancialFeasibilityAssessment(
         string applicationId,
+        string applicantId,
+        string contractVersion,
         FeasibilityGrade grade,
+        FeasibilityAction action,
         FeasibilityScoreBreakdown scoreBreakdown,
+        DateTimeOffset generatedAt,
         ApprovalProbability? predictiveProbability = null)
     {
         if (string.IsNullOrWhiteSpace(applicationId))
         {
             throw new ArgumentException("Application ID is required.", nameof(applicationId));
+        }
+
+        if (string.IsNullOrWhiteSpace(applicantId))
+        {
+            throw new ArgumentException("Applicant ID is required.", nameof(applicantId));
+        }
+
+        if (string.IsNullOrWhiteSpace(contractVersion))
+        {
+            throw new ArgumentException("Scoring contract version is required.", nameof(contractVersion));
         }
 
         if (scoreBreakdown == null)
@@ -40,11 +57,14 @@ public sealed class FinancialFeasibilityAssessment : Entity
         }
 
         ApplicationId = applicationId.Trim();
+        ApplicantId = applicantId.Trim();
+        ContractVersion = contractVersion.Trim();
         Grade = grade;
+        Action = action;
         ScoreBreakdown = scoreBreakdown;
         PredictiveProbability = predictiveProbability;
         IsFinalized = false;
-        GeneratedAt = DateTimeOffset.UtcNow;
+        GeneratedAt = generatedAt.ToUniversalTime();
     }
 
     public void FinalizeAssessment()

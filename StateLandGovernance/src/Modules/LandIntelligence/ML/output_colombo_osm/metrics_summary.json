@@ -1,0 +1,225 @@
+{
+  "generated_at_utc": "2026-09-20T15:16:31.608987+00:00",
+  "dataset": {
+    "path": "C:\\Users\\Ravindu Peiris\\Documents\\GitHub\\J26-SE-343\\StateLandGovernance\\data\\gis\\experiments\\colombo\\parcels_colombo_osm_v2.csv",
+    "sha256": "ea52bb6df835bc902d768722c696f8ca83be80ecd36929c60442f2d45c0d342f",
+    "manifest_path": "C:\\Users\\Ravindu Peiris\\Documents\\GitHub\\J26-SE-343\\StateLandGovernance\\data\\gis\\experiments\\colombo\\parcels_colombo_osm_v2_manifest.json",
+    "manifest_sha256": "8b1b3e813ae259c20e5b102057d5160f42df4e0d76edb52608e8f4ee34f58292",
+    "validation": {
+      "row_count": 1500,
+      "label_distribution": {
+        "Suitable": 681,
+        "Moderately Suitable": 635,
+        "Unsuitable": 184
+      },
+      "gis_enrichment_status_counts": {
+        "AssessedComplete": 1497,
+        "AssessedPartial": 3
+      },
+      "spatial_constraint_counts": {
+        "False": 1490,
+        "True": 10
+      },
+      "elevation_na_fraction": 1.0,
+      "soil_overlap_na_fraction": 1.0,
+      "terrain_unique": [
+        "Unknown"
+      ]
+    }
+  },
+  "split": {
+    "method": "GroupShuffleSplit on lat/lon grid cells",
+    "cell_deg": 0.02,
+    "approx_cell_size_note": "~0.02\u00b0 cells (~2.2 km at equator; slightly less N\u2013S metres near Colombo)",
+    "test_size": 0.2,
+    "seed": 42,
+    "n_train": 1222,
+    "n_test": 278,
+    "n_train_groups": 140,
+    "n_test_groups": 35,
+    "group_overlap_count": 0,
+    "train_label_counts": {
+      "Suitable": 560,
+      "Moderately Suitable": 509,
+      "Unsuitable": 153
+    },
+    "test_label_counts": {
+      "Moderately Suitable": 126,
+      "Suitable": 121,
+      "Unsuitable": 31
+    },
+    "classes_missing_in_train": [],
+    "classes_missing_in_test": [],
+    "limitation_if_class_missing": "Fixed seed/grid used; no seed search for flattering scores. Macro-F1 uses zero_division=0 when a class is absent from a split."
+  },
+  "seeds": {
+    "experiment_seed": 42
+  },
+  "package_versions": {
+    "python": "3.13.15",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "sklearn": "1.9.1",
+    "joblib": "1.6.0"
+  },
+  "models": {
+    "Dummy Majority": {
+      "accuracy": 0.4352517985611511,
+      "macro_f1": 0.202172096908939,
+      "weighted_f1": 0.2639873063954851,
+      "per_class": {
+        "Unsuitable": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 31
+        },
+        "Moderately Suitable": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 126
+        },
+        "Suitable": {
+          "precision": 0.4352517985611511,
+          "recall": 1.0,
+          "f1": 0.606516290726817,
+          "support": 121
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "Unsuitable",
+          "Moderately Suitable",
+          "Suitable"
+        ],
+        "matrix": [
+          [
+            0,
+            0,
+            31
+          ],
+          [
+            0,
+            0,
+            126
+          ],
+          [
+            0,
+            0,
+            121
+          ]
+        ]
+      },
+      "classification_report": "                     precision    recall  f1-score   support\n\n         Unsuitable       0.00      0.00      0.00        31\nModerately Suitable       0.00      0.00      0.00       126\n           Suitable       0.44      1.00      0.61       121\n\n           accuracy                           0.44       278\n          macro avg       0.15      0.33      0.20       278\n       weighted avg       0.19      0.44      0.26       278\n"
+    },
+    "Logistic Regression": {
+      "accuracy": 0.7302158273381295,
+      "macro_f1": 0.706507755686717,
+      "weighted_f1": 0.726627733405507,
+      "per_class": {
+        "Unsuitable": {
+          "precision": 0.52,
+          "recall": 0.8387096774193549,
+          "f1": 0.6419753086419753,
+          "support": 31
+        },
+        "Moderately Suitable": {
+          "precision": 0.7912087912087912,
+          "recall": 0.5714285714285714,
+          "f1": 0.663594470046083,
+          "support": 126
+        },
+        "Suitable": {
+          "precision": 0.7664233576642335,
+          "recall": 0.8677685950413223,
+          "f1": 0.813953488372093,
+          "support": 121
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "Unsuitable",
+          "Moderately Suitable",
+          "Suitable"
+        ],
+        "matrix": [
+          [
+            26,
+            5,
+            0
+          ],
+          [
+            22,
+            72,
+            32
+          ],
+          [
+            2,
+            14,
+            105
+          ]
+        ]
+      },
+      "classification_report": "                     precision    recall  f1-score   support\n\n         Unsuitable       0.52      0.84      0.64        31\nModerately Suitable       0.79      0.57      0.66       126\n           Suitable       0.77      0.87      0.81       121\n\n           accuracy                           0.73       278\n          macro avg       0.69      0.76      0.71       278\n       weighted avg       0.75      0.73      0.73       278\n"
+    },
+    "Random Forest": {
+      "accuracy": 0.7841726618705036,
+      "macro_f1": 0.7825657962059935,
+      "weighted_f1": 0.780345044668863,
+      "per_class": {
+        "Unsuitable": {
+          "precision": 0.8,
+          "recall": 0.7741935483870968,
+          "f1": 0.7868852459016393,
+          "support": 31
+        },
+        "Moderately Suitable": {
+          "precision": 0.8235294117647058,
+          "recall": 0.6666666666666666,
+          "f1": 0.7368421052631579,
+          "support": 126
+        },
+        "Suitable": {
+          "precision": 0.7534246575342466,
+          "recall": 0.9090909090909091,
+          "f1": 0.8239700374531835,
+          "support": 121
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "Unsuitable",
+          "Moderately Suitable",
+          "Suitable"
+        ],
+        "matrix": [
+          [
+            24,
+            7,
+            0
+          ],
+          [
+            6,
+            84,
+            36
+          ],
+          [
+            0,
+            11,
+            110
+          ]
+        ]
+      },
+      "classification_report": "                     precision    recall  f1-score   support\n\n         Unsuitable       0.80      0.77      0.79        31\nModerately Suitable       0.82      0.67      0.74       126\n           Suitable       0.75      0.91      0.82       121\n\n           accuracy                           0.78       278\n          macro avg       0.79      0.78      0.78       278\n       weighted avg       0.79      0.78      0.78       278\n"
+    }
+  },
+  "verification": {
+    "pipeline_reload_matches": true,
+    "unseen_category_and_missing_numeric_predict_ok": true,
+    "predictors_exclude_audit_fields": true,
+    "preprocessing_fit_on_train_only": true
+  },
+  "comparison_caveat": "Do not compare these scores directly to synthetic or Hambantota experiments: datasets, label generators, and splits differ."
+}

@@ -16,7 +16,7 @@ namespace StateLandGovernance.LeaseFeasibility.Application.DTOs;
 public sealed record FeasibilityFactorDto(
     string FactorId,
     string Category,
-    int ScoreContribution,
+    decimal ScoreContribution,
     string Description,
     bool IsPenalty
 );
@@ -27,11 +27,14 @@ public sealed record FeasibilityFactorDto(
 public sealed record FeasibilityAssessmentDto(
     string ApplicationId,
     string ApplicantId,
-    int TotalScore,
+    string ContractVersion,
+    decimal TotalScore,
     string EligibilityGrade, // A, B, C, D, or E
+    string RecommendedAction, // FastTrack, Proceed, ManualReview, Escalate, or Reject
     bool RequiresManualReview,
+    bool RequiresEscalation,
     IReadOnlyList<FeasibilityFactorDto> ContributingFactors,
-    DateTime EvaluationTimestamp
+    DateTimeOffset EvaluationTimestamp
 );
 
 /// <summary>

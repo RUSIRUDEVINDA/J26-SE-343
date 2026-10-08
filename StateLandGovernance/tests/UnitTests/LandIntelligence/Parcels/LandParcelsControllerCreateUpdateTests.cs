@@ -32,6 +32,7 @@ public sealed class LandParcelsControllerCreateUpdateTests
             new UpdateLandParcelCommandHandler(
                 repository,
                 new NoOpLandParcelGraphSynchronizer(),
+                new NoOpLandParcelGisEnrichmentPersistenceService(),
                 new UpdateLandParcelCommandValidator()),
             new DeleteLandParcelCommandHandler(
                 repository,

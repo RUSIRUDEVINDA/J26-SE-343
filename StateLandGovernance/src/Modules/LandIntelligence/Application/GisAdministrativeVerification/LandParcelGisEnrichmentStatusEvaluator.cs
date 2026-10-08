@@ -79,24 +79,40 @@ public static class LandParcelGisEnrichmentStatusEvaluator
                 "Stored administrative location does not match GIS-detected province/district.");
         }
 
-        if (road?.Status == RoadAccessibilityEnrichmentStatus.Unavailable)
+        if (road?.Status is RoadAccessibilityEnrichmentStatus.Unavailable
+            or RoadAccessibilityEnrichmentStatus.OutsideCoverage)
         {
-            warnings.Add("Road accessibility evidence is unavailable for this parcel.");
+            warnings.Add(
+                road.Status == RoadAccessibilityEnrichmentStatus.OutsideCoverage
+                    ? "Road accessibility evidence is outside configured GIS enrichment coverage."
+                    : "Road accessibility evidence is unavailable for this parcel.");
         }
 
-        if (water?.Status == WaterProximityEnrichmentStatus.Unavailable)
+        if (water?.Status is WaterProximityEnrichmentStatus.Unavailable
+            or WaterProximityEnrichmentStatus.OutsideCoverage)
         {
-            warnings.Add("Water proximity evidence is unavailable for this parcel.");
+            warnings.Add(
+                water.Status == WaterProximityEnrichmentStatus.OutsideCoverage
+                    ? "Water proximity evidence is outside configured GIS enrichment coverage."
+                    : "Water proximity evidence is unavailable for this parcel.");
         }
 
-        if (soil?.Status == SoilGroupEnrichmentStatus.Unavailable)
+        if (soil?.Status is SoilGroupEnrichmentStatus.Unavailable
+            or SoilGroupEnrichmentStatus.OutsideCoverage)
         {
-            warnings.Add("Soil group evidence is unavailable for this parcel.");
+            warnings.Add(
+                soil.Status == SoilGroupEnrichmentStatus.OutsideCoverage
+                    ? "Soil group evidence is outside configured GIS enrichment coverage."
+                    : "Soil group evidence is unavailable for this parcel.");
         }
 
-        if (environmental?.Status == EnvironmentalSpatialConstraintEnrichmentStatus.Unavailable)
+        if (environmental?.Status is EnvironmentalSpatialConstraintEnrichmentStatus.Unavailable
+            or EnvironmentalSpatialConstraintEnrichmentStatus.OutsideCoverage)
         {
-            warnings.Add("Environmental/spatial constraint evidence is unavailable for this parcel.");
+            warnings.Add(
+                environmental.Status == EnvironmentalSpatialConstraintEnrichmentStatus.OutsideCoverage
+                    ? "Environmental/spatial constraint evidence is outside configured GIS enrichment coverage."
+                    : "Environmental/spatial constraint evidence is unavailable for this parcel.");
         }
 
         if (environmental?.ErosionDataStatus == ErosionDataStatus.Unavailable)
@@ -113,8 +129,12 @@ public static class LandParcelGisEnrichmentStatusEvaluator
         WaterProximityEnrichmentResult? water,
         SoilGroupEnrichmentResult? soil,
         EnvironmentalSpatialConstraintEnrichmentResult? environmental) =>
-        road?.Status == RoadAccessibilityEnrichmentStatus.Unavailable
-        || water?.Status == WaterProximityEnrichmentStatus.Unavailable
-        || soil?.Status == SoilGroupEnrichmentStatus.Unavailable
-        || environmental?.Status == EnvironmentalSpatialConstraintEnrichmentStatus.Unavailable;
+        road?.Status is RoadAccessibilityEnrichmentStatus.Unavailable
+            or RoadAccessibilityEnrichmentStatus.OutsideCoverage
+        || water?.Status is WaterProximityEnrichmentStatus.Unavailable
+            or WaterProximityEnrichmentStatus.OutsideCoverage
+        || soil?.Status is SoilGroupEnrichmentStatus.Unavailable
+            or SoilGroupEnrichmentStatus.OutsideCoverage
+        || environmental?.Status is EnvironmentalSpatialConstraintEnrichmentStatus.Unavailable
+            or EnvironmentalSpatialConstraintEnrichmentStatus.OutsideCoverage;
 }

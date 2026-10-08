@@ -1,29 +1,31 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using StateLandGovernance.LeaseFeasibility.Application.DTOs;
 using StateLandGovernance.LeaseFeasibility.Application.Interfaces;
 using StateLandGovernance.LeaseFeasibility.Application.Utilities;
+using StateLandGovernance.LeaseFeasibility.Domain.Enums;
 using StateLandGovernance.LeaseFeasibility.Domain.Services;
+using StateLandGovernance.LeaseFeasibility.Domain.ValueObjects;
 
 namespace StateLandGovernance.LeaseFeasibility.Application.Commands;
 
 /// <summary>
-/// Command to assess the financial feasibility of a lease application via document extraction.
+/// Command to assess a lease application. Money values are LKR per month and
+/// IncomeConsistencyRatio is a normalized 0-1 value supplied by an approved upstream calculation.
 /// </summary>
 public sealed record AssessFinancialFeasibilityCommand(
     string ApplicationId,
     string ApplicantId,
+    decimal RequestedMonthlyLeasePaymentLkr,
+    decimal MonthlyDebtObligationsLkr,
+    decimal IncomeConsistencyRatio,
     string BankStatementUri,
     string SalarySlipUri,
-    string CribReportUri
-);
+    string CribReportUri);
 
-/// <summary>
-/// Handler for the AssessFinancialFeasibilityCommand.
-/// </summary>
 public sealed class AssessFinancialFeasibilityCommandHandler
 {
     private readonly IDocumentExtractionService _extractionService;
@@ -46,71 +48,102 @@ public sealed class AssessFinancialFeasibilityCommandHandler
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<FeasibilityAssessmentDto> HandleAsync(AssessFinancialFeasibilityCommand command, CancellationToken cancellationToken = default)
+    public async Task<FeasibilityAssessmentDto> HandleAsync(
+        AssessFinancialFeasibilityCommand command,
+        CancellationToken cancellationToken = default)
     {
-        // 1. Extract raw data from documents
-        var bankData = await _extractionService.ExtractBankStatementDataAsync(command.BankStatementUri, cancellationToken);
-        var salaryData = await _extractionService.ExtractSalarySlipDataAsync(command.SalarySlipUri, cancellationToken);
-        var cribData = await _extractionService.ExtractCribReportDataAsync(command.CribReportUri, cancellationToken);
+        var validation = new Validators.AssessFinancialFeasibilityCommandValidator().Validate(command);
+        if (!validation.IsValid)
+        {
+            throw new ValidationException(validation.Errors);
+        }
 
-        // 2. Assemble Financial Profile (Domain ValueObject)
-        var profile = new StateLandGovernance.LeaseFeasibility.Domain.ValueObjects.FinancialProfile(
-            ApplicantId: command.ApplicantId,
-            AverageMonthlyIncome: salaryData.AverageMonthlyIncome,
-            IncomeConsistencyScore: 0.85m, // Based on business rules or synthesized
-            EmploymentTenureMonths: salaryData.EmploymentTenureMonths,
-            EmploymentType: salaryData.EmploymentType,
-            EmployerOrBusinessName: salaryData.EmployerOrBusinessName,
-            AverageAccountBalance: bankData.AverageAccountBalance,
-            OverdraftFrequency: bankData.OverdraftFrequency,
-            SavingsToIncomeRatio: bankData.SavingsToIncomeRatio,
-            CreditRiskGrade: cribData.CreditRiskGrade,
-            ActiveLoanObligations: cribData.ActiveLoanObligations,
-            DefaultHistoryIndicator: cribData.DefaultHistoryIndicator,
-            RecentCreditInquiries: cribData.RecentCreditInquiries
-        );
+        var bankData = await _extractionService.ExtractBankStatementDataAsync(
+            command.BankStatementUri,
+            cancellationToken);
+        var salaryData = await _extractionService.ExtractSalarySlipDataAsync(
+            command.SalarySlipUri,
+            cancellationToken);
+        var cribData = await _extractionService.ExtractCribReportDataAsync(
+            command.CribReportUri,
+            cancellationToken);
 
-        // Map for PII Logger (Needs DTO)
-        var profileDto = new FinancialProfileDto(
-            command.ApplicantId, salaryData.AverageMonthlyIncome, 0.85m, salaryData.EmploymentTenureMonths,
-            salaryData.EmploymentType, salaryData.EmployerOrBusinessName, bankData.AverageAccountBalance,
-            bankData.OverdraftFrequency, bankData.SavingsToIncomeRatio, cribData.CreditRiskGrade,
-            cribData.ActiveLoanObligations, cribData.DefaultHistoryIndicator, cribData.RecentCreditInquiries
-        );
+        if (!Enum.TryParse<CreditRiskGrade>(cribData.CreditRiskGrade, true, out var creditRiskGrade) ||
+            !Enum.IsDefined(creditRiskGrade))
+        {
+            throw new ValidationException(new[] { "CRIB credit risk grade must be A, B, C, D, or E." });
+        }
 
-        // 3. PII-Masked Logging BEFORE processing
-        var maskedLogPayload = PiiMasker.GetMaskedLogPayload(profileDto);
-        _logger.LogInformation("Processing Financial Profile for Applicant: {MaskedPayload}", maskedLogPayload);
+        var input = new FinancialFeasibilityScoringInput(
+            applicationId: command.ApplicationId,
+            applicantId: command.ApplicantId,
+            averageMonthlyIncomeLkr: salaryData.AverageMonthlyIncome,
+            incomeConsistencyRatio: command.IncomeConsistencyRatio,
+            requestedMonthlyLeasePaymentLkr: command.RequestedMonthlyLeasePaymentLkr,
+            monthlyDebtObligationsLkr: command.MonthlyDebtObligationsLkr,
+            averageAccountBalanceLkr: bankData.AverageAccountBalance,
+            overdraftCountInEvidenceWindow: bankData.OverdraftCountInEvidenceWindow,
+            creditRiskGrade: creditRiskGrade,
+            hasDefaultHistory: cribData.DefaultHistoryIndicator);
 
-        // 4. Domain Engine Evaluation
-        var assessment = _scoringEngine.EvaluateFeasibility(profile, _timeProvider.GetUtcNow().UtcDateTime);
+        var maskedLogPayload = PiiMasker.GetMaskedLogPayload(input, salaryData.EmployerOrBusinessName);
+        _logger.LogInformation(
+            "Processing deterministic financial feasibility input: {MaskedPayload}",
+            maskedLogPayload);
 
-        // 5. Persist the assessment
+        var evaluationTimestamp = _timeProvider.GetUtcNow();
+        var assessment = _scoringEngine.EvaluateFeasibility(input, evaluationTimestamp);
+
         await _repository.AddAsync(assessment, cancellationToken);
 
-        // 6. Map back to DTO
-        var factors = new System.Collections.Generic.List<FeasibilityFactorDto>
+        var factors = new List<FeasibilityFactorDto>
         {
-            new FeasibilityFactorDto("ITC", "IncomeToLeaseCost", (int)assessment.ScoreBreakdown.IncomeToLeaseCostScore, "Income to lease cost ratio", false),
-            new FeasibilityFactorDto("INC", "IncomeConsistency", (int)assessment.ScoreBreakdown.IncomeConsistencyScore, "Income consistency score", false),
-            new FeasibilityFactorDto("DTI", "DebtToIncome", (int)assessment.ScoreBreakdown.DebtToIncomeScore, "Debt to income score", false),
-            new FeasibilityFactorDto("EMP", "EmploymentStability", (int)assessment.ScoreBreakdown.EmploymentStabilityScore, "Employment stability score", false),
-            new FeasibilityFactorDto("CRD", "CreditIndicator", (int)assessment.ScoreBreakdown.CreditIndicatorScore, "Credit indicator score", false)
+            new(
+                "DSR",
+                "DebtServiceRatio",
+                assessment.ScoreBreakdown.DebtServiceRatioScore,
+                $"Monthly debt plus requested lease payment is {assessment.ScoreBreakdown.DebtServiceRatio:P2} of monthly income.",
+                false),
+            new(
+                "INC",
+                "IncomeConsistency",
+                assessment.ScoreBreakdown.IncomeConsistencyScore,
+                $"Income consistency ratio is {command.IncomeConsistencyRatio:F2}.",
+                false),
+            new(
+                "LIQ",
+                "LiquidityBuffer",
+                assessment.ScoreBreakdown.LiquidityBufferScore,
+                $"Average account balance covers {assessment.ScoreBreakdown.LiquidityBufferMonths:F2} months of requested lease payments.",
+                false),
+            new(
+                "CRD",
+                "CreditHistory",
+                assessment.ScoreBreakdown.CreditHistoryScore,
+                $"Normalized CRIB credit grade is {creditRiskGrade}.",
+                false)
         };
 
-        if (assessment.ScoreBreakdown.PenaltyScore < 0)
+        if (assessment.ScoreBreakdown.PenaltyScore < 0m)
         {
-            factors.Add(new FeasibilityFactorDto("PEN", "Penalty", (int)assessment.ScoreBreakdown.PenaltyScore, "Risk penalty", true));
+            factors.Add(new FeasibilityFactorDto(
+                "PEN",
+                "Penalty",
+                assessment.ScoreBreakdown.PenaltyScore,
+                "Approved default-history and/or evidence-window overdraft penalties applied.",
+                true));
         }
 
         return new FeasibilityAssessmentDto(
-            ApplicationId: command.ApplicationId,
-            ApplicantId: command.ApplicantId, // Pass from command since assessment doesn't store ApplicantId
-            TotalScore: (int)assessment.ScoreBreakdown.TotalScore,
+            ApplicationId: assessment.ApplicationId,
+            ApplicantId: assessment.ApplicantId,
+            ContractVersion: assessment.ContractVersion,
+            TotalScore: assessment.ScoreBreakdown.TotalScore,
             EligibilityGrade: assessment.Grade.ToString(),
-            RequiresManualReview: assessment.Grade == StateLandGovernance.LeaseFeasibility.Domain.Enums.FeasibilityGrade.C, // Assuming C means manual review, or whatever custom logic
+            RecommendedAction: assessment.Action.ToString(),
+            RequiresManualReview: assessment.Action == FeasibilityAction.ManualReview,
+            RequiresEscalation: assessment.Action == FeasibilityAction.Escalate,
             ContributingFactors: factors,
-            EvaluationTimestamp: assessment.GeneratedAt.UtcDateTime
-        );
+            EvaluationTimestamp: assessment.GeneratedAt);
     }
 }

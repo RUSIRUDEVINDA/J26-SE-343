@@ -11,12 +11,11 @@ export const LAND_INTELLIGENCE_BASE = "/land-intelligence";
 
 export type NavItem = {
   label: string;
-  href?: string;
+  href: string;
   icon: string;
-  disabled?: boolean;
-  disabledReason?: string;
 };
 
+/** Only routes that are implemented and functional in this frontend. */
 export const component01NavItems: NavItem[] = [
   { label: "Dashboard", href: LAND_INTELLIGENCE_BASE, icon: "▦" },
   {
@@ -31,25 +30,13 @@ export const component01NavItems: NavItem[] = [
   },
   {
     label: "Parcel Intelligence",
-    href: `${LAND_INTELLIGENCE_BASE}/parcel-intelligence`,
+    href: `${LAND_INTELLIGENCE_BASE}/parcels`,
     icon: "▤",
-  },
-  {
-    label: "Reserve Land",
-    icon: "▣",
-    disabled: true,
-    disabledReason: "Owned by another component",
   },
   {
     label: "Knowledge Graph",
     href: `${LAND_INTELLIGENCE_BASE}/knowledge-graph`,
     icon: "◎",
-  },
-  {
-    label: "Tax Checker",
-    icon: "",
-    disabled: true,
-    disabledReason: "Owned by another component",
   },
 ];
 
@@ -62,19 +49,19 @@ export const moduleLandingLinks = [
   },
   {
     id: "component-02",
-    title: "Component 2",
+    title: "Lease Feasibility",
     href: "/component-02",
     available: false,
   },
   {
     id: "component-03",
-    title: "Component 3",
+    title: "Governance Intelligence",
     href: "/component-03",
     available: false,
   },
   {
     id: "component-04",
-    title: "Component 4",
+    title: "Workflow Governance",
     href: "/component-04",
     available: false,
   },

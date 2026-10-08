@@ -61,19 +61,38 @@ public class ValueObjectsTests
     [Fact]
     public void FeasibilityScoreBreakdown_WithValidScores_InitializesCorrectly()
     {
-        var score = new FeasibilityScoreBreakdown(10, 10, 20, 10, 10, 0, 60);
-        Assert.Equal(60, score.TotalScore);
+        var score = new FeasibilityScoreBreakdown(0.30m, 4m, 25m, 20m, 15m, 15m, 0m, 75m);
+        Assert.Equal(75m, score.TotalScore);
     }
 
     [Fact]
     public void FeasibilityScoreBreakdown_WithPositivePenalty_ThrowsArgumentOutOfRangeException()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new FeasibilityScoreBreakdown(10, 10, 20, 10, 10, 5, 60));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new FeasibilityScoreBreakdown(0.30m, 4m, 25m, 20m, 15m, 15m, 5m, 75m));
     }
 
     [Fact]
     public void FeasibilityScoreBreakdown_WithOutOfBoundsTotal_ThrowsArgumentOutOfRangeException()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new FeasibilityScoreBreakdown(10, 10, 20, 10, 10, 0, 105));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new FeasibilityScoreBreakdown(0.30m, 4m, 25m, 20m, 15m, 15m, 0m, 105m));
+    }
+
+    [Fact]
+    public void FinancialFeasibilityScoringInput_WithInvalidRatio_ThrowsDomainException()
+    {
+        Assert.Throws<StateLandGovernance.LeaseFeasibility.Domain.Exceptions.InvalidFinancialProfileException>(() =>
+            new FinancialFeasibilityScoringInput(
+                "APP-001",
+                "PERSON-001",
+                100_000m,
+                1.01m,
+                10_000m,
+                5_000m,
+                30_000m,
+                0,
+                CreditRiskGrade.A,
+                false));
     }
 }
