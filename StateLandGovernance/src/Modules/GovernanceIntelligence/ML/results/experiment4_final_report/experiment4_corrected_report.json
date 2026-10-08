@@ -1,0 +1,421 @@
+{
+  "report_title": "Experiment 4 Corrected Comparative Report",
+  "generated_at": "2026-10-07T11:21:46.946895+00:00",
+  "important_caveat": "Development cross-validation results on 200 baseline records. Frozen fold assignments replayed. Not untouched held-out test results. Researcher review is not independent professional governance validation.",
+  "alignment": {
+    "id_mismatches": 0,
+    "label_mismatches": 0,
+    "fold_mismatches": 0,
+    "status": "PASS"
+  },
+  "arm_a": {
+    "run_dir": "results/experiment4_synthetic_augmentation_run2",
+    "oof_rows": 200,
+    "overall": {
+      "Accuracy": 0.77,
+      "Macro_Precision": 0.7708,
+      "Macro_Recall": 0.77,
+      "Macro_F1": 0.7685,
+      "Weighted_F1": 0.7685,
+      "Misclassified": 46
+    },
+    "per_class": [
+      {
+        "Label": "Administrative / Procedural / Integrity",
+        "Support": 50,
+        "TP": 37,
+        "FP": 8,
+        "FN": 13,
+        "TN": 142,
+        "Precision": 0.8222,
+        "Recall": 0.74,
+        "F1": 0.7789,
+        "FPR": 0.0533
+      },
+      {
+        "Label": "Lease Revenue / Payment / Enforcement",
+        "Support": 50,
+        "TP": 42,
+        "FP": 12,
+        "FN": 8,
+        "TN": 138,
+        "Precision": 0.7778,
+        "Recall": 0.84,
+        "F1": 0.8077,
+        "FPR": 0.08
+      },
+      {
+        "Label": "Unauthorized Allocation / Transfer / Use",
+        "Support": 50,
+        "TP": 33,
+        "FP": 12,
+        "FN": 17,
+        "TN": 138,
+        "Precision": 0.7333,
+        "Recall": 0.66,
+        "F1": 0.6947,
+        "FPR": 0.08
+      },
+      {
+        "Label": "Protected / Environmental Lease Misuse",
+        "Support": 50,
+        "TP": 42,
+        "FP": 14,
+        "FN": 8,
+        "TN": 136,
+        "Precision": 0.75,
+        "Recall": 0.84,
+        "F1": 0.7925,
+        "FPR": 0.0933
+      }
+    ],
+    "confusion_matrix": {
+      "labels": [
+        "Administrative / Procedural / Integrity",
+        "Lease Revenue / Payment / Enforcement",
+        "Unauthorized Allocation / Transfer / Use",
+        "Protected / Environmental Lease Misuse"
+      ],
+      "matrix": [
+        [
+          37,
+          7,
+          4,
+          2
+        ],
+        [
+          6,
+          42,
+          1,
+          1
+        ],
+        [
+          1,
+          5,
+          33,
+          11
+        ],
+        [
+          1,
+          0,
+          7,
+          42
+        ]
+      ]
+    }
+  },
+  "arm_b": {
+    "run_dir": "results/experiment4_synthetic_augmentation_run5",
+    "oof_rows": 200,
+    "overall": {
+      "Accuracy": 0.76,
+      "Macro_Precision": 0.7668,
+      "Macro_Recall": 0.76,
+      "Macro_F1": 0.7601,
+      "Weighted_F1": 0.7601,
+      "Misclassified": 48
+    },
+    "per_class": [
+      {
+        "Label": "Administrative / Procedural / Integrity",
+        "Support": 50,
+        "TP": 34,
+        "FP": 6,
+        "FN": 16,
+        "TN": 144,
+        "Precision": 0.85,
+        "Recall": 0.68,
+        "F1": 0.7556,
+        "FPR": 0.04
+      },
+      {
+        "Label": "Lease Revenue / Payment / Enforcement",
+        "Support": 50,
+        "TP": 43,
+        "FP": 11,
+        "FN": 7,
+        "TN": 139,
+        "Precision": 0.7963,
+        "Recall": 0.86,
+        "F1": 0.8269,
+        "FPR": 0.0733
+      },
+      {
+        "Label": "Unauthorized Allocation / Transfer / Use",
+        "Support": 50,
+        "TP": 37,
+        "FP": 19,
+        "FN": 13,
+        "TN": 131,
+        "Precision": 0.6607,
+        "Recall": 0.74,
+        "F1": 0.6981,
+        "FPR": 0.1267
+      },
+      {
+        "Label": "Protected / Environmental Lease Misuse",
+        "Support": 50,
+        "TP": 38,
+        "FP": 12,
+        "FN": 12,
+        "TN": 138,
+        "Precision": 0.76,
+        "Recall": 0.76,
+        "F1": 0.76,
+        "FPR": 0.08
+      }
+    ],
+    "confusion_matrix": {
+      "labels": [
+        "Administrative / Procedural / Integrity",
+        "Lease Revenue / Payment / Enforcement",
+        "Unauthorized Allocation / Transfer / Use",
+        "Protected / Environmental Lease Misuse"
+      ],
+      "matrix": [
+        [
+          34,
+          7,
+          7,
+          2
+        ],
+        [
+          5,
+          43,
+          1,
+          1
+        ],
+        [
+          0,
+          4,
+          37,
+          9
+        ],
+        [
+          1,
+          0,
+          11,
+          38
+        ]
+      ]
+    },
+    "per_fold_training": {
+      "fold_1": {
+        "baseline_train": 175,
+        "synthetic_records": 225,
+        "eval": 25
+      },
+      "fold_2": {
+        "baseline_train": 161,
+        "synthetic_records": 225,
+        "eval": 39
+      },
+      "fold_3": {
+        "baseline_train": 141,
+        "synthetic_records": 225,
+        "eval": 59
+      },
+      "fold_4": {
+        "baseline_train": 159,
+        "synthetic_records": 225,
+        "eval": 41
+      },
+      "fold_5": {
+        "baseline_train": 164,
+        "synthetic_records": 225,
+        "eval": 36
+      },
+      "note": "Baseline training size ranges from 141 (fold 3) to 175 (fold 1). 225 synthetic variants enter training only; evaluation is always the 200 baseline OOF records."
+    }
+  },
+  "deltas_b_minus_a": {
+    "Accuracy": -0.01,
+    "Macro_F1": -0.0084,
+    "Weighted_F1": -0.0084,
+    "Misclassified_change": 2
+  },
+  "per_class_deltas": {
+    "Administrative / Procedural / Integrity": {
+      "F1_delta": -0.0233,
+      "TP_delta": -3
+    },
+    "Lease Revenue / Payment / Enforcement": {
+      "F1_delta": 0.0192,
+      "TP_delta": 1
+    },
+    "Unauthorized Allocation / Transfer / Use": {
+      "F1_delta": 0.0034,
+      "TP_delta": 4
+    },
+    "Protected / Environmental Lease Misuse": {
+      "F1_delta": -0.0325,
+      "TP_delta": -4
+    }
+  },
+  "paired_comparison": {
+    "helped": 9,
+    "hurt": 11,
+    "net_gain": -2,
+    "helped_records": [
+      {
+        "Research_ID": "STATE-LEASE-020",
+        "True_Label": "Protected / Environmental Lease Misuse",
+        "Arm_A_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Arm_B_Pred": "Protected / Environmental Lease Misuse",
+        "Fold": 4
+      },
+      {
+        "Research_ID": "STATE-LEASE-031",
+        "True_Label": "Lease Revenue / Payment / Enforcement",
+        "Arm_A_Pred": "Administrative / Procedural / Integrity",
+        "Arm_B_Pred": "Lease Revenue / Payment / Enforcement",
+        "Fold": 3
+      },
+      {
+        "Research_ID": "STATE-LEASE-032",
+        "True_Label": "Lease Revenue / Payment / Enforcement",
+        "Arm_A_Pred": "Administrative / Procedural / Integrity",
+        "Arm_B_Pred": "Lease Revenue / Payment / Enforcement",
+        "Fold": 3
+      },
+      {
+        "Research_ID": "WEB-063",
+        "True_Label": "Administrative / Procedural / Integrity",
+        "Arm_A_Pred": "Lease Revenue / Payment / Enforcement",
+        "Arm_B_Pred": "Administrative / Procedural / Integrity",
+        "Fold": 2
+      },
+      {
+        "Research_ID": "WEB-071",
+        "True_Label": "Unauthorized Allocation / Transfer / Use",
+        "Arm_A_Pred": "Lease Revenue / Payment / Enforcement",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 4
+      },
+      {
+        "Research_ID": "WEB-131",
+        "True_Label": "Unauthorized Allocation / Transfer / Use",
+        "Arm_A_Pred": "Protected / Environmental Lease Misuse",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 3
+      },
+      {
+        "Research_ID": "WEB-147",
+        "True_Label": "Unauthorized Allocation / Transfer / Use",
+        "Arm_A_Pred": "Protected / Environmental Lease Misuse",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 3
+      },
+      {
+        "Research_ID": "WEB-151",
+        "True_Label": "Unauthorized Allocation / Transfer / Use",
+        "Arm_A_Pred": "Protected / Environmental Lease Misuse",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 3
+      },
+      {
+        "Research_ID": "WEB-155",
+        "True_Label": "Unauthorized Allocation / Transfer / Use",
+        "Arm_A_Pred": "Protected / Environmental Lease Misuse",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 3
+      }
+    ],
+    "hurt_records": [
+      {
+        "Research_ID": "STATE-LEASE-002",
+        "True_Label": "Administrative / Procedural / Integrity",
+        "Arm_A_Pred": "Administrative / Procedural / Integrity",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 5
+      },
+      {
+        "Research_ID": "STATE-LEASE-008",
+        "True_Label": "Lease Revenue / Payment / Enforcement",
+        "Arm_A_Pred": "Lease Revenue / Payment / Enforcement",
+        "Arm_B_Pred": "Administrative / Procedural / Integrity",
+        "Fold": 3
+      },
+      {
+        "Research_ID": "STATE-LEASE-014",
+        "True_Label": "Protected / Environmental Lease Misuse",
+        "Arm_A_Pred": "Protected / Environmental Lease Misuse",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 4
+      },
+      {
+        "Research_ID": "STATE-LEASE-016",
+        "True_Label": "Protected / Environmental Lease Misuse",
+        "Arm_A_Pred": "Protected / Environmental Lease Misuse",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 2
+      },
+      {
+        "Research_ID": "STATE-LEASE-019",
+        "True_Label": "Protected / Environmental Lease Misuse",
+        "Arm_A_Pred": "Protected / Environmental Lease Misuse",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 5
+      },
+      {
+        "Research_ID": "STATE-LEASE-025",
+        "True_Label": "Protected / Environmental Lease Misuse",
+        "Arm_A_Pred": "Protected / Environmental Lease Misuse",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 2
+      },
+      {
+        "Research_ID": "STATE-LEASE-051",
+        "True_Label": "Administrative / Procedural / Integrity",
+        "Arm_A_Pred": "Administrative / Procedural / Integrity",
+        "Arm_B_Pred": "Lease Revenue / Payment / Enforcement",
+        "Fold": 3
+      },
+      {
+        "Research_ID": "WEB-065",
+        "True_Label": "Administrative / Procedural / Integrity",
+        "Arm_A_Pred": "Administrative / Procedural / Integrity",
+        "Arm_B_Pred": "Lease Revenue / Payment / Enforcement",
+        "Fold": 3
+      },
+      {
+        "Research_ID": "WEB-105",
+        "True_Label": "Administrative / Procedural / Integrity",
+        "Arm_A_Pred": "Administrative / Procedural / Integrity",
+        "Arm_B_Pred": "Protected / Environmental Lease Misuse",
+        "Fold": 5
+      },
+      {
+        "Research_ID": "WEB-157",
+        "True_Label": "Unauthorized Allocation / Transfer / Use",
+        "Arm_A_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Arm_B_Pred": "Protected / Environmental Lease Misuse",
+        "Fold": 5
+      },
+      {
+        "Research_ID": "WEB-199",
+        "True_Label": "Protected / Environmental Lease Misuse",
+        "Arm_A_Pred": "Protected / Environmental Lease Misuse",
+        "Arm_B_Pred": "Unauthorized Allocation / Transfer / Use",
+        "Fold": 4
+      }
+    ],
+    "revenue_clarification": {
+      "helped_revenue_records": 2,
+      "tp_arm_a": 42,
+      "tp_arm_b": 43,
+      "correct_gain": 1,
+      "note": "Revenue TP increased from 42 to 43 (gain of 1). Exactly 2 Revenue records appear in the helped list (A wrong -> B correct)."
+    }
+  },
+  "known_limitations": [
+    "Development CV results; frozen folds replayed; not held-out test performance.",
+    "Blank Related_Baseline_IDs do not establish semantic independence between synthetic and baseline records.",
+    "class_weight='balanced' interaction with augmented pool is an untested hypothesis.",
+    "Vocabulary shift hypothesis (synthetic phrase patterns) is untested.",
+    "Researcher review is not independent professional governance domain validation.",
+    "Closed-set 4-class classifier; no validated out-of-scope detector."
+  ],
+  "result_summary": "Arm B (75 families, 225 variants) produced worse overall CV metrics. Accuracy: 0.76 vs 0.77 (delta -0.01). Macro-F1: 0.7601 vs 0.7685 (delta -0.0084). Net change: -2 (9 helped, 11 hurt). This is a negative result under the current pipeline and augmentation strategy.",
+  "pending_families_note": "25 families remain pending. Approving them to improve metrics is not a valid research practice. Approval must be based on review criteria only."
+}
