@@ -70,3 +70,13 @@ secrets.json
 
 ## Antigravity local agent skills (local-only, must not be committed)
 .agents/skills/
+
+## Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+ENV/
+env/
