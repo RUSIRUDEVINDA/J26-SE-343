@@ -12,7 +12,18 @@ _ML_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ML_ROOT / "src"))
 
 from config import LABEL_ORDER
-from http_service import ServiceSettings, create_app
+from http_service import ServiceSettings, create_app as create_service_app
+
+
+class _StubAnomalyBundle:
+    bundle_version = "workflow-anomaly-stub-v1"
+
+
+def create_app(*args, **kwargs):
+    """Keep complaint-boundary tests isolated from production anomaly artifacts."""
+
+    kwargs.setdefault("anomaly_bundle_loader", lambda _path: _StubAnomalyBundle())
+    return create_service_app(*args, **kwargs)
 
 
 def _settings(tmp_path: Path, max_request_chars: int = 100) -> ServiceSettings:
