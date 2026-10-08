@@ -20,9 +20,9 @@ public sealed record FinancialProfileDto(
     decimal SavingsToIncomeRatio,
     // CRIB Report
     string CreditRiskGrade,
-    decimal ActiveLoanObligations,
-    bool DefaultHistoryIndicator,
-    int RecentCreditInquiries
+    decimal? ActiveLoanObligations,
+    bool? DefaultHistoryIndicator,
+    int? RecentCreditInquiries
 );
 
 /// <summary>
@@ -30,10 +30,22 @@ public sealed record FinancialProfileDto(
 /// </summary>
 public sealed record CribReportDataDto(
     string CreditRiskGrade,
-    decimal ActiveLoanObligations,
-    bool DefaultHistoryIndicator,
-    int RecentCreditInquiries
-);
+    decimal? ActiveLoanObligations,
+    bool? DefaultHistoryIndicator,
+    int? RecentCreditInquiries
+)
+{
+    // Original bureau grade (including subgrade or XX), never the lease eligibility grade.
+    public string? NormalizedCreditRiskGrade { get; init; }
+    public int? CreditScore { get; init; }
+    public decimal? BureauProbabilityOfDefaultPercent { get; init; }
+    public decimal? OutstandingBalanceLkr { get; init; }
+    public decimal? ReportedMonthlyPaymentsLkr { get; init; }
+    public int? SelfInquiriesLastSixMonths { get; init; }
+    public int? ActiveDisputes { get; init; }
+    public bool RequiresManualReview { get; init; }
+    public IReadOnlyList<string> ReviewReasons { get; init; } = Array.Empty<string>();
+}
 
 /// <summary>
 /// Data Transfer Object representing structured data extracted from a bank statement.
@@ -80,7 +92,10 @@ public sealed record FeasibilityAssessmentDto(
     bool RequiresEscalation,
     IReadOnlyList<FeasibilityFactorDto> ContributingFactors,
     DateTimeOffset EvaluationTimestamp
-);
+)
+{
+    public StateLandGovernance.LeaseFeasibility.Domain.ValueObjects.LeasePaymentCapacity? PaymentCapacity { get; init; }
+}
 
 /// <summary>
 /// Data Transfer Object for the ML-driven predictive approval estimation.

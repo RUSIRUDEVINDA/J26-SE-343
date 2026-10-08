@@ -1,12 +1,4 @@
-import { PageLayout, PageHeading } from "@/shared/components/PageLayout";
-
+import { FinancialScreen } from "@/modules/component-02/components/FinancialFlow";
 export default function Component02Page() {
-  return (
-    <PageLayout showSidebar={false}>
-      <PageHeading title="Component 2" />
-      <div className="placeholderPage">
-        <p>Coming soon — owned by another component.</p>
-      </div>
-    </PageLayout>
-  );
+  return <FinancialScreen screen="overview" />;
 }

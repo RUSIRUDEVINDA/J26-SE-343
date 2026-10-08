@@ -2,8 +2,8 @@
 
 Next.js (App Router) frontend for the **State Land Lease Information and Management System**.
 
-This folder implements **Component 1: Land Intelligence and Spatial Recommendation** only.
-Components 2–4 are module placeholders (`lease-feasibility`, `governance-intelligence`,
+This folder implements **Component 1: Land Intelligence and Spatial Recommendation** and a **Component 2 Financial Intelligence & Proposal Support UI preview**.
+Components 3–4 remain module placeholders (`lease-feasibility`, `governance-intelligence`,
 `workflow-governance` / `component-0x`).
 
 ## Prerequisites
@@ -97,3 +97,7 @@ In **Development** / **Testing**, WorkflowGovernance lease cases use an **in-mem
 repository so the full API host can start. That store is volatile. **Production**
 refuses to register it — durable persistence must be added before Production hosting.
 Land Intelligence UI flows do not require lease-case storage.
+
+## Component 2 UI preview
+
+Open `/component-02` for the 13-screen financial document, assessment and proposal flow based on the Figma reference. It uses fictional sample data; OCR, scoring, prediction, RAG and submission are not connected. See `src/modules/component-02/README.md` for routes and integration boundaries.

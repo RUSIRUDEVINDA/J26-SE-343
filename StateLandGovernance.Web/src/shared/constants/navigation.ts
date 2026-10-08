@@ -49,9 +49,9 @@ export const moduleLandingLinks = [
   },
   {
     id: "component-02",
-    title: "Lease Feasibility",
+    title: "Financial Intelligence & Proposal Support",
     href: "/component-02",
-    available: false,
+    available: true,
   },
   {
     id: "component-03",

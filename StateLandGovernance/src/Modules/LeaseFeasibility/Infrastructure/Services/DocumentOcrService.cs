@@ -53,7 +53,7 @@ public sealed class DocumentOcrService : IDocumentExtractionService
             }
             if (documentUri.Contains("mock-crib"))
             {
-                return "MOCK OCR RESULT: [CRIB REPORT] Credit Risk Grade: A. Active Loan Obligations: 12000. Default History Indicator: False. Recent Credit Inquiries: 1.";
+                return "MOCK OCR RESULT: [CRIB REPORT] Credit Risk Grade: A1. Total Current Balance: 12000. Reviewed Monthly Debt Obligations LKR: 200. Reviewed Default History Indicator: False. Recent Credit Inquiries: 1.";
             }
 
             return "MOCK OCR RESULT: [BANK STATEMENT] Average Monthly Income: 5000. Average Account Balance: 15000. Overdraft Count Last 6 Months: 0. Savings To Income Ratio: 0.2. Loan Obligation: 200. Verification: SUCCESS.";
@@ -152,36 +152,7 @@ public sealed class DocumentOcrService : IDocumentExtractionService
     public async Task<CribReportDataDto> ExtractCribReportDataAsync(string documentUri, CancellationToken cancellationToken = default)
     {
         var rawText = await ExtractTextAsync(documentUri, cancellationToken);
-        var errors = new List<string>();
-
-        if (!rawText.Contains("CRIB REPORT", StringComparison.OrdinalIgnoreCase))
-        {
-            errors.Add("Malformed document or low-confidence OCR: 'CRIB REPORT' indicator not found.");
-        }
-
-        string? grade = TryExtractString(rawText, @"Credit\s*Risk\s*Grade[\s:]+([A-E])");
-        if (string.IsNullOrWhiteSpace(grade)) errors.Add("Missing required field: Credit Risk Grade.");
-
-        decimal? obligations = TryExtractDecimal(rawText, @"Active\s*Loan\s*Obligations[\s:]+([\d,.]+)");
-        if (!obligations.HasValue) errors.Add("Missing required field: Active Loan Obligations.");
-
-        bool? defaultHistory = TryExtractBool(rawText, @"Default\s*History\s*Indicator[\s:]+(\w+)");
-        if (!defaultHistory.HasValue) errors.Add("Missing required field: Default History Indicator.");
-
-        decimal? inquiries = TryExtractDecimal(rawText, @"Recent\s*Credit\s*Inquiries[\s:]+(\d+)");
-        if (!inquiries.HasValue) errors.Add("Missing required field: Recent Credit Inquiries.");
-
-        if (errors.Count > 0)
-        {
-            throw new ValidationException(errors);
-        }
-
-        return new CribReportDataDto(
-            CreditRiskGrade: grade!,
-            ActiveLoanObligations: obligations.Value,
-            DefaultHistoryIndicator: defaultHistory.Value,
-            RecentCreditInquiries: (int)inquiries.Value
-        );
+        return CribReportParser.Parse(rawText);
     }
 
     private string? TryExtractString(string text, string pattern)
