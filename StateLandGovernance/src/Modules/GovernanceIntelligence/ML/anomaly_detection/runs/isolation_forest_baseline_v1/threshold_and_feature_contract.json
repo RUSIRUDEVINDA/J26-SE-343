@@ -1,0 +1,74 @@
+{
+  "baseline_name": "isolation_forest_baseline_v1",
+  "feature_contract": {
+    "definitions": {
+      "distinct_resources": "Distinct (institution, resource) pairs; shared raw resource names are institution-scoped.",
+      "elapsed_days": "Last minus first timestamp in original event_seq order, divided by 86400 seconds.",
+      "event_count": "Number of accepted events in case.",
+      "institution_switches": "Adjacent changes of institution.",
+      "max_gap_hours": "Maximum adjacent timestamp difference in event_seq order / 3600.",
+      "mean_gap_hours": "Arithmetic mean of adjacent timestamp differences / 3600.",
+      "repeated_activity_count": "event_count minus unique_activities; extra occurrences, not number of loops.",
+      "resource_handoffs": "Adjacent changes of the (institution, resource) pair.",
+      "unique_activities": "Number of distinct activity_canonical values."
+    },
+    "excluded_inputs": [
+      "case_id",
+      "label",
+      "perturbation_type",
+      "simulation_marker",
+      "raw_activity_text",
+      "resource_identifiers",
+      "source_parent_case_id",
+      "source_family_id",
+      "exact_trace_group",
+      "split",
+      "preparation_status",
+      "legal_route",
+      "land_purpose",
+      "province",
+      "applicant_type",
+      "land_extent_perches",
+      "inter_provincial",
+      "required_higher_approval",
+      "registration_requirement"
+    ],
+    "missing_value_policy": "Reject incomplete accepted input; do not impute from all splits.",
+    "model_features": [
+      "event_count",
+      "elapsed_days",
+      "max_gap_hours",
+      "mean_gap_hours",
+      "unique_activities",
+      "repeated_activity_count",
+      "resource_handoffs",
+      "institution_switches",
+      "distinct_resources"
+    ],
+    "normalization": "Strip only terminal (Repeated), (Re-submission), (Correction Requested) in derived activity_canonical; preserve raw activity. This is generator-specific, not a production taxonomy.",
+    "precision": "Unrounded recomputed floats; originals used 2 decimals.",
+    "scoring_scope": "complete accepted synthetic case only; not validated for in-flight prefixes",
+    "timezone": "Unspecified naive timestamps; no UTC assignment or business-calendar correction."
+  },
+  "feature_contract_sha256": "c99f2390dde960397fe15e069c5b29da5f489036573969baf56840d64abe196c",
+  "feature_order": [
+    "event_count",
+    "elapsed_days",
+    "max_gap_hours",
+    "mean_gap_hours",
+    "unique_activities",
+    "repeated_activity_count",
+    "resource_handoffs",
+    "institution_switches",
+    "distinct_resources"
+  ],
+  "score_direction": "anomaly_score = -model.score_samples(X); larger values are more statistically unusual",
+  "threshold": 0.5743688923115832,
+  "threshold_limitations": "The 5% target is a declared synthetic experiment choice; it is not a legal rule, operational SLA, calibrated probability, or guaranteed false-positive rate.",
+  "threshold_policy": {
+    "quantile": 0.95,
+    "quantile_method": "linear",
+    "reference_case_count": 80,
+    "strict_comparison": "anomaly_score > threshold"
+  }
+}
