@@ -1,0 +1,88 @@
+{
+  "status": "PREPARED_FOR_SYNTHETIC_ONLY_EXPERIMENTS",
+  "source_zip_sha256": "adf77147bdfae5b1149a72e6d70766778d99ae291369c0953ff1485dd039568c",
+  "source_hashes": {
+    "case_features.csv": "5422ce0072dad2fc0b32cd9fc21cdf547dd47ec19e7c028508295c64d40f3705",
+    "event_log.csv": "6642ef8481b77d6a411b270fe7d25cde42a58962b3472c667675f63bc0a0bff2",
+    "routing_config.json": "c03f503d1aa60e561058f360262db5ec5f9465b8cd4c02a32c7f292898a9d709"
+  },
+  "source_cases": 500,
+  "source_events": 8242,
+  "accepted_cases": 456,
+  "accepted_events": 7422,
+  "quarantined_cases": 44,
+  "quarantined_events": 820,
+  "case_reason_counts": {
+    "EVENT_AFTER_FINAL_NOTIFICATION": 18,
+    "NON_MONOTONIC_EVENT_TIME": 36,
+    "FINAL_NOTIFICATION_NOT_LAST": 8
+  },
+  "feature_mismatch_cells": 29,
+  "feature_mismatch_cases": 19,
+  "feature_mismatches_by_column": {
+    "elapsed_days": 10,
+    "mean_gap_hours": 10,
+    "max_gap_hours": 9
+  },
+  "split_counts": {
+    "train": {
+      "none": 240
+    },
+    "validation": {
+      "none": 80,
+      "extended_gap": 10,
+      "repeated_correction_loop": 1,
+      "excessive_handoffs": 1,
+      "increased_event_count": 10,
+      "duplicated_sequence": 6
+    },
+    "test": {
+      "none": 80,
+      "extended_gap": 10,
+      "excessive_handoffs": 2,
+      "increased_event_count": 10,
+      "duplicated_sequence": 6
+    },
+    "quarantine": {
+      "repeated_correction_loop": 19,
+      "excessive_handoffs": 17,
+      "duplicated_sequence": 8
+    }
+  },
+  "split_method": "Deterministic SHA256 ranking using seed and exact relative-time trace fingerprint. Reference cases: 240/80/80; accepted perturbations split by type into validation/test. No model outcomes used.",
+  "split_seed": "wolf-synthetic-v1-20261008",
+  "known_exact_trace_overlap": 0,
+  "known_exact_first_two_event_overlap": 0,
+  "lineage_provenance": "Generator code, generation seed, latent families and parent traces were not supplied. Exact overlap checks cannot establish independent generation.",
+  "outside_08_17_events": 5099,
+  "weekend_events": 2365,
+  "model_fit_performed": false,
+  "derived_definition_change_case_counts": {
+    "unique_activities": 33,
+    "repeated_activity_count": 33,
+    "resource_handoffs": 120,
+    "distinct_resources": 299
+  },
+  "retained_cases_with_raw_feature_mismatch": 0,
+  "split_route_counts": {
+    "train": {
+      "Institutional": 66,
+      "Residential": 56,
+      "Commercial": 64,
+      "Agricultural": 54
+    },
+    "validation": {
+      "Institutional": 28,
+      "Agricultural": 17,
+      "Residential": 32,
+      "Commercial": 31
+    },
+    "test": {
+      "Residential": 34,
+      "Commercial": 19,
+      "Institutional": 24,
+      "Agricultural": 31
+    }
+  },
+  "exact_duplicate_prepared_feature_vectors": 0
+}

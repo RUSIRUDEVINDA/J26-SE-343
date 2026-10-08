@@ -1,0 +1,821 @@
+case_id,event_seq,activity,institution,resource,timestamp
+SL-CASE-0421,1,DS Application Received,DS,DS_Officer_4,2024-10-26T20:29:13.646071
+SL-CASE-0421,2,DS Initial Review,DS,DS_Officer_3,2024-10-28T13:17:09.690144
+SL-CASE-0421,3,Survey Clearance Requested,Survey,Clearance_Officer_3,2024-10-28T19:41:24.032778
+SL-CASE-0421,4,Survey Clearance Issued,Survey,Clearance_Officer_11,2024-11-15T12:21:38.892920
+SL-CASE-0421,5,DS Field Report Requested,DS,Clearance_Officer_5,2024-11-15T14:30:59.968286
+SL-CASE-0421,6,DS Field Report Issued,DS,Clearance_Officer_1,2024-11-28T11:05:29.764884
+SL-CASE-0421,7,PLC/DLC Review,PLC_DLC,PLC_Officer_1,2024-12-02T13:04:59.680700
+SL-CASE-0421,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2024-12-07T00:01:41.548126
+SL-CASE-0421,9,LCGD Case Intake,LCGD,LCGD_Officer_3,2024-12-09T02:12:32.296579
+SL-CASE-0421,10,LCGD Review,LCGD,LCGD_Officer_2,2024-12-16T22:41:37.281409
+SL-CASE-0421,11,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2024-12-22T14:43:43.860660
+SL-CASE-0421,12,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2024-12-24T09:32:26.514684
+SL-CASE-0421,13,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2024-12-29T12:02:33.476793
+SL-CASE-0421,14,LCGD Lease Decision,LCGD,LCGD_Officer_4,2024-12-24T04:35:56.837399
+SL-CASE-0421,15,DS Final Notification,DS,DS_Officer_3,2024-12-25T06:44:58.626446
+SL-CASE-0422,1,DS Application Received,DS,DS_Officer_7,2024-07-04T21:16:23.490232
+SL-CASE-0422,2,DS Initial Review,DS,DS_Officer_1,2024-07-05T08:04:56.672043
+SL-CASE-0422,3,Survey Clearance Requested,Survey,Clearance_Officer_10,2024-07-05T17:14:31.063754
+SL-CASE-0422,4,Survey Clearance Issued,Survey,Clearance_Officer_11,2024-07-08T10:23:19.296522
+SL-CASE-0422,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_7,2024-07-09T04:42:37.882767
+SL-CASE-0422,6,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_9,2024-07-27T06:57:05.715890
+SL-CASE-0422,7,PLC/DLC Review,PLC_DLC,PLC_Officer_1,2024-07-30T01:55:11.523693
+SL-CASE-0422,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2024-08-01T04:39:51.703779
+SL-CASE-0422,9,LCGD Case Intake,LCGD,LCGD_Officer_4,2024-08-07T08:13:59.152697
+SL-CASE-0422,10,LCGD Review,LCGD,LCGD_Officer_4,2024-08-21T18:54:39.215976
+SL-CASE-0422,11,LCGD Review (Correction Requested),LCGD,LCGD_Officer_4,2024-08-29T08:13:27.983700
+SL-CASE-0422,12,LCGD Review (Correction Requested),LCGD,LCGD_Officer_4,2024-09-07T16:11:46.158729
+SL-CASE-0422,13,LCGD Review (Correction Requested),LCGD,LCGD_Officer_4,2024-09-14T13:45:42.155084
+SL-CASE-0422,14,LCGD Review (Correction Requested),LCGD,LCGD_Officer_4,2024-09-24T06:33:06.040583
+SL-CASE-0422,15,LCGD Lease Decision,LCGD,LCGD_Officer_4,2024-08-23T17:59:21.688120
+SL-CASE-0422,16,DS Final Notification,DS,DS_Officer_4,2024-08-25T20:06:47.364535
+SL-CASE-0423,1,DS Application Received,DS,DS_Officer_3,2024-10-31T17:53:27.030117
+SL-CASE-0423,2,DS Initial Review,DS,DS_Officer_7,2024-11-02T15:55:33.198666
+SL-CASE-0423,3,Survey Clearance Requested,Survey,Clearance_Officer_11,2024-11-03T11:30:45.913263
+SL-CASE-0423,4,Survey Clearance Issued,Survey,Clearance_Officer_2,2024-11-20T16:52:34.736710
+SL-CASE-0423,5,DS Field Report Requested,DS,Clearance_Officer_4,2024-11-21T08:57:51.051622
+SL-CASE-0423,6,DS Field Report Issued,DS,Clearance_Officer_3,2024-12-02T21:11:39.761808
+SL-CASE-0423,7,PLC/DLC Review,PLC_DLC,PLC_Officer_2,2024-12-05T15:06:21.799674
+SL-CASE-0423,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_3,2024-12-07T10:10:03.870983
+SL-CASE-0423,9,LCGD Case Intake,LCGD,LCGD_Officer_2,2024-12-12T11:45:11.163473
+SL-CASE-0423,10,LCGD Review,LCGD,LCGD_Officer_2,2024-12-24T12:58:30.969074
+SL-CASE-0423,11,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2024-12-31T08:12:36.975241
+SL-CASE-0423,12,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2025-01-07T23:25:37.548078
+SL-CASE-0423,13,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2025-01-16T22:02:54.481496
+SL-CASE-0423,14,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2025-01-19T21:19:24.699927
+SL-CASE-0423,15,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-12-27T21:54:10.568745
+SL-CASE-0423,16,DS Final Notification,DS,DS_Officer_2,2024-12-28T18:34:38.691168
+SL-CASE-0424,1,DS Application Received,DS,DS_Officer_2,2024-07-19T20:00:45.514640
+SL-CASE-0424,2,DS Initial Review,DS,DS_Officer_8,2024-07-20T07:57:10.452635
+SL-CASE-0424,3,Survey Clearance Requested,Survey,Clearance_Officer_10,2024-07-20T23:13:56.160481
+SL-CASE-0424,4,Survey Clearance Issued,Survey,Clearance_Officer_3,2024-07-30T07:19:23.671968
+SL-CASE-0424,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_8,2024-07-30T21:53:10.294164
+SL-CASE-0424,6,Agrarian Services Clearance Requested (Correction Requested),Agrarian,Clearance_Officer_8,2024-08-01T03:57:04.039224
+SL-CASE-0424,7,Agrarian Services Clearance Requested (Correction Requested),Agrarian,Clearance_Officer_8,2024-08-08T05:47:55.600506
+SL-CASE-0424,8,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_1,2024-08-02T05:45:09.366843
+SL-CASE-0424,9,PLC/DLC Review,PLC_DLC,PLC_Officer_6,2024-08-05T21:14:44.230580
+SL-CASE-0424,10,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_4,2024-08-10T09:58:04.423971
+SL-CASE-0424,11,LCGD Case Intake,LCGD,LCGD_Officer_4,2024-08-15T20:29:17.570660
+SL-CASE-0424,12,LCGD Review,LCGD,LCGD_Officer_2,2024-08-26T21:59:35.253654
+SL-CASE-0424,13,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-08-31T22:43:47.137658
+SL-CASE-0424,14,DS Final Notification,DS,DS_Officer_4,2024-09-01T10:24:32.530109
+SL-CASE-0425,1,DS Application Received,DS,DS_Officer_1,2024-11-11T11:06:25.438572
+SL-CASE-0425,2,DS Initial Review,DS,DS_Officer_8,2024-11-12T02:46:50.790816
+SL-CASE-0425,3,Survey Clearance Requested,Survey,Clearance_Officer_11,2024-11-12T18:07:31.924078
+SL-CASE-0425,4,Survey Clearance Issued,Survey,Clearance_Officer_9,2024-11-30T13:36:21.332529
+SL-CASE-0425,5,Environmental Clearance Requested,Environmental,Clearance_Officer_10,2024-12-01T02:40:55.420686
+SL-CASE-0425,6,Environmental Clearance Issued,Environmental,Clearance_Officer_11,2024-12-10T10:34:43.526164
+SL-CASE-0425,7,Environmental Clearance Issued (Correction Requested),Environmental,Clearance_Officer_11,2024-12-16T13:48:36.863885
+SL-CASE-0425,8,Environmental Clearance Issued (Correction Requested),Environmental,Clearance_Officer_11,2024-12-25T22:22:27.503696
+SL-CASE-0425,9,Environmental Clearance Issued (Correction Requested),Environmental,Clearance_Officer_11,2024-12-27T18:35:06.945991
+SL-CASE-0425,10,Environmental Clearance Issued (Correction Requested),Environmental,Clearance_Officer_11,2025-01-04T18:50:14.444810
+SL-CASE-0425,11,DS Field Report Requested,DS,Clearance_Officer_12,2024-12-10T17:12:41.916254
+SL-CASE-0425,12,DS Field Report Issued,DS,Clearance_Officer_6,2024-12-25T10:27:50.135654
+SL-CASE-0425,13,PLC/DLC Review,PLC_DLC,PLC_Officer_3,2025-01-01T06:37:09.295587
+SL-CASE-0425,14,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_6,2025-01-02T09:40:12.201937
+SL-CASE-0425,15,LCGD Case Intake,LCGD,LCGD_Officer_1,2025-01-06T09:07:42.343634
+SL-CASE-0425,16,LCGD Review,LCGD,LCGD_Officer_1,2025-01-18T13:29:20.251957
+SL-CASE-0425,17,Higher Approval Requested,Ministry,LCGD_Officer_3,2025-01-19T18:30:59.079610
+SL-CASE-0425,18,Higher Approval Granted,Ministry,LCGD_Officer_2,2025-02-28T00:01:40.377630
+SL-CASE-0425,19,LCGD Lease Decision,LCGD,LCGD_Officer_1,2025-03-09T05:54:12.000119
+SL-CASE-0425,20,Registration Requested,Registry,Registry_Officer_3,2025-03-13T08:46:33.687559
+SL-CASE-0425,21,Registration Completed,Registry,Registry_Officer_1,2025-03-16T10:41:57.432740
+SL-CASE-0425,22,DS Final Notification,DS,DS_Officer_3,2025-03-17T12:58:53.074692
+SL-CASE-0426,1,DS Application Received,DS,DS_Officer_1,2024-03-26T01:56:19.710901
+SL-CASE-0426,2,DS Initial Review,DS,DS_Officer_4,2024-03-27T08:52:13.211071
+SL-CASE-0426,3,Survey Clearance Requested,Survey,Clearance_Officer_10,2024-03-28T06:55:36.242924
+SL-CASE-0426,4,Survey Clearance Issued,Survey,Clearance_Officer_8,2024-04-06T04:25:59.606585
+SL-CASE-0426,5,Survey Clearance Issued (Correction Requested),Survey,Clearance_Officer_8,2024-04-13T16:18:50.733136
+SL-CASE-0426,6,Survey Clearance Issued (Correction Requested),Survey,Clearance_Officer_8,2024-04-18T16:45:22.137885
+SL-CASE-0426,7,Survey Clearance Issued (Correction Requested),Survey,Clearance_Officer_8,2024-04-26T04:55:26.439632
+SL-CASE-0426,8,Survey Clearance Issued (Correction Requested),Survey,Clearance_Officer_8,2024-05-03T03:51:18.102708
+SL-CASE-0426,9,Environmental Clearance Requested,Environmental,Clearance_Officer_11,2024-04-06T08:15:05.313685
+SL-CASE-0426,10,Environmental Clearance Issued,Environmental,Clearance_Officer_2,2024-04-18T14:52:50.230950
+SL-CASE-0426,11,DS Field Report Requested,DS,Clearance_Officer_2,2024-04-19T06:16:19.049629
+SL-CASE-0426,12,DS Field Report Issued,DS,Clearance_Officer_1,2024-04-23T00:28:33.186904
+SL-CASE-0426,13,PLC/DLC Review,PLC_DLC,PLC_Officer_6,2024-04-29T12:51:58.182660
+SL-CASE-0426,14,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_2,2024-04-30T12:10:11.725959
+SL-CASE-0426,15,LCGD Case Intake,LCGD,LCGD_Officer_4,2024-05-02T00:43:30.121407
+SL-CASE-0426,16,LCGD Review,LCGD,LCGD_Officer_2,2024-05-08T18:31:21.007217
+SL-CASE-0426,17,Higher Approval Requested,Ministry,LCGD_Officer_1,2024-05-09T06:37:18.828038
+SL-CASE-0426,18,Higher Approval Granted,Ministry,LCGD_Officer_4,2024-05-18T08:00:22.929393
+SL-CASE-0426,19,LCGD Lease Decision,LCGD,LCGD_Officer_2,2024-05-22T12:14:14.284005
+SL-CASE-0426,20,DS Final Notification,DS,DS_Officer_1,2024-05-25T06:10:02.174346
+SL-CASE-0427,1,DS Application Received,DS,DS_Officer_7,2024-10-09T21:17:59.534537
+SL-CASE-0427,2,DS Initial Review,DS,DS_Officer_1,2024-10-10T16:08:29.942915
+SL-CASE-0427,3,Survey Clearance Requested,Survey,Clearance_Officer_8,2024-10-11T08:40:08.650619
+SL-CASE-0427,4,Survey Clearance Issued,Survey,Clearance_Officer_11,2024-10-24T17:21:17.153017
+SL-CASE-0427,5,Environmental Clearance Requested,Environmental,Clearance_Officer_9,2024-10-25T13:12:08.883226
+SL-CASE-0427,6,Environmental Clearance Issued,Environmental,Clearance_Officer_5,2024-10-28T12:27:27.181799
+SL-CASE-0427,7,Irrigation Dept Clearance Requested,Irrigation,Clearance_Officer_2,2024-10-28T18:19:57.245266
+SL-CASE-0427,8,Irrigation Dept Clearance Issued,Irrigation,Clearance_Officer_9,2024-11-04T04:02:31.078242
+SL-CASE-0427,9,DS Field Report Requested,DS,Clearance_Officer_11,2024-11-04T21:04:07.982234
+SL-CASE-0427,10,DS Field Report Issued,DS,Clearance_Officer_6,2024-11-15T20:23:06.551640
+SL-CASE-0427,11,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2024-11-24T12:25:46.377769
+SL-CASE-0427,12,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_2,2024-11-27T22:13:50.975634
+SL-CASE-0427,13,LCGD Case Intake,LCGD,LCGD_Officer_3,2024-11-29T09:39:02.904482
+SL-CASE-0427,14,LCGD Review,LCGD,LCGD_Officer_1,2024-12-05T15:50:40.767076
+SL-CASE-0427,15,LCGD Review (Correction Requested),LCGD,LCGD_Officer_1,2024-12-13T16:09:21.379787
+SL-CASE-0427,16,LCGD Review (Correction Requested),LCGD,LCGD_Officer_1,2024-12-19T22:10:59.000481
+SL-CASE-0427,17,Higher Approval Requested,Ministry,LCGD_Officer_2,2024-12-09T21:36:13.230223
+SL-CASE-0427,18,Higher Approval Granted,Ministry,LCGD_Officer_3,2025-01-08T10:07:45.329324
+SL-CASE-0427,19,LCGD Lease Decision,LCGD,LCGD_Officer_3,2025-01-18T08:51:28.644712
+SL-CASE-0427,20,Registration Requested,Registry,Registry_Officer_1,2025-01-22T01:07:02.698450
+SL-CASE-0427,21,Registration Completed,Registry,Registry_Officer_1,2025-02-07T10:41:21.404226
+SL-CASE-0427,22,DS Final Notification,DS,DS_Officer_4,2025-02-09T21:03:52.667792
+SL-CASE-0428,1,DS Application Received,DS,DS_Officer_6,2024-07-30T11:20:47.433190
+SL-CASE-0428,2,DS Initial Review,DS,DS_Officer_3,2024-07-31T08:23:26.642935
+SL-CASE-0428,3,Survey Clearance Requested,Survey,Clearance_Officer_1,2024-07-31T15:03:18.041662
+SL-CASE-0428,4,Survey Clearance Issued,Survey,Clearance_Officer_2,2024-08-06T13:19:18.929022
+SL-CASE-0428,5,DS Field Report Requested,DS,Clearance_Officer_3,2024-08-07T10:51:36.631067
+SL-CASE-0428,6,DS Field Report Requested (Correction Requested),DS,Clearance_Officer_3,2024-08-13T05:33:58.933818
+SL-CASE-0428,7,DS Field Report Requested (Correction Requested),DS,Clearance_Officer_3,2024-08-22T17:43:09.469949
+SL-CASE-0428,8,DS Field Report Requested (Correction Requested),DS,Clearance_Officer_3,2024-08-24T16:50:23.523303
+SL-CASE-0428,9,DS Field Report Issued,DS,Clearance_Officer_8,2024-08-08T22:33:16.362113
+SL-CASE-0428,10,PLC/DLC Review,PLC_DLC,PLC_Officer_4,2024-08-18T06:38:12.398066
+SL-CASE-0428,11,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2024-08-19T02:40:17.912768
+SL-CASE-0428,12,LCGD Case Intake,LCGD,LCGD_Officer_2,2024-08-20T15:56:11.202005
+SL-CASE-0428,13,LCGD Review,LCGD,LCGD_Officer_3,2024-08-29T11:15:57.557812
+SL-CASE-0428,14,LCGD Lease Decision,LCGD,LCGD_Officer_1,2024-08-30T07:22:41.829338
+SL-CASE-0428,15,Registration Requested,Registry,Registry_Officer_1,2024-09-01T15:53:36.051587
+SL-CASE-0428,16,Registration Completed,Registry,Registry_Officer_1,2024-09-10T20:31:49.907269
+SL-CASE-0428,17,DS Final Notification,DS,DS_Officer_3,2024-09-12T03:23:39.875031
+SL-CASE-0429,1,DS Application Received,DS,DS_Officer_6,2023-08-12T14:32:40.249464
+SL-CASE-0429,2,DS Initial Review,DS,DS_Officer_7,2023-08-14T10:29:44.361994
+SL-CASE-0429,3,Survey Clearance Requested,Survey,Clearance_Officer_10,2023-08-15T09:32:26.216274
+SL-CASE-0429,4,Survey Clearance Issued,Survey,Clearance_Officer_11,2023-09-02T18:25:07.697373
+SL-CASE-0429,5,Environmental Clearance Requested,Environmental,Clearance_Officer_7,2023-09-03T06:21:04.407983
+SL-CASE-0429,6,Environmental Clearance Issued,Environmental,Clearance_Officer_5,2023-09-21T05:34:43.030158
+SL-CASE-0429,7,DS Field Report Requested,DS,Clearance_Officer_6,2023-09-21T21:16:57.217805
+SL-CASE-0429,8,DS Field Report Issued,DS,Clearance_Officer_11,2023-10-01T07:12:17.837549
+SL-CASE-0429,9,PLC/DLC Review,PLC_DLC,PLC_Officer_3,2023-10-09T04:40:32.409878
+SL-CASE-0429,10,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_4,2023-10-11T05:04:48.815322
+SL-CASE-0429,11,LCGD Case Intake,LCGD,LCGD_Officer_2,2023-10-17T04:40:01.397035
+SL-CASE-0429,12,LCGD Case Intake (Correction Requested),LCGD,LCGD_Officer_2,2023-10-19T02:20:54.700353
+SL-CASE-0429,13,LCGD Case Intake (Correction Requested),LCGD,LCGD_Officer_2,2023-10-23T16:27:15.873466
+SL-CASE-0429,14,LCGD Review,LCGD,LCGD_Officer_1,2023-10-21T17:05:51.161126
+SL-CASE-0429,15,Higher Approval Requested,Ministry,LCGD_Officer_3,2023-10-22T14:41:58.161386
+SL-CASE-0429,16,Higher Approval Granted,Ministry,LCGD_Officer_1,2023-11-12T18:33:57.691403
+SL-CASE-0429,17,LCGD Lease Decision,LCGD,LCGD_Officer_1,2023-11-14T02:26:13.630199
+SL-CASE-0429,18,Registration Requested,Registry,Registry_Officer_1,2023-11-18T00:07:15.611333
+SL-CASE-0429,19,Registration Completed,Registry,Registry_Officer_1,2023-11-19T17:46:55.422699
+SL-CASE-0429,20,DS Final Notification,DS,DS_Officer_7,2023-11-22T04:12:31.802907
+SL-CASE-0430,1,DS Application Received,DS,DS_Officer_6,2024-06-18T11:19:00.597723
+SL-CASE-0430,2,DS Initial Review,DS,DS_Officer_3,2024-06-19T11:01:05.973168
+SL-CASE-0430,3,Survey Clearance Requested,Survey,Clearance_Officer_12,2024-06-20T02:03:31.565315
+SL-CASE-0430,4,Survey Clearance Issued,Survey,Clearance_Officer_6,2024-06-23T03:23:22.509361
+SL-CASE-0430,5,DS Field Report Requested,DS,Clearance_Officer_8,2024-06-23T20:53:03.368080
+SL-CASE-0430,6,DS Field Report Requested (Correction Requested),DS,Clearance_Officer_8,2024-06-29T15:43:46.827563
+SL-CASE-0430,7,DS Field Report Requested (Correction Requested),DS,Clearance_Officer_8,2024-07-05T09:48:14.748113
+SL-CASE-0430,8,DS Field Report Requested (Correction Requested),DS,Clearance_Officer_8,2024-07-09T14:33:22.091586
+SL-CASE-0430,9,DS Field Report Issued,DS,Clearance_Officer_9,2024-06-26T11:23:11.843677
+SL-CASE-0430,10,PLC/DLC Review,PLC_DLC,PLC_Officer_4,2024-06-27T09:03:55.316487
+SL-CASE-0430,11,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_1,2024-06-28T02:39:19.225468
+SL-CASE-0430,12,LCGD Case Intake,LCGD,LCGD_Officer_2,2024-07-01T14:43:08.191682
+SL-CASE-0430,13,LCGD Review,LCGD,LCGD_Officer_1,2024-07-07T06:19:03.878636
+SL-CASE-0430,14,Higher Approval Requested,Ministry,LCGD_Officer_3,2024-07-11T08:59:57.910607
+SL-CASE-0430,15,Higher Approval Granted,Ministry,LCGD_Officer_3,2024-07-29T00:20:28.216031
+SL-CASE-0430,16,LCGD Lease Decision,LCGD,LCGD_Officer_2,2024-08-03T01:28:36.921548
+SL-CASE-0430,17,Registration Requested,Registry,Registry_Officer_2,2024-08-07T02:47:38.256782
+SL-CASE-0430,18,Registration Completed,Registry,Registry_Officer_2,2024-08-10T06:52:18.592284
+SL-CASE-0430,19,DS Final Notification,DS,DS_Officer_7,2024-08-10T10:36:25.708972
+SL-CASE-0431,1,DS Application Received,DS,DS_Officer_4,2023-10-26T04:36:11.110569
+SL-CASE-0431,2,DS Initial Review,DS,DS_Officer_3,2023-10-27T11:18:34.000866
+SL-CASE-0431,3,Survey Clearance Requested,Survey,Clearance_Officer_8,2023-10-28T07:24:22.768285
+SL-CASE-0431,4,Survey Clearance Issued,Survey,Clearance_Officer_7,2023-11-15T19:49:27.491939
+SL-CASE-0431,5,Environmental Clearance Requested,Environmental,Clearance_Officer_7,2023-11-16T17:23:46.703104
+SL-CASE-0431,6,Environmental Clearance Issued,Environmental,Clearance_Officer_2,2023-12-03T08:46:20.454010
+SL-CASE-0431,7,Irrigation Dept Clearance Requested,Irrigation,Clearance_Officer_2,2023-12-03T18:32:36.565952
+SL-CASE-0431,8,Irrigation Dept Clearance Issued,Irrigation,Clearance_Officer_3,2023-12-14T17:46:06.052708
+SL-CASE-0431,9,DS Field Report Requested,DS,Clearance_Officer_8,2023-12-15T11:09:24.651245
+SL-CASE-0431,10,DS Field Report Issued,DS,Clearance_Officer_1,2023-12-16T19:48:43.204499
+SL-CASE-0431,11,PLC/DLC Review,PLC_DLC,PLC_Officer_4,2023-12-26T15:12:41.772238
+SL-CASE-0431,12,PLC/DLC Review (Correction Requested),PLC_DLC,PLC_Officer_4,2023-12-27T15:51:55.481997
+SL-CASE-0431,13,PLC/DLC Review (Correction Requested),PLC_DLC,PLC_Officer_4,2023-12-30T21:42:43.793022
+SL-CASE-0431,14,PLC/DLC Review (Correction Requested),PLC_DLC,PLC_Officer_4,2024-01-09T21:10:08.130723
+SL-CASE-0431,15,PLC/DLC Review (Correction Requested),PLC_DLC,PLC_Officer_4,2024-01-11T11:22:37.744317
+SL-CASE-0431,16,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_1,2023-12-28T20:29:57.342951
+SL-CASE-0431,17,LCGD Case Intake,LCGD,LCGD_Officer_3,2023-12-31T08:57:11.025354
+SL-CASE-0431,18,LCGD Review,LCGD,LCGD_Officer_1,2024-01-10T03:34:13.841220
+SL-CASE-0431,19,Higher Approval Requested,Ministry,LCGD_Officer_1,2024-01-13T23:39:05.259574
+SL-CASE-0431,20,Higher Approval Granted,Ministry,LCGD_Officer_4,2024-01-20T18:08:11.784250
+SL-CASE-0431,21,LCGD Lease Decision,LCGD,LCGD_Officer_1,2024-01-27T12:06:22.155752
+SL-CASE-0431,22,Registration Requested,Registry,Registry_Officer_1,2024-02-01T02:17:38.780386
+SL-CASE-0431,23,Registration Completed,Registry,Registry_Officer_3,2024-02-02T11:15:12.702711
+SL-CASE-0431,24,DS Final Notification,DS,DS_Officer_2,2024-02-04T06:14:34.981961
+SL-CASE-0432,1,DS Application Received,DS,DS_Officer_7,2024-07-03T04:44:51.909477
+SL-CASE-0432,2,DS Initial Review,DS,DS_Officer_8,2024-07-04T19:12:50.726165
+SL-CASE-0432,3,Survey Clearance Requested,Survey,Clearance_Officer_11,2024-07-05T11:16:10.148537
+SL-CASE-0432,4,Survey Clearance Issued,Survey,Clearance_Officer_8,2024-07-07T16:57:48.923707
+SL-CASE-0432,5,DS Field Report Requested,DS,Clearance_Officer_11,2024-07-08T07:57:02.042439
+SL-CASE-0432,6,DS Field Report Issued,DS,Clearance_Officer_7,2024-07-11T14:47:50.296247
+SL-CASE-0432,7,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2024-07-15T17:56:37.497236
+SL-CASE-0432,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_1,2024-07-19T13:25:59.230787
+SL-CASE-0432,9,LCGD Case Intake,LCGD,LCGD_Officer_4,2024-07-22T17:31:53.488415
+SL-CASE-0432,10,LCGD Review,LCGD,LCGD_Officer_2,2024-08-06T02:33:48.285712
+SL-CASE-0432,11,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2024-08-09T12:03:25.284955
+SL-CASE-0432,12,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2024-08-12T14:26:58.495273
+SL-CASE-0432,13,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2024-08-15T04:04:32.855382
+SL-CASE-0432,14,LCGD Review (Correction Requested),LCGD,LCGD_Officer_2,2024-08-19T01:41:48.530196
+SL-CASE-0432,15,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-08-08T11:10:25.578360
+SL-CASE-0432,16,DS Final Notification,DS,DS_Officer_8,2024-08-11T07:51:07.262573
+SL-CASE-0433,1,DS Application Received,DS,DS_Officer_3,2023-05-09T04:25:28.011737
+SL-CASE-0433,2,DS Initial Review,DS,DS_Officer_8,2023-05-09T09:34:55.032800
+SL-CASE-0433,3,Survey Clearance Requested,Survey,Clearance_Officer_8,2023-05-09T12:42:12.711787
+SL-CASE-0433,4,Survey Clearance Issued,Survey,Clearance_Officer_9,2023-05-26T02:32:18.927044
+SL-CASE-0433,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_2,2023-05-26T23:06:43.596856
+SL-CASE-0433,6,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_1,2023-05-29T15:42:23.455357
+SL-CASE-0433,7,PLC/DLC Review,PLC_DLC,PLC_Officer_6,2023-06-07T03:27:38.777962
+SL-CASE-0433,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_1,2023-06-10T13:18:41.693801
+SL-CASE-0433,9,LCGD Case Intake,LCGD,LCGD_Officer_3,2023-06-15T03:43:12.806838
+SL-CASE-0433,10,LCGD Review,LCGD,LCGD_Officer_1,2023-06-17T11:39:59.216081
+SL-CASE-0433,11,LCGD Lease Decision,LCGD,LCGD_Officer_4,2023-06-20T00:42:20.738721
+SL-CASE-0433,12,Registration Requested,Registry,Registry_Officer_1,2023-06-24T13:24:02.380479
+SL-CASE-0433,13,Registration Completed,Registry,Registry_Officer_4,2023-06-27T03:28:37.285367
+SL-CASE-0433,14,Registration Completed (Correction Requested),Registry,Registry_Officer_4,2023-06-28T10:04:21.912536
+SL-CASE-0433,15,Registration Completed (Correction Requested),Registry,Registry_Officer_4,2023-07-06T19:16:04.946767
+SL-CASE-0433,16,Registration Completed (Correction Requested),Registry,Registry_Officer_4,2023-07-08T10:31:10.808832
+SL-CASE-0433,17,Registration Completed (Correction Requested),Registry,Registry_Officer_4,2023-07-14T08:35:21.092420
+SL-CASE-0433,18,DS Final Notification,DS,DS_Officer_5,2023-06-30T00:51:12.130981
+SL-CASE-0434,1,DS Application Received,DS,DS_Officer_4,2023-10-07T08:16:18.239205
+SL-CASE-0434,2,DS Initial Review,DS,DS_Officer_8,2023-10-08T13:23:58.519555
+SL-CASE-0434,3,Survey Clearance Requested,Survey,Clearance_Officer_6,2023-10-09T12:47:42.036682
+SL-CASE-0434,4,Survey Clearance Issued,Survey,Clearance_Officer_1,2023-10-18T20:22:17.572966
+SL-CASE-0434,5,Survey Clearance Issued (Correction Requested),Survey,Clearance_Officer_1,2023-10-24T10:43:32.078450
+SL-CASE-0434,6,Survey Clearance Issued (Correction Requested),Survey,Clearance_Officer_1,2023-10-29T22:39:26.626114
+SL-CASE-0434,7,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_1,2023-10-19T10:13:54.273498
+SL-CASE-0434,8,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_5,2023-11-04T20:26:40.532648
+SL-CASE-0434,9,PLC/DLC Review,PLC_DLC,PLC_Officer_4,2023-11-10T11:35:10.491786
+SL-CASE-0434,10,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_4,2023-11-12T23:39:26.345733
+SL-CASE-0434,11,LCGD Case Intake,LCGD,LCGD_Officer_2,2023-11-17T19:38:39.937257
+SL-CASE-0434,12,LCGD Review,LCGD,LCGD_Officer_4,2023-11-30T14:35:46.793999
+SL-CASE-0434,13,LCGD Lease Decision,LCGD,LCGD_Officer_3,2023-12-06T08:26:19.464036
+SL-CASE-0434,14,DS Final Notification,DS,DS_Officer_2,2023-12-08T04:08:10.922022
+SL-CASE-0436,1,DS Application Received,DS,DS_Officer_8,2024-02-28T07:47:51.573056
+SL-CASE-0436,2,DS Initial Review,DS,DS_Officer_3,2024-02-29T10:18:44.950886
+SL-CASE-0436,3,Survey Clearance Requested,Survey,Clearance_Officer_1,2024-02-29T13:44:13.937209
+SL-CASE-0436,4,Survey Clearance Issued,Survey,Clearance_Officer_6,2024-03-04T11:28:55.434895
+SL-CASE-0436,5,Environmental Clearance Requested,Environmental,Clearance_Officer_3,2024-03-04T15:43:50.441171
+SL-CASE-0436,6,Environmental Clearance Issued,Environmental,Clearance_Officer_6,2024-03-08T16:36:10.010152
+SL-CASE-0436,7,Irrigation Dept Clearance Requested,Irrigation,Clearance_Officer_4,2024-03-09T07:21:45.803929
+SL-CASE-0436,8,Irrigation Dept Clearance Issued,Irrigation,Clearance_Officer_7,2024-03-25T23:47:59.115624
+SL-CASE-0436,9,DS Field Report Requested,DS,Clearance_Officer_9,2024-03-26T07:51:16.320373
+SL-CASE-0436,10,DS Field Report Requested (Correction Requested),DS,Clearance_Officer_9,2024-04-01T14:32:17.118011
+SL-CASE-0436,11,DS Field Report Requested (Correction Requested),DS,Clearance_Officer_9,2024-04-09T09:58:58.175102
+SL-CASE-0436,12,DS Field Report Issued,DS,Clearance_Officer_9,2024-03-29T16:52:51.036259
+SL-CASE-0436,13,PLC/DLC Review,PLC_DLC,PLC_Officer_2,2024-04-08T09:30:27.397140
+SL-CASE-0436,14,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_4,2024-04-09T21:49:20.235278
+SL-CASE-0436,15,LCGD Case Intake,LCGD,LCGD_Officer_2,2024-04-13T20:55:26.488362
+SL-CASE-0436,16,LCGD Review,LCGD,LCGD_Officer_4,2024-04-23T11:15:17.950438
+SL-CASE-0436,17,Higher Approval Requested,Ministry,LCGD_Officer_3,2024-04-24T08:55:31.283993
+SL-CASE-0436,18,Higher Approval Granted,Ministry,LCGD_Officer_2,2024-05-13T04:53:01.372831
+SL-CASE-0436,19,LCGD Lease Decision,LCGD,LCGD_Officer_4,2024-05-23T02:40:58.768532
+SL-CASE-0436,20,Registration Requested,Registry,Registry_Officer_1,2024-05-26T05:18:15.954751
+SL-CASE-0436,21,Registration Completed,Registry,Registry_Officer_1,2024-06-04T07:03:55.490782
+SL-CASE-0436,22,DS Final Notification,DS,DS_Officer_2,2024-06-04T15:18:29.317008
+SL-CASE-0437,1,DS Application Received,DS,DS_Officer_6,2024-05-22T09:56:21.192341
+SL-CASE-0437,2,DS Initial Review,DS,DS_Officer_4,2024-05-22T22:08:55.522513
+SL-CASE-0437,3,Survey Clearance Requested,Survey,Clearance_Officer_5,2024-05-23T01:06:43.758732
+SL-CASE-0437,4,Survey Clearance Issued,Survey,Clearance_Officer_9,2024-05-30T03:35:14.498616
+SL-CASE-0437,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_6,2024-05-30T07:39:50.626852
+SL-CASE-0437,6,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_12,2024-06-15T03:14:02.762291
+SL-CASE-0437,7,Agrarian Services Clearance Issued (Correction Requested),Agrarian,Clearance_Officer_12,2024-06-18T17:41:27.489509
+SL-CASE-0437,8,Agrarian Services Clearance Issued (Correction Requested),Agrarian,Clearance_Officer_12,2024-06-19T23:47:38.547864
+SL-CASE-0437,9,Agrarian Services Clearance Issued (Correction Requested),Agrarian,Clearance_Officer_12,2024-06-26T02:18:48.302731
+SL-CASE-0437,10,Agrarian Services Clearance Issued (Correction Requested),Agrarian,Clearance_Officer_12,2024-06-30T17:09:33.849963
+SL-CASE-0437,11,PLC/DLC Review,PLC_DLC,PLC_Officer_2,2024-06-15T20:14:03.622622
+SL-CASE-0437,12,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_3,2024-06-17T19:18:37.385540
+SL-CASE-0437,13,LCGD Case Intake,LCGD,LCGD_Officer_4,2024-06-23T04:23:04.965156
+SL-CASE-0437,14,LCGD Review,LCGD,LCGD_Officer_1,2024-06-26T04:59:07.025395
+SL-CASE-0437,15,LCGD Lease Decision,LCGD,LCGD_Officer_4,2024-07-02T11:11:40.975326
+SL-CASE-0437,16,DS Final Notification,DS,DS_Officer_1,2024-07-03T11:26:47.661470
+SL-CASE-0438,1,DS Application Received,DS,DS_Officer_1,2023-02-14T05:30:02.985885
+SL-CASE-0438,2,DS Initial Review,DS,DS_Officer_8,2023-02-15T23:37:04.708365
+SL-CASE-0438,3,Survey Clearance Requested,Survey,Clearance_Officer_3,2023-02-16T19:57:04.281075
+SL-CASE-0438,4,Survey Clearance Issued,Survey,Clearance_Officer_2,2023-02-19T16:08:12.219672
+SL-CASE-0438,5,Survey Clearance Issued (Correction Requested),Survey,Clearance_Officer_2,2023-02-27T16:50:33.588659
+SL-CASE-0438,6,Survey Clearance Issued (Correction Requested),Survey,Clearance_Officer_2,2023-03-09T15:41:39.883300
+SL-CASE-0438,7,Survey Clearance Issued (Correction Requested),Survey,Clearance_Officer_2,2023-03-12T20:54:57.803321
+SL-CASE-0438,8,Survey Clearance Issued (Correction Requested),Survey,Clearance_Officer_2,2023-03-22T05:31:32.502673
+SL-CASE-0438,9,Environmental Clearance Requested,Environmental,Clearance_Officer_7,2023-02-20T03:52:46.016045
+SL-CASE-0438,10,Environmental Clearance Issued,Environmental,Clearance_Officer_2,2023-03-02T23:37:06.585496
+SL-CASE-0438,11,Irrigation Dept Clearance Requested,Irrigation,Clearance_Officer_6,2023-03-03T18:56:18.913263
+SL-CASE-0438,12,Irrigation Dept Clearance Issued,Irrigation,Clearance_Officer_7,2023-03-16T14:49:12.915714
+SL-CASE-0438,13,DS Field Report Requested,DS,Clearance_Officer_5,2023-03-17T06:36:18.851497
+SL-CASE-0438,14,DS Field Report Issued,DS,Clearance_Officer_10,2023-03-28T15:32:32.945353
+SL-CASE-0438,15,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2023-04-04T10:44:41.198756
+SL-CASE-0438,16,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_2,2023-04-08T12:29:17.308329
+SL-CASE-0438,17,LCGD Case Intake,LCGD,LCGD_Officer_4,2023-04-13T13:30:48.735719
+SL-CASE-0438,18,LCGD Review,LCGD,LCGD_Officer_4,2023-04-24T07:31:50.091353
+SL-CASE-0438,19,Higher Approval Requested,Ministry,LCGD_Officer_4,2023-04-26T01:03:17.210308
+SL-CASE-0438,20,Higher Approval Granted,Ministry,LCGD_Officer_1,2023-05-20T21:31:14.717856
+SL-CASE-0438,21,LCGD Lease Decision,LCGD,LCGD_Officer_3,2023-05-24T08:06:54.663109
+SL-CASE-0438,22,Registration Requested,Registry,Registry_Officer_1,2023-05-29T05:42:33.658702
+SL-CASE-0438,23,Registration Completed,Registry,Registry_Officer_2,2023-06-01T08:09:50.100402
+SL-CASE-0438,24,DS Final Notification,DS,DS_Officer_3,2023-06-03T12:43:50.260782
+SL-CASE-0439,1,DS Application Received,DS,DS_Officer_7,2024-09-14T11:26:57.265962
+SL-CASE-0439,2,DS Initial Review,DS,DS_Officer_6,2024-09-15T00:33:48.485365
+SL-CASE-0439,3,Survey Clearance Requested,Survey,Clearance_Officer_12,2024-09-15T08:01:53.872617
+SL-CASE-0439,4,Survey Clearance Issued,Survey,Clearance_Officer_2,2024-09-28T15:20:44.395429
+SL-CASE-0439,5,DS Field Report Requested,DS,Clearance_Officer_5,2024-09-29T04:40:06.083884
+SL-CASE-0439,6,DS Field Report Issued,DS,Clearance_Officer_10,2024-10-06T10:04:42.632485
+SL-CASE-0439,7,PLC/DLC Review,PLC_DLC,PLC_Officer_4,2024-10-07T10:48:12.599483
+SL-CASE-0439,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_1,2024-10-07T17:40:43.786243
+SL-CASE-0439,9,LCGD Case Intake,LCGD,LCGD_Officer_3,2024-10-12T02:21:40.114162
+SL-CASE-0439,10,LCGD Review,LCGD,LCGD_Officer_3,2024-10-24T09:30:39.524357
+SL-CASE-0439,11,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-10-29T19:36:48.767745
+SL-CASE-0439,12,LCGD Lease Decision (Correction Requested),LCGD,LCGD_Officer_3,2024-11-03T17:33:13.238871
+SL-CASE-0439,13,LCGD Lease Decision (Correction Requested),LCGD,LCGD_Officer_3,2024-11-09T05:00:51.919733
+SL-CASE-0439,14,LCGD Lease Decision (Correction Requested),LCGD,LCGD_Officer_3,2024-11-10T15:48:53.744284
+SL-CASE-0439,15,LCGD Lease Decision (Correction Requested),LCGD,LCGD_Officer_3,2024-11-18T18:16:38.495025
+SL-CASE-0439,16,Registration Requested,Registry,Registry_Officer_3,2024-10-30T22:00:40.630624
+SL-CASE-0439,17,Registration Completed,Registry,Registry_Officer_4,2024-11-18T09:45:47.297405
+SL-CASE-0439,18,DS Final Notification,DS,DS_Officer_5,2024-11-20T11:31:54.217677
+SL-CASE-0440,1,DS Application Received,DS,DS_Officer_8,2023-07-03T13:34:56.407989
+SL-CASE-0440,2,DS Initial Review,DS,DS_Officer_5,2023-07-05T04:00:47.074933
+SL-CASE-0440,3,Survey Clearance Requested,Survey,Clearance_Officer_4,2023-07-05T22:54:33.101692
+SL-CASE-0440,4,Survey Clearance Issued,Survey,Clearance_Officer_9,2023-07-10T14:35:32.291150
+SL-CASE-0440,5,DS Field Report Requested,DS,Clearance_Officer_1,2023-07-11T10:18:29.249569
+SL-CASE-0440,6,DS Field Report Issued,DS,Clearance_Officer_4,2023-07-20T12:10:37.887697
+SL-CASE-0440,7,DS Field Report Issued (Correction Requested),DS,Clearance_Officer_4,2023-07-21T14:09:17.669640
+SL-CASE-0440,8,DS Field Report Issued (Correction Requested),DS,Clearance_Officer_4,2023-07-30T23:26:55.096262
+SL-CASE-0440,9,PLC/DLC Review,PLC_DLC,PLC_Officer_3,2023-07-29T03:34:54.125338
+SL-CASE-0440,10,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_4,2023-07-30T15:00:13.663185
+SL-CASE-0440,11,LCGD Case Intake,LCGD,LCGD_Officer_2,2023-08-05T19:38:31.041926
+SL-CASE-0440,12,LCGD Review,LCGD,LCGD_Officer_2,2023-08-18T18:40:58.079038
+SL-CASE-0440,13,LCGD Lease Decision,LCGD,LCGD_Officer_3,2023-08-26T12:57:43.850019
+SL-CASE-0440,14,Registration Requested,Registry,Registry_Officer_1,2023-08-30T02:49:49.441943
+SL-CASE-0440,15,Registration Completed,Registry,Registry_Officer_3,2023-09-02T04:15:36.737642
+SL-CASE-0440,16,DS Final Notification,DS,DS_Officer_6,2023-09-04T00:30:56.654240
+SL-CASE-0441,1,DS Application Received,DS,DS_Officer_8,2023-10-25T22:15:19.550358
+SL-CASE-0441,2,DS Initial Review,DS,DS_Officer_8,2023-10-27T08:47:21.171716
+SL-CASE-0441,3,Survey Clearance Requested,Survey,Clearance_Officer_3,2023-10-27T17:37:21.979924
+SL-CASE-0441,4,Survey Clearance Issued,Survey,Clearance_Officer_10,2023-11-12T05:55:10.684007
+SL-CASE-0441,5,Environmental Clearance Requested,Environmental,Clearance_Officer_1,2023-11-12T09:24:03.399844
+SL-CASE-0441,6,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2023-11-17T05:24:43.442950
+SL-CASE-0441,7,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2023-11-24T08:15:29.543118
+SL-CASE-0441,8,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2023-11-27T12:45:50.011697
+SL-CASE-0441,9,Environmental Clearance Issued,Environmental,Clearance_Officer_3,2023-11-15T08:40:05.581926
+SL-CASE-0441,10,DS Field Report Requested,DS,Clearance_Officer_2,2023-11-15T16:50:55.285948
+SL-CASE-0441,11,DS Field Report Issued,DS,Clearance_Officer_9,2023-11-18T10:56:15.223752
+SL-CASE-0441,12,PLC/DLC Review,PLC_DLC,PLC_Officer_3,2023-11-26T16:49:21.571173
+SL-CASE-0441,13,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2023-11-29T11:37:52.584173
+SL-CASE-0441,14,LCGD Case Intake,LCGD,LCGD_Officer_1,2023-12-04T03:22:49.662619
+SL-CASE-0441,15,LCGD Review,LCGD,LCGD_Officer_1,2023-12-05T05:26:11.551835
+SL-CASE-0441,16,LCGD Lease Decision,LCGD,LCGD_Officer_4,2023-12-06T12:47:23.782018
+SL-CASE-0441,17,Registration Requested,Registry,Registry_Officer_4,2023-12-09T01:38:48.408780
+SL-CASE-0441,18,Registration Completed,Registry,Registry_Officer_2,2023-12-28T21:49:59.651939
+SL-CASE-0441,19,DS Final Notification,DS,DS_Officer_2,2023-12-29T13:32:42.371955
+SL-CASE-0442,1,DS Application Received,DS,DS_Officer_7,2024-10-13T13:27:38.445979
+SL-CASE-0442,2,DS Initial Review,DS,DS_Officer_2,2024-10-13T20:48:38.972810
+SL-CASE-0442,3,Survey Clearance Requested,Survey,Clearance_Officer_1,2024-10-14T19:02:25.095429
+SL-CASE-0442,4,Survey Clearance Issued,Survey,Clearance_Officer_5,2024-10-19T16:00:52.472344
+SL-CASE-0442,5,DS Field Report Requested,DS,Clearance_Officer_8,2024-10-19T23:02:54.031617
+SL-CASE-0442,6,DS Field Report Issued,DS,Clearance_Officer_7,2024-10-27T11:04:08.004795
+SL-CASE-0442,7,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2024-10-31T05:53:34.349512
+SL-CASE-0442,8,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-11-01T16:55:04.372445
+SL-CASE-0442,9,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-11-07T05:49:57.806478
+SL-CASE-0442,10,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-11-12T22:52:53.854748
+SL-CASE-0442,11,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2024-11-03T23:03:19.601725
+SL-CASE-0442,12,LCGD Case Intake,LCGD,LCGD_Officer_3,2024-11-04T18:33:29.016599
+SL-CASE-0442,13,LCGD Review,LCGD,LCGD_Officer_2,2024-11-19T09:43:20.060967
+SL-CASE-0442,14,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-11-23T05:57:00.909894
+SL-CASE-0442,15,DS Final Notification,DS,DS_Officer_3,2024-11-26T02:18:33.885862
+SL-CASE-0443,1,DS Application Received,DS,DS_Officer_5,2023-06-12T20:54:33.739396
+SL-CASE-0443,2,DS Initial Review,DS,DS_Officer_6,2023-06-13T14:21:05.427691
+SL-CASE-0443,3,Survey Clearance Requested,Survey,Clearance_Officer_8,2023-06-13T22:37:33.818021
+SL-CASE-0443,4,Survey Clearance Issued,Survey,Clearance_Officer_3,2023-06-21T08:59:59.774573
+SL-CASE-0443,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_2,2023-06-22T06:08:13.504620
+SL-CASE-0443,6,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_4,2023-06-25T08:56:13.752923
+SL-CASE-0443,7,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2023-07-02T09:06:24.925947
+SL-CASE-0443,8,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2023-07-07T01:01:22.497144
+SL-CASE-0443,9,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2023-07-10T09:20:03.015691
+SL-CASE-0443,10,PLC/DLC Review,PLC_DLC,PLC_Officer_6,2023-06-27T08:05:11.424173
+SL-CASE-0443,11,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_3,2023-07-02T06:20:42.763667
+SL-CASE-0443,12,LCGD Case Intake,LCGD,LCGD_Officer_4,2023-07-07T18:25:34.884226
+SL-CASE-0443,13,LCGD Review,LCGD,LCGD_Officer_1,2023-07-18T07:38:10.252539
+SL-CASE-0443,14,LCGD Lease Decision,LCGD,LCGD_Officer_4,2023-07-22T23:06:42.150089
+SL-CASE-0443,15,Registration Requested,Registry,Registry_Officer_2,2023-07-26T20:13:32.295508
+SL-CASE-0443,16,Registration Completed,Registry,Registry_Officer_2,2023-08-09T11:14:12.291478
+SL-CASE-0443,17,DS Final Notification,DS,DS_Officer_1,2023-08-10T23:29:12.164284
+SL-CASE-0445,1,DS Application Received,DS,DS_Officer_2,2024-10-03T18:47:28.897249
+SL-CASE-0445,2,DS Initial Review,DS,DS_Officer_4,2024-10-04T19:41:46.548848
+SL-CASE-0445,3,Survey Clearance Requested,Survey,Clearance_Officer_9,2024-10-05T07:36:13.196013
+SL-CASE-0445,4,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-10-08T02:41:49.829305
+SL-CASE-0445,5,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-10-16T00:02:53.737708
+SL-CASE-0445,6,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-10-20T02:40:17.813679
+SL-CASE-0445,7,Survey Clearance Issued,Survey,Clearance_Officer_11,2024-10-08T08:27:55.778610
+SL-CASE-0445,8,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_12,2024-10-09T01:33:46.019058
+SL-CASE-0445,9,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_4,2024-10-22T18:51:46.945272
+SL-CASE-0445,10,PLC/DLC Review,PLC_DLC,PLC_Officer_1,2024-10-29T09:36:54.363614
+SL-CASE-0445,11,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_4,2024-10-30T08:22:57.457516
+SL-CASE-0445,12,LCGD Case Intake,LCGD,LCGD_Officer_3,2024-11-06T02:11:47.203265
+SL-CASE-0445,13,LCGD Review,LCGD,LCGD_Officer_4,2024-11-19T07:54:19.041608
+SL-CASE-0445,14,LCGD Lease Decision,LCGD,LCGD_Officer_4,2024-11-27T10:01:08.713994
+SL-CASE-0445,15,DS Final Notification,DS,DS_Officer_3,2024-11-30T09:11:28.055878
+SL-CASE-0446,1,DS Application Received,DS,DS_Officer_7,2024-05-07T05:19:25.081053
+SL-CASE-0446,2,DS Initial Review,DS,DS_Officer_3,2024-05-08T16:35:03.940981
+SL-CASE-0446,3,Survey Clearance Requested,Survey,Clearance_Officer_4,2024-05-09T00:28:33.670635
+SL-CASE-0446,4,Survey Clearance Issued,Survey,Clearance_Officer_11,2024-05-25T19:42:16.441627
+SL-CASE-0446,5,Environmental Clearance Requested,Environmental,Clearance_Officer_8,2024-05-26T02:41:06.067088
+SL-CASE-0446,6,Environmental Clearance Issued,Environmental,Clearance_Officer_4,2024-05-30T04:53:30.259867
+SL-CASE-0446,7,Irrigation Dept Clearance Requested,Irrigation,Clearance_Officer_2,2024-05-30T12:08:01.019350
+SL-CASE-0446,8,Irrigation Dept Clearance Issued,Irrigation,Clearance_Officer_2,2024-06-03T08:57:57.052746
+SL-CASE-0446,9,DS Field Report Requested,DS,Clearance_Officer_11,2024-06-04T08:38:35.229294
+SL-CASE-0446,10,DS Field Report Issued,DS,Clearance_Officer_1,2024-06-15T19:18:31.988720
+SL-CASE-0446,11,PLC/DLC Review,PLC_DLC,PLC_Officer_2,2024-06-20T00:39:41.186791
+SL-CASE-0446,12,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2024-06-24T18:14:36.266006
+SL-CASE-0446,13,LCGD Case Intake,LCGD,LCGD_Officer_2,2024-06-26T15:01:02.954395
+SL-CASE-0446,14,LCGD Review,LCGD,LCGD_Officer_1,2024-07-04T20:45:24.256859
+SL-CASE-0446,15,Higher Approval Requested,Ministry,LCGD_Officer_2,2024-07-08T11:53:22.113367
+SL-CASE-0446,16,Higher Approval Granted,Ministry,LCGD_Officer_1,2024-07-19T08:49:38.650873
+SL-CASE-0446,17,LCGD Lease Decision,LCGD,LCGD_Officer_1,2024-07-20T01:18:23.092535
+SL-CASE-0446,18,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-07-23T19:25:15.990297
+SL-CASE-0446,19,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-07-25T04:03:06.076506
+SL-CASE-0446,20,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-08-01T11:51:32.483362
+SL-CASE-0446,21,Registration Requested,Registry,Registry_Officer_2,2024-07-20T09:00:19.214584
+SL-CASE-0446,22,Registration Completed,Registry,Registry_Officer_1,2024-07-24T17:08:16.182730
+SL-CASE-0446,23,DS Final Notification,DS,DS_Officer_7,2024-07-24T20:16:38.099579
+SL-CASE-0447,1,DS Application Received,DS,DS_Officer_5,2023-12-22T14:42:11.596209
+SL-CASE-0447,2,DS Initial Review,DS,DS_Officer_4,2023-12-22T21:25:06.749260
+SL-CASE-0447,3,Survey Clearance Requested,Survey,Clearance_Officer_5,2023-12-23T19:10:07.841889
+SL-CASE-0447,4,Survey Clearance Issued,Survey,Clearance_Officer_11,2024-01-11T10:35:25.661098
+SL-CASE-0447,5,Environmental Clearance Requested,Environmental,Clearance_Officer_2,2024-01-11T17:57:27.976251
+SL-CASE-0447,6,Environmental Clearance Issued,Environmental,Clearance_Officer_1,2024-01-23T22:49:48.908472
+SL-CASE-0447,7,Irrigation Dept Clearance Requested,Irrigation,Clearance_Officer_5,2024-01-24T18:07:33.476442
+SL-CASE-0447,8,Irrigation Dept Clearance Issued,Irrigation,Clearance_Officer_9,2024-02-02T18:09:57.167235
+SL-CASE-0447,9,DS Field Report Requested,DS,Clearance_Officer_4,2024-02-03T10:16:45.117682
+SL-CASE-0447,10,DS Field Report Issued,DS,Clearance_Officer_7,2024-02-10T09:51:22.308241
+SL-CASE-0447,11,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2024-02-19T03:23:06.139020
+SL-CASE-0447,12,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_6,2024-02-20T21:27:13.508881
+SL-CASE-0447,13,LCGD Case Intake,LCGD,LCGD_Officer_1,2024-02-26T12:42:36.749343
+SL-CASE-0447,14,LCGD Review,LCGD,LCGD_Officer_1,2024-02-27T13:56:11.685625
+SL-CASE-0447,15,Higher Approval Requested,Ministry,LCGD_Officer_4,2024-03-01T00:02:22.569397
+SL-CASE-0447,16,Higher Approval Granted,Ministry,LCGD_Officer_1,2024-04-07T01:28:44.436528
+SL-CASE-0447,17,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-04-10T19:23:31.779229
+SL-CASE-0447,18,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-04-18T00:49:54.416452
+SL-CASE-0447,19,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-04-21T11:01:11.681630
+SL-CASE-0447,20,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-04-10T22:04:21.533158
+SL-CASE-0447,21,Registration Requested,Registry,Registry_Officer_4,2024-04-15T15:37:36.864857
+SL-CASE-0447,22,Registration Completed,Registry,Registry_Officer_1,2024-04-24T23:08:34.115545
+SL-CASE-0447,23,DS Final Notification,DS,DS_Officer_1,2024-04-26T00:20:28.791139
+SL-CASE-0448,1,DS Application Received,DS,DS_Officer_4,2023-07-08T03:22:48.967612
+SL-CASE-0448,2,DS Initial Review,DS,DS_Officer_1,2023-07-10T02:47:55.167031
+SL-CASE-0448,3,Survey Clearance Requested,Survey,Clearance_Officer_9,2023-07-10T22:34:09.985316
+SL-CASE-0448,4,Survey Clearance Issued,Survey,Clearance_Officer_7,2023-07-18T02:16:55.130227
+SL-CASE-0448,5,DS Field Report Requested,DS,Clearance_Officer_10,2023-07-18T17:47:33.315442
+SL-CASE-0448,6,DS Field Report Issued,DS,Clearance_Officer_10,2023-07-24T20:23:41.381902
+SL-CASE-0448,7,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2023-07-29T19:25:32.626348
+SL-CASE-0448,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_3,2023-08-01T23:33:20.664035
+SL-CASE-0448,9,LCGD Case Intake,LCGD,LCGD_Officer_2,2023-08-07T12:08:40.597273
+SL-CASE-0448,10,LCGD Review,LCGD,LCGD_Officer_2,2023-08-14T12:35:23.411915
+SL-CASE-0448,11,Higher Approval Requested,Ministry,LCGD_Officer_2,2023-08-16T04:07:43.541327
+SL-CASE-0448,12,Higher Approval Granted,Ministry,LCGD_Officer_4,2023-09-03T09:34:55.576270
+SL-CASE-0448,13,LCGD Lease Decision,LCGD,LCGD_Officer_4,2023-09-05T04:51:34.624372
+SL-CASE-0448,14,Registration Requested,Registry,Registry_Officer_2,2023-09-09T04:20:22.361470
+SL-CASE-0448,15,Registration Completed,Registry,Registry_Officer_1,2023-09-20T10:33:00.666098
+SL-CASE-0448,16,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2023-09-25T13:08:09.333882
+SL-CASE-0448,17,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2023-09-28T18:40:16.001243
+SL-CASE-0448,18,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2023-10-02T01:27:01.247920
+SL-CASE-0448,19,DS Final Notification,DS,DS_Officer_8,2023-09-21T21:37:25.228816
+SL-CASE-0449,1,DS Application Received,DS,DS_Officer_3,2024-02-19T00:04:09.917227
+SL-CASE-0449,2,DS Initial Review,DS,DS_Officer_2,2024-02-19T05:02:58.585313
+SL-CASE-0449,3,Survey Clearance Requested,Survey,Clearance_Officer_12,2024-02-19T09:58:08.508471
+SL-CASE-0449,4,Survey Clearance Issued,Survey,Clearance_Officer_6,2024-03-05T22:21:11.749909
+SL-CASE-0449,5,Environmental Clearance Requested,Environmental,Clearance_Officer_11,2024-03-06T10:21:12.278430
+SL-CASE-0449,6,Environmental Clearance Issued,Environmental,Clearance_Officer_9,2024-03-17T08:22:29.104816
+SL-CASE-0449,7,DS Field Report Requested,DS,Clearance_Officer_3,2024-03-18T04:39:27.236307
+SL-CASE-0449,8,DS Field Report Issued,DS,Clearance_Officer_5,2024-03-26T10:00:05.756155
+SL-CASE-0449,9,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2024-04-05T04:56:05.824993
+SL-CASE-0449,10,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2024-04-09T12:22:47.773862
+SL-CASE-0449,11,LCGD Case Intake,LCGD,LCGD_Officer_2,2024-04-12T09:52:21.957004
+SL-CASE-0449,12,LCGD Review,LCGD,LCGD_Officer_4,2024-04-26T13:57:47.321201
+SL-CASE-0449,13,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-04-30T08:29:08.025559
+SL-CASE-0449,14,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-05-06T11:07:01.708736
+SL-CASE-0449,15,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-05-10T15:00:25.691020
+SL-CASE-0449,16,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-05-14T00:19:28.267975
+SL-CASE-0449,17,Registration Requested,Registry,Registry_Officer_1,2024-05-05T05:14:17.955664
+SL-CASE-0449,18,Registration Completed,Registry,Registry_Officer_4,2024-05-14T23:15:30.725655
+SL-CASE-0449,19,DS Final Notification,DS,DS_Officer_2,2024-05-15T21:36:49.132707
+SL-CASE-0450,1,DS Application Received,DS,DS_Officer_3,2023-05-10T10:49:32.153897
+SL-CASE-0450,2,DS Initial Review,DS,DS_Officer_8,2023-05-10T21:59:06.810049
+SL-CASE-0450,3,Survey Clearance Requested,Survey,Clearance_Officer_10,2023-05-11T07:20:20.790218
+SL-CASE-0450,4,Survey Clearance Issued,Survey,Clearance_Officer_1,2023-05-13T17:17:14.847603
+SL-CASE-0450,5,DS Field Report Requested,DS,Clearance_Officer_5,2023-05-14T13:07:58.938208
+SL-CASE-0450,6,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2023-05-21T09:09:16.466401
+SL-CASE-0450,7,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2023-05-24T15:14:41.894032
+SL-CASE-0450,8,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2023-05-31T08:44:08.833768
+SL-CASE-0450,9,DS Field Report Issued,DS,Clearance_Officer_6,2023-05-29T05:54:42.541147
+SL-CASE-0450,10,PLC/DLC Review,PLC_DLC,PLC_Officer_2,2023-06-01T06:39:04.518391
+SL-CASE-0450,11,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2023-06-02T00:38:53.287173
+SL-CASE-0450,12,LCGD Case Intake,LCGD,LCGD_Officer_3,2023-06-04T18:43:10.274829
+SL-CASE-0450,13,LCGD Review,LCGD,LCGD_Officer_1,2023-06-10T23:59:47.711633
+SL-CASE-0450,14,LCGD Lease Decision,LCGD,LCGD_Officer_2,2023-06-14T08:37:59.991664
+SL-CASE-0450,15,DS Final Notification,DS,DS_Officer_3,2023-06-14T10:50:07.300242
+SL-CASE-0452,1,DS Application Received,DS,DS_Officer_2,2024-01-29T19:04:14.507370
+SL-CASE-0452,2,DS Initial Review,DS,DS_Officer_2,2024-01-31T18:14:13.600102
+SL-CASE-0452,3,Survey Clearance Requested,Survey,Clearance_Officer_7,2024-02-01T03:10:00.282951
+SL-CASE-0452,4,Survey Clearance Issued,Survey,Clearance_Officer_1,2024-02-03T16:02:37.833607
+SL-CASE-0452,5,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-02-10T17:57:00.085201
+SL-CASE-0452,6,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-02-15T13:16:13.702154
+SL-CASE-0452,7,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-02-18T09:28:37.128769
+SL-CASE-0452,8,DS Field Report Requested,DS,Clearance_Officer_4,2024-02-04T10:24:32.193057
+SL-CASE-0452,9,DS Field Report Issued,DS,Clearance_Officer_8,2024-02-23T10:14:34.406251
+SL-CASE-0452,10,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2024-02-24T10:22:53.889873
+SL-CASE-0452,11,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_1,2024-02-25T07:54:15.710089
+SL-CASE-0452,12,LCGD Case Intake,LCGD,LCGD_Officer_1,2024-02-26T01:01:31.939524
+SL-CASE-0452,13,LCGD Review,LCGD,LCGD_Officer_3,2024-03-09T09:04:19.079784
+SL-CASE-0452,14,LCGD Lease Decision,LCGD,LCGD_Officer_1,2024-03-16T06:18:20.003901
+SL-CASE-0452,15,DS Final Notification,DS,DS_Officer_5,2024-03-19T03:17:39.242045
+SL-CASE-0453,1,DS Application Received,DS,DS_Officer_7,2024-05-12T23:33:07.093069
+SL-CASE-0453,2,DS Initial Review,DS,DS_Officer_5,2024-05-13T18:42:53.915281
+SL-CASE-0453,3,Survey Clearance Requested,Survey,Clearance_Officer_8,2024-05-14T02:51:12.975809
+SL-CASE-0453,4,Survey Clearance Issued,Survey,Clearance_Officer_7,2024-05-29T16:08:43.977865
+SL-CASE-0453,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_2,2024-05-30T12:32:41.501674
+SL-CASE-0453,6,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_12,2024-06-18T18:00:07.752216
+SL-CASE-0453,7,PLC/DLC Review,PLC_DLC,PLC_Officer_2,2024-06-24T03:20:49.217569
+SL-CASE-0453,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_2,2024-06-29T00:46:15.905568
+SL-CASE-0453,9,LCGD Case Intake,LCGD,LCGD_Officer_1,2024-07-04T18:18:56.693068
+SL-CASE-0453,10,LCGD Review,LCGD,LCGD_Officer_1,2024-07-08T17:57:24.450227
+SL-CASE-0453,11,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-07-09T08:16:07.907644
+SL-CASE-0453,12,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-07-14T19:47:12.024615
+SL-CASE-0453,13,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-07-18T08:22:38.559957
+SL-CASE-0453,14,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-07-23T23:36:20.893295
+SL-CASE-0453,15,DS Final Notification,DS,DS_Officer_6,2024-07-09T13:26:49.699556
+SL-CASE-0454,1,DS Application Received,DS,DS_Officer_3,2023-02-18T04:15:04.071883
+SL-CASE-0454,2,DS Initial Review,DS,DS_Officer_1,2023-02-19T02:45:39.286694
+SL-CASE-0454,3,Survey Clearance Requested,Survey,Clearance_Officer_5,2023-02-19T13:41:05.307116
+SL-CASE-0454,4,Survey Clearance Issued,Survey,Clearance_Officer_7,2023-03-11T04:06:54.026425
+SL-CASE-0454,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_7,2023-03-11T06:58:16.315625
+SL-CASE-0454,6,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_10,2023-03-20T19:10:12.434972
+SL-CASE-0454,7,PLC/DLC Review,PLC_DLC,PLC_Officer_6,2023-03-26T12:06:12.823100
+SL-CASE-0454,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_3,2023-03-31T11:41:58.313150
+SL-CASE-0454,9,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2023-04-01T09:15:09.597681
+SL-CASE-0454,10,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2023-04-08T00:11:14.851391
+SL-CASE-0454,11,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2023-04-15T11:02:58.616808
+SL-CASE-0454,12,LCGD Case Intake,LCGD,LCGD_Officer_2,2023-04-07T00:55:39.237566
+SL-CASE-0454,13,LCGD Review,LCGD,LCGD_Officer_2,2023-04-15T16:46:26.958875
+SL-CASE-0454,14,LCGD Lease Decision,LCGD,LCGD_Officer_2,2023-04-19T01:10:02.338290
+SL-CASE-0454,15,Registration Requested,Registry,Registry_Officer_3,2023-04-21T02:47:11.671146
+SL-CASE-0454,16,Registration Completed,Registry,Registry_Officer_2,2023-04-29T19:52:24.294656
+SL-CASE-0454,17,DS Final Notification,DS,DS_Officer_6,2023-05-01T11:41:12.708929
+SL-CASE-0455,1,DS Application Received,DS,DS_Officer_3,2024-05-08T07:10:08.745177
+SL-CASE-0455,2,DS Initial Review,DS,DS_Officer_1,2024-05-09T19:15:11.892095
+SL-CASE-0455,3,Survey Clearance Requested,Survey,Clearance_Officer_9,2024-05-10T10:19:21.968409
+SL-CASE-0455,4,Survey Clearance Issued,Survey,Clearance_Officer_6,2024-05-29T05:33:25.469285
+SL-CASE-0455,5,Environmental Clearance Requested,Environmental,Clearance_Officer_8,2024-05-29T09:54:50.967709
+SL-CASE-0455,6,Environmental Clearance Issued,Environmental,Clearance_Officer_5,2024-06-11T08:42:45.535719
+SL-CASE-0455,7,Irrigation Dept Clearance Requested,Irrigation,Clearance_Officer_11,2024-06-12T02:47:10.629449
+SL-CASE-0455,8,Irrigation Dept Clearance Issued,Irrigation,Clearance_Officer_2,2024-07-01T22:16:39.876786
+SL-CASE-0455,9,DS Field Report Requested,DS,Clearance_Officer_2,2024-07-02T19:50:46.947427
+SL-CASE-0455,10,DS Field Report Issued,DS,Clearance_Officer_2,2024-07-21T21:31:17.477635
+SL-CASE-0455,11,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2024-07-26T19:01:01.405452
+SL-CASE-0455,12,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-08-01T12:46:15.328619
+SL-CASE-0455,13,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-08-02T15:44:21.600888
+SL-CASE-0455,14,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-08-04T11:37:19.561299
+SL-CASE-0455,15,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_1,2024-07-31T12:20:13.519533
+SL-CASE-0455,16,LCGD Case Intake,LCGD,LCGD_Officer_1,2024-08-04T22:05:50.293527
+SL-CASE-0455,17,LCGD Review,LCGD,LCGD_Officer_3,2024-08-07T21:55:05.659952
+SL-CASE-0455,18,Higher Approval Requested,Ministry,LCGD_Officer_4,2024-08-11T12:11:32.760651
+SL-CASE-0455,19,Higher Approval Granted,Ministry,LCGD_Officer_1,2024-09-09T09:03:11.702088
+SL-CASE-0455,20,LCGD Lease Decision,LCGD,LCGD_Officer_2,2024-09-16T07:44:59.470754
+SL-CASE-0455,21,Registration Requested,Registry,Registry_Officer_1,2024-09-17T08:55:24.683329
+SL-CASE-0455,22,Registration Completed,Registry,Registry_Officer_3,2024-09-26T02:06:56.045635
+SL-CASE-0455,23,DS Final Notification,DS,DS_Officer_6,2024-09-28T20:28:19.113694
+SL-CASE-0456,1,DS Application Received,DS,DS_Officer_1,2023-01-01T12:39:51.814232
+SL-CASE-0456,2,DS Initial Review,DS,DS_Officer_7,2023-01-01T17:07:47.001255
+SL-CASE-0456,3,Survey Clearance Requested,Survey,Clearance_Officer_12,2023-01-02T11:50:23.088346
+SL-CASE-0456,4,Survey Clearance Issued,Survey,Clearance_Officer_2,2023-01-20T22:53:28.931505
+SL-CASE-0456,5,DS Field Report Requested,DS,Clearance_Officer_6,2023-01-21T07:55:13.928681
+SL-CASE-0456,6,DS Field Report Issued,DS,Clearance_Officer_12,2023-01-26T09:46:39.288126
+SL-CASE-0456,7,PLC/DLC Review,PLC_DLC,PLC_Officer_3,2023-02-04T17:55:54.839535
+SL-CASE-0456,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_6,2023-02-09T14:07:32.573428
+SL-CASE-0456,9,LCGD Case Intake,LCGD,LCGD_Officer_3,2023-02-14T13:12:06.604720
+SL-CASE-0456,10,LCGD Review,LCGD,LCGD_Officer_3,2023-02-21T17:05:37.548074
+SL-CASE-0456,11,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2023-02-26T16:11:11.923063
+SL-CASE-0456,12,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2023-02-27T13:05:59.251401
+SL-CASE-0456,13,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2023-03-02T16:47:44.145036
+SL-CASE-0456,14,LCGD Lease Decision,LCGD,LCGD_Officer_3,2023-02-22T06:34:46.447017
+SL-CASE-0456,15,Registration Requested,Registry,Registry_Officer_4,2023-02-22T17:34:32.590966
+SL-CASE-0456,16,Registration Completed,Registry,Registry_Officer_4,2023-02-25T15:07:37.040816
+SL-CASE-0456,17,DS Final Notification,DS,DS_Officer_3,2023-02-27T18:25:11.528260
+SL-CASE-0457,1,DS Application Received,DS,DS_Officer_4,2024-06-04T05:43:22.810317
+SL-CASE-0457,2,DS Initial Review,DS,DS_Officer_1,2024-06-06T04:23:44.630732
+SL-CASE-0457,3,Survey Clearance Requested,Survey,Clearance_Officer_10,2024-06-06T10:52:03.094937
+SL-CASE-0457,4,Survey Clearance Issued,Survey,Clearance_Officer_5,2024-06-09T16:54:41.403670
+SL-CASE-0457,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_1,2024-06-10T02:34:19.620363
+SL-CASE-0457,6,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_7,2024-06-27T19:04:15.358274
+SL-CASE-0457,7,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2024-06-28T17:28:09.691418
+SL-CASE-0457,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_3,2024-07-02T07:07:28.357706
+SL-CASE-0457,9,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-07-07T22:36:32.353559
+SL-CASE-0457,10,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-07-10T23:53:35.365200
+SL-CASE-0457,11,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-07-11T20:07:11.949815
+SL-CASE-0457,12,LCGD Case Intake,LCGD,LCGD_Officer_3,2024-07-03T05:10:20.713325
+SL-CASE-0457,13,LCGD Review,LCGD,LCGD_Officer_1,2024-07-12T23:47:51.773713
+SL-CASE-0457,14,Higher Approval Requested,Ministry,LCGD_Officer_3,2024-07-17T18:42:52.758457
+SL-CASE-0457,15,Higher Approval Granted,Ministry,LCGD_Officer_2,2024-08-22T14:20:05.143986
+SL-CASE-0457,16,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-09-01T04:56:18.028536
+SL-CASE-0457,17,DS Final Notification,DS,DS_Officer_4,2024-09-02T07:09:57.288390
+SL-CASE-0459,1,DS Application Received,DS,DS_Officer_7,2024-08-15T13:48:54.780153
+SL-CASE-0459,2,DS Initial Review,DS,DS_Officer_3,2024-08-16T07:35:30.390906
+SL-CASE-0459,3,Survey Clearance Requested,Survey,Clearance_Officer_3,2024-08-17T05:21:58.831507
+SL-CASE-0459,4,Survey Clearance Issued,Survey,Clearance_Officer_8,2024-08-23T15:43:21.484893
+SL-CASE-0459,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_3,2024-08-24T05:32:30.806778
+SL-CASE-0459,6,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_11,2024-09-05T06:59:07.431280
+SL-CASE-0459,7,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2024-09-07T13:34:08.379391
+SL-CASE-0459,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_2,2024-09-11T03:38:56.506597
+SL-CASE-0459,9,LCGD Case Intake,LCGD,LCGD_Officer_2,2024-09-13T01:47:14.319095
+SL-CASE-0459,10,LCGD Review,LCGD,LCGD_Officer_1,2024-09-18T09:10:46.708973
+SL-CASE-0459,11,LCGD Lease Decision,LCGD,LCGD_Officer_1,2024-09-19T07:29:59.059554
+SL-CASE-0459,12,Registration Requested,Registry,Registry_Officer_4,2024-09-22T06:37:47.835622
+SL-CASE-0459,13,Registration Completed,Registry,Registry_Officer_1,2024-10-09T05:10:55.753240
+SL-CASE-0459,14,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-10-15T10:45:25.670173
+SL-CASE-0459,15,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-10-20T00:08:22.653626
+SL-CASE-0459,16,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-10-27T08:34:26.527461
+SL-CASE-0459,17,DS Final Notification,DS,DS_Officer_1,2024-10-10T08:06:50.465684
+SL-CASE-0460,1,DS Application Received,DS,DS_Officer_1,2023-12-24T08:55:35.324692
+SL-CASE-0460,2,DS Initial Review,DS,DS_Officer_6,2023-12-25T01:18:59.162835
+SL-CASE-0460,3,Survey Clearance Requested,Survey,Clearance_Officer_8,2023-12-26T00:23:08.034427
+SL-CASE-0460,4,Survey Clearance Issued,Survey,Clearance_Officer_10,2024-01-02T08:43:38.681488
+SL-CASE-0460,5,Referred to External Audit Unit,External Audit Unit,External_Audit_Unit_Officer,2024-01-03T13:04:39.184440
+SL-CASE-0460,6,Referred to Legal Affairs Division,Legal Affairs Division,Legal_Affairs_Division_Officer,2024-01-06T15:02:34.642382
+SL-CASE-0460,7,Referred to District Secretariat Liaison,District Secretariat Liaison,District_Secretariat_Liaison_Officer,2024-01-08T08:13:17.153981
+SL-CASE-0460,8,Environmental Clearance Requested,Environmental,Clearance_Officer_9,2024-01-02T22:58:12.178671
+SL-CASE-0460,9,Environmental Clearance Issued,Environmental,Clearance_Officer_10,2024-01-12T12:41:36.096671
+SL-CASE-0460,10,DS Field Report Requested,DS,Clearance_Officer_2,2024-01-13T09:37:43.833895
+SL-CASE-0460,11,DS Field Report Issued,DS,Clearance_Officer_12,2024-01-17T15:36:04.176918
+SL-CASE-0460,12,PLC/DLC Review,PLC_DLC,PLC_Officer_4,2024-01-23T18:56:28.344295
+SL-CASE-0460,13,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_4,2024-01-25T12:28:23.815139
+SL-CASE-0460,14,LCGD Case Intake,LCGD,LCGD_Officer_2,2024-01-26T07:42:56.773859
+SL-CASE-0460,15,LCGD Review,LCGD,LCGD_Officer_2,2024-02-02T04:31:36.268289
+SL-CASE-0460,16,Higher Approval Requested,Ministry,LCGD_Officer_2,2024-02-06T05:25:24.401761
+SL-CASE-0460,17,Higher Approval Granted,Ministry,LCGD_Officer_3,2024-02-27T05:47:05.534886
+SL-CASE-0460,18,LCGD Lease Decision,LCGD,LCGD_Officer_1,2024-03-03T13:37:10.152335
+SL-CASE-0460,19,Registration Requested,Registry,Registry_Officer_4,2024-03-05T00:47:04.634584
+SL-CASE-0460,20,Registration Completed,Registry,Registry_Officer_2,2024-03-22T22:35:30.656862
+SL-CASE-0460,21,DS Final Notification,DS,DS_Officer_8,2024-03-23T00:40:07.194851
+SL-CASE-0481,1,DS Application Received,DS,DS_Officer_7,2023-07-22T13:20:57.534424
+SL-CASE-0481,2,DS Initial Review,DS,DS_Officer_4,2023-07-24T06:44:57.119190
+SL-CASE-0481,3,Survey Clearance Requested,Survey,Clearance_Officer_12,2023-07-25T04:44:31.832136
+SL-CASE-0481,4,Survey Clearance Issued,Survey,Clearance_Officer_12,2023-08-09T04:19:51.868828
+SL-CASE-0481,5,Environmental Clearance Requested,Environmental,Clearance_Officer_4,2023-08-09T18:12:06.483354
+SL-CASE-0481,6,Environmental Clearance Issued,Environmental,Clearance_Officer_5,2023-08-14T14:28:35.198735
+SL-CASE-0481,7,DS Field Report Requested,DS,Clearance_Officer_8,2023-08-14T22:57:13.868060
+SL-CASE-0481,8,DS Field Report Issued,DS,Clearance_Officer_1,2023-09-01T14:57:40.308542
+SL-CASE-0481,9,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2023-09-05T00:26:25.366509
+SL-CASE-0481,10,Survey Clearance Requested (Repeated),Survey,Clearance_Officer_12,2023-09-06T07:17:31.336408
+SL-CASE-0481,11,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2023-09-07T15:20:14.261970
+SL-CASE-0481,12,LCGD Case Intake,LCGD,LCGD_Officer_3,2023-09-11T21:50:04.379958
+SL-CASE-0481,13,LCGD Review,LCGD,LCGD_Officer_4,2023-09-13T01:46:49.402112
+SL-CASE-0481,14,LCGD Lease Decision,LCGD,LCGD_Officer_2,2023-09-13T12:38:59.375083
+SL-CASE-0481,15,Registration Requested,Registry,Registry_Officer_3,2023-09-13T19:49:36.506853
+SL-CASE-0481,16,Survey Clearance Issued (Repeated),Survey,Clearance_Officer_12,2023-09-21T06:52:51.373100
+SL-CASE-0481,17,Environmental Clearance Requested (Repeated),Environmental,Clearance_Officer_4,2023-09-21T20:45:05.987626
+SL-CASE-0481,18,Registration Completed,Registry,Registry_Officer_4,2023-09-26T11:44:32.120748
+SL-CASE-0481,19,Environmental Clearance Issued (Repeated),Environmental,Clearance_Officer_5,2023-09-26T17:01:34.703007
+SL-CASE-0481,20,DS Field Report Requested (Repeated),DS,Clearance_Officer_8,2023-09-27T01:30:13.372332
+SL-CASE-0481,21,DS Final Notification,DS,DS_Officer_6,2023-09-28T19:21:32.840186
+SL-CASE-0481,22,DS Field Report Issued (Repeated),DS,Clearance_Officer_1,2023-10-14T17:30:39.812814
+SL-CASE-0482,1,DS Application Received,DS,DS_Officer_4,2024-06-20T07:33:35.086839
+SL-CASE-0482,2,DS Initial Review,DS,DS_Officer_6,2024-06-20T18:35:52.485509
+SL-CASE-0482,3,Survey Clearance Requested,Survey,Clearance_Officer_5,2024-06-21T05:42:30.381001
+SL-CASE-0482,4,Survey Clearance Issued,Survey,Clearance_Officer_8,2024-06-25T18:03:44.264798
+SL-CASE-0482,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_3,2024-06-26T06:29:38.156591
+SL-CASE-0482,6,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_6,2024-06-30T07:27:43.662741
+SL-CASE-0482,7,PLC/DLC Review,PLC_DLC,PLC_Officer_1,2024-07-06T04:47:33.209753
+SL-CASE-0482,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_4,2024-07-08T10:29:08.506597
+SL-CASE-0482,9,LCGD Case Intake,LCGD,LCGD_Officer_1,2024-07-11T04:58:29.592054
+SL-CASE-0482,10,Survey Clearance Requested (Repeated),Survey,Clearance_Officer_5,2024-07-13T03:11:43.833473
+SL-CASE-0482,11,LCGD Review,LCGD,LCGD_Officer_2,2024-07-14T04:36:22.350061
+SL-CASE-0482,12,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-07-14T17:06:21.662371
+SL-CASE-0482,13,Survey Clearance Issued (Repeated),Survey,Clearance_Officer_8,2024-07-17T15:32:57.717270
+SL-CASE-0482,14,Registration Requested,Registry,Registry_Officer_2,2024-07-17T16:23:39.637849
+SL-CASE-0482,15,Agrarian Services Clearance Requested (Repeated),Agrarian,Clearance_Officer_3,2024-07-18T03:58:51.609063
+SL-CASE-0482,16,Registration Completed,Registry,Registry_Officer_3,2024-07-21T13:12:32.469636
+SL-CASE-0482,17,DS Final Notification,DS,DS_Officer_6,2024-07-21T23:24:02.924444
+SL-CASE-0482,18,Agrarian Services Clearance Issued (Repeated),Agrarian,Clearance_Officer_6,2024-07-22T04:56:57.115213
+SL-CASE-0482,19,PLC/DLC Review (Repeated),PLC_DLC,PLC_Officer_1,2024-07-28T02:16:46.662225
+SL-CASE-0483,1,DS Application Received,DS,DS_Officer_7,2024-10-30T13:38:54.788184
+SL-CASE-0483,2,DS Initial Review,DS,DS_Officer_3,2024-10-31T04:24:02.006341
+SL-CASE-0483,3,Survey Clearance Requested,Survey,Clearance_Officer_3,2024-10-31T20:36:25.612607
+SL-CASE-0483,4,Survey Clearance Issued,Survey,Clearance_Officer_12,2024-11-17T13:34:04.031985
+SL-CASE-0483,5,Environmental Clearance Requested,Environmental,Clearance_Officer_3,2024-11-17T22:05:39.422834
+SL-CASE-0483,6,Environmental Clearance Issued,Environmental,Clearance_Officer_7,2024-11-19T17:35:10.270997
+SL-CASE-0483,7,Irrigation Dept Clearance Requested,Irrigation,Clearance_Officer_11,2024-11-19T21:15:29.295746
+SL-CASE-0483,8,Irrigation Dept Clearance Issued,Irrigation,Clearance_Officer_9,2024-11-25T19:27:26.699226
+SL-CASE-0483,9,DS Field Report Requested,DS,Clearance_Officer_11,2024-11-25T22:03:10.472543
+SL-CASE-0483,10,DS Field Report Issued,DS,Clearance_Officer_2,2024-12-07T09:24:41.166189
+SL-CASE-0483,11,PLC/DLC Review,PLC_DLC,PLC_Officer_6,2024-12-09T17:45:52.830845
+SL-CASE-0483,12,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_6,2024-12-10T11:57:32.969834
+SL-CASE-0483,13,Survey Clearance Requested (Repeated),Survey,Clearance_Officer_3,2024-12-11T12:29:38.716491
+SL-CASE-0483,14,LCGD Case Intake,LCGD,LCGD_Officer_1,2024-12-14T11:56:07.738635
+SL-CASE-0483,15,LCGD Review,LCGD,LCGD_Officer_2,2024-12-16T02:35:17.657025
+SL-CASE-0483,16,LCGD Lease Decision,LCGD,LCGD_Officer_2,2024-12-23T05:24:41.033701
+SL-CASE-0483,17,Registration Requested,Registry,Registry_Officer_1,2024-12-23T18:44:01.986282
+SL-CASE-0483,18,Registration Completed,Registry,Registry_Officer_2,2024-12-28T03:20:44.399920
+SL-CASE-0483,19,Survey Clearance Issued (Repeated),Survey,Clearance_Officer_12,2024-12-28T05:27:17.135869
+SL-CASE-0483,20,DS Final Notification,DS,DS_Officer_3,2024-12-28T11:57:03.426215
+SL-CASE-0483,21,Environmental Clearance Requested (Repeated),Environmental,Clearance_Officer_3,2024-12-28T13:58:52.526718
+SL-CASE-0483,22,Environmental Clearance Issued (Repeated),Environmental,Clearance_Officer_7,2024-12-30T09:28:23.374881
+SL-CASE-0483,23,Irrigation Dept Clearance Requested (Repeated),Irrigation,Clearance_Officer_11,2024-12-30T13:08:42.399630
+SL-CASE-0483,24,Irrigation Dept Clearance Issued (Repeated),Irrigation,Clearance_Officer_9,2025-01-05T11:20:39.803110
+SL-CASE-0483,25,DS Field Report Requested (Repeated),DS,Clearance_Officer_11,2025-01-05T13:56:23.576427
+SL-CASE-0486,1,DS Application Received,DS,DS_Officer_7,2023-01-15T16:07:28.286902
+SL-CASE-0486,2,DS Initial Review,DS,DS_Officer_2,2023-01-16T04:25:14.932935
+SL-CASE-0486,3,Survey Clearance Requested,Survey,Clearance_Officer_11,2023-01-16T06:30:19.761512
+SL-CASE-0486,4,Survey Clearance Issued,Survey,Clearance_Officer_3,2023-01-18T03:40:11.757146
+SL-CASE-0486,5,Environmental Clearance Requested,Environmental,Clearance_Officer_9,2023-01-18T11:36:47.858443
+SL-CASE-0486,6,Environmental Clearance Issued,Environmental,Clearance_Officer_9,2023-02-05T13:37:23.412173
+SL-CASE-0486,7,DS Field Report Requested,DS,Clearance_Officer_6,2023-02-06T07:14:18.334566
+SL-CASE-0486,8,DS Field Report Issued,DS,Clearance_Officer_3,2023-02-17T19:28:30.566415
+SL-CASE-0486,9,PLC/DLC Review,PLC_DLC,PLC_Officer_5,2023-02-27T02:21:12.454054
+SL-CASE-0486,10,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2023-02-28T03:50:16.418557
+SL-CASE-0486,11,Survey Clearance Requested (Repeated),Survey,Clearance_Officer_11,2023-03-03T11:21:42.327140
+SL-CASE-0486,12,Survey Clearance Issued (Repeated),Survey,Clearance_Officer_3,2023-03-05T08:31:34.322774
+SL-CASE-0486,13,LCGD Case Intake,LCGD,LCGD_Officer_1,2023-03-05T15:32:15.675740
+SL-CASE-0486,14,Environmental Clearance Requested (Repeated),Environmental,Clearance_Officer_9,2023-03-05T16:28:10.424071
+SL-CASE-0486,15,LCGD Review,LCGD,LCGD_Officer_4,2023-03-07T11:34:37.789247
+SL-CASE-0486,16,LCGD Lease Decision,LCGD,LCGD_Officer_4,2023-03-12T22:31:44.118499
+SL-CASE-0486,17,Registration Requested,Registry,Registry_Officer_4,2023-03-13T23:13:35.505019
+SL-CASE-0486,18,Environmental Clearance Issued (Repeated),Environmental,Clearance_Officer_9,2023-03-23T18:28:45.977801
+SL-CASE-0486,19,DS Field Report Requested (Repeated),DS,Clearance_Officer_6,2023-03-24T12:05:40.900194
+SL-CASE-0486,20,Registration Completed,Registry,Registry_Officer_2,2023-03-29T08:05:35.444078
+SL-CASE-0486,21,DS Final Notification,DS,DS_Officer_3,2023-03-31T22:08:19.675626
+SL-CASE-0486,22,DS Field Report Issued (Repeated),DS,Clearance_Officer_3,2023-04-05T00:19:53.132043
+SL-CASE-0488,1,DS Application Received,DS,DS_Officer_5,2023-03-08T12:34:24.923849
+SL-CASE-0488,2,DS Initial Review,DS,DS_Officer_2,2023-03-09T03:27:27.109657
+SL-CASE-0488,3,Survey Clearance Requested,Survey,Clearance_Officer_8,2023-03-09T19:07:23.766591
+SL-CASE-0488,4,Survey Clearance Issued,Survey,Clearance_Officer_7,2023-03-22T07:46:40.515794
+SL-CASE-0488,5,DS Field Report Requested,DS,Clearance_Officer_9,2023-03-22T12:20:49.403390
+SL-CASE-0488,6,DS Field Report Issued,DS,Clearance_Officer_6,2023-04-05T17:10:22.512201
+SL-CASE-0488,7,PLC/DLC Review,PLC_DLC,PLC_Officer_4,2023-04-15T10:19:06.790489
+SL-CASE-0488,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2023-04-18T10:23:16.326084
+SL-CASE-0488,9,Survey Clearance Requested (Repeated),Survey,Clearance_Officer_8,2023-04-19T05:39:43.532752
+SL-CASE-0488,10,LCGD Case Intake,LCGD,LCGD_Officer_3,2023-04-23T02:44:06.370092
+SL-CASE-0488,11,LCGD Review,LCGD,LCGD_Officer_4,2023-04-29T00:18:58.047180
+SL-CASE-0488,12,LCGD Lease Decision,LCGD,LCGD_Officer_1,2023-05-01T00:00:49.582296
+SL-CASE-0488,13,Survey Clearance Issued (Repeated),Survey,Clearance_Officer_7,2023-05-01T18:19:00.281955
+SL-CASE-0488,14,DS Field Report Requested (Repeated),DS,Clearance_Officer_9,2023-05-01T22:53:09.169551
+SL-CASE-0488,15,DS Final Notification,DS,DS_Officer_3,2023-05-03T23:21:39.871984
+SL-CASE-0488,16,DS Field Report Issued (Repeated),DS,Clearance_Officer_6,2023-05-16T03:42:42.278362
+SL-CASE-0492,1,DS Application Received,DS,DS_Officer_1,2023-03-10T00:01:59.614635
+SL-CASE-0492,2,DS Initial Review,DS,DS_Officer_8,2023-03-11T02:08:59.946761
+SL-CASE-0492,3,Survey Clearance Requested,Survey,Clearance_Officer_1,2023-03-12T00:15:27.210961
+SL-CASE-0492,4,Survey Clearance Issued,Survey,Clearance_Officer_9,2023-03-25T10:18:42.434309
+SL-CASE-0492,5,Agrarian Services Clearance Requested,Agrarian,Clearance_Officer_7,2023-03-25T22:41:53.078132
+SL-CASE-0492,6,Agrarian Services Clearance Issued,Agrarian,Clearance_Officer_1,2023-04-12T15:09:04.646271
+SL-CASE-0492,7,PLC/DLC Review,PLC_DLC,PLC_Officer_6,2023-04-13T10:16:18.233130
+SL-CASE-0492,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_4,2023-04-17T05:47:07.576154
+SL-CASE-0492,9,LCGD Case Intake,LCGD,LCGD_Officer_1,2023-04-20T03:52:25.645444
+SL-CASE-0492,10,Survey Clearance Requested (Repeated),Survey,Clearance_Officer_1,2023-04-20T21:39:03.213004
+SL-CASE-0492,11,LCGD Review,LCGD,LCGD_Officer_3,2023-04-21T19:52:09.187774
+SL-CASE-0492,12,LCGD Lease Decision,LCGD,LCGD_Officer_3,2023-05-01T00:53:59.180798
+SL-CASE-0492,13,Survey Clearance Issued (Repeated),Survey,Clearance_Officer_9,2023-05-04T07:42:18.436352
+SL-CASE-0492,14,Agrarian Services Clearance Requested (Repeated),Agrarian,Clearance_Officer_7,2023-05-04T20:05:29.080175
+SL-CASE-0492,15,Registration Requested,Registry,Registry_Officer_3,2023-05-05T19:09:53.567802
+SL-CASE-0492,16,Registration Completed,Registry,Registry_Officer_1,2023-05-09T07:08:27.807770
+SL-CASE-0492,17,DS Final Notification,DS,DS_Officer_5,2023-05-10T12:40:43.262111
+SL-CASE-0492,18,Agrarian Services Clearance Issued (Repeated),Agrarian,Clearance_Officer_1,2023-05-22T12:32:40.648314
+SL-CASE-0492,19,PLC/DLC Review (Repeated),PLC_DLC,PLC_Officer_6,2023-05-23T07:39:54.235173
+SL-CASE-0494,1,DS Application Received,DS,DS_Officer_2,2023-09-01T09:30:42.448183
+SL-CASE-0494,2,DS Initial Review,DS,DS_Officer_8,2023-09-03T06:24:02.889686
+SL-CASE-0494,3,Survey Clearance Requested,Survey,Clearance_Officer_11,2023-09-03T13:36:39.711446
+SL-CASE-0494,4,Survey Clearance Issued,Survey,Clearance_Officer_8,2023-09-07T06:54:14.485442
+SL-CASE-0494,5,DS Field Report Requested,DS,Clearance_Officer_7,2023-09-07T19:47:11.041013
+SL-CASE-0494,6,DS Field Report Issued,DS,Clearance_Officer_9,2023-09-23T12:00:04.350718
+SL-CASE-0494,7,PLC/DLC Review,PLC_DLC,PLC_Officer_6,2023-09-30T02:29:59.584121
+SL-CASE-0494,8,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_3,2023-10-01T12:35:14.253490
+SL-CASE-0494,9,LCGD Case Intake,LCGD,LCGD_Officer_3,2023-10-05T15:16:26.979354
+SL-CASE-0494,10,Survey Clearance Requested (Repeated),Survey,Clearance_Officer_11,2023-10-06T10:25:37.687992
+SL-CASE-0494,11,Survey Clearance Issued (Repeated),Survey,Clearance_Officer_8,2023-10-10T03:43:12.461988
+SL-CASE-0494,12,DS Field Report Requested (Repeated),DS,Clearance_Officer_7,2023-10-10T16:36:09.017559
+SL-CASE-0494,13,LCGD Review,LCGD,LCGD_Officer_2,2023-10-14T09:27:59.378444
+SL-CASE-0494,14,LCGD Lease Decision,LCGD,LCGD_Officer_3,2023-10-16T09:48:27.143870
+SL-CASE-0494,15,Registration Requested,Registry,Registry_Officer_3,2023-10-17T11:13:22.852291
+SL-CASE-0494,16,Registration Completed,Registry,Registry_Officer_3,2023-10-21T03:02:13.454810
+SL-CASE-0494,17,DS Final Notification,DS,DS_Officer_2,2023-10-21T12:08:07.048612
+SL-CASE-0494,18,DS Field Report Issued (Repeated),DS,Clearance_Officer_9,2023-10-26T08:49:02.327264
+SL-CASE-0494,19,PLC/DLC Review (Repeated),PLC_DLC,PLC_Officer_6,2023-11-01T23:18:57.560667
+SL-CASE-0497,1,DS Application Received,DS,DS_Officer_3,2024-04-24T22:09:00.945244
+SL-CASE-0497,2,DS Initial Review,DS,DS_Officer_7,2024-04-26T04:13:11.340174
+SL-CASE-0497,3,Survey Clearance Requested,Survey,Clearance_Officer_2,2024-04-26T19:10:28.286609
+SL-CASE-0497,4,Survey Clearance Issued,Survey,Clearance_Officer_4,2024-05-16T13:13:03.949509
+SL-CASE-0497,5,Environmental Clearance Requested,Environmental,Clearance_Officer_7,2024-05-16T19:50:08.041137
+SL-CASE-0497,6,Environmental Clearance Issued,Environmental,Clearance_Officer_10,2024-05-20T10:06:11.344380
+SL-CASE-0497,7,DS Field Report Requested,DS,Clearance_Officer_7,2024-05-21T00:45:58.211757
+SL-CASE-0497,8,DS Field Report Issued,DS,Clearance_Officer_7,2024-06-02T23:38:16.955545
+SL-CASE-0497,9,PLC/DLC Review,PLC_DLC,PLC_Officer_3,2024-06-05T23:22:20.912438
+SL-CASE-0497,10,PLC/DLC Recommendation,PLC_DLC,PLC_Officer_5,2024-06-06T11:22:31.873325
+SL-CASE-0497,11,Survey Clearance Requested (Repeated),Survey,Clearance_Officer_2,2024-06-07T15:05:24.559744
+SL-CASE-0497,12,LCGD Case Intake,LCGD,LCGD_Officer_1,2024-06-10T17:05:36.775106
+SL-CASE-0497,13,LCGD Review,LCGD,LCGD_Officer_1,2024-06-21T08:45:48.392050
+SL-CASE-0497,14,LCGD Lease Decision,LCGD,LCGD_Officer_3,2024-06-22T02:02:52.470517
+SL-CASE-0497,15,Registration Requested,Registry,Registry_Officer_1,2024-06-24T14:43:57.476713
+SL-CASE-0497,16,Survey Clearance Issued (Repeated),Survey,Clearance_Officer_4,2024-06-27T09:08:00.222644
+SL-CASE-0497,17,Environmental Clearance Requested (Repeated),Environmental,Clearance_Officer_7,2024-06-27T15:45:04.314272
+SL-CASE-0497,18,Environmental Clearance Issued (Repeated),Environmental,Clearance_Officer_10,2024-07-01T06:01:07.617515
+SL-CASE-0497,19,DS Field Report Requested (Repeated),DS,Clearance_Officer_7,2024-07-01T20:40:54.484892
+SL-CASE-0497,20,Registration Completed,Registry,Registry_Officer_2,2024-07-05T17:00:05.956221
+SL-CASE-0497,21,DS Final Notification,DS,DS_Officer_6,2024-07-08T05:17:16.356082
+SL-CASE-0497,22,DS Field Report Issued (Repeated),DS,Clearance_Officer_7,2024-07-14T19:33:13.228680
