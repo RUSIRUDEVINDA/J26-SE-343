@@ -21,6 +21,11 @@ public sealed class ZoningMatchRule : RegulatoryRule
 
     public override void Evaluate(LeaseEvaluationInput input, List<Violation> violations, List<ComplianceCondition> conditions)
     {
+        Evaluate(input, violations, conditions, DateTime.UtcNow);
+    }
+
+    public override void Evaluate(LeaseEvaluationInput input, List<Violation> violations, List<ComplianceCondition> conditions, DateTime evaluationTimestamp)
+    {
         if (string.IsNullOrWhiteSpace(input.ZoningArea))
         {
             violations.Add(new Violation(Code, "Zoning classification cannot be empty."));
@@ -47,7 +52,7 @@ public sealed class ZoningMatchRule : RegulatoryRule
             {
                 conditions.Add(new ComplianceCondition(
                     "Commercial operations in Residential zoning require local authority permits and environmental clearance.",
-                    DateTime.UtcNow.AddDays(30)));
+                    evaluationTimestamp.AddDays(30)));
             }
         }
         else if (zoning == "agricultural")

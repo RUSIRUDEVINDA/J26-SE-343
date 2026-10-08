@@ -69,4 +69,43 @@ public class EvaluateComplianceCommandHandlerTests
         Assert.Equal(3, result.Violations.Count);
         Assert.Empty(result.Conditions);
     }
+
+    [Fact]
+    public async Task HandleAsync_ShouldUseTimeProvider_ForDeterministicConditionDates()
+    {
+        // Arrange
+        var fixedTime = new DateTimeOffset(2026, 7, 1, 9, 0, 0, System.TimeSpan.Zero);
+        var timeProvider = new CustomTestTimeProvider(fixedTime);
+        var evalStore = new InMemoryGovernanceEvaluationStore(_auditRepository);
+        var complianceEngine = new RegulatoryComplianceEngine();
+        var handlerWithTime = new EvaluateComplianceCommandHandler(
+            _ruleProvider,
+            complianceEngine,
+            evalStore,
+            null,
+            timeProvider);
+
+        var command = new EvaluateComplianceCommand(
+            ActionName: "ApproveConditionalLease",
+            LeaseDurationYears: 45, // Requires 90 days condition
+            ProposedUse: "Conservation",
+            LeaseAmount: 5000.00m,
+            ZoningArea: "ForestReserve"
+        );
+
+        // Act
+        var result = await handlerWithTime.HandleAsync(command, CancellationToken.None);
+
+        // Assert
+        Assert.Equal("Conditional", result.Status);
+        Assert.Single(result.Conditions);
+        Assert.Equal(fixedTime.UtcDateTime.AddDays(90), result.Conditions[0].RequiredByDate);
+    }
+
+    private sealed class CustomTestTimeProvider : TimeProvider
+    {
+        private readonly DateTimeOffset _utcNow;
+        public CustomTestTimeProvider(DateTimeOffset utcNow) => _utcNow = utcNow;
+        public override DateTimeOffset GetUtcNow() => _utcNow;
+    }
 }

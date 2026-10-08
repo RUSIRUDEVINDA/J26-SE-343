@@ -891,4 +891,121 @@ public class GovernanceConflictEngineTests
         var result = _engine.DetectConflicts(input, _fixedTime);
         Assert.Single(result);
     }
+
+    [Fact]
+    public void DetectConflicts_ShouldFlagDuplicateAllocation_WhenDifferentApplicantsAllocatedSameParcelInOverlappingPeriod()
+    {
+        var from = DateTime.UtcNow;
+        var to = from.AddYears(5);
+        var input = new List<GovernanceDecisionSnapshot>
+        {
+            new("LEASE_A", "PARCEL_100", "LandCommissioner", "National", "Approval", "Agricultural", from, to, "CrownLandsOrdinance",
+                applicantId: "APP_CORP_1", parcelGeometry: null, recordStatus: "ALLOCATED"),
+            new("LEASE_B", "PARCEL_100", "DivisionalSecretariat", "Local", "Approval", "Agricultural", from.AddYears(1), to.AddYears(1), "CrownLandsOrdinance",
+                applicantId: "APP_INDIV_2", parcelGeometry: null, recordStatus: "ALLOCATED")
+        };
+
+        var result = _engine.DetectConflicts(input, _fixedTime);
+
+        Assert.Single(result);
+        var conflict = result[0];
+        Assert.Equal("DuplicateAllocation", conflict.ConflictType);
+        Assert.Equal("Critical", conflict.Severity);
+        Assert.Contains("Potential duplicate allocation detected", conflict.Explanation);
+        Assert.Contains("APP_CORP_1", conflict.Explanation);
+        Assert.Contains("APP_INDIV_2", conflict.Explanation);
+        Assert.Contains("Reliable parcel geometry is unavailable", conflict.Explanation);
+        Assert.Contains("Spatial overlap cannot be claimed without verified parcel geometry", conflict.Explanation);
+        Assert.Contains("Land Administration Review Board", conflict.RecommendedAction);
+
+        // Ethical language validation
+        Assert.DoesNotContain("illegal", conflict.Explanation, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("fraud", conflict.Explanation, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("corrupt", conflict.Explanation, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void DetectConflicts_ShouldFlagDuplicateAllocation_WhenSameApplicantSubmitsDuplicateApplicationsForSameSubject()
+    {
+        var from = DateTime.UtcNow;
+        var to = from.AddYears(2);
+        var input = new List<GovernanceDecisionSnapshot>
+        {
+            new("APP_REC_1", "PARCEL_100", "LandMinistry", "National", "Approval", "Commercial", from, to, "Law_A",
+                applicantId: "APP_SAME_USER", recordStatus: "ACTIVE"),
+            new("APP_REC_2", "PARCEL_100", "LandMinistry", "National", "Approval", "Commercial", from, to, "Law_A",
+                applicantId: "APP_SAME_USER", recordStatus: "ACTIVE")
+        };
+
+        var result = _engine.DetectConflicts(input, _fixedTime);
+
+        Assert.Single(result);
+        Assert.Equal("DuplicateAllocation", result[0].ConflictType);
+        Assert.Contains("Duplicate allocation/application identified for the same applicant: 'APP_SAME_USER'", result[0].Explanation);
+    }
+
+    [Fact]
+    public void DetectConflicts_ShouldReturnNoConflict_WhenAllocationsDoNotOverlapTemporally()
+    {
+        var baseDate = DateTime.UtcNow;
+        var input = new List<GovernanceDecisionSnapshot>
+        {
+            new("LEASE_PAST", "PARCEL_100", "LandCommissioner", "National", "Approval", "Agricultural",
+                baseDate, baseDate.AddYears(2), "CrownLandsOrdinance",
+                applicantId: "PARTY_A", recordStatus: "ALLOCATED"),
+            new("LEASE_FUTURE", "PARCEL_100", "LandCommissioner", "National", "Approval", "Agricultural",
+                baseDate.AddYears(3), baseDate.AddYears(5), "CrownLandsOrdinance",
+                applicantId: "PARTY_B", recordStatus: "ALLOCATED")
+        };
+
+        var result = _engine.DetectConflicts(input, _fixedTime);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void DetectConflicts_ShouldFlagConflictingStatuses_WhenActiveRecordOverlapsRevokedOrCancelledRecord()
+    {
+        var from = DateTime.UtcNow;
+        var to = from.AddYears(3);
+        var input = new List<GovernanceDecisionSnapshot>
+        {
+            new("LEASE_ACTIVE", "PARCEL_200", "LandMinistry", "National", "Approval", "Commercial", from, to, "Act_A",
+                recordStatus: "ACTIVE"),
+            new("LEASE_REVOKED", "PARCEL_200", "LandMinistry", "National", "Approval", "Commercial", from, to, "Act_A",
+                recordStatus: "REVOKED")
+        };
+
+        var result = _engine.DetectConflicts(input, _fixedTime);
+
+        Assert.Single(result);
+        var conflict = result[0];
+        Assert.Equal("ConflictingStatuses", conflict.ConflictType);
+        Assert.Equal("Critical", conflict.Severity);
+        Assert.Contains("Conflicting record status detected", conflict.Explanation);
+        Assert.Contains("active/permissive status", conflict.Explanation);
+        Assert.Contains("restrictive status 'REVOKED'", conflict.Explanation);
+        Assert.Contains("Land Registrar", conflict.RecommendedAction);
+    }
+
+    [Fact]
+    public void DetectConflicts_ShouldAttachParcelGeometryNote_WhenGeometryIsProvided()
+    {
+        var from = DateTime.UtcNow;
+        var to = from.AddYears(1);
+        var polygonWkt = "POLYGON((79.85 6.92, 79.86 6.92, 79.86 6.93, 79.85 6.93, 79.85 6.92))";
+        var input = new List<GovernanceDecisionSnapshot>
+        {
+            new("DEC_A", "PARCEL_GEO", "UDA", "National", "Approval", "Commercial", from, to, "Law_A",
+                parcelGeometry: polygonWkt, applicantId: "PARTY_1"),
+            new("DEC_B", "PARCEL_GEO", "UDA", "National", "Approval", "Commercial", from, to, "Law_A",
+                parcelGeometry: polygonWkt, applicantId: "PARTY_2")
+        };
+
+        var result = _engine.DetectConflicts(input, _fixedTime);
+
+        Assert.Single(result);
+        Assert.Contains("Parcel geometry records attached for administrative boundary verification", result[0].Explanation);
+        Assert.DoesNotContain("Reliable parcel geometry is unavailable", result[0].Explanation);
+    }
 }

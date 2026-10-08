@@ -249,4 +249,32 @@ public class DetectConflictsCommandHandlerTests
         Assert.Contains("Highest severity: None", audit.Details);
         Assert.Contains("Detected conflicts: 0", audit.Details);
     }
+
+    [Fact]
+    public async Task HandleAsync_ShouldDetectDuplicateAllocation_AndPropagateGeometryDisclaimer()
+    {
+        var from = DateTime.UtcNow;
+        var to = from.AddYears(2);
+        var command = new DetectConflictsCommand(
+            ActionName: "DuplicateAllocationAction",
+            Decisions: new List<GovernanceDecisionSnapshotDto>
+            {
+                new("DEC_ALLOC_1", "PARCEL_300", "LandMinistry", "National", "Approval", "Commercial", from, to, "Law_A",
+                    ApplicantId: "APPLICANT_ALPHA", RecordStatus: "ALLOCATED"),
+                new("DEC_ALLOC_2", "PARCEL_300", "DivisionalSecretariat", "Local", "Approval", "Commercial", from, to, "Law_A",
+                    ApplicantId: "APPLICANT_BETA", RecordStatus: "ALLOCATED")
+            }
+        );
+
+        var result = await _handler.HandleAsync(command, CancellationToken.None);
+
+        Assert.Equal("ConflictsDetected", result.Status);
+        Assert.Single(result.Conflicts);
+        var conflict = result.Conflicts[0];
+        Assert.Equal("DuplicateAllocation", conflict.ConflictType);
+        Assert.Equal("Critical", conflict.Severity);
+        Assert.Contains("APPLICANT_ALPHA", conflict.Explanation);
+        Assert.Contains("APPLICANT_BETA", conflict.Explanation);
+        Assert.Contains("Reliable parcel geometry is unavailable", conflict.Explanation);
+    }
 }
