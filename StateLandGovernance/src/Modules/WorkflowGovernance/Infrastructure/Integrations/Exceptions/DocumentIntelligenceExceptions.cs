@@ -96,3 +96,19 @@ public sealed class DocumentIntelligenceTimeoutException : DocumentIntelligenceE
     {
     }
 }
+
+/// <summary>
+/// Thrown when source document byte integrity verification fails against the registered checksum before upload.
+/// </summary>
+public sealed class DocumentContentIntegrityException : DocumentIntelligenceException
+{
+    public string ExpectedChecksum { get; }
+    public string ComputedChecksum { get; }
+
+    public DocumentContentIntegrityException(string message, string expectedChecksum, string computedChecksum, Exception? innerException = null)
+        : base(message, 400, "CHECKSUM_MISMATCH", innerException)
+    {
+        ExpectedChecksum = expectedChecksum ?? string.Empty;
+        ComputedChecksum = computedChecksum ?? string.Empty;
+    }
+}

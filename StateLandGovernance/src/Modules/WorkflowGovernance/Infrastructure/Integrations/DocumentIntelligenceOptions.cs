@@ -33,6 +33,12 @@ public sealed class DocumentIntelligenceOptions
     public bool Preprocess { get; set; } = true;
 
     /// <summary>
+    /// Maximum allowed upload bytes for document analysis. Default is 25 MB (26,214,400 bytes).
+    /// Must be greater than 0. Kept aligned with external FastAPI OCR upload limits.
+    /// </summary>
+    public long MaxUploadBytes { get; set; } = 25 * 1024 * 1024;
+
+    /// <summary>
     /// Validates configuration values and throws ArgumentException if invalid.
     /// Prevents silent fallback or misconfiguration.
     /// </summary>
@@ -59,6 +65,14 @@ public sealed class DocumentIntelligenceOptions
                 nameof(RequestTimeoutSeconds),
                 RequestTimeoutSeconds,
                 "DocumentIntelligence:RequestTimeoutSeconds must be greater than 0.");
+        }
+
+        if (MaxUploadBytes <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(MaxUploadBytes),
+                MaxUploadBytes,
+                "DocumentIntelligence:MaxUploadBytes must be greater than 0.");
         }
 
         if (DefaultLanguageMode is not ("eng" or "sin" or "sin+eng"))
