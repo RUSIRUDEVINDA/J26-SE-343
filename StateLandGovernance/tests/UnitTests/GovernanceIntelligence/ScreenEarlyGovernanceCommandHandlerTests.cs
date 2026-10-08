@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
+using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Domain.ValueObjects;
@@ -32,6 +33,52 @@ public class ScreenEarlyGovernanceCommandHandlerTests
 
     private static EarlyGovernanceIndicatorDto CreateVerifiedPresentDto(string type) =>
         new(type, "VerifiedPresent", $"REF-PRESENT-{type}", SampleUtcTime);
+
+    private static ScreenEarlyGovernanceCommandHandler CreateHandler(IEarlyGovernanceScreeningEngine engine) =>
+        new(engine, new RecordingStore(), new UnconfiguredEarlyGovernanceReferralPolicy(),
+            new FixedTimeProvider(SampleUtcTime));
+
+    private static ScreenEarlyGovernanceCommand CreateCommand(
+        string caseId,
+        string inputVersion,
+        IReadOnlyList<EarlyGovernanceIndicatorDto>? indicators) =>
+        new(Guid.NewGuid(), Guid.NewGuid(), caseId, inputVersion, indicators);
+
+    private sealed class FixedTimeProvider(DateTimeOffset utcNow) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow() => utcNow;
+    }
+
+    private sealed class RecordingStore : IEarlyGovernanceScreeningStore
+    {
+        public Task AddAsync(Guid assessmentId, DateTimeOffset createdAtUtc,
+            EarlyGovernanceScreeningResultDto result, CancellationToken cancellationToken = default) =>
+            Task.CompletedTask;
+
+        public Task AddAssessmentAsync(Guid assessmentId, Guid workflowRunId, DateTimeOffset createdAtUtc,
+            EarlyGovernanceScreeningResultDto result, EarlyGovernanceReferralIntentDto? referral,
+            CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+        public Task<StoredEarlyGovernanceScreeningDto?> GetByIdAsync(Guid assessmentId,
+            CancellationToken cancellationToken = default) => Task.FromResult<StoredEarlyGovernanceScreeningDto?>(null);
+
+        public Task<StoredEarlyGovernanceReferralDto?> GetReferralByIdAsync(Guid referralId,
+            CancellationToken cancellationToken = default) => Task.FromResult<StoredEarlyGovernanceReferralDto?>(null);
+
+        public Task<IReadOnlyList<StoredEarlyGovernanceReferralDto>> GetReferralHistoryByCaseIdAsync(
+            string caseId, int limit, CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<StoredEarlyGovernanceReferralDto>>(Array.Empty<StoredEarlyGovernanceReferralDto>());
+
+        public Task<bool> TryBeginReferralDeliveryAsync(Guid referralId, int expectedAttemptCount,
+            DateTimeOffset attemptedAtUtc, CancellationToken cancellationToken = default) => Task.FromResult(false);
+
+        public Task MarkReferralDeliveryFailedAsync(Guid referralId, int deliveryAttemptCount, string failureCode,
+            CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+        public Task MarkReferralAcknowledgedAsync(Guid referralId, int deliveryAttemptCount,
+            DateTimeOffset acknowledgedAtUtc, string commissionerReviewProcessReference,
+            CancellationToken cancellationToken = default) => Task.CompletedTask;
+    }
 
     // Recording fake to observe engine interactions
     private sealed class RecordingEarlyGovernanceScreeningEngine : IEarlyGovernanceScreeningEngine
@@ -65,9 +112,9 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     [Fact]
     public async Task HandleAsync_AllSevenVerifiedAbsent_ReturnsClearWithCanonicalStringsAndProvenance()
     {
-        var handler = new ScreenEarlyGovernanceCommandHandler(new EarlyGovernanceScreeningEngine());
+        var handler = CreateHandler(new EarlyGovernanceScreeningEngine());
         var dtos = AllSevenIndicatorNames.Select(CreateVerifiedAbsentDto).ToList();
-        var command = new ScreenEarlyGovernanceCommand("CASE-001", "v1.0", dtos);
+        var command = CreateCommand("CASE-001", "v1.0", dtos);
 
         var result = await handler.HandleAsync(command);
 
@@ -95,7 +142,7 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     [Fact]
     public async Task HandleAsync_VerifiedPresentWithUnavailableEvidence_ReturnsReviewRequiredAndHasIncompleteEvidenceTrue()
     {
-        var handler = new ScreenEarlyGovernanceCommandHandler(new EarlyGovernanceScreeningEngine());
+        var handler = CreateHandler(new EarlyGovernanceScreeningEngine());
         var dtos = new List<EarlyGovernanceIndicatorDto>
         {
             CreateVerifiedPresentDto("LegalDispute"),
@@ -106,7 +153,7 @@ public class ScreenEarlyGovernanceCommandHandlerTests
             CreateVerifiedAbsentDto("UnresolvedObjection"),
             CreateVerifiedAbsentDto("PreviousIllegalLandActivity")
         };
-        var command = new ScreenEarlyGovernanceCommand("CASE-MIXED", "v1.0", dtos);
+        var command = CreateCommand("CASE-MIXED", "v1.0", dtos);
 
         var result = await handler.HandleAsync(command);
 
@@ -130,8 +177,8 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     [Fact]
     public async Task HandleAsync_ExplicitEmptyCollection_ReturnsInsufficientInformationWithSevenMissingResults()
     {
-        var handler = new ScreenEarlyGovernanceCommandHandler(new EarlyGovernanceScreeningEngine());
-        var command = new ScreenEarlyGovernanceCommand("CASE-EMPTY", "v1.0", Array.Empty<EarlyGovernanceIndicatorDto>());
+        var handler = CreateHandler(new EarlyGovernanceScreeningEngine());
+        var command = CreateCommand("CASE-EMPTY", "v1.0", Array.Empty<EarlyGovernanceIndicatorDto>());
 
         var result = await handler.HandleAsync(command);
 
@@ -156,8 +203,8 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_NullIndicatorsCollection_ThrowsArgumentExceptionBeforeCallingEngine()
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
-        var command = new ScreenEarlyGovernanceCommand("CASE-001", "v1.0", null!);
+        var handler = CreateHandler(fakeEngine);
+        var command = CreateCommand("CASE-001", "v1.0", null!);
 
         await Assert.ThrowsAsync<ArgumentException>(() => handler.HandleAsync(command));
         Assert.Equal(0, fakeEngine.CallCount);
@@ -170,7 +217,7 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_NullCommand_ThrowsArgumentNullExceptionBeforeCallingEngine()
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
+        var handler = CreateHandler(fakeEngine);
 
         await Assert.ThrowsAsync<ArgumentNullException>(() => handler.HandleAsync(null!));
         Assert.Equal(0, fakeEngine.CallCount);
@@ -183,8 +230,8 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_NullOrWhitespaceCaseId_ThrowsArgumentExceptionBeforeCallingEngine(string? invalidCaseId)
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
-        var command = new ScreenEarlyGovernanceCommand(invalidCaseId!, "v1.0", Array.Empty<EarlyGovernanceIndicatorDto>());
+        var handler = CreateHandler(fakeEngine);
+        var command = CreateCommand(invalidCaseId!, "v1.0", Array.Empty<EarlyGovernanceIndicatorDto>());
 
         await Assert.ThrowsAsync<ArgumentException>(() => handler.HandleAsync(command));
         Assert.Equal(0, fakeEngine.CallCount);
@@ -197,8 +244,8 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_NullOrWhitespaceInputVersion_ThrowsArgumentExceptionBeforeCallingEngine(string? invalidVersion)
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
-        var command = new ScreenEarlyGovernanceCommand("CASE-001", invalidVersion!, Array.Empty<EarlyGovernanceIndicatorDto>());
+        var handler = CreateHandler(fakeEngine);
+        var command = CreateCommand("CASE-001", invalidVersion!, Array.Empty<EarlyGovernanceIndicatorDto>());
 
         await Assert.ThrowsAsync<ArgumentException>(() => handler.HandleAsync(command));
         Assert.Equal(0, fakeEngine.CallCount);
@@ -208,8 +255,8 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_NullIndicatorElement_ThrowsArgumentExceptionBeforeCallingEngine()
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
-        var command = new ScreenEarlyGovernanceCommand("CASE-001", "v1.0", new EarlyGovernanceIndicatorDto[] { null! });
+        var handler = CreateHandler(fakeEngine);
+        var command = CreateCommand("CASE-001", "v1.0", new EarlyGovernanceIndicatorDto[] { null! });
 
         await Assert.ThrowsAsync<ArgumentException>(() => handler.HandleAsync(command));
         Assert.Equal(0, fakeEngine.CallCount);
@@ -223,12 +270,12 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_SymbolicParsing_AcceptsMixedCaseAndSurroundingWhitespace()
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
+        var handler = CreateHandler(fakeEngine);
         var dtos = new[]
         {
             new EarlyGovernanceIndicatorDto("  legaldispute  ", "  verifiedabsent  ", "REF-001", SampleUtcTime)
         };
-        var command = new ScreenEarlyGovernanceCommand("CASE-001", "v1.0", dtos);
+        var command = CreateCommand("CASE-001", "v1.0", dtos);
 
         var result = await handler.HandleAsync(command);
 
@@ -252,12 +299,12 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_InvalidIndicatorType_ThrowsArgumentExceptionBeforeCallingEngine(string? invalidType)
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
+        var handler = CreateHandler(fakeEngine);
         var dtos = new[]
         {
             new EarlyGovernanceIndicatorDto(invalidType!, "VerifiedAbsent", "REF-001", SampleUtcTime)
         };
-        var command = new ScreenEarlyGovernanceCommand("CASE-001", "v1.0", dtos);
+        var command = CreateCommand("CASE-001", "v1.0", dtos);
 
         await Assert.ThrowsAsync<ArgumentException>(() => handler.HandleAsync(command));
         Assert.Equal(0, fakeEngine.CallCount);
@@ -277,12 +324,12 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_InvalidEvidenceState_ThrowsArgumentExceptionBeforeCallingEngine(string? invalidState)
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
+        var handler = CreateHandler(fakeEngine);
         var dtos = new[]
         {
             new EarlyGovernanceIndicatorDto("LegalDispute", invalidState!, "REF-001", SampleUtcTime)
         };
-        var command = new ScreenEarlyGovernanceCommand("CASE-001", "v1.0", dtos);
+        var command = CreateCommand("CASE-001", "v1.0", dtos);
 
         await Assert.ThrowsAsync<ArgumentException>(() => handler.HandleAsync(command));
         Assert.Equal(0, fakeEngine.CallCount);
@@ -296,13 +343,13 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_DuplicateIndicatorTypes_ThrowsArgumentExceptionBeforeCallingEngine()
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
+        var handler = CreateHandler(fakeEngine);
         var dtos = new[]
         {
             CreateVerifiedAbsentDto("LegalDispute"),
             CreateVerifiedAbsentDto("LegalDispute")
         };
-        var command = new ScreenEarlyGovernanceCommand("CASE-DUP", "v1.0", dtos);
+        var command = CreateCommand("CASE-DUP", "v1.0", dtos);
 
         await Assert.ThrowsAsync<ArgumentException>(() => handler.HandleAsync(command));
         Assert.Equal(0, fakeEngine.CallCount);
@@ -312,12 +359,12 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_VerifiedPresentWithoutProvenance_ThrowsArgumentExceptionBeforeCallingEngine()
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
+        var handler = CreateHandler(fakeEngine);
         var dtos = new[]
         {
             new EarlyGovernanceIndicatorDto("LegalDispute", "VerifiedPresent", null, null)
         };
-        var command = new ScreenEarlyGovernanceCommand("CASE-NOPROV", "v1.0", dtos);
+        var command = CreateCommand("CASE-NOPROV", "v1.0", dtos);
 
         await Assert.ThrowsAsync<ArgumentException>(() => handler.HandleAsync(command));
         Assert.Equal(0, fakeEngine.CallCount);
@@ -327,13 +374,13 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_NonZeroUtcOffsetTimestamp_ThrowsArgumentExceptionBeforeCallingEngine()
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
+        var handler = CreateHandler(fakeEngine);
         var nonZeroOffset = new DateTimeOffset(2026, 9, 18, 10, 0, 0, TimeSpan.FromHours(5.5));
         var dtos = new[]
         {
             new EarlyGovernanceIndicatorDto("LegalDispute", "VerifiedPresent", "REF-001", nonZeroOffset)
         };
-        var command = new ScreenEarlyGovernanceCommand("CASE-OFFSET", "v1.0", dtos);
+        var command = CreateCommand("CASE-OFFSET", "v1.0", dtos);
 
         await Assert.ThrowsAsync<ArgumentException>(() => handler.HandleAsync(command));
         Assert.Equal(0, fakeEngine.CallCount);
@@ -346,8 +393,8 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_PreCancelledToken_ThrowsOperationCanceledExceptionAndDoesNotCallEngine()
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
-        var command = new ScreenEarlyGovernanceCommand("CASE-CANCEL", "v1.0", Array.Empty<EarlyGovernanceIndicatorDto>());
+        var handler = CreateHandler(fakeEngine);
+        var command = CreateCommand("CASE-CANCEL", "v1.0", Array.Empty<EarlyGovernanceIndicatorDto>());
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
@@ -362,13 +409,13 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     public async Task HandleAsync_ValidCommand_InvokesEngineExactlyOnceWithCorrectlyMappedDomainInput()
     {
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
+        var handler = CreateHandler(fakeEngine);
         var dtos = new[]
         {
             new EarlyGovernanceIndicatorDto("LegalDispute", "VerifiedPresent", "REF-DISPUTE", SampleUtcTime),
             new EarlyGovernanceIndicatorDto("UnauthorizedOccupation", "VerifiedAbsent", "REF-OCCUPATION", SampleUtcTime)
         };
-        var command = new ScreenEarlyGovernanceCommand("CASE-MAP-001", "v2.0", dtos);
+        var command = CreateCommand("CASE-MAP-001", "v2.0", dtos);
 
         var result = await handler.HandleAsync(command);
 
@@ -415,8 +462,8 @@ public class ScreenEarlyGovernanceCommandHandlerTests
             fakeIndicatorResults);
 
         var fakeEngine = new RecordingEarlyGovernanceScreeningEngine(cannedDomainResult);
-        var handler = new ScreenEarlyGovernanceCommandHandler(fakeEngine);
-        var command = new ScreenEarlyGovernanceCommand("CASE-MAPPED", "v3.1", Array.Empty<EarlyGovernanceIndicatorDto>());
+        var handler = CreateHandler(fakeEngine);
+        var command = CreateCommand("CASE-MAPPED", "v3.1", Array.Empty<EarlyGovernanceIndicatorDto>());
 
         var result = await handler.HandleAsync(command);
 
@@ -453,6 +500,8 @@ public class ScreenEarlyGovernanceCommandHandlerTests
     [Fact]
     public void Constructor_NullEngine_ThrowsArgumentNullException()
     {
-        Assert.Throws<ArgumentNullException>(() => new ScreenEarlyGovernanceCommandHandler(null!));
+        Assert.Throws<ArgumentNullException>(() => new ScreenEarlyGovernanceCommandHandler(
+            null!, new RecordingStore(), new UnconfiguredEarlyGovernanceReferralPolicy(),
+            new FixedTimeProvider(SampleUtcTime)));
     }
 }

@@ -9,7 +9,9 @@ namespace StateLandGovernance.GovernanceIntelligence.Application.DTOs;
 /// </summary>
 public sealed record StoredEarlyGovernanceScreeningDto(
     Guid AssessmentId,
+    Guid? WorkflowRunId,
     DateTimeOffset CreatedAtUtc,
     int SnapshotSchemaVersion,
-    EarlyGovernanceScreeningResultDto Result
+    EarlyGovernanceScreeningResultDto Result,
+    StoredEarlyGovernanceReferralDto? Referral
 );

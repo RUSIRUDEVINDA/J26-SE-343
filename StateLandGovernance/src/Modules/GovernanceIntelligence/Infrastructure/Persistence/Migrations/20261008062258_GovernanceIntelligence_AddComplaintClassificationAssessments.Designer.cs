@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(GovernanceIntelligenceDbContext))]
-    partial class GovernanceIntelligenceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261008062258_GovernanceIntelligence_AddComplaintClassificationAssessments")]
+    partial class GovernanceIntelligence_AddComplaintClassificationAssessments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -529,99 +532,6 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                     b.ToTable("consensus_evaluations", "governance_intelligence");
                 });
 
-            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceReferralEntity", b =>
-                {
-                    b.Property<Guid>("ReferralId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("referral_id");
-
-                    b.Property<DateTimeOffset?>("AcknowledgedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("acknowledged_at_utc");
-
-                    b.Property<Guid>("AssessmentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("assessment_id");
-
-                    b.Property<string>("CaseId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("case_id");
-
-                    b.Property<string>("CommissionerReviewProcessReference")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("commissioner_review_process_reference");
-
-                    b.Property<Guid>("CorrelationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("correlation_id");
-
-                    b.Property<int>("DeliveryAttemptCount")
-                        .HasColumnType("integer")
-                        .HasColumnName("delivery_attempt_count");
-
-                    b.Property<string>("DeliveryState")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
-                        .HasColumnName("delivery_state");
-
-                    b.Property<string>("EvidenceReferencesJson")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("evidence_references_json");
-
-                    b.Property<DateTimeOffset?>("LastAttemptAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_attempt_at_utc");
-
-                    b.Property<string>("LastFailureCode")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("last_failure_code");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
-                        .HasColumnName("reason");
-
-                    b.Property<string>("ReasonCode")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("reason_code");
-
-                    b.Property<DateTimeOffset>("RequestedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("requested_at_utc");
-
-                    b.Property<Guid>("WorkflowRunId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("workflow_run_id");
-
-                    b.HasKey("ReferralId");
-
-                    b.HasIndex("AssessmentId")
-                        .IsUnique();
-
-                    b.HasIndex("CorrelationId")
-                        .IsUnique();
-
-                    b.HasIndex("DeliveryState");
-
-                    b.HasIndex("CaseId", "RequestedAtUtc");
-
-                    b.ToTable("early_governance_referrals", "governance_intelligence", t =>
-                        {
-                            t.HasCheckConstraint("CK_early_governance_referrals_delivery_attempt_count", "delivery_attempt_count >= 0");
-
-                            t.HasCheckConstraint("CK_early_governance_referrals_delivery_state", "delivery_state IN ('Pending', 'Delivering', 'DeliveryFailed', 'Acknowledged')");
-                        });
-                });
-
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceScreeningEvaluationEntity", b =>
                 {
                     b.Property<Guid>("AssessmentId")
@@ -653,13 +563,7 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .HasColumnType("integer")
                         .HasColumnName("snapshot_schema_version");
 
-                    b.Property<Guid?>("WorkflowRunId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("workflow_run_id");
-
                     b.HasKey("AssessmentId");
-
-                    b.HasIndex("CaseId", "CreatedAtUtc");
 
                     b.ToTable("early_governance_screening_evaluations", "governance_intelligence");
                 });
@@ -1121,17 +1025,6 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                     b.Navigation("AuditRecord");
                 });
 
-            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceReferralEntity", b =>
-                {
-                    b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceScreeningEvaluationEntity", "Assessment")
-                        .WithOne("Referral")
-                        .HasForeignKey("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceReferralEntity", "AssessmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Assessment");
-                });
-
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceExplanationEvaluationEntity", b =>
                 {
                     b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceAuditRecordEntity", "AuditRecord")
@@ -1216,11 +1109,6 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ConsensusEvaluationEntity", b =>
                 {
                     b.Navigation("InstitutionPositions");
-                });
-
-            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceScreeningEvaluationEntity", b =>
-                {
-                    b.Navigation("Referral");
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceExplanationEvaluationEntity", b =>
