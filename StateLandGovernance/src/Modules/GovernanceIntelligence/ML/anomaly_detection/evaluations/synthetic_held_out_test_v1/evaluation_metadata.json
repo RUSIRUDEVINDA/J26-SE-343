@@ -1,0 +1,27 @@
+{
+  "feature_order": [
+    "event_count",
+    "elapsed_days",
+    "max_gap_hours",
+    "mean_gap_hours",
+    "unique_activities",
+    "repeated_activity_count",
+    "resource_handoffs",
+    "institution_switches",
+    "distinct_resources"
+  ],
+  "fit_performed": false,
+  "input_sha256": {
+    "X_test": "5ab49268a4d07f76279c8684282e98d6823cbd9fd10d157dc43bb8d5dacb26c4",
+    "keys_test": "f07c2b7829aba5f5317dfa6602ab8b5c9089a2342813006eded95a27adb9f928",
+    "split_manifest": "413fa775a5df391653ec6123e008ceb6fbeb671d48dd491d12b3f83f2aa21954",
+    "y_test": "1dde076edb333c1516554d884969a264e93f1a3291919529847bec1230134307"
+  },
+  "metric_label": "synthetic held-out evaluation",
+  "model_sha256": "59ed4a73d56d9f06798c4ebc4684a633afe72841c41ed0b3ba4e7bb658782b46",
+  "score_direction": "anomaly_score = -model.score_samples(X); larger values are more statistically unusual",
+  "split_manifest_sha256": "413fa775a5df391653ec6123e008ceb6fbeb671d48dd491d12b3f83f2aa21954",
+  "strict_flag_rule": "anomaly_score > threshold",
+  "test_scored_once": true,
+  "threshold": 0.5743688923115832
+}
