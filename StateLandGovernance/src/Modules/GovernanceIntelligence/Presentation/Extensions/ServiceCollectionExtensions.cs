@@ -2,6 +2,8 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
+using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Application.Queries;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -78,6 +80,11 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddSingleton<IEarlyGovernanceScreeningEngine, EarlyGovernanceScreeningEngine>();
         services.TryAddTransient<ScreenEarlyGovernanceCommandHandler>();
+        services.TryAddTransient<DeliverEarlyGovernanceReferralCommandHandler>();
+        services.TryAddTransient<GetEarlyGovernanceScreeningAssessmentQueryHandler>();
+        services.TryAddTransient<GetEarlyGovernanceReferralHistoryQueryHandler>();
+        services.TryAddSingleton<IEarlyGovernanceReferralPolicy, UnconfiguredEarlyGovernanceReferralPolicy>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
 
         return services;
     }
