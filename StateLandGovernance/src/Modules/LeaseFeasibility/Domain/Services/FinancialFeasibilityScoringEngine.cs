@@ -48,6 +48,12 @@ public sealed class FinancialFeasibilityScoringEngine : IFinancialFeasibilitySco
         var totalScore = Math.Clamp(rawScore, 0m, 100m);
         var grade = _contract.DeriveGrade(totalScore);
         var action = _contract.DeriveAction(grade);
+        var capacity = new LeasePaymentCapacity(input.AverageMonthlyIncomeLkr,
+            input.MonthlyDebtObligationsLkr, input.RequestedMonthlyLeasePaymentLkr);
+        if (!capacity.IsWithinLimit && action != FeasibilityAction.Reject)
+        {
+            action = FeasibilityAction.Escalate;
+        }
 
         var breakdown = new FeasibilityScoreBreakdown(
             debtServiceRatio,
@@ -67,7 +73,8 @@ public sealed class FinancialFeasibilityScoringEngine : IFinancialFeasibilitySco
             action: action,
             scoreBreakdown: breakdown,
             generatedAt: evaluationTimestamp,
-            predictiveProbability: null);
+            predictiveProbability: null,
+            paymentCapacity: capacity);
     }
 
     private decimal ScoreDebtServiceRatio(decimal ratio)
