@@ -1,0 +1,212 @@
+{
+  "experiment_name": "Experiment 2 \u2014 Source-and-Text-Grouped Development Evaluation",
+  "generated_at": "2026-09-20T12:17:17.738915+00:00",
+  "dataset": {
+    "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\data\\state_land_governance_confirmed_200.csv",
+    "sha256": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61",
+    "row_count": 200,
+    "classes": [
+      "Administrative / Procedural / Integrity",
+      "Lease Revenue / Payment / Enforcement",
+      "Unauthorized Allocation / Transfer / Use",
+      "Protected / Environmental Lease Misuse"
+    ]
+  },
+  "environment": {
+    "python_version": "3.13.1 (tags/v3.13.1:0671451, Dec  3 2024, 19:06:28) [MSC v.1942 64 bit (AMD64)]",
+    "sklearn_version": "1.7.2",
+    "pandas_version": "2.3.3",
+    "numpy_version": "2.3.1",
+    "git": {
+      "commit": "b72673a514a35efe99a043c0ef72b26a105c65c5",
+      "working_tree_clean": false
+    }
+  },
+  "grouping_parameters": {
+    "shingle_k": 5,
+    "jaccard_threshold": 0.5,
+    "case_normalization": "lower",
+    "whitespace_normalization": "collapsed"
+  },
+  "cv_parameters": {
+    "strategy": "StratifiedGroupKFold",
+    "n_splits": 5,
+    "shuffle": true,
+    "random_state": 42,
+    "group_field": "Combined_Group"
+  },
+  "model_parameters": {
+    "tfidf": {
+      "lowercase": true,
+      "stop_words": "english",
+      "ngram_range": [
+        1,
+        2
+      ],
+      "sublinear_tf": true
+    },
+    "logistic_regression": {
+      "max_iter": 2000,
+      "class_weight": "balanced",
+      "random_state": 42,
+      "C": 1.0,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "multi_class": "auto"
+    }
+  },
+  "overall_metrics": {
+    "Accuracy": 0.725,
+    "Macro_Precision": 0.7318,
+    "Macro_Recall": 0.725,
+    "Macro_F1": 0.7242,
+    "Weighted_F1": 0.7242,
+    "Misclassified": 55
+  },
+  "per_class_metrics": {
+    "Administrative / Procedural / Integrity": {
+      "Support": 50,
+      "TP": 36,
+      "FP": 10,
+      "FN": 14,
+      "TN": 140,
+      "Precision": 0.7826,
+      "Recall": 0.72,
+      "F1": 0.75,
+      "FPR": 0.0667
+    },
+    "Lease Revenue / Payment / Enforcement": {
+      "Support": 50,
+      "TP": 35,
+      "FP": 11,
+      "FN": 15,
+      "TN": 139,
+      "Precision": 0.7609,
+      "Recall": 0.7,
+      "F1": 0.7292,
+      "FPR": 0.0733
+    },
+    "Unauthorized Allocation / Transfer / Use": {
+      "Support": 50,
+      "TP": 32,
+      "FP": 12,
+      "FN": 18,
+      "TN": 138,
+      "Precision": 0.7273,
+      "Recall": 0.64,
+      "F1": 0.6809,
+      "FPR": 0.08
+    },
+    "Protected / Environmental Lease Misuse": {
+      "Support": 50,
+      "TP": 42,
+      "FP": 22,
+      "FN": 8,
+      "TN": 128,
+      "Precision": 0.6562,
+      "Recall": 0.84,
+      "F1": 0.7368,
+      "FPR": 0.1467
+    }
+  },
+  "confusion_matrix": [
+    [
+      36,
+      7,
+      4,
+      3
+    ],
+    [
+      8,
+      35,
+      1,
+      6
+    ],
+    [
+      1,
+      4,
+      32,
+      13
+    ],
+    [
+      1,
+      0,
+      7,
+      42
+    ]
+  ],
+  "fold_results": [
+    {
+      "Fold": 1,
+      "Train_Size": 175,
+      "Test_Size": 25,
+      "Accuracy": 0.64,
+      "Macro_F1": 0.5687,
+      "Weighted_F1": 0.6328,
+      "Test_Administrative___Procedural___Integrity": 8,
+      "Test_Lease_Revenue___Payment___Enforcement": 1,
+      "Test_Unauthorized_Allocation___Transfer___Use": 6,
+      "Test_Protected___Environmental_Lease_Misuse": 10
+    },
+    {
+      "Fold": 2,
+      "Train_Size": 161,
+      "Test_Size": 39,
+      "Accuracy": 0.8205,
+      "Macro_F1": 0.8212,
+      "Weighted_F1": 0.8146,
+      "Test_Administrative___Procedural___Integrity": 9,
+      "Test_Lease_Revenue___Payment___Enforcement": 8,
+      "Test_Unauthorized_Allocation___Transfer___Use": 13,
+      "Test_Protected___Environmental_Lease_Misuse": 9
+    },
+    {
+      "Fold": 3,
+      "Train_Size": 141,
+      "Test_Size": 59,
+      "Accuracy": 0.5932,
+      "Macro_F1": 0.5843,
+      "Weighted_F1": 0.5923,
+      "Test_Administrative___Procedural___Integrity": 16,
+      "Test_Lease_Revenue___Payment___Enforcement": 25,
+      "Test_Unauthorized_Allocation___Transfer___Use": 9,
+      "Test_Protected___Environmental_Lease_Misuse": 9
+    },
+    {
+      "Fold": 4,
+      "Train_Size": 159,
+      "Test_Size": 41,
+      "Accuracy": 0.7805,
+      "Macro_F1": 0.7946,
+      "Weighted_F1": 0.7857,
+      "Test_Administrative___Procedural___Integrity": 8,
+      "Test_Lease_Revenue___Payment___Enforcement": 10,
+      "Test_Unauthorized_Allocation___Transfer___Use": 9,
+      "Test_Protected___Environmental_Lease_Misuse": 14
+    },
+    {
+      "Fold": 5,
+      "Train_Size": 164,
+      "Test_Size": 36,
+      "Accuracy": 0.8333,
+      "Macro_F1": 0.8479,
+      "Weighted_F1": 0.8295,
+      "Test_Administrative___Procedural___Integrity": 9,
+      "Test_Lease_Revenue___Payment___Enforcement": 6,
+      "Test_Unauthorized_Allocation___Transfer___Use": 13,
+      "Test_Protected___Environmental_Lease_Misuse": 8
+    }
+  ],
+  "historical_comparison": {
+    "experiment_1_baseline": {
+      "source": "results/baseline_metrics.json (Experiment 1 Baseline)",
+      "strategy": "StratifiedGroupKFold (Source_Group_ID only)",
+      "Accuracy": 0.745,
+      "Macro_F1": 0.7402,
+      "Weighted_F1": 0.7402,
+      "Misclassified": 51
+    },
+    "comparison_interpretation": "Experiment 2 performance measures generalization under conservative source-and-text grouping. The score reflects model sensitivity when narrative boilerplate templates are kept strictly within folds rather than memorized across training and test."
+  },
+  "output_directory": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment2_source_text"
+}

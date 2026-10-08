@@ -45,23 +45,22 @@ public static class LandParcelMapper
             command.District,
             command.DivisionalSecretariat,
             command.GramaNiladhariDivision);
-        var spatial = new SpatialReference(
+        var spatial = LandParcelInputMapper.ToSpatialReference(
             command.CentroidLatitude,
             command.CentroidLongitude,
             command.CoordinateSystem,
-            command.BoundaryReference);
+            command.BoundaryReference,
+            command.BoundaryPolygon);
 
         LandUse? currentUse = command.CurrentUseType is null
             ? null
             : new LandUse(command.CurrentUseType.Value, command.CurrentUseDescription);
 
-        LandCharacteristics? characteristics = command.SoilType is null
-            && command.TerrainDescription is null
-            && command.ElevationMeters is null
-            ? null
-            : new LandCharacteristics(command.SoilType, command.TerrainDescription, command.ElevationMeters);
+        var characteristics = LandParcelInputMapper.ToCharacteristics(command.Characteristics);
 
-        return new LandParcel(identifier, category, area, location, spatial, currentUse, characteristics);
+        var parcel = new LandParcel(identifier, category, area, location, spatial, currentUse, characteristics);
+        LandParcelInputMapper.ApplyChildCollections(parcel, command);
+        return parcel;
     }
 
     private static ParcelIdentifierDto ToIdentifierDto(ParcelIdentifier identifier) =>
@@ -88,11 +87,15 @@ public static class LandParcelMapper
             spatial.CentroidLatitude,
             spatial.CentroidLongitude,
             spatial.CoordinateSystem,
-            spatial.BoundaryReference);
+            spatial.BoundaryReference,
+            GeoJsonGeometryMapper.ToGeoJson(spatial.Boundary));
 
     private static LandCharacteristicsDto ToCharacteristicsDto(LandCharacteristics characteristics) =>
         new(
             characteristics.SoilType,
             characteristics.TerrainDescription,
-            characteristics.ElevationMeters);
+            characteristics.ElevationMeters,
+            AttributeProvenanceMapper.ToDto(characteristics.SoilTypeProvenance),
+            AttributeProvenanceMapper.ToDto(characteristics.TerrainDescriptionProvenance),
+            AttributeProvenanceMapper.ToDto(characteristics.ElevationMetersProvenance));
 }

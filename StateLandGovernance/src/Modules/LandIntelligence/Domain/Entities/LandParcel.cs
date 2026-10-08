@@ -17,6 +17,8 @@ public sealed class LandParcel : Entity
     public SpatialReference Spatial { get; private set; } = null!;
     public LandCharacteristics? Characteristics { get; private set; }
 
+    public ParcelGisDerivedIntelligence? GisDerivedIntelligence { get; private set; }
+
     public IReadOnlyCollection<SpatialConstraint> SpatialConstraints => _spatialConstraints.AsReadOnly();
     public IReadOnlyCollection<EnvironmentalRestriction> EnvironmentalRestrictions =>
         _environmentalRestrictions.AsReadOnly();
@@ -51,6 +53,35 @@ public sealed class LandParcel : Entity
 
     public void UpdateCharacteristics(LandCharacteristics characteristics) =>
         Characteristics = characteristics;
+
+    public void AttachGisDerivedIntelligence(ParcelGisDerivedIntelligence intelligence) =>
+        GisDerivedIntelligence = intelligence;
+
+    public void UpdateSpatial(SpatialReference spatial) => Spatial = spatial;
+
+    public void ReplaceSpatialConstraints(IEnumerable<SpatialConstraint> constraints)
+    {
+        _spatialConstraints.Clear();
+        _spatialConstraints.AddRange(constraints);
+    }
+
+    public void ReplaceEnvironmentalRestrictions(IEnumerable<EnvironmentalRestriction> restrictions)
+    {
+        _environmentalRestrictions.Clear();
+        _environmentalRestrictions.AddRange(restrictions);
+    }
+
+    public void ReplaceInfrastructureFeatures(IEnumerable<InfrastructureFeature> features)
+    {
+        _infrastructureFeatures.Clear();
+        _infrastructureFeatures.AddRange(features);
+    }
+
+    public void ReplaceRegulatoryReferences(IEnumerable<RegulatoryReference> references)
+    {
+        _regulatoryReferences.Clear();
+        _regulatoryReferences.AddRange(references);
+    }
 
     public void AddSpatialConstraint(SpatialConstraint constraint) =>
         _spatialConstraints.Add(constraint);

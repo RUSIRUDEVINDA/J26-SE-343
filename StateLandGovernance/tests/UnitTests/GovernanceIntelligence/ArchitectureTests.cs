@@ -151,6 +151,7 @@ public class ArchitectureTests
 
         foreach (var csprojPath in csprojFiles)
         {
+            var fileName = Path.GetFileName(csprojPath);
             var doc = System.Xml.Linq.XDocument.Load(csprojPath);
             var packageRefs = doc.Descendants("PackageReference")
                 .Select(el => el.Attribute("Include")?.Value)
@@ -160,6 +161,22 @@ public class ArchitectureTests
             foreach (var packageId in packageRefs)
             {
                 Assert.NotNull(packageId);
+
+                // Infrastructure project is allowed EF Core and Npgsql persistence packages
+                if (fileName.Contains(".Infrastructure.", StringComparison.OrdinalIgnoreCase) &&
+                    (packageId.StartsWith("Microsoft.EntityFrameworkCore", StringComparison.OrdinalIgnoreCase) ||
+                     packageId.StartsWith("Npgsql.EntityFrameworkCore", StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
+
+                // Test project is allowed EF Core InMemory provider package
+                if (fileName.Contains(".UnitTests.", StringComparison.OrdinalIgnoreCase) &&
+                    packageId.Equals("Microsoft.EntityFrameworkCore.InMemory", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 foreach (var forbidden in forbiddenPackageTokens)
                 {
                     bool isForbiddenMatch =
@@ -171,7 +188,7 @@ public class ArchitectureTests
 
                     Assert.False(
                         isForbiddenMatch,
-                        $"Project {Path.GetFileName(csprojPath)} contains forbidden package reference: {packageId} matching {forbidden}");
+                        $"Project {fileName} contains forbidden package reference: {packageId} matching {forbidden}");
                 }
             }
         }

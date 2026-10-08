@@ -22,6 +22,9 @@ internal sealed class InfrastructureFeatureConfiguration : IEntityTypeConfigurat
         builder.Property(feature => feature.DistanceMeters)
             .HasPrecision(12, 2);
 
+        builder.Property(feature => feature.DistanceProvenanceJson)
+            .HasColumnType("jsonb");
+
         builder.Property(feature => feature.Location)
             .HasColumnType("geometry (Point, 4326)");
 

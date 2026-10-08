@@ -1,0 +1,175 @@
+{
+  "generated_at_utc": "2026-09-20T16:14:00.178893+00:00",
+  "candidate": "colombo_osm_backend_compatible",
+  "dataset_path": "C:\\Users\\Ravindu Peiris\\Documents\\GitHub\\J26-SE-343\\StateLandGovernance\\data\\gis\\experiments\\colombo\\parcels_colombo_osm_v2.csv",
+  "dataset_sha256": "ea52bb6df835bc902d768722c696f8ca83be80ecd36929c60442f2d45c0d342f",
+  "selection": {
+    "method": "GroupKFold on training spatial groups only",
+    "metric": "macro_f1",
+    "result": {
+      "folds": 5,
+      "models": {
+        "Dummy Majority": {
+          "cv_accuracy_mean": 0.4582368685178989,
+          "cv_accuracy_std": 0.02627509847047631,
+          "cv_macro_f1_mean": 0.20934488077112948,
+          "cv_macro_f1_std": 0.008252379300102414,
+          "fold_macro_f1": [
+            0.2104283054003724,
+            0.2191780821917808,
+            0.2005730659025788,
+            0.21731123388581952,
+            0.1992337164750958
+          ],
+          "fold_accuracy": [
+            0.46122448979591835,
+            0.4897959183673469,
+            0.430327868852459,
+            0.48360655737704916,
+            0.4262295081967213
+          ],
+          "labels_in_training_pool": [
+            "Unsuitable",
+            "Moderately Suitable",
+            "Suitable"
+          ]
+        },
+        "Logistic Regression": {
+          "cv_accuracy_mean": 0.6113348946135831,
+          "cv_accuracy_std": 0.026895533445243786,
+          "cv_macro_f1_mean": 0.5715285954349887,
+          "cv_macro_f1_std": 0.0325939381985375,
+          "fold_macro_f1": [
+            0.5375322246373148,
+            0.5291013103259327,
+            0.5805414392370915,
+            0.6063864205969468,
+            0.6040815823776581
+          ],
+          "fold_accuracy": [
+            0.5755102040816327,
+            0.5959183673469388,
+            0.6024590163934426,
+            0.6516393442622951,
+            0.6311475409836066
+          ],
+          "labels_in_training_pool": [
+            "Unsuitable",
+            "Moderately Suitable",
+            "Suitable"
+          ]
+        },
+        "Random Forest": {
+          "cv_accuracy_mean": 0.6489595182335229,
+          "cv_accuracy_std": 0.013904202318530522,
+          "cv_macro_f1_mean": 0.6562758676097806,
+          "cv_macro_f1_std": 0.022361114802456273,
+          "fold_macro_f1": [
+            0.6376108530570298,
+            0.6287788481811253,
+            0.6930286546710341,
+            0.660435463659148,
+            0.6615255184805662
+          ],
+          "fold_accuracy": [
+            0.6326530612244898,
+            0.636734693877551,
+            0.6721311475409836,
+            0.6516393442622951,
+            0.6516393442622951
+          ],
+          "labels_in_training_pool": [
+            "Unsuitable",
+            "Moderately Suitable",
+            "Suitable"
+          ]
+        }
+      },
+      "selected_by_cv_macro_f1": "Random Forest"
+    }
+  },
+  "split": {
+    "method": "GroupShuffleSplit on lat/lon grid cells",
+    "cell_deg": 0.02,
+    "approx_cell_size_note": "~0.02\u00b0 cells (~2.2 km at equator; slightly less N\u2013S metres near Colombo)",
+    "test_size": 0.2,
+    "seed": 42,
+    "n_train": 1222,
+    "n_test": 278,
+    "n_train_groups": 140,
+    "n_test_groups": 35,
+    "group_overlap_count": 0,
+    "train_label_counts": {
+      "Suitable": 560,
+      "Moderately Suitable": 509,
+      "Unsuitable": 153
+    },
+    "test_label_counts": {
+      "Moderately Suitable": 126,
+      "Suitable": 121,
+      "Unsuitable": 31
+    },
+    "classes_missing_in_train": [],
+    "classes_missing_in_test": [],
+    "limitation_if_class_missing": "Fixed seed/grid used; no seed search for flattering scores. Macro-F1 uses zero_division=0 when a class is absent from a split.",
+    "heldout_role": "EXPLORATORY ONLY \u2014 this held-out set already informed development via sensitivity analysis. Scores here are not an untouched final evaluation. A new random split of the same data does not restore independent validity."
+  },
+  "exploratory_heldout_metrics": {
+    "role": "exploratory_only",
+    "serving_model": "Random Forest",
+    "metrics": {
+      "accuracy": 0.6079136690647482,
+      "macro_f1": 0.5939736620078434,
+      "weighted_f1": 0.5806565040852424,
+      "per_class": {
+        "Unsuitable": {
+          "precision": 0.5833333333333334,
+          "recall": 0.6774193548387096,
+          "f1": 0.6268656716417911,
+          "support": 31
+        },
+        "Moderately Suitable": {
+          "precision": 0.6417910447761194,
+          "recall": 0.3412698412698413,
+          "f1": 0.44559585492227977,
+          "support": 126
+        },
+        "Suitable": {
+          "precision": 0.6,
+          "recall": 0.8677685950413223,
+          "f1": 0.7094594594594594,
+          "support": 121
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "Unsuitable",
+          "Moderately Suitable",
+          "Suitable"
+        ],
+        "matrix": [
+          [
+            21,
+            8,
+            2
+          ],
+          [
+            15,
+            43,
+            68
+          ],
+          [
+            0,
+            16,
+            105
+          ]
+        ]
+      },
+      "classification_report": "                     precision    recall  f1-score   support\n\n         Unsuitable       0.58      0.68      0.63        31\nModerately Suitable       0.64      0.34      0.45       126\n           Suitable       0.60      0.87      0.71       121\n\n           accuracy                           0.61       278\n          macro avg       0.61      0.63      0.59       278\n       weighted avg       0.62      0.61      0.58       278\n"
+    }
+  },
+  "baselines_note": "Dummy Majority and Logistic Regression are reported under selection.cv; Random Forest is the intended experimental serving artifact when selected.",
+  "previous_artifacts_preserved": "C:\\Users\\Ravindu Peiris\\Documents\\GitHub\\J26-SE-343\\StateLandGovernance\\src\\Modules\\LandIntelligence\\ML\\output_colombo_osm",
+  "live_ml_untouched": true,
+  "model_activation_enabled": false
+}

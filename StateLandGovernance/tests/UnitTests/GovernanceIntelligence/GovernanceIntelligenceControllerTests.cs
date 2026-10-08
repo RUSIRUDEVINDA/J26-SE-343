@@ -9,6 +9,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.GovernanceIntelligence.Presentation.Controllers;
 
@@ -43,15 +44,24 @@ public class GovernanceIntelligenceControllerTests
     public GovernanceIntelligenceControllerTests()
     {
         _spyAuditRepo = new SpyAuditRepository();
+        var evalStore = new InMemoryGovernanceEvaluationStore(_spyAuditRepo);
         var ruleProvider = new InMemoryRegulatoryRuleProvider();
         var conflictEngine = new GovernanceConflictEngine();
+        var riskEngine = new GovernanceRiskEngine();
         var timeProvider = new FixedTimeProvider();
         
         var complianceEngine = new RegulatoryComplianceEngine();
-        var complianceHandler = new EvaluateComplianceCommandHandler(ruleProvider, complianceEngine, _spyAuditRepo);
-        var conflictHandler = new DetectConflictsCommandHandler(conflictEngine, _spyAuditRepo, timeProvider);
+        var complianceHandler = new EvaluateComplianceCommandHandler(ruleProvider, complianceEngine, evalStore);
+        var conflictHandler = new DetectConflictsCommandHandler(conflictEngine, evalStore, timeProvider);
+        var riskHandler = new EvaluateGovernanceRiskCommandHandler(riskEngine, evalStore, timeProvider);
+        var explanationEngine = new ExplainableGovernanceEngine();
+        var explanationHandler = new GenerateGovernanceExplanationCommandHandler(explanationEngine, evalStore, timeProvider);
+        var consensusEngine = new GovernanceConsensusEngine();
+        var consensusHandler = new EvaluateGovernanceConsensusCommandHandler(consensusEngine, evalStore, timeProvider);
+        var verificationEngine = new ConditionalGovernanceVerificationEngine();
+        var verificationHandler = new EvaluateConditionalVerificationCommandHandler(verificationEngine, evalStore, timeProvider);
 
-        _controller = new GovernanceIntelligenceController(complianceHandler, conflictHandler);
+        _controller = new GovernanceIntelligenceController(complianceHandler, conflictHandler, riskHandler, explanationHandler, consensusHandler, verificationHandler);
     }
 
     [Fact]
@@ -158,5 +168,63 @@ public class GovernanceIntelligenceControllerTests
         
         // Assert that the controller delegates work without containing rule checking logic internally
         Assert.True(methods.Length > 0);
+    }
+
+    [Fact]
+    public async Task EvaluateRisk_ShouldReturnOk_WhenRequestIsValid()
+    {
+        // Arrange
+        var inputDto = new GovernanceRiskEvaluationInputDto("SUBJ-PARCEL-1", null, null, null, null, null);
+        var command = new EvaluateGovernanceRiskCommand("TestRiskEvaluation", inputDto);
+
+        // Act
+        var response = await _controller.EvaluateRisk(command, CancellationToken.None);
+
+        // Assert
+        var result = Assert.IsType<OkObjectResult>(response.Result);
+        var dto = Assert.IsType<GovernanceRiskAssessmentResultDto>(result.Value);
+        Assert.Equal("SUBJ-PARCEL-1", dto.SubjectId);
+        Assert.Equal(0, dto.OverallRiskScore);
+        Assert.Equal("Low", dto.Severity);
+    }
+
+    [Fact]
+    public async Task EvaluateRisk_ShouldReturnBadRequest_WhenCommandIsNull()
+    {
+        // Act
+        var response = await _controller.EvaluateRisk(null!, CancellationToken.None);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(response.Result);
+    }
+
+    [Fact]
+    public async Task EvaluateRisk_ShouldReturnBadRequest_WhenSubjectIdIsEmpty()
+    {
+        // Arrange
+        var inputDto = new GovernanceRiskEvaluationInputDto("   ", null, null, null, null, null);
+        var command = new EvaluateGovernanceRiskCommand("TestRiskEvaluation", inputDto);
+
+        // Act
+        var response = await _controller.EvaluateRisk(command, CancellationToken.None);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(response.Result);
+    }
+
+    [Fact]
+    public async Task EvaluateRisk_ShouldPropagateCancellationTokenToAuditRepository()
+    {
+        // Arrange
+        var cts = new CancellationTokenSource();
+        var token = cts.Token;
+        var inputDto = new GovernanceRiskEvaluationInputDto("SUBJ-PARCEL-1", null, null, null, null, null);
+        var command = new EvaluateGovernanceRiskCommand("TestRiskEvaluationToken", inputDto);
+
+        // Act
+        await _controller.EvaluateRisk(command, token);
+
+        // Assert
+        Assert.Equal(token, _spyAuditRepo.CapturedToken);
     }
 }

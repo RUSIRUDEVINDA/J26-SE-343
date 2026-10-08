@@ -59,17 +59,35 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
+## Local GIS reference datasets (not committed; imported via H2 pipeline)
+StateLandGovernance/data/gis/
+
 ## Environment / secrets
 .env
 .env.*
 !.env.example
+!.env.local.example
+
+## Next.js (StateLandGovernance.Web)
+StateLandGovernance.Web/.next/
+StateLandGovernance.Web/node_modules/
 appsettings.Local.json
 secrets.json
 
+## Cursor rules
+.rules/rules
 /skill-creator
 
-## Antigravity local agent skills (local-only, must not be committed)
-.agents/skills/
+## Antigravity local agent files
+.agents/
+.Rules/rules/
+.research-log/
+
+## Research-log generated/local scripts and artefacts
+scripts/export_research_log.py
+scripts/test_export_research_log.py
+scripts/run_research_log_export.bat
+*.xlsx
 
 ## Python
 __pycache__/
@@ -80,3 +98,17 @@ __pycache__/
 venv/
 ENV/
 env/
+.Python
+.ipynb_checkpoints/
+*.egg-info/
+dist/
+build/
+.coverage
+htmlcov/
+
+## GovernanceIntelligence generated ML artefacts
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/models/*.joblib
+
+## Generated evaluation results
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/state_land_governance_confirmed_200.csv
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/data/state_land_governance_confirmed_200.csv

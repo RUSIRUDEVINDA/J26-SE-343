@@ -9,13 +9,16 @@ public sealed class CreateLandParcelCommandHandler
     : ICommandHandler<CreateLandParcelCommand, LandParcelDto>
 {
     private readonly ILandParcelRepository _landParcelRepository;
+    private readonly ILandParcelGraphSynchronizer _graphSynchronizer;
     private readonly CreateLandParcelCommandValidator _validator;
 
     public CreateLandParcelCommandHandler(
         ILandParcelRepository landParcelRepository,
+        ILandParcelGraphSynchronizer graphSynchronizer,
         CreateLandParcelCommandValidator validator)
     {
         _landParcelRepository = landParcelRepository;
+        _graphSynchronizer = graphSynchronizer;
         _validator = validator;
     }
 
@@ -40,6 +43,7 @@ public sealed class CreateLandParcelCommandHandler
 
         var parcel = LandParcelMapper.ToEntity(command);
         await _landParcelRepository.AddAsync(parcel, cancellationToken);
+        await _graphSynchronizer.SynchronizeAfterPersistAsync(parcel, cancellationToken);
 
         return LandParcelMapper.ToDto(parcel);
     }

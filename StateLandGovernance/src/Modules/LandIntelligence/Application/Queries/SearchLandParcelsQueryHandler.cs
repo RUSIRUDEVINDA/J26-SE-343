@@ -30,12 +30,13 @@ public sealed class SearchLandParcelsQueryHandler
         }
 
         var parcels = await _landParcelRepository.SearchAsync(query.Request, cancellationToken);
+        var totalCount = await _landParcelRepository.CountSearchAsync(query.Request, cancellationToken);
         var results = parcels.Select(LandParcelMapper.ToSearchResultDto).ToList();
 
         return new LandSearchResponse(
             results,
             query.Request.Page,
             query.Request.PageSize,
-            results.Count);
+            totalCount);
     }
 }

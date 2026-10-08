@@ -15,7 +15,13 @@ public interface ILandParcelRepository
         LandSearchRequest request,
         CancellationToken cancellationToken = default);
 
+    Task<int> CountSearchAsync(
+        LandSearchRequest request,
+        CancellationToken cancellationToken = default);
+
     Task AddAsync(LandParcel parcel, CancellationToken cancellationToken = default);
 
     Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default);
+
+    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }

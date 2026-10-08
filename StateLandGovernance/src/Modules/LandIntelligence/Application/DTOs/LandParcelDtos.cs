@@ -20,7 +20,16 @@ public sealed record SpatialReferenceDto(
     double CentroidLatitude,
     double CentroidLongitude,
     string CoordinateSystem,
-    string? BoundaryReference);
+    string? BoundaryReference,
+    GeoJsonPolygonDto? BoundaryPolygon = null);
+
+public sealed record LandCharacteristicsDto(
+    string? SoilType,
+    string? TerrainDescription,
+    decimal? ElevationMeters,
+    AttributeProvenanceDto? SoilTypeProvenance = null,
+    AttributeProvenanceDto? TerrainDescriptionProvenance = null,
+    AttributeProvenanceDto? ElevationMetersProvenance = null);
 
 public sealed record LandCategoryDto(
     LandCategoryType Type,
@@ -29,8 +38,3 @@ public sealed record LandCategoryDto(
 public sealed record LandUseDto(
     LandUseType Type,
     string? Description);
-
-public sealed record LandCharacteristicsDto(
-    string? SoilType,
-    string? TerrainDescription,
-    decimal? ElevationMeters);

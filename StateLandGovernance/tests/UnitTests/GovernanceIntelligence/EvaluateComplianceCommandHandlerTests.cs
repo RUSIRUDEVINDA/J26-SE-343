@@ -5,6 +5,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 
 namespace StateLandGovernance.UnitTests.GovernanceIntelligence.Application;
 
@@ -18,12 +19,13 @@ public class EvaluateComplianceCommandHandlerTests
     {
         _ruleProvider = new InMemoryRegulatoryRuleProvider();
         _auditRepository = new InMemoryGovernanceAuditRepository();
+        var evalStore = new InMemoryGovernanceEvaluationStore(_auditRepository);
         var complianceEngine = new RegulatoryComplianceEngine();
 
         _handler = new EvaluateComplianceCommandHandler(
             _ruleProvider,
             complianceEngine,
-            _auditRepository);
+            evalStore);
     }
 
     [Fact]

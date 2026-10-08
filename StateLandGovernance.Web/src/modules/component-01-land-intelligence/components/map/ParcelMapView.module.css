@@ -1,0 +1,140 @@
+.headingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: flex-end;
+}
+
+.fallbackNote {
+  margin: -0.35rem 0 1rem;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.fallbackNote a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.errorBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.facts {
+  background: #fff;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  padding: 1.15rem 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.factsTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.85rem;
+  font-size: 1rem;
+  color: var(--color-primary);
+}
+
+.factList {
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.factList dt {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-muted);
+}
+
+.factList dd {
+  margin: 0.2rem 0 0;
+  font-size: 0.92rem;
+  word-break: break-word;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+}
+
+.badgeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.provenance {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-card-border);
+}
+
+.provenanceTitle {
+  margin: 0 0 0.45rem;
+  font-size: 0.85rem;
+}
+
+.provenance ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.disclaimer {
+  margin: 1rem 0 0;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.mapColumn {
+  min-width: 0;
+}
+
+.unavailable {
+  background: #fff;
+  border: 1px solid var(--color-card-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.unavailableTitle {
+  margin: 0 0 0.4rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.unavailableHint {
+  margin: 0.75rem 0 0;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
