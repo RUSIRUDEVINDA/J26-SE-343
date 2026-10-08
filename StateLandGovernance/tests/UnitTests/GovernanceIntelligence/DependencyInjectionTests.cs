@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -7,6 +8,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.DependencyInjection;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.EarlyGovernanceReferral;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 using StateLandGovernance.GovernanceIntelligence.Presentation.Controllers;
@@ -61,7 +63,6 @@ public class DependencyInjectionTests
         var verificationEngine = serviceProvider.GetService<IConditionalGovernanceVerificationEngine>();
         var verificationHandler = serviceProvider.GetService<EvaluateConditionalVerificationCommandHandler>();
         var screeningEngine = serviceProvider.GetService<IEarlyGovernanceScreeningEngine>();
-        var screeningHandler = serviceProvider.GetService<ScreenEarlyGovernanceCommandHandler>();
 
         // Assert
         Assert.NotNull(controller);
@@ -79,7 +80,6 @@ public class DependencyInjectionTests
         Assert.NotNull(verificationHandler);
         Assert.NotNull(screeningEngine);
         Assert.IsType<EarlyGovernanceScreeningEngine>(screeningEngine);
-        Assert.NotNull(screeningHandler);
     }
 
     [Fact]
@@ -159,17 +159,15 @@ public class DependencyInjectionTests
 
         var engine1 = serviceProvider.GetService<IEarlyGovernanceScreeningEngine>();
         var engine2 = serviceProvider.GetService<IEarlyGovernanceScreeningEngine>();
-        var handler1 = serviceProvider.GetService<ScreenEarlyGovernanceCommandHandler>();
-        var handler2 = serviceProvider.GetService<ScreenEarlyGovernanceCommandHandler>();
+        var handlerRegistration = services.Single(
+            descriptor => descriptor.ServiceType == typeof(ScreenEarlyGovernanceCommandHandler));
 
         // Assert
         Assert.NotNull(engine1);
         Assert.IsType<EarlyGovernanceScreeningEngine>(engine1);
         Assert.Same(engine1, engine2);
 
-        Assert.NotNull(handler1);
-        Assert.NotNull(handler2);
-        Assert.NotSame(handler1, handler2);
+        Assert.Equal(ServiceLifetime.Transient, handlerRegistration.Lifetime);
     }
 
     [Fact]
@@ -190,10 +188,12 @@ public class DependencyInjectionTests
         using var scope = serviceProvider.CreateScope();
 
         var store = scope.ServiceProvider.GetService<IEarlyGovernanceScreeningStore>();
+        var handoff = scope.ServiceProvider.GetService<IEarlyGovernanceReferralHandoff>();
 
         // Assert
         Assert.NotNull(store);
         Assert.IsType<PostgresEarlyGovernanceScreeningStore>(store);
+        Assert.IsType<UnconfiguredEarlyGovernanceReferralHandoff>(handoff);
     }
 
     [Fact]
@@ -223,7 +223,11 @@ public class DependencyInjectionTests
         {
             var store1 = scope1.ServiceProvider.GetRequiredService<IEarlyGovernanceScreeningStore>();
             var store1Again = scope1.ServiceProvider.GetRequiredService<IEarlyGovernanceScreeningStore>();
+            var policy = scope1.ServiceProvider.GetRequiredService<IEarlyGovernanceReferralPolicy>();
+            var deliveryHandler = scope1.ServiceProvider.GetRequiredService<DeliverEarlyGovernanceReferralCommandHandler>();
             Assert.Same(store1, store1Again);
+            Assert.IsType<UnconfiguredEarlyGovernanceReferralPolicy>(policy);
+            Assert.NotNull(deliveryHandler);
 
             using (var scope2 = serviceProvider.CreateScope())
             {
@@ -253,5 +257,59 @@ public class DependencyInjectionTests
         Assert.Contains("GovernanceIntelligenceConnection", ex.Message);
         Assert.Contains("GOVERNANCE_INTELLIGENCE_CONNECTION", ex.Message);
         Assert.Contains("In-memory storage is not supported", ex.Message);
+    }
+
+    [Fact]
+    public void AddGovernanceIntelligenceInfrastructure_ShouldRegisterScopedComplaintAssessmentStoreAndHandler()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:GovernanceIntelligenceConnection"] =
+                    "Host=localhost;Database=stateland_governance;Username=postgres;Password=postgres",
+                ["ComplaintClassifier:BaseUrl"] = "http://127.0.0.1:8104",
+                ["ComplaintClassifier:TimeoutSeconds"] = "10"
+            })
+            .Build();
+        var environment = new TestHostEnvironment { EnvironmentName = Environments.Development };
+
+        services.AddGovernanceIntelligenceInfrastructure(configuration, environment);
+        using var serviceProvider = services.BuildServiceProvider(validateScopes: true);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            serviceProvider.GetRequiredService<IComplaintClassificationAssessmentStore>());
+
+        using var firstScope = serviceProvider.CreateScope();
+        var firstStore = firstScope.ServiceProvider.GetRequiredService<IComplaintClassificationAssessmentStore>();
+        var sameStore = firstScope.ServiceProvider.GetRequiredService<IComplaintClassificationAssessmentStore>();
+        var handler = firstScope.ServiceProvider.GetRequiredService<ClassifyComplaintCommandHandler>();
+        using var secondScope = serviceProvider.CreateScope();
+        var secondStore = secondScope.ServiceProvider.GetRequiredService<IComplaintClassificationAssessmentStore>();
+
+        Assert.IsType<PostgresComplaintClassificationAssessmentStore>(firstStore);
+        Assert.Same(firstStore, sameStore);
+        Assert.NotSame(firstStore, secondStore);
+        Assert.NotNull(handler);
+    }
+
+    [Fact]
+    public void AddGovernanceIntelligenceInfrastructure_ShouldFailClearly_WhenResolvingComplaintStoreWithoutPostgresConfiguration()
+    {
+        var services = new ServiceCollection();
+        var configuration = new ConfigurationBuilder().Build();
+        var environment = new TestHostEnvironment { EnvironmentName = Environments.Development };
+
+        services.AddGovernanceIntelligenceInfrastructure(configuration, environment);
+        using var serviceProvider = services.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            scope.ServiceProvider.GetRequiredService<IComplaintClassificationAssessmentStore>());
+
+        Assert.Contains("GovernanceIntelligenceConnection", exception.Message);
+        Assert.Contains("GOVERNANCE_INTELLIGENCE_CONNECTION", exception.Message);
+        Assert.Contains("In-memory storage is not supported", exception.Message);
     }
 }
