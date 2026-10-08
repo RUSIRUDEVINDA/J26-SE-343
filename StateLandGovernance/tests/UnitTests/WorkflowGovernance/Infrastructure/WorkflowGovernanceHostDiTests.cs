@@ -19,6 +19,14 @@ public sealed class WorkflowGovernanceHostDiTests
         services.AddWorkflowGovernanceApplication();
         services.AddWorkflowGovernanceInfrastructure(allowInMemoryLeasePersistence: true);
 
+        // Stubs for Batch 4A.2–4A.5 downstream ports deferred to Batch 4B infrastructure
+        services.AddScoped<IGovernedDocumentRepository>(_ => null!);
+        services.AddScoped<IDocumentAnalysisRepository>(_ => null!);
+        services.AddScoped<IDocumentCompletenessAssessmentRepository>(_ => null!);
+        services.AddScoped<IProposalTemplateProvider>(_ => null!);
+        services.AddScoped<IDocumentRequirementProvider>(_ => null!);
+        services.AddScoped<IComponent4ScreeningGateway>(_ => null!);
+
         using var provider = services.BuildServiceProvider(
             new ServiceProviderOptions
             {
