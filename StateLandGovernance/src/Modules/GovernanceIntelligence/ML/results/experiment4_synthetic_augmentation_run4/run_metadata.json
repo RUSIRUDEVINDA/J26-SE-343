@@ -1,0 +1,41 @@
+{
+  "status": "DRY_RUN",
+  "output_dir": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment4_synthetic_augmentation_run4",
+  "review_file": "candidate-data\\v1\\synthetic_family_review_pack_confirmed_20261007.csv",
+  "review_sha256": "0f4d839d9ad46223430cf5adb375775ce7ae12cc8b38b57f263eab790895fb74",
+  "candidate_sha256": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8",
+  "total_families_in_pack": 100,
+  "eligible_families": 75,
+  "eligible_records": 225,
+  "zero_augmentation_folds": [],
+  "eligible_label_distribution": {
+    "Administrative / Procedural / Integrity": 48,
+    "Lease Revenue / Payment / Enforcement": 66,
+    "Unauthorized Allocation / Transfer / Use": 57,
+    "Protected / Environmental Lease Misuse": 54
+  },
+  "fold_eligible_counts": {
+    "1": {
+      "families": 75,
+      "records": 225
+    },
+    "2": {
+      "families": 75,
+      "records": 225
+    },
+    "3": {
+      "families": 75,
+      "records": 225
+    },
+    "4": {
+      "families": 75,
+      "records": 225
+    },
+    "5": {
+      "families": 75,
+      "records": 225
+    }
+  },
+  "note": "Dry-run: input validation and manifest generation only. No model was fitted. No metrics were produced. ",
+  "caution": "Researcher review is not independent domain-expert governance validation. Development cross-validation results only. Not held-out test results."
+}
