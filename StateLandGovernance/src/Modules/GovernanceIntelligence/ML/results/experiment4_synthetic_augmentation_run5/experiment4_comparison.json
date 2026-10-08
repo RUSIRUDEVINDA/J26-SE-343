@@ -1,0 +1,87 @@
+{
+  "arm_a_run_dir": "results\\experiment4_synthetic_augmentation_run2",
+  "arm_b_run_dir": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment4_synthetic_augmentation_run5",
+  "arm_a_metrics": {
+    "Accuracy": 0.77,
+    "Macro_F1_sklearn": 0.7685,
+    "Weighted_F1": 0.7685,
+    "Misclassified": 46
+  },
+  "arm_a_metrics_source": "recomputed from Arm A OOF True_Label/Predicted_Label",
+  "arm_b_metrics": {
+    "Accuracy": 0.76,
+    "Macro_F1_sklearn": 0.7601,
+    "Macro_F1_from_per_class": {
+      "value": 0.7602
+    },
+    "Weighted_F1": 0.7601,
+    "Macro_Precision_sklearn": 0.7668,
+    "Macro_Precision_from_per_class": {
+      "value": 0.7668
+    },
+    "Macro_Recall_sklearn": 0.76,
+    "Macro_Recall_from_per_class": {
+      "value": 0.76
+    },
+    "Misclassified": 48,
+    "note_zero_division": "sklearn metrics use zero_division=0 (undefined \u2192 0.0). per_class metrics record 'undefined' when denominator is 0. Macro averages from per_class may differ from sklearn macro values when any class has an undefined metric."
+  },
+  "deltas_b_minus_a": {
+    "Accuracy": -0.01,
+    "Macro_F1_sklearn": -0.0084,
+    "Weighted_F1": -0.0084,
+    "Misclassified": 2
+  },
+  "paired_comparison": {
+    "total_records": 200,
+    "arm_a_correct": 154,
+    "arm_b_correct": 152,
+    "helped": 9,
+    "hurt": 11,
+    "net_gain": -2,
+    "both_correct": 143,
+    "both_wrong_any": 37,
+    "both_wrong_same_error": 34,
+    "both_wrong_different_error": 3,
+    "label_changes": 23,
+    "note": "helped = A_wrong_B_correct; hurt = A_correct_B_wrong. net_gain = helped - hurt = arm_b_correct - arm_a_correct. label_changes includes both_wrong_different_error transitions. Both arms evaluated on identical 200 baseline OOF records."
+  },
+  "augmentation_summary": [
+    {
+      "Fold": 1,
+      "Eligible_Families": 75,
+      "Eligible_Records": 225,
+      "Excluded_Families": 0,
+      "Excluded_Families_IDs": ""
+    },
+    {
+      "Fold": 2,
+      "Eligible_Families": 75,
+      "Eligible_Records": 225,
+      "Excluded_Families": 0,
+      "Excluded_Families_IDs": ""
+    },
+    {
+      "Fold": 3,
+      "Eligible_Families": 75,
+      "Eligible_Records": 225,
+      "Excluded_Families": 0,
+      "Excluded_Families_IDs": ""
+    },
+    {
+      "Fold": 4,
+      "Eligible_Families": 75,
+      "Eligible_Records": 225,
+      "Excluded_Families": 0,
+      "Excluded_Families_IDs": ""
+    },
+    {
+      "Fold": 5,
+      "Eligible_Families": 75,
+      "Eligible_Records": 225,
+      "Excluded_Families": 0,
+      "Excluded_Families_IDs": ""
+    }
+  ],
+  "interpretation_caution": "These are development cross-validation results on 200 baseline records. Frozen folds are replayed. Not held-out test results. Researcher review is not independent domain-expert governance validation. Deltas reflect OOF prediction changes, not generalisation to new data."
+}

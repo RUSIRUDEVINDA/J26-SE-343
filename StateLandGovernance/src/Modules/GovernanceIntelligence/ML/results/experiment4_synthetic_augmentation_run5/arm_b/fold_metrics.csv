@@ -1,0 +1,6 @@
+Fold,Baseline_Train_Size,Synthetic_Families,Synthetic_Records,Test_Size,Accuracy,Macro_F1,Weighted_F1,Test_Administrative___Procedural___Integrity,Test_Lease_Revenue___Payment___Enforcement,Test_Unauthorized_Allocation___Transfer___Use,Test_Protected___Environmental_Lease_Misuse
+1,175,75,225,25,0.64,0.5687,0.6328,8,1,6,10
+2,161,75,225,39,0.7949,0.8064,0.793,9,8,13,9
+3,141,75,225,59,0.7797,0.7907,0.7783,16,25,9,9
+4,159,75,225,41,0.7805,0.8011,0.7858,8,10,9,14
+5,164,75,225,36,0.75,0.7724,0.7501,9,6,13,8
