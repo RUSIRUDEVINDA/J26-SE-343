@@ -16,6 +16,11 @@ public interface IRegulatoryComplianceEngine
     ComplianceResult Evaluate(LeaseEvaluationInput input, IEnumerable<RegulatoryRule> rules);
 
     /// <summary>
+    /// Evaluates the legacy lease inputs against active regulatory rules using a supplied deterministic evaluation timestamp.
+    /// </summary>
+    ComplianceResult Evaluate(LeaseEvaluationInput input, IEnumerable<RegulatoryRule> rules, DateTime evaluationTimestamp);
+
+    /// <summary>
     /// Evaluates structured proposal facts against source-backed NPD operational compliance rules.
     /// </summary>
     ComplianceResult EvaluateNpd(ProposalComplianceInput input, DateTime evaluationTimestamp);

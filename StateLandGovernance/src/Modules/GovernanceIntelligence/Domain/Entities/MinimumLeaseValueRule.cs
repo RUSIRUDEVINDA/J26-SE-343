@@ -24,6 +24,11 @@ public sealed class MinimumLeaseValueRule : RegulatoryRule
 
     public override void Evaluate(LeaseEvaluationInput input, List<Violation> violations, List<ComplianceCondition> conditions)
     {
+        Evaluate(input, violations, conditions, DateTime.UtcNow);
+    }
+
+    public override void Evaluate(LeaseEvaluationInput input, List<Violation> violations, List<ComplianceCondition> conditions, DateTime evaluationTimestamp)
+    {
         if (input.LeaseAmount < AbsoluteMinimumAmount)
         {
             violations.Add(new Violation(Code, $"Lease amount of {input.LeaseAmount:C} is invalid or below the statutory minimum of {AbsoluteMinimumAmount:C}."));
@@ -32,7 +37,7 @@ public sealed class MinimumLeaseValueRule : RegulatoryRule
         {
             conditions.Add(new ComplianceCondition(
                 $"Proposed lease fee of {input.LeaseAmount:C} is below the assessment threshold of {ValuationReviewThreshold:C} and requires Chief Valuer certification.",
-                DateTime.UtcNow.AddDays(45)));
+                evaluationTimestamp.AddDays(45)));
         }
     }
 }
