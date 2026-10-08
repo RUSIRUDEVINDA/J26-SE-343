@@ -1,0 +1,47 @@
+{
+  "reproduction_status": "PASS",
+  "description": "Comparison of Experiment 4 Arm A vs saved Experiment 3 Arm B by Research_ID. Probability tolerance: 0.0001 (absolute difference, rtol=0; equal to the maximum difference between two saved 4-dp representations of the same float: 2 \u00d7 0.00005 = 0.0001). Row-sum tolerance: 0.00021 (4 \u00d7 0.00005 worst-case row-sum error + 1 ULP buffer). Probabilities aligned by class name, not column position.",
+  "pass_conditions": {
+    "identical_id_sets": true,
+    "zero_true_label_mismatches": true,
+    "zero_fold_mismatches": true,
+    "zero_predicted_label_mismatches": true,
+    "probabilities_valid_and_within_tolerance": true,
+    "prob_validation_error": null
+  },
+  "prediction_mismatches": {
+    "count": 0,
+    "ids": []
+  },
+  "true_label_mismatches": {
+    "count": 0,
+    "ids": []
+  },
+  "fold_mismatches": {
+    "count": 0,
+    "ids": []
+  },
+  "probability_columns_compared": [
+    "prob_Administrative___Procedural___Integrity",
+    "prob_Lease_Revenue___Payment___Enforcement",
+    "prob_Unauthorized_Allocation___Transfer___Use",
+    "prob_Protected___Environmental_Lease_Misuse"
+  ],
+  "max_abs_probability_diff": 0.0,
+  "probability_tolerance": 0.0001,
+  "probability_row_sum_tolerance": 0.00021,
+  "probabilities_within_tolerance": true,
+  "probability_equality_note": "Both the Arm A OOF and the Experiment 3 Arm B reference store probabilities rounded to 4 decimal places. Max-diff is an absolute comparison (rtol=0). A max-diff of 0.0 means the two files store the same rounded 4-dp values. A nonzero max-diff up to 0.0001 is within the expected rounding band for two 4-dp rounded representations of the same float. This is a saved-rounded-value comparison, not full-precision floating-point equality.",
+  "new_arm_a": {
+    "Accuracy": 0.77,
+    "Macro_F1": 0.7685
+  },
+  "reference_exp3b": {
+    "Accuracy": 0.77,
+    "Macro_F1": 0.7685
+  },
+  "metric_deltas": {
+    "Accuracy": 0.0,
+    "Macro_F1": 0.0
+  }
+}

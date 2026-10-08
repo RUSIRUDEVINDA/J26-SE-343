@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Application.Queries;
+using StateLandGovernance.GovernanceIntelligence.Application.Timing;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -85,6 +86,19 @@ public static class ServiceCollectionExtensions
         services.TryAddTransient<GetEarlyGovernanceReferralHistoryQueryHandler>();
         services.TryAddSingleton<IEarlyGovernanceReferralPolicy, UnconfiguredEarlyGovernanceReferralPolicy>();
         services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the deterministic lease-approval handover timing calculator.
+    /// This does not register a Component 3 source or expose an HTTP endpoint.
+    /// </summary>
+    public static IServiceCollection AddLeaseApprovalTimingMonitoring(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.TryAddSingleton<ILeaseApprovalTimingCalculator, LeaseApprovalTimingCalculator>();
 
         return services;
     }

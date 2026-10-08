@@ -9,6 +9,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.ComplaintClassification;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.EarlyGovernanceReferral;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.WorkflowAnomaly;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 
@@ -41,6 +42,7 @@ public static class ServiceCollectionExtensions
         }
 
         services.AddComplaintClassifier(configuration);
+        services.AddWorkflowAnomalyClient(configuration);
         services.TryAddSingleton<IEarlyGovernanceReferralHandoff, UnconfiguredEarlyGovernanceReferralHandoff>();
 
         var connectionString = configuration.GetConnectionString("GovernanceIntelligenceConnection")
@@ -106,6 +108,43 @@ public static class ServiceCollectionExtensions
                     .GetRequiredService<IOptions<ComplaintClassifierOptions>>()
                     .Value;
                 if (!ComplaintClassifierOptions.TryCreateBaseUri(
+                        options.BaseUrl,
+                        out var baseUri,
+                        out var validationError))
+                {
+                    throw new InvalidOperationException(validationError);
+                }
+
+                client.BaseAddress = baseUri;
+                client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+            });
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the validated configuration and typed HTTP client for the workflow anomaly detector.
+    /// Registration does not contact the Python service.
+    /// </summary>
+    public static IServiceCollection AddWorkflowAnomalyClient(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        services.AddSingleton<IValidateOptions<WorkflowAnomalyOptions>, WorkflowAnomalyOptionsValidator>();
+        services.AddOptions<WorkflowAnomalyOptions>()
+            .Bind(configuration.GetSection(WorkflowAnomalyOptions.SectionName))
+            .ValidateOnStart();
+
+        services.AddHttpClient<IWorkflowAnomalyClient, HttpWorkflowAnomalyClient>(
+            (serviceProvider, client) =>
+            {
+                var options = serviceProvider
+                    .GetRequiredService<IOptions<WorkflowAnomalyOptions>>()
+                    .Value;
+                if (!WorkflowAnomalyOptions.TryCreateBaseUri(
                         options.BaseUrl,
                         out var baseUri,
                         out var validationError))

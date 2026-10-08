@@ -339,14 +339,21 @@ Install the ML requirements, then run this command from the `ML/` directory:
 python -m uvicorn src.http_service:app --host 127.0.0.1 --port 8104
 ```
 
-The service exposes only:
+The service exposes:
 
 - `GET /health` — readiness and the loaded `model_version`.
 - `POST /predict` — prediction for a nonblank English complaint.
+- `POST /workflow-anomaly/predict` — completed-trace synthetic workflow-anomaly inference.
 
 The model, metadata, and validation sidecar are loaded once during application
 startup through `predict_v1.load_versioned_artifact`. Startup fails if their
 validation fails. The service never fits or regenerates a model.
+
+The frozen workflow-anomaly bundle is likewise verified and loaded once during
+startup. Its HTTP adapter reuses `anomaly_detection.inference` and does not
+duplicate feature extraction or scoring logic. Its exact request and response
+contract, synthetic-only limitations, and PowerShell smoke command are
+documented in `anomaly_detection/README.md`.
 
 Artifact locations can be configured for deployment with absolute paths:
 
@@ -358,14 +365,24 @@ Artifact locations can be configured for deployment with absolute paths:
 defaults to `10000`. Oversized input is rejected without truncation. This limit
 is operational and is not a research or governance rule.
 
+Workflow-anomaly deployment settings are:
+
+- `GOVERNANCE_ANOMALY_BUNDLE_CONFIG` — trusted local bundle configuration.
+- `GOVERNANCE_ANOMALY_MAX_REQUEST_BYTES` — request limit, default `262144`.
+- `GOVERNANCE_ANOMALY_MAX_EVENTS` — event-count limit, default `500`.
+
+These limits are operational and are not anomaly rules. Model paths and the
+frozen threshold are not accepted from HTTP payloads.
+
 English input is expected. The service does not detect language and does not
 claim multilingual support. `case_id` is optional context and is not a model
 feature.
 
 The default development binding is loopback (`127.0.0.1`) for use by the local
 .NET backend. Loopback is a deployment boundary, not authentication. A future
-remote deployment requires an explicit access-control decision. This service
-does not enable browser CORS and should not be called directly from the frontend.
+remote deployment requires explicit service authentication, authorization, and
+transport security. This service does not enable browser CORS, but disabled CORS
+is not authentication, and it should not be called directly from the frontend.
 
 ---
 

@@ -1,0 +1,32 @@
+{
+  "reproduction_status": "PASS",
+  "description": "Comparison of Experiment 4 Arm A vs saved Experiment 3 Arm B by Research_ID. Probability tolerance: 0.0001.",
+  "historical_reference_note": "Historical values (accuracy 0.7700, macro-F1 ~0.7685) are reference observations from the saved Experiment 3 Arm B, not hardcoded targets.",
+  "prediction_mismatches": {
+    "count": 0,
+    "ids": []
+  },
+  "true_label_mismatches": {
+    "count": 0,
+    "ids": []
+  },
+  "fold_mismatches": {
+    "count": 0,
+    "ids": []
+  },
+  "max_abs_probability_diff": 0.0,
+  "probability_tolerance": 0.0001,
+  "probabilities_within_tolerance": true,
+  "new_arm_a": {
+    "Accuracy": 0.77,
+    "Macro_F1": 0.7685
+  },
+  "reference_exp3b": {
+    "Accuracy": 0.77,
+    "Macro_F1": 0.7685
+  },
+  "metric_deltas": {
+    "Accuracy": 0.0,
+    "Macro_F1": 0.0
+  }
+}

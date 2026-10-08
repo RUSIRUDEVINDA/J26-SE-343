@@ -1,0 +1,13 @@
+{
+  "bundle_manifest": "bundle_manifest.json",
+  "bundle_version": "workflow_anomaly_model_v1",
+  "payload_model_paths_allowed": false,
+  "trusted_local_artifact_paths": {
+    "evaluation_metadata": "../../evaluations/synthetic_held_out_test_v1/evaluation_metadata.json",
+    "metadata": "../../runs/isolation_forest_baseline_v1/metadata.json",
+    "model": "../../runs/isolation_forest_baseline_v1/isolation_forest.joblib",
+    "test_metrics": "../../evaluations/synthetic_held_out_test_v1/test_metrics.json",
+    "test_predictions": "../../evaluations/synthetic_held_out_test_v1/test_predictions.csv",
+    "threshold_and_feature_contract": "../../runs/isolation_forest_baseline_v1/threshold_and_feature_contract.json"
+  }
+}

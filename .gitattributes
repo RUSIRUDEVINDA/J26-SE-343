@@ -1,0 +1,10 @@
+
+# Preserve exact bytes of Governance Intelligence datasets and artifacts.
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/candidate-data/v1/*.csv -text
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/data/*.csv -text
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/results/** -text
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/models/** -text
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/anomaly_detection/data/synthetic_workflow_v1/** -text
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/anomaly_detection/runs/** -text
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/anomaly_detection/bundles/** -text
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/anomaly_detection/evaluations/** -text
