@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
+using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Domain.ValueObjects;
@@ -15,11 +16,13 @@ namespace StateLandGovernance.GovernanceIntelligence.Application.Commands;
 /// <para>
 /// Boundary notes:
 /// - Verified evidence states are caller assertions.
-/// - This command performs evaluation only; authorization, authentication of evidence,
-///   and persistence are managed outside this handler.
+/// - Authorization and authentication of evidence are managed outside this handler.
+/// - AssessmentId and WorkflowRunId must be supplied by the caller; neither is inferred.
 /// </para>
 /// </summary>
 public sealed record ScreenEarlyGovernanceCommand(
+    Guid AssessmentId,
+    Guid WorkflowRunId,
     string CaseId,
     string InputVersion,
     IReadOnlyList<EarlyGovernanceIndicatorDto>? Indicators
@@ -31,13 +34,23 @@ public sealed record ScreenEarlyGovernanceCommand(
 public sealed class ScreenEarlyGovernanceCommandHandler
 {
     private readonly IEarlyGovernanceScreeningEngine _engine;
+    private readonly IEarlyGovernanceScreeningStore _store;
+    private readonly IEarlyGovernanceReferralPolicy _referralPolicy;
+    private readonly TimeProvider _timeProvider;
 
-    public ScreenEarlyGovernanceCommandHandler(IEarlyGovernanceScreeningEngine engine)
+    public ScreenEarlyGovernanceCommandHandler(
+        IEarlyGovernanceScreeningEngine engine,
+        IEarlyGovernanceScreeningStore store,
+        IEarlyGovernanceReferralPolicy referralPolicy,
+        TimeProvider timeProvider)
     {
         _engine = engine ?? throw new ArgumentNullException(nameof(engine));
+        _store = store ?? throw new ArgumentNullException(nameof(store));
+        _referralPolicy = referralPolicy ?? throw new ArgumentNullException(nameof(referralPolicy));
+        _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
     }
 
-    public Task<EarlyGovernanceScreeningResultDto> HandleAsync(
+    public async Task<EarlyGovernanceScreeningResultDto> HandleAsync(
         ScreenEarlyGovernanceCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -46,6 +59,16 @@ public sealed class ScreenEarlyGovernanceCommandHandler
         if (command is null)
         {
             throw new ArgumentNullException(nameof(command), "Command cannot be null.");
+        }
+
+        if (command.AssessmentId == Guid.Empty)
+        {
+            throw new ArgumentException("AssessmentId cannot be empty.", nameof(command));
+        }
+
+        if (command.WorkflowRunId == Guid.Empty)
+        {
+            throw new ArgumentException("WorkflowRunId cannot be empty.", nameof(command));
         }
 
         if (command.Indicators is null)
@@ -105,7 +128,43 @@ public sealed class ScreenEarlyGovernanceCommandHandler
             domainResult.HasIncompleteEvidence,
             indicatorResultDtos);
 
-        return Task.FromResult(resultDto);
+        var assessedAtUtc = _timeProvider.GetUtcNow();
+        var referralDecision = _referralPolicy.Evaluate(resultDto);
+        EarlyGovernanceReferralIntentDto? referral = null;
+        if (referralDecision.Status == EarlyGovernanceReferralMappingStatus.ReferralRequired)
+        {
+            if (string.IsNullOrWhiteSpace(referralDecision.DecisionCode) ||
+                string.IsNullOrWhiteSpace(referralDecision.Reason))
+            {
+                throw new InvalidOperationException("A referral policy decision must include a decision code and reason.");
+            }
+
+            var evidenceReferences = (referralDecision.EvidenceReferences ?? Array.Empty<string>())
+                .Where(reference => !string.IsNullOrWhiteSpace(reference))
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+
+            referral = new EarlyGovernanceReferralIntentDto(
+                Guid.NewGuid(),
+                command.AssessmentId,
+                command.AssessmentId,
+                resultDto.CaseId,
+                command.WorkflowRunId,
+                referralDecision.DecisionCode,
+                referralDecision.Reason,
+                evidenceReferences,
+                assessedAtUtc);
+        }
+
+        await _store.AddAssessmentAsync(
+            command.AssessmentId,
+            command.WorkflowRunId,
+            assessedAtUtc,
+            resultDto,
+            referral,
+            cancellationToken).ConfigureAwait(false);
+
+        return resultDto;
     }
 
     /// <summary>

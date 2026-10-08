@@ -16,6 +16,7 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
 using StateLandGovernance.LandIntelligence.Presentation.DependencyInjection;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
+using Microsoft.OpenApi.Models;
 
 EnvFileLoader.LoadFromRepositoryRoot();
 
@@ -58,21 +59,26 @@ builder.Services.AddLandIntelligencePresentation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc(LandIntelligenceApiGroups.External, new OpenApiInfo
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(options =>
     {
-        Title = "State Land Governance — Component 1 External Read API",
-        Version = "v1",
-        Description =
-            "Read-only REST contract for external platform modules: land parcel queries, search, spatial constraints, knowledge graph relationships, and explainable recommendations."
-    });
+        options.SwaggerDoc(LandIntelligenceApiGroups.External, new OpenApiInfo
+        {
+            Title = "State Land Governance — Component 1 External Read API",
+            Version = "v1",
+            Description =
+                "Read-only REST contract for external platform modules: land parcel queries, search, spatial constraints, knowledge graph relationships, and explainable recommendations."
+        });
 
-    options.SwaggerDoc(LandIntelligenceApiGroups.Internal, new OpenApiInfo
-    {
-        Title = "State Land Governance — Component 1 Internal Maintenance API",
-        Version = "v1",
-        Description =
-            "Component 1 parcel persistence endpoints. Not for consumption by external platform modules."
+        options.SwaggerDoc(LandIntelligenceApiGroups.Internal, new OpenApiInfo
+        {
+            Title = "State Land Governance — Component 1 Internal Maintenance API",
+            Version = "v1",
+            Description =
+                "Component 1 parcel persistence endpoints. Not for consumption by external platform modules."
+        });
     });
+}
 
     options.DocInclusionPredicate((documentName, apiDescription) =>
         string.Equals(apiDescription.GroupName, documentName, StringComparison.Ordinal));

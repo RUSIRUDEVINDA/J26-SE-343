@@ -20,6 +20,9 @@ public class EarlyGovernanceScreeningEvaluationEntityConfiguration : IEntityType
             .HasColumnName("assessment_id")
             .ValueGeneratedNever();
 
+        builder.Property(e => e.WorkflowRunId)
+            .HasColumnName("workflow_run_id");
+
         builder.Property(e => e.CaseId)
             .HasColumnName("case_id")
             .HasMaxLength(100)
@@ -43,5 +46,7 @@ public class EarlyGovernanceScreeningEvaluationEntityConfiguration : IEntityType
             .HasColumnName("result_snapshot_json")
             .HasColumnType("jsonb")
             .IsRequired();
+
+        builder.HasIndex(e => new { e.CaseId, e.CreatedAtUtc });
     }
 }

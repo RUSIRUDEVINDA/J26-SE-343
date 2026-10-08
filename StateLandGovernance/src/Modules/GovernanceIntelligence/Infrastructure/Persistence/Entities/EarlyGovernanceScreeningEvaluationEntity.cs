@@ -8,9 +8,11 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
 public class EarlyGovernanceScreeningEvaluationEntity
 {
     public Guid AssessmentId { get; set; }
+    public Guid? WorkflowRunId { get; set; }
     public string CaseId { get; set; } = string.Empty;
     public string InputVersion { get; set; } = string.Empty;
     public DateTimeOffset CreatedAtUtc { get; set; }
     public int SnapshotSchemaVersion { get; set; }
     public string ResultSnapshotJson { get; set; } = string.Empty;
+    public EarlyGovernanceReferralEntity? Referral { get; set; }
 }
