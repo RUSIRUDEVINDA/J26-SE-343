@@ -1,0 +1,33 @@
+{
+  "case_id": "SYNTHETIC-DEMO-COMPLETE-001",
+  "events": [
+    {
+      "event_seq": 1,
+      "activity": "DS Application Received",
+      "institution": "DS",
+      "resource": "Demo Officer 1",
+      "timestamp": "2031-02-03T08:00:00"
+    },
+    {
+      "event_seq": 2,
+      "activity": "DS Initial Review",
+      "institution": "DS",
+      "resource": "Demo Officer 1",
+      "timestamp": "2031-02-03T12:00:00"
+    },
+    {
+      "event_seq": 3,
+      "activity": "PLC/DLC Review",
+      "institution": "PLC/DLC",
+      "resource": "Demo Reviewer 1",
+      "timestamp": "2031-02-04T10:00:00"
+    },
+    {
+      "event_seq": 4,
+      "activity": "DS Final Notification",
+      "institution": "DS",
+      "resource": "Demo Officer 2",
+      "timestamp": "2031-02-05T09:00:00"
+    }
+  ]
+}
