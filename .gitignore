@@ -112,6 +112,15 @@ StateLandGovernance/src/Modules/GovernanceIntelligence/ML/models/*.joblib
 ## Generated evaluation results
 StateLandGovernance/src/Modules/GovernanceIntelligence/ML/state_land_governance_confirmed_200.csv
 StateLandGovernance/src/Modules/GovernanceIntelligence/ML/data/state_land_governance_confirmed_200.csv
+## Governance Blockchain Service
+governance-blockchain-service/node_modules/
+governance-blockchain-service/deployment.json
+governance-blockchain-service/network/besu/nodes/**/key
+governance-blockchain-service/network/besu/**/key.priv
+governance-blockchain-service/network/besu/generated/
+governance-blockchain-service/network/besu/qbft-out/
+governance-blockchain-service/artifacts/
+governance-blockchain-service/cache/
 
 ## WorkflowGovernance Local Development / Demo Storage
 .local-data/
