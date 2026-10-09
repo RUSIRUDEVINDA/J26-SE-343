@@ -1,0 +1,13 @@
+{
+  "name": "governance-blockchain-service",
+  "version": "1.0.0",
+  "description": "Component 4 Governance Intelligence - Hyperledger Besu QBFT Audit Ledger",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.18"
+  }
+}
