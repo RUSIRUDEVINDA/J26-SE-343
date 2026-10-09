@@ -1,6 +1,9 @@
 namespace StateLandGovernance.WorkflowGovernance.Infrastructure;
 
+using System;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using StateLandGovernance.WorkflowGovernance.Application.Interfaces;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence;
@@ -36,15 +39,63 @@ public static class DependencyInjection
 
         if (!allowInMemoryLeasePersistence)
         {
-            throw new InvalidOperationException(
-                "WorkflowGovernance lease-case persistence is not configured for this environment. "
-                + "In-memory ILeaseCaseRepository / IWorkflowGovernanceUnitOfWork registrations are "
-                + "Development and Testing only (process-local, non-durable). "
-                + "Provide durable EF (or equivalent) persistence before hosting in Production.");
+            var hasLeaseCaseRepo = services.Any(d => d.ServiceType == typeof(ILeaseCaseRepository));
+            var hasUnitOfWork = services.Any(d => d.ServiceType == typeof(IWorkflowGovernanceUnitOfWork));
+            if (!hasLeaseCaseRepo || !hasUnitOfWork)
+            {
+                throw new InvalidOperationException(
+                    "WorkflowGovernance lease-case persistence is not configured for this environment. "
+                    + "In-memory ILeaseCaseRepository / IWorkflowGovernanceUnitOfWork registrations are "
+                    + "Development and Testing only (process-local, non-durable). "
+                    + "Provide durable EF (or equivalent) persistence before hosting in Production.");
+            }
+
+            return services;
         }
 
-        services.AddSingleton<ILeaseCaseRepository, InMemoryLeaseCaseRepository>();
-        services.AddScoped<IWorkflowGovernanceUnitOfWork, InMemoryWorkflowGovernanceUnitOfWork>();
+        services.TryAddSingleton<ILeaseCaseRepository, InMemoryLeaseCaseRepository>();
+        services.TryAddSingleton<IGovernedDocumentRepository, InMemoryGovernedDocumentRepository>();
+        services.TryAddSingleton<IDocumentAnalysisRepository, InMemoryDocumentAnalysisRepository>();
+        services.TryAddScoped<IWorkflowGovernanceUnitOfWork, InMemoryWorkflowGovernanceUnitOfWork>();
+
+        // Development/Testing placeholders for downstream ports deferred to Batch 4B
+        services.TryAddScoped<IDocumentCompletenessAssessmentRepository>(_ => null!);
+        services.TryAddScoped<IProposalTemplateProvider>(_ => null!);
+        services.TryAddScoped<IDocumentRequirementProvider>(_ => null!);
+        services.TryAddScoped<IComponent4ScreeningGateway>(_ => null!);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers local filesystem development storage for document content and analysis artifacts.
+    /// Implements IDocumentContentWriter, IDocumentContentReader, IAnalysisArtifactWriter, and IAnalysisArtifactReader.
+    /// </summary>
+    public static IServiceCollection AddWorkflowGovernanceLocalDocumentStorage(
+        this IServiceCollection services,
+        Microsoft.Extensions.Configuration.IConfiguration? configuration = null,
+        Action<Storage.LocalFileStorageOptions>? configureOptions = null)
+    {
+        services.AddOptions<Storage.LocalFileStorageOptions>();
+
+        if (configuration is not null)
+        {
+            services.Configure<Storage.LocalFileStorageOptions>(
+                configuration.GetSection(Storage.LocalFileStorageOptions.SectionName));
+        }
+
+        if (configureOptions is not null)
+        {
+            services.Configure(configureOptions);
+        }
+
+        services.TryAddSingleton<Storage.LocalFileDocumentContentStore>();
+        services.TryAddSingleton<IDocumentContentWriter>(sp => sp.GetRequiredService<Storage.LocalFileDocumentContentStore>());
+        services.TryAddSingleton<IDocumentContentReader>(sp => sp.GetRequiredService<Storage.LocalFileDocumentContentStore>());
+
+        services.TryAddSingleton<Storage.LocalFileAnalysisArtifactStore>();
+        services.TryAddSingleton<Integrations.IAnalysisArtifactWriter>(sp => sp.GetRequiredService<Storage.LocalFileAnalysisArtifactStore>());
+        services.TryAddSingleton<IAnalysisArtifactReader>(sp => sp.GetRequiredService<Storage.LocalFileAnalysisArtifactStore>());
 
         return services;
     }
