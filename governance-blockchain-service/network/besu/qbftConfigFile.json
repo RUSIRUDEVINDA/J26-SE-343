@@ -1,0 +1,40 @@
+{
+  "genesis": {
+    "config": {
+      "chainId": 1337,
+      "homesteadBlock": 0,
+      "eip150Block": 0,
+      "eip155Block": 0,
+      "eip158Block": 0,
+      "byzantiumBlock": 0,
+      "constantinopleBlock": 0,
+      "petersburgBlock": 0,
+      "istanbulBlock": 0,
+      "parisBlock": 0,
+      "qbft": {
+        "blockperiodseconds": 2,
+        "epochlength": 30000,
+        "requesttimeoutseconds": 4
+      }
+    },
+    "nonce": "0x0",
+    "timestamp": "0x58ee40ba",
+    "gasLimit": "0x1fffffffffffff",
+    "difficulty": "0x1",
+    "mixHash": "0x63746963616c2062797a616e74696e65206661756c7420746f6c6572616e6365",
+    "alloc": {
+      "fe3b557e8fb62b89f4916b721be55ceb828dbd73": {
+        "balance": "0x1000000000000000000000000000"
+      },
+      "8f2a55949038a9610f50fb23b5883af3b4ecb3c3": {
+        "balance": "0x1000000000000000000000000000"
+      }
+    }
+  },
+  "blockchain": {
+    "nodes": {
+      "generate": true,
+      "count": 4
+    }
+  }
+}
