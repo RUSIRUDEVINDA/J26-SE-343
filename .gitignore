@@ -121,3 +121,6 @@ governance-blockchain-service/network/besu/generated/
 governance-blockchain-service/network/besu/qbft-out/
 governance-blockchain-service/artifacts/
 governance-blockchain-service/cache/
+
+## WorkflowGovernance Local Development / Demo Storage
+.local-data/
