@@ -1,4 +1,4 @@
-import type { ApiErrorResponse } from "@/shared/types/common";
+import type { ApiErrorResponse } from "../shared/types/common";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
 
