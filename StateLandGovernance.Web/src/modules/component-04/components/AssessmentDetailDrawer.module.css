@@ -1,0 +1,222 @@
+.drawerContainer {
+  background: #ffffff;
+  border: 1px solid var(--color-card-border, #f3eaea);
+  border-radius: var(--radius-card, 26px);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft, 0 4px 7px rgba(0, 0, 0, 0.05));
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--color-card-border, #f3eaea);
+  padding-bottom: 0.85rem;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.statusIconWarning {
+  color: #c53030;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.statusIconSuccess {
+  color: #276749;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.statusIconNeutral {
+  color: #4a5568;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.titleArea {
+  min-width: 0;
+}
+
+.titleArea h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text, #171717);
+  word-break: break-word;
+}
+
+.caseSubline {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-muted, #707070);
+  word-break: break-all;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--color-muted, #707070);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  background: var(--color-nav-inactive, #f5ebea);
+  color: var(--color-primary, #850906);
+}
+
+.advisoryNotice {
+  background: #fffaf0;
+  border-left: 4px solid #dd6b20;
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.775rem;
+  color: #7b341e;
+  line-height: 1.4;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sectionHeading {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text, #171717);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.findingCardWarning {
+  background: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  color: #742a2a;
+}
+
+.findingCardSuccess {
+  background: #f0fff4;
+  border: 1px solid #9ae6b4;
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  color: #22543d;
+}
+
+.findingCardNeutral {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  color: #2d3748;
+}
+
+.findingCardTitle {
+  margin: 0 0 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.findingCardBody {
+  margin: 0;
+  font-size: 0.825rem;
+  line-height: 1.45;
+}
+
+.sectionText {
+  margin: 0;
+  font-size: 0.825rem;
+  line-height: 1.5;
+  color: #4a5568;
+}
+
+.mlBox {
+  background: #edf2f7;
+  border: 1px solid #cbd5e0;
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.mlBoxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.mlTag {
+  background: #e2e8f0;
+  padding: 0.15rem 0.45rem;
+  border-radius: 10px;
+  font-size: 0.7rem;
+}
+
+.mlPredictionRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mlCategory {
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: var(--color-primary, #850906);
+}
+
+.mlProbability {
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.mlDisclaimer {
+  margin: 0;
+  font-size: 0.725rem;
+  color: #718096;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.footerActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-card-border, #f3eaea);
+}
+
+.plannedBadge {
+  font-size: 0.75rem;
+  color: var(--color-muted, #707070);
+  margin-right: auto;
+}
