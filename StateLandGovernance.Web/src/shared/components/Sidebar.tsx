@@ -7,6 +7,7 @@ import {
   LAND_INTELLIGENCE_BASE,
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
+import type { NavItem } from "@/shared/constants/navigation";
 
 function isActive(pathname: string, href: string): boolean {
   if (href === LAND_INTELLIGENCE_BASE) {
@@ -22,14 +23,14 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Sidebar() {
+export function Sidebar({ items = component01NavItems, label = "Land Intelligence navigation", basePath = LAND_INTELLIGENCE_BASE, compactMobile = false }: { items?: NavItem[]; label?: string; basePath?: string; compactMobile?: boolean }) {
   const pathname = usePathname();
 
   return (
-    <aside className={styles.sidebar} aria-label="Land Intelligence navigation">
+    <aside className={`${styles.sidebar} ${compactMobile ? styles.compactMobile : ""}`} aria-label={label}>
       <nav className={styles.nav}>
-        {component01NavItems.map((item) => {
-          const active = isActive(pathname, item.href);
+        {items.map((item) => {
+          const active = item.href === basePath ? pathname === item.href : isActive(pathname, item.href);
           return (
             <Link
               key={item.label}
