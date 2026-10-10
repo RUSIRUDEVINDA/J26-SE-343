@@ -1,12 +1,10 @@
-import { PageLayout, PageHeading } from "@/shared/components/PageLayout";
+import type { Metadata } from "next";
+import { GovernanceDashboard } from "@/modules/component-04";
+
+export const metadata: Metadata = { title: "Governance Intelligence", description: "Governance assessments and advisory evidence for state land lease review." };
 
 export default function Component04Page() {
   return (
-    <PageLayout showSidebar={false}>
-      <PageHeading title="Component 4" />
-      <div className="placeholderPage">
-        <p>Coming soon — owned by another component.</p>
-      </div>
-    </PageLayout>
+    <GovernanceDashboard />
   );
 }
