@@ -1,0 +1,46 @@
+.workspace { min-width: 0; }
+.modeBar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; padding: .8rem 1.1rem; border-radius: 16px; background: var(--color-nav-inactive); font-size: .8rem; }
+.modeBar p { margin: 0; line-height: 1.6; }
+.footer { color: var(--color-muted); font-size: .8rem; line-height: 1.6; margin: 1.5rem 0; }
+.heading { margin-bottom: 1.6rem; }
+.heading h1 { font-size: 1.75rem; font-weight: 500; margin: 0 0 .6rem; }
+.heading p, .muted { color: var(--color-muted); font-size: .875rem; line-height: 1.6; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 1.5rem; align-items: start; }
+.dashboardSplit { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.5rem; }
+.stack { display: grid; gap: 1.25rem; min-width: 0; }
+.card { border: 1px solid var(--color-card-border); background: #fff; border-radius: var(--radius-card); padding: 1.6rem; min-width: 0; }
+.card h2 { font-size: 1.15rem; font-weight: 500; margin: 0 0 1rem; }
+.card h3 { font-size: .95rem; font-weight: 500; margin: 1.25rem 0 .6rem; }
+.card p { line-height: 1.65; font-size: .875rem; }
+.notice { padding: 1rem 1.25rem; background: var(--color-warning-bg); border: 1px solid var(--color-warning-border); border-radius: 18px; line-height: 1.6; font-size: .875rem; }
+.notice p { margin: .35rem 0 0; }
+.stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.stat { background: #fff; border-radius: 24px; padding: 1.2rem; }
+.stat p { color: var(--color-muted); font-size: .8rem; margin: 0 0 .6rem; }
+.stat strong { color: var(--color-primary); font-size: 1.65rem; font-weight: 500; }
+.stat small { display: block; color: var(--color-muted); margin-top: .4rem; }
+.scroll { overflow-x: auto; max-width: 100%; }
+.table { width: 100%; border-collapse: collapse; font-size: .8rem; text-align: left; }
+.table th { font-weight: 500; padding: 1rem .8rem; }
+.table thead th { background: #fff7f6; }
+.table tbody th { border-bottom: 1px solid var(--color-card-border); }
+.table td { padding: 1.1rem .8rem; border-bottom: 1px solid var(--color-card-border); }
+.table tbody tr:nth-child(even) { background: var(--color-page-bg); }
+.table a { color: var(--color-primary); }
+.tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 1.5rem; }
+.tabs a { padding: .65rem 1rem; border: 1px solid var(--color-card-border); border-radius: 100px; font-size: .8rem; text-decoration: none; background: #fff; }
+.tabs a[aria-current=page] { color: #fff; background: var(--color-primary); }
+.facts { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(0, 2fr); gap: .8rem 1rem; font-size: .8rem; line-height: 1.6; }
+.facts dt { color: var(--color-muted); }
+.facts dd { margin: 0; overflow-wrap: anywhere; }
+.checks { padding: 0; margin: 0; list-style: none; }
+.checks li { display: flex; justify-content: space-between; align-items: start; gap: 1rem; padding: 1.2rem 0; border-bottom: 1px solid var(--color-card-border); font-size: .875rem; }
+.checks li > div { min-width: 0; }
+.checks small { display: block; color: var(--color-muted); line-height: 1.6; margin-top: .4rem; }
+.actions { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1.25rem; }
+.field { display: grid; gap: .5rem; margin-bottom: 1.2rem; font-size: .875rem; }
+.field input, .field textarea, .field select { width: 100%; border: 1px solid var(--color-input-border); border-radius: 12px; padding: .8rem 1rem; background: #fff; }
+.field textarea { min-height: 140px; resize: vertical; }
+.workspace button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+@media (max-width: 1200px) { .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split, .dashboardSplit { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { .modeBar { flex-direction: column; align-items: stretch; } .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .card { padding: 1.1rem; } .facts { grid-template-columns: 1fr; gap: .35rem; } .facts dd { margin-bottom: .7rem; } .checks li { flex-wrap: wrap; } .heading h1 { font-size: 1.4rem; } }
