@@ -1,6 +1,7 @@
 using StateLandGovernance.BuildingBlocks.DependencyInjection;
 using StateLandGovernance.WorkflowGovernance.Application;
 using StateLandGovernance.WorkflowGovernance.Infrastructure;
+using StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence;
 using StateLandGovernance.WorkflowGovernance.Presentation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,7 @@ builder.Services.AddBuildingBlocks();
 
 builder.Services
     .AddWorkflowGovernanceApplication()
-    .AddWorkflowGovernanceInfrastructure(builder.Environment)
+    .AddWorkflowGovernanceInfrastructure(builder.Environment, builder.Configuration)
     .AddWorkflowGovernancePresentation();
 
 builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
@@ -96,15 +97,21 @@ if (app.Environment.IsDevelopment())
     try
     {
         using var scope = app.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetService<LandIntelligenceDbContext>();
-        if (dbContext != null && dbContext.Database.CanConnect())
+        var landDbContext = scope.ServiceProvider.GetService<LandIntelligenceDbContext>();
+        if (landDbContext != null && landDbContext.Database.CanConnect())
         {
-            dbContext.Database.Migrate();
+            landDbContext.Database.Migrate();
+        }
+
+        var workflowDbContext = scope.ServiceProvider.GetService<WorkflowGovernanceDbContext>();
+        if (workflowDbContext != null && workflowDbContext.Database.CanConnect())
+        {
+            workflowDbContext.Database.Migrate();
         }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"[Development] LandIntelligence migration skipped: {ex.Message}");
+        Console.WriteLine($"[Development] Database migration skipped: {ex.Message}");
     }
 }
 else
@@ -114,6 +121,7 @@ else
     dbContext.Database.Migrate();
 }
 
+app.UseLandIntelligenceCallerContext();
 app.UseLandIntelligenceExceptionHandling();
 
 if (app.Environment.IsDevelopment())

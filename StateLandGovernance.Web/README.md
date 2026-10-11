@@ -10,8 +10,14 @@ Components 2–4 are module placeholders (`lease-feasibility`, `governance-intel
 
 - Node.js 20+
 - ASP.NET `StateLandGovernance.Api` running locally (default `http://localhost:5264`)
-- PostgreSQL / PostGIS for Land Intelligence (configure via repository-root `.env` —
-  never point automated checks at a shared production database)
+- PostgreSQL / PostGIS with **imported Colombo cadastre** data. Configure
+  repository-root `.env` `LAND_INTELLIGENCE_CONNECTION` to
+  `land_intel_colombo_real_demo` (or `land_intel_colombo_real_pilot`). See
+  `StateLandGovernance/docs/COLOMBO_REAL_PARCEL_IMPORT.md`.
+- Do **not** point the normal UI at `land_intel_colombo_demo` (`DEMO-*` fixtures).
+
+Imported parcels show **source-reported land use** from Survey Department/iLAS
+metadata. That data does **not** prove ownership, legal availability, or suitability.
 
 ## Setup
 
@@ -24,11 +30,9 @@ npm install
 ## Run (PowerShell)
 
 ```powershell
-# Terminal 1 — API (Development). Uses LAND_INTELLIGENCE_CONNECTION from repo-root .env.
+# Terminal 1 — API against real-data DB (LAND_INTELLIGENCE_CONNECTION in repo-root .env)
 cd StateLandGovernance
-$env:ASPNETCORE_ENVIRONMENT = "Development"
-$env:ASPNETCORE_URLS = "http://127.0.0.1:5264"
-dotnet run --project src\Api\StateLandGovernance.Api.csproj --urls http://127.0.0.1:5264
+.\run-api.ps1
 
 # Terminal 2 — frontend
 cd StateLandGovernance.Web
@@ -57,7 +61,7 @@ npm run build
 | `NEXT_PUBLIC_API_BASE_URL` | Base URL for the ASP.NET API (see `.env.local.example`) |
 
 Experimental Colombo ML remains **disabled** in committed API configuration.
-Do not enable it for normal frontend demos.
+Do not enable it for normal frontend use.
 
 ## Routes (Component 1)
 
@@ -81,9 +85,6 @@ Do not enable it for normal frontend demos.
 | Parcel facts | `GET /api/v1/land/parcels/{id}` |
 | Constraints | `GET /api/v1/land/parcels/{id}/constraints` |
 | Relationships | `GET /api/v1/land/parcels/{id}/relationships` |
-
-Form fields that are not on the recommendation DTO (water proximity, soil group,
-free-text extras) are shown disabled and are never submitted.
 
 ## Production ML
 
