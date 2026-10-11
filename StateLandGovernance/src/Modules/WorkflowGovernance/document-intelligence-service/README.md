@@ -208,8 +208,107 @@ Example output:
 
 ---
 
-## 8. Architectural Boundaries & Non-Authority Disclaimer
+## 8. Ollama Real Model Integration (QWEN-1B)
 
-- This service produces **unverified machine observations only**.
-- It does **not** create Domain facts, approve proposals, perform regulatory screening, or mutate case workflow state.
-- Integration with Component 3 is handled via `IDocumentIntelligenceService` through a decoupled Infrastructure HTTP adapter in a future checkpoint.
+In addition to pure OCR extraction (`/v1/ocr`), this service provides a governed semantic extraction pipeline via `POST /v1/analyze` backed by local Ollama HTTP inference.
+
+### A. Ollama Setup & Development Model
+1. **Install Ollama**:
+   Download and install from [ollama.ai](https://ollama.ai).
+2. **Pull the Development Model**:
+   ```bash
+   ollama pull qwen3:1.7b
+   ```
+3. **Verify Model Installation**:
+   ```bash
+   ollama list
+   ```
+   Confirm `qwen3:1.7b` appears in the list with valid digest.
+4. **Default URL & Daemon**:
+   Ollama serves locally at `http://localhost:11434` without authentication.
+   Ensure the Ollama service or desktop app is running before invoking live semantic extraction.
+5. **Development Model Disclaimer**:
+   > `qwen3:1.7b` is the current **DEVELOPMENT** model for local development and validation.
+   > The final evaluation model may be frozen later after validation comparison.
+   > 1.7B is chosen for local responsiveness and low memory footprint; no claim is made that 1.7B is the best or optimal model for high-stakes production.
+
+### B. Core Architecture & Non-Authority Boundary
+- **Candidate-Only Output**: Machine outputs produced by Qwen/NLP models are strictly candidate facts (`ExtractedCandidateFact`).
+- **No Automatic Authority**: The model never makes legal, routing, screening, approval, rejection, or completion decisions.
+- **Thinking Disabled**: Every request to Ollama explicitly specifies `"think": false`. Hidden reasoning traces are never generated or stored.
+- **Human Verification Flow**: Machine candidate facts flow to the .NET application, where authorized human officers must review and confirm (`Confirmed`), correct (`Corrected`), or reject (`Unsupported`). Only human-verified facts enter the immutable `VerifiedFactSnapshot`.
+- **Backward Compatibility**: The `/v1/ocr` endpoint remains 100% backward compatible and unchanged.
+
+### C. Composite Pipeline (`POST /v1/analyze`)
+The composite analysis endpoint executes:
+1. **Document Ingestion & Preprocessing**: PDF rasterization and image contrast enhancement.
+2. **OCR Extraction**: Tesseract OCR producing page-indexed transcripts and confidence scores.
+3. **Deterministic Chunking**: Text grouped into page-preserving chunks within token budget limits.
+4. **Prompt Injection Defense**: Untrusted OCR text wrapped in strict `<UNTRUSTED_DOCUMENT_PAGES>` delimiters with versioned extraction instructions (`qwen-proposal-extraction-v2`).
+5. **Ollama Structured Inference**: Chat completion against `POST /api/chat` with `model="qwen3:1.7b"`, `think=false`, `temperature=0.0`, and schema-constrained structured output.
+6. **Deterministic Grounding Verification**: Every candidate fact must quote text that verbatim appears on the referenced page. Character offsets (`start_offset`, `end_offset`) are computed against clean page text. Fabricated or hallucinated quotes fail verification (`is_verified=false`) and generate warnings.
+7. **JSON Validation & Schema Repair**: Output validated against canonical schemas, bounding values, and clamping confidence to `[0.0, 1.0]`.
+
+### D. Configuration
+Configured via `.env` or environment variables:
+```ini
+SEMANTIC_PROVIDER=ollama          # "ollama" (local Ollama HTTP daemon) or "stub" (deterministic regex)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=qwen3:1.7b
+OLLAMA_TIMEOUT_SECONDS=60.0
+OLLAMA_THINK=false
+OLLAMA_TEMPERATURE=0.0
+OLLAMA_KEEP_ALIVE=5m
+SEMANTIC_PROMPT_VERSION=qwen-proposal-extraction-v2
+RUN_QWEN_LIVE_TESTS=false         # Gate for live Ollama inference in test suite
+```
+
+### E. Composite Analysis Request Example
+```bash
+curl -X POST "http://localhost:8000/v1/analyze?language_mode=sin+eng&preprocess=true" \
+  -H "X-Request-ID: req-semantic-001" \
+  -F "file=@/path/to/proposal_deed.pdf"
+```
+
+---
+
+## 9. Semantic Evaluation Framework & Benchmark Protocol
+
+The service includes an evaluation suite for measuring semantic extraction accuracy, classification Macro-F1, evidence-span precision, and reproducibility:
+
+### A. Evaluation Manifest Schema (`dataset_manifest_template.json`)
+The manifest standardizes:
+- **80 Target Documents**: 40 development, 16 validation, 24 held-out test documents.
+- **Document Categories**: Project proposals, lease applications, survey plans, title deeds, valuation reports.
+- **Language Coverage**: Sinhala-dominant, English-dominant, and mixed bilingual.
+- **45 Manual OCR Ground-Truth Pages**: For paired CER/WER and semantic evaluation.
+- All uncollected documents are explicitly marked `PLANNED`.
+
+### B. Evaluation Runner
+Execute evaluation across an annotated dataset manifest:
+```bash
+python -m app.evaluation.runner \
+  --manifest evaluation/dataset_manifest_template.json \
+  --split development \
+  --output-dir evaluation/results
+```
+
+Outputs:
+- JSON evaluation report with:
+  - Classification Macro-F1, precision, recall
+  - Field-level precision, recall, and F1
+  - Critical-field accuracy (`ApplicantName`, `NicNumber`, `ExtentAcres`, `StatutoryBasis`)
+  - Grounded evidence-span precision (exact match & verification rate)
+  - Character Error Rate (CER) and Word Error Rate (WER)
+- Environment reproducibility metadata: Ollama version, model digest (`/api/tags`), commit hash, hardware device, model ID, prompt version, temperature, timestamp.
+- Per-document extraction breakdown CSV.
+
+---
+
+## 10. Architectural Boundaries & Non-Authority Disclaimer
+
+- **Candidate Facts Only**: Qwen produces unverified candidate observations only.
+- **Non-Authoritative Classification**: Machine document classification is non-authoritative.
+- **Mandatory Human Verification**: All candidate facts must be reviewed by authorized human officers through .NET Component 3 before entering the immutable `VerifiedFactSnapshot`.
+- **Zero Case Authority**: Qwen cannot approve, reject, reroute, screen, determine consensus, or complete lease cases.
+- **Storage Independence**: Source document bytes and OCR transcripts remain stored behind durable storage abstractions (`IDocumentContentReader` / `IDocumentContentWriter` / `IAnalysisArtifactReader` / `IAnalysisArtifactWriter`), not in PostgreSQL.

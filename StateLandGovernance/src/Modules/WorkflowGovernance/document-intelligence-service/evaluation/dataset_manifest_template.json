@@ -1,0 +1,67 @@
+{
+  "version": "1.0",
+  "status": "PLANNED",
+  "study_plan": {
+    "planned_documents_total": 80,
+    "planned_proposals": 30,
+    "planned_supporting_documents": 50,
+    "planned_splits": {
+      "development": 40,
+      "validation": 16,
+      "held_out": 24
+    },
+    "planned_language_breakdown": {
+      "sin": 20,
+      "eng": 20,
+      "mixed": 20
+    },
+    "planned_ocr_ground_truth_pages_total": 45,
+    "planned_ocr_ground_truth_breakdown": {
+      "sin": 15,
+      "eng": 15,
+      "mixed": 15
+    }
+  },
+  "planned_documents_total": 80,
+  "planned_proposals": 30,
+  "planned_supporting_documents": 50,
+  "planned_splits": {
+    "development": 40,
+    "validation": 16,
+    "held_out": 24
+  },
+  "planned_language_breakdown": {
+    "sin": 20,
+    "eng": 20,
+    "mixed": 20
+  },
+  "documents": [
+    {
+      "document_id": "PLANNED-EXAMPLE-prop-001",
+      "application_group_id": "APP-GROUP-001",
+      "split": "development",
+      "language_group": "eng",
+      "document_type_ground_truth": "LeaseProposal",
+      "file_path": "samples/proposals/prop_001_eng.pdf",
+      "ground_truth_path": "samples/ground_truth/prop_001_eng_facts.json"
+    },
+    {
+      "document_id": "PLANNED-EXAMPLE-prop-002",
+      "application_group_id": "APP-GROUP-002",
+      "split": "development",
+      "language_group": "sin",
+      "document_type_ground_truth": "LeaseProposal",
+      "file_path": "samples/proposals/prop_002_sin.pdf",
+      "ground_truth_path": "samples/ground_truth/prop_002_sin_facts.json"
+    },
+    {
+      "document_id": "PLANNED-EXAMPLE-prop-003",
+      "application_group_id": "APP-GROUP-003",
+      "split": "development",
+      "language_group": "mixed",
+      "document_type_ground_truth": "LeaseProposal",
+      "file_path": "samples/proposals/prop_003_mixed.pdf",
+      "ground_truth_path": "samples/ground_truth/prop_003_mixed_facts.json"
+    }
+  ]
+}

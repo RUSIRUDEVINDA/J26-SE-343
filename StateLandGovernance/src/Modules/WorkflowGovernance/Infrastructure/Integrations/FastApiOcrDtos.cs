@@ -63,3 +63,49 @@ public sealed record FastApiPageTranscriptArtifactDto(
     [property: JsonPropertyName("raw_text")] string RawText,
     [property: JsonPropertyName("clean_text")] string CleanText
 );
+
+/// <summary>
+/// Transport DTO representing the response schema returned by FastAPI POST /v1/analyze.
+/// </summary>
+internal sealed record FastApiAnalyzeResponseDto(
+    [property: JsonPropertyName("request_id")] string RequestId,
+    [property: JsonPropertyName("language_mode")] string LanguageMode,
+    [property: JsonPropertyName("preprocessed")] bool Preprocessed,
+    [property: JsonPropertyName("page_count")] int PageCount,
+    [property: JsonPropertyName("pages")] IReadOnlyList<FastApiOcrPageDto> Pages,
+    [property: JsonPropertyName("classification")] FastApiClassificationDto Classification,
+    [property: JsonPropertyName("facts")] IReadOnlyList<FastApiCandidateFactDto> Facts,
+    [property: JsonPropertyName("model_identifier")] string ModelIdentifier,
+    [property: JsonPropertyName("prompt_version")] string PromptVersion,
+    [property: JsonPropertyName("duration_breakdown")] FastApiDurationBreakdownDto DurationBreakdown,
+    [property: JsonPropertyName("warnings")] IReadOnlyList<string>? Warnings,
+    [property: JsonPropertyName("governance_notice")] string GovernanceNotice
+);
+
+internal sealed record FastApiClassificationDto(
+    [property: JsonPropertyName("code")] string Code,
+    [property: JsonPropertyName("confidence")] double Confidence
+);
+
+internal sealed record FastApiCandidateFactDto(
+    [property: JsonPropertyName("field_code")] string FieldCode,
+    [property: JsonPropertyName("value_kind")] string ValueKind,
+    [property: JsonPropertyName("canonical_value")] string CanonicalValue,
+    [property: JsonPropertyName("confidence")] double Confidence,
+    [property: JsonPropertyName("evidence")] FastApiEvidenceSpanDto? Evidence,
+    [property: JsonPropertyName("is_evidence_verified")] bool IsEvidenceVerified,
+    [property: JsonPropertyName("validation_warning")] string? ValidationWarning
+);
+
+internal sealed record FastApiEvidenceSpanDto(
+    [property: JsonPropertyName("page_number")] int PageNumber,
+    [property: JsonPropertyName("quote")] string Quote,
+    [property: JsonPropertyName("start_offset")] int? StartOffset,
+    [property: JsonPropertyName("end_offset")] int? EndOffset
+);
+
+internal sealed record FastApiDurationBreakdownDto(
+    [property: JsonPropertyName("ocr_duration_ms")] double OcrDurationMs,
+    [property: JsonPropertyName("semantic_duration_ms")] double SemanticDurationMs,
+    [property: JsonPropertyName("total_duration_ms")] double TotalDurationMs
+);
