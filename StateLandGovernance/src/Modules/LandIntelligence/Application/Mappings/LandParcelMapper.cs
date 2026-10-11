@@ -10,7 +10,8 @@ public static class LandParcelMapper
     public static LandParcelDto ToDto(
         LandParcel parcel,
         CadastralSourceMetadataDto? cadastralSource = null,
-        LandParcelAvailabilityDto? availability = null) =>
+        LandParcelAvailabilityDto? availability = null,
+        ParcelGisEnrichmentSummaryDto? gisEnrichment = null) =>
         new(
             parcel.Id,
             ToIdentifierDto(parcel.Identifier),
@@ -25,11 +26,13 @@ public static class LandParcelMapper
             parcel.InfrastructureFeatures.Count,
             parcel.RegulatoryReferences.Count,
             cadastralSource,
-            availability);
+            availability,
+            gisEnrichment);
 
     public static LandSearchResultDto ToSearchResultDto(
         LandParcel parcel,
-        CadastralSourceMetadataDto? cadastralSource = null) =>
+        CadastralSourceMetadataDto? cadastralSource = null,
+        LandParcelAvailabilityDto? availability = null) =>
         new(
             parcel.Id,
             parcel.Identifier.CadastralNumber,
@@ -41,7 +44,8 @@ public static class LandParcelMapper
             parcel.Area.Unit,
             parcel.Spatial.CentroidLatitude,
             parcel.Spatial.CentroidLongitude,
-            cadastralSource);
+            cadastralSource,
+            availability);
 
     public static LandParcel ToEntity(CreateLandParcelCommand command)
     {
