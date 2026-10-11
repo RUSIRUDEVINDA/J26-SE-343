@@ -18,8 +18,14 @@ public sealed record DocumentAnalysisDto(
     int Revision,
     int RunCount,
     AnalysisRunDto? ActiveRun,
-    IReadOnlyList<AnalysisRunDto> Runs
-);
+    IReadOnlyList<AnalysisRunDto> Runs,
+    IReadOnlyList<HumanFactVerificationDto>? Verifications = null,
+    IReadOnlyList<VerifiedFactSnapshotDto>? VerifiedFactSnapshots = null
+)
+{
+    public IReadOnlyList<HumanFactVerificationDto> Verifications { get; init; } = Verifications ?? Array.Empty<HumanFactVerificationDto>();
+    public IReadOnlyList<VerifiedFactSnapshotDto> VerifiedFactSnapshots { get; init; } = VerifiedFactSnapshots ?? Array.Empty<VerifiedFactSnapshotDto>();
+}
 
 /// <summary>
 /// Read-only DTO exposing an individual machine analysis run and its lifecycle state.

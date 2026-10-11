@@ -62,20 +62,20 @@ export const moduleLandingLinks = [
   },
   {
     id: "component-02",
-    title: "Lease Feasibility",
+    title: "Financial Intelligence & Proposal Support",
     href: "/component-02",
-    available: false,
+    available: true,
   },
   {
     id: "component-03",
-    title: "Governance Intelligence",
+    title: "Workflow Governance",
     href: "/component-03",
     available: false,
   },
   {
     id: "component-04",
-    title: "Workflow Governance",
+    title: "Governance Intelligence",
     href: "/component-04",
-    available: false,
+    available: true,
   },
 ];

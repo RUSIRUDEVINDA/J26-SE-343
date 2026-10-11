@@ -23,6 +23,79 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplaintClassificationAssessmentEntity", b =>
+                {
+                    b.Property<Guid>("AssessmentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("assessment_id");
+
+                    b.Property<decimal>("AdministrativeProceduralIntegrityProbability")
+                        .HasPrecision(18, 17)
+                        .HasColumnType("numeric(18,17)")
+                        .HasColumnName("administrative_procedural_integrity_probability");
+
+                    b.Property<string>("AdvisoryNote")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("advisory_note");
+
+                    b.Property<DateTimeOffset>("AssessedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("assessed_at_utc");
+
+                    b.Property<string>("CaseId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("case_id");
+
+                    b.Property<string>("ClosedSetNote")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("closed_set_note");
+
+                    b.Property<string>("ComplaintText")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("complaint_text");
+
+                    b.Property<decimal>("LeaseRevenuePaymentEnforcementProbability")
+                        .HasPrecision(18, 17)
+                        .HasColumnType("numeric(18,17)")
+                        .HasColumnName("lease_revenue_payment_enforcement_probability");
+
+                    b.Property<string>("ModelVersion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("model_version");
+
+                    b.Property<string>("PredictedCategory")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("predicted_category");
+
+                    b.Property<decimal>("ProtectedEnvironmentalLeaseMisuseProbability")
+                        .HasPrecision(18, 17)
+                        .HasColumnType("numeric(18,17)")
+                        .HasColumnName("protected_environmental_lease_misuse_probability");
+
+                    b.Property<decimal>("UnauthorizedAllocationTransferUseProbability")
+                        .HasPrecision(18, 17)
+                        .HasColumnType("numeric(18,17)")
+                        .HasColumnName("unauthorized_allocation_transfer_use_probability");
+
+                    b.HasKey("AssessmentId");
+
+                    b.ToTable("complaint_classification_assessments", "governance_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_complaint_classification_assessments_probability_range", "administrative_procedural_integrity_probability >= 0 AND administrative_procedural_integrity_probability <= 1 AND lease_revenue_payment_enforcement_probability >= 0 AND lease_revenue_payment_enforcement_probability <= 1 AND unauthorized_allocation_transfer_use_probability >= 0 AND unauthorized_allocation_transfer_use_probability <= 1 AND protected_environmental_lease_misuse_probability >= 0 AND protected_environmental_lease_misuse_probability <= 1");
+
+                            t.HasCheckConstraint("CK_complaint_classification_assessments_probability_sum", "abs(administrative_procedural_integrity_probability + lease_revenue_payment_enforcement_probability + unauthorized_allocation_transfer_use_probability + protected_environmental_lease_misuse_probability - 1.0) <= 0.000001");
+                        });
+                });
+
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceEvaluationEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -456,6 +529,99 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                     b.ToTable("consensus_evaluations", "governance_intelligence");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceReferralEntity", b =>
+                {
+                    b.Property<Guid>("ReferralId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("referral_id");
+
+                    b.Property<DateTimeOffset?>("AcknowledgedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("acknowledged_at_utc");
+
+                    b.Property<Guid>("AssessmentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("assessment_id");
+
+                    b.Property<string>("CaseId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("case_id");
+
+                    b.Property<string>("CommissionerReviewProcessReference")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("commissioner_review_process_reference");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("correlation_id");
+
+                    b.Property<int>("DeliveryAttemptCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("delivery_attempt_count");
+
+                    b.Property<string>("DeliveryState")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("delivery_state");
+
+                    b.Property<string>("EvidenceReferencesJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("evidence_references_json");
+
+                    b.Property<DateTimeOffset?>("LastAttemptAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_attempt_at_utc");
+
+                    b.Property<string>("LastFailureCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("last_failure_code");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("reason");
+
+                    b.Property<string>("ReasonCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("reason_code");
+
+                    b.Property<DateTimeOffset>("RequestedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("requested_at_utc");
+
+                    b.Property<Guid>("WorkflowRunId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workflow_run_id");
+
+                    b.HasKey("ReferralId");
+
+                    b.HasIndex("AssessmentId")
+                        .IsUnique();
+
+                    b.HasIndex("CorrelationId")
+                        .IsUnique();
+
+                    b.HasIndex("DeliveryState");
+
+                    b.HasIndex("CaseId", "RequestedAtUtc");
+
+                    b.ToTable("early_governance_referrals", "governance_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_early_governance_referrals_delivery_attempt_count", "delivery_attempt_count >= 0");
+
+                            t.HasCheckConstraint("CK_early_governance_referrals_delivery_state", "delivery_state IN ('Pending', 'Delivering', 'DeliveryFailed', 'Acknowledged')");
+                        });
+                });
+
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceScreeningEvaluationEntity", b =>
                 {
                     b.Property<Guid>("AssessmentId")
@@ -487,7 +653,13 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .HasColumnType("integer")
                         .HasColumnName("snapshot_schema_version");
 
+                    b.Property<Guid?>("WorkflowRunId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workflow_run_id");
+
                     b.HasKey("AssessmentId");
+
+                    b.HasIndex("CaseId", "CreatedAtUtc");
 
                     b.ToTable("early_governance_screening_evaluations", "governance_intelligence");
                 });
@@ -949,6 +1121,17 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                     b.Navigation("AuditRecord");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceReferralEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceScreeningEvaluationEntity", "Assessment")
+                        .WithOne("Referral")
+                        .HasForeignKey("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceReferralEntity", "AssessmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Assessment");
+                });
+
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceExplanationEvaluationEntity", b =>
                 {
                     b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceAuditRecordEntity", "AuditRecord")
@@ -1033,6 +1216,11 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ConsensusEvaluationEntity", b =>
                 {
                     b.Navigation("InstitutionPositions");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceScreeningEvaluationEntity", b =>
+                {
+                    b.Navigation("Referral");
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceExplanationEvaluationEntity", b =>

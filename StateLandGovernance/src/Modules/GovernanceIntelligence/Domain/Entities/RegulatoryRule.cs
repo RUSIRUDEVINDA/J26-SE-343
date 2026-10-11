@@ -32,4 +32,16 @@ public abstract class RegulatoryRule
         LeaseEvaluationInput input, 
         List<Violation> violations, 
         List<ComplianceCondition> conditions);
+
+    /// <summary>
+    /// Evaluates the input details against the rule using a supplied deterministic evaluation timestamp.
+    /// </summary>
+    public virtual void Evaluate(
+        LeaseEvaluationInput input,
+        List<Violation> violations,
+        List<ComplianceCondition> conditions,
+        DateTime evaluationTimestamp)
+    {
+        Evaluate(input, violations, conditions);
+    }
 }

@@ -112,7 +112,7 @@ public sealed class EvaluateComplianceCommandHandler
                 command.LeaseAmount,
                 command.ZoningArea ?? string.Empty);
 
-            result = _complianceEngine.Evaluate(legacyInput, rules);
+            result = _complianceEngine.Evaluate(legacyInput, rules, utcTimestamp);
         }
 
         // Store audit record & evaluation output atomically

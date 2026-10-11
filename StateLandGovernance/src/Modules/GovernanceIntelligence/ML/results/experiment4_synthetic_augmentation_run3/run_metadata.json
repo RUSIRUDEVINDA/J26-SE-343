@@ -1,0 +1,21 @@
+{
+  "status": "DRY_RUN",
+  "output_dir": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment4_synthetic_augmentation_run3",
+  "review_file": "candidate-data\\v1\\synthetic_family_review_pack.csv",
+  "review_sha256": "e41a6bf12b780ac5ef60f3adc07b808e20f4521c5abd21cb6496d869a3cdbf8e",
+  "candidate_sha256": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8",
+  "total_families_in_pack": 100,
+  "eligible_families": 0,
+  "eligible_records": 0,
+  "zero_augmentation_folds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "eligible_label_distribution": {},
+  "fold_eligible_counts": {},
+  "note": "Dry-run: input validation and manifest generation only. No model was fitted. No metrics were produced. ",
+  "caution": "Researcher review is not independent professional governance validation. Development cross-validation results only. Not held-out test results."
+}

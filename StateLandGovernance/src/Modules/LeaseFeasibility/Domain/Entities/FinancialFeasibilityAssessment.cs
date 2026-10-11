@@ -17,6 +17,7 @@ public sealed class FinancialFeasibilityAssessment : Entity
     public FeasibilityAction Action { get; private set; }
     public FeasibilityScoreBreakdown ScoreBreakdown { get; private set; } = null!;
     public ApprovalProbability? PredictiveProbability { get; private set; }
+    public LeasePaymentCapacity? PaymentCapacity { get; private set; }
     public bool IsFinalized { get; private set; }
     public DateTimeOffset GeneratedAt { get; private set; }
 
@@ -34,7 +35,8 @@ public sealed class FinancialFeasibilityAssessment : Entity
         FeasibilityAction action,
         FeasibilityScoreBreakdown scoreBreakdown,
         DateTimeOffset generatedAt,
-        ApprovalProbability? predictiveProbability = null)
+        ApprovalProbability? predictiveProbability = null,
+        LeasePaymentCapacity? paymentCapacity = null)
     {
         if (string.IsNullOrWhiteSpace(applicationId))
         {
@@ -63,6 +65,7 @@ public sealed class FinancialFeasibilityAssessment : Entity
         Action = action;
         ScoreBreakdown = scoreBreakdown;
         PredictiveProbability = predictiveProbability;
+        PaymentCapacity = paymentCapacity;
         IsFinalized = false;
         GeneratedAt = generatedAt.ToUniversalTime();
     }

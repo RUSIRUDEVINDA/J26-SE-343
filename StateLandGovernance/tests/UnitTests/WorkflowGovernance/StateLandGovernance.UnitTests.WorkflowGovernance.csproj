@@ -25,6 +25,7 @@
     <ProjectReference Include="..\..\..\src\Modules\WorkflowGovernance\Domain\StateLandGovernance.WorkflowGovernance.Domain.csproj" />
     <ProjectReference Include="..\..\..\src\Modules\WorkflowGovernance\Application\StateLandGovernance.WorkflowGovernance.Application.csproj" />
     <ProjectReference Include="..\..\..\src\Modules\WorkflowGovernance\Infrastructure\StateLandGovernance.WorkflowGovernance.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\WorkflowGovernance\Presentation\StateLandGovernance.WorkflowGovernance.Presentation.csproj" />
   </ItemGroup>
 
 </Project>

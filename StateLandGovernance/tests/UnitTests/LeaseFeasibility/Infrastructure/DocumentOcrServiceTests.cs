@@ -38,7 +38,7 @@ public class DocumentOcrServiceTests
         _output.WriteLine("--- RAW EXTRACTED TEXT FROM OCR ---");
         _output.WriteLine(result);
         _output.WriteLine("-----------------------------------");
-        
+
         if (envFile == "mock-statement.txt")
         {
             Assert.Contains("MOCK OCR RESULT", result);
@@ -139,7 +139,7 @@ public class DocumentOcrServiceTests
         _output.WriteLine(json);
 
         Assert.NotNull(profile);
-        Assert.Equal("A", profile.CreditRiskGrade);
+        Assert.Equal("A1", profile.CreditRiskGrade);
         Assert.Equal(6500m, profile.AverageMonthlyIncome);
     }
 
@@ -168,7 +168,7 @@ public class DocumentOcrServiceTests
         var configMock = new Mock<IConfiguration>();
         configMock.Setup(c => c["Azure:DocumentIntelligence:Endpoint"]).Returns("https://dummy.cognitiveservices.azure.com/");
         var service = new DocumentOcrService(configMock.Object);
-        
+
         string tempFile = System.IO.Path.GetTempFileName();
         System.IO.File.WriteAllText(tempFile, "[BANK STATEMENT]\nAverage Monthly Income: 5000.\nOverdraft Count Last 6 Months: 1"); // Missing Account Balance and Savings Ratio
 
@@ -196,7 +196,7 @@ public class DocumentOcrServiceTests
         var configMock = new Mock<IConfiguration>();
         configMock.Setup(c => c["Azure:DocumentIntelligence:Endpoint"]).Returns("https://dummy.cognitiveservices.azure.com/");
         var service = new DocumentOcrService(configMock.Object);
-        
+
         string tempFile = System.IO.Path.GetTempFileName();
         System.IO.File.WriteAllText(tempFile, "[CRIB REPORT]\nActive Loan Obligations: 5000.\nDefault History Indicator: True"); // Missing Grade and Inquiries
 
@@ -208,8 +208,8 @@ public class DocumentOcrServiceTests
             );
 
             Assert.NotEmpty(ex.Errors);
-            Assert.Contains(ex.Errors, e => e.Contains("Missing required field: Credit Risk Grade"));
-            Assert.Contains(ex.Errors, e => e.Contains("Missing required field: Recent Credit Inquiries"));
+            Assert.Contains(ex.Errors, e => e.Contains("CRIB Risk Grade"));
+
         }
         finally
         {

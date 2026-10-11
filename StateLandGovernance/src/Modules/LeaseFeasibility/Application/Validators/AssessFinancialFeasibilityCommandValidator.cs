@@ -30,6 +30,11 @@ public sealed class AssessFinancialFeasibilityCommandValidator : IRequestValidat
             errors.Add("Monthly debt obligations cannot be negative.");
         }
 
+        if (request.VerifiedTotalMonthlyIncomeLkr is <= 0m)
+        {
+            errors.Add("Verified total monthly income must be greater than zero LKR.");
+        }
+
         if (request.IncomeConsistencyRatio is < 0m or > 1m)
         {
             errors.Add("Income consistency ratio must be between 0 and 1.");

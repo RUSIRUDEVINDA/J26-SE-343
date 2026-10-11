@@ -7,14 +7,14 @@ export default function HomePage() {
     <PageLayout showSidebar={false}>
       <PageHeading
         title="State Land Lease Information and Management System"
-        subtitle="Select a platform module. Component 1 — Land Intelligence and Spatial Recommendation is available in this frontend."
+        subtitle="Select a platform module. Explore Land Intelligence or the Financial Intelligence design preview."
       />
       <div className="landingGrid">
         {moduleLandingLinks.map((module) =>
           module.available ? (
             <Link key={module.id} href={module.href} className="landingCard">
               <h2>{module.title}</h2>
-              <p>Open module dashboard and spatial recommendation tools.</p>
+              <p>{module.id === "component-02" ? "Open the financial assessment and proposal design preview." : "Open module dashboard and spatial recommendation tools."}</p>
             </Link>
           ) : (
             <div

@@ -1,0 +1,50 @@
+{
+  "artifacts": {
+    "evaluation_metadata": {
+      "path": "../../evaluations/synthetic_held_out_test_v1/evaluation_metadata.json",
+      "sha256": "8bd3ef71a3534e6930fd9734f0e43f4e23bd070539117074bc2a1f3acff730b6"
+    },
+    "metadata": {
+      "path": "../../runs/isolation_forest_baseline_v1/metadata.json",
+      "sha256": "632d709d31f24b889d0ee0165fd921f8104a9c3d3e9fa12ab66eee943b186d74"
+    },
+    "model": {
+      "path": "../../runs/isolation_forest_baseline_v1/isolation_forest.joblib",
+      "sha256": "59ed4a73d56d9f06798c4ebc4684a633afe72841c41ed0b3ba4e7bb658782b46"
+    },
+    "test_metrics": {
+      "path": "../../evaluations/synthetic_held_out_test_v1/test_metrics.json",
+      "sha256": "f53e0059bf4319ab9824eb3b11d3a55a84a203584a9f41b466779101e2439739"
+    },
+    "test_predictions": {
+      "path": "../../evaluations/synthetic_held_out_test_v1/test_predictions.csv",
+      "sha256": "0cb416722b8e7cbf0e269049a7a5cd9ee97d607cea52fe1012e8d714ade10dc3"
+    },
+    "threshold_and_feature_contract": {
+      "path": "../../runs/isolation_forest_baseline_v1/threshold_and_feature_contract.json",
+      "sha256": "52c01aad552996e377623722482ac294bffd6ed936487bf75cdb7fbf77c3155b"
+    }
+  },
+  "bundle_version": "workflow_anomaly_model_v1",
+  "feature_order": [
+    "event_count",
+    "elapsed_days",
+    "max_gap_hours",
+    "mean_gap_hours",
+    "unique_activities",
+    "repeated_activity_count",
+    "resource_handoffs",
+    "institution_switches",
+    "distinct_resources"
+  ],
+  "limitations": [
+    "Synthetic-only completed-case workflow experiment.",
+    "Not a corruption detector, legal compliance engine, or validated Sri Lankan departmental model.",
+    "Anomaly score is not a probability or confidence value.",
+    "No individual-feature attribution is supplied by this bundle."
+  ],
+  "score_direction": "anomaly_score = -model.score_samples(X); larger values are more statistically unusual",
+  "strict_flag_rule": "anomaly_score > threshold",
+  "threshold": 0.5743688923115832,
+  "trusted_local_only": true
+}

@@ -16,6 +16,11 @@ public sealed class RegulatoryComplianceEngine : IRegulatoryComplianceEngine
 {
     public ComplianceResult Evaluate(LeaseEvaluationInput input, IEnumerable<RegulatoryRule> rules)
     {
+        return Evaluate(input, rules, DateTime.UtcNow);
+    }
+
+    public ComplianceResult Evaluate(LeaseEvaluationInput input, IEnumerable<RegulatoryRule> rules, DateTime evaluationTimestamp)
+    {
         if (input is null) throw new ArgumentNullException(nameof(input));
         if (rules is null) throw new ArgumentNullException(nameof(rules));
 
@@ -24,7 +29,7 @@ public sealed class RegulatoryComplianceEngine : IRegulatoryComplianceEngine
 
         foreach (var rule in rules.Where(r => r != null && r.IsActive))
         {
-            rule.Evaluate(input, violations, conditions);
+            rule.Evaluate(input, violations, conditions, evaluationTimestamp);
         }
 
         ComplianceStatus status;
@@ -58,7 +63,7 @@ public sealed class RegulatoryComplianceEngine : IRegulatoryComplianceEngine
 
         var deterministicId = GenerateDeterministicEvaluationId(input.ProposedUse, legacyFindings);
 
-        return new ComplianceResult(status, legacyFindings, deterministicId, DateTime.UtcNow, violations, conditions);
+        return new ComplianceResult(status, legacyFindings, deterministicId, evaluationTimestamp, violations, conditions);
     }
 
     public ComplianceResult EvaluateNpd(ProposalComplianceInput input, DateTime evaluationTimestamp)

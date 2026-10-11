@@ -16,6 +16,53 @@ namespace StateLandGovernance.UnitTests.LeaseFeasibility.Application.Commands;
 
 public class AssessFinancialFeasibilityCommandHandlerTests
 {
+    [Theory]
+    [InlineData("XX", false, 0)]
+    [InlineData("B1", null, 0)]
+    [InlineData("B1", false, 1)]
+    public async Task UnreviewedCribEvidenceDoesNotScoreOrPersist(string grade, bool? history, int disputes)
+    {
+        var extraction = new Mock<IDocumentExtractionService>();
+        extraction.Setup(e => e.ExtractBankStatementDataAsync("bank", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new BankStatementDataDto(100000m, 40000m, 0, 0.2m));
+        extraction.Setup(e => e.ExtractSalarySlipDataAsync("salary", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new SalarySlipDataDto(100000m, 24, "Full-Time", "Synthetic employer"));
+        extraction.Setup(e => e.ExtractCribReportDataAsync("crib", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CribReportDataDto(grade, null, history, null) { ActiveDisputes = disputes });
+        var scoring = new Mock<IFinancialFeasibilityScoringEngine>(MockBehavior.Strict);
+        var repository = new Mock<IFinancialFeasibilityRepository>(MockBehavior.Strict);
+        var handler = new AssessFinancialFeasibilityCommandHandler(extraction.Object,
+            scoring.Object, repository.Object, TimeProvider.System,
+            Mock.Of<ILogger<AssessFinancialFeasibilityCommandHandler>>());
+        await Assert.ThrowsAsync<StateLandGovernance.LeaseFeasibility.Application.Interfaces.ValidationException>(() =>
+            handler.HandleAsync(new AssessFinancialFeasibilityCommand("case", "applicant", 10000m, 2000m, 0.8m, "bank", "salary", "crib")));
+        scoring.VerifyNoOtherCalls();
+        repository.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task VerifiedTotalIncomeFeedsCapacityAndResponse()
+    {
+        var extraction = new Mock<IDocumentExtractionService>();
+        extraction.Setup(e => e.ExtractBankStatementDataAsync("bank", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new BankStatementDataDto(0m, 200000m, 0, 0m));
+        extraction.Setup(e => e.ExtractSalarySlipDataAsync("salary", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new SalarySlipDataDto(50000m, 24, "Full-Time", "Synthetic employer"));
+        extraction.Setup(e => e.ExtractCribReportDataAsync("crib", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CribReportDataDto("A1", null, false, 0));
+        var repository = new Mock<IFinancialFeasibilityRepository>();
+        var handler = new AssessFinancialFeasibilityCommandHandler(extraction.Object,
+            new FinancialFeasibilityScoringEngine(), repository.Object, TimeProvider.System,
+            Mock.Of<ILogger<AssessFinancialFeasibilityCommandHandler>>());
+        var result = await handler.HandleAsync(new AssessFinancialFeasibilityCommand(
+            "case", "applicant", 15000.01m, 45000m, 1m, "bank", "salary", "crib", 100000m));
+        Assert.Equal(100000m, result.PaymentCapacity!.VerifiedMonthlyIncomeLkr);
+        Assert.Equal(15000m, result.PaymentCapacity.AvailableMonthlyLeasePaymentLkr);
+        Assert.True(result.RequiresEscalation);
+        repository.Verify(r => r.AddAsync(It.Is<FinancialFeasibilityAssessment>(a =>
+            a.PaymentCapacity != null && !a.PaymentCapacity.IsWithinLimit), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
     private sealed class TestTimeProvider : TimeProvider
     {
         private readonly DateTimeOffset _time;
@@ -23,8 +70,11 @@ public class AssessFinancialFeasibilityCommandHandlerTests
         public override DateTimeOffset GetUtcNow() => _time;
     }
 
-    [Fact]
-    public async Task HandleAsync_ValidInput_PreservesIdsTypedAmountsAndTimeProviderTimestamp()
+    [Theory]
+    [InlineData("B")]
+    [InlineData("B1")]
+    [InlineData("B3")]
+    public async Task HandleAsync_ValidInput_PreservesIdsTypedAmountsAndTimeProviderTimestamp(string bureauGrade)
     {
         var fixedTime = new DateTimeOffset(2026, 9, 22, 12, 15, 0, TimeSpan.FromHours(5.5));
         var extractionMock = new Mock<IDocumentExtractionService>();
@@ -34,7 +84,7 @@ public class AssessFinancialFeasibilityCommandHandlerTests
         extractionMock.Setup(e => e.ExtractSalarySlipDataAsync("mock-salary1.txt", It.IsAny<CancellationToken>()))
             .ReturnsAsync(new SalarySlipDataDto(100_000m, 24, "Full-Time", "Acme Corp"));
         extractionMock.Setup(e => e.ExtractCribReportDataAsync("mock-crib.txt", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new CribReportDataDto("B", 900_000m, false, 1));
+            .ReturnsAsync(new CribReportDataDto(bureauGrade, 900_000m, false, 1));
 
         var breakdown = new FeasibilityScoreBreakdown(
             debtServiceRatio: 0.28m,

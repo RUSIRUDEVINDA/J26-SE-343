@@ -139,6 +139,29 @@ public class FinancialFeasibilityScoringEngineTests
         Assert.Equal(10m, result.ScoreBreakdown.DebtServiceRatioScore);
     }
 
+    [Theory]
+    [InlineData("15000", true, FeasibilityAction.ManualReview)]
+    [InlineData("15000.01", false, FeasibilityAction.Escalate)]
+    public void EvaluateFeasibility_EnforcesCapacityIndependentOfScore(string payment, bool within, FeasibilityAction action)
+    {
+        var result = new FinancialFeasibilityScoringEngine().EvaluateFeasibility(
+            CreateInput(monthlyDebtObligationsLkr: 45000m,
+                requestedMonthlyLeasePaymentLkr: decimal.Parse(payment, CultureInfo.InvariantCulture),
+                averageAccountBalanceLkr: 200000m), EvaluationTime);
+        Assert.Equal(within, result.PaymentCapacity!.IsWithinLimit);
+        Assert.Equal(15000m, result.PaymentCapacity.AvailableMonthlyLeasePaymentLkr);
+        Assert.Equal(action, result.Action);
+    }
+
+    [Fact]
+    public void EvaluateFeasibility_OverCapacityPreservesReject()
+    {
+        var result = new FinancialFeasibilityScoringEngine().EvaluateFeasibility(
+            CreateInput(monthlyDebtObligationsLkr: 70000m, hasDefaultHistory: true), EvaluationTime);
+        Assert.Equal(FeasibilityAction.Reject, result.Action);
+        Assert.Equal(0m, result.PaymentCapacity!.AvailableMonthlyLeasePaymentLkr);
+    }
+
     private static FinancialFeasibilityScoringInput CreateInput(
         string applicationId = "LEASE-001",
         string applicantId = "PERSON-001",
