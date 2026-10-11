@@ -2,6 +2,7 @@ namespace StateLandGovernance.WorkflowGovernance.Infrastructure;
 
 using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -63,6 +64,58 @@ public static class DependencyInjection
         services.TryAddScoped<IProposalTemplateProvider>(_ => null!);
         services.TryAddScoped<IDocumentRequirementProvider>(_ => null!);
         services.TryAddScoped<IComponent4ScreeningGateway>(_ => null!);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers durable PostgreSQL persistence for WorkflowGovernance using EF Core.
+    /// Resolves connection string from parameter, environment variable WORKFLOW_GOVERNANCE_CONNECTION,
+    /// or LAND_INTELLIGENCE_CONNECTION.
+    /// </summary>
+    public static IServiceCollection AddWorkflowGovernancePostgresPersistence(
+        this IServiceCollection services,
+        string? connectionString = null)
+    {
+        var resolvedConnection = connectionString
+            ?? Environment.GetEnvironmentVariable("WORKFLOW_GOVERNANCE_CONNECTION")
+            ?? Environment.GetEnvironmentVariable("LAND_INTELLIGENCE_CONNECTION");
+
+        if (string.IsNullOrWhiteSpace(resolvedConnection))
+        {
+            throw new InvalidOperationException(
+                "Set WORKFLOW_GOVERNANCE_CONNECTION or LAND_INTELLIGENCE_CONNECTION in .env at the repository root.");
+        }
+
+        services.AddDbContext<WorkflowGovernanceDbContext>(options =>
+        {
+            options.UseNpgsql(resolvedConnection, npgsqlOptions =>
+            {
+                npgsqlOptions.MigrationsHistoryTable("__ef_migrations_history", WorkflowGovernanceDbContext.SchemaName);
+            });
+        });
+
+        services.AddScoped<WorkflowGovernanceAggregateTracker>();
+        services.AddScoped<IWorkflowGovernanceUnitOfWork>(sp =>
+            new PostgresWorkflowGovernanceUnitOfWork(
+                sp.GetRequiredService<WorkflowGovernanceDbContext>(),
+                sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
+        services.AddScoped<ILeaseCaseRepository>(sp =>
+            new PostgresLeaseCaseRepository(
+                sp.GetRequiredService<WorkflowGovernanceDbContext>(),
+                sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
+        services.AddScoped<IGovernedDocumentRepository>(sp =>
+            new PostgresGovernedDocumentRepository(
+                sp.GetRequiredService<WorkflowGovernanceDbContext>(),
+                sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
+        services.AddScoped<IDocumentAnalysisRepository>(sp =>
+            new PostgresDocumentAnalysisRepository(
+                sp.GetRequiredService<WorkflowGovernanceDbContext>(),
+                sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
+        services.AddScoped<IDocumentCompletenessAssessmentRepository>(sp =>
+            new PostgresDocumentCompletenessAssessmentRepository(
+                sp.GetRequiredService<WorkflowGovernanceDbContext>(),
+                sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
 
         return services;
     }
