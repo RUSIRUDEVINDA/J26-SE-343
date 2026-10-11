@@ -12,10 +12,11 @@ public sealed record LandRecommendationSearchRequest
     public decimal? RequiredAreaHectares { get; init; }
     public decimal AreaTolerancePercent { get; init; } = 15m;
     public PreferredLocationCriteria? PreferredLocation { get; init; }
+    /// <summary>Legacy domain category filter — use only for synthetic/domain-managed parcels.</summary>
     public LandCategoryType? RequiredLandCategory { get; init; }
     public LandUseType? RequiredLandUse { get; init; }
-    public AccessibilityCriteria? Accessibility { get; init; }
-    public EnvironmentalCriteria? Environmental { get; init; }
+    /// <summary>Exact match on source-reported land-use code or English label (real cadastre).</summary>
+    public string? SourceReportedLandUse { get; init; }
     public RegulatoryCriteria? Regulatory { get; init; }
     public IReadOnlyList<CustomCriterionCriteria>? AdditionalCriteria { get; init; }
     public Guid? TargetParcelId { get; init; }
@@ -27,18 +28,6 @@ public sealed record PreferredLocationCriteria
     public string? Province { get; init; }
     public string? District { get; init; }
     public string? DivisionalSecretariat { get; init; }
-}
-
-public sealed record AccessibilityCriteria
-{
-    public decimal? MaxRoadDistanceMeters { get; init; }
-    public bool RequireRoadAccess { get; init; }
-}
-
-public sealed record EnvironmentalCriteria
-{
-    public RestrictionSeverity MaxAllowedEnvironmentalSeverity { get; init; } = RestrictionSeverity.Medium;
-    public bool RejectProhibitiveEnvironmentalRestrictions { get; init; } = true;
 }
 
 public sealed record RegulatoryCriteria
@@ -66,7 +55,25 @@ public sealed record CriterionEvaluationDto(
     decimal WeightedScore,
     string Summary,
     AttributeProvenanceDto? DataProvenance = null,
-    string? AttributePath = null);
+    string? AttributePath = null,
+    bool WasAssessed = true,
+    string? NotAssessedReason = null);
+
+public sealed record RecommendationFilterStageDto(
+    string Name,
+    int CandidateCount,
+    string Description);
+
+public sealed record RecommendationUnavailableCriterionDto(
+    string Key,
+    string Reason);
+
+public sealed record RecommendationSearchTransparencyDto(
+    IReadOnlyList<string> AppliedFilters,
+    int CandidateCountBeforeFilters,
+    int CandidateCountAfterFilters,
+    IReadOnlyList<RecommendationFilterStageDto> FilterStages,
+    IReadOnlyList<RecommendationUnavailableCriterionDto> UnavailableCriteria);
 
 public sealed record RestrictionSummaryDto(
     string RestrictionType,
@@ -86,10 +93,19 @@ public sealed record LandParcelRecommendationResult(
     IReadOnlyList<RecommendationEvidenceDto> Evidence,
     string Explanation,
     bool HardConstraintRejected = false,
-    string? HardConstraintReason = null);
+    string? HardConstraintReason = null,
+    /// <summary>State-land screening status label (not legal availability).</summary>
+    string? CandidateStatusLabel = null,
+    string? CandidateStatusReason = null,
+    string? SourceReportedClaimantCategoryCode = null,
+    string? SourceReportedClaimantCategoryDisplay = null,
+    string? SourceParcelStatusCode = null,
+    string? SourceProvenanceLabel = null,
+    DateTimeOffset? SourceImportedAtUtc = null);
 
 public sealed record LandRecommendationSearchResponse(
     LandUseType RequiredPurpose,
     IReadOnlyList<LandParcelRecommendationResult> Recommendations,
     int CandidateCount,
-    DateTimeOffset GeneratedAt);
+    DateTimeOffset GeneratedAt,
+    RecommendationSearchTransparencyDto? Transparency = null);
