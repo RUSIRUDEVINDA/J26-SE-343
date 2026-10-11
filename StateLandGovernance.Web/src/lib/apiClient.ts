@@ -1,4 +1,12 @@
 import type { ApiErrorResponse } from "@/shared/types/common";
+import {
+  ensureApplicantAccessToken,
+  ensureOfficerAccessToken,
+  isDemoOwnerHeaderEnabled,
+  landIntelligenceBearerHeaders,
+} from "@/modules/component-01-land-intelligence/utils/landIntelligenceSession";
+
+export type LandIntelligenceApiAuthRole = "applicant" | "officer" | "none";
 import { landIntelligenceOwnerHeaders } from "@/modules/component-01-land-intelligence/utils/landIntelligenceOwner";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
@@ -28,9 +36,33 @@ function ensureBaseUrl(): string {
   return baseUrl;
 }
 
-function mergeHeaders(init?: HeadersInit): HeadersInit {
+async function resolveAccessToken(
+  authRole: LandIntelligenceApiAuthRole,
+): Promise<string | null> {
+  if (authRole === "none") {
+    return null;
+  }
+  if (authRole === "officer") {
+    return await ensureOfficerAccessToken();
+  }
+  return await ensureApplicantAccessToken();
+}
+
+async function mergeHeaders(
+  init?: HeadersInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
+): Promise<HeadersInit> {
+  const accessToken = await resolveAccessToken(authRole);
+  const demoOwner =
+    authRole === "applicant" &&
+    isDemoOwnerHeaderEnabled() &&
+    !accessToken
+      ? landIntelligenceOwnerHeaders()
+      : {};
+
   return {
-    ...landIntelligenceOwnerHeaders(),
+    ...landIntelligenceBearerHeaders(accessToken),
+    ...demoOwner,
     ...init,
   };
 }
@@ -53,15 +85,22 @@ async function parseError(response: Response): Promise<ApiClientError> {
   }
 }
 
-export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
+export async function apiGet<T>(
+  path: string,
+  init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
+): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
   const response = await fetch(url, {
     ...init,
     method: "GET",
-    headers: mergeHeaders({
-      Accept: "application/json",
-      ...init?.headers,
-    }),
+    headers: await mergeHeaders(
+      {
+        Accept: "application/json",
+        ...init?.headers,
+      },
+      authRole,
+    ),
   });
   if (!response.ok) {
     throw await parseError(response);
@@ -73,16 +112,20 @@ export async function apiPost<T>(
   path: string,
   body: unknown,
   init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
   const response = await fetch(url, {
     ...init,
     method: "POST",
-    headers: mergeHeaders({
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...init?.headers,
-    }),
+    headers: await mergeHeaders(
+      {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...init?.headers,
+      },
+      authRole,
+    ),
     body: JSON.stringify(body),
   });
   if (!response.ok) {
@@ -95,16 +138,20 @@ export async function apiPut<T>(
   path: string,
   body: unknown,
   init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
   const response = await fetch(url, {
     ...init,
     method: "PUT",
-    headers: mergeHeaders({
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...init?.headers,
-    }),
+    headers: await mergeHeaders(
+      {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...init?.headers,
+      },
+      authRole,
+    ),
     body: JSON.stringify(body),
   });
   if (!response.ok) {
@@ -119,15 +166,19 @@ export async function apiPut<T>(
 export async function apiDelete(
   path: string,
   init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<void> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
   const response = await fetch(url, {
     ...init,
     method: "DELETE",
-    headers: mergeHeaders({
-      Accept: "application/json",
-      ...init?.headers,
-    }),
+    headers: await mergeHeaders(
+      {
+        Accept: "application/json",
+        ...init?.headers,
+      },
+      authRole,
+    ),
   });
   if (!response.ok) {
     throw await parseError(response);

@@ -15,6 +15,9 @@ import {
   type RecommendationsSessionPayload,
 } from "@/modules/component-01-land-intelligence/types/landIntelligence";
 import { landUseTypeLabels } from "@/modules/component-01-land-intelligence/utils/enumMappings";
+import {
+  targetAreaUnitShortLabel,
+} from "@/modules/component-01-land-intelligence/utils/targetAreaUnits";
 import styles from "./RecommendationsView.module.css";
 
 const REC_STORE_EVENT = "component01.recommendations";
@@ -74,7 +77,10 @@ function getServerHydrated() {
   return false;
 }
 
-function buildSummaryChips(request: LandRecommendationSearchRequest) {
+function buildSummaryChips(
+  request: LandRecommendationSearchRequest,
+  formState?: FindSuitableLandFormState,
+) {
   const chips: Array<{ label: string; muted?: boolean }> = [
     {
       label: `Purpose: ${landUseTypeLabels[request.requiredPurpose] ?? "Unknown"}`,
@@ -90,8 +96,20 @@ function buildSummaryChips(request: LandRecommendationSearchRequest) {
   if (request.preferredLocation?.province) {
     chips.push({ label: `Province: ${request.preferredLocation.province}` });
   }
-  if (request.requiredAreaHectares != null) {
-    chips.push({ label: `Minimum area: ${request.requiredAreaHectares} ha` });
+  const targetArea =
+    request.targetAreaHectares ??
+    request.preferredAreaHectares ??
+    request.requiredAreaHectares;
+  if (targetArea != null) {
+    const entered = formState?.targetAreaValue?.trim();
+    const unit = formState?.targetAreaUnit;
+    if (entered && unit) {
+      chips.push({
+        label: `Target area: ${entered} ${targetAreaUnitShortLabel(unit)} (${targetArea} ha scored)`,
+      });
+    } else {
+      chips.push({ label: `Target area: ${targetArea} ha` });
+    }
   }
   if (request.sourceReportedLandUse) {
     chips.push({
@@ -107,7 +125,7 @@ function hasRestrictiveFilters(formState?: FindSuitableLandFormState): boolean {
     return false;
   }
   return Boolean(
-    formState.requiredAreaHectares.trim() ||
+    formState.targetAreaValue.trim() ||
       formState.sourceReportedLandUse.trim(),
   );
 }
@@ -183,7 +201,7 @@ export function RecommendationsView() {
 
   const { request, response, formState } = payload;
   const transparency = response.transparency;
-  const chips = buildSummaryChips(request);
+  const chips = buildSummaryChips(request, formState);
   const canClearFilters = hasRestrictiveFilters(formState);
   const searchDistrict = request.preferredLocation?.district?.trim() || null;
 
@@ -194,7 +212,8 @@ export function RecommendationsView() {
     }
     const cleared: FindSuitableLandFormState = {
       ...formState,
-      requiredAreaHectares: "",
+      targetAreaValue: "",
+      targetAreaUnit: "hectares",
       sourceReportedLandUse: "",
     };
     try {
@@ -213,7 +232,7 @@ export function RecommendationsView() {
     <>
       <PageHeading
         title="Suitable Land Results"
-        subtitle="Compare ranked parcels using rule-based scores. Expand a card for criteria, restrictions, and provenance."
+        subtitle="Rule-based scores only (not ML or legal availability). Tied scores share a rank; display order is cadastral and does not imply suitability."
         action={
           <Button
             href="/land-intelligence/find-suitable-land"
@@ -288,7 +307,7 @@ export function RecommendationsView() {
         <div className={styles.layout}>
           <div className={styles.listColumn}>
             <h2 className={styles.listHeading}>
-              Ranked results ({response.recommendations.length})
+              Results ({response.recommendations.length} shown)
             </h2>
             {response.recommendations.map((item) => (
               <RecommendationCard
