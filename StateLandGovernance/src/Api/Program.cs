@@ -1,7 +1,6 @@
 using StateLandGovernance.BuildingBlocks.DependencyInjection;
 using StateLandGovernance.WorkflowGovernance.Application;
 using StateLandGovernance.WorkflowGovernance.Infrastructure;
-using StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence;
 using StateLandGovernance.WorkflowGovernance.Presentation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,12 +21,22 @@ EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
 
+var isOcrDemoEnabled = builder.Environment.IsDevelopment()
+    && builder.Configuration.GetValue<bool>("WorkflowGovernance:OcrDemo:Enabled", false);
+
 builder.Services.AddBuildingBlocks();
 
 builder.Services
     .AddWorkflowGovernanceApplication()
-    .AddWorkflowGovernanceInfrastructure(builder.Environment, builder.Configuration)
-    .AddWorkflowGovernancePresentation();
+    .AddWorkflowGovernanceInfrastructure(builder.Environment)
+    .AddWorkflowGovernancePresentation(builder.Configuration);
+
+if (isOcrDemoEnabled)
+{
+    builder.Services
+        .AddWorkflowGovernanceLocalDocumentStorage(builder.Configuration)
+        .AddWorkflowGovernanceDocumentIntelligence(builder.Configuration);
+}
 
 builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
 builder.Services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRuleProvider>();
@@ -47,7 +56,9 @@ builder.Services.AddCors(options =>
         policy => policy
             .WithOrigins(
                 "http://localhost:3000",
-                "http://127.0.0.1:3000")
+                "http://127.0.0.1:3000",
+                "http://localhost:5173",
+                "http://127.0.0.1:5173")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -75,6 +86,17 @@ builder.Services.AddSwaggerGen(options =>
             "Component 1 parcel persistence endpoints. Not for consumption by external platform modules."
     });
 
+    if (isOcrDemoEnabled)
+    {
+        options.SwaggerDoc("workflow-governance", new OpenApiInfo
+        {
+            Title = "State Land Governance — Component 3 Workflow Governance API",
+            Version = "v1",
+            Description =
+                "Component 3 workflow governance, document intake, and OCR intelligence demonstration endpoints."
+        });
+    }
+
     options.DocInclusionPredicate((documentName, apiDescription) =>
         string.Equals(apiDescription.GroupName, documentName, StringComparison.Ordinal));
 });
@@ -92,26 +114,27 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint(
             $"/swagger/{LandIntelligenceApiGroups.Internal}/swagger.json",
             "Land Intelligence Internal API v1");
+
+        if (isOcrDemoEnabled)
+        {
+            options.SwaggerEndpoint(
+                "/swagger/workflow-governance/swagger.json",
+                "Workflow Governance API v1");
+        }
     });
 
     try
     {
         using var scope = app.Services.CreateScope();
-        var landDbContext = scope.ServiceProvider.GetService<LandIntelligenceDbContext>();
-        if (landDbContext != null && landDbContext.Database.CanConnect())
+        var dbContext = scope.ServiceProvider.GetService<LandIntelligenceDbContext>();
+        if (dbContext != null && dbContext.Database.CanConnect())
         {
-            landDbContext.Database.Migrate();
-        }
-
-        var workflowDbContext = scope.ServiceProvider.GetService<WorkflowGovernanceDbContext>();
-        if (workflowDbContext != null && workflowDbContext.Database.CanConnect())
-        {
-            workflowDbContext.Database.Migrate();
+            dbContext.Database.Migrate();
         }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"[Development] Database migration skipped: {ex.Message}");
+        Console.WriteLine($"[Development] LandIntelligence migration skipped: {ex.Message}");
     }
 }
 else

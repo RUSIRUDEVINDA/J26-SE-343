@@ -106,27 +106,4 @@ public sealed class AnalysisRun
         SupersededAt = supersededAt;
         State = AnalysisRunState.Superseded;
     }
-
-    /// <summary>
-    /// Restores persisted lifecycle fields without replaying domain transitions.
-    /// </summary>
-    internal void RestorePersistedState(
-        AnalysisRunState state,
-        DateTime? startedAt,
-        DateTime? completedAt,
-        AnalysisRunResult? result,
-        DateTime? failedAt,
-        AnalysisRunFailure? failure,
-        DateTime? supersededAt,
-        string? supersessionReason)
-    {
-        State = state;
-        StartedAt = startedAt;
-        CompletedAt = completedAt;
-        Result = result;
-        FailedAt = failedAt;
-        Failure = failure;
-        SupersededAt = supersededAt;
-        SupersessionReason = supersessionReason;
-    }
 }

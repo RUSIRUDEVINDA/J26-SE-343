@@ -11,9 +11,9 @@ using StateLandGovernance.WorkflowGovernance.Domain.LeaseCases;
 
 public sealed class GovernedDocument
 {
-    public GovernedDocumentId Id { get; private init; }
-    public LeaseCaseId LeaseCaseId { get; private init; }
-    public string LogicalCategory { get; private init; } = null!;
+    public GovernedDocumentId Id { get; }
+    public LeaseCaseId LeaseCaseId { get; }
+    public string LogicalCategory { get; }
     public DocumentVersionId ActiveVersionId { get; private set; }
     public int Revision { get; private set; }
 
@@ -182,38 +182,5 @@ public sealed class GovernedDocument
         {
             return currentVersionNumber + 1;
         }
-    }
-
-    /// <summary>
-    /// Reconstructs a persisted aggregate without emitting registration events.
-    /// </summary>
-    internal static GovernedDocument Rehydrate(
-        GovernedDocumentId id,
-        LeaseCaseId leaseCaseId,
-        string logicalCategory,
-        DocumentVersionId activeVersionId,
-        int revision,
-        IReadOnlyList<DocumentVersion> versions) =>
-        new(id, leaseCaseId, logicalCategory, activeVersionId, revision, versions);
-
-    private GovernedDocument(
-        GovernedDocumentId id,
-        LeaseCaseId leaseCaseId,
-        string logicalCategory,
-        DocumentVersionId activeVersionId,
-        int revision,
-        IReadOnlyList<DocumentVersion> versions)
-    {
-        if (versions.Count == 0)
-        {
-            throw new InvalidDocumentException("At least one version is required for rehydration.");
-        }
-
-        Id = id;
-        LeaseCaseId = leaseCaseId;
-        LogicalCategory = logicalCategory;
-        ActiveVersionId = activeVersionId;
-        Revision = revision;
-        _versions.AddRange(versions);
     }
 }
