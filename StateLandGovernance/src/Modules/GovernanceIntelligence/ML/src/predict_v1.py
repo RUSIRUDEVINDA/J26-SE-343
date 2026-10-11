@@ -40,6 +40,8 @@ from __future__ import annotations
 
 import json
 import hashlib
+import math
+import re
 import sys
 from pathlib import Path
 from typing import Optional
@@ -47,7 +49,7 @@ from typing import Optional
 import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import FeatureUnion, Pipeline
 from sklearn.utils.validation import check_is_fitted
 
 _SRC_DIR = Path(__file__).resolve().parent
@@ -121,36 +123,90 @@ def _validate_metadata(metadata: dict, meta_path: Path) -> str:
         raise ValueError(
             "Metadata fitted_classes_order must contain each fixed taxonomy label exactly once"
         )
+    if version == "v2":
+        pipeline_validation = metadata.get("pipeline_validation")
+        if not isinstance(pipeline_validation, dict):
+            raise ValueError("V2 metadata is missing pipeline_validation evidence")
+        if pipeline_validation.get("architecture") != "arm_e_word_character":
+            raise ValueError("V2 metadata pipeline architecture is not the frozen Arm E architecture")
+        stable_parameters = pipeline_validation.get("stable_parameters")
+        if not isinstance(stable_parameters, dict) or not stable_parameters:
+            raise ValueError("V2 metadata is missing stable pipeline parameters")
     return version
+
+
+def _normalise_parameter(value):
+    if isinstance(value, tuple):
+        return [_normalise_parameter(item) for item in value]
+    if isinstance(value, list):
+        return [_normalise_parameter(item) for item in value]
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return value
+    return repr(value)
 
 
 def validate_fitted_pipeline(pipeline, metadata: dict) -> dict:
     """Reject unexpected, unfitted, or taxonomy-incompatible pipelines."""
-    if not isinstance(pipeline, Pipeline):
+    model_version = metadata.get("model_version")
+    is_v2 = model_version == "v2"
+    valid_pipeline_type = type(pipeline) is Pipeline if is_v2 else isinstance(pipeline, Pipeline)
+    if not valid_pipeline_type:
         raise ValueError(f"Model artifact must contain an sklearn Pipeline, got {type(pipeline).__name__}")
 
-    expected_steps = ["boilerplate", "tfidf", "clf"]
+    expected_steps = ["boilerplate", "features", "clf"] if is_v2 else ["boilerplate", "tfidf", "clf"]
     actual_steps = [name for name, _ in pipeline.steps]
     if actual_steps != expected_steps:
         raise ValueError(f"Unexpected pipeline steps: expected {expected_steps}, got {actual_steps}")
 
     boilerplate = pipeline.named_steps["boilerplate"]
-    tfidf = pipeline.named_steps["tfidf"]
     clf = pipeline.named_steps["clf"]
-    expected_types = (
-        (boilerplate, BoilerplateStripper, "boilerplate"),
-        (tfidf, TfidfVectorizer, "tfidf"),
-        (clf, LogisticRegression, "clf"),
-    )
+    if is_v2:
+        features = pipeline.named_steps["features"]
+        expected_types = (
+            (boilerplate, BoilerplateStripper, "boilerplate"),
+            (features, FeatureUnion, "features"),
+            (clf, LogisticRegression, "clf"),
+        )
+    else:
+        tfidf = pipeline.named_steps["tfidf"]
+        expected_types = (
+            (boilerplate, BoilerplateStripper, "boilerplate"),
+            (tfidf, TfidfVectorizer, "tfidf"),
+            (clf, LogisticRegression, "clf"),
+        )
     for estimator, expected_type, step_name in expected_types:
-        if not isinstance(estimator, expected_type):
+        if type(estimator) is not expected_type:
             raise ValueError(
                 f"Unexpected estimator type for step '{step_name}': "
                 f"expected {expected_type.__name__}, got {type(estimator).__name__}"
             )
 
+    estimator_types = {
+        "boilerplate": type(boilerplate).__name__,
+        "clf": type(clf).__name__,
+    }
     try:
-        check_is_fitted(tfidf, attributes=["vocabulary_", "idf_"])
+        if is_v2:
+            transformer_names = [name for name, _ in features.transformer_list]
+            if transformer_names != ["word", "character"]:
+                raise ValueError(
+                    "Unexpected FeatureUnion transformers: expected ['word', 'character'], "
+                    f"got {transformer_names}"
+                )
+            word = features.transformer_list[0][1]
+            character = features.transformer_list[1][1]
+            if type(word) is not TfidfVectorizer or type(character) is not TfidfVectorizer:
+                raise ValueError("V2 word and character feature estimators must be exact TfidfVectorizer instances")
+            check_is_fitted(word, attributes=["vocabulary_", "idf_"])
+            check_is_fitted(character, attributes=["vocabulary_", "idf_"])
+            estimator_types.update({
+                "features": type(features).__name__,
+                "word": type(word).__name__,
+                "character": type(character).__name__,
+            })
+        else:
+            check_is_fitted(tfidf, attributes=["vocabulary_", "idf_"])
+            estimator_types["tfidf"] = type(tfidf).__name__
         check_is_fitted(clf, attributes=["classes_", "coef_", "intercept_", "n_features_in_"])
     except Exception as exc:
         raise ValueError(f"Model pipeline is not fitted: {exc}") from exc
@@ -165,14 +221,30 @@ def validate_fitted_pipeline(pipeline, metadata: dict) -> dict:
             "Fitted classifier class order does not match metadata fitted_classes_order"
         )
 
+    stable_parameters = {}
+    if is_v2:
+        expected_parameters = metadata["pipeline_validation"]["stable_parameters"]
+        actual_parameters = pipeline.get_params(deep=True)
+        missing_parameters = sorted(set(expected_parameters) - set(actual_parameters))
+        if missing_parameters:
+            raise ValueError(f"V2 pipeline is missing stable parameters: {missing_parameters}")
+        mismatches = {}
+        for key, expected in expected_parameters.items():
+            actual = _normalise_parameter(actual_parameters[key])
+            if actual != expected:
+                mismatches[key] = {"expected": expected, "actual": actual}
+        if mismatches:
+            raise ValueError(f"V2 pipeline stable parameter mismatch: {mismatches}")
+        stable_parameters = {
+            key: _normalise_parameter(actual_parameters[key])
+            for key in sorted(expected_parameters)
+        }
+
     return {
         "steps": actual_steps,
-        "estimator_types": {
-            "boilerplate": type(boilerplate).__name__,
-            "tfidf": type(tfidf).__name__,
-            "clf": type(clf).__name__,
-        },
+        "estimator_types": estimator_types,
         "fitted_classes_order": fitted_classes,
+        "stable_parameters": stable_parameters,
     }
 
 
@@ -183,7 +255,8 @@ def _validate_sidecar(
     meta_path: Path,
     model_version: str,
 ) -> None:
-    if sidecar.get("schema_version") != 1:
+    expected_schema = 2 if model_version == "v2" else 1
+    if sidecar.get("schema_version") != expected_schema:
         raise ValueError(f"Unsupported validation sidecar schema in '{validation_path}'")
     if sidecar.get("overall_status") != "PASS":
         raise ValueError(f"Validation sidecar '{validation_path}' does not record overall_status=PASS")
@@ -209,6 +282,13 @@ def _validate_sidecar(
             "Model metadata hash does not match validation evidence: "
             f"expected={expected_meta_hash}, actual={actual_meta_hash}"
         )
+    if model_version == "v2":
+        pipeline_evidence = sidecar.get("pipeline_validation")
+        evidence_hashes = sidecar.get("evidence_hashes")
+        if not isinstance(pipeline_evidence, dict) or pipeline_evidence.get("status") != "PASS":
+            raise ValueError("V2 validation sidecar lacks passing pipeline validation evidence")
+        if not isinstance(evidence_hashes, dict) or not evidence_hashes:
+            raise ValueError("V2 validation sidecar lacks evidence hashes")
 
 def load_versioned_artifact(
     joblib_path: Optional[Path] = None,
@@ -270,6 +350,9 @@ def load_versioned_artifact(
     # make an arbitrary joblib safe; only trusted local artifacts may reach load().
     _validate_sidecar(sidecar, validation_path, joblib_path, meta_path, version)
 
+    if version == "v2" and metadata.get("model_sha256") != _sha256(joblib_path):
+        raise ValueError("V2 metadata model_sha256 does not match the model artifact")
+
     pipeline = joblib.load(joblib_path)
     pipeline_validation = validate_fitted_pipeline(pipeline, metadata)
 
@@ -282,6 +365,23 @@ def load_versioned_artifact(
         "validation_path": validation_path,
         "pipeline_validation": pipeline_validation,
     }
+
+
+def load_model_version(model_version: str, models_dir: Optional[Path] = None) -> dict:
+    """Load a locally configured versioned package without accepting arbitrary paths.
+
+    The HTTP boundary continues to use v1 defaults. Deployment configuration may
+    select a trusted local version explicitly in a later milestone.
+    """
+    if not isinstance(model_version, str) or re.fullmatch(r"v[1-9][0-9]*", model_version) is None:
+        raise ValueError("model_version must use the local version format v<positive integer>")
+    trusted_models_dir = Path(models_dir) if models_dir is not None else MODELS_DIR
+    version_dir = trusted_models_dir / model_version
+    return load_versioned_artifact(
+        joblib_path=version_dir / f"governance_classifier_{model_version}.joblib",
+        meta_path=version_dir / f"model_metadata_{model_version}.json",
+        validation_path=version_dir / "validation" / f"model_validation_{model_version}.json",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -343,7 +443,22 @@ def predict_complaint(
 
     # Map probabilities using fitted classes_ order (never assume positional order)
     fitted_classes  = pipeline.named_steps["clf"].classes_.tolist()
-    class_probs     = {cls: float(prob) for cls, prob in zip(fitted_classes, proba_vector)}
+    if len(fitted_classes) != 4 or set(fitted_classes) != set(LABEL_ORDER):
+        raise ValueError("Prediction pipeline classes do not match the fixed taxonomy")
+    if len(proba_vector) != 4:
+        raise ValueError("Prediction pipeline must return exactly four probabilities")
+    numeric_probabilities = [float(value) for value in proba_vector]
+    if not all(math.isfinite(value) and 0.0 <= value <= 1.0 for value in numeric_probabilities):
+        raise ValueError("Prediction probabilities must be finite and inside [0, 1]")
+    if not math.isclose(sum(numeric_probabilities), 1.0, rel_tol=0.0, abs_tol=1e-10):
+        raise ValueError("Prediction probabilities must sum to one")
+    argmax_label = fitted_classes[max(range(4), key=numeric_probabilities.__getitem__)]
+    if predicted_label != argmax_label:
+        raise ValueError("Predicted category must equal probability argmax")
+    class_probs = {
+        cls: probability
+        for cls, probability in zip(fitted_classes, numeric_probabilities)
+    }
 
     return {
         "model_version":       artifact["model_version"],
