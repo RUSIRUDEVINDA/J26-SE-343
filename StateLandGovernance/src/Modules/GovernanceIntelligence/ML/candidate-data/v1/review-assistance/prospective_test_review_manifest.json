@@ -1,0 +1,319 @@
+{
+  "package": "prospective synthetic family human-review assistance",
+  "created_at": "2026-10-11T12:20:23+05:30",
+  "timezone": "Asia/Colombo",
+  "source_hashes": {
+    "candidate_dataset": {
+      "path": "data/state_land_complaints_development_530.csv",
+      "sha256": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8"
+    },
+    "confirmed_review_pack": {
+      "path": "candidate-data/v1/synthetic_family_review_pack_confirmed_20261007.csv",
+      "sha256": "0f4d839d9ad46223430cf5adb375775ce7ae12cc8b38b57f263eab790895fb74"
+    },
+    "experiment5_population_manifest": {
+      "path": "results/experiment5_combined_real_synthetic/experiment5_population_manifest.csv",
+      "sha256": "3838dcd2a77620c0ffa7d466461a323e8982909c6724e58b32b0835ac9dedbd6"
+    },
+    "experiment5_protocol": {
+      "path": "results/experiment5_combined_real_synthetic/experiment5_protocol.json",
+      "sha256": "d30472ecdd813ec0b0ab12f8661018bd16842fec2c859cf621eccca5c53e9f2b"
+    },
+    "experiment5_summary": {
+      "path": "results/experiment5_combined_real_synthetic/experiment5_summary.json",
+      "sha256": "467f5d3c6843a8ea8f34eff0fd0f071696c72c94115b4b226a99f58cb251a89d"
+    }
+  },
+  "family_count": 25,
+  "record_count": 75,
+  "family_ids": [
+    "SYN-FAM-005",
+    "SYN-FAM-008",
+    "SYN-FAM-010",
+    "SYN-FAM-012",
+    "SYN-FAM-014",
+    "SYN-FAM-015",
+    "SYN-FAM-020",
+    "SYN-FAM-022",
+    "SYN-FAM-024",
+    "SYN-FAM-029",
+    "SYN-FAM-035",
+    "SYN-FAM-048",
+    "SYN-FAM-052",
+    "SYN-FAM-055",
+    "SYN-FAM-063",
+    "SYN-FAM-069",
+    "SYN-FAM-072",
+    "SYN-FAM-075",
+    "SYN-FAM-081",
+    "SYN-FAM-082",
+    "SYN-FAM-084",
+    "SYN-FAM-086",
+    "SYN-FAM-087",
+    "SYN-FAM-093",
+    "SYN-FAM-097"
+  ],
+  "families": [
+    {
+      "synthetic_family_id": "SYN-FAM-005",
+      "research_ids": [
+        "SYN-0013",
+        "SYN-0014",
+        "SYN-0015"
+      ],
+      "proposed_label": "Administrative / Procedural / Integrity"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-008",
+      "research_ids": [
+        "SYN-0022",
+        "SYN-0023",
+        "SYN-0024"
+      ],
+      "proposed_label": "Administrative / Procedural / Integrity"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-010",
+      "research_ids": [
+        "SYN-0028",
+        "SYN-0029",
+        "SYN-0030"
+      ],
+      "proposed_label": "Administrative / Procedural / Integrity"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-012",
+      "research_ids": [
+        "SYN-0034",
+        "SYN-0035",
+        "SYN-0036"
+      ],
+      "proposed_label": "Administrative / Procedural / Integrity"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-014",
+      "research_ids": [
+        "SYN-0040",
+        "SYN-0041",
+        "SYN-0042"
+      ],
+      "proposed_label": "Administrative / Procedural / Integrity"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-015",
+      "research_ids": [
+        "SYN-0043",
+        "SYN-0044",
+        "SYN-0045"
+      ],
+      "proposed_label": "Administrative / Procedural / Integrity"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-020",
+      "research_ids": [
+        "SYN-0058",
+        "SYN-0059",
+        "SYN-0060"
+      ],
+      "proposed_label": "Administrative / Procedural / Integrity"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-022",
+      "research_ids": [
+        "SYN-0064",
+        "SYN-0065",
+        "SYN-0066"
+      ],
+      "proposed_label": "Administrative / Procedural / Integrity"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-024",
+      "research_ids": [
+        "SYN-0070",
+        "SYN-0071",
+        "SYN-0072"
+      ],
+      "proposed_label": "Administrative / Procedural / Integrity"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-029",
+      "research_ids": [
+        "SYN-0085",
+        "SYN-0086",
+        "SYN-0087"
+      ],
+      "proposed_label": "Lease Revenue / Payment / Enforcement"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-035",
+      "research_ids": [
+        "SYN-0103",
+        "SYN-0104",
+        "SYN-0105"
+      ],
+      "proposed_label": "Lease Revenue / Payment / Enforcement"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-048",
+      "research_ids": [
+        "SYN-0142",
+        "SYN-0143",
+        "SYN-0144"
+      ],
+      "proposed_label": "Lease Revenue / Payment / Enforcement"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-052",
+      "research_ids": [
+        "SYN-0154",
+        "SYN-0155",
+        "SYN-0156"
+      ],
+      "proposed_label": "Unauthorized Allocation / Transfer / Use"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-055",
+      "research_ids": [
+        "SYN-0163",
+        "SYN-0164",
+        "SYN-0165"
+      ],
+      "proposed_label": "Unauthorized Allocation / Transfer / Use"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-063",
+      "research_ids": [
+        "SYN-0187",
+        "SYN-0188",
+        "SYN-0189"
+      ],
+      "proposed_label": "Unauthorized Allocation / Transfer / Use"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-069",
+      "research_ids": [
+        "SYN-0205",
+        "SYN-0206",
+        "SYN-0207"
+      ],
+      "proposed_label": "Unauthorized Allocation / Transfer / Use"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-072",
+      "research_ids": [
+        "SYN-0214",
+        "SYN-0215",
+        "SYN-0216"
+      ],
+      "proposed_label": "Unauthorized Allocation / Transfer / Use"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-075",
+      "research_ids": [
+        "SYN-0223",
+        "SYN-0224",
+        "SYN-0225"
+      ],
+      "proposed_label": "Unauthorized Allocation / Transfer / Use"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-081",
+      "research_ids": [
+        "SYN-0241",
+        "SYN-0242",
+        "SYN-0243"
+      ],
+      "proposed_label": "Protected / Environmental Lease Misuse"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-082",
+      "research_ids": [
+        "SYN-0244",
+        "SYN-0245",
+        "SYN-0246"
+      ],
+      "proposed_label": "Protected / Environmental Lease Misuse"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-084",
+      "research_ids": [
+        "SYN-0250",
+        "SYN-0251",
+        "SYN-0252"
+      ],
+      "proposed_label": "Protected / Environmental Lease Misuse"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-086",
+      "research_ids": [
+        "SYN-0256",
+        "SYN-0257",
+        "SYN-0258"
+      ],
+      "proposed_label": "Protected / Environmental Lease Misuse"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-087",
+      "research_ids": [
+        "SYN-0259",
+        "SYN-0260",
+        "SYN-0261"
+      ],
+      "proposed_label": "Protected / Environmental Lease Misuse"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-093",
+      "research_ids": [
+        "SYN-0277",
+        "SYN-0278",
+        "SYN-0279"
+      ],
+      "proposed_label": "Protected / Environmental Lease Misuse"
+    },
+    {
+      "synthetic_family_id": "SYN-FAM-097",
+      "research_ids": [
+        "SYN-0289",
+        "SYN-0290",
+        "SYN-0291"
+      ],
+      "proposed_label": "Protected / Environmental Lease Misuse"
+    }
+  ],
+  "proposed_label_distribution": {
+    "Administrative / Procedural / Integrity": 9,
+    "Lease Revenue / Payment / Enforcement": 3,
+    "Unauthorized Allocation / Transfer / Use": 6,
+    "Protected / Environmental Lease Misuse": 7
+  },
+  "allowed_review_decisions": [
+    "Approved",
+    "Label_Change",
+    "Rejected",
+    "Needs_Discussion"
+  ],
+  "prediction_before_review_freeze_prohibited": true,
+  "prediction_prohibition": "Do not run classifier prediction or inference on this population before human review decisions are completed and frozen.",
+  "population_reservation": "This population is reserved for prospective synthetic testing after human review freeze.",
+  "model_inference_occurred": false,
+  "model_inference_statement": "No classifier or model artifact was loaded or invoked, and no model inference occurred while creating this package.",
+  "experiment5_outcomes_used_for_label_recommendation": false,
+  "auto_approval_performed": false,
+  "decision_fields_initially_blank": true,
+  "validation": {
+    "family_count": 25,
+    "record_count": 75,
+    "unique_research_id_count": 75,
+    "families_with_exactly_three_variants": 25,
+    "families_with_one_proposed_label": 25,
+    "experiment5_included_family_overlap": 0,
+    "experiment5_arm_record_overlap": 0,
+    "source_decision_fields_blank": true,
+    "proposed_label_distribution": {
+      "Administrative / Procedural / Integrity": 9,
+      "Lease Revenue / Payment / Enforcement": 3,
+      "Unauthorized Allocation / Transfer / Use": 6,
+      "Protected / Environmental Lease Misuse": 7
+    }
+  }
+}
