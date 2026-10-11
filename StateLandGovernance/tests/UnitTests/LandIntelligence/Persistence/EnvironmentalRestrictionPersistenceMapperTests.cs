@@ -1,10 +1,9 @@
-using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Mappings;
-using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.Criteria;
+using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations;
 
 namespace StateLandGovernance.UnitTests.LandIntelligence.Persistence;
 
@@ -74,28 +73,18 @@ public sealed class EnvironmentalRestrictionPersistenceMapperTests
     }
 
     [Fact]
-    public void EnvironmentalCriterionEvaluator_evaluates_persisted_high_severity_restriction()
+    public void HardConstraintEvaluator_rejects_persisted_high_severity_restriction()
     {
         var parcel = CreateParcelWithRestriction(
             EnvironmentalRestrictionType.ForestReserve,
             "[SYNTHETIC] High conservation restriction",
             RestrictionSeverity.High);
 
-        var evaluation = new EnvironmentalCriterionEvaluator().Evaluate(
-            parcel,
-            new LandRecommendationSearchRequest
-            {
-                RequiredPurpose = LandUseType.Agricultural,
-                Environmental = new EnvironmentalCriteria
-                {
-                    MaxAllowedEnvironmentalSeverity = RestrictionSeverity.Medium,
-                    RejectProhibitiveEnvironmentalRestrictions = true
-                }
-            });
+        var evaluation = HardConstraintEvaluator.Evaluate(parcel);
 
-        Assert.False(evaluation.IsMet);
-        Assert.Contains("exceeds allowed limit", evaluation.Summary, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("High", evaluation.Summary, StringComparison.OrdinalIgnoreCase);
+        Assert.True(evaluation.IsViolated);
+        Assert.Contains("High-severity environmental restriction", evaluation.Summary, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("ForestReserve", evaluation.Summary, StringComparison.OrdinalIgnoreCase);
     }
 
     private static LandParcelEntity CreateParcelEntity(
