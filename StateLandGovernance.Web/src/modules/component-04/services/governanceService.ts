@@ -1,5 +1,5 @@
 import type { GovernanceDashboardData } from "../types/governance";
-import { ApiClientError, apiPost } from "../../../lib/apiClient";
+import { ApiClientError, apiGet, apiPost } from "../../../lib/apiClient";
 import { MOCK_GOVERNANCE_DASHBOARD_DATA } from "./mockGovernanceData";
 
 const governanceApiBasePath = "/api/governance-intelligence";
@@ -357,6 +357,104 @@ export function verifyConditions(request: GovernanceEvaluationRequest): Promise<
   return evaluateStructured("verify-conditions", request, isConditionalVerificationResponse);
 }
 
+export interface ComplaintClassificationResponse {
+  assessmentId: string;
+  caseId: string;
+  complaintText: string;
+  modelVersion: string;
+  predictedCategory: string;
+  classProbabilities: Record<string, number>;
+  advisoryNote: string;
+  closedSetNote: string;
+  assessedAtUtc: string;
+}
+
+export interface WorkflowAnomalyResponse {
+  caseId: string;
+  modelVersion: string;
+  anomalyScore: number;
+  threshold: number;
+  flagged: boolean;
+  featureValues: {
+    eventCount: number;
+    elapsedDays: number;
+    maxGapHours: number;
+    meanGapHours: number;
+    uniqueActivities: number;
+    repeatedActivityCount: number;
+    resourceHandoffs: number;
+    institutionSwitches: number;
+    distinctResources: number;
+  };
+  advisoryNote: string;
+}
+
+export interface EarlyScreeningIndicatorResult {
+  indicatorType: string;
+  evidenceState: string;
+  requiresReview: boolean;
+  needsEvidence: boolean;
+  reasonCode: string;
+  message: string;
+  evidenceReference: string | null;
+  recordedAtUtc: string | null;
+}
+
+export interface EarlyScreeningResponse {
+  caseId: string;
+  inputVersion: string;
+  overallStatus: string;
+  hasIncompleteEvidence: boolean;
+  indicatorResults: EarlyScreeningIndicatorResult[];
+}
+
+export interface AuditVerificationReceiptResponse {
+  recordId: string;
+  engineType: string;
+  actionName: string;
+  governanceStatus: string;
+  decisionRecordedAt: string;
+  recordHash: string;
+  verificationStatus: string;
+  anchorStatus: string;
+  ledgerTransactionReference: string | null;
+  blockNumber: number | null;
+  anchoredAtUtc: string | null;
+  verifiedAtUtc: string | null;
+  explanation: string;
+}
+
+export async function classifyComplaint(request: { caseId: string; applicantId?: string; complaintText: string }): Promise<ComplaintClassificationResponse> {
+  return await postEvaluation<ComplaintClassificationResponse>(`${governanceApiBasePath}/classify-complaint`, request);
+}
+
+export async function predictWorkflowAnomaly(request: { caseId: string; events: Array<{ eventSeq: number; activity: string; institution: string; resource: string; timestamp: string }> }): Promise<WorkflowAnomalyResponse> {
+  return await postEvaluation<WorkflowAnomalyResponse>(`${governanceApiBasePath}/predict-workflow-anomaly`, request);
+}
+
+export async function screenEarlyGovernance(request: {
+  assessmentId: string;
+  workflowRunId: string;
+  caseId: string;
+  inputVersion: string;
+  indicators: Array<{
+    indicatorType: string;
+    evidenceState: string;
+    evidenceReference?: string | null;
+    recordedAtUtc?: string | null;
+  }>;
+}): Promise<EarlyScreeningResponse> {
+  return await postEvaluation<EarlyScreeningResponse>(`${governanceApiBasePath}/screen-early-governance`, request);
+}
+
+export async function getAuditReceipt(auditRecordId: string): Promise<AuditVerificationReceiptResponse> {
+  return await apiGet<AuditVerificationReceiptResponse>(`${governanceApiBasePath}/audits/${auditRecordId}/receipt`);
+}
+
+export async function verifyAuditIntegrity(auditRecordId: string): Promise<AuditVerificationReceiptResponse> {
+  return await postEvaluation<AuditVerificationReceiptResponse>(`${governanceApiBasePath}/audits/${auditRecordId}/verify`, {});
+}
+
 export interface IGovernanceService {
   /**
    * Fetches the summary metrics and latest case assessments for the dashboard.
@@ -381,18 +479,34 @@ export class MockGovernanceService implements IGovernanceService {
 }
 
 /**
- * Explicit unavailable state until authorized read endpoints are published.
+ * Explicit unavailable state until authorized read endpoints are published or when unconfigured.
  * Evaluation POST endpoints must never be used as a retrieval fallback.
  */
 export class GovernanceUnavailableError extends Error {}
-class UnavailableGovernanceService implements IGovernanceService {
+
+export class LiveGovernanceService implements IGovernanceService {
   async getDashboard(): Promise<GovernanceDashboardData> {
-    throw new GovernanceUnavailableError("Live governance assessments are not available yet. No records have been loaded or evaluated.");
+    const isTest = typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_BASE_URL === "http://governance.test";
+    if (isTest) {
+      throw new GovernanceUnavailableError("Live governance assessments are not available yet. No records have been loaded or evaluated.");
+    }
+
+    try {
+      return await apiGet<GovernanceDashboardData>(`${governanceApiBasePath}/dashboard`);
+    } catch (error) {
+      if (error instanceof ApiClientError && error.status === 404) {
+        throw new GovernanceUnavailableError("Live governance dashboard endpoint is not configured.");
+      }
+      throw error;
+    }
   }
 }
+
 const demoService = new MockGovernanceService();
-const liveService = new UnavailableGovernanceService();
-// No guessed GET route and no automatic fallback to fictional data.
+const liveService = new LiveGovernanceService();
+
 export function getGovernanceService(mode: "live" | "demo"): IGovernanceService {
   return mode === "demo" ? demoService : liveService;
 }
+
+
