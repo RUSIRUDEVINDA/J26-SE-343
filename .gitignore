@@ -124,3 +124,7 @@ governance-blockchain-service/cache/
 
 ## WorkflowGovernance Local Development / Demo Storage
 .local-data/
+
+/scratch/browser_evidence
+/Component4_Synthetic_Integration_Seeds
+instruction.md
