@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Application.Commands;
 using StateLandGovernance.LandIntelligence.Application.Queries;
+using StateLandGovernance.LandIntelligence.Application.Services;
 using StateLandGovernance.LandIntelligence.Application.Validators;
 
 namespace StateLandGovernance.LandIntelligence.Application.DependencyInjection;
@@ -15,7 +16,10 @@ public static class LandIntelligenceApplicationExtensions
         services.AddScoped<GenerateLandRecommendationCommandHandler>();
 
         services.AddScoped<GetLandParcelByIdQueryHandler>();
+        services.AddScoped<GetLandParcelMetricsQueryHandler>();
+        services.AddScoped<GetLandIntelligenceGisCoverageQueryHandler>();
         services.AddScoped<SearchLandParcelsQueryHandler>();
+        services.AddScoped<LandParcelAvailabilityComposer>();
         services.AddScoped<ListSourceReportedLandUseOptionsQueryHandler>();
         services.AddScoped<ListDerivedSoilGroupOptionsQueryHandler>();
         services.AddScoped<GetSpatialConstraintsByParcelIdQueryHandler>();

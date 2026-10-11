@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
-using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Presentation.Security;
 
 namespace StateLandGovernance.LandIntelligence.Presentation.Configuration;
 
@@ -13,19 +13,5 @@ public sealed class LandIntelligenceCallerContext : ILandIntelligenceCallerConte
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public Guid? OwnerId
-    {
-        get
-        {
-            var context = _httpContextAccessor.HttpContext;
-            if (context?.Items.TryGetValue(LandIntelligenceCallerHeaders.OwnerIdItemKey, out var value) == true
-                && value is Guid ownerId
-                && ownerId != Guid.Empty)
-            {
-                return ownerId;
-            }
-
-            return null;
-        }
-    }
+    public Guid? OwnerId => LandIntelligenceOwnerIdResolver.ResolveOwnerId(_httpContextAccessor.HttpContext);
 }

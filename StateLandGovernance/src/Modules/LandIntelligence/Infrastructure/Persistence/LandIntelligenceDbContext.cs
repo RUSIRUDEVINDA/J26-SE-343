@@ -59,6 +59,9 @@ public class LandIntelligenceDbContext : DbContext
     public DbSet<LeaseInterestStatusHistoryEntity> LeaseInterestStatusHistory =>
         Set<LeaseInterestStatusHistoryEntity>();
 
+    public DbSet<ColomboStateResearchProjectLeaseReadyEntity> ColomboStateResearchProjectLeaseReady =>
+        Set<ColomboStateResearchProjectLeaseReadyEntity>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);

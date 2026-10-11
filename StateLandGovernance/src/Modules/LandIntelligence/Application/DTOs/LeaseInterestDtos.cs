@@ -15,7 +15,9 @@ public sealed record LeaseInterestApplicantDto(
     string ContactEmail,
     string PostalAddress,
     string? OrganizationName,
-    string? OrganizationRegistrationNumber);
+    string? OrganizationRegistrationNumber,
+    string? NationalIdentityCardNumber,
+    string? RepresentativeNationalIdentityCardNumber);
 
 public sealed record LeaseInterestProposalDto(
     LandUseType RequestedPurpose,
@@ -37,7 +39,17 @@ public sealed record UpsertLeaseInterestDraftDto(
 public sealed record LeaseInterestStatusHistoryEntryDto(
     LeaseInterestRequestStatus Status,
     DateTimeOffset ChangedAtUtc,
-    string? Note);
+    string? Note,
+    LeaseInterestStatusActorKindDto ActorKind = LeaseInterestStatusActorKindDto.System,
+    Guid? ActorId = null,
+    bool VisibleToApplicant = true);
+
+public enum LeaseInterestStatusActorKindDto
+{
+    System = 0,
+    Applicant = 1,
+    Officer = 2,
+}
 
 public sealed record LeaseInterestCostLineDto(
     string Code,
@@ -96,3 +108,67 @@ public sealed record LeaseInterestDocumentChecklistItemDto(
 public sealed record LeaseInterestDocumentChecklistDto(
     IReadOnlyList<LeaseInterestDocumentChecklistItemDto> Items,
     string StorageNote);
+
+public sealed record LeaseInterestOfficerLookupRequestDto(
+    string NationalIdentityCardNumber,
+    int Page = 1,
+    int PageSize = 20);
+
+public sealed record LeaseInterestOfficerLookupItemDto(
+    Guid RequestId,
+    Guid LandParcelId,
+    string? AcknowledgementReference,
+    DateTimeOffset? SubmittedAtUtc,
+    LeaseInterestRequestStatus Status,
+    string? CadastralNumber,
+    string? District,
+    LandUseType RequestedPurpose,
+    int? RequestedDurationYears,
+    string MaskedNationalIdentityCardNumber);
+
+public sealed record LeaseInterestOfficerLookupResponseDto(
+    IReadOnlyList<LeaseInterestOfficerLookupItemDto> Items,
+    int TotalCount,
+    int Page,
+    int PageSize);
+
+public sealed record LeaseInterestOfficerQueueRequestDto(
+    int Page = 1,
+    int PageSize = 20);
+
+public sealed record LeaseInterestOfficerQueueItemDto(
+    Guid RequestId,
+    Guid LandParcelId,
+    string? AcknowledgementReference,
+    DateTimeOffset? SubmittedAtUtc,
+    LeaseInterestRequestStatus Status,
+    string? CadastralNumber,
+    string? District);
+
+public sealed record LeaseInterestOfficerQueueResponseDto(
+    IReadOnlyList<LeaseInterestOfficerQueueItemDto> Items,
+    int TotalCount,
+    int Page,
+    int PageSize);
+
+public sealed record LeaseInterestOfficerStatusUpdateDto(
+    LeaseInterestRequestStatus NewStatus,
+    string Note,
+    bool VisibleToApplicant = true);
+
+public sealed record LeaseInterestOfficerRequestDetailDto(
+    Guid Id,
+    Guid LandParcelId,
+    LeaseInterestRequestStatus Status,
+    string? AcknowledgementReference,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset UpdatedAtUtc,
+    DateTimeOffset? SubmittedAtUtc,
+    LeaseInterestApplicantDto Applicant,
+    LeaseInterestProposalDto Proposal,
+    LeaseInterestSupportingInfoDto Supporting,
+    bool ConsentToPreliminaryAssessment,
+    IReadOnlyList<LeaseInterestStatusHistoryEntryDto> StatusHistory,
+    string? CadastralNumber,
+    string? District,
+    string ApplicantOutcomeSummary);

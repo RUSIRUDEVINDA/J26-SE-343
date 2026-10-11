@@ -19,7 +19,11 @@ import type {
   UpsertLeaseInterestDraft,
 } from "../types/landIntelligence";
 import { landUseTypeLabels } from "../utils/enumMappings";
-import { displayOrUnknown, formatArea } from "../utils/formatters";
+import {
+  convertAreaToHectares,
+  displayOrUnknown,
+  formatArea,
+} from "../utils/formatters";
 import { formatSourceReportedLandUseLine } from "../utils/sourceReportedCadastre";
 import styles from "./LeaseInterestFormView.module.css";
 
@@ -42,6 +46,23 @@ function statusLabel(status: number): string {
     default:
       return "Unknown";
   }
+}
+
+function proposalWithParcelArea(
+  proposal: UpsertLeaseInterestDraft["proposal"],
+  parcel: LandParcelResponse,
+): UpsertLeaseInterestDraft["proposal"] {
+  if (
+    proposal.requestedAreaHectares != null &&
+    proposal.requestedAreaHectares > 0
+  ) {
+    return proposal;
+  }
+  const hectares = convertAreaToHectares(parcel.area.value, parcel.area.unit);
+  if (hectares == null || hectares <= 0) {
+    return proposal;
+  }
+  return { ...proposal, requestedAreaHectares: hectares };
 }
 
 function emptyDraft(): UpsertLeaseInterestDraft {
@@ -100,7 +121,7 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
       setRequest(draftRes);
       setDraft({
         applicant: draftRes.applicant,
-        proposal: draftRes.proposal,
+        proposal: proposalWithParcelArea(draftRes.proposal, parcelRes),
         supporting: draftRes.supporting,
         consentToPreliminaryAssessment: draftRes.consentToPreliminaryAssessment,
       });
@@ -446,7 +467,7 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
                 id="area"
                 type="number"
                 min={0}
-                step="0.01"
+                step="any"
                 className={styles.input}
                 disabled={readOnly}
                 value={draft.proposal.requestedAreaHectares ?? ""}

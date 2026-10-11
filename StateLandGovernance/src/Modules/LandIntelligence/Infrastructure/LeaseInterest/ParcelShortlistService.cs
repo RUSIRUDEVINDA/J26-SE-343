@@ -107,7 +107,7 @@ public sealed class ParcelShortlistService : IParcelShortlistService
         if (!_caller.IsAuthenticated)
         {
             throw new LandIntelligenceAuthorizationException(
-                "An owner identity is required. Send a valid X-Land-Intelligence-Owner-Id header.");
+                "An authenticated applicant identity is required for this operation.");
         }
 
         return _caller.OwnerId!.Value;

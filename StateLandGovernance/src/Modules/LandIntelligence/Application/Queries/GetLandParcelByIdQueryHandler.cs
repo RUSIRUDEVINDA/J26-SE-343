@@ -1,6 +1,8 @@
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using ValidationException = StateLandGovernance.LandIntelligence.Application.Interfaces.ValidationException;
 using StateLandGovernance.LandIntelligence.Application.Mappings;
+using StateLandGovernance.LandIntelligence.Application.Services;
 using StateLandGovernance.LandIntelligence.Domain.Exceptions;
 
 namespace StateLandGovernance.LandIntelligence.Application.Queries;
@@ -10,19 +12,19 @@ public sealed class GetLandParcelByIdQueryHandler
 {
     private readonly ILandParcelRepository _landParcelRepository;
     private readonly IRealParcelSourceReadRepository _realParcelSourceReadRepository;
-    private readonly IResearchSimulatedLeaseReadRepository _researchSimulatedLeaseReadRepository;
-    private readonly IResearchDemoMode _researchDemoMode;
+    private readonly LandParcelAvailabilityComposer _availabilityComposer;
+    private readonly ILandIntelligenceGisCoverageService _gisCoverageService;
 
     public GetLandParcelByIdQueryHandler(
         ILandParcelRepository landParcelRepository,
         IRealParcelSourceReadRepository realParcelSourceReadRepository,
-        IResearchSimulatedLeaseReadRepository researchSimulatedLeaseReadRepository,
-        IResearchDemoMode researchDemoMode)
+        LandParcelAvailabilityComposer availabilityComposer,
+        ILandIntelligenceGisCoverageService gisCoverageService)
     {
         _landParcelRepository = landParcelRepository;
         _realParcelSourceReadRepository = realParcelSourceReadRepository;
-        _researchSimulatedLeaseReadRepository = researchSimulatedLeaseReadRepository;
-        _researchDemoMode = researchDemoMode;
+        _availabilityComposer = availabilityComposer;
+        _gisCoverageService = gisCoverageService;
     }
 
     public async Task<LandParcelDto> HandleAsync(
@@ -41,19 +43,15 @@ public sealed class GetLandParcelByIdQueryHandler
             parcel.Id,
             cancellationToken);
 
-        ResearchSimulatedLeaseWorkflowDto? simulated = null;
-        if (_researchDemoMode.IsEnabled)
-        {
-            simulated = await _researchSimulatedLeaseReadRepository.GetByParcelIdAsync(
-                parcel.Id,
-                cancellationToken);
-        }
-
-        var availability = LandParcelAvailabilityMapper.Build(
+        var availability = await _availabilityComposer.BuildAsync(
+            parcel.Id,
             cadastralSource,
-            simulated,
-            _researchDemoMode.IsEnabled);
+            cancellationToken);
 
-        return LandParcelMapper.ToDto(parcel, cadastralSource, availability);
+        var gisEnrichment = await _gisCoverageService.GetParcelEnrichmentSummaryAsync(
+            parcel.Id,
+            cancellationToken);
+
+        return LandParcelMapper.ToDto(parcel, cadastralSource, availability, gisEnrichment);
     }
 }

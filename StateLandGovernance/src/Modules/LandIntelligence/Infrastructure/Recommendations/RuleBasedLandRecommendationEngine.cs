@@ -1,6 +1,7 @@
 using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Application.ProjectLeaseReady;
 using StateLandGovernance.LandIntelligence.Application.Recommendations;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
@@ -19,6 +20,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
     private readonly ExperimentalColomboMlOptions _experimentalOptions;
     private readonly IRealParcelSourceReadRepository _realParcelSourceReadRepository;
     private readonly IRecommendationParcelContext _parcelContext;
+    private readonly IProjectLeaseReadyDesignationReadRepository _projectLeaseReady;
 
     public RuleBasedLandRecommendationEngine(
         ILandParcelRepository landParcelRepository,
@@ -27,7 +29,8 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         IExperimentalColomboMlEvidenceService experimentalColomboMlEvidence,
         Microsoft.Extensions.Options.IOptions<ExperimentalColomboMlOptions> experimentalOptions,
         IRealParcelSourceReadRepository realParcelSourceReadRepository,
-        IRecommendationParcelContext parcelContext)
+        IRecommendationParcelContext parcelContext,
+        IProjectLeaseReadyDesignationReadRepository projectLeaseReady)
     {
         _landParcelRepository = landParcelRepository;
         _evaluators = evaluators.OrderBy(e => e.Order).ToList();
@@ -36,6 +39,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         _experimentalOptions = experimentalOptions.Value;
         _realParcelSourceReadRepository = realParcelSourceReadRepository;
         _parcelContext = parcelContext;
+        _projectLeaseReady = projectLeaseReady;
     }
 
     public async Task<LandRecommendationSearchResponse> RecommendAsync(
@@ -44,9 +48,11 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
     {
         var (candidates, transparency) = await RetrieveCandidatesWithTransparencyAsync(request, cancellationToken);
 
+        var candidateIds = candidates.Select(c => c.Id).ToList();
         var sources = await _realParcelSourceReadRepository.GetByParcelIdsAsync(
-            candidates.Select(c => c.Id).ToList(),
+            candidateIds,
             cancellationToken);
+        var projectLeaseReady = await _projectLeaseReady.GetByParcelIdsAsync(candidateIds, cancellationToken);
         _parcelContext.Load(sources);
 
         try
@@ -59,23 +65,34 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 .Take(Math.Max(1, request.MaxResults))
                 .ToList();
 
+            var rankingAssignments = AssignRankings(drafts, rankedDrafts);
+
             var recommendations = new List<LandParcelRecommendationResult>(rankedDrafts.Count);
             for (var index = 0; index < rankedDrafts.Count; index++)
             {
                 var draft = rankedDrafts[index];
+                var ranking = rankingAssignments[index];
                 var (mlPrediction, experimentalEvidence) = await CollectSupplementaryEvidenceAsync(
                     draft.Parcel,
                     request.RequiredPurpose,
                     draft.HardConstraint.IsViolated,
                     cancellationToken);
 
+                var source = _parcelContext.GetSource(draft.Parcel.Id);
+                var screening = SourceReportedClaimantScreening.Evaluate(source);
+                projectLeaseReady.TryGetValue(draft.Parcel.Id, out var designation);
+                var leaseReadyEvaluation = designation is null
+                    ? null
+                    : ProjectLeaseReadyDesignationEvaluator.Evaluate(designation, source);
+
                 recommendations.Add(ToRecommendationResult(
                     draft,
                     request.RequiredPurpose,
                     mlPrediction,
                     experimentalEvidence,
-                    index + 1,
-                    SourceReportedClaimantScreening.Evaluate(_parcelContext.GetSource(draft.Parcel.Id))));
+                    ranking,
+                    screening,
+                    leaseReadyEvaluation));
             }
 
             var unavailable = CollectUnavailableCriteria(request, drafts);
@@ -163,8 +180,9 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         LandUseType requiredPurpose,
         MlSuitabilityPrediction? mlPrediction,
         ExperimentalColomboMlEvidenceResult? experimentalEvidence,
-        int rank,
-        StateLandCandidateScreeningResult screening)
+        RecommendationRankingAssignment ranking,
+        StateLandCandidateScreeningResult screening,
+        ProjectLeaseReadyDesignationEvaluator.Evaluation? projectLeaseReady)
     {
         var evidence = BuildEvidence(
             draft.CriterionResults,
@@ -172,7 +190,17 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             draft.Parcel,
             draft.HardConstraint,
             mlPrediction,
-            experimentalEvidence);
+            experimentalEvidence).ToList();
+
+        if (projectLeaseReady?.IsDesignatedInProjectDataset == true)
+        {
+            evidence.Add(new RecommendationEvidenceDto(
+                "ProjectLeaseReadyDesignation",
+                projectLeaseReady.IsEffectiveForLeaseFlow
+                    ? $"{projectLeaseReady.DisplayLeaseAvailabilityLabel}. {projectLeaseReady.Designation.DesignationNotice}"
+                    : $"{projectLeaseReady.DisplayLeaseAvailabilityLabel}. {projectLeaseReady.Designation.DesignationNotice}",
+                "Project lease-ready (dataset assumption)"));
+        }
 
         var explanation = draft.HardConstraint.IsViolated
             ? RecommendationExplanationBuilder.BuildHardConstraintRejection(
@@ -193,7 +221,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             draft.Parcel.Id,
             draft.Parcel.Identifier.CadastralNumber,
             draft.SuitabilityScore,
-            rank,
+            ranking.DisplayOrder,
             draft.MatchingCriteria,
             draft.FailedCriteria,
             draft.Restrictions,
@@ -207,7 +235,15 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             screening.ClaimantCategoryDisplay,
             screening.ParcelStatusCode,
             screening.SourceProvenanceLabel,
-            screening.SourceImportedAtUtc);
+            screening.SourceImportedAtUtc,
+            projectLeaseReady?.DisplayLeaseAvailabilityLabel,
+            projectLeaseReady?.IsDesignatedInProjectDataset ?? false,
+            projectLeaseReady?.IsEffectiveForLeaseFlow ?? false,
+            draft.Parcel.Area.ToHectares(),
+            ranking.DisplayOrder,
+            ranking.RuleScoreRank,
+            ranking.RuleScoreTieCount,
+            ranking.IsTiedOnRuleScore);
     }
 
     private async Task<(IReadOnlyList<LandParcel> Candidates, RecommendationSearchTransparencyDto Transparency)>
@@ -288,13 +324,13 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             appliedFilters.Add($"sourceReportedLandUse={request.SourceReportedLandUse.Trim()}");
         }
 
-        if (request.RequiredAreaHectares is > 0)
+        var targetArea = request.ResolveTargetAreaHectares();
+        if (targetArea is > 0)
         {
-            appliedFilters.Add($"minAreaHectares={request.RequiredAreaHectares.Value}");
+            appliedFilters.Add($"targetAreaHectares={targetArea.Value} (scoring only, not a minimum filter)");
         }
 
-        // Progressive SQL filters (district, province, source land use, area).
-        // Min area is a hard floor — no silent tolerance in candidate selection.
+        // Progressive SQL filters (district, province, source land use).
         var searchRequest = BuildSearchRequest(request);
         var candidates = await LoadAllMatchingAsync(searchRequest, cancellationToken);
 
@@ -345,23 +381,6 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 "Source-reported land use",
                 count,
                 $"Exact match on '{sourceLandUseFilter}'."));
-        }
-
-        if (request.RequiredAreaHectares is > 0)
-        {
-            var count = await _landParcelRepository.CountSearchAsync(new LandSearchRequest
-            {
-                Province = provinceFilter,
-                District = district,
-                SourceReportedLandUse = sourceLandUseFilter,
-                MinArea = request.RequiredAreaHectares,
-                Page = 1,
-                PageSize = 1
-            }, cancellationToken);
-            stages.Add(new RecommendationFilterStageDto(
-                "Minimum area",
-                count,
-                $"Excluded parcels below {request.RequiredAreaHectares.Value:F2} ha."));
         }
 
         // Source-reported Private claimant category is excluded from state-land candidates.
@@ -464,8 +483,6 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             SourceReportedLandUse = string.IsNullOrWhiteSpace(request.SourceReportedLandUse)
                 ? null
                 : request.SourceReportedLandUse.Trim(),
-            // Hard minimum area — do not soften with AreaTolerancePercent at filter time.
-            MinArea = request.RequiredAreaHectares is > 0 ? request.RequiredAreaHectares : null,
             Page = 1,
             PageSize = CandidatePageSize
         };
@@ -555,6 +572,64 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         }
 
         return evidence;
+    }
+
+    private sealed record RecommendationRankingAssignment(
+        int DisplayOrder,
+        int RuleScoreRank,
+        int RuleScoreTieCount,
+        bool IsTiedOnRuleScore);
+
+    private static IReadOnlyList<RecommendationRankingAssignment> AssignRankings(
+        IReadOnlyList<ParcelRecommendationDraft> allDrafts,
+        IReadOnlyList<ParcelRecommendationDraft> displayedDrafts)
+    {
+        var tieCounts = allDrafts
+            .GroupBy(d => d.SuitabilityScore)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        var competitionRanks = BuildCompetitionRanks(allDrafts);
+
+        var assignments = new List<RecommendationRankingAssignment>(displayedDrafts.Count);
+        for (var index = 0; index < displayedDrafts.Count; index++)
+        {
+            var draft = displayedDrafts[index];
+            var tieCount = tieCounts.TryGetValue(draft.SuitabilityScore, out var count) ? count : 1;
+            var ruleScoreRank = competitionRanks.TryGetValue(draft.Parcel.Id, out var rank) ? rank : index + 1;
+
+            assignments.Add(new RecommendationRankingAssignment(
+                index + 1,
+                ruleScoreRank,
+                tieCount,
+                tieCount > 1));
+        }
+
+        return assignments;
+    }
+
+    private static Dictionary<Guid, int> BuildCompetitionRanks(IReadOnlyList<ParcelRecommendationDraft> drafts)
+    {
+        var ordered = drafts
+            .OrderByDescending(d => d.SuitabilityScore)
+            .ThenBy(d => d.Parcel.Identifier.CadastralNumber, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var ranks = new Dictionary<Guid, int>(ordered.Count);
+        var rank = 0;
+        decimal? previousScore = null;
+
+        foreach (var draft in ordered)
+        {
+            if (previousScore is null || draft.SuitabilityScore != previousScore.Value)
+            {
+                rank++;
+                previousScore = draft.SuitabilityScore;
+            }
+
+            ranks[draft.Parcel.Id] = rank;
+        }
+
+        return ranks;
     }
 
     private sealed record ParcelRecommendationDraft(

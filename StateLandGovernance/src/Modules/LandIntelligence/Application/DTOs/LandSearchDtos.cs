@@ -16,7 +16,8 @@ public sealed record LandParcelDto(
     int InfrastructureFeatureCount,
     int RegulatoryReferenceCount,
     CadastralSourceMetadataDto? CadastralSource = null,
-    LandParcelAvailabilityDto? Availability = null);
+    LandParcelAvailabilityDto? Availability = null,
+    ParcelGisEnrichmentSummaryDto? GisEnrichment = null);
 
 public sealed record LandSearchRequest
 {
@@ -50,7 +51,8 @@ public sealed record LandSearchResultDto(
     AreaUnit AreaUnit,
     double CentroidLatitude,
     double CentroidLongitude,
-    CadastralSourceMetadataDto? CadastralSource = null);
+    CadastralSourceMetadataDto? CadastralSource = null,
+    LandParcelAvailabilityDto? Availability = null);
 
 public sealed record LandSearchResponse(
     IReadOnlyList<LandSearchResultDto> Results,

@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StateLandGovernance.LandIntelligence.Application.Security;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Presentation.Models;
@@ -13,6 +15,7 @@ namespace StateLandGovernance.LandIntelligence.Presentation.Controllers;
 [ApiController]
 [ApiExplorerSettings(GroupName = LandIntelligenceApiGroups.External)]
 [Route("api/v1/land/me")]
+[Authorize(Policy = LandIntelligenceAuth.Policies.Applicant)]
 [Produces("application/json")]
 public sealed class LandCitizenWorkspaceController : ControllerBase
 {

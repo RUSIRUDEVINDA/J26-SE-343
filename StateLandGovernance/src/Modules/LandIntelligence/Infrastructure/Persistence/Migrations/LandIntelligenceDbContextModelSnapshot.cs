@@ -25,6 +25,42 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.ColomboStateResearchProjectLeaseReadyEntity", b =>
+                {
+                    b.Property<string>("ResearchRecordId")
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<string>("DatasetKey")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("DesignationLabel")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("DesignationNotice")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("ImportedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("LandParcelId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ResearchRecordId");
+
+                    b.HasIndex("DatasetKey");
+
+                    b.HasIndex("LandParcelId")
+                        .IsUnique();
+
+                    b.ToTable("colombo_state_research_project_lease_ready", "land_intelligence");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.EnvironmentalRestrictionEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -442,6 +478,13 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
+                    b.Property<string>("ApplicantNicCiphertext")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ApplicantNicLookupDigest")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<bool>("ConsentToPreliminaryAssessment")
                         .HasColumnType("boolean");
 
@@ -483,6 +526,8 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .IsUnique()
                         .HasFilter("\"AcknowledgementReference\" IS NOT NULL");
 
+                    b.HasIndex("ApplicantNicLookupDigest");
+
                     b.HasIndex("LandParcelId");
 
                     b.HasIndex("OwnerId");
@@ -500,6 +545,14 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ActorKind")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
                     b.Property<DateTimeOffset>("ChangedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -512,6 +565,11 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("VisibleToApplicant")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.HasKey("Id");
 
