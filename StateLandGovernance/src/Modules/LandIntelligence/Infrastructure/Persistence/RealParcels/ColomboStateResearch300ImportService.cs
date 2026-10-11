@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Npgsql;
 using NpgsqlTypes;
+using StateLandGovernance.LandIntelligence.Application.ProjectLeaseReady;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.RealParcels;
@@ -421,7 +422,8 @@ public sealed class ColomboStateResearch300ImportService
 
         foreach (var item in rows)
         {
-            await UpsertParcelAsync(connection, transaction, item, lookupIds, csvHash, geoHash, cancellationToken);
+            var parcelId = await UpsertParcelAsync(connection, transaction, item, lookupIds, csvHash, geoHash, cancellationToken);
+            await UpsertProjectLeaseReadyDesignationAsync(connection, transaction, parcelId, item.RecordId, cancellationToken);
         }
 
         foreach (var scenario in scenarioRows)
@@ -484,6 +486,11 @@ public sealed class ColomboStateResearch300ImportService
             """;
         await using var command = new NpgsqlCommand(sql, connection, transaction);
         await command.ExecuteNonQueryAsync(ct);
+        await using var leaseReady = new NpgsqlCommand(
+            ColomboStateResearch300ProjectLeaseReadyPersistence.EnsureTableSql,
+            connection,
+            transaction);
+        await leaseReady.ExecuteNonQueryAsync(ct);
     }
 
     private static async Task ColomboCadastreParcelImportServiceEnsureSourceTableAsync(
@@ -547,7 +554,27 @@ public sealed class ColomboStateResearch300ImportService
         await command.ExecuteNonQueryAsync(ct);
     }
 
-    private static async Task UpsertParcelAsync(
+    private static async Task UpsertProjectLeaseReadyDesignationAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        Guid landParcelId,
+        string researchRecordId,
+        CancellationToken ct)
+    {
+        var (label, notice) = ColomboStateResearch300ProjectLeaseReadyPersistence.DesignationCopy();
+        await using var command = new NpgsqlCommand(
+            ColomboStateResearch300ProjectLeaseReadyPersistence.UpsertSql,
+            connection,
+            transaction);
+        command.Parameters.AddWithValue("recordId", researchRecordId);
+        command.Parameters.AddWithValue("parcelId", landParcelId);
+        command.Parameters.AddWithValue("datasetKey", ColomboStateResearchProjectLeaseReady.DatasetKey);
+        command.Parameters.AddWithValue("label", label);
+        command.Parameters.AddWithValue("notice", notice);
+        await command.ExecuteNonQueryAsync(ct);
+    }
+
+    private static async Task<Guid> UpsertParcelAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         ColomboStateResearch300ImportRow item,
@@ -625,6 +652,7 @@ public sealed class ColomboStateResearch300ImportService
         Add("mapMarkerLat", item.MapMarkerLatitude);
         Add("mapMarkerLon", item.MapMarkerLongitude);
         await source.ExecuteNonQueryAsync(ct);
+        return persistedId;
     }
 
     private static async Task<LookupIds> ReadLookupIdsAsync(
