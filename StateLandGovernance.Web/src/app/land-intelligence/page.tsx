@@ -7,13 +7,13 @@ export default function Component01DashboardPage() {
     <>
       <PageHeading
         title="Land Intelligence Dashboard"
-        subtitle="Hambantota pilot — spatial recommendation and knowledge graph"
+        subtitle="Decision-support view of indexed state land parcels for the Colombo pilot. Results inform comparison and review — they are not ownership confirmation or lease approval."
         action={
           <Button
             href="/land-intelligence/find-suitable-land"
             variant="primary"
           >
-            Find Suitable Land ↗
+            Find Suitable Land
           </Button>
         }
       />
