@@ -13,8 +13,15 @@ public static class LeaseInterestPayloadSerializer
         Converters = { new JsonStringEnumConverter() },
     };
 
-    public static string Serialize(UpsertLeaseInterestDraftDto draft) =>
-        JsonSerializer.Serialize(draft, Options);
+    /// <summary>Persists draft JSON without NIC fields (NIC is stored encrypted on the entity).</summary>
+    public static string Serialize(UpsertLeaseInterestDraftDto draft)
+    {
+        var redacted = draft with
+        {
+            Applicant = LeaseInterestApplicantNic.ClearNicFromApplicant(draft.Applicant),
+        };
+        return JsonSerializer.Serialize(redacted, Options);
+    }
 
     public static UpsertLeaseInterestDraftDto Deserialize(string json)
     {

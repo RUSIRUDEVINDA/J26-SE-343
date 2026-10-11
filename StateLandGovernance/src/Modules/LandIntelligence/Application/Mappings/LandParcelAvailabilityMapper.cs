@@ -1,4 +1,5 @@
 using StateLandGovernance.LandIntelligence.Application.DTOs;
+using StateLandGovernance.LandIntelligence.Application.ProjectLeaseReady;
 
 namespace StateLandGovernance.LandIntelligence.Application.Mappings;
 
@@ -9,15 +10,30 @@ public static class LandParcelAvailabilityMapper
     public static LandParcelAvailabilityDto Build(
         CadastralSourceMetadataDto? cadastralSource,
         ResearchSimulatedLeaseWorkflowDto? simulatedWorkflow,
-        bool includeSimulatedWorkflow)
+        bool includeSimulatedWorkflow,
+        ProjectLeaseReadyDesignationRecord? projectDesignation = null)
     {
+        var simulated = includeSimulatedWorkflow ? simulatedWorkflow : null;
+        var researchRecordId = cadastralSource?.ResearchRecordId;
+
+        if (projectDesignation is not null)
+        {
+            var evaluation = ProjectLeaseReadyDesignationEvaluator.Evaluate(
+                projectDesignation,
+                cadastralSource);
+
+            return new LandParcelAvailabilityDto(
+                evaluation.DisplayLeaseAvailabilityLabel,
+                researchRecordId ?? projectDesignation.ResearchRecordId,
+                simulated,
+                evaluation.Designation);
+        }
+
         if (cadastralSource is null)
         {
             return new LandParcelAvailabilityDto("Unknown", null, null);
         }
 
-        var researchRecordId = cadastralSource.ResearchRecordId;
-        var simulated = includeSimulatedWorkflow ? simulatedWorkflow : null;
         return new LandParcelAvailabilityDto(NotVerifiedLabel, researchRecordId, simulated);
     }
 }
