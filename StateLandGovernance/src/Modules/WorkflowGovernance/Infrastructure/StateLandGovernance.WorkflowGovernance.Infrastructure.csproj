@@ -5,6 +5,7 @@
     <ProjectReference Include="..\Domain\StateLandGovernance.WorkflowGovernance.Domain.csproj" />
     <ProjectReference Include="..\..\..\Shared\Infrastructure\StateLandGovernance.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\StateLandGovernance.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\GovernanceIntelligence\Application\StateLandGovernance.GovernanceIntelligence.Application.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
