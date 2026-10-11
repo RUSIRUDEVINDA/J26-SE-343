@@ -18,7 +18,9 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
     private readonly ILandParcelRepository _parcelRepository;
     private readonly ILeaseInterestCostAssessmentService _costAssessment;
     private readonly LeaseInterestDraftValidator _validator;
+    private readonly INicPersonalDataProtector _nicProtector;
     private readonly TimeProvider _timeProvider;
+    private readonly ILeaseInterestParcelEligibilityService _parcelEligibility;
 
     public LeaseInterestRequestService(
         LandIntelligenceDbContext dbContext,
@@ -26,14 +28,18 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
         ILandParcelRepository parcelRepository,
         ILeaseInterestCostAssessmentService costAssessment,
         LeaseInterestDraftValidator validator,
-        TimeProvider timeProvider)
+        INicPersonalDataProtector nicProtector,
+        TimeProvider timeProvider,
+        ILeaseInterestParcelEligibilityService parcelEligibility)
     {
         _dbContext = dbContext;
         _caller = caller;
         _parcelRepository = parcelRepository;
         _costAssessment = costAssessment;
         _validator = validator;
+        _nicProtector = nicProtector;
         _timeProvider = timeProvider;
+        _parcelEligibility = parcelEligibility;
     }
 
     public LeaseInterestDocumentChecklistDto GetDocumentChecklist() =>
@@ -53,6 +59,7 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
     {
         var ownerId = RequireOwnerId();
         await EnsureParcelExistsAsync(landParcelId, cancellationToken);
+        await _parcelEligibility.EnsureEligibleForLeaseInterestAsync(landParcelId, cancellationToken);
 
         var entity = await _dbContext.LeaseInterestRequests
             .Include(x => x.StatusHistory)
@@ -73,6 +80,8 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
                     string.Empty,
                     string.Empty,
                     string.Empty,
+                    null,
+                    null,
                     null,
                     null),
                 new LeaseInterestProposalDto(
@@ -103,7 +112,10 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
                 entity.Id,
                 LeaseInterestRequestStatus.Draft,
                 now,
-                "Draft created.");
+                "Draft created.",
+                LeaseInterestStatusActorKind.System,
+                null,
+                true);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
@@ -131,6 +143,7 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
 
         var now = _timeProvider.GetUtcNow();
         entity.PayloadJson = LeaseInterestPayloadSerializer.Serialize(draft);
+        ApplyNicFromDraft(entity, draft);
         entity.RequestedPurpose = (int)draft.Proposal.RequestedPurpose;
         entity.RequestedDurationYears = draft.Proposal.RequestedDurationYears;
         entity.ConsentToPreliminaryAssessment = draft.ConsentToPreliminaryAssessment;
@@ -181,9 +194,11 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
         }
 
         await EnsureParcelExistsAsync(entity.LandParcelId, cancellationToken);
+        await _parcelEligibility.EnsureEligibleForLeaseInterestAsync(entity.LandParcelId, cancellationToken);
 
         var now = _timeProvider.GetUtcNow();
         entity.PayloadJson = LeaseInterestPayloadSerializer.Serialize(draft);
+        ApplyNicFromDraft(entity, draft);
         entity.RequestedPurpose = (int)draft.Proposal.RequestedPurpose;
         entity.RequestedDurationYears = draft.Proposal.RequestedDurationYears;
         entity.ConsentToPreliminaryAssessment = draft.ConsentToPreliminaryAssessment;
@@ -197,12 +212,18 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             entity.Id,
             LeaseInterestRequestStatus.Submitted,
             now,
-            "Submitted by applicant.");
+            "Submitted by applicant. Preliminary expression of interest only — not a reservation or lease.",
+            LeaseInterestStatusActorKind.Applicant,
+            ownerId,
+            true);
         AppendStatusHistory(
             entity.Id,
             LeaseInterestRequestStatus.PendingVerification,
             now,
-            "Queued for officer verification. Parcel availability is unchanged.");
+            "Queued for officer verification. Official lease availability is unchanged.",
+            LeaseInterestStatusActorKind.System,
+            null,
+            true);
 
         try
         {
@@ -309,12 +330,54 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             (LandUseType)entity.RequestedPurpose,
             entity.RequestedDurationYears);
 
+    private void ApplyNicFromDraft(LeaseInterestRequestEntity entity, UpsertLeaseInterestDraftDto draft)
+    {
+        var raw = LeaseInterestApplicantNic.SelectRawNic(draft.Applicant);
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return;
+        }
+
+        if (!SriLankanNic.TryNormalize(raw, out var normalized))
+        {
+            return;
+        }
+
+        entity.ApplicantNicCiphertext = _nicProtector.Encrypt(normalized);
+        entity.ApplicantNicLookupDigest = _nicProtector.ComputeLookupDigest(normalized);
+    }
+
     private LeaseInterestRequestDetailDto MapDetail(LeaseInterestRequestEntity entity)
     {
         var draft = LeaseInterestPayloadSerializer.Deserialize(entity.PayloadJson);
+        draft = draft with
+        {
+            Applicant = LeaseInterestApplicantNic.ClearNicFromApplicant(draft.Applicant),
+        };
+        var decryptedNic = _nicProtector.Decrypt(entity.ApplicantNicCiphertext);
+        draft = draft with
+        {
+            Applicant = LeaseInterestApplicantNic.MergeDecryptedNic(draft.Applicant, decryptedNic),
+        };
+
+        if (entity.Status != LeaseInterestRequestStatus.Draft)
+        {
+            draft = draft with
+            {
+                Applicant = LeaseInterestApplicantNic.MaskForApiResponse(draft.Applicant),
+            };
+        }
+
         var history = entity.StatusHistory
+            .Where(x => x.VisibleToApplicant)
             .OrderBy(x => x.ChangedAtUtc)
-            .Select(x => new LeaseInterestStatusHistoryEntryDto(x.Status, x.ChangedAtUtc, x.Note))
+            .Select(x => new LeaseInterestStatusHistoryEntryDto(
+                x.Status,
+                x.ChangedAtUtc,
+                x.Note,
+                (LeaseInterestStatusActorKindDto)x.ActorKind,
+                x.ActorId,
+                x.VisibleToApplicant))
             .ToList();
 
         return new LeaseInterestRequestDetailDto(
@@ -337,7 +400,10 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
         Guid leaseInterestRequestId,
         LeaseInterestRequestStatus status,
         DateTimeOffset changedAtUtc,
-        string? note)
+        string? note,
+        LeaseInterestStatusActorKind actorKind,
+        Guid? actorId,
+        bool visibleToApplicant)
     {
         _dbContext.LeaseInterestStatusHistory.Add(new LeaseInterestStatusHistoryEntity
         {
@@ -346,6 +412,9 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             Status = status,
             ChangedAtUtc = changedAtUtc,
             Note = note,
+            ActorKind = actorKind,
+            ActorId = actorId,
+            VisibleToApplicant = visibleToApplicant,
         });
     }
 
@@ -354,7 +423,7 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
         if (!_caller.IsAuthenticated)
         {
             throw new LandIntelligenceAuthorizationException(
-                "An owner identity is required. Send a valid X-Land-Intelligence-Owner-Id header.");
+                "An authenticated applicant identity is required for this operation.");
         }
 
         return _caller.OwnerId!.Value;
