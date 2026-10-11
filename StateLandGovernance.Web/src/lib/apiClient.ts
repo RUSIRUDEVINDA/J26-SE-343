@@ -1,4 +1,5 @@
 import type { ApiErrorResponse } from "@/shared/types/common";
+import { landIntelligenceOwnerHeaders } from "@/modules/component-01-land-intelligence/utils/landIntelligenceOwner";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
 
@@ -22,6 +23,7 @@ function ensureBaseUrl(): string {
   if (baseUrl) {
     return baseUrl;
   }
+
   if (
     process.env.NODE_ENV === "development" ||
     (typeof window !== "undefined" &&
@@ -30,14 +32,23 @@ function ensureBaseUrl(): string {
   ) {
     return "http://localhost:5264";
   }
+
   throw new Error(
     "NEXT_PUBLIC_API_BASE_URL is not configured. Copy .env.local.example to .env.local.",
   );
 }
 
+function mergeHeaders(init?: HeadersInit): HeadersInit {
+  return {
+    ...landIntelligenceOwnerHeaders(),
+    ...init,
+  };
+}
+
 async function parseError(response: Response): Promise<ApiClientError> {
   try {
     const body = (await response.json()) as ApiErrorResponse;
+
     return new ApiClientError({
       status: body.status ?? response.status,
       title: body.title ?? response.statusText,
@@ -53,19 +64,25 @@ async function parseError(response: Response): Promise<ApiClientError> {
   }
 }
 
-export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
+export async function apiGet<T>(
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
   const response = await fetch(url, {
     ...init,
     method: "GET",
-    headers: {
+    headers: mergeHeaders({
       Accept: "application/json",
       ...init?.headers,
-    },
+    }),
   });
+
   if (!response.ok) {
     throw await parseError(response);
   }
+
   return (await response.json()) as T;
 }
 
@@ -75,19 +92,22 @@ export async function apiPost<T>(
   init?: RequestInit,
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
   const response = await fetch(url, {
     ...init,
     method: "POST",
-    headers: {
+    headers: mergeHeaders({
       Accept: "application/json",
       "Content-Type": "application/json",
       ...init?.headers,
-    },
+    }),
     body: JSON.stringify(body),
   });
+
   if (!response.ok) {
     throw await parseError(response);
   }
+
   return (await response.json()) as T;
 }
 
@@ -97,15 +117,17 @@ export async function apiPostFormData<T>(
   init?: RequestInit,
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
   let response: Response;
+
   try {
     response = await fetch(url, {
       ...init,
       method: "POST",
-      headers: {
+      headers: mergeHeaders({
         Accept: "application/json",
         ...init?.headers,
-      },
+      }),
       body: formData,
     });
   } catch {
@@ -120,5 +142,55 @@ export async function apiPostFormData<T>(
   if (!response.ok) {
     throw await parseError(response);
   }
+
   return (await response.json()) as T;
+}
+
+export async function apiPut<T>(
+  path: string,
+  body: unknown,
+  init?: RequestInit,
+): Promise<T> {
+  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
+  const response = await fetch(url, {
+    ...init,
+    method: "PUT",
+    headers: mergeHeaders({
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...init?.headers,
+    }),
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  return (await response.json()) as T;
+}
+
+export async function apiDelete(
+  path: string,
+  init?: RequestInit,
+): Promise<void> {
+  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
+  const response = await fetch(url, {
+    ...init,
+    method: "DELETE",
+    headers: mergeHeaders({
+      Accept: "application/json",
+      ...init?.headers,
+    }),
+  });
+
+  if (!response.ok) {
+    throw await parseError(response);
+  }
 }

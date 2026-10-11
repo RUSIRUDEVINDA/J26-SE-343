@@ -1,0 +1,38 @@
+{
+  "original_baseline": {
+    "path": "data/state_land_governance_confirmed_200.csv",
+    "sha256": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61"
+  },
+  "candidate_dataset": {
+    "path": "data/state_land_complaints_development_530.csv",
+    "sha256": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8"
+  },
+  "confirmed_review_pack": {
+    "path": "candidate-data/v1/synthetic_family_review_pack_confirmed_20261007.csv",
+    "sha256": "0f4d839d9ad46223430cf5adb375775ce7ae12cc8b38b57f263eab790895fb74"
+  },
+  "experiment4_arm_a_oof": {
+    "path": "results/experiment4_synthetic_augmentation_run2/arm_a/oof_predictions.csv",
+    "sha256": "88fff40470a5d2b85714f07a60a5425ffec07b82a262cb0c67161098302f7d8e"
+  },
+  "experiment4_arm_b_oof": {
+    "path": "results/experiment4_synthetic_augmentation_run5/arm_b/oof_predictions.csv",
+    "sha256": "98132e4ff898489cd4f9abf624017d4bb9565e27a62c04c6f2b1c19509ad0aea"
+  },
+  "experiment4_real_fold_manifest": {
+    "path": "results/experiment4_synthetic_augmentation_run2/baseline_fold_manifest.csv",
+    "sha256": "260c0eaa681ab42a6142117c3cb7e0d2cff8a2438feb32596d0eaf10bf8cc567"
+  },
+  "model_v1_metadata": {
+    "path": "models/v1/model_metadata_v1.json",
+    "sha256": "07b110dfd95087a0598c60e88ab5eec34aa3170e22f464b025df1222e9f95419"
+  },
+  "model_v1_validation": {
+    "path": "models/v1/validation/model_validation_v1.json",
+    "sha256": "407c3ecc12b5ba7295c5aaeae2f735e0dff66b53afee7eb7a8578c27e91bf837"
+  },
+  "model_v1_artifact": {
+    "path": "models/v1/governance_classifier_v1.joblib",
+    "sha256": "14e91be02ef9bdb2f5e440782503c8c89dfa479d010a3fc993e651aa7a9b25c6"
+  }
+}

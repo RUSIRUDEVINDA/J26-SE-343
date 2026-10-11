@@ -30,15 +30,25 @@ export function Sidebar() {
       <nav className={styles.nav}>
         {component01NavItems.map((item) => {
           const active = isActive(pathname, item.href);
+          const className = [
+            styles.link,
+            active ? styles.active : styles.inactive,
+            item.primary && !active ? styles.primaryAction : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
+
           return (
             <Link
               key={item.label}
               href={item.href}
-              className={`${styles.link} ${active ? styles.active : styles.inactive}`}
+              className={className}
               aria-current={active ? "page" : undefined}
             >
-              <span aria-hidden="true">{item.icon} </span>
-              {item.label}
+              <span className={styles.icon} aria-hidden="true">
+                {item.icon}
+              </span>
+              <span className={styles.label}>{item.label}</span>
             </Link>
           );
         })}

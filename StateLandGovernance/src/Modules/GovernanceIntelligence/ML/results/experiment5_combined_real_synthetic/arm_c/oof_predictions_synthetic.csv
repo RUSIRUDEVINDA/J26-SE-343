@@ -1,0 +1,226 @@
+Research_ID,population_origin,source_group,synthetic_family_id,synthetic_variant,True_Label,Predicted_Label,Fold,prob_Administrative___Procedural___Integrity,prob_Lease_Revenue___Payment___Enforcement,prob_Unauthorized_Allocation___Transfer___Use,prob_Protected___Environmental_Lease_Misuse
+SYN-0001,synthetic,,SYN-FAM-001,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.6691436938519967,0.11323872304629427,0.11148330671759045,0.1061342763841187
+SYN-0002,synthetic,,SYN-FAM-001,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.6664912204080194,0.17710263327777276,0.0822220563294965,0.07418408998471124
+SYN-0003,synthetic,,SYN-FAM-001,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.6811318112358242,0.11676103235068078,0.10789122142072463,0.09421593499277035
+SYN-0004,synthetic,,SYN-FAM-002,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.4711873418863038,0.1563352379191038,0.17937235154164768,0.1931050686529446
+SYN-0005,synthetic,,SYN-FAM-002,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.6939130317103346,0.09966038254908592,0.12123998434247284,0.08518660139810676
+SYN-0006,synthetic,,SYN-FAM-002,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.6157700878683339,0.13496643489108537,0.12899394531495872,0.12026953192562212
+SYN-0007,synthetic,,SYN-FAM-003,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.672990450536843,0.12054582025102072,0.10550169972968615,0.1009620294824501
+SYN-0008,synthetic,,SYN-FAM-003,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.5274933387446077,0.1364891481497281,0.15863581106526745,0.17738170204039672
+SYN-0009,synthetic,,SYN-FAM-003,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.5122960797206418,0.18764011524624963,0.1544929269540977,0.14557087807901076
+SYN-0010,synthetic,,SYN-FAM-004,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.6436297153635326,0.11902780698186528,0.15102227586952,0.08632020178508208
+SYN-0011,synthetic,,SYN-FAM-004,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.5074060767554143,0.18151747833417267,0.1791559420813072,0.1319205028291058
+SYN-0012,synthetic,,SYN-FAM-004,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.4294183134812864,0.14960338019804434,0.274338053606725,0.1466402527139443
+SYN-0016,synthetic,,SYN-FAM-006,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.5288534594021863,0.16950052671939733,0.15631523017198218,0.1453307837064341
+SYN-0017,synthetic,,SYN-FAM-006,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.3398372307291027,0.21505579100269498,0.20965619744535888,0.23545078082284351
+SYN-0018,synthetic,,SYN-FAM-006,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.5424194368596317,0.17418710474566765,0.1392035424851949,0.1441899159095058
+SYN-0019,synthetic,,SYN-FAM-007,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.473404138963219,0.1603845211555336,0.21443504501966462,0.15177629486158284
+SYN-0020,synthetic,,SYN-FAM-007,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.3275873791052718,0.26108860387167865,0.17232989670985066,0.23899412031319875
+SYN-0021,synthetic,,SYN-FAM-007,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.5948775703370661,0.13107001731954615,0.1661500288865346,0.10790238345685313
+SYN-0025,synthetic,,SYN-FAM-009,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.4939881187554242,0.1878869950538748,0.16650775071601406,0.15161713547468683
+SYN-0026,synthetic,,SYN-FAM-009,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.46000605443803383,0.23665357558691894,0.15792951057764176,0.14541085939740536
+SYN-0027,synthetic,,SYN-FAM-009,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.48662838837521494,0.22511756561430837,0.15916655891995726,0.12908748709051943
+SYN-0031,synthetic,,SYN-FAM-011,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.596639226023997,0.1411779802899761,0.1559398818989787,0.10624291178704823
+SYN-0032,synthetic,,SYN-FAM-011,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.5781315620568355,0.1278798787595617,0.18695991319443328,0.10702864598916957
+SYN-0033,synthetic,,SYN-FAM-011,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.5528935457337882,0.20084317549855846,0.13181669537929078,0.1144465833883626
+SYN-0037,synthetic,,SYN-FAM-013,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.42839750314388136,0.2103148523904768,0.1711418321729179,0.19014581229272384
+SYN-0038,synthetic,,SYN-FAM-013,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.5026157053577495,0.1888822707565557,0.1952412594394274,0.11326076444626745
+SYN-0039,synthetic,,SYN-FAM-013,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.3178276564979997,0.2402534383860039,0.21436897144366024,0.22754993367233606
+SYN-0046,synthetic,,SYN-FAM-016,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.46488751425001135,0.19876493154976696,0.1878223030615517,0.1485252511386699
+SYN-0047,synthetic,,SYN-FAM-016,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.4670716130598225,0.2123292280643317,0.18348596376908463,0.1371131951067613
+SYN-0048,synthetic,,SYN-FAM-016,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.3760885688714014,0.20481385323385143,0.2415733350363172,0.17752424285843
+SYN-0049,synthetic,,SYN-FAM-017,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.29210385520332194,0.27293684657385525,0.26068946197034853,0.17426983625247433
+SYN-0050,synthetic,,SYN-FAM-017,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.4772351936486169,0.2034975873706443,0.15887216590390674,0.1603950530768322
+SYN-0051,synthetic,,SYN-FAM-017,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.3700891502804048,0.35361965941564794,0.15485680719234413,0.12143438311160329
+SYN-0052,synthetic,,SYN-FAM-018,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.4580322270510461,0.29215125514178214,0.1197364222531613,0.13008009555401046
+SYN-0053,synthetic,,SYN-FAM-018,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.5322190185111144,0.2401865317973355,0.13413817849320123,0.09345627119834897
+SYN-0054,synthetic,,SYN-FAM-018,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.4766123608963483,0.2901230480340158,0.12082009004838912,0.1124445010212469
+SYN-0055,synthetic,,SYN-FAM-019,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.4485834979807597,0.23720863909545956,0.16949216539800602,0.14471569752577468
+SYN-0056,synthetic,,SYN-FAM-019,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.365839376258727,0.30083792102895845,0.17937370033251698,0.1539490023797976
+SYN-0057,synthetic,,SYN-FAM-019,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.5100335623611093,0.2502349511184874,0.11590897363109878,0.1238225128893044
+SYN-0061,synthetic,,SYN-FAM-021,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.5444063423144643,0.21592770259385888,0.1335546451725133,0.10611130991916352
+SYN-0062,synthetic,,SYN-FAM-021,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.39580212785441293,0.27550571588008016,0.19245493047001527,0.13623722579549166
+SYN-0063,synthetic,,SYN-FAM-021,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.3535732186362169,0.30002993167259046,0.1938926148152688,0.15250423487592382
+SYN-0067,synthetic,,SYN-FAM-023,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.36852224790273547,0.3000275396290463,0.16305245731023424,0.1683977551579839
+SYN-0068,synthetic,,SYN-FAM-023,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.7067390446543459,0.09123929701827993,0.10264304778470847,0.09937861054266552
+SYN-0069,synthetic,,SYN-FAM-023,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.3904202042279973,0.22159484498248208,0.20102418982399414,0.1869607609655264
+SYN-0073,synthetic,,SYN-FAM-025,1.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.6116789224148586,0.1432357830514564,0.12068539051872797,0.12439990401495704
+SYN-0074,synthetic,,SYN-FAM-025,2.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.492098834611428,0.2232491114346918,0.15024993087735855,0.13440212307652158
+SYN-0075,synthetic,,SYN-FAM-025,3.0,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.4372686385027443,0.2767820411910352,0.15585628333408333,0.1300930369721371
+SYN-0076,synthetic,,SYN-FAM-026,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.16431610468231309,0.4150790390504509,0.2484879065407727,0.17211694972646324
+SYN-0077,synthetic,,SYN-FAM-026,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.2500322538118533,0.4138273281269643,0.17962433686220958,0.15651608119897292
+SYN-0078,synthetic,,SYN-FAM-026,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.16015010405725846,0.5754468418648396,0.12718233725817446,0.13722071681972736
+SYN-0079,synthetic,,SYN-FAM-027,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.15671577763571842,0.4643035429493623,0.17887968154052217,0.20010099787439714
+SYN-0080,synthetic,,SYN-FAM-027,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.13282334758605632,0.45137266231530154,0.2392458302720891,0.17655815982655304
+SYN-0081,synthetic,,SYN-FAM-027,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.15663533167112928,0.6124113190126569,0.14022052438721325,0.0907328249290005
+SYN-0082,synthetic,,SYN-FAM-028,1.0,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,2,0.1742354568530218,0.29743174015221,0.30811785850057555,0.22021494449419263
+SYN-0083,synthetic,,SYN-FAM-028,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.3049927997563058,0.3467401725932126,0.20586710898347563,0.1423999186670061
+SYN-0084,synthetic,,SYN-FAM-028,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.16964417939777562,0.4011707831942819,0.2679744722288498,0.16121056517909269
+SYN-0088,synthetic,,SYN-FAM-030,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2036288335279911,0.5776865509455011,0.11885757146253227,0.09982704406397552
+SYN-0089,synthetic,,SYN-FAM-030,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.18722614271335938,0.5428194167597351,0.1559820307438116,0.11397240978309389
+SYN-0090,synthetic,,SYN-FAM-030,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.14698417626279778,0.5648303682909754,0.15997622277851956,0.1282092326677072
+SYN-0091,synthetic,,SYN-FAM-031,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.2568448091172814,0.42230790898296555,0.16233424478183764,0.1585130371179154
+SYN-0092,synthetic,,SYN-FAM-031,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.13003118999991317,0.6062255136163744,0.11880396479071585,0.14493933159299646
+SYN-0093,synthetic,,SYN-FAM-031,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.18253309226983733,0.5072199020877152,0.1456305772380709,0.16461642840437654
+SYN-0094,synthetic,,SYN-FAM-032,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.24908735786141986,0.47658224234848445,0.16524782633850524,0.1090825734515904
+SYN-0095,synthetic,,SYN-FAM-032,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.1721689720071455,0.3873790457879535,0.31248568692033923,0.1279662952845618
+SYN-0096,synthetic,,SYN-FAM-032,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.17819605801061625,0.46311787705417046,0.1967846720930122,0.1619013928422011
+SYN-0097,synthetic,,SYN-FAM-033,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.2139371811255914,0.3727842629144865,0.2528021700412698,0.16047638591865235
+SYN-0098,synthetic,,SYN-FAM-033,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.20194694214306147,0.5763441104074907,0.1259202556058093,0.0957886918436385
+SYN-0099,synthetic,,SYN-FAM-033,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.18359337940391104,0.4982438499397875,0.18343912140243637,0.13472364925386493
+SYN-0100,synthetic,,SYN-FAM-034,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.1823203530120939,0.5586107629828698,0.13738948407154802,0.1216793999334883
+SYN-0101,synthetic,,SYN-FAM-034,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.10785824957410044,0.6952581684478096,0.11640891315978859,0.08047466881830141
+SYN-0102,synthetic,,SYN-FAM-034,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.15173873721196457,0.47303436805495996,0.16801901965593433,0.20720787507714114
+SYN-0106,synthetic,,SYN-FAM-036,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.1607950572185384,0.34233248971890406,0.20916925675265433,0.2877031963099033
+SYN-0107,synthetic,,SYN-FAM-036,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.13973212337575347,0.49696870297077056,0.24458928837397942,0.11870988527949654
+SYN-0108,synthetic,,SYN-FAM-036,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.22738747631710196,0.47126707717544364,0.1746047847618259,0.1267406617456284
+SYN-0109,synthetic,,SYN-FAM-037,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.18940643686958525,0.37750124206634555,0.22453865781773122,0.20855366324633806
+SYN-0110,synthetic,,SYN-FAM-037,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.2280362809344984,0.30519041465919355,0.28678807102315756,0.17998523338315053
+SYN-0111,synthetic,,SYN-FAM-037,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.14445302702193424,0.6069873511822543,0.13352294911598822,0.11503667267982307
+SYN-0112,synthetic,,SYN-FAM-038,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.21373717364965308,0.5864457901205249,0.10504385252551302,0.09477318370430894
+SYN-0113,synthetic,,SYN-FAM-038,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.1383492577915651,0.5740754127461103,0.14887869488213812,0.1386966345801866
+SYN-0114,synthetic,,SYN-FAM-038,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.20792862052127892,0.5156618060858481,0.13323930259593683,0.1431702707969361
+SYN-0115,synthetic,,SYN-FAM-039,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.2211855527079441,0.43762428904817524,0.16032836275633405,0.18086179548754655
+SYN-0116,synthetic,,SYN-FAM-039,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.23180131750975486,0.33414176855421174,0.2508342640026547,0.18322264993337875
+SYN-0117,synthetic,,SYN-FAM-039,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.20127019675370458,0.41756612371136753,0.22438862624640143,0.15677505328852642
+SYN-0118,synthetic,,SYN-FAM-040,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.1869800147903933,0.4658439983952533,0.2021582537424339,0.14501773307191948
+SYN-0119,synthetic,,SYN-FAM-040,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.1890839412262018,0.44607778802959663,0.224115034067238,0.14072323667696363
+SYN-0120,synthetic,,SYN-FAM-040,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.21113901342664929,0.5417342758523731,0.12329289177850576,0.1238338189424719
+SYN-0121,synthetic,,SYN-FAM-041,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.22230670855992932,0.6118197401471424,0.09613969827007145,0.06973385302285674
+SYN-0122,synthetic,,SYN-FAM-041,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.17057316496243477,0.5516925820058823,0.1483482972472435,0.12938595578443943
+SYN-0123,synthetic,,SYN-FAM-041,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.11372852826130397,0.6867909068834186,0.1206211058703121,0.07885945898496528
+SYN-0124,synthetic,,SYN-FAM-042,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.21667185722922924,0.508667623153216,0.15277031547094205,0.12189020414661271
+SYN-0125,synthetic,,SYN-FAM-042,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.19259770976843274,0.40330990384338866,0.19654732487198603,0.20754506151619245
+SYN-0126,synthetic,,SYN-FAM-042,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2581343748170801,0.4472428260469922,0.15132282461803498,0.14329997451789267
+SYN-0127,synthetic,,SYN-FAM-043,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.2391086715020947,0.5652961162414735,0.10743132917256475,0.0881638830838671
+SYN-0128,synthetic,,SYN-FAM-043,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.22021680337540017,0.44785649021143514,0.1553161819356477,0.17661052447751704
+SYN-0129,synthetic,,SYN-FAM-043,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.22231655232123962,0.47148275315754534,0.15903839797048308,0.147162296550732
+SYN-0130,synthetic,,SYN-FAM-044,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.16916308618161938,0.36810086332991815,0.3055751951217771,0.1571608553666853
+SYN-0131,synthetic,,SYN-FAM-044,2.0,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,1,0.18583329379542907,0.23269065533834773,0.3574770501565906,0.2239990007096327
+SYN-0132,synthetic,,SYN-FAM-044,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.24261980787611082,0.3878442770048818,0.2155311142777331,0.15400480084127433
+SYN-0133,synthetic,,SYN-FAM-045,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.10381173166007114,0.7073244111604251,0.10469338163929168,0.08417047554021219
+SYN-0134,synthetic,,SYN-FAM-045,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.22962448119160792,0.5402875727794338,0.1278302117840125,0.10225773424494591
+SYN-0135,synthetic,,SYN-FAM-045,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.2394513819419517,0.4390371821187371,0.15680002530141704,0.16471141063789416
+SYN-0136,synthetic,,SYN-FAM-046,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.12133782103866098,0.7421201579299466,0.07056384429039374,0.06597817674099869
+SYN-0137,synthetic,,SYN-FAM-046,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.1488270864847546,0.530848600140394,0.17323747122712047,0.1470868421477311
+SYN-0138,synthetic,,SYN-FAM-046,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.16508186158017857,0.5670501397658754,0.1423472669029965,0.1255207317509495
+SYN-0139,synthetic,,SYN-FAM-047,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.16151538230022683,0.489667091649383,0.20597389667757732,0.14284362937281278
+SYN-0140,synthetic,,SYN-FAM-047,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.12072478761918241,0.6764637253259429,0.11791703176708863,0.08489445528778612
+SYN-0141,synthetic,,SYN-FAM-047,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.26631317198145793,0.444875517093597,0.15657504389210108,0.13223626703284397
+SYN-0145,synthetic,,SYN-FAM-049,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.1472476960141877,0.5260289990405329,0.21151471000588762,0.11520859493939166
+SYN-0146,synthetic,,SYN-FAM-049,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.16806162544867226,0.48254777365035467,0.20905358329734752,0.14033701760362544
+SYN-0147,synthetic,,SYN-FAM-049,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.2350610003739217,0.40815031835715665,0.21770364776002643,0.13908503350889503
+SYN-0148,synthetic,,SYN-FAM-050,1.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.24359117571530348,0.356615952780251,0.21937466133183414,0.18041821017261142
+SYN-0149,synthetic,,SYN-FAM-050,2.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.14661525471485182,0.4923408524415663,0.21988545507626392,0.1411584377673181
+SYN-0150,synthetic,,SYN-FAM-050,3.0,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.1585519814467913,0.5902915477829713,0.1419759509865561,0.10918051978368125
+SYN-0151,synthetic,,SYN-FAM-051,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.14541193117988993,0.18564711229139272,0.46500094139060344,0.20394001513811383
+SYN-0152,synthetic,,SYN-FAM-051,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.16841179391540903,0.1737351072395912,0.4807551821049733,0.1770979167400263
+SYN-0153,synthetic,,SYN-FAM-051,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.1416265346361534,0.21570815732037865,0.5211250933684239,0.12154021467504397
+SYN-0157,synthetic,,SYN-FAM-053,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.17352940978084289,0.1405447152371055,0.5130279961722394,0.17289787880981236
+SYN-0158,synthetic,,SYN-FAM-053,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.20946585358243675,0.23496361870746618,0.29069967238829747,0.2648708553217996
+SYN-0159,synthetic,,SYN-FAM-053,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.17486355473357526,0.16593366921820304,0.45810956915685563,0.20109320689136617
+SYN-0160,synthetic,,SYN-FAM-054,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.20085963268142634,0.2059358394007148,0.3810196135435442,0.2121849143743146
+SYN-0161,synthetic,,SYN-FAM-054,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.1989420782662104,0.2153226532022507,0.36146291144566334,0.2242723570858756
+SYN-0162,synthetic,,SYN-FAM-054,3.0,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,1,0.14036332842921884,0.15530689324954955,0.3046235409024517,0.3997062374187799
+SYN-0166,synthetic,,SYN-FAM-056,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.13728755358348002,0.16373470542353788,0.5526050567761533,0.14637268421682884
+SYN-0167,synthetic,,SYN-FAM-056,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.11029004608882312,0.15868209917733828,0.49239821255452476,0.2386296421793139
+SYN-0168,synthetic,,SYN-FAM-056,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.29597329256286314,0.19844257038808474,0.32798793168036555,0.17759620536868648
+SYN-0169,synthetic,,SYN-FAM-057,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.26576200759089363,0.12848015929592796,0.39362761240387945,0.21213022070929902
+SYN-0170,synthetic,,SYN-FAM-057,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.13991605619817263,0.13007783225860772,0.5863440339491314,0.14366207759408825
+SYN-0171,synthetic,,SYN-FAM-057,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.22516240704276144,0.18803719340239342,0.43062911193970826,0.1561712876151368
+SYN-0172,synthetic,,SYN-FAM-058,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.15345877764350646,0.2630765901423063,0.38754436964622946,0.19592026256795775
+SYN-0173,synthetic,,SYN-FAM-058,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.12929617809279198,0.15967731322055492,0.5542028696492703,0.15682363903738278
+SYN-0174,synthetic,,SYN-FAM-058,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.21613987376181115,0.16483070492737129,0.4160013380311051,0.20302808327971245
+SYN-0175,synthetic,,SYN-FAM-059,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.15963115136270878,0.2566760013481651,0.413919590382108,0.16977325690701806
+SYN-0176,synthetic,,SYN-FAM-059,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.22306719441446318,0.26105326739960316,0.3020338607247006,0.2138456774612331
+SYN-0177,synthetic,,SYN-FAM-059,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.15372375573726432,0.274340903824885,0.3707682558870768,0.20116708455077392
+SYN-0178,synthetic,,SYN-FAM-060,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.30204546632566287,0.14583718318266428,0.38283494628047,0.16928240421120294
+SYN-0179,synthetic,,SYN-FAM-060,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.2058379439286322,0.15345899085442183,0.4327357894881247,0.2079672757288213
+SYN-0180,synthetic,,SYN-FAM-060,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.16105778938595824,0.1764783124967348,0.45957298693712006,0.20289091118018696
+SYN-0181,synthetic,,SYN-FAM-061,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.09669942681099108,0.12444045070923831,0.579210598818322,0.1996495236614485
+SYN-0182,synthetic,,SYN-FAM-061,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.20206626810936065,0.2393915921253505,0.3208088040670325,0.23773333569825633
+SYN-0183,synthetic,,SYN-FAM-061,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.1803984294752774,0.1523257700321619,0.4543918540883803,0.21288394640418054
+SYN-0184,synthetic,,SYN-FAM-062,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.27248827279806886,0.14917492550501546,0.361195405390554,0.21714139630636167
+SYN-0185,synthetic,,SYN-FAM-062,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.25084896403587786,0.21721781811681903,0.33993076710054454,0.19200245074675867
+SYN-0186,synthetic,,SYN-FAM-062,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.17534465737168123,0.2556806784946642,0.4026591052694717,0.16631555886418298
+SYN-0190,synthetic,,SYN-FAM-064,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.22471927838968977,0.18245247861335906,0.340933575977033,0.25189466701991814
+SYN-0191,synthetic,,SYN-FAM-064,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.18894436416935,0.17955978561634256,0.3298345162480143,0.3016613339662932
+SYN-0192,synthetic,,SYN-FAM-064,3.0,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,0.13367126085884137,0.17920254029992816,0.2753080010124049,0.41181819782882567
+SYN-0193,synthetic,,SYN-FAM-065,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.22559672803634126,0.19047873498831788,0.3907358700130974,0.19318866696224343
+SYN-0194,synthetic,,SYN-FAM-065,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.104040896710196,0.18031434780348357,0.4741725575754944,0.24147219791082597
+SYN-0195,synthetic,,SYN-FAM-065,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.16638464905003728,0.16538862922348688,0.4688653112305353,0.19936141049594058
+SYN-0196,synthetic,,SYN-FAM-066,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.14094519855986606,0.2013222271801029,0.49718190355422526,0.1605506707058058
+SYN-0197,synthetic,,SYN-FAM-066,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.1991189140843905,0.21075322775994332,0.3458716282950215,0.2442562298606448
+SYN-0198,synthetic,,SYN-FAM-066,3.0,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,4,0.21077398565587746,0.30732059507307935,0.304431840570519,0.1774735787005243
+SYN-0199,synthetic,,SYN-FAM-067,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.23282768015960706,0.18184753982217272,0.4313651105326525,0.15395966948556775
+SYN-0200,synthetic,,SYN-FAM-067,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.19249208305921287,0.16659656615873017,0.35527147292649286,0.28563987785556405
+SYN-0201,synthetic,,SYN-FAM-067,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.1225806055429815,0.1759982043342966,0.5002082401080071,0.2012129500147147
+SYN-0202,synthetic,,SYN-FAM-068,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.13491003115380035,0.13559876586919853,0.47550955605062994,0.25398164692637115
+SYN-0203,synthetic,,SYN-FAM-068,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.18426140703708285,0.20028860019222228,0.3790643893478093,0.23638560342288567
+SYN-0204,synthetic,,SYN-FAM-068,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.15358472654540076,0.19527060324491857,0.42778407065306195,0.22336059955661872
+SYN-0208,synthetic,,SYN-FAM-070,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.2055051937906904,0.21272012395249776,0.39285685725394326,0.18891782500286855
+SYN-0209,synthetic,,SYN-FAM-070,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.19986425019171705,0.20712203839518464,0.4271227885568908,0.16589092285620743
+SYN-0210,synthetic,,SYN-FAM-070,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.24954417437196214,0.23180182988784462,0.33531659062014807,0.1833374051200453
+SYN-0211,synthetic,,SYN-FAM-071,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.14937746174453706,0.1816460985073935,0.4626979600868049,0.20627847966126456
+SYN-0212,synthetic,,SYN-FAM-071,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.19013826125124608,0.2023289230643654,0.36446786495177125,0.24306495073261733
+SYN-0213,synthetic,,SYN-FAM-071,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.13964171171471726,0.15701835171813874,0.5005743431501939,0.20276559341695002
+SYN-0217,synthetic,,SYN-FAM-073,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.11804668064762981,0.1221168002314542,0.5474820097070066,0.2123545094139094
+SYN-0218,synthetic,,SYN-FAM-073,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.14718034489591564,0.18599877778085117,0.4883251619093787,0.17849571541385456
+SYN-0219,synthetic,,SYN-FAM-073,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.13177379980718518,0.1697543348771525,0.48554893177957287,0.21292293353608935
+SYN-0220,synthetic,,SYN-FAM-074,1.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.16729776727195572,0.25904524292210884,0.37140463333567986,0.20225235647025555
+SYN-0221,synthetic,,SYN-FAM-074,2.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.14001404660727115,0.2920577078508463,0.3659422754040923,0.20198597013779027
+SYN-0222,synthetic,,SYN-FAM-074,3.0,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.12618088418449794,0.1650421149796203,0.5416663153271106,0.1671106855087711
+SYN-0226,synthetic,,SYN-FAM-076,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.14592999071194443,0.15839662978235217,0.23551939757656903,0.4601539819291343
+SYN-0227,synthetic,,SYN-FAM-076,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.26151888208626994,0.21357357710367658,0.24050362033862854,0.284403920471425
+SYN-0228,synthetic,,SYN-FAM-076,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.18066983312049542,0.13338799972301466,0.12833468268353793,0.5576074844729519
+SYN-0229,synthetic,,SYN-FAM-077,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.11134548902998641,0.18755591430042595,0.3461364249239609,0.3549621717456267
+SYN-0230,synthetic,,SYN-FAM-077,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.0981010316659158,0.12228565622018346,0.18169716121154889,0.597916150902352
+SYN-0231,synthetic,,SYN-FAM-077,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.10291420891934648,0.09335560778508085,0.16100488283538772,0.642725300460185
+SYN-0232,synthetic,,SYN-FAM-078,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.18057524204410713,0.1564666779075819,0.2560790013971474,0.40687907865116363
+SYN-0233,synthetic,,SYN-FAM-078,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.21155202057654182,0.16528759262111578,0.2302917636763905,0.39286862312595194
+SYN-0234,synthetic,,SYN-FAM-078,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.17918091259432797,0.1300840503697309,0.13901213113849323,0.5517229058974479
+SYN-0235,synthetic,,SYN-FAM-079,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.18538129828786026,0.15698465587413063,0.2243676055399282,0.43326644029808076
+SYN-0236,synthetic,,SYN-FAM-079,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.19358653904444997,0.1916239083226815,0.2155802417686303,0.39920931086423816
+SYN-0237,synthetic,,SYN-FAM-079,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.12062938032124133,0.1386866871445142,0.15575804314352454,0.5849258893907199
+SYN-0238,synthetic,,SYN-FAM-080,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.13974271149361323,0.14516613769135667,0.11203963443523517,0.6030515163797949
+SYN-0239,synthetic,,SYN-FAM-080,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.19379509653301924,0.1930885952495402,0.19913862825665066,0.4139776799607898
+SYN-0240,synthetic,,SYN-FAM-080,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.10112484682086327,0.10200126612129966,0.1687268314022855,0.6281470556555515
+SYN-0247,synthetic,,SYN-FAM-083,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.14314235095820438,0.1734628802053393,0.23115070381498753,0.4522440650214688
+SYN-0248,synthetic,,SYN-FAM-083,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.14202023430858704,0.19917441313738746,0.22564925426028581,0.43315609829373974
+SYN-0249,synthetic,,SYN-FAM-083,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.1148450601558307,0.17113131848790147,0.20699717662275433,0.5070264447335135
+SYN-0253,synthetic,,SYN-FAM-085,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.2690157358748729,0.15987787710336362,0.20129040171007254,0.3698159853116909
+SYN-0254,synthetic,,SYN-FAM-085,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.13094522216440127,0.1649833491943265,0.16389315097291574,0.5401782776683566
+SYN-0255,synthetic,,SYN-FAM-085,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.20065074224905688,0.19658154325988075,0.23635831313330477,0.3664094013577576
+SYN-0262,synthetic,,SYN-FAM-088,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.1671706031849214,0.1660048214068084,0.2555666298401176,0.41125794556815254
+SYN-0263,synthetic,,SYN-FAM-088,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.12138580378226953,0.12150522360631981,0.17604667507490926,0.5810622975365013
+SYN-0264,synthetic,,SYN-FAM-088,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.1868684055828361,0.16904865193370766,0.1593069634484872,0.48477597903496905
+SYN-0265,synthetic,,SYN-FAM-089,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.16351053768520615,0.17356337354332566,0.22960059451817916,0.4333254942532889
+SYN-0266,synthetic,,SYN-FAM-089,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.12448517261263592,0.16325095316522417,0.33087333312819905,0.38139054109394094
+SYN-0267,synthetic,,SYN-FAM-089,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.25786237124910316,0.1545729219675347,0.1988431638060679,0.3887215429772942
+SYN-0268,synthetic,,SYN-FAM-090,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.18754995527207452,0.1247211441359995,0.2904013206471192,0.39732757994480683
+SYN-0269,synthetic,,SYN-FAM-090,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.11351422974163584,0.15551948456376502,0.2024525578937346,0.5285137278008646
+SYN-0270,synthetic,,SYN-FAM-090,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.20194505346941374,0.19530721500941697,0.24844676205631389,0.35430096946485545
+SYN-0271,synthetic,,SYN-FAM-091,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.12074301072254912,0.18970295003982893,0.2911156528040599,0.398438386433562
+SYN-0272,synthetic,,SYN-FAM-091,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.12705536652291247,0.16402210430554365,0.3332353954999411,0.3756871336716028
+SYN-0273,synthetic,,SYN-FAM-091,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.20977626797779245,0.169882983721028,0.23035982482176048,0.38998092347941915
+SYN-0274,synthetic,,SYN-FAM-092,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.14439301834189078,0.12982258247030248,0.24621944983686364,0.4795649493509432
+SYN-0275,synthetic,,SYN-FAM-092,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.10570368663221599,0.1462408696549256,0.15203513867015786,0.5960203050427004
+SYN-0276,synthetic,,SYN-FAM-092,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.11805329241566234,0.09476511588433155,0.14256121811308964,0.6446203735869165
+SYN-0280,synthetic,,SYN-FAM-094,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.12762885408150118,0.1285874568195148,0.2547632141631791,0.4890204749358049
+SYN-0281,synthetic,,SYN-FAM-094,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.08982790823996598,0.11304161787557526,0.14999491772064646,0.6471355561638122
+SYN-0282,synthetic,,SYN-FAM-094,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.1661714905356252,0.16235286109320557,0.252131449945521,0.4193441984256483
+SYN-0283,synthetic,,SYN-FAM-095,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.12943152664891006,0.11777717622517496,0.22284845711509638,0.5299428400108186
+SYN-0284,synthetic,,SYN-FAM-095,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.13801147263079533,0.1314017772257447,0.16929099970934125,0.5612957504341187
+SYN-0285,synthetic,,SYN-FAM-095,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.13645939085531175,0.17524430021634532,0.22561909884374307,0.46267721008459983
+SYN-0286,synthetic,,SYN-FAM-096,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.19794469061967593,0.15746864367172064,0.2307079655881835,0.41387870012042
+SYN-0287,synthetic,,SYN-FAM-096,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.1573167987235216,0.19845000398895662,0.1900108413137357,0.454222355973786
+SYN-0288,synthetic,,SYN-FAM-096,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.1396815479226433,0.15385632205442526,0.2123574961563252,0.49410463386660625
+SYN-0292,synthetic,,SYN-FAM-098,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.18035402385769383,0.13073414369159422,0.276515328071686,0.41239650437902586
+SYN-0293,synthetic,,SYN-FAM-098,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.14903293593733746,0.15515979348039624,0.2301725293116124,0.4656347412706539
+SYN-0294,synthetic,,SYN-FAM-098,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.1062415815890391,0.1267107291088622,0.1585024378397427,0.6085452514623562
+SYN-0295,synthetic,,SYN-FAM-099,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.11605558914382653,0.13097129059953042,0.2054586361085044,0.5475144841481386
+SYN-0296,synthetic,,SYN-FAM-099,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.1463929230350223,0.15184385468002265,0.2935912984088576,0.40817192387609746
+SYN-0297,synthetic,,SYN-FAM-099,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.13906253432401208,0.13539929281458477,0.15174790595499524,0.5737902669064079
+SYN-0298,synthetic,,SYN-FAM-100,1.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.2406268411246778,0.2171938893866512,0.18878096613361522,0.3533983033550557
+SYN-0299,synthetic,,SYN-FAM-100,2.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.10918035920823314,0.10687898795236302,0.18015038326600333,0.6037902695734005
+SYN-0300,synthetic,,SYN-FAM-100,3.0,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.18826102411365378,0.2253455143549327,0.2276230488172337,0.3587704127141799

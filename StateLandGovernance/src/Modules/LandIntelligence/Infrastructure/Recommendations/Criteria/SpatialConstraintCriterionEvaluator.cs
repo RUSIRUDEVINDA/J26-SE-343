@@ -2,6 +2,7 @@ using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
+using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.Criteria;
 
@@ -16,9 +17,26 @@ internal sealed class SpatialConstraintCriterionEvaluator : IRecommendationCrite
     public CriterionEvaluationDto Evaluate(LandParcel parcel, LandRecommendationSearchRequest request)
     {
         var constraints = parcel.SpatialConstraints.ToList();
+        var enrichmentStatus = parcel.GisDerivedIntelligence?.EnrichmentStatus;
 
         if (constraints.Count == 0)
         {
+            if (enrichmentStatus == GisEnrichmentOverallStatus.Unavailable)
+            {
+                return CriterionEvaluationFactory.Create(
+                    Key,
+                    "Spatial Constraints",
+                    CriterionCategory.SpatialConstraintImpact,
+                    isMet: false,
+                    score: 0m,
+                    DefaultWeight,
+                    "Spatial constraint coverage unavailable for this parcel.",
+                    AttributeProvenance.Unknown("Spatial constraints"),
+                    "spatial.constraints",
+                    wasAssessed: false,
+                    notAssessedReason: "Spatial constraint coverage unavailable");
+            }
+
             return CriterionEvaluationFactory.Create(
                 Key,
                 "Spatial Constraints",
@@ -26,10 +44,13 @@ internal sealed class SpatialConstraintCriterionEvaluator : IRecommendationCrite
                 isMet: true,
                 score: 100m,
                 DefaultWeight,
-                "No spatial constraints are recorded for this parcel.");
+                "No mapped intersection found in available layer.",
+                AttributeProvenance.Unknown("Spatial constraints"),
+                "spatial.constraints");
         }
 
         var maxSeverity = constraints.Max(c => c.Severity);
+        var sample = constraints.OrderByDescending(c => c.Severity).First();
 
         if (maxSeverity == RestrictionSeverity.Prohibitive)
         {
@@ -40,7 +61,7 @@ internal sealed class SpatialConstraintCriterionEvaluator : IRecommendationCrite
                 isMet: false,
                 score: 10m,
                 DefaultWeight,
-                "Parcel has prohibitive spatial constraints.");
+                $"Parcel has prohibitive spatial constraint ({sample.Type}): {sample.Description}");
         }
 
         var score = maxSeverity switch

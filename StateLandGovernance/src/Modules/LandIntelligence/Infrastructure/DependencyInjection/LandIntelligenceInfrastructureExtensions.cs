@@ -1,8 +1,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using StateLandGovernance.LandIntelligence.Application.Configuration;
-using StateLandGovernance.LandIntelligence.Application.GisAdministrativeVerification;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Application.GisAdministrativeVerification;
+using StateLandGovernance.LandIntelligence.Application.Validators;
+using StateLandGovernance.LandIntelligence.Infrastructure.Configuration;
 using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
 using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j.Configuration;
 using StateLandGovernance.LandIntelligence.Infrastructure.PostGIS;
@@ -11,6 +14,7 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferen
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Import;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Validation;
 using StateLandGovernance.LandIntelligence.Infrastructure.PilotValidation;
+using StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest;
 using StateLandGovernance.LandIntelligence.Infrastructure.Repositories;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
@@ -29,10 +33,25 @@ public static class LandIntelligenceInfrastructureExtensions
             configuration.GetSection(GisEnrichmentCoverageOptions.SectionName));
         services.Configure<ExperimentalColomboMlOptions>(
             configuration.GetSection(ExperimentalColomboMlOptions.SectionName));
+        services.Configure<ResearchDemoOptions>(
+            configuration.GetSection(ResearchDemoOptions.SectionName));
+        services.Configure<LeaseInterestOptions>(
+            configuration.GetSection(LeaseInterestOptions.SectionName));
+
+        services.AddSingleton(TimeProvider.System);
+        services.AddScoped<ILeaseInterestCostAssessmentService, LeaseInterestCostAssessmentService>();
+        services.AddScoped<IParcelShortlistService, ParcelShortlistService>();
+        services.AddScoped<ILeaseInterestRequestService, LeaseInterestRequestService>();
+        services.AddScoped<LeaseInterestDraftValidator>(sp =>
+            new LeaseInterestDraftValidator(
+                sp.GetRequiredService<IOptions<LeaseInterestOptions>>().Value));
 
         services.AddLandIntelligencePostGis(connectionString);
 
         services.AddScoped<ILandParcelRepository, LandParcelRepository>();
+        services.AddScoped<IRealParcelSourceReadRepository, RealParcelSourceReadRepository>();
+        services.AddScoped<IResearchSimulatedLeaseReadRepository, ResearchSimulatedLeaseReadRepository>();
+        services.AddSingleton<IResearchDemoMode, ResearchDemoMode>();
         services.AddScoped<ISpatialConstraintRepository, SpatialConstraintRepository>();
         services.AddScoped<ILandRecommendationRepository, LandRecommendationRepository>();
         services.AddScoped<ISpatialAnalysisService, PostGisSpatialAnalysisService>();

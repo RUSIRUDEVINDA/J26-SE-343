@@ -2,19 +2,28 @@ import type { ReactNode } from "react";
 import { AppHeader } from "./AppHeader";
 import { Sidebar } from "./Sidebar";
 import styles from "./PageLayout.module.css";
+import type { NavItem } from "@/shared/constants/navigation";
 
 export function PageLayout({
   children,
   showSidebar = true,
+  navigationItems,
+  navigationLabel,
+  navigationBasePath,
+  navigationCompactMobile,
 }: {
   children: ReactNode;
   showSidebar?: boolean;
+  navigationItems?: NavItem[];
+  navigationLabel?: string;
+  navigationBasePath?: string;
+  navigationCompactMobile?: boolean;
 }) {
   return (
     <div className={styles.shell}>
       <AppHeader />
       <div className={showSidebar ? styles.bodyWithSidebar : styles.body}>
-        {showSidebar ? <Sidebar /> : null}
+        {showSidebar ? <Sidebar items={navigationItems} label={navigationLabel} basePath={navigationBasePath} compactMobile={navigationCompactMobile} /> : null}
         <main className={styles.main}>{children}</main>
       </div>
     </div>

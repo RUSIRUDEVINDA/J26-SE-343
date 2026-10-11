@@ -34,6 +34,8 @@ public class GovernanceIntelligenceDbContext : DbContext
     public DbSet<EarlyGovernanceScreeningEvaluationEntity> EarlyGovernanceScreeningEvaluations => Set<EarlyGovernanceScreeningEvaluationEntity>();
     public DbSet<EarlyGovernanceReferralEntity> EarlyGovernanceReferrals => Set<EarlyGovernanceReferralEntity>();
     public DbSet<ComplaintClassificationAssessmentEntity> ComplaintClassificationAssessments => Set<ComplaintClassificationAssessmentEntity>();
+    public DbSet<GovernanceAuditAnchorReceiptEntity> GovernanceAuditAnchorReceipts => Set<GovernanceAuditAnchorReceiptEntity>();
+    public DbSet<GovernanceAuditAnchorOutboxEntity> GovernanceAuditAnchorOutbox => Set<GovernanceAuditAnchorOutboxEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

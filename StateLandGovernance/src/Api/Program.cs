@@ -152,6 +152,7 @@ else
     dbContext.Database.Migrate();
 }
 
+app.UseLandIntelligenceCallerContext();
 app.UseLandIntelligenceExceptionHandling();
 
 if (app.Environment.IsDevelopment())

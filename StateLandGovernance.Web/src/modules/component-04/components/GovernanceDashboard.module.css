@@ -1,0 +1,82 @@
+.pageWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 100%;
+}
+
+.bannerCard {
+  background: #ffffff;
+  border: 1px solid var(--color-card-border, #f3eaea);
+  border-radius: var(--radius-card, 26px);
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow-soft, 0 4px 7px rgba(0, 0, 0, 0.05));
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bannerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.bannerTitle {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-primary, #850906);
+  letter-spacing: -0.01em;
+}
+
+.badgeGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mockBadge {
+  background: #fefcbf;
+  border: 1px solid #ecc94b;
+  color: #744210;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.bannerDescription {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.boundaryAlert {
+  background: #f7fafc;
+  border-left: 3px solid #718096;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.785rem;
+  color: #4a5568;
+}
+
+.layoutSplit {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+@media (min-width: 1380px) {
+  .layoutSplitWithDetail {
+    display: grid;
+    grid-template-columns: minmax(0, 1.28fr) minmax(380px, 0.92fr);
+    align-items: start;
+    gap: 1.5rem;
+  }
+}

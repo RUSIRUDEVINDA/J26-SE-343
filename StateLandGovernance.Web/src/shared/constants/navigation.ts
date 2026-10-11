@@ -13,6 +13,8 @@ export type NavItem = {
   label: string;
   href: string;
   icon: string;
+  /** Emphasise the primary workflow entry in the sidebar. */
+  primary?: boolean;
 };
 
 /** Only routes that are implemented and functional in this frontend. */
@@ -22,6 +24,7 @@ export const component01NavItems: NavItem[] = [
     label: "Find Suitable Land",
     href: `${LAND_INTELLIGENCE_BASE}/find-suitable-land`,
     icon: "✦",
+    primary: true,
   },
   {
     label: "Recommendations",
@@ -32,6 +35,16 @@ export const component01NavItems: NavItem[] = [
     label: "Parcel Intelligence",
     href: `${LAND_INTELLIGENCE_BASE}/parcels`,
     icon: "▤",
+  },
+  {
+    label: "Saved parcels",
+    href: `${LAND_INTELLIGENCE_BASE}/shortlist`,
+    icon: "☆",
+  },
+  {
+    label: "My requests",
+    href: `${LAND_INTELLIGENCE_BASE}/my-requests`,
+    icon: "☰",
   },
   {
     label: "Knowledge Graph",
@@ -55,14 +68,14 @@ export const moduleLandingLinks = [
   },
   {
     id: "component-03",
-    title: "Governance Intelligence",
+    title: "Workflow Governance",
     href: "/component-03",
     available: false,
   },
   {
     id: "component-04",
-    title: "Workflow Governance",
+    title: "Governance Intelligence",
     href: "/component-04",
-    available: false,
+    available: true,
   },
 ];
