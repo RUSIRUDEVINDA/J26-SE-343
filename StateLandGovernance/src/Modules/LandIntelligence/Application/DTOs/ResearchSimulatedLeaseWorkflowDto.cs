@@ -14,4 +14,5 @@ public sealed record ResearchSimulatedLeaseWorkflowDto(
 public sealed record LandParcelAvailabilityDto(
     string ActualLeaseAvailabilityLabel,
     string? ResearchRecordId,
-    ResearchSimulatedLeaseWorkflowDto? SimulatedWorkflow);
+    ResearchSimulatedLeaseWorkflowDto? SimulatedWorkflow,
+    ProjectLeaseReadyDesignationDto? ProjectLeaseReady = null);
