@@ -13,6 +13,7 @@ using StateLandGovernance.WorkflowGovernance.Application.Interfaces;
 using StateLandGovernance.WorkflowGovernance.Application.Queries;
 using StateLandGovernance.WorkflowGovernance.Infrastructure;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations;
+using StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Repositories;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Services;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Storage;
@@ -222,6 +223,33 @@ public sealed class WorkflowGovernanceHostDiTests
         // Custom registrations MUST NOT be overwritten by TryAdd
         Assert.Same(customDocRepo, resolvedDocRepo);
         Assert.Same(customAnalysisRepo, resolvedAnalysisRepo);
+    }
+
+    [Fact]
+    public void PostgresPersistenceRegistration_ResolvesDurableRepositoriesAndUnitOfWork()
+    {
+        var services = new ServiceCollection();
+        var dummyConn = "Host=localhost;Database=test_db;Username=test;Password=test";
+
+        services.AddWorkflowGovernanceApplication();
+        services.AddWorkflowGovernancePostgresPersistence(dummyConn);
+        services.AddWorkflowGovernanceInfrastructure(allowInMemoryLeasePersistence: true);
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var sp = scope.ServiceProvider;
+
+        var uow = sp.GetRequiredService<IWorkflowGovernanceUnitOfWork>();
+        var caseRepo = sp.GetRequiredService<ILeaseCaseRepository>();
+        var docRepo = sp.GetRequiredService<IGovernedDocumentRepository>();
+        var analysisRepo = sp.GetRequiredService<IDocumentAnalysisRepository>();
+        var assessmentRepo = sp.GetRequiredService<IDocumentCompletenessAssessmentRepository>();
+
+        Assert.IsType<PostgresWorkflowGovernanceUnitOfWork>(uow);
+        Assert.IsType<PostgresLeaseCaseRepository>(caseRepo);
+        Assert.IsType<PostgresGovernedDocumentRepository>(docRepo);
+        Assert.IsType<PostgresDocumentAnalysisRepository>(analysisRepo);
+        Assert.IsType<PostgresDocumentCompletenessAssessmentRepository>(assessmentRepo);
     }
 
     private sealed class CustomTestGovernedDocumentRepository : IGovernedDocumentRepository
