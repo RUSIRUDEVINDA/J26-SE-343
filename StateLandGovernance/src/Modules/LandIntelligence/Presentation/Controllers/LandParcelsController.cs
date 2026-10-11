@@ -23,6 +23,8 @@ public sealed class LandParcelsController : ControllerBase
     private readonly GetLandRelationshipsQueryHandler _relationshipsHandler;
     private readonly ListSourceReportedLandUseOptionsQueryHandler _sourceLandUseOptionsHandler;
     private readonly ListDerivedSoilGroupOptionsQueryHandler _derivedSoilGroupOptionsHandler;
+    private readonly GetLandParcelMetricsQueryHandler _metricsHandler;
+    private readonly GetLandIntelligenceGisCoverageQueryHandler _gisCoverageHandler;
 
     public LandParcelsController(
         SearchLandParcelsQueryHandler searchHandler,
@@ -30,7 +32,9 @@ public sealed class LandParcelsController : ControllerBase
         GetSpatialConstraintsByParcelIdQueryHandler constraintsHandler,
         GetLandRelationshipsQueryHandler relationshipsHandler,
         ListSourceReportedLandUseOptionsQueryHandler sourceLandUseOptionsHandler,
-        ListDerivedSoilGroupOptionsQueryHandler derivedSoilGroupOptionsHandler)
+        ListDerivedSoilGroupOptionsQueryHandler derivedSoilGroupOptionsHandler,
+        GetLandParcelMetricsQueryHandler metricsHandler,
+        GetLandIntelligenceGisCoverageQueryHandler gisCoverageHandler)
     {
         _searchHandler = searchHandler;
         _getByIdHandler = getByIdHandler;
@@ -38,6 +42,28 @@ public sealed class LandParcelsController : ControllerBase
         _relationshipsHandler = relationshipsHandler;
         _sourceLandUseOptionsHandler = sourceLandUseOptionsHandler;
         _derivedSoilGroupOptionsHandler = derivedSoilGroupOptionsHandler;
+        _metricsHandler = metricsHandler;
+        _gisCoverageHandler = gisCoverageHandler;
+    }
+
+    [HttpGet("metrics")]
+    [ProducesResponseType(typeof(LandParcelMetricsResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<LandParcelMetricsResponse>> GetParcelMetricsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var metrics = await _metricsHandler.HandleAsync(new GetLandParcelMetricsQuery(), cancellationToken);
+        return Ok(LandIntelligenceApiResponseMapper.ToResponse(metrics));
+    }
+
+    [HttpGet("gis-coverage")]
+    [ProducesResponseType(typeof(LandIntelligenceGisCoverageResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<LandIntelligenceGisCoverageResponse>> GetGisCoverageAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var coverage = await _gisCoverageHandler.HandleAsync(
+            new GetLandIntelligenceGisCoverageQuery(),
+            cancellationToken);
+        return Ok(LandIntelligenceApiResponseMapper.ToResponse(coverage));
     }
 
     /// <summary>
@@ -76,15 +102,15 @@ public sealed class LandParcelsController : ControllerBase
     /// Empty when the district has no imported soil coverage.
     /// </summary>
     [HttpGet("derived-soil-group-options")]
-    [ProducesResponseType(typeof(IReadOnlyList<string>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyList<string>>> ListDerivedSoilGroupOptionsAsync(
+    [ProducesResponseType(typeof(DerivedSoilGroupOptionsResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<DerivedSoilGroupOptionsResponse>> ListDerivedSoilGroupOptionsAsync(
         [FromQuery] string? district = null,
         CancellationToken cancellationToken = default)
     {
         var options = await _derivedSoilGroupOptionsHandler.HandleAsync(
             new ListDerivedSoilGroupOptionsQuery(district),
             cancellationToken);
-        return Ok(options);
+        return Ok(new DerivedSoilGroupOptionsResponse(options));
     }
 
     /// <summary>

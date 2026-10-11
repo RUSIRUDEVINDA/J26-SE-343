@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StateLandGovernance.LandIntelligence.Application.Security;
 using StateLandGovernance.LandIntelligence.Application.Commands;
 using StateLandGovernance.LandIntelligence.Presentation.Mappings;
 using StateLandGovernance.LandIntelligence.Presentation.Models;
@@ -13,6 +15,7 @@ namespace StateLandGovernance.LandIntelligence.Presentation.Controllers;
 [ApiController]
 [ApiExplorerSettings(GroupName = LandIntelligenceApiGroups.Internal)]
 [Route("api/v1/internal/land/parcels")]
+[Authorize(Policy = LandIntelligenceAuth.Policies.InternalMaintainer)]
 [Produces("application/json")]
 public sealed class LandParcelsInternalController : ControllerBase
 {
