@@ -1,0 +1,185 @@
+{
+  "experiment": 6,
+  "evaluation_type": "synthetic prospective evaluation",
+  "not_real_world_accuracy": true,
+  "candidate_not_deployed": true,
+  "review_freeze_timestamp": "2026-10-11T13:24:02+05:30",
+  "review_frozen_before_model_fit_and_inference": true,
+  "frozen_review_snapshot_sha256": "41bed6d4cb40a42e8e081e5b2e90a32a9df83897891142727ec1240887f72498",
+  "configuration": {
+    "architecture": "Pipeline(BoilerplateStripper, FeatureUnion(word, character), LogisticRegression)",
+    "boilerplate_stripper": {
+      "class": "boilerplate_transformer.BoilerplateStripper",
+      "parameters": {},
+      "exact_phrases": [
+        "was identified in official audit/report material as a government/state land lease case involving",
+        "The Land Commissioner has confirmed that this is a genuine, direct, distinct state-land lease incident.",
+        "File-level details should be retained from the Commissioner's records when available."
+      ]
+    },
+    "feature_union": {
+      "transformers": [
+        "word",
+        "character"
+      ],
+      "word_tfidf": {
+        "lowercase": true,
+        "stop_words": "english",
+        "ngram_range": [
+          1,
+          2
+        ],
+        "sublinear_tf": true
+      },
+      "character_tfidf": {
+        "analyzer": "char_wb",
+        "ngram_range": [
+          3,
+          5
+        ],
+        "lowercase": true,
+        "sublinear_tf": true,
+        "min_df": 1
+      }
+    },
+    "logistic_regression": {
+      "max_iter": 2000,
+      "class_weight": "balanced",
+      "random_state": 42,
+      "C": 1.0,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "multi_class": "auto"
+    },
+    "class_order": [
+      "Administrative / Procedural / Integrity",
+      "Lease Revenue / Payment / Enforcement",
+      "Unauthorized Allocation / Transfer / Use",
+      "Protected / Environmental Lease Misuse"
+    ],
+    "sample_weight_policy": {
+      "real_record": 1.0,
+      "synthetic_variant": 0.3333333333333333,
+      "synthetic_family_total": 1.0
+    },
+    "random_seed": 42,
+    "evidence": {
+      "protocol": "results/experiment5_combined_real_synthetic/experiment5_protocol.json",
+      "arm_e_run_metadata": "results/experiment5_combined_real_synthetic/arm_e/run_metadata.json",
+      "word_and_lr_parameters_source": "src/config.py used by the saved Experiment 5 implementation"
+    }
+  },
+  "configuration_sha256": "a71710157a029de2df6a6329e276ceec12fc44433799960f862778d89fe68376",
+  "candidate_model_sha256": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+  "input_hashes": {
+    "real_baseline": {
+      "path": "data/state_land_governance_confirmed_200.csv",
+      "sha256": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61"
+    },
+    "candidate_dataset": {
+      "path": "data/state_land_complaints_development_530.csv",
+      "sha256": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8"
+    },
+    "experiment5_development_review": {
+      "path": "candidate-data/v1/synthetic_family_review_pack_confirmed_20261007.csv",
+      "sha256": "0f4d839d9ad46223430cf5adb375775ce7ae12cc8b38b57f263eab790895fb74"
+    },
+    "prospective_corrected_review": {
+      "path": "candidate-data/v1/review-assistance/prospective_test_family_review_corrected_20261011.csv",
+      "sha256": "41bed6d4cb40a42e8e081e5b2e90a32a9df83897891142727ec1240887f72498"
+    },
+    "prospective_review_manifest": {
+      "path": "candidate-data/v1/review-assistance/prospective_test_review_manifest.json",
+      "sha256": "1e3b062018221985f27458082f76b26d252a5973ce7dc4176efe6621d5a47ce7"
+    },
+    "prospective_review_template": {
+      "path": "candidate-data/v1/review-assistance/prospective_test_family_review_template.csv",
+      "sha256": "866d1361bcc4fe7449d2cfda56aefc7b3cf7d69e82faf031b26d601bde822feb"
+    },
+    "experiment5_protocol": {
+      "path": "results/experiment5_combined_real_synthetic/experiment5_protocol.json",
+      "sha256": "d30472ecdd813ec0b0ab12f8661018bd16842fec2c859cf621eccca5c53e9f2b"
+    },
+    "experiment5_summary": {
+      "path": "results/experiment5_combined_real_synthetic/experiment5_summary.json",
+      "sha256": "467f5d3c6843a8ea8f34eff0fd0f071696c72c94115b4b226a99f58cb251a89d"
+    },
+    "experiment5_arm_e_metadata": {
+      "path": "results/experiment5_combined_real_synthetic/arm_e/run_metadata.json",
+      "sha256": "49a57418999ce510cc4029265fd00b40b80ec79452357a442df7924858e7280d"
+    },
+    "experiment5_population_manifest": {
+      "path": "results/experiment5_combined_real_synthetic/experiment5_population_manifest.csv",
+      "sha256": "3838dcd2a77620c0ffa7d466461a323e8982909c6724e58b32b0835ac9dedbd6"
+    }
+  },
+  "dependency_versions": {
+    "python": "3.13.1",
+    "numpy": "2.3.1",
+    "pandas": "2.3.3",
+    "scikit_learn": "1.7.2",
+    "scipy": "1.16.3",
+    "joblib": "1.5.2"
+  },
+  "training_population": {
+    "reviewed_families": 25,
+    "prospective_records_before_filtering": 75,
+    "eligible_families": 23,
+    "eligible_records": 69,
+    "excluded_families": 2,
+    "excluded_records": 6,
+    "eligible_class_distribution_records": {
+      "Administrative / Procedural / Integrity": 21,
+      "Lease Revenue / Payment / Enforcement": 9,
+      "Unauthorized Allocation / Transfer / Use": 18,
+      "Protected / Environmental Lease Misuse": 21
+    },
+    "training_real_records": 200,
+    "training_synthetic_records": 225,
+    "training_synthetic_families": 75
+  },
+  "eligible_family_ids": [
+    "SYN-FAM-005",
+    "SYN-FAM-008",
+    "SYN-FAM-012",
+    "SYN-FAM-014",
+    "SYN-FAM-015",
+    "SYN-FAM-020",
+    "SYN-FAM-022",
+    "SYN-FAM-029",
+    "SYN-FAM-035",
+    "SYN-FAM-048",
+    "SYN-FAM-052",
+    "SYN-FAM-055",
+    "SYN-FAM-063",
+    "SYN-FAM-069",
+    "SYN-FAM-072",
+    "SYN-FAM-075",
+    "SYN-FAM-081",
+    "SYN-FAM-082",
+    "SYN-FAM-084",
+    "SYN-FAM-086",
+    "SYN-FAM-087",
+    "SYN-FAM-093",
+    "SYN-FAM-097"
+  ],
+  "excluded_families": [
+    {
+      "Synthetic_Family_ID": "SYN-FAM-010",
+      "Review_Decision": "Needs_Discussion"
+    },
+    {
+      "Synthetic_Family_ID": "SYN-FAM-024",
+      "Review_Decision": "Needs_Discussion"
+    }
+  ],
+  "no_additional_model_selection": true,
+  "no_hyperparameter_tuning": true,
+  "prospective_scoring_count": 1,
+  "source_derived_records_excluded": true,
+  "common_synthetic_generator_limitation": "Development and prospective synthetic families share a common generator origin; results may reflect generator regularities.",
+  "git": {
+    "branch": "Component_04_RD",
+    "commit": "fbeea57bd89dfe7cdcf7fa2c0469313f3a3c7b6b"
+  }
+}

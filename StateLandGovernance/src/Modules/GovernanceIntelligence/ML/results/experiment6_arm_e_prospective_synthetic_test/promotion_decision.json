@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "accuracy_strictly_greater_than_0_80": true,
+    "macro_f1_strictly_greater_than_0_80": true,
+    "no_represented_class_zero_recall": true,
+    "probability_validation_passed": true,
+    "integrity_and_leakage_checks_passed": true,
+    "labelled_synthetic_prospective_evaluation": true
+  },
+  "all_criteria_passed": true,
+  "verdict": "ARM E PASSED PROSPECTIVE SYNTHETIC EVALUATION \u2014 PROMOTION REVIEW REQUIRED",
+  "automatic_deployment_authorized": false
+}
