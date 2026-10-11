@@ -47,7 +47,7 @@ This microservice provides an isolated, deterministic OCR extraction pipeline fo
 
 ### A. Clone & Navigate
 ```bash
-cd document-intelligence-service
+cd StateLandGovernance/src/Modules/WorkflowGovernance/document-intelligence-service
 ```
 
 ### B. Configure Environment
