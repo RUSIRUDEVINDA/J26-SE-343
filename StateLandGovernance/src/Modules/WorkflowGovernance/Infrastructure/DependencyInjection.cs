@@ -37,6 +37,7 @@ public static class DependencyInjection
     {
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IWorkflowInstanceRepository, WorkflowInstanceRepository>();
+        services.TryAddScoped<IComponent4ScreeningGateway, Integrations.Component4ScreeningGateway>();
 
         if (!allowInMemoryLeasePersistence)
         {
@@ -63,7 +64,6 @@ public static class DependencyInjection
         services.TryAddScoped<IDocumentCompletenessAssessmentRepository>(_ => null!);
         services.TryAddScoped<IProposalTemplateProvider>(_ => null!);
         services.TryAddScoped<IDocumentRequirementProvider>(_ => null!);
-        services.TryAddScoped<IComponent4ScreeningGateway>(_ => null!);
 
         return services;
     }
