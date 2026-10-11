@@ -9,7 +9,13 @@ namespace StateLandGovernance.LandIntelligence.Application.DTOs;
 public sealed record LandRecommendationSearchRequest
 {
     public required LandUseType RequiredPurpose { get; init; }
+    /// <summary>Target area (ha) for continuous area-match scoring in Find Suitable Land.</summary>
+    public decimal? TargetAreaHectares { get; init; }
+    /// <summary>Legacy alias — treated as <see cref="TargetAreaHectares"/> when target is unset (not a minimum filter).</summary>
     public decimal? RequiredAreaHectares { get; init; }
+    /// <summary>Legacy alias — treated as <see cref="TargetAreaHectares"/> when target and required are unset.</summary>
+    public decimal? PreferredAreaHectares { get; init; }
+    /// <summary>Deprecated — no longer applied to area scoring (continuous target match is used instead).</summary>
     public decimal AreaTolerancePercent { get; init; } = 15m;
     public PreferredLocationCriteria? PreferredLocation { get; init; }
     /// <summary>Legacy domain category filter — use only for synthetic/domain-managed parcels.</summary>
@@ -101,7 +107,15 @@ public sealed record LandParcelRecommendationResult(
     string? SourceReportedClaimantCategoryDisplay = null,
     string? SourceParcelStatusCode = null,
     string? SourceProvenanceLabel = null,
-    DateTimeOffset? SourceImportedAtUtc = null);
+    DateTimeOffset? SourceImportedAtUtc = null,
+    string? ProjectLeaseReadyLabel = null,
+    bool IsProjectLeaseReadyDesignated = false,
+    bool IsProjectLeaseReadyEffective = false,
+    decimal? ParcelAreaHectares = null,
+    int DisplayOrder = 0,
+    int RuleScoreRank = 0,
+    int RuleScoreTieCount = 0,
+    bool IsTiedOnRuleScore = false);
 
 public sealed record LandRecommendationSearchResponse(
     LandUseType RequiredPurpose,
