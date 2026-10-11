@@ -1,5 +1,5 @@
 import { areaUnitLabels } from "./enumMappings";
-import type { AreaUnit } from "../types/landIntelligence";
+import { AreaUnit } from "../types/landIntelligence";
 
 /** Formats the rule-based suitability score (0–100 scale from the API). Not a probability. */
 export function formatRuleScore(score: number): string {
@@ -20,6 +20,26 @@ export function formatArea(value: number, unit: AreaUnit): string {
   }
   const unitLabel = areaUnitLabels[unit] ?? "Unknown";
   return `${value} ${unitLabel}`;
+}
+
+/** Converts a parcel area to hectares for lease-interest proposal fields. */
+export function convertAreaToHectares(
+  value: number,
+  unit: AreaUnit,
+): number | null {
+  if (value == null || Number.isNaN(value) || value < 0) {
+    return null;
+  }
+  switch (unit) {
+    case AreaUnit.Hectares:
+      return value;
+    case AreaUnit.SquareMeters:
+      return value / 10_000;
+    case AreaUnit.Acres:
+      return value * 0.40468564224;
+    default:
+      return null;
+  }
 }
 
 export function displayOrUnavailable(value: string | null | undefined): string {

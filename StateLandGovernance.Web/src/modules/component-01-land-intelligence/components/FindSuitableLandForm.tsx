@@ -22,14 +22,6 @@ import styles from "./FindSuitableLandForm.module.css";
 
 const FORM_STORE_EVENT = "component01.findSuitableLandForm";
 
-const STEPS = [
-  { id: 0, label: "Essential" },
-  { id: 1, label: "Location & size" },
-  { id: 2, label: "Source filters" },
-] as const;
-
-type StepId = (typeof STEPS)[number]["id"];
-
 const initialState: FindSuitableLandFormState = {
   requiredPurpose: "",
   requiredAreaHectares: "",
@@ -158,7 +150,6 @@ export function FindSuitableLandForm() {
   );
   const [draft, setDraft] = useState<FindSuitableLandFormState | null>(null);
   const form = draft ?? stored;
-  const [step, setStep] = useState<StepId>(0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -296,47 +287,6 @@ export function FindSuitableLandForm() {
     writeFormStore(null);
     setError(null);
     setFieldErrors({});
-    setStep(0);
-  }
-
-  function goBack() {
-    setError(null);
-    setStep((current) => (current > 0 ? ((current - 1) as StepId) : current));
-  }
-
-  function goContinue() {
-    setError(null);
-    if (step === 0) {
-      if (!validateEssential()) {
-        return;
-      }
-      setStep(1);
-      return;
-    }
-    if (step === 1) {
-      if (!validateLocation()) {
-        return;
-      }
-      setStep(2);
-    }
-  }
-
-  function goToStep(nextStep: StepId) {
-    if (nextStep === step) {
-      return;
-    }
-    if (nextStep > step) {
-      if (step === 0 && !validateEssential()) {
-        return;
-      }
-      if (step === 1 && nextStep === 2 && !validateLocation()) {
-        return;
-      }
-      if (nextStep === 2 && (!validateEssential() || !validateLocation())) {
-        return;
-      }
-    }
-    setStep(nextStep);
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -347,13 +297,6 @@ export function FindSuitableLandForm() {
     const locationOk = validateLocation();
     const sourceOk = validateSourceFilters();
     if (!essentialOk || !locationOk || !sourceOk) {
-      if (!essentialOk) {
-        setStep(0);
-      } else if (!locationOk) {
-        setStep(1);
-      } else {
-        setStep(2);
-      }
       return;
     }
 
@@ -419,36 +362,14 @@ export function FindSuitableLandForm() {
   return (
     <form className={styles.layout} onSubmit={handleSubmit} noValidate>
       <div className={styles.mainColumn}>
-        <ol className={styles.steps} aria-label="Form steps">
-          {STEPS.map((item) => {
-            const active = step === item.id;
-            const done = step > item.id;
-            return (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  className={`${styles.stepTab} ${active ? styles.stepTabActive : ""} ${done ? styles.stepTabDone : ""}`}
-                  aria-current={active ? "step" : undefined}
-                  onClick={() => goToStep(item.id)}
-                >
-                  <span className={styles.stepNum} aria-hidden="true">
-                    {item.id + 1}
-                  </span>
-                  {item.label}
-                </button>
-              </li>
-            );
-          })}
-        </ol>
-
-        {step === 0 ? (
+        <div className={styles.sections}>
           <section className={styles.panel} aria-labelledby="essential-heading">
             <h2 id="essential-heading" className={styles.panelTitle}>
               1. Essential
             </h2>
             <p className={styles.panelSubtitle}>
-              Start with the purpose you need and an optional minimum area.
-              Required purpose must be selected before search.
+              Purpose you need and an optional minimum area. Required purpose
+              must be selected before search.
             </p>
             <div className={styles.grid}>
               <div className={styles.field}>
@@ -530,9 +451,7 @@ export function FindSuitableLandForm() {
               </div>
             </div>
           </section>
-        ) : null}
 
-        {step === 1 ? (
           <section className={styles.panel} aria-labelledby="location-heading">
             <h2 id="location-heading" className={styles.panelTitle}>
               2. Location &amp; size
@@ -630,9 +549,7 @@ export function FindSuitableLandForm() {
               </div>
             </div>
           </section>
-        ) : null}
 
-        {step === 2 ? (
           <section className={styles.panel} aria-labelledby="source-heading">
             <h2 id="source-heading" className={styles.panelTitle}>
               3. Source filters
@@ -691,7 +608,7 @@ export function FindSuitableLandForm() {
               </div>
             </div>
           </section>
-        ) : null}
+        </div>
 
         <div className={styles.warning} role="note">
           <strong>Decision-support only:</strong> Results compare recorded
@@ -750,20 +667,9 @@ export function FindSuitableLandForm() {
           <Button type="button" variant="secondary" onClick={handleClear}>
             Clear form
           </Button>
-          {step > 0 ? (
-            <Button type="button" variant="secondary" onClick={goBack}>
-              Back
-            </Button>
-          ) : null}
-          {step < 2 ? (
-            <Button type="button" variant="primary" onClick={goContinue}>
-              Continue
-            </Button>
-          ) : (
-            <Button type="submit" variant="primary" disabled={!canSearch}>
-              {submitting ? "Searching…" : "Find suitable land"}
-            </Button>
-          )}
+          <Button type="submit" variant="primary" disabled={!canSearch}>
+            {submitting ? "Searching…" : "Find suitable land"}
+          </Button>
         </div>
       </div>
     </form>
