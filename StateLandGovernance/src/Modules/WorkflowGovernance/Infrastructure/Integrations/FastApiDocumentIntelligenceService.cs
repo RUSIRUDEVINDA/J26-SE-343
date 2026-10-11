@@ -143,56 +143,90 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
         byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
         multipartContent.Add(byteArrayContent, "file", sanitizedFileName);
 
-            // 3. Build target URL with query parameters
-            var uriBuilder = new StringBuilder("v1/ocr");
-            uriBuilder.Append("?language_mode=").Append(Uri.EscapeDataString(languageMode));
-            uriBuilder.Append("&preprocess=").Append(_options.Preprocess ? "true" : "false");
+        var isSemantic = RequiresSemanticAnalysis(request.RequestedCapabilities);
 
-            using var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.ToString())
-            {
-                Content = multipartContent
-            };
+        // 3. Build target URL with query parameters
+        var uriBuilder = new StringBuilder(isSemantic ? "v1/analyze" : "v1/ocr");
+        uriBuilder.Append("?language_mode=").Append(Uri.EscapeDataString(languageMode));
+        uriBuilder.Append("&preprocess=").Append(_options.Preprocess ? "true" : "false");
+        if (isSemantic && !string.IsNullOrWhiteSpace(request.LogicalCategory))
+        {
+            uriBuilder.Append("&category_hint=").Append(Uri.EscapeDataString(request.LogicalCategory));
+        }
 
-            httpRequest.Headers.TryAddWithoutValidation("X-Request-ID", correlationId);
-            httpRequest.Headers.TryAddWithoutValidation("X-Correlation-ID", correlationId);
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.ToString())
+        {
+            Content = multipartContent
+        };
 
-            // 4. Send HTTP request to FastAPI OCR service
-            HttpResponseMessage response;
-            try
+        httpRequest.Headers.TryAddWithoutValidation("X-Request-ID", correlationId);
+        httpRequest.Headers.TryAddWithoutValidation("X-Correlation-ID", correlationId);
+
+        // 4. Send HTTP request to FastAPI document intelligence service
+        HttpResponseMessage response;
+        try
+        {
+            response = await _httpClient.SendAsync(
+                httpRequest,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            _logger.LogInformation("[{CorrelationId}] Document intelligence processing cancelled by caller.", correlationId);
+            throw;
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogError(ex, "[{CorrelationId}] Document intelligence processing timed out after {Timeout} seconds.",
+                correlationId, _options.RequestTimeoutSeconds);
+            throw new DocumentIntelligenceTimeoutException(
+                $"Document intelligence service timed out after {_options.RequestTimeoutSeconds} seconds.",
+                innerException: ex);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "[{CorrelationId}] Network failure communicating with document intelligence service.", correlationId);
+            throw new DocumentIntelligenceServiceUnavailableException(
+                "Document intelligence service communication failed due to a network or transport error.",
+                innerException: ex);
+        }
+
+        using (response)
+        {
+            if (!response.IsSuccessStatusCode)
             {
-                response = await _httpClient.SendAsync(
-                    httpRequest,
-                    HttpCompletionOption.ResponseHeadersRead,
-                    cancellationToken);
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("[{CorrelationId}] OCR extraction cancelled by caller.", correlationId);
-                throw;
-            }
-            catch (OperationCanceledException ex)
-            {
-                _logger.LogError(ex, "[{CorrelationId}] OCR extraction timed out after {Timeout} seconds.",
-                    correlationId, _options.RequestTimeoutSeconds);
-                throw new DocumentIntelligenceTimeoutException(
-                    $"Document intelligence service timed out after {_options.RequestTimeoutSeconds} seconds.",
-                    innerException: ex);
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "[{CorrelationId}] Network failure communicating with document intelligence service.", correlationId);
-                throw new DocumentIntelligenceServiceUnavailableException(
-                    "Document intelligence service communication failed due to a network or transport error.",
-                    innerException: ex);
+                await HandleErrorResponseAsync(response, correlationId, cancellationToken);
             }
 
-            using (response)
+            if (isSemantic)
             {
-                if (!response.IsSuccessStatusCode)
+                FastApiAnalyzeResponseDto? analyzeResponse;
+                try
                 {
-                    await HandleErrorResponseAsync(response, correlationId, cancellationToken);
+                    analyzeResponse = await response.Content.ReadFromJsonAsync<FastApiAnalyzeResponseDto>(
+                        cancellationToken: cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "[{CorrelationId}] Failed to deserialize analyze response.", correlationId);
+                    throw new DocumentIntelligenceServerException(
+                        "Failed to deserialize valid response from document intelligence service.",
+                        (int)response.StatusCode,
+                        innerException: ex);
                 }
 
+                if (analyzeResponse is null)
+                {
+                    throw new DocumentIntelligenceServerException(
+                        "Document intelligence service returned empty response payload.",
+                        (int)response.StatusCode);
+                }
+
+                return await MapAndPersistSemanticArtifactsAsync(analyzeResponse, request, correlationId, cancellationToken);
+            }
+            else
+            {
                 FastApiOcrResponseDto? ocrResponse;
                 try
                 {
@@ -218,6 +252,7 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
                 // 5. Persist OCR artifacts through mandatory IAnalysisArtifactWriter and map result
                 return await MapAndPersistArtifactsAsync(ocrResponse, request, correlationId, cancellationToken);
             }
+        }
     }
 
     private static string ResolveLanguageMode(string? hint, string fallback)
@@ -483,5 +518,286 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
             Candidates: candidates,
             Warnings: warnings.Count > 0 ? warnings : null
         );
+    }
+
+    private static bool RequiresSemanticAnalysis(IReadOnlyList<string>? requestedCapabilities)
+    {
+        if (requestedCapabilities == null || requestedCapabilities.Count == 0)
+        {
+            return false;
+        }
+
+        return requestedCapabilities.Any(c =>
+            string.Equals(c, "SemanticExtraction", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(c, "Classification", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(c, "Analyze", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static string NormalizeValueKind(string? valueKind)
+    {
+        if (string.IsNullOrWhiteSpace(valueKind))
+        {
+            return "Text";
+        }
+
+        var trimmed = valueKind.Trim();
+        if (string.Equals(trimmed, "String", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Text";
+        }
+
+        return trimmed;
+    }
+
+    private static string NormalizeCanonicalValue(string? rawValue, string normalizedValueKind)
+    {
+        if (string.IsNullOrWhiteSpace(rawValue))
+        {
+            return string.Empty;
+        }
+
+        var trimmed = rawValue.Trim();
+        switch (normalizedValueKind)
+        {
+            case "Decimal":
+                if (decimal.TryParse(trimmed, System.Globalization.NumberStyles.AllowLeadingSign | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out var d))
+                {
+                    return d.ToString("G29", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                return trimmed;
+
+            case "Integer":
+                if (long.TryParse(trimmed, System.Globalization.NumberStyles.None | System.Globalization.NumberStyles.AllowLeadingSign, System.Globalization.CultureInfo.InvariantCulture, out var l))
+                {
+                    return l.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                }
+                return trimmed;
+
+            case "Boolean":
+                return string.Equals(trimmed, "true", StringComparison.OrdinalIgnoreCase) ? "true" : "false";
+
+            default:
+                return trimmed;
+        }
+    }
+
+    /// <summary>
+    /// Persists OCR transcripts, raw semantic JSON response, and maps candidate facts
+    /// into DocumentIntelligenceResult.
+    ///
+    /// Governance Invariants:
+    /// 1. Machine output is candidate-only. ExtractedCandidateFact items are non-authoritative.
+    /// 2. Artifact references are backed by actual UTF-8 bytes written to IAnalysisArtifactWriter.
+    /// 3. Fact confidence is clamped to [0.0, 1.0].
+    /// 4. Evidence quotes link to persisted page or document transcript artifacts.
+    /// </summary>
+    private async Task<DocumentIntelligenceResult> MapAndPersistSemanticArtifactsAsync(
+        FastApiAnalyzeResponseDto analyze,
+        DocumentIntelligenceRequest request,
+        string correlationId,
+        CancellationToken cancellationToken)
+    {
+        var artifacts = new List<AnalysisArtifactOutputDto>();
+        var warnings = new List<string>();
+        var pageArtifactMap = new Dictionary<int, Guid>();
+
+        if (analyze.Warnings != null)
+        {
+            warnings.AddRange(analyze.Warnings);
+        }
+
+        // Add non-authoritative governance notice
+        warnings.Add($"Document classified as '{analyze.Classification.Code}' with machine confidence {analyze.Classification.Confidence:P0}. " +
+                     "Machine output is candidate-only, not authoritative.");
+
+        // 1. Build composite full-document text artifact & page artifacts
+        var fullTextBuilder = new StringBuilder();
+
+        try
+        {
+            foreach (var page in analyze.Pages.OrderBy(p => p.PageNumber))
+            {
+                var pageText = string.IsNullOrWhiteSpace(page.CleanText) ? page.Text : page.CleanText;
+                if (fullTextBuilder.Length > 0)
+                {
+                    fullTextBuilder.Append("\n\n");
+                }
+                fullTextBuilder.Append(pageText);
+
+                // Per-page transcript artifact preserving strict 1-based page provenance
+                var pageProvenanceDto = new FastApiPageTranscriptArtifactDto(
+                    PageNumber: page.PageNumber,
+                    LanguageMode: analyze.LanguageMode,
+                    RawText: page.RawText,
+                    CleanText: pageText
+                );
+                var pageBytes = JsonSerializer.SerializeToUtf8Bytes(pageProvenanceDto);
+                var expectedPageHash = Convert.ToHexString(SHA256.HashData(pageBytes)).ToLowerInvariant();
+
+                var proposedPageKey = $"analysis-artifacts/{request.DocumentVersionId:D}/pages/{page.PageNumber}.json";
+
+                var pageReceipt = await _artifactWriter.WriteAsync(
+                    proposedPageKey,
+                    "application/json",
+                    pageBytes,
+                    cancellationToken);
+
+                if (!string.Equals(pageReceipt.ChecksumAlgorithm, "SHA-256", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new DocumentIntelligenceServerException(
+                        $"Artifact writer returned unsupported checksum algorithm '{pageReceipt.ChecksumAlgorithm}'. Expected SHA-256.");
+                }
+
+                if (!string.Equals(pageReceipt.ChecksumValue, expectedPageHash, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new DocumentIntelligenceServerException(
+                        $"Artifact writer receipt checksum mismatch for page {page.PageNumber}. Expected {expectedPageHash}, but received {pageReceipt.ChecksumValue}.");
+                }
+
+                var pageArtifactId = Guid.NewGuid();
+                pageArtifactMap[page.PageNumber] = pageArtifactId;
+
+                artifacts.Add(new AnalysisArtifactOutputDto(
+                    ArtifactId: pageArtifactId,
+                    ArtifactKind: "OcrPageTranscript",
+                    StorageReference: pageReceipt.StorageReference,
+                    ContentType: "application/json",
+                    ChecksumAlgorithm: pageReceipt.ChecksumAlgorithm,
+                    ChecksumValue: pageReceipt.ChecksumValue
+                ));
+
+                if (page.Confidence.HasValue)
+                {
+                    warnings.Add($"Page {page.PageNumber}: OCR engine confidence score is {page.Confidence.Value:F1}% " +
+                                 "(unverified machine observation metric, not legal fact confidence).");
+                }
+            }
+
+            var fullText = fullTextBuilder.ToString();
+            var fullBytes = Encoding.UTF8.GetBytes(fullText);
+            var expectedFullHash = Convert.ToHexString(SHA256.HashData(fullBytes)).ToLowerInvariant();
+            var proposedDocKey = $"analysis-artifacts/{request.DocumentVersionId:D}/document-transcript.txt";
+
+            var docReceipt = await _artifactWriter.WriteAsync(
+                proposedDocKey,
+                "text/plain",
+                fullBytes,
+                cancellationToken);
+
+            if (!string.Equals(docReceipt.ChecksumAlgorithm, "SHA-256", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new DocumentIntelligenceServerException(
+                    $"Artifact writer returned unsupported checksum algorithm '{docReceipt.ChecksumAlgorithm}'. Expected SHA-256.");
+            }
+
+            if (!string.Equals(docReceipt.ChecksumValue, expectedFullHash, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new DocumentIntelligenceServerException(
+                    $"Artifact writer receipt checksum mismatch for document transcript. Expected {expectedFullHash}, but received {docReceipt.ChecksumValue}.");
+            }
+
+            var docArtifactId = Guid.NewGuid();
+            artifacts.Insert(0, new AnalysisArtifactOutputDto(
+                ArtifactId: docArtifactId,
+                ArtifactKind: "OcrDocumentTranscript",
+                StorageReference: docReceipt.StorageReference,
+                ContentType: "text/plain",
+                ChecksumAlgorithm: docReceipt.ChecksumAlgorithm,
+                ChecksumValue: docReceipt.ChecksumValue
+            ));
+
+            // Persist raw semantic JSON response artifact
+            var semanticBytes = JsonSerializer.SerializeToUtf8Bytes(analyze);
+            var expectedSemanticHash = Convert.ToHexString(SHA256.HashData(semanticBytes)).ToLowerInvariant();
+            var proposedSemanticKey = $"analysis-artifacts/{request.DocumentVersionId:D}/semantic-extraction.json";
+
+            var semanticReceipt = await _artifactWriter.WriteAsync(
+                proposedSemanticKey,
+                "application/json",
+                semanticBytes,
+                cancellationToken);
+
+            artifacts.Add(new AnalysisArtifactOutputDto(
+                ArtifactId: Guid.NewGuid(),
+                ArtifactKind: "SemanticRawResponse",
+                StorageReference: semanticReceipt.StorageReference,
+                ContentType: "application/json",
+                ChecksumAlgorithm: semanticReceipt.ChecksumAlgorithm,
+                ChecksumValue: semanticReceipt.ChecksumValue
+            ));
+
+            // Map candidate facts
+            var candidateFacts = new List<ExtractedCandidateFactDto>();
+            foreach (var fact in analyze.Facts)
+            {
+                Guid? evidenceArtifactId = null;
+                int? pageNumber = null;
+                string? excerpt = null;
+
+                if (fact.Evidence != null && !string.IsNullOrWhiteSpace(fact.Evidence.Quote))
+                {
+                    pageNumber = fact.Evidence.PageNumber;
+                    excerpt = fact.Evidence.Quote.Trim();
+                    if (excerpt.Length > 500)
+                    {
+                        excerpt = excerpt.Substring(0, 500);
+                    }
+
+                    if (pageArtifactMap.TryGetValue(fact.Evidence.PageNumber, out var matchedPageId))
+                    {
+                        evidenceArtifactId = matchedPageId;
+                    }
+                    else
+                    {
+                        evidenceArtifactId = docArtifactId;
+                    }
+                }
+
+                var normalizedValueKind = NormalizeValueKind(fact.ValueKind);
+                var canonicalValue = NormalizeCanonicalValue(fact.CanonicalValue, normalizedValueKind);
+
+                candidateFacts.Add(new ExtractedCandidateFactDto(
+                    FactId: Guid.NewGuid(),
+                    FactCode: fact.FieldCode,
+                    ValueKind: normalizedValueKind,
+                    CanonicalValue: canonicalValue,
+                    ConfidenceScore: (decimal)Math.Clamp(fact.Confidence, 0.0, 1.0),
+                    EvidenceArtifactId: evidenceArtifactId,
+                    PageNumber: pageNumber,
+                    Excerpt: excerpt
+                ));
+
+                if (!fact.IsEvidenceVerified)
+                {
+                    warnings.Add($"Fact '{fact.FieldCode}': Evidence quote was not verified against OCR text.");
+                }
+            }
+
+            return new DocumentIntelligenceResult(
+                Provider: "FastApi-QwenSemantic",
+                ModelName: analyze.ModelIdentifier,
+                ModelVersion: analyze.PromptVersion,
+                Outcome: "Succeeded",
+                Artifacts: artifacts,
+                Candidates: candidateFacts,
+                Warnings: warnings.Count > 0 ? warnings : null
+            );
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (DocumentIntelligenceException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[{CorrelationId}] Failed to persist analysis artifacts for version {VersionId}",
+                correlationId, request.DocumentVersionId);
+            throw new DocumentIntelligenceServerException(
+                "Failed to persist document analysis artifact to storage.",
+                innerException: ex);
+        }
     }
 }
