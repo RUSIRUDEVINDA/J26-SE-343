@@ -91,6 +91,25 @@ public sealed class HttpComplaintClassificationClientTests
     }
 
     [Fact]
+    public async Task ClassifyAsync_ValidatedV2Response_PreservesVersionAndCompleteContract()
+    {
+        var client = CreateClient(HandlerReturning(
+            ValidResponseJson(CaseId, modelVersion: "v2")));
+
+        var result = await client.ClassifyAsync(ComplaintText, CaseId);
+
+        Assert.True(result.IsSuccess);
+        var prediction = Assert.IsType<ComplaintClassificationPrediction>(result.Prediction);
+        Assert.Equal("v2", prediction.ModelVersion);
+        Assert.Equal(CaseId, prediction.CaseId);
+        Assert.Equal(ComplaintClassificationCategories.LeaseRevenuePaymentEnforcement, prediction.PredictedCategory);
+        Assert.Equal(ComplaintClassificationCategories.All.Count, prediction.ClassProbabilities.Count);
+        Assert.Equal(ValidProbabilities(), prediction.ClassProbabilities);
+        Assert.Equal("Advisory output; officer review is required.", prediction.AdvisoryNote);
+        Assert.Equal("Only the configured four categories are considered.", prediction.ClosedSetNote);
+    }
+
+    [Fact]
     public async Task ClassifyAsync_ProbabilitySumWithinTolerance_AcceptsResponse()
     {
         var probabilities = ValidProbabilities();
