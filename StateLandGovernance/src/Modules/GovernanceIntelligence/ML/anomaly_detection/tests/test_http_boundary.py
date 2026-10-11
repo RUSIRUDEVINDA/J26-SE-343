@@ -43,7 +43,7 @@ def _settings(
 
 
 def _complaint_artifact() -> dict:
-    return {"model_version": "complaint-stub-v1", "pipeline": object()}
+    return {"model_version": "v2", "pipeline": object()}
 
 
 def _bundle():
@@ -286,7 +286,7 @@ def test_real_http_path_loads_and_scores_frozen_bundle_without_fitting(
 def test_existing_complaint_route_contract_remains_distinct(tmp_path):
     def complaint_predictor(_text, _artifact, case_id):
         return {
-            "model_version": "complaint-stub-v1",
+            "model_version": "v2",
             "predicted_category": LABEL_ORDER[0],
             "class_probabilities": {label: 0.25 for label in LABEL_ORDER},
             "case_id": case_id,
