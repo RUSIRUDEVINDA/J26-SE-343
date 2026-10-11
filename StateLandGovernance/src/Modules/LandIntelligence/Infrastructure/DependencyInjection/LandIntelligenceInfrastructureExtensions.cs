@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Application.GisAdministrativeVerification;
+using StateLandGovernance.LandIntelligence.Application.Services;
 using StateLandGovernance.LandIntelligence.Application.Validators;
 using StateLandGovernance.LandIntelligence.Infrastructure.Configuration;
 using StateLandGovernance.LandIntelligence.Infrastructure.Neo4j;
@@ -15,6 +16,7 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferen
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Validation;
 using StateLandGovernance.LandIntelligence.Infrastructure.PilotValidation;
 using StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest;
+using StateLandGovernance.LandIntelligence.Infrastructure.GisCoverage;
 using StateLandGovernance.LandIntelligence.Infrastructure.Repositories;
 
 namespace StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
@@ -37,11 +39,18 @@ public static class LandIntelligenceInfrastructureExtensions
             configuration.GetSection(ResearchDemoOptions.SectionName));
         services.Configure<LeaseInterestOptions>(
             configuration.GetSection(LeaseInterestOptions.SectionName));
+        services.Configure<LeaseInterestPersonalDataOptions>(
+            configuration.GetSection(LeaseInterestPersonalDataOptions.SectionName));
 
         services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<INicPersonalDataProtector, NicPersonalDataProtector>();
+        services.AddSingleton<ILeaseInterestOfficerAccessGate, LeaseInterestOfficerAccessGate>();
         services.AddScoped<ILeaseInterestCostAssessmentService, LeaseInterestCostAssessmentService>();
         services.AddScoped<IParcelShortlistService, ParcelShortlistService>();
         services.AddScoped<ILeaseInterestRequestService, LeaseInterestRequestService>();
+        services.AddScoped<ILeaseInterestOfficerLookupService, LeaseInterestOfficerLookupService>();
+        services.AddScoped<ILeaseInterestOfficerReviewService, LeaseInterestOfficerReviewService>();
+        services.AddScoped<ILeaseInterestParcelEligibilityService, LeaseInterestParcelEligibilityService>();
         services.AddScoped<LeaseInterestDraftValidator>(sp =>
             new LeaseInterestDraftValidator(
                 sp.GetRequiredService<IOptions<LeaseInterestOptions>>().Value));
@@ -51,6 +60,7 @@ public static class LandIntelligenceInfrastructureExtensions
         services.AddScoped<ILandParcelRepository, LandParcelRepository>();
         services.AddScoped<IRealParcelSourceReadRepository, RealParcelSourceReadRepository>();
         services.AddScoped<IResearchSimulatedLeaseReadRepository, ResearchSimulatedLeaseReadRepository>();
+        services.AddScoped<IProjectLeaseReadyDesignationReadRepository, ProjectLeaseReadyDesignationReadRepository>();
         services.AddSingleton<IResearchDemoMode, ResearchDemoMode>();
         services.AddScoped<ISpatialConstraintRepository, SpatialConstraintRepository>();
         services.AddScoped<ILandRecommendationRepository, LandRecommendationRepository>();
@@ -87,6 +97,7 @@ public static class LandIntelligenceInfrastructureExtensions
         services.AddScoped<ILandParcelGisEnrichmentPersistenceService, LandParcelGisEnrichmentPersistenceService>();
         services.AddScoped<ILandParcelGisKnowledgeGraphSyncService, LandParcelGisKnowledgeGraphSyncService>();
         services.AddScoped<IHambantotaPilotValidationService, HambantotaPilotValidationService>();
+        services.AddScoped<ILandIntelligenceGisCoverageService, LandIntelligenceGisCoverageService>();
 
         return services;
     }
