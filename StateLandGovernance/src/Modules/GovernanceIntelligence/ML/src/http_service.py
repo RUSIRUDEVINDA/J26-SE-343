@@ -26,12 +26,10 @@ sys.path.insert(0, str(_SRC_DIR))
 sys.path.insert(0, str(_ML_DIR))
 
 from predict_v1 import (
-    DEFAULT_JOBLIB,
-    DEFAULT_META,
-    DEFAULT_VALIDATION,
     load_versioned_artifact,
     predict_complaint,
 )
+from config import MODELS_DIR
 from anomaly_detection.bundle import (
     DEFAULT_BUNDLE_CONFIG,
     TrustedLocalBundle,
@@ -44,6 +42,9 @@ logger = logging.getLogger(__name__)
 DEFAULT_MAX_REQUEST_CHARS = 10_000
 DEFAULT_MAX_ANOMALY_REQUEST_BYTES = 262_144
 DEFAULT_MAX_ANOMALY_EVENTS = 500
+DEFAULT_MODEL_VERSION = "v2"
+SUPPORTED_MODEL_VERSIONS = frozenset({"v1", "v2"})
+MODEL_VERSION_ENV = "GOVERNANCE_MODEL_VERSION"
 MODEL_PATH_ENV = "GOVERNANCE_MODEL_PATH"
 METADATA_PATH_ENV = "GOVERNANCE_MODEL_METADATA_PATH"
 VALIDATION_PATH_ENV = "GOVERNANCE_MODEL_VALIDATION_PATH"
@@ -65,6 +66,7 @@ class ServiceSettings:
     model_path: Path
     metadata_path: Path
     validation_path: Path
+    model_version: str = DEFAULT_MODEL_VERSION
     max_request_chars: int = DEFAULT_MAX_REQUEST_CHARS
     anomaly_bundle_config: Path = DEFAULT_BUNDLE_CONFIG
     max_anomaly_request_bytes: int = DEFAULT_MAX_ANOMALY_REQUEST_BYTES
@@ -72,6 +74,52 @@ class ServiceSettings:
 
     @classmethod
     def from_environment(cls) -> "ServiceSettings":
+        if MODEL_VERSION_ENV in os.environ:
+            configured_version = os.environ[MODEL_VERSION_ENV]
+            if not configured_version.strip():
+                raise ValueError(f"{MODEL_VERSION_ENV} must not be blank")
+            model_version = configured_version.strip()
+        else:
+            model_version = DEFAULT_MODEL_VERSION
+        if model_version not in SUPPORTED_MODEL_VERSIONS:
+            raise ValueError(
+                f"{MODEL_VERSION_ENV} must be one of {sorted(SUPPORTED_MODEL_VERSIONS)}"
+            )
+
+        version_dir = MODELS_DIR / model_version
+        defaults = {
+            MODEL_PATH_ENV: version_dir / f"governance_classifier_{model_version}.joblib",
+            METADATA_PATH_ENV: version_dir / f"model_metadata_{model_version}.json",
+            VALIDATION_PATH_ENV: version_dir / "validation" / f"model_validation_{model_version}.json",
+        }
+        configured_paths = {name: os.getenv(name) for name in defaults}
+        present_paths = {name for name, value in configured_paths.items() if value is not None}
+        if present_paths and present_paths != set(defaults):
+            missing = sorted(set(defaults) - present_paths)
+            raise ValueError(
+                "Complaint classifier artifact path overrides must be configured as one complete "
+                f"model/metadata/validation set; missing {missing}"
+            )
+        if present_paths:
+            blank = sorted(name for name, value in configured_paths.items() if not value.strip())
+            if blank:
+                raise ValueError(f"Complaint classifier artifact path overrides must not be blank: {blank}")
+            paths = {
+                name: Path(value).expanduser().resolve()
+                for name, value in configured_paths.items()
+            }
+            package_dir = paths[MODEL_PATH_ENV].parent
+            if (
+                paths[METADATA_PATH_ENV].parent != package_dir
+                or paths[VALIDATION_PATH_ENV].parent != package_dir / "validation"
+            ):
+                raise ValueError(
+                    "Complaint classifier model, metadata, and validation sidecar must come "
+                    "from one version package directory"
+                )
+        else:
+            paths = {name: path.resolve() for name, path in defaults.items()}
+
         def configured_path(name: str, default: Path) -> Path:
             configured = os.getenv(name)
             return Path(configured).expanduser().resolve() if configured else default.resolve()
@@ -87,9 +135,10 @@ class ServiceSettings:
             return value
 
         return cls(
-            model_path=configured_path(MODEL_PATH_ENV, DEFAULT_JOBLIB),
-            metadata_path=configured_path(METADATA_PATH_ENV, DEFAULT_META),
-            validation_path=configured_path(VALIDATION_PATH_ENV, DEFAULT_VALIDATION),
+            model_path=paths[MODEL_PATH_ENV],
+            metadata_path=paths[METADATA_PATH_ENV],
+            validation_path=paths[VALIDATION_PATH_ENV],
+            model_version=model_version,
             max_request_chars=positive_limit(
                 MAX_REQUEST_CHARS_ENV, DEFAULT_MAX_REQUEST_CHARS
             ),
@@ -202,6 +251,10 @@ def create_app(
 ) -> FastAPI:
     """Create an app whose validated artifacts are loaded once at startup."""
     resolved_settings = settings or ServiceSettings.from_environment()
+    if resolved_settings.model_version not in SUPPORTED_MODEL_VERSIONS:
+        raise ValueError(
+            f"Configured complaint model version must be one of {sorted(SUPPORTED_MODEL_VERSIONS)}"
+        )
 
     @asynccontextmanager
     async def lifespan(application: FastAPI):
@@ -211,6 +264,12 @@ def create_app(
                 meta_path=resolved_settings.metadata_path,
                 validation_path=resolved_settings.validation_path,
             )
+            if artifact.get("model_version") != resolved_settings.model_version:
+                raise ValueError(
+                    "Loaded complaint classifier version does not match trusted configuration: "
+                    f"configured={resolved_settings.model_version!r}, "
+                    f"loaded={artifact.get('model_version')!r}"
+                )
         except Exception as exc:
             logger.exception(
                 "Classifier startup failed. Verify the three artifact configuration variables "
@@ -295,7 +354,9 @@ def create_app(
             raise
         except Exception:
             # Complaint content and case identifiers are intentionally absent.
-            logger.exception("Complaint prediction failed.")
+            # Do not include the exception because third-party exception text
+            # could contain model input.
+            logger.error("Complaint prediction failed.")
             raise HTTPException(status_code=500, detail="Prediction failed.") from None
 
     @application.post(

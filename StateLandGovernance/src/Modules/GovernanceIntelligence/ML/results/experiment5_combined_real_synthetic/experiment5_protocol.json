@@ -1,0 +1,33 @@
+{
+  "experiment": 5,
+  "title": "Leakage-safe combined real + synthetic development evaluation",
+  "random_seed": 42,
+  "fold_count": 5,
+  "class_order": [
+    "Administrative / Procedural / Integrity",
+    "Lease Revenue / Payment / Enforcement",
+    "Unauthorized Allocation / Transfer / Use",
+    "Protected / Environmental Lease Misuse"
+  ],
+  "real_split": "Exact Evaluation_Fold and Combined_Group from Experiment 4 Arm A frozen baseline manifest",
+  "synthetic_split": "StratifiedKFold over approved family IDs; all variants contained in family fold",
+  "arms": [
+    "arm_a",
+    "arm_b",
+    "arm_c",
+    "arm_d",
+    "arm_e"
+  ],
+  "selection_thresholds": {
+    "combined_accuracy": "> 0.80",
+    "combined_macro_f1": "> 0.80",
+    "synthetic_accuracy": "> 0.80",
+    "maximum_real_accuracy_decrease": 0.01
+  },
+  "final_prospective_test_authorized": false,
+  "model_promotion_authorized": false,
+  "git": {
+    "branch": "Component_04_RD",
+    "commit": "4951cda56fe830a912aee356a351c9c5065f5433"
+  }
+}

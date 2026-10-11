@@ -1,0 +1,110 @@
+{
+  "artifact_type": "classification_metrics_addendum",
+  "bundle_manifest_sha256": "50ca8d9042e60f98051684e0901b6831bee91c101d85488b0e22c4c301d480a7",
+  "coverage_cautions": {
+    "excessive_handoffs": "two test examples; insufficient for reliable per-type claims",
+    "repeated_correction_loop": "zero test examples"
+  },
+  "evaluation_scope": "synthetic held-out evaluation only",
+  "existing_test_metrics_agree": true,
+  "fit_or_scoring_performed": false,
+  "frozen_threshold": 0.5743688923115832,
+  "generated_utc": "2026-10-11T14:21:14.399688+00:00",
+  "interpretation": {
+    "anomaly_score": "not a probability or confidence value",
+    "detector_scope": "not a corruption detector or legal-compliance detector",
+    "real_world_accuracy": "not established for Sri Lankan departments or any real-world population",
+    "reference_normal": "generator-designated reference; not independently verified normality"
+  },
+  "limitations": [
+    "Metrics describe only the frozen synthetic held-out prediction file.",
+    "Reference-normal cases are generator-designated, not verified real normality.",
+    "Anomaly score is not probability or confidence.",
+    "No threshold adjustment, model fitting, rescoring, or prediction change occurred.",
+    "This is not a corruption, fraud, wrongdoing, or legal-compliance detector."
+  ],
+  "metrics": {
+    "accuracy": 0.8611111111111112,
+    "accuracy_improvement_over_always_normal": 0.12037037037037046,
+    "accuracy_wilson_95_interval": {
+      "confidence_level": 0.95,
+      "lower": 0.7834258825797703,
+      "method": "Wilson score interval",
+      "upper": 0.9139899131588275
+    },
+    "always_normal_baseline_accuracy": 0.7407407407407407,
+    "anomaly_class": {
+      "f1": 0.7169811320754716,
+      "precision": 0.76,
+      "recall": 0.6785714285714286
+    },
+    "balanced_accuracy": 0.8017857142857143,
+    "confusion_counts": {
+      "false_negative": 9,
+      "false_positive": 6,
+      "true_negative": 74,
+      "true_positive": 19
+    },
+    "macro_f1": 0.8124782960990855,
+    "macro_precision": 0.8257831325301205,
+    "macro_recall": 0.8017857142857143,
+    "per_perturbation_counts": {
+      "duplicated_sequence": {
+        "detected": 4,
+        "missed": 2,
+        "total": 6
+      },
+      "excessive_handoffs": {
+        "detected": 0,
+        "missed": 2,
+        "total": 2
+      },
+      "extended_gap": {
+        "detected": 10,
+        "missed": 0,
+        "total": 10
+      },
+      "increased_event_count": {
+        "detected": 5,
+        "missed": 5,
+        "total": 10
+      },
+      "repeated_correction_loop": {
+        "detected": 0,
+        "missed": 0,
+        "total": 0
+      }
+    },
+    "perturbation_support": 28,
+    "reference_flag_rate": 0.075,
+    "reference_support": 80,
+    "specificity": 0.925,
+    "support": 108,
+    "weighted_f1": 0.858458412110455,
+    "weighted_precision": 0.8574564926372156,
+    "weighted_recall": 0.8611111111111112
+  },
+  "source_predictions_sha256": "0cb416722b8e7cbf0e269049a7a5cd9ee97d607cea52fe1012e8d714ade10dc3",
+  "split_isolation": {
+    "test_prediction_ids_matching_keys_test": 108,
+    "training_overlap": 0,
+    "validation_overlap": 0
+  },
+  "strict_flag_rule": "anomaly_score > threshold",
+  "threshold_adjustment_performed": false,
+  "threshold_ties": 0,
+  "verified_bundle_artifact_sha256": {
+    "evaluation_metadata": "8bd3ef71a3534e6930fd9734f0e43f4e23bd070539117074bc2a1f3acff730b6",
+    "metadata": "632d709d31f24b889d0ee0165fd921f8104a9c3d3e9fa12ab66eee943b186d74",
+    "model": "59ed4a73d56d9f06798c4ebc4684a633afe72841c41ed0b3ba4e7bb658782b46",
+    "test_metrics": "f53e0059bf4319ab9824eb3b11d3a55a84a203584a9f41b466779101e2439739",
+    "test_predictions": "0cb416722b8e7cbf0e269049a7a5cd9ee97d607cea52fe1012e8d714ade10dc3",
+    "threshold_and_feature_contract": "52c01aad552996e377623722482ac294bffd6ed936487bf75cdb7fbf77c3155b"
+  },
+  "verified_evaluation_input_sha256": {
+    "X_test": "5ab49268a4d07f76279c8684282e98d6823cbd9fd10d157dc43bb8d5dacb26c4",
+    "keys_test": "f07c2b7829aba5f5317dfa6602ab8b5c9089a2342813006eded95a27adb9f928",
+    "split_manifest": "413fa775a5df391653ec6123e008ceb6fbeb671d48dd491d12b3f83f2aa21954",
+    "y_test": "1dde076edb333c1516554d884969a264e93f1a3291919529847bec1230134307"
+  }
+}

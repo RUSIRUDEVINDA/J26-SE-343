@@ -1,9 +1,17 @@
-"""Pytest fixtures and programmatic synthetic document generators."""
-
 import io
+import os
 import pytest
 import pymupdf
 from PIL import Image, ImageDraw
+
+from app.core.config import settings
+
+
+@pytest.fixture(autouse=True)
+def configure_test_semantic_provider(monkeypatch):
+    """Ensure normal pytest runs never require external Ollama daemon."""
+    if not os.getenv("RUN_QWEN_LIVE_TESTS", "").lower() in ("true", "1", "yes"):
+        monkeypatch.setattr(settings, "semantic_provider", "stub")
 
 
 @pytest.fixture

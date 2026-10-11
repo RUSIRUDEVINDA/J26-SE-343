@@ -14,6 +14,7 @@ python -m anomaly_detection.cli verify-baseline
 python -m anomaly_detection.cli evaluate-test
 python -m anomaly_detection.cli verify-bundle
 python -m anomaly_detection.cli infer --input-json anomaly_detection/examples/complete_synthetic_trace.json
+python -m anomaly_detection.report_test_metrics_addendum
 python -m pytest anomaly_detection/tests -q
 ```
 
@@ -102,6 +103,16 @@ Inference returns the nine values, score, frozen threshold, and strict flag.
 The score is not probability/confidence and no feature-causation explanation is
 returned. The included example is fictional synthetic input, not an evaluation
 case or real departmental record.
+
+`report_test_metrics_addendum` reads the already-frozen `test_predictions.csv`
+and recomputes descriptive classification metrics without loading or scoring
+the model. It verifies bundle and evaluation hashes, the strict threshold rule,
+split isolation, and agreement with the original test metrics before creating
+`classification_metrics_addendum.json`. The command refuses to overwrite an
+existing addendum. This remains synthetic held-out evidence only: generator-
+designated references are not verified real normality, anomaly score is not
+probability or confidence, and this is not a corruption or legal-compliance
+detector. No threshold adjustment occurs.
 
 ## Internal HTTP inference boundary
 
