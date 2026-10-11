@@ -1,0 +1,285 @@
+{
+  "model_id": "governance_complaint_classifier_v2",
+  "model_version": "v2",
+  "component": "Component 4 - GovernanceIntelligence",
+  "created_at_utc": "2026-10-11T08:12:20.350770+00:00",
+  "model_sha256": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+  "promotion_source": "Experiment 6 Arm E already-fitted candidate; copied byte-for-byte without reserialization",
+  "pipeline_description": "BoilerplateStripper -> FeatureUnion(word TF-IDF, character TF-IDF) -> LogisticRegression",
+  "pipeline_validation": {
+    "architecture": "arm_e_word_character",
+    "steps": [
+      "boilerplate",
+      "features",
+      "clf"
+    ],
+    "estimator_types": {
+      "boilerplate": "BoilerplateStripper",
+      "clf": "LogisticRegression",
+      "features": "FeatureUnion",
+      "word": "TfidfVectorizer",
+      "character": "TfidfVectorizer"
+    },
+    "stable_parameters": {
+      "clf__C": 1.0,
+      "clf__class_weight": "balanced",
+      "clf__fit_intercept": true,
+      "clf__max_iter": 2000,
+      "clf__multi_class": "auto",
+      "clf__penalty": "l2",
+      "clf__random_state": 42,
+      "clf__solver": "lbfgs",
+      "clf__tol": 0.0001,
+      "features__character__analyzer": "char_wb",
+      "features__character__binary": false,
+      "features__character__lowercase": true,
+      "features__character__max_df": 1.0,
+      "features__character__max_features": null,
+      "features__character__min_df": 1,
+      "features__character__ngram_range": [
+        3,
+        5
+      ],
+      "features__character__norm": "l2",
+      "features__character__smooth_idf": true,
+      "features__character__stop_words": null,
+      "features__character__sublinear_tf": true,
+      "features__word__analyzer": "word",
+      "features__word__binary": false,
+      "features__word__lowercase": true,
+      "features__word__max_df": 1.0,
+      "features__word__max_features": null,
+      "features__word__min_df": 1,
+      "features__word__ngram_range": [
+        1,
+        2
+      ],
+      "features__word__norm": "l2",
+      "features__word__smooth_idf": true,
+      "features__word__stop_words": "english",
+      "features__word__sublinear_tf": true
+    }
+  },
+  "label_taxonomy": [
+    "Administrative / Procedural / Integrity",
+    "Lease Revenue / Payment / Enforcement",
+    "Unauthorized Allocation / Transfer / Use",
+    "Protected / Environmental Lease Misuse"
+  ],
+  "fitted_classes_order": [
+    "Administrative / Procedural / Integrity",
+    "Lease Revenue / Payment / Enforcement",
+    "Protected / Environmental Lease Misuse",
+    "Unauthorized Allocation / Transfer / Use"
+  ],
+  "training_population": {
+    "real_baseline_records": 200,
+    "reviewed_development_synthetic_records": 225,
+    "reviewed_development_synthetic_families": 75,
+    "total_training_rows": 425
+  },
+  "sample_weight_policy": {
+    "real_record": 1.0,
+    "synthetic_variant": 0.3333333333333333,
+    "synthetic_family_total": 1.0
+  },
+  "excluded_populations": {
+    "source_derived_candidates": 30,
+    "all_prospective_families": true,
+    "review_decisions": [
+      "Rejected",
+      "Needs_Discussion"
+    ]
+  },
+  "experiment5_development_results": {
+    "real": {
+      "support": 200,
+      "correct": 160,
+      "incorrect": 40,
+      "accuracy": 0.8,
+      "balanced_accuracy": 0.7999999999999999,
+      "macro_precision": 0.8018577962917586,
+      "macro_recall": 0.7999999999999999,
+      "macro_f1": 0.7989041990793784,
+      "weighted_f1": 0.7989041990793786,
+      "all_class_metrics_defined": true,
+      "no_zero_recall_class": true
+    },
+    "synthetic": {
+      "support": 225,
+      "correct": 217,
+      "incorrect": 8,
+      "accuracy": 0.9644444444444444,
+      "balanced_accuracy": 0.964220051391104,
+      "macro_precision": 0.9675065932805871,
+      "macro_recall": 0.964220051391104,
+      "macro_f1": 0.9656992968466117,
+      "weighted_f1": 0.9645488867718147,
+      "all_class_metrics_defined": true,
+      "no_zero_recall_class": true,
+      "family_metrics": {
+        "family_support": 75,
+        "family_majority_accuracy": 0.9866666666666667,
+        "family_majority_macro_f1": 0.9877757901013715,
+        "families_all_three_variants_correct": 68,
+        "correct_variants_distribution": {
+          "0": 0,
+          "1": 1,
+          "2": 6,
+          "3": 68
+        }
+      }
+    },
+    "combined": {
+      "support": 425,
+      "correct": 377,
+      "incorrect": 48,
+      "accuracy": 0.8870588235294118,
+      "balanced_accuracy": 0.8852617561067909,
+      "macro_precision": 0.8891037939333393,
+      "macro_recall": 0.8852617561067908,
+      "macro_f1": 0.8863466633621631,
+      "weighted_f1": 0.8868137378289329,
+      "all_class_metrics_defined": true,
+      "no_zero_recall_class": true
+    }
+  },
+  "experiment6_prospective_synthetic_results": {
+    "evaluation_type": "synthetic prospective evaluation",
+    "support": 69,
+    "correct": 65,
+    "incorrect": 4,
+    "accuracy": 0.9420289855072463,
+    "balanced_accuracy": 0.9345238095238095,
+    "macro_precision": 0.950595238095238,
+    "macro_recall": 0.9345238095238095,
+    "macro_f1": 0.940976005293003,
+    "weighted_f1": 0.9429515401628642,
+    "wilson_95_accuracy_interval": {
+      "lower": 0.8602075664233835,
+      "upper": 0.9772276111196287
+    },
+    "probability_validation": {
+      "finite": true,
+      "inside_unit_interval": true,
+      "row_sums_within_tolerance": true,
+      "argmax_agreement": true,
+      "row_sum_tolerance": 1e-10,
+      "maximum_row_sum_error": 2.220446049250313e-16
+    },
+    "family_metrics": {
+      "eligible_family_count": 23,
+      "family_majority_accuracy": 1.0,
+      "family_majority_macro_f1": 1.0,
+      "families_all_three_variants_correct": 19,
+      "correct_variants_distribution": {
+        "0": 0,
+        "1": 0,
+        "2": 4,
+        "3": 19
+      },
+      "families_with_variant_prediction_disagreement": 4,
+      "families_with_majority_ties": 0
+    }
+  },
+  "evidence": {
+    "review_snapshot_sha256": "41bed6d4cb40a42e8e081e5b2e90a32a9df83897891142727ec1240887f72498",
+    "configuration_sha256": "a71710157a029de2df6a6329e276ceec12fc44433799960f862778d89fe68376",
+    "input_hashes": {
+      "real_baseline": {
+        "path": "data/state_land_governance_confirmed_200.csv",
+        "sha256": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61"
+      },
+      "candidate_dataset": {
+        "path": "data/state_land_complaints_development_530.csv",
+        "sha256": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8"
+      },
+      "experiment5_development_review": {
+        "path": "candidate-data/v1/synthetic_family_review_pack_confirmed_20261007.csv",
+        "sha256": "0f4d839d9ad46223430cf5adb375775ce7ae12cc8b38b57f263eab790895fb74"
+      },
+      "prospective_corrected_review": {
+        "path": "candidate-data/v1/review-assistance/prospective_test_family_review_corrected_20261011.csv",
+        "sha256": "41bed6d4cb40a42e8e081e5b2e90a32a9df83897891142727ec1240887f72498"
+      },
+      "prospective_review_manifest": {
+        "path": "candidate-data/v1/review-assistance/prospective_test_review_manifest.json",
+        "sha256": "1e3b062018221985f27458082f76b26d252a5973ce7dc4176efe6621d5a47ce7"
+      },
+      "prospective_review_template": {
+        "path": "candidate-data/v1/review-assistance/prospective_test_family_review_template.csv",
+        "sha256": "866d1361bcc4fe7449d2cfda56aefc7b3cf7d69e82faf031b26d601bde822feb"
+      },
+      "experiment5_protocol": {
+        "path": "results/experiment5_combined_real_synthetic/experiment5_protocol.json",
+        "sha256": "d30472ecdd813ec0b0ab12f8661018bd16842fec2c859cf621eccca5c53e9f2b"
+      },
+      "experiment5_summary": {
+        "path": "results/experiment5_combined_real_synthetic/experiment5_summary.json",
+        "sha256": "467f5d3c6843a8ea8f34eff0fd0f071696c72c94115b4b226a99f58cb251a89d"
+      },
+      "experiment5_arm_e_metadata": {
+        "path": "results/experiment5_combined_real_synthetic/arm_e/run_metadata.json",
+        "sha256": "49a57418999ce510cc4029265fd00b40b80ec79452357a442df7924858e7280d"
+      },
+      "experiment5_population_manifest": {
+        "path": "results/experiment5_combined_real_synthetic/experiment5_population_manifest.csv",
+        "sha256": "3838dcd2a77620c0ffa7d466461a323e8982909c6724e58b32b0835ac9dedbd6"
+      }
+    },
+    "artifact_hashes": {
+      "candidate_metadata": "1725b8abd9c20a5ff1f17964546fe6f89841cda1fe94484371e79d3e4d794876",
+      "candidate_sha256_record": "fd6b3671381decf84bc3edc4c6d2c3e8d81e54ae367adbb91ab2b10aeef76f1d",
+      "training_manifest": "ff99c44734138e9cbf93ede4bc041db4247578ad04779a9ec3d97947818701f9",
+      "prospective_manifest": "faf64e66e77e978030edd047e5a6c0ef9399553614e90236b1a875b6fde6f551",
+      "review_snapshot": "41bed6d4cb40a42e8e081e5b2e90a32a9df83897891142727ec1240887f72498",
+      "predictions": "cd097846ccb234b4168396bbab18c4b4d964fcc7f3c694f8ea5d3dbdc344bd67",
+      "family_predictions": "b7db1c005c76e5e78932dbc9a551725458c1274b5f01833544a4c5348600e826",
+      "metrics": "6e06564b90c7d9eb412c9e3f56c7c5948e75681cdc730c7a08c9eb02a7a88110",
+      "per_class_metrics": "22dc24641cfe25452c07dbc32bd5297de4c73a6c6e61b80a30c85939b734d39d",
+      "confusion_matrix": "b86659c68aad6c7a8ecfad73fe0b361438555b33b70d2a0bb153d6cf9db990a3",
+      "integrity_report": "910b57ec03be668b9f4e7b9167c5ae8a2368ae68c8d5779108d596add2f14f9b",
+      "promotion_decision": "fbe77a672ff1331c0ca09a77c9fbbc5af0b8533ad45d55f44499933e50cad368",
+      "evaluation_metadata": "73b416e2d2d38633b24a5d807c64b3ab408d0755dc922b03ede93c7562b2df23",
+      "experiment6_report": "5ccf6e7fdb6a55157bb974c91872ccbca438e75bbb212dfb9da8779298d72557",
+      "candidate": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+      "experiment6_input:real_baseline": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61",
+      "experiment6_input:candidate_dataset": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8",
+      "experiment6_input:experiment5_development_review": "0f4d839d9ad46223430cf5adb375775ce7ae12cc8b38b57f263eab790895fb74",
+      "experiment6_input:prospective_corrected_review": "41bed6d4cb40a42e8e081e5b2e90a32a9df83897891142727ec1240887f72498",
+      "experiment6_input:prospective_review_manifest": "1e3b062018221985f27458082f76b26d252a5973ce7dc4176efe6621d5a47ce7",
+      "experiment6_input:prospective_review_template": "866d1361bcc4fe7449d2cfda56aefc7b3cf7d69e82faf031b26d601bde822feb",
+      "experiment6_input:experiment5_protocol": "d30472ecdd813ec0b0ab12f8661018bd16842fec2c859cf621eccca5c53e9f2b",
+      "experiment6_input:experiment5_summary": "467f5d3c6843a8ea8f34eff0fd0f071696c72c94115b4b226a99f58cb251a89d",
+      "experiment6_input:experiment5_arm_e_metadata": "49a57418999ce510cc4029265fd00b40b80ec79452357a442df7924858e7280d",
+      "experiment6_input:experiment5_population_manifest": "3838dcd2a77620c0ffa7d466461a323e8982909c6724e58b32b0835ac9dedbd6"
+    }
+  },
+  "dependency_versions": {
+    "python": "3.13.1",
+    "numpy": "2.3.1",
+    "pandas": "2.3.3",
+    "scikit_learn": "1.7.2",
+    "scipy": "1.16.3",
+    "joblib": "1.5.2"
+  },
+  "fit_count_evidence": {
+    "recorded_count": 1,
+    "independently_provable_from_saved_artifact": false,
+    "limitation": "The saved metadata records one fit, but the joblib and evidence do not provide an immutable invocation log proving the historical fit count independently."
+  },
+  "previous_version": {
+    "version": "v1",
+    "status": "unchanged rollback version"
+  },
+  "advisory_purpose": "English state-land complaint category classification for subsequent human governance review.",
+  "limitations": [
+    "Experiment 6 is a synthetic prospective evaluation, not real-world accuracy.",
+    "No independent departmental validation has been performed.",
+    "Development and prospective synthetic families share a common generator origin.",
+    "Closed-set four-class model with no validated out-of-scope detector.",
+    "Raw logistic-regression probabilities are not demonstrated to be calibrated.",
+    "Output is advisory and does not determine guilt, legal liability, final approval, or administrative action."
+  ],
+  "deployment_status": "packaged for deployment review; not deployed and not the service default"
+}
