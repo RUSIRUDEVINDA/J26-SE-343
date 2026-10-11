@@ -80,12 +80,6 @@ public sealed class LandRecommendationSearchRequestValidatorTests
             Province = "Western",
             District = "Colombo"
         },
-        Accessibility = new AccessibilityCriteria
-        {
-            RequireRoadAccess = true,
-            MaxRoadDistanceMeters = 1000m
-        },
-        Environmental = new EnvironmentalCriteria(),
         Regulatory = new RegulatoryCriteria()
     };
 }

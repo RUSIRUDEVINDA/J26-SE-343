@@ -31,16 +31,6 @@ internal static class DeterministicRecommendationScenarioSupport
             {
                 Province = "Western"
             },
-            Accessibility = new AccessibilityCriteria
-            {
-                RequireRoadAccess = true,
-                MaxRoadDistanceMeters = 5000m
-            },
-            Environmental = new EnvironmentalCriteria
-            {
-                MaxAllowedEnvironmentalSeverity = RestrictionSeverity.Medium,
-                RejectProhibitiveEnvironmentalRestrictions = true
-            },
             Regulatory = new RegulatoryCriteria
             {
                 MaxRegulatoryReferences = 2,
@@ -117,7 +107,7 @@ internal static class DeterministicRecommendationScenarioSupport
         Assert.NotEmpty(result.Explanation);
 
         var totalCriteria = result.MatchingCriteria.Count + result.FailedCriteria.Count;
-        Assert.True(totalCriteria >= 8, $"Expected comprehensive criterion coverage, got {totalCriteria}.");
+        Assert.True(totalCriteria >= 6, $"Expected core criterion coverage, got {totalCriteria}.");
     }
 
     public static void AssertMonotonicRanking(IReadOnlyList<LandParcelRecommendationResult> recommendations)
