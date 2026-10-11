@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import ast
+import logging
+import math
+import shutil
 import sys
 from pathlib import Path
 
@@ -12,7 +16,15 @@ _ML_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ML_ROOT / "src"))
 
 from config import LABEL_ORDER
-from http_service import ServiceSettings, create_app as create_service_app
+from http_service import (
+    DEFAULT_MODEL_VERSION,
+    METADATA_PATH_ENV,
+    MODEL_PATH_ENV,
+    MODEL_VERSION_ENV,
+    VALIDATION_PATH_ENV,
+    ServiceSettings,
+    create_app as create_service_app,
+)
 
 
 class _StubAnomalyBundle:
@@ -36,12 +48,12 @@ def _settings(tmp_path: Path, max_request_chars: int = 100) -> ServiceSettings:
 
 
 def _artifact() -> dict:
-    return {"model_version": "stub-v1", "pipeline": object()}
+    return {"model_version": "v2", "pipeline": object()}
 
 
 def _result(case_id=None) -> dict:
     return {
-        "model_version": "stub-v1",
+        "model_version": "v2",
         "predicted_category": LABEL_ORDER[0],
         "class_probabilities": {label: 0.25 for label in LABEL_ORDER},
         "case_id": case_id,
@@ -55,7 +67,7 @@ def test_healthy_startup_returns_readiness_and_model_version(tmp_path):
     with TestClient(app) as client:
         response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "ready", "model_version": "stub-v1"}
+    assert response.json() == {"status": "ready", "model_version": "v2"}
 
 
 def test_startup_failure_is_not_silently_recovered(tmp_path):
@@ -100,7 +112,7 @@ def test_valid_prediction_preserves_contract_and_version(tmp_path):
         )
     assert response.status_code == 200
     body = response.json()
-    assert body["model_version"] == "stub-v1"
+    assert body["model_version"] == "v2"
     assert body["predicted_category"] in LABEL_ORDER
     assert set(body["class_probabilities"]) == set(LABEL_ORDER)
 
@@ -184,3 +196,211 @@ def test_prediction_failure_returns_sanitized_error(tmp_path):
     assert response.json() == {"detail": "Prediction failed."}
     assert "secret" not in response.text
     assert "C:/private" not in response.text
+
+
+def _clear_classifier_environment(monkeypatch):
+    for name in (MODEL_VERSION_ENV, MODEL_PATH_ENV, METADATA_PATH_ENV, VALIDATION_PATH_ENV):
+        monkeypatch.delenv(name, raising=False)
+
+
+def test_default_environment_selects_complete_v2_package(monkeypatch):
+    _clear_classifier_environment(monkeypatch)
+
+    settings = ServiceSettings.from_environment()
+
+    assert settings.model_version == DEFAULT_MODEL_VERSION == "v2"
+    assert settings.model_path.name == "governance_classifier_v2.joblib"
+    assert settings.metadata_path.name == "model_metadata_v2.json"
+    assert settings.validation_path.name == "model_validation_v2.json"
+    assert settings.model_path.parent == settings.metadata_path.parent
+    assert settings.validation_path.parent == settings.model_path.parent / "validation"
+
+
+def test_explicit_v1_environment_selects_complete_rollback_package(monkeypatch):
+    _clear_classifier_environment(monkeypatch)
+    monkeypatch.setenv(MODEL_VERSION_ENV, "v1")
+
+    settings = ServiceSettings.from_environment()
+
+    assert settings.model_version == "v1"
+    assert settings.model_path.name == "governance_classifier_v1.joblib"
+    assert settings.metadata_path.name == "model_metadata_v1.json"
+    assert settings.validation_path.name == "model_validation_v1.json"
+
+
+@pytest.mark.parametrize("configured", ["", "   ", "v3", "latest", "V2"])
+def test_invalid_explicit_version_is_rejected(monkeypatch, configured):
+    _clear_classifier_environment(monkeypatch)
+    monkeypatch.setenv(MODEL_VERSION_ENV, configured)
+
+    with pytest.raises(ValueError, match=MODEL_VERSION_ENV):
+        ServiceSettings.from_environment()
+
+
+def test_incomplete_path_override_is_rejected(monkeypatch, tmp_path):
+    _clear_classifier_environment(monkeypatch)
+    monkeypatch.setenv(MODEL_PATH_ENV, str(tmp_path / "model.joblib"))
+
+    with pytest.raises(ValueError, match="complete"):
+        ServiceSettings.from_environment()
+
+
+def test_mixed_package_directories_are_rejected(monkeypatch, tmp_path):
+    _clear_classifier_environment(monkeypatch)
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    monkeypatch.setenv(MODEL_PATH_ENV, str(first / "model.joblib"))
+    monkeypatch.setenv(METADATA_PATH_ENV, str(second / "metadata.json"))
+    monkeypatch.setenv(VALIDATION_PATH_ENV, str(first / "validation" / "validation.json"))
+
+    with pytest.raises(ValueError, match="one version package"):
+        ServiceSettings.from_environment()
+
+
+def test_v1_paths_with_v2_selection_fail_startup(monkeypatch):
+    _clear_classifier_environment(monkeypatch)
+    v1 = _ML_ROOT / "models" / "v1"
+    monkeypatch.setenv(MODEL_VERSION_ENV, "v2")
+    monkeypatch.setenv(MODEL_PATH_ENV, str(v1 / "governance_classifier_v1.joblib"))
+    monkeypatch.setenv(METADATA_PATH_ENV, str(v1 / "model_metadata_v1.json"))
+    monkeypatch.setenv(
+        VALIDATION_PATH_ENV,
+        str(v1 / "validation" / "model_validation_v1.json"),
+    )
+    app = create_app(ServiceSettings.from_environment())
+
+    with pytest.raises(RuntimeError, match="failed to load"):
+        with TestClient(app):
+            pass
+
+
+def test_loaded_version_mismatch_fails_startup(tmp_path):
+    settings = _settings(tmp_path)
+    app = create_app(settings, artifact_loader=lambda **_: {"model_version": "v1"})
+
+    with pytest.raises(RuntimeError, match="failed to load"):
+        with TestClient(app):
+            pass
+
+
+def test_missing_v2_artifact_fails_startup(tmp_path):
+    settings = ServiceSettings(
+        model_path=tmp_path / "missing.joblib",
+        metadata_path=tmp_path / "missing.json",
+        validation_path=tmp_path / "validation" / "missing.json",
+        model_version="v2",
+    )
+    app = create_app(settings)
+
+    with pytest.raises(RuntimeError, match="failed to load"):
+        with TestClient(app):
+            pass
+
+
+def test_v2_hash_mismatch_fails_startup(tmp_path):
+    source = _ML_ROOT / "models" / "v2"
+    package = tmp_path / "v2"
+    shutil.copytree(source, package)
+    model_path = package / "governance_classifier_v2.joblib"
+    model_path.write_bytes(model_path.read_bytes() + b"tamper")
+    settings = ServiceSettings(
+        model_path=model_path,
+        metadata_path=package / "model_metadata_v2.json",
+        validation_path=package / "validation" / "model_validation_v2.json",
+        model_version="v2",
+    )
+    app = create_app(settings)
+
+    with pytest.raises(RuntimeError, match="failed to load"):
+        with TestClient(app):
+            pass
+
+
+def test_real_v2_predict_contract_and_case_id(monkeypatch):
+    _clear_classifier_environment(monkeypatch)
+    app = create_app(ServiceSettings.from_environment())
+    complaint = "A fictional protected wetland lease was used to dump construction waste."
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/predict",
+            json={"complaint_text": complaint, "case_id": "CASE-V2-HTTP-001"},
+        )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["model_version"] == "v2"
+    assert body["predicted_category"] in LABEL_ORDER
+    assert body["case_id"] == "CASE-V2-HTTP-001"
+    assert body["advisory_note"]
+    assert body["closed_set_note"]
+    probabilities = body["class_probabilities"]
+    assert set(probabilities) == set(LABEL_ORDER)
+    assert all(math.isfinite(value) and 0 <= value <= 1 for value in probabilities.values())
+    assert math.isclose(sum(probabilities.values()), 1.0, rel_tol=0.0, abs_tol=1e-10)
+    assert body["predicted_category"] == max(probabilities, key=probabilities.get)
+
+
+def test_real_v1_rollback_remains_compatible(monkeypatch):
+    _clear_classifier_environment(monkeypatch)
+    monkeypatch.setenv(MODEL_VERSION_ENV, "v1")
+    app = create_app(ServiceSettings.from_environment())
+
+    with TestClient(app) as client:
+        health = client.get("/health")
+        prediction = client.post(
+            "/predict",
+            json={
+                "complaint_text": "A fictional lease payment remains overdue.",
+                "case_id": "CASE-V1-ROLLBACK-001",
+            },
+        )
+
+    assert health.status_code == 200
+    assert health.json() == {"status": "ready", "model_version": "v1"}
+    assert prediction.status_code == 200
+    assert prediction.json()["model_version"] == "v1"
+    assert prediction.json()["case_id"] == "CASE-V1-ROLLBACK-001"
+
+
+def test_unexpected_request_field_is_rejected(tmp_path):
+    app = create_app(_settings(tmp_path), artifact_loader=lambda **_: _artifact())
+    with TestClient(app) as client:
+        response = client.post(
+            "/predict",
+            json={"complaint_text": "Fictional complaint.", "model_version": "v1"},
+        )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "Invalid request payload."}
+
+
+def test_complaint_text_is_absent_from_prediction_failure_logs(tmp_path, caplog):
+    complaint = "FICTIONAL-SENSITIVE-COMPLAINT-TEXT-DO-NOT-LOG"
+
+    def failing_predictor(text, _artifact, _case_id):
+        raise RuntimeError(text)
+
+    app = create_app(
+        _settings(tmp_path),
+        artifact_loader=lambda **_: _artifact(),
+        predictor=failing_predictor,
+    )
+    with caplog.at_level(logging.ERROR):
+        with TestClient(app) as client:
+            response = client.post("/predict", json={"complaint_text": complaint})
+
+    assert response.status_code == 500
+    assert complaint not in caplog.text
+
+
+def test_runtime_service_contains_no_training_method_invocation():
+    tree = ast.parse((_ML_ROOT / "src" / "http_service.py").read_text(encoding="utf-8"))
+    prohibited = {"fit", "fit_transform", "partial_fit"}
+    calls = {
+        node.func.attr
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr in prohibited
+    }
+    assert calls == set()

@@ -33,7 +33,9 @@ The output is **advisory classification intelligence** for subsequent human/gove
 ```
 English complaint text
         ↓
-TF-IDF  (unigrams + bigrams, sublinear_tf=True, English stop-words)
+Boilerplate removal
+        ↓
+FeatureUnion  (word TF-IDF unigrams+bigrams + character TF-IDF 3–5 grams)
         ↓
 Logistic Regression  (L2, C=1.0, class_weight='balanced', max_iter=2000)
         ↓
@@ -336,6 +338,14 @@ Automated test suites:
 Install the ML requirements, then run this command from the `ML/` directory:
 
 ```bash
+GOVERNANCE_MODEL_VERSION=v2 \
+python -m uvicorn src.http_service:app --host 127.0.0.1 --port 8104
+```
+
+PowerShell:
+
+```powershell
+$env:GOVERNANCE_MODEL_VERSION = 'v2'
 python -m uvicorn src.http_service:app --host 127.0.0.1 --port 8104
 ```
 
@@ -345,9 +355,33 @@ The service exposes:
 - `POST /predict` — prediction for a nonblank English complaint.
 - `POST /workflow-anomaly/predict` — completed-trace synthetic workflow-anomaly inference.
 
-The model, metadata, and validation sidecar are loaded once during application
-startup through `predict_v1.load_versioned_artifact`. Startup fails if their
-validation fails. The service never fits or regenerates a model.
+Complaint classifier `v2` is the default active model. The validated `v1`
+package remains available only as an explicit rollback. The model, metadata,
+and validation sidecar are selected as one versioned package and loaded once
+during application startup through `predict_v1.load_versioned_artifact`.
+Hashes, metadata, validation evidence, pipeline structure and parameters,
+taxonomy, and fitted class order are checked before the service becomes ready.
+Startup fails closed; it never falls back to another version. The service never
+fits, regenerates, or reserializes a model.
+
+Trusted local version selection uses:
+
+- `GOVERNANCE_MODEL_VERSION=v2` — active default;
+- `GOVERNANCE_MODEL_VERSION=v1` — explicit rollback.
+
+Only `v1` and `v2` are accepted. A blank or unknown explicit value fails
+startup. The selection is process configuration only and is not accepted in
+the `/predict` request.
+
+Exact PowerShell rollback procedure:
+
+```powershell
+$env:GOVERNANCE_MODEL_VERSION = 'v1'
+python -m uvicorn src.http_service:app --host 127.0.0.1 --port 8104
+```
+
+Restore v2 by setting the variable to `v2` or removing it before starting a new
+process. Restart is required; the service does not change versions per request.
 
 The frozen workflow-anomaly bundle is likewise verified and loaded once during
 startup. Its HTTP adapter reuses `anomaly_detection.inference` and does not
@@ -355,11 +389,17 @@ duplicate feature extraction or scoring logic. Its exact request and response
 contract, synthetic-only limitations, and PowerShell smoke command are
 documented in `anomaly_detection/README.md`.
 
-Artifact locations can be configured for deployment with absolute paths:
+The existing trusted artifact path overrides remain available:
 
 - `GOVERNANCE_MODEL_PATH`
 - `GOVERNANCE_MODEL_METADATA_PATH`
 - `GOVERNANCE_MODEL_VALIDATION_PATH`
+
+If any path override is used, all three must be supplied. The model and
+metadata must share one directory and the validation sidecar must be in that
+directory's `validation/` child. The loaded package must declare the version
+selected by `GOVERNANCE_MODEL_VERSION`; mixed-version packages fail startup.
+The request and response JSON contracts remain unchanged.
 
 `GOVERNANCE_MAX_REQUEST_CHARS` controls the operational request-text limit and
 defaults to `10000`. Oversized input is rejected without truncation. This limit
@@ -383,6 +423,7 @@ The default development binding is loopback (`127.0.0.1`) for use by the local
 remote deployment requires explicit service authentication, authorization, and
 transport security. This service does not enable browser CORS, but disabled CORS
 is not authentication, and it should not be called directly from the frontend.
+This procedure does not authorize remote deployment.
 
 ---
 
@@ -407,6 +448,7 @@ is not authentication, and it should not be called directly from the frontend.
 - **Dataset size**: 200 records. Performance estimates from cross-validation are indicative; the dataset is small for a text classifier.
 - **Text only**: No geographic, institutional, or other metadata is used. Future phases may incorporate additional feature types.
 - **No probability calibration**: `predict_proba` output is raw logistic-regression probability — not calibrated. Do not interpret it as a precise confidence interval.
+- **Synthetic prospective evaluation**: v2 promotion evidence comes from a synthetic prospective population. It is not real-world accuracy or independent departmental validation, and development and prospective families share a common generator origin.
 - **Proposed labels**: All ML labels are proposed research labels. They have not been independently reviewed by a domain expert for each record. Label quality affects classifier quality.
 - **Fixed baseline architecture**: TF-IDF + Logistic Regression is the approved baseline. Hyperparameter tuning, character n-grams, and transformer-based models are explicitly deferred to later phases.
 - **Advisory output only**: All classifier outputs are classification intelligence, not legal determinations.

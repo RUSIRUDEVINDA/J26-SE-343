@@ -238,16 +238,18 @@ def test_fresh_process_loading(promoted_package):
     assert evidence["training_invoked"] is False
 
 
-def test_fastapi_default_remains_v1(monkeypatch):
+def test_fastapi_default_is_v2(monkeypatch):
     import http_service
 
     for name in (
+        http_service.MODEL_VERSION_ENV,
         http_service.MODEL_PATH_ENV,
         http_service.METADATA_PATH_ENV,
         http_service.VALIDATION_PATH_ENV,
     ):
         monkeypatch.delenv(name, raising=False)
     settings = http_service.ServiceSettings.from_environment()
-    assert settings.model_path.resolve() == DEFAULT_JOBLIB.resolve()
-    assert settings.metadata_path.resolve() == DEFAULT_META.resolve()
-    assert settings.validation_path.resolve() == DEFAULT_VALIDATION.resolve()
+    assert settings.model_version == "v2"
+    assert settings.model_path.resolve() == (http_service.MODELS_DIR / "v2" / "governance_classifier_v2.joblib").resolve()
+    assert settings.metadata_path.resolve() == (http_service.MODELS_DIR / "v2" / "model_metadata_v2.json").resolve()
+    assert settings.validation_path.resolve() == (http_service.MODELS_DIR / "v2" / "validation" / "model_validation_v2.json").resolve()
