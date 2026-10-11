@@ -1,0 +1,5 @@
+label,precision,recall,f1,support,precision_defined,recall_defined,f1_defined
+Administrative / Procedural / Integrity,0.9591836734693877,0.9791666666666666,0.9690721649484536,48,True,True,True
+Lease Revenue / Payment / Enforcement,0.9545454545454546,0.9545454545454546,0.9545454545454546,66,True,True,True
+Unauthorized Allocation / Transfer / Use,0.9615384615384616,0.8771929824561403,0.9174311926605505,57,True,True,True
+Protected / Environmental Lease Misuse,0.9137931034482759,0.9814814814814815,0.9464285714285714,54,True,True,True
