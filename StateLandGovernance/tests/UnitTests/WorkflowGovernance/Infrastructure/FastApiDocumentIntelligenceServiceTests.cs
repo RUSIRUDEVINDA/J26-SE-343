@@ -1000,4 +1000,219 @@ public sealed class FastApiDocumentIntelligenceServiceTests
         };
         Assert.Throws<ArgumentOutOfRangeException>(() => options.Validate());
     }
+
+    [Fact]
+    public async Task AnalyzeDocumentAsync_WithSemanticCapability_RoutesToAnalyzeEndpoint_AndMapsCandidateFactsAndArtifacts()
+    {
+        var rawJson = """
+        {
+            "request_id": "test-req-semantic-001",
+            "language_mode": "sin+eng",
+            "preprocessed": true,
+            "page_count": 1,
+            "pages": [
+                {
+                    "page_number": 1,
+                    "raw_text": "Applicant Name: Lanka Agri Ltd\nLand Extent: 10.5\n",
+                    "clean_text": "Applicant Name: Lanka Agri Ltd\nLand Extent: 10.5",
+                    "text": "Applicant Name: Lanka Agri Ltd\nLand Extent: 10.5",
+                    "character_count": 48,
+                    "confidence": 96.0
+                }
+            ],
+            "classification": {
+                "code": "LeaseProposal",
+                "confidence": 0.98
+            },
+            "facts": [
+                {
+                    "field_code": "applicant_name",
+                    "value_kind": "Text",
+                    "canonical_value": "Lanka Agri Ltd",
+                    "confidence": 0.92,
+                    "evidence": {
+                        "page_number": 1,
+                        "quote": "Applicant Name: Lanka Agri Ltd",
+                        "start_offset": 0,
+                        "end_offset": 30
+                    },
+                    "is_evidence_verified": true,
+                    "validation_warning": null
+                },
+                {
+                    "field_code": "land_extent",
+                    "value_kind": "Decimal",
+                    "canonical_value": "10.5",
+                    "confidence": 0.88,
+                    "evidence": {
+                        "page_number": 1,
+                        "quote": "Land Extent: 10.5",
+                        "start_offset": 31,
+                        "end_offset": 48
+                    },
+                    "is_evidence_verified": true,
+                    "validation_warning": null
+                }
+            ],
+            "model_identifier": "Qwen/Qwen2.5-7B-Instruct",
+            "prompt_version": "qwen-proposal-extraction-v1",
+            "duration_breakdown": {
+                "ocr_duration_ms": 110.0,
+                "semantic_duration_ms": 240.0,
+                "total_duration_ms": 350.0
+            },
+            "warnings": null,
+            "governance_notice": "Machine-extracted candidate information. Not human verified. Not authoritative."
+        }
+        """;
+
+        var sampleBytes = Encoding.UTF8.GetBytes("sample-semantic-bytes");
+        var baseReq = CreateSampleRequest(sampleBytes);
+        var request = new DocumentIntelligenceRequest(
+            GovernedDocumentId: baseReq.GovernedDocumentId,
+            DocumentVersionId: baseReq.DocumentVersionId,
+            ContentReference: baseReq.ContentReference,
+            ChecksumAlgorithm: baseReq.ChecksumAlgorithm,
+            ChecksumValue: baseReq.ChecksumValue,
+            OriginalFileName: baseReq.OriginalFileName,
+            MediaType: baseReq.MediaType,
+            LogicalCategory: "LeaseProposal",
+            RequestedCapabilities: new[] { "Ocr", "SemanticExtraction" },
+            LanguageHint: "sin+eng"
+        );
+
+        var handler = new FakeHttpMessageHandler
+        {
+            Handler = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(rawJson, Encoding.UTF8, "application/json")
+            })
+        };
+
+        var service = CreateService(handler);
+        var result = await service.AnalyzeDocumentAsync(request);
+
+        Assert.NotNull(result);
+        Assert.Equal("Succeeded", result.Outcome);
+        Assert.Equal("FastApi-QwenSemantic", result.Provider);
+        Assert.Equal("Qwen/Qwen2.5-7B-Instruct", result.ModelName);
+        Assert.Equal("qwen-proposal-extraction-v1", result.ModelVersion);
+
+        // Verify endpoint called
+        Assert.NotNull(handler.LastRequest);
+        Assert.StartsWith("http://127.0.0.1:8000/v1/analyze", handler.LastRequest.RequestUri!.ToString());
+        Assert.Contains("category_hint=LeaseProposal", handler.LastRequest.RequestUri.Query);
+
+        // Verify artifacts persisted: full doc, page 1, and semantic raw response
+        Assert.Equal(3, result.Artifacts.Count);
+        var docArtifact = Assert.Single(result.Artifacts, a => a.ArtifactKind == "OcrDocumentTranscript");
+        var pageArtifact = Assert.Single(result.Artifacts, a => a.ArtifactKind == "OcrPageTranscript");
+        var semanticArtifact = Assert.Single(result.Artifacts, a => a.ArtifactKind == "SemanticRawResponse");
+        Assert.Equal("application/json", semanticArtifact.ContentType);
+
+        // Verify candidate facts mapped with evidence link
+        Assert.Equal(2, result.Candidates.Count);
+        var nameFact = Assert.Single(result.Candidates, f => f.FactCode == "applicant_name");
+        Assert.Equal("Lanka Agri Ltd", nameFact.CanonicalValue);
+        Assert.Equal("Text", nameFact.ValueKind);
+        Assert.Equal(0.92m, nameFact.ConfidenceScore);
+        Assert.Equal(pageArtifact.ArtifactId, nameFact.EvidenceArtifactId);
+        Assert.Equal(1, nameFact.PageNumber);
+        Assert.Equal("Applicant Name: Lanka Agri Ltd", nameFact.Excerpt);
+
+        var extentFact = Assert.Single(result.Candidates, f => f.FactCode == "land_extent");
+        Assert.Equal("10.5", extentFact.CanonicalValue);
+        Assert.Equal("Decimal", extentFact.ValueKind);
+        Assert.Equal(0.88m, extentFact.ConfidenceScore);
+        Assert.Equal(pageArtifact.ArtifactId, extentFact.EvidenceArtifactId);
+
+        // Verify governance notice recorded in warnings
+        Assert.NotNull(result.Warnings);
+        Assert.Contains(result.Warnings, w => w.Contains("LeaseProposal") && w.Contains("candidate-only"));
+    }
+
+    [Fact]
+    public async Task AnalyzeDocumentAsync_WithUnverifiedEvidence_RecordsWarning()
+    {
+        var rawJson = """
+        {
+            "request_id": "test-req-semantic-002",
+            "language_mode": "eng",
+            "preprocessed": false,
+            "page_count": 1,
+            "pages": [
+                {
+                    "page_number": 1,
+                    "raw_text": "Sample text",
+                    "clean_text": "Sample text",
+                    "text": "Sample text",
+                    "character_count": 11,
+                    "confidence": 99.0
+                }
+            ],
+            "classification": {
+                "code": "Other",
+                "confidence": 0.60
+            },
+            "facts": [
+                {
+                    "field_code": "project_title",
+                    "value_kind": "Text",
+                    "canonical_value": "Fabricated Title",
+                    "confidence": 0.40,
+                    "evidence": {
+                        "page_number": 1,
+                        "quote": "Not in text",
+                        "start_offset": null,
+                        "end_offset": null
+                    },
+                    "is_evidence_verified": false,
+                    "validation_warning": "Quote was not found verbatim in page 1 OCR text."
+                }
+            ],
+            "model_identifier": "StubSemanticExtractor",
+            "prompt_version": "stub-v1",
+            "duration_breakdown": {
+                "ocr_duration_ms": 50.0,
+                "semantic_duration_ms": 10.0,
+                "total_duration_ms": 60.0
+            },
+            "warnings": [
+                "Unverified evidence detected for field 'project_title'."
+            ],
+            "governance_notice": "Candidate only"
+        }
+        """;
+
+        var sampleBytes = Encoding.UTF8.GetBytes("sample-unverified-bytes");
+        var baseReq = CreateSampleRequest(sampleBytes);
+        var request = new DocumentIntelligenceRequest(
+            GovernedDocumentId: baseReq.GovernedDocumentId,
+            DocumentVersionId: baseReq.DocumentVersionId,
+            ContentReference: baseReq.ContentReference,
+            ChecksumAlgorithm: baseReq.ChecksumAlgorithm,
+            ChecksumValue: baseReq.ChecksumValue,
+            OriginalFileName: baseReq.OriginalFileName,
+            MediaType: baseReq.MediaType,
+            LogicalCategory: "Other",
+            RequestedCapabilities: new[] { "SemanticExtraction" },
+            LanguageHint: "eng"
+        );
+
+        var handler = new FakeHttpMessageHandler
+        {
+            Handler = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(rawJson, Encoding.UTF8, "application/json")
+            })
+        };
+
+        var service = CreateService(handler);
+        var result = await service.AnalyzeDocumentAsync(request);
+
+        Assert.NotNull(result);
+        Assert.Single(result.Candidates);
+        Assert.NotNull(result.Warnings);
+        Assert.Contains(result.Warnings, w => w.Contains("project_title") && w.Contains("not verified"));
+    }
 }
