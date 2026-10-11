@@ -30,6 +30,12 @@ public sealed class LeaseInterestRequestEntity
 
     public DateTimeOffset? SubmittedAtUtc { get; set; }
 
+    /// <summary>AES-GCM encrypted normalized NIC (base64). Not stored in PayloadJson.</summary>
+    public string? ApplicantNicCiphertext { get; set; }
+
+    /// <summary>HMAC digest of normalized NIC for exact-match officer lookup.</summary>
+    public string? ApplicantNicLookupDigest { get; set; }
+
     public ICollection<LeaseInterestStatusHistoryEntity> StatusHistory { get; set; } =
         new List<LeaseInterestStatusHistoryEntity>();
 }

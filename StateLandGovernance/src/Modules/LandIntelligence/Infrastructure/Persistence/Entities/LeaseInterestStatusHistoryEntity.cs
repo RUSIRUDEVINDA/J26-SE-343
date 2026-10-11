@@ -14,5 +14,11 @@ public sealed class LeaseInterestStatusHistoryEntity
 
     public string? Note { get; set; }
 
+    public LeaseInterestStatusActorKind ActorKind { get; set; }
+
+    public Guid? ActorId { get; set; }
+
+    public bool VisibleToApplicant { get; set; } = true;
+
     public LeaseInterestRequestEntity? Request { get; set; }
 }
