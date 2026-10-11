@@ -22,8 +22,11 @@ internal sealed class LeaseInterestRequestEntityConfiguration
         builder.Property(x => x.RequestedPurpose).IsRequired();
         builder.Property(x => x.CreatedAtUtc).IsRequired();
         builder.Property(x => x.UpdatedAtUtc).IsRequired();
+        builder.Property(x => x.ApplicantNicCiphertext).HasColumnType("text");
+        builder.Property(x => x.ApplicantNicLookupDigest).HasMaxLength(64);
 
         builder.HasIndex(x => x.OwnerId);
+        builder.HasIndex(x => x.ApplicantNicLookupDigest);
         builder.HasIndex(x => x.LandParcelId);
         builder.HasIndex(x => x.AcknowledgementReference).IsUnique()
             .HasFilter("\"AcknowledgementReference\" IS NOT NULL");
