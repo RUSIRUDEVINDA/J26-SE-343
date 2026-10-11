@@ -55,10 +55,12 @@ public sealed class WorkflowAnomalyRealSmokeIntegrationTests
         var baseAddress = $"http://127.0.0.1:{port}";
 
         // 3. Start the existing FastAPI service on loopback
+        var configuredPython = Environment.GetEnvironmentVariable("COMPONENT4_TEST_PYTHON_EXECUTABLE");
+        var usePythonLauncher = string.IsNullOrWhiteSpace(configuredPython);
         var startInfo = new ProcessStartInfo
         {
-            FileName = "py",
-            Arguments = $"-3.13 -m uvicorn http_service:app --app-dir \"{mlSrcDir}\" --host 127.0.0.1 --port {port}",
+            FileName = usePythonLauncher ? "py" : configuredPython!,
+            Arguments = $"{(usePythonLauncher ? "-3.13 " : string.Empty)}-m uvicorn http_service:app --app-dir \"{mlSrcDir}\" --host 127.0.0.1 --port {port}",
             WorkingDirectory = repoRoot,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -66,6 +68,7 @@ public sealed class WorkflowAnomalyRealSmokeIntegrationTests
             CreateNoWindow = true
         };
         startInfo.Environment["PYTHONPATH"] = $"{mlDir};{mlSrcDir}";
+        startInfo.Environment["GOVERNANCE_MODEL_VERSION"] = "v2";
 
         using var process = new Process { StartInfo = startInfo };
         var outputLog = new System.Text.StringBuilder();
