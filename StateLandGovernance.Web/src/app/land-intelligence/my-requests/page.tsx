@@ -10,23 +10,8 @@ import { PageHeading } from "@/shared/components/PageLayout";
 import { listMyLeaseInterestRequests } from "@/modules/component-01-land-intelligence/services/citizenWorkspaceApi";
 import type { LeaseInterestRequestSummary } from "@/modules/component-01-land-intelligence/types/landIntelligence";
 import { landUseTypeLabels } from "@/modules/component-01-land-intelligence/utils/enumMappings";
-
-function statusText(status: number): string {
-  switch (status) {
-    case 1:
-      return "Draft";
-    case 3:
-      return "Pending verification";
-    case 4:
-      return "Needs information";
-    case 5:
-      return "Declined";
-    case 6:
-      return "Referred to authority";
-    default:
-      return "Submitted";
-  }
-}
+import { leaseInterestStatusLabel } from "@/modules/component-01-land-intelligence/utils/leaseInterestStatus";
+import styles from "./MyRequests.module.css";
 
 export default function MyRequestsPage() {
   const [items, setItems] = useState<LeaseInterestRequestSummary[]>([]);
@@ -80,29 +65,33 @@ export default function MyRequestsPage() {
         />
       ) : null}
       {!loading && !error && items.length > 0 ? (
-        <ul className="stack">
+        <ul className={styles.list}>
           {items.map((item) => (
-            <li
-              key={item.id}
-              className="card"
-              style={{ padding: "1rem", listStyle: "none" }}
-            >
-              <p style={{ margin: 0, fontWeight: 700 }}>
+            <li key={item.id} className={styles.card}>
+              <p className={styles.title}>
                 {item.acknowledgementReference ?? `Draft ${item.id.slice(0, 8)}`}
               </p>
-              <p style={{ margin: "0.35rem 0", fontSize: "0.85rem" }}>
-                Status: {statusText(item.status)} · Purpose:{" "}
+              <p className={styles.meta}>
+                Status: {leaseInterestStatusLabel(item.status)} · Purpose:{" "}
                 {landUseTypeLabels[item.requestedPurpose] ?? "Unknown"}
                 {item.requestedDurationYears != null
                   ? ` · ${item.requestedDurationYears} years requested`
                   : ""}
               </p>
-              <Button
-                href={`/land-intelligence/parcels/${item.landParcelId}/lease-interest`}
-                variant="secondary"
-              >
-                View parcel / form
-              </Button>
+              <div className={styles.actions}>
+                <Button
+                  href={`/land-intelligence/my-requests/${item.id}`}
+                  variant="primary"
+                >
+                  View status
+                </Button>
+                <Button
+                  href={`/land-intelligence/parcels/${item.landParcelId}/lease-interest`}
+                  variant="secondary"
+                >
+                  Parcel form
+                </Button>
+              </div>
             </li>
           ))}
         </ul>
