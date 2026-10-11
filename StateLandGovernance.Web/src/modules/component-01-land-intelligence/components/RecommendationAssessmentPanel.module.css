@@ -1,0 +1,136 @@
+.panel {
+  background: #fff;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  padding: 1.25rem 1.35rem;
+  box-shadow: var(--shadow-soft);
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  color: var(--color-primary);
+}
+
+.section {
+  margin-bottom: 1.1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.section:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.sectionTitle {
+  margin: 0 0 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.copy {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+
+.bullets {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+
+.bullets li + li {
+  margin-top: 0.35rem;
+}
+
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.legend li {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+}
+
+.legend p {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  line-height: 1.35;
+}
+
+.legend strong {
+  font-size: 0.875rem;
+}
+
+.swatch {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 999px;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+
+.recommended {
+  background: #1b5e20;
+}
+
+.needsReview {
+  background: #b7791f;
+}
+
+.hardRejected {
+  background: #850906;
+}
+
+.stages {
+  list-style: none;
+  margin: 0.65rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stages li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.stageCount {
+  min-width: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 960px) {
+  .panel {
+    position: static;
+  }
+}
