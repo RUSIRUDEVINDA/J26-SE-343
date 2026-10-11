@@ -847,4 +847,168 @@ public sealed class WorkflowGovernancePostgresIntegrationTests
         Assert.IsType<LocalFileAnalysisArtifactStore>(artifactWriter);
         Assert.IsType<LocalFileAnalysisArtifactStore>(artifactReader);
     }
+
+    [Fact]
+    public async Task SemanticFactLifecycle_PostgresPersistenceRestart_SurvivesSessionDisposalAndExcludesUnsupported()
+    {
+        var connectionString = GetConnectionString();
+        if (string.IsNullOrWhiteSpace(connectionString)) return;
+
+        var now = DateTime.UtcNow;
+        var officerId = Guid.NewGuid();
+        var caseId = new LeaseCaseId(Guid.NewGuid());
+        var appRef = $"SLG-APP-{Guid.NewGuid():N}"[..25];
+        var docId = new GovernedDocumentId(Guid.NewGuid());
+        var versionId = new DocumentVersionId(Guid.NewGuid());
+        var checksum = new DocumentChecksum("SHA-256", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+        var contentRef = new DocumentContentReference("local://workflow-governance/docs/proposal.pdf");
+
+        var analysisId = new DocumentAnalysisId(Guid.NewGuid());
+        var runId = new AnalysisRunId(Guid.NewGuid());
+        var resultId = new AnalysisRunResultId(Guid.NewGuid());
+        var fact1Id = new ExtractedFactId(Guid.NewGuid());
+        var fact2Id = new ExtractedFactId(Guid.NewGuid());
+        var fact3Id = new ExtractedFactId(Guid.NewGuid());
+        var verification1Id = new HumanFactVerificationId(Guid.NewGuid());
+        var verification2Id = new HumanFactVerificationId(Guid.NewGuid());
+        var verification3Id = new HumanFactVerificationId(Guid.NewGuid());
+        var snapshotId = new VerifiedFactSnapshotId(Guid.NewGuid());
+
+        var caseAuthority = new VerifiedAuthoritySnapshot(
+            officerId,
+            new[] { "LeaseInitiator" },
+            new AuthorityScope(AuthorityScopeKind.LeaseCase, caseId.Value.ToString()),
+            now.AddHours(-1), now, now.AddHours(2));
+
+        var docAuthority = new VerifiedAuthoritySnapshot(
+            officerId,
+            new[] { "DocumentSubmitter" },
+            new AuthorityScope(AuthorityScopeKind.LeaseCase, caseId.Value.ToString()),
+            now.AddHours(-1), now, now.AddHours(2));
+
+        var verifierAuthority = new VerifiedAuthoritySnapshot(
+            officerId,
+            new[] { "FactVerifier", "FactSnapshotPublisher" },
+            new AuthorityScope(AuthorityScopeKind.GovernedDocument, docId.Value.ToString("D")),
+            now.AddHours(-1),
+            now.AddMinutes(-5),
+            now.AddHours(2));
+
+        // --- SESSION 1: STAGE AND COMMIT DOCUMENT ANALYSIS WITH MACHINE CANDIDATE FACTS ---
+        using (var provider1 = CreateServiceProvider(connectionString))
+        using (var scope1 = provider1.CreateScope())
+        {
+            var sp = scope1.ServiceProvider;
+            var caseRepo = sp.GetRequiredService<ILeaseCaseRepository>();
+            var docRepo = sp.GetRequiredService<IGovernedDocumentRepository>();
+            var analysisRepo = sp.GetRequiredService<IDocumentAnalysisRepository>();
+            var uow = sp.GetRequiredService<IWorkflowGovernanceUnitOfWork>();
+
+            var leaseCase = new LeaseCase(caseId, appRef, officerId, now, caseAuthority);
+            await caseRepo.AddAsync(leaseCase);
+
+            var doc = new GovernedDocument(docId, caseId, "LeaseProposal", versionId, checksum, contentRef, "proposal.pdf", "application/pdf", 1024, officerId, now, docAuthority);
+            await docRepo.AddAsync(doc);
+
+            var analysis = new DocumentAnalysis(analysisId, docId, versionId, checksum, 1, 1, now);
+            analysis.RequestRun(
+                runId,
+                new AnalysisModelReference("FastApi-QwenSemantic", "Qwen/Qwen2.5-7B-Instruct", "qwen-proposal-extraction-v1"),
+                new[] { new AnalysisCapabilityCode("Ocr"), new AnalysisCapabilityCode("SemanticExtraction") },
+                now.AddMinutes(1));
+            analysis.StartRun(runId, now.AddMinutes(2));
+
+            var artifacts = new List<AnalysisResultArtifactReference>
+            {
+                new AnalysisResultArtifactReference(new AnalysisResultArtifactId(Guid.NewGuid()), "OcrDocumentTranscript", "analysis-artifacts/test/doc.txt", "text/plain", new AnalysisArtifactChecksum("SHA-256", "hash1")),
+                new AnalysisResultArtifactReference(new AnalysisResultArtifactId(Guid.NewGuid()), "OcrPageTranscript", "analysis-artifacts/test/page1.json", "application/json", new AnalysisArtifactChecksum("SHA-256", "hash2")),
+                new AnalysisResultArtifactReference(new AnalysisResultArtifactId(Guid.NewGuid()), "SemanticRawResponse", "analysis-artifacts/test/sem.json", "application/json", new AnalysisArtifactChecksum("SHA-256", "hash3"))
+            };
+
+            var facts = new List<ExtractedFactInput>
+            {
+                new ExtractedFactInput(fact1Id, new FactCode("applicant_name"), new AnalysisFactValue(AnalysisFactValueKind.Text, "Lanka Bio Tech Ltd"), new ConfidenceScore(0.95m), null),
+                new ExtractedFactInput(fact2Id, new FactCode("land_extent"), new AnalysisFactValue(AnalysisFactValueKind.Decimal, "15.5"), new ConfidenceScore(0.88m), null),
+                new ExtractedFactInput(fact3Id, new FactCode("investment_amount"), new AnalysisFactValue(AnalysisFactValueKind.Integer, "500000000"), new ConfidenceScore(0.30m), null)
+            };
+
+            analysis.CompleteRun(runId, resultId, AnalysisResultOutcome.OutputsProduced, artifacts, facts, now.AddMinutes(3));
+            await analysisRepo.AddAsync(analysis);
+            await uow.CommitAsync();
+        }
+
+        // --- SESSION 2: RELOAD FROM POSTGRES, PERFORM HUMAN VERIFICATIONS, COMMIT ---
+        using (var provider2 = CreateServiceProvider(connectionString))
+        using (var scope2 = provider2.CreateScope())
+        {
+            var sp = scope2.ServiceProvider;
+            var analysisRepo = sp.GetRequiredService<IDocumentAnalysisRepository>();
+            var uow = sp.GetRequiredService<IWorkflowGovernanceUnitOfWork>();
+
+            var analysis = await analysisRepo.GetByIdAsync(analysisId);
+            Assert.NotNull(analysis);
+            var run = analysis.Runs.Single(r => r.Id == runId);
+            Assert.Equal(AnalysisRunState.Completed, run.State);
+            Assert.Equal(3, run.Result!.ExtractedFacts.Count);
+            Assert.Equal(3, run.Result.Artifacts.Count);
+
+            // Officer verifications
+            // 1. Confirmed
+            analysis.RecordFactVerification(verification1Id, resultId, fact1Id, FactVerificationDecision.Confirmed, null, null, officerId, now.AddMinutes(4), verifierAuthority);
+            // 2. Corrected
+            analysis.RecordFactVerification(verification2Id, resultId, fact2Id, FactVerificationDecision.Corrected, new AnalysisFactValue(AnalysisFactValueKind.Decimal, "12.5"), "Survey plan confirms 12.5 acres", officerId, now.AddMinutes(5), verifierAuthority);
+            // 3. Unsupported
+            analysis.RecordFactVerification(verification3Id, resultId, fact3Id, FactVerificationDecision.Unsupported, null, "Unsubstantiated projection", officerId, now.AddMinutes(6), verifierAuthority);
+
+            await uow.CommitAsync();
+        }
+
+        // --- SESSION 3: RELOAD FROM POSTGRES, PUBLISH SNAPSHOT, COMMIT ---
+        using (var provider3 = CreateServiceProvider(connectionString))
+        using (var scope3 = provider3.CreateScope())
+        {
+            var sp = scope3.ServiceProvider;
+            var analysisRepo = sp.GetRequiredService<IDocumentAnalysisRepository>();
+            var uow = sp.GetRequiredService<IWorkflowGovernanceUnitOfWork>();
+
+            var analysis = await analysisRepo.GetByIdAsync(analysisId);
+            Assert.NotNull(analysis);
+            Assert.Equal(3, analysis.Verifications.Count);
+
+            analysis.PublishVerifiedFactSnapshot(snapshotId, resultId, officerId, now.AddMinutes(7), verifierAuthority);
+            await uow.CommitAsync();
+        }
+
+        // --- SESSION 4: RELOAD FROM POSTGRES, VERIFY PERSISTED SNAPSHOT EXCLUDES UNSUPPORTED ---
+        using (var provider4 = CreateServiceProvider(connectionString))
+        using (var scope4 = provider4.CreateScope())
+        {
+            var sp = scope4.ServiceProvider;
+            var analysisRepo = sp.GetRequiredService<IDocumentAnalysisRepository>();
+
+            var analysis = await analysisRepo.GetByIdAsync(analysisId);
+            Assert.NotNull(analysis);
+            Assert.Single(analysis.VerifiedFactSnapshots);
+
+            var snapshot = analysis.VerifiedFactSnapshots.Single();
+            Assert.Equal(snapshotId, snapshot.Id);
+            Assert.Equal(3, snapshot.SourceFactCount);
+            Assert.Equal(2, snapshot.PublishedFactCount);
+            Assert.Equal(1, snapshot.ConfirmedFactCount);
+            Assert.Equal(1, snapshot.CorrectedFactCount);
+            Assert.Equal(1, snapshot.UnsupportedFactCount);
+            Assert.Equal(2, snapshot.Entries.Count);
+
+            var confirmed = Assert.Single(snapshot.Entries, f => f.FactCode.Value == "applicant_name");
+            Assert.Equal("Lanka Bio Tech Ltd", confirmed.EffectiveValue.CanonicalValue);
+            Assert.Equal(FactVerificationDecision.Confirmed, confirmed.Decision);
+
+            var corrected = Assert.Single(snapshot.Entries, f => f.FactCode.Value == "land_extent");
+            Assert.Equal("12.5", corrected.EffectiveValue.CanonicalValue);
+            Assert.Equal(FactVerificationDecision.Corrected, corrected.Decision);
+
+            // Unsupported fact was cleanly excluded from snapshot entries!
+            Assert.DoesNotContain(snapshot.Entries, f => f.FactCode.Value == "investment_amount");
+        }
+    }
 }
