@@ -161,6 +161,44 @@ public sealed class MlSuitabilityRecommendationTests
     }
 
     [Fact]
+    public async Task RecommendAsync_calls_ml_only_for_top_ranked_results()
+    {
+        var parcels = new[]
+        {
+            SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-A"),
+            SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-B"),
+            SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-C"),
+        };
+        var trackingMlClient = new TrackingMlSuitabilityClient(
+            new MlSuitabilityPrediction("Suitable", new Dictionary<string, decimal> { ["Suitable"] = 0.9m }));
+        var engine = RecommendationEngineTestFactory.CreateWithMlClient(trackingMlClient, parcels);
+
+        var response = await engine.RecommendAsync(new LandRecommendationSearchRequest
+        {
+            RequiredPurpose = LandUseType.Agricultural,
+            PreferredLocation = new PreferredLocationCriteria { District = "Colombo" },
+            MaxResults = 2
+        });
+
+        Assert.Equal(2, response.Recommendations.Count);
+        Assert.Equal(2, trackingMlClient.CallCount);
+    }
+
+    [Fact]
+    public async Task PredictAsync_skips_further_calls_after_first_unreachable_failure()
+    {
+        var client = new HttpMlSuitabilityClient(
+            new HttpClient { BaseAddress = new Uri("http://127.0.0.1:1"), Timeout = TimeSpan.FromMilliseconds(100) },
+            NullLogger<HttpMlSuitabilityClient>.Instance);
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
+
+        await client.PredictAsync(parcel, LandUseType.Agricultural);
+        await client.PredictAsync(parcel, LandUseType.Agricultural);
+
+        Assert.Null(await client.PredictAsync(parcel, LandUseType.Agricultural));
+    }
+
+    [Fact]
     public async Task RecommendAsync_continues_when_ml_client_returns_null()
     {
         var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
