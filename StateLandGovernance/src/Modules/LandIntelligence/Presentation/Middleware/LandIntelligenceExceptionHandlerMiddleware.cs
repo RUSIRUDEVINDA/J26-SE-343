@@ -144,7 +144,25 @@ public sealed class LandIntelligenceExceptionHandlerMiddleware
 
                 null),
 
+            LeaseInterestRequestNotFoundException leaseInterestNotFound => (
 
+                StatusCodes.Status404NotFound,
+
+                "Lease interest request not found.",
+
+                leaseInterestNotFound.Message,
+
+                null),
+
+            LandIntelligenceAuthorizationException unauthorized => (
+
+                StatusCodes.Status401Unauthorized,
+
+                "Unauthorized.",
+
+                unauthorized.Message,
+
+                null),
 
             LandIntelligenceDomainException domain => (
 

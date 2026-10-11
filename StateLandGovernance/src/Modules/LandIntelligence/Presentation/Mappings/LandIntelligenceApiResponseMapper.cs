@@ -22,7 +22,9 @@ internal static class LandIntelligenceApiResponseMapper
             dto.SpatialConstraintCount,
             dto.EnvironmentalRestrictionCount,
             dto.InfrastructureFeatureCount,
-            dto.RegulatoryReferenceCount);
+            dto.RegulatoryReferenceCount,
+            ToCadastralSourceResponse(dto.CadastralSource),
+            ToAvailabilityResponse(dto.Availability));
 
     public static LandSearchResultsResponse ToResponse(LandSearchResponse response) =>
         new(
@@ -45,7 +47,19 @@ internal static class LandIntelligenceApiResponseMapper
             response.RequiredPurpose,
             response.Recommendations.Select(ToRecommendationResponse).ToList(),
             response.CandidateCount,
-            response.GeneratedAt);
+            response.GeneratedAt,
+            response.Transparency is null
+                ? null
+                : new RecommendationSearchTransparencyResponse(
+                    response.Transparency.AppliedFilters,
+                    response.Transparency.CandidateCountBeforeFilters,
+                    response.Transparency.CandidateCountAfterFilters,
+                    response.Transparency.FilterStages
+                        .Select(s => new RecommendationFilterStageResponse(s.Name, s.CandidateCount, s.Description))
+                        .ToList(),
+                    response.Transparency.UnavailableCriteria
+                        .Select(u => new RecommendationUnavailableCriterionResponse(u.Key, u.Reason))
+                        .ToList()));
 
     public static LandRecommendationResponse ToResponse(LandRecommendationDto dto) =>
         new(
@@ -70,7 +84,46 @@ internal static class LandIntelligenceApiResponseMapper
             dto.AreaValue,
             dto.AreaUnit,
             dto.CentroidLatitude,
-            dto.CentroidLongitude);
+            dto.CentroidLongitude,
+            ToCadastralSourceResponse(dto.CadastralSource));
+
+    private static CadastralSourceMetadataResponse? ToCadastralSourceResponse(CadastralSourceMetadataDto? dto) =>
+        dto is null
+            ? null
+            : new CadastralSourceMetadataResponse(
+                dto.SourceProvenanceLabel,
+                dto.SourceLayer,
+                dto.SourceFeatureId,
+                dto.SourceReportedLandUseCode,
+                dto.SourceReportedLandUseEnglishLabel,
+                dto.SourceReportedLandUseText,
+                dto.SourceReportedLandUseDisplay,
+                dto.SourceReportedClaimantCategoryCode,
+                dto.SourceReportedClaimantCategoryEnglishLabel,
+                dto.SourceReportedClaimantCategoryDisplay,
+                dto.SourceParcelStatusCode,
+                dto.GnIndex,
+                dto.CoordinateStatus,
+                dto.ImportedAtUtc,
+                dto.ResearchRecordId,
+                dto.MapMarkerLatitude,
+                dto.MapMarkerLongitude);
+
+    private static LandParcelAvailabilityResponse? ToAvailabilityResponse(LandParcelAvailabilityDto? dto) =>
+        dto is null
+            ? null
+            : new LandParcelAvailabilityResponse(
+                dto.ActualLeaseAvailabilityLabel,
+                dto.ResearchRecordId,
+                dto.SimulatedWorkflow is null
+                    ? null
+                    : new ResearchSimulatedLeaseWorkflowResponse(
+                        dto.SimulatedWorkflow.ResearchRecordId,
+                        dto.SimulatedWorkflow.ScenarioId,
+                        dto.SimulatedWorkflow.SimulatedLeaseStatus,
+                        dto.SimulatedWorkflow.IsSimulatedLeaseStatus,
+                        dto.SimulatedWorkflow.DatasetUsage,
+                        dto.SimulatedWorkflow.Notice));
 
     private static SpatialReferenceResponse ToSpatialResponse(SpatialReferenceDto dto) =>
         new(
@@ -127,7 +180,14 @@ internal static class LandIntelligenceApiResponseMapper
             dto.Evidence.Select(ToEvidenceResponse).ToList(),
             dto.Explanation,
             dto.HardConstraintRejected,
-            dto.HardConstraintReason);
+            dto.HardConstraintReason,
+            dto.CandidateStatusLabel,
+            dto.CandidateStatusReason,
+            dto.SourceReportedClaimantCategoryCode,
+            dto.SourceReportedClaimantCategoryDisplay,
+            dto.SourceParcelStatusCode,
+            dto.SourceProvenanceLabel,
+            dto.SourceImportedAtUtc);
 
     private static CriterionEvaluationResponse ToCriterionEvaluationResponse(CriterionEvaluationDto dto) =>
         new(
@@ -140,7 +200,9 @@ internal static class LandIntelligenceApiResponseMapper
             dto.WeightedScore,
             dto.Summary,
             ToProvenanceResponse(dto.DataProvenance),
-            dto.AttributePath);
+            dto.AttributePath,
+            dto.WasAssessed,
+            dto.NotAssessedReason);
 
     private static RestrictionSummaryResponse ToRestrictionResponse(RestrictionSummaryDto dto) =>
         new(

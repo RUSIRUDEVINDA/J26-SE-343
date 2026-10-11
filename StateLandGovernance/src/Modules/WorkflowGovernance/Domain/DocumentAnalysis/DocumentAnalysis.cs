@@ -11,13 +11,13 @@ using StateLandGovernance.WorkflowGovernance.Domain.Authority;
 
 public sealed class DocumentAnalysis
 {
-    public DocumentAnalysisId Id { get; }
-    public GovernedDocumentId GovernedDocumentId { get; }
-    public DocumentVersionId DocumentVersionId { get; }
-    public DocumentChecksum DocumentChecksum { get; }
-    public int DocumentVersionNumber { get; }
-    public int SourceDocumentRevision { get; }
-    public DateTime CreatedAt { get; }
+    public DocumentAnalysisId Id { get; private init; }
+    public GovernedDocumentId GovernedDocumentId { get; private init; }
+    public DocumentVersionId DocumentVersionId { get; private init; }
+    public DocumentChecksum DocumentChecksum { get; private init; } = null!;
+    public int DocumentVersionNumber { get; private init; }
+    public int SourceDocumentRevision { get; private init; }
+    public DateTime CreatedAt { get; private init; }
     public int Revision { get; private set; }
 
     private readonly List<IDomainEvent> _domainEvents = new();
@@ -658,5 +658,59 @@ public sealed class DocumentAnalysis
         _verifiedFactSnapshots.Add(candidate);
         Revision = nextRevision;
         _domainEvents.Add(evt);
+    }
+
+    /// <summary>
+    /// Reconstructs a persisted aggregate without emitting creation events.
+    /// </summary>
+    internal static DocumentAnalysis Rehydrate(
+        DocumentAnalysisId id,
+        GovernedDocumentId governedDocumentId,
+        DocumentVersionId documentVersionId,
+        DocumentChecksum documentChecksum,
+        int documentVersionNumber,
+        int sourceDocumentRevision,
+        DateTime createdAt,
+        int revision,
+        IReadOnlyList<AnalysisRun> runs,
+        IReadOnlyList<HumanFactVerification> verifications,
+        IReadOnlyList<VerifiedFactSnapshot> verifiedFactSnapshots) =>
+        new(
+            id,
+            governedDocumentId,
+            documentVersionId,
+            documentChecksum,
+            documentVersionNumber,
+            sourceDocumentRevision,
+            createdAt,
+            revision,
+            runs,
+            verifications,
+            verifiedFactSnapshots);
+
+    private DocumentAnalysis(
+        DocumentAnalysisId id,
+        GovernedDocumentId governedDocumentId,
+        DocumentVersionId documentVersionId,
+        DocumentChecksum documentChecksum,
+        int documentVersionNumber,
+        int sourceDocumentRevision,
+        DateTime createdAt,
+        int revision,
+        IReadOnlyList<AnalysisRun> runs,
+        IReadOnlyList<HumanFactVerification> verifications,
+        IReadOnlyList<VerifiedFactSnapshot> verifiedFactSnapshots)
+    {
+        Id = id;
+        GovernedDocumentId = governedDocumentId;
+        DocumentVersionId = documentVersionId;
+        DocumentChecksum = documentChecksum;
+        DocumentVersionNumber = documentVersionNumber;
+        SourceDocumentRevision = sourceDocumentRevision;
+        CreatedAt = createdAt;
+        Revision = revision;
+        _runs.AddRange(runs);
+        _verifications.AddRange(verifications);
+        _verifiedFactSnapshots.AddRange(verifiedFactSnapshots);
     }
 }
