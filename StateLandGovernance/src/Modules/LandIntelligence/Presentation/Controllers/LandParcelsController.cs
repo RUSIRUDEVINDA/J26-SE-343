@@ -21,17 +21,23 @@ public sealed class LandParcelsController : ControllerBase
     private readonly GetLandParcelByIdQueryHandler _getByIdHandler;
     private readonly GetSpatialConstraintsByParcelIdQueryHandler _constraintsHandler;
     private readonly GetLandRelationshipsQueryHandler _relationshipsHandler;
+    private readonly ListSourceReportedLandUseOptionsQueryHandler _sourceLandUseOptionsHandler;
+    private readonly ListDerivedSoilGroupOptionsQueryHandler _derivedSoilGroupOptionsHandler;
 
     public LandParcelsController(
         SearchLandParcelsQueryHandler searchHandler,
         GetLandParcelByIdQueryHandler getByIdHandler,
         GetSpatialConstraintsByParcelIdQueryHandler constraintsHandler,
-        GetLandRelationshipsQueryHandler relationshipsHandler)
+        GetLandRelationshipsQueryHandler relationshipsHandler,
+        ListSourceReportedLandUseOptionsQueryHandler sourceLandUseOptionsHandler,
+        ListDerivedSoilGroupOptionsQueryHandler derivedSoilGroupOptionsHandler)
     {
         _searchHandler = searchHandler;
         _getByIdHandler = getByIdHandler;
         _constraintsHandler = constraintsHandler;
         _relationshipsHandler = relationshipsHandler;
+        _sourceLandUseOptionsHandler = sourceLandUseOptionsHandler;
+        _derivedSoilGroupOptionsHandler = derivedSoilGroupOptionsHandler;
     }
 
     /// <summary>
@@ -46,6 +52,39 @@ public sealed class LandParcelsController : ControllerBase
     {
         var response = await _searchHandler.HandleAsync(new SearchLandParcelsQuery(request), cancellationToken);
         return Ok(LandIntelligenceApiResponseMapper.ToResponse(response));
+    }
+
+    /// <summary>
+    /// Lists distinct source-reported land-use codes present in imported cadastre metadata.
+    /// </summary>
+    [HttpGet("source-reported-land-use-options")]
+    [ProducesResponseType(typeof(IReadOnlyList<SourceReportedLandUseOptionResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<SourceReportedLandUseOptionResponse>>> ListSourceReportedLandUseOptionsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var options = await _sourceLandUseOptionsHandler.HandleAsync(
+            new ListSourceReportedLandUseOptionsQuery(),
+            cancellationToken);
+
+        return Ok(options
+            .Select(option => new SourceReportedLandUseOptionResponse(option.Code, option.EnglishLabel))
+            .ToList());
+    }
+
+    /// <summary>
+    /// Lists distinct GIS-derived soil group names for parcels in an optional district.
+    /// Empty when the district has no imported soil coverage.
+    /// </summary>
+    [HttpGet("derived-soil-group-options")]
+    [ProducesResponseType(typeof(IReadOnlyList<string>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<string>>> ListDerivedSoilGroupOptionsAsync(
+        [FromQuery] string? district = null,
+        CancellationToken cancellationToken = default)
+    {
+        var options = await _derivedSoilGroupOptionsHandler.HandleAsync(
+            new ListDerivedSoilGroupOptionsQuery(district),
+            cancellationToken);
+        return Ok(options);
     }
 
     /// <summary>

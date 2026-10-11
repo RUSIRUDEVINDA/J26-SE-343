@@ -16,6 +16,8 @@ public static class LandIntelligenceApplicationExtensions
 
         services.AddScoped<GetLandParcelByIdQueryHandler>();
         services.AddScoped<SearchLandParcelsQueryHandler>();
+        services.AddScoped<ListSourceReportedLandUseOptionsQueryHandler>();
+        services.AddScoped<ListDerivedSoilGroupOptionsQueryHandler>();
         services.AddScoped<GetSpatialConstraintsByParcelIdQueryHandler>();
         services.AddScoped<GetLandRelationshipsQueryHandler>();
         services.AddScoped<SearchLandRecommendationsQueryHandler>();
@@ -27,7 +29,6 @@ public static class LandIntelligenceApplicationExtensions
         services.AddScoped<LandSearchRequestValidator>();
         services.AddScoped<LandRecommendationRequestValidator>();
         services.AddScoped<LandRecommendationSearchRequestValidator>();
-
         return services;
     }
 }

@@ -1,8 +1,6 @@
 import type { LandSearchResultResponse } from "../types/landIntelligence";
-import {
-  landCategoryTypeLabels,
-  landUseTypeLabels,
-} from "../utils/enumMappings";
+import { landCategoryTypeLabels, landUseTypeLabels } from "../utils/enumMappings";
+import { formatSourceReportedLandUseLine } from "../utils/sourceReportedCadastre";
 import { formatArea } from "../utils/formatters";
 import styles from "./ParcelCatalog.module.css";
 
@@ -20,7 +18,7 @@ export function ParcelCatalog({
   return (
     <section className={styles.wrap} aria-label="Available land parcels">
       <div className={styles.header}>
-        <h2 className={styles.title}>Available land parcels</h2>
+        <h2 className={styles.title}>Indexed land parcels</h2>
         <p className={styles.count}>
           Showing {parcels.length} of {totalCount} indexed parcel
           {totalCount === 1 ? "" : "s"}
@@ -32,8 +30,8 @@ export function ParcelCatalog({
             <tr>
               <th scope="col">Cadastral no.</th>
               <th scope="col">District</th>
-              <th scope="col">Category</th>
-              <th scope="col">Use</th>
+              <th scope="col">Domain category</th>
+              <th scope="col">Source-reported land use</th>
               <th scope="col">Area</th>
               <th scope="col">Centroid</th>
               <th scope="col">
@@ -60,12 +58,17 @@ export function ParcelCatalog({
                   </td>
                   <td>{parcel.district}</td>
                   <td>
-                    {landCategoryTypeLabels[parcel.categoryType] ?? "Unknown"}
+                    {parcel.cadastralSource
+                      ? "—"
+                      : landCategoryTypeLabels[parcel.categoryType] ?? "Unknown"}
                   </td>
                   <td>
-                    {parcel.currentUseType
-                      ? landUseTypeLabels[parcel.currentUseType] ?? "Unknown"
-                      : "—"}
+                    {parcel.cadastralSource
+                      ? formatSourceReportedLandUseLine(parcel.cadastralSource) ||
+                        "—"
+                      : parcel.currentUseType
+                        ? landUseTypeLabels[parcel.currentUseType] ?? "Unknown"
+                        : "—"}
                   </td>
                   <td>{formatArea(parcel.areaValue, parcel.areaUnit)}</td>
                   <td className={styles.mono}>

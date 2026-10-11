@@ -6,18 +6,19 @@ internal static class RecommendationScoreCalculator
 {
     public static decimal Calculate(IReadOnlyList<CriterionEvaluationDto> evaluations)
     {
-        if (evaluations.Count == 0)
+        var assessed = evaluations.Where(e => e.WasAssessed).ToList();
+        if (assessed.Count == 0)
         {
             return 0m;
         }
 
-        var totalWeight = evaluations.Sum(e => e.Weight);
+        var totalWeight = assessed.Sum(e => e.Weight);
         if (totalWeight <= 0m)
         {
             return 0m;
         }
 
-        var weightedSum = evaluations.Sum(e => e.WeightedScore);
+        var weightedSum = assessed.Sum(e => e.WeightedScore);
         return Math.Round(weightedSum / totalWeight, 2);
     }
 }

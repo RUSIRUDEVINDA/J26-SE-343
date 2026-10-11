@@ -4,7 +4,9 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities;
 namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 
 /// <summary>
-/// Synthetic reference data for Component 1 lookup tables. Not real government data.
+/// Lookup-table seed rows (land categories / land uses) required by EF HasData and FKs.
+/// Not parcel demo data — cadastral parcels must come from real import or isolated test fixtures.
+/// Descriptions are labelled [SYNTHETIC] so they are never mistaken for Survey Department values.
 /// </summary>
 internal static class LandIntelligenceSeedData
 {

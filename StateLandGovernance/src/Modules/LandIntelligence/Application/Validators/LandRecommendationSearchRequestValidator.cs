@@ -19,14 +19,14 @@ public sealed class LandRecommendationSearchRequestValidator : IRequestValidator
             errors.Add("Required area cannot be negative.");
         }
 
+        if (request.RequiredAreaHectares is 0)
+        {
+            errors.Add("Minimum land area must be a positive number when specified.");
+        }
+
         if (request.AreaTolerancePercent is < 0 or > 100)
         {
             errors.Add("Area tolerance percent must be between 0 and 100.");
-        }
-
-        if (request.Accessibility?.MaxRoadDistanceMeters is <= 0)
-        {
-            errors.Add("Maximum road distance must be greater than zero when specified.");
         }
 
         if (request.Regulatory?.MaxRegulatoryReferences is < 0)

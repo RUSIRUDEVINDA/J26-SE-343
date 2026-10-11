@@ -7,7 +7,6 @@ import {
   LAND_INTELLIGENCE_BASE,
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
-import type { NavItem } from "@/shared/constants/navigation";
 
 function isActive(pathname: string, href: string): boolean {
   if (href === LAND_INTELLIGENCE_BASE) {
@@ -23,23 +22,33 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Sidebar({ items = component01NavItems, label = "Land Intelligence navigation", basePath = LAND_INTELLIGENCE_BASE, compactMobile = false }: { items?: NavItem[]; label?: string; basePath?: string; compactMobile?: boolean }) {
+export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className={`${styles.sidebar} ${compactMobile ? styles.compactMobile : ""}`} aria-label={label}>
+    <aside className={styles.sidebar} aria-label="Land Intelligence navigation">
       <nav className={styles.nav}>
-        {items.map((item) => {
-          const active = item.href === basePath ? pathname === item.href : isActive(pathname, item.href);
+        {component01NavItems.map((item) => {
+          const active = isActive(pathname, item.href);
+          const className = [
+            styles.link,
+            active ? styles.active : styles.inactive,
+            item.primary && !active ? styles.primaryAction : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
+
           return (
             <Link
               key={item.label}
               href={item.href}
-              className={`${styles.link} ${active ? styles.active : styles.inactive}`}
+              className={className}
               aria-current={active ? "page" : undefined}
             >
-              <span aria-hidden="true">{item.icon} </span>
-              {item.label}
+              <span className={styles.icon} aria-hidden="true">
+                {item.icon}
+              </span>
+              <span className={styles.label}>{item.label}</span>
             </Link>
           );
         })}

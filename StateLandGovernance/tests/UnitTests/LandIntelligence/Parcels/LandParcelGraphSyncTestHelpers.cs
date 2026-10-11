@@ -86,6 +86,11 @@ internal sealed class FailingLandParcelRepository : ILandParcelRepository
 
     public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) =>
         throw new InvalidOperationException("Simulated PostgreSQL persistence failure.");
+
+    public Task<IReadOnlyList<string>> ListDerivedSoilGroupOptionsAsync(
+        string? district = null,
+        CancellationToken cancellationToken = default) =>
+        _inner.ListDerivedSoilGroupOptionsAsync(district, cancellationToken);
 }
 
 internal sealed class FailingDeleteLandParcelRepository : ILandParcelRepository
@@ -117,6 +122,11 @@ internal sealed class FailingDeleteLandParcelRepository : ILandParcelRepository
 
     public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) =>
         throw new InvalidOperationException("Simulated PostgreSQL delete failure.");
+
+    public Task<IReadOnlyList<string>> ListDerivedSoilGroupOptionsAsync(
+        string? district = null,
+        CancellationToken cancellationToken = default) =>
+        _inner.ListDerivedSoilGroupOptionsAsync(district, cancellationToken);
 }
 
 internal sealed class RecordingKnowledgeGraphService : IKnowledgeGraphService

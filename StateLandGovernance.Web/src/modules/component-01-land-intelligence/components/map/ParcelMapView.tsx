@@ -20,6 +20,10 @@ import {
   formatCoordinatePair,
   resolveParcelMapGeometry,
 } from "../../utils/parcelGeometry";
+import {
+  formatSourceReportedClaimantCategoryLine,
+  formatSourceReportedLandUseLine,
+} from "../../utils/sourceReportedCadastre";
 import styles from "./ParcelMapView.module.css";
 
 const ParcelMap = dynamic(
@@ -35,9 +39,30 @@ function describeProvenance(parcel: LandParcelResponse): string[] {
   const cadastral = parcel.identifier.cadastralNumber ?? "";
   const category = parcel.category.description ?? "";
   const use = parcel.currentUse?.description ?? "";
+  const source = parcel.cadastralSource;
+
+  if (source) {
+    labels.push(`Real cadastre source: ${source.sourceProvenanceLabel}`);
+    labels.push("Source-reported land use — not legal title, ownership, or suitability");
+    const landUseLine = formatSourceReportedLandUseLine(source);
+    if (landUseLine) {
+      labels.push(landUseLine);
+    }
+    const claimantLine = formatSourceReportedClaimantCategoryLine(source);
+    if (claimantLine) {
+      labels.push(claimantLine);
+    }
+    if (source.sourceReportedLandUseText) {
+      labels.push(`Source land-use text: ${source.sourceReportedLandUseText}`);
+    }
+    if (source.gnIndex) {
+      labels.push(`GN index: ${source.gnIndex}`);
+    }
+    return labels;
+  }
 
   if (/DEMO/i.test(cadastral) || /DEMO SYNTHETIC/i.test(category)) {
-    labels.push("Demo / synthetic parcel fixture");
+    labels.push("Synthetic DEMO fixture (excluded from catalog search — not cadastre data)");
   }
   if (/SIMULATED/i.test(category) || /research/i.test(category)) {
     labels.push("Research or simulated attributes present");
@@ -214,8 +239,65 @@ export function ParcelMapView({ parcelId }: { parcelId: string }) {
                 <dt>Province</dt>
                 <dd>{displayOrUnavailable(parcel.location.province)}</dd>
               </div>
+              {parcel.cadastralSource ? (
+                <>
+                  <div>
+                    <dt>Source parcel id</dt>
+                    <dd>
+                      {displayOrUnavailable(
+                        parcel.cadastralSource.sourceFeatureId,
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Source-reported land use</dt>
+                    <dd>
+                      {formatSourceReportedLandUseLine(parcel.cadastralSource) ||
+                        "Unavailable"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Source-reported claimant category</dt>
+                    <dd>
+                      {formatSourceReportedClaimantCategoryLine(
+                        parcel.cadastralSource,
+                      ) || "Unavailable"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Source land-use code</dt>
+                    <dd>
+                      {displayOrUnavailable(
+                        parcel.cadastralSource.sourceReportedLandUseCode,
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Source land-use text</dt>
+                    <dd>
+                      {displayOrUnavailable(
+                        parcel.cadastralSource.sourceReportedLandUseText,
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>GN division index</dt>
+                    <dd>
+                      {displayOrUnavailable(parcel.cadastralSource.gnIndex)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Source provenance</dt>
+                    <dd>
+                      {displayOrUnavailable(
+                        parcel.cadastralSource.sourceProvenanceLabel,
+                      )}
+                    </dd>
+                  </div>
+                </>
+              ) : null}
               <div>
-                <dt>Available area</dt>
+                <dt>Computed area</dt>
                 <dd>{formatArea(parcel.area.value, parcel.area.unit)}</dd>
               </div>
               <div>

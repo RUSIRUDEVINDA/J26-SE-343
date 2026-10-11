@@ -1,4 +1,5 @@
-import type { ApiErrorResponse } from "../shared/types/common";
+import type { ApiErrorResponse } from "@/shared/types/common";
+import { landIntelligenceOwnerHeaders } from "@/modules/component-01-land-intelligence/utils/landIntelligenceOwner";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
 
@@ -27,6 +28,13 @@ function ensureBaseUrl(): string {
   return baseUrl;
 }
 
+function mergeHeaders(init?: HeadersInit): HeadersInit {
+  return {
+    ...landIntelligenceOwnerHeaders(),
+    ...init,
+  };
+}
+
 async function parseError(response: Response): Promise<ApiClientError> {
   try {
     const body = (await response.json()) as ApiErrorResponse;
@@ -50,10 +58,10 @@ export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, {
     ...init,
     method: "GET",
-    headers: {
+    headers: mergeHeaders({
       Accept: "application/json",
       ...init?.headers,
-    },
+    }),
   });
   if (!response.ok) {
     throw await parseError(response);
@@ -70,15 +78,58 @@ export async function apiPost<T>(
   const response = await fetch(url, {
     ...init,
     method: "POST",
-    headers: {
+    headers: mergeHeaders({
       Accept: "application/json",
       "Content-Type": "application/json",
       ...init?.headers,
-    },
+    }),
     body: JSON.stringify(body),
   });
   if (!response.ok) {
     throw await parseError(response);
   }
   return (await response.json()) as T;
+}
+
+export async function apiPut<T>(
+  path: string,
+  body: unknown,
+  init?: RequestInit,
+): Promise<T> {
+  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+  const response = await fetch(url, {
+    ...init,
+    method: "PUT",
+    headers: mergeHeaders({
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...init?.headers,
+    }),
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+  if (response.status === 204) {
+    return undefined as T;
+  }
+  return (await response.json()) as T;
+}
+
+export async function apiDelete(
+  path: string,
+  init?: RequestInit,
+): Promise<void> {
+  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+  const response = await fetch(url, {
+    ...init,
+    method: "DELETE",
+    headers: mergeHeaders({
+      Accept: "application/json",
+      ...init?.headers,
+    }),
+  });
+  if (!response.ok) {
+    throw await parseError(response);
+  }
 }
