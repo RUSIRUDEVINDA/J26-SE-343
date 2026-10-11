@@ -1,0 +1,13 @@
+{
+  "support": 200,
+  "correct": 158,
+  "incorrect": 42,
+  "accuracy": 0.79,
+  "balanced_accuracy": 0.79,
+  "macro_precision": 0.7928959627329192,
+  "macro_recall": 0.7899999999999999,
+  "macro_f1": 0.7883211990702762,
+  "weighted_f1": 0.7883211990702762,
+  "all_class_metrics_defined": true,
+  "no_zero_recall_class": true
+}

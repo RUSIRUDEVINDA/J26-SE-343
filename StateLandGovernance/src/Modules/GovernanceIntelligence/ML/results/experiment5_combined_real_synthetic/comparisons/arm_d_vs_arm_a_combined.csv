@@ -1,0 +1,426 @@
+Research_ID,True_Label,Arm_A_Pred,Fold,True_Label_Candidate,Candidate_Pred,Fold_Candidate,Arm_A_Correct,Candidate_Correct,Transition
+STATE-LEASE-001,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+STATE-LEASE-002,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+STATE-LEASE-003,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,4,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,4,False,False,both_wrong_same_prediction
+STATE-LEASE-004,Administrative / Procedural / Integrity,Protected / Environmental Lease Misuse,1,Administrative / Procedural / Integrity,Protected / Environmental Lease Misuse,1,False,False,both_wrong_same_prediction
+STATE-LEASE-005,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+STATE-LEASE-006,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,1,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,1,False,False,both_wrong_same_prediction
+STATE-LEASE-007,Administrative / Procedural / Integrity,Protected / Environmental Lease Misuse,3,Administrative / Procedural / Integrity,Protected / Environmental Lease Misuse,3,False,False,both_wrong_same_prediction
+STATE-LEASE-008,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,True,False,hurt
+STATE-LEASE-009,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,False,False,both_wrong_same_prediction
+STATE-LEASE-010,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+STATE-LEASE-011,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+STATE-LEASE-012,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,3,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,3,False,False,both_wrong_same_prediction
+STATE-LEASE-013,Protected / Environmental Lease Misuse,Administrative / Procedural / Integrity,1,Protected / Environmental Lease Misuse,Administrative / Procedural / Integrity,1,False,False,both_wrong_same_prediction
+STATE-LEASE-014,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+STATE-LEASE-015,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+STATE-LEASE-016,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+STATE-LEASE-017,Lease Revenue / Payment / Enforcement,Protected / Environmental Lease Misuse,3,Lease Revenue / Payment / Enforcement,Protected / Environmental Lease Misuse,3,False,False,both_wrong_same_prediction
+STATE-LEASE-018,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+STATE-LEASE-019,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+STATE-LEASE-020,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,False,True,helped
+STATE-LEASE-021,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+STATE-LEASE-022,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+STATE-LEASE-023,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,1,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,1,False,False,both_wrong_same_prediction
+STATE-LEASE-024,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+STATE-LEASE-025,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+STATE-LEASE-026,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,False,False,both_wrong_same_prediction
+STATE-LEASE-027,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+STATE-LEASE-028,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+STATE-LEASE-029,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,2,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,2,False,False,both_wrong_same_prediction
+STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,False,False,both_wrong_same_prediction
+STATE-LEASE-031,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,False,False,both_wrong_same_prediction
+STATE-LEASE-032,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,False,True,helped
+STATE-LEASE-033,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+STATE-LEASE-034,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-035,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,False,False,both_wrong_same_prediction
+STATE-LEASE-036,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,False,False,both_wrong_same_prediction
+STATE-LEASE-037,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+STATE-LEASE-038,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+STATE-LEASE-039,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-040,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+STATE-LEASE-041,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+STATE-LEASE-042,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,False,False,both_wrong_same_prediction
+STATE-LEASE-043,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,False,False,both_wrong_same_prediction
+STATE-LEASE-044,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-045,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-046,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-047,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-048,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-049,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-050,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-051,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,3,True,False,hurt
+STATE-LEASE-052,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-053,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-054,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+STATE-LEASE-055,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-056,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+STATE-LEASE-057,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+STATE-LEASE-058,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+STATE-LEASE-059,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,3,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,3,False,False,both_wrong_same_prediction
+STATE-LEASE-060,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+STATE-LEASE-061,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+STATE-LEASE-062,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,3,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,3,False,False,both_wrong_same_prediction
+SYN-0001,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0002,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0003,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0004,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0005,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0006,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0007,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+SYN-0008,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+SYN-0009,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+SYN-0010,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+SYN-0011,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+SYN-0012,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+SYN-0016,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+SYN-0017,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+SYN-0018,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+SYN-0019,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+SYN-0020,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+SYN-0021,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+SYN-0025,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+SYN-0026,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+SYN-0027,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+SYN-0031,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+SYN-0032,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+SYN-0033,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+SYN-0037,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0038,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0039,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,False,True,helped
+SYN-0046,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+SYN-0047,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+SYN-0048,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+SYN-0049,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,2,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,2,False,False,both_wrong_same_prediction
+SYN-0050,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+SYN-0051,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+SYN-0052,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+SYN-0053,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+SYN-0054,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+SYN-0055,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+SYN-0056,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+SYN-0057,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+SYN-0061,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+SYN-0062,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+SYN-0063,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+SYN-0067,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0068,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0069,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+SYN-0073,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+SYN-0074,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+SYN-0075,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+SYN-0076,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+SYN-0077,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+SYN-0078,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+SYN-0079,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+SYN-0080,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+SYN-0081,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+SYN-0082,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0083,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0084,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0088,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+SYN-0089,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+SYN-0090,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+SYN-0091,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+SYN-0092,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+SYN-0093,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+SYN-0094,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0095,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0096,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0097,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0098,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,False,True,helped
+SYN-0099,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0100,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,True,True,both_correct
+SYN-0101,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,True,True,both_correct
+SYN-0102,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,True,True,both_correct
+SYN-0106,Lease Revenue / Payment / Enforcement,Protected / Environmental Lease Misuse,1,Lease Revenue / Payment / Enforcement,Protected / Environmental Lease Misuse,1,False,False,both_wrong_same_prediction
+SYN-0107,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,True,True,both_correct
+SYN-0108,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,1,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,False,True,helped
+SYN-0109,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,False,True,helped
+SYN-0110,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,False,True,helped
+SYN-0111,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+SYN-0112,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0113,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0114,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0115,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+SYN-0116,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,False,True,helped
+SYN-0117,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+SYN-0118,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+SYN-0119,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+SYN-0120,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,False,True,helped
+SYN-0121,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0122,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0123,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0124,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+SYN-0125,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,False,True,helped
+SYN-0126,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,False,True,helped
+SYN-0127,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0128,Lease Revenue / Payment / Enforcement,Protected / Environmental Lease Misuse,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,False,True,helped
+SYN-0129,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0130,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,1,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,1,False,False,both_wrong_same_prediction
+SYN-0131,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,1,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,1,False,False,both_wrong_same_prediction
+SYN-0132,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,True,True,both_correct
+SYN-0133,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0134,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0135,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0136,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0137,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0138,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+SYN-0139,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,False,True,helped
+SYN-0140,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+SYN-0141,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,False,True,helped
+SYN-0145,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,True,True,both_correct
+SYN-0146,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,True,True,both_correct
+SYN-0147,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,True,True,both_correct
+SYN-0148,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0149,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0150,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+SYN-0151,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+SYN-0152,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+SYN-0153,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+SYN-0157,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+SYN-0158,Unauthorized Allocation / Transfer / Use,Administrative / Procedural / Integrity,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,False,True,helped
+SYN-0159,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+SYN-0160,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+SYN-0161,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+SYN-0162,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,1,True,False,hurt
+SYN-0166,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+SYN-0167,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+SYN-0168,Unauthorized Allocation / Transfer / Use,Administrative / Procedural / Integrity,1,Unauthorized Allocation / Transfer / Use,Administrative / Procedural / Integrity,1,False,False,both_wrong_same_prediction
+SYN-0169,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+SYN-0170,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+SYN-0171,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+SYN-0172,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+SYN-0173,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+SYN-0174,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+SYN-0175,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,False,True,helped
+SYN-0176,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+SYN-0177,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,False,True,helped
+SYN-0178,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+SYN-0179,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+SYN-0180,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+SYN-0181,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+SYN-0182,Unauthorized Allocation / Transfer / Use,Administrative / Procedural / Integrity,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,False,True,helped
+SYN-0183,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+SYN-0184,Unauthorized Allocation / Transfer / Use,Administrative / Procedural / Integrity,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,False,True,helped
+SYN-0185,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+SYN-0186,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+SYN-0190,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+SYN-0191,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,False,False,both_wrong_same_prediction
+SYN-0192,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,False,False,both_wrong_same_prediction
+SYN-0193,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+SYN-0194,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+SYN-0195,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+SYN-0196,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+SYN-0197,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+SYN-0198,Unauthorized Allocation / Transfer / Use,Administrative / Procedural / Integrity,4,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,4,False,False,both_wrong_different_predictions
+SYN-0199,Unauthorized Allocation / Transfer / Use,Administrative / Procedural / Integrity,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,False,True,helped
+SYN-0200,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,False,False,both_wrong_same_prediction
+SYN-0201,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+SYN-0202,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+SYN-0203,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+SYN-0204,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+SYN-0208,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+SYN-0209,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,False,True,helped
+SYN-0210,Unauthorized Allocation / Transfer / Use,Administrative / Procedural / Integrity,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,False,True,helped
+SYN-0211,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+SYN-0212,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+SYN-0213,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+SYN-0217,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+SYN-0218,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+SYN-0219,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+SYN-0220,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,2,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,2,False,False,both_wrong_same_prediction
+SYN-0221,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+SYN-0222,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,False,True,helped
+SYN-0226,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+SYN-0227,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,5,Protected / Environmental Lease Misuse,Administrative / Procedural / Integrity,5,False,False,both_wrong_different_predictions
+SYN-0228,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+SYN-0229,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,False,True,helped
+SYN-0230,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0231,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0232,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0233,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0234,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0235,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+SYN-0236,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+SYN-0237,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+SYN-0238,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+SYN-0239,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,False,True,helped
+SYN-0240,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+SYN-0247,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0248,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0249,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0253,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0254,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0255,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0262,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0263,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0264,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0265,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+SYN-0266,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+SYN-0267,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+SYN-0268,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0269,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0270,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0271,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+SYN-0272,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+SYN-0273,Protected / Environmental Lease Misuse,Administrative / Procedural / Integrity,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,False,True,helped
+SYN-0274,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0275,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0276,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+SYN-0280,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+SYN-0281,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+SYN-0282,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+SYN-0283,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+SYN-0284,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+SYN-0285,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+SYN-0286,Protected / Environmental Lease Misuse,Administrative / Procedural / Integrity,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,False,True,helped
+SYN-0287,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+SYN-0288,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+SYN-0292,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0293,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0294,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+SYN-0295,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+SYN-0296,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,False,True,helped
+SYN-0297,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+SYN-0298,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+SYN-0299,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+SYN-0300,Protected / Environmental Lease Misuse,Administrative / Procedural / Integrity,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,False,True,helped
+WEB-063,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,2,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,2,False,False,both_wrong_same_prediction
+WEB-064,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+WEB-065,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+WEB-066,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,False,False,both_wrong_same_prediction
+WEB-067,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+WEB-068,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,False,False,both_wrong_same_prediction
+WEB-069,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,False,False,both_wrong_same_prediction
+WEB-070,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+WEB-071,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,False,True,helped
+WEB-072,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+WEB-073,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,4,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,4,False,False,both_wrong_same_prediction
+WEB-074,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,5,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,5,False,False,both_wrong_same_prediction
+WEB-075,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+WEB-076,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+WEB-077,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+WEB-078,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+WEB-079,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+WEB-080,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,2,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,2,False,False,both_wrong_same_prediction
+WEB-081,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+WEB-082,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+WEB-083,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+WEB-084,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+WEB-085,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+WEB-086,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,True,True,both_correct
+WEB-087,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+WEB-088,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+WEB-089,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+WEB-090,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+WEB-091,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+WEB-092,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,True,True,both_correct
+WEB-093,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+WEB-094,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+WEB-095,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+WEB-096,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+WEB-097,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+WEB-098,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,5,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,5,False,False,both_wrong_same_prediction
+WEB-099,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+WEB-100,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,3,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,3,False,False,both_wrong_same_prediction
+WEB-101,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+WEB-102,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,True,True,both_correct
+WEB-103,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,True,True,both_correct
+WEB-104,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,True,True,both_correct
+WEB-105,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,Administrative / Procedural / Integrity,Protected / Environmental Lease Misuse,5,True,False,hurt
+WEB-106,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,True,True,both_correct
+WEB-107,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+WEB-108,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+WEB-109,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+WEB-110,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+WEB-111,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+WEB-112,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+WEB-113,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+WEB-114,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+WEB-115,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+WEB-116,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+WEB-117,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+WEB-118,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+WEB-119,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+WEB-120,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+WEB-121,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,True,True,both_correct
+WEB-122,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,True,True,both_correct
+WEB-123,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+WEB-124,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,True,True,both_correct
+WEB-125,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,True,True,both_correct
+WEB-126,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+WEB-127,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+WEB-128,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+WEB-129,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+WEB-130,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+WEB-131,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,False,True,helped
+WEB-132,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+WEB-133,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+WEB-134,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+WEB-135,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+WEB-136,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+WEB-137,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+WEB-138,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,2,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,2,False,False,both_wrong_same_prediction
+WEB-139,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+WEB-140,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+WEB-141,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+WEB-142,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+WEB-143,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+WEB-144,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+WEB-145,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+WEB-146,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+WEB-147,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,False,False,both_wrong_same_prediction
+WEB-148,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,4,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,4,False,False,both_wrong_same_prediction
+WEB-149,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,True,True,both_correct
+WEB-150,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,2,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,2,False,False,both_wrong_same_prediction
+WEB-151,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,False,True,helped
+WEB-152,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+WEB-153,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,True,True,both_correct
+WEB-154,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,True,True,both_correct
+WEB-155,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,False,True,helped
+WEB-156,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,True,True,both_correct
+WEB-157,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,True,False,hurt
+WEB-158,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,2,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,2,False,False,both_wrong_same_prediction
+WEB-159,Unauthorized Allocation / Transfer / Use,Administrative / Procedural / Integrity,2,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,2,False,False,both_wrong_different_predictions
+WEB-160,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,True,True,both_correct
+WEB-161,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,False,False,both_wrong_same_prediction
+WEB-162,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+WEB-163,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+WEB-164,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+WEB-165,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+WEB-166,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+WEB-167,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+WEB-168,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+WEB-169,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+WEB-170,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+WEB-171,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+WEB-172,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+WEB-173,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+WEB-174,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+WEB-175,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+WEB-176,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+WEB-177,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,False,False,both_wrong_same_prediction
+WEB-178,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,False,False,both_wrong_same_prediction
+WEB-179,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+WEB-180,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+WEB-181,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,False,False,both_wrong_same_prediction
+WEB-182,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,False,False,both_wrong_same_prediction
+WEB-183,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+WEB-184,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+WEB-185,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+WEB-186,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+WEB-187,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+WEB-188,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+WEB-189,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+WEB-190,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+WEB-191,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,True,True,both_correct
+WEB-192,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+WEB-193,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+WEB-194,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,True,True,both_correct
+WEB-195,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,True,True,both_correct
+WEB-196,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
+WEB-197,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,True,True,both_correct
+WEB-198,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,1,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,1,False,False,both_wrong_same_prediction
+WEB-199,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,True,False,hurt
+WEB-200,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,True,True,both_correct
