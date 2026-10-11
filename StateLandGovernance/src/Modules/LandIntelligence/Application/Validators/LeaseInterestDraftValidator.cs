@@ -1,5 +1,6 @@
 using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
+using StateLandGovernance.LandIntelligence.Application.LeaseInterest;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 
 namespace StateLandGovernance.LandIntelligence.Application.Validators;
@@ -19,7 +20,7 @@ public sealed class LeaseInterestDraftValidator
 
         if (string.IsNullOrWhiteSpace(draft.Applicant.LegalName))
         {
-            errors.Add("Applicant legal name is required.");
+            errors.Add("Applicant Full name is required.");
         }
 
         if (string.IsNullOrWhiteSpace(draft.Applicant.ContactPhone))
@@ -48,6 +49,31 @@ public sealed class LeaseInterestDraftValidator
             {
                 errors.Add("Organization registration number is required for organization applicants.");
             }
+        }
+
+        var nicRaw = LeaseInterestApplicantNic.SelectRawNic(draft.Applicant);
+        if (forSubmit)
+        {
+            if (draft.Applicant.Kind == LeaseInterestApplicantKindDto.Individual)
+            {
+                if (!SriLankanNic.TryValidate(nicRaw, out _, out var nicError))
+                {
+                    errors.Add(nicError!);
+                }
+            }
+            else if (string.IsNullOrWhiteSpace(nicRaw))
+            {
+                errors.Add("Representative National Identity Card (NIC) number is required.");
+            }
+            else if (!SriLankanNic.TryValidate(nicRaw, out _, out var repNicError))
+            {
+                errors.Add(repNicError!);
+            }
+        }
+        else if (!string.IsNullOrWhiteSpace(nicRaw)
+                 && !SriLankanNic.TryValidate(nicRaw, out _, out var draftNicError))
+        {
+            errors.Add(draftNicError!);
         }
 
         if (!Enum.IsDefined(typeof(LandUseType), draft.Proposal.RequestedPurpose))
