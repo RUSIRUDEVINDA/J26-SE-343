@@ -13,6 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 
@@ -98,23 +99,53 @@ func (b *RealBesuClient) AnchorRecord(ctx context.Context, auditRecordID [32]byt
 		if existing.RecordHash == recordHash {
 			// Idempotent duplicate: accept same hash without re-submitting transaction
 			anchoredAt := time.Unix(int64(existing.AnchoredAt), 0).UTC()
-			log.Printf("[INFO] Audit record %x already anchored with matching hash. Returning existing anchor receipt.", auditRecordID[:8])
+			log.Printf("[INFO] Audit record %x already anchored with matching hash. Returning existing anchor receipt.", auditRecordID[:])
 
 			// Query past AuditRecordAnchored event logs to return the original transaction reference and block number
-			query := ethereum.FilterQuery{
-				Addresses: []common.Address{b.contractAddr},
-				Topics: [][]common.Hash{
-					{crypto.Keccak256Hash([]byte("AuditRecordAnchored(bytes32,bytes32,uint64,address)"))},
-					{common.BytesToHash(auditRecordID[:])},
-				},
-			}
-			logs, logErr := b.client.FilterLogs(ctx, query)
-			if logErr == nil && len(logs) > 0 {
-				return logs[0].TxHash.Hex(), logs[0].BlockNumber, anchoredAt, nil
+			latestBlock, logErr := b.client.BlockNumber(ctx)
+			if logErr == nil {
+				const maximumInclusiveBlockRange uint64 = 1000
+				for toBlock := latestBlock; ; {
+					fromBlock := uint64(0)
+					if toBlock >= maximumInclusiveBlockRange {
+						fromBlock = toBlock - (maximumInclusiveBlockRange - 1)
+					}
+
+					query := ethereum.FilterQuery{
+						Addresses: []common.Address{b.contractAddr},
+						FromBlock: new(big.Int).SetUint64(fromBlock),
+						ToBlock:   new(big.Int).SetUint64(toBlock),
+						Topics: [][]common.Hash{
+							nil,
+							{common.BytesToHash(auditRecordID[:])},
+						},
+					}
+					var logs []types.Log
+					logs, logErr = b.client.FilterLogs(ctx, query)
+					if logErr != nil {
+						break
+					}
+					for index := len(logs) - 1; index >= 0; index-- {
+						eventLog := logs[index]
+						if len(eventLog.Topics) >= 3 && eventLog.Topics[2] == common.BytesToHash(recordHash[:]) {
+							return eventLog.TxHash.Hex(), eventLog.BlockNumber, anchoredAt, nil
+						}
+					}
+					if fromBlock == 0 {
+						break
+					}
+					toBlock = fromBlock - 1
+				}
 			}
 
-			// Deterministic fallback reference if log querying is filtered
-			return fmt.Sprintf("0xanchored_%x", auditRecordID[:8]), 0, anchoredAt, nil
+			// A transaction reference and block number are evidence, not decorative identifiers.
+			// Fail closed so the caller can retry rather than persisting invented receipt metadata.
+			if logErr != nil {
+				return "", 0, time.Time{}, fmt.Errorf(
+					"anchor exists but its transaction receipt could not be recovered: %w", logErr)
+			}
+			return "", 0, time.Time{}, errors.New(
+				"anchor exists but no anchoring event was found for its audit record ID")
 		}
 		// Existing ID with differing hash -> strictly reject
 		return "", 0, time.Time{}, ErrRecordAlreadyAnchoredWithDifferentHash
