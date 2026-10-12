@@ -26,13 +26,15 @@ public sealed record ApplyPp1SeedScenarioResult(
 /// </summary>
 public sealed class ApplyPp1SeedScenarioCommandHandler
 {
+    private const string CommissionerCaseId = "PP1-ANOMALY-COMMISSIONER-001";
     private static readonly HashSet<string> ApprovedCases = new(StringComparer.Ordinal)
     {
         "PP1-FINAL-CLEAR-001",
         "PP1-FINAL-REFERRAL-001",
         "PP1-FINAL-DELAYED-001",
         "PP1-FINAL-COMPLAINT-001",
-        "PP1-FINAL-COMBINED-001"
+        "PP1-FINAL-COMBINED-001",
+        CommissionerCaseId
     };
 
     private readonly IComponent1GovernanceCaseProjectionStore _component1Store;
@@ -58,13 +60,13 @@ public sealed class ApplyPp1SeedScenarioCommandHandler
                 nameof(command));
         }
 
-        if (!string.Equals(
-                command.SyntheticSeedVersion,
-                GovernanceInputProvenance.FinalPp1SyntheticSeedVersion,
-                StringComparison.Ordinal))
+        var expectedVersion = command.CaseId == CommissionerCaseId
+            ? GovernanceInputProvenance.CommissionerAnomalySyntheticSeedVersion
+            : GovernanceInputProvenance.FinalPp1SyntheticSeedVersion;
+        if (!string.Equals(command.SyntheticSeedVersion, expectedVersion, StringComparison.Ordinal))
         {
             throw new ArgumentException(
-                $"SyntheticSeedVersion must equal '{GovernanceInputProvenance.FinalPp1SyntheticSeedVersion}'.",
+                $"SyntheticSeedVersion does not match the approved contract for CaseId '{command.CaseId}'.",
                 nameof(command));
         }
 
@@ -80,7 +82,7 @@ public sealed class ApplyPp1SeedScenarioCommandHandler
             throw new ArgumentException("GeneratedAtUtc must have a zero UTC offset.", nameof(command));
         }
 
-        var version = GovernanceInputProvenance.FinalPp1SyntheticSeedVersion;
+        var version = expectedVersion;
         var c1Provenance = GovernanceInputProvenance.CreatePp1Fixture(
             "SyntheticPp1Seed.Component1",
             $"{command.CaseId}:C1",
@@ -164,6 +166,11 @@ public sealed class ApplyPp1SeedScenarioCommandHandler
     {
         var ongoing = command.CaseId is "PP1-FINAL-REFERRAL-001" or "PP1-FINAL-COMPLAINT-001";
         var delayed = command.CaseId is "PP1-FINAL-DELAYED-001" or "PP1-FINAL-COMBINED-001";
+        if (command.CaseId == CommissionerCaseId)
+        {
+            return CreateCommissionerWorkflowProjection(command, provenance);
+        }
+
         var activities = command.CaseId switch
         {
             "PP1-FINAL-REFERRAL-001" => new[]
@@ -268,6 +275,94 @@ public sealed class ApplyPp1SeedScenarioCommandHandler
             traceStatus,
             completeness,
             stageCode,
+            Component3EventTimestampSemantics.ExactUtcTimestamp,
+            Component3WorkflowGovernanceProjection.RequiredColomboTimeZone,
+            events,
+            roadmapStart,
+            handover,
+            inputHash,
+            provenance,
+            command.GeneratedAtUtc);
+    }
+
+    private static Component3WorkflowGovernanceProjection CreateCommissionerWorkflowProjection(
+        ApplyPp1SeedScenarioCommand command,
+        GovernanceInputProvenance provenance)
+    {
+        var start = command.GeneratedAtUtc.AddDays(-70);
+        var definitions = new (string Activity, string Stage, string Role, string Institution, string Resource, int Day, string Outcome)[]
+        {
+            ("Complete Proposal Received", "DS_COMPLETE_PROPOSAL", "IntakeOfficer", "DS", "DS-Intake-01", 0, "Completed"),
+            ("DS Scrutiny", "DS_SCRUTINY", "LandOfficer", "DS", "DS-Land-02", 3, "Completed"),
+            ("DS Field Verification", "DS_FIELD_VERIFICATION", "FieldOfficer", "DS", "DS-Field-03", 7, "Completed"),
+            ("Environmental Clearance", "TECHNICAL_CLEARANCE_ENV", "EnvironmentalOfficer", "CEA", "CEA-Review-01", 10, "Completed"),
+            ("Survey Clearance", "TECHNICAL_CLEARANCE_SURVEY", "SurveyOfficer", "SURVEY_DEPARTMENT", "Survey-Review-04", 13, "Completed"),
+            ("PLC/DLC Review and Recommendation", "PLC_DLC_RECOMMENDATION", "CommitteeSecretary", "PLC_DLC", "PLC-DLC-Committee", 17, "Completed"),
+            ("LCGD Intake", "LCGD_INTAKE", "IntakeOfficer", "LCGD", "LCGD-Intake-01", 20, "Completed"),
+            ("LCGD Technical Review", "LCGD_TECHNICAL_REVIEW", "ReviewOfficer", "LCGD", "LCGD-Review-07", 24, "Completed"),
+            ("Correction Requested", "LCGD_CORRECTION_REQUEST", "ReviewOfficer", "LCGD", "LCGD-Review-07", 27, "Completed"),
+            ("LCGD Technical Review (Re-submission)", "LCGD_TECHNICAL_REVIEW", "ReviewOfficer", "LCGD", "LCGD-Review-07", 45, "Completed"),
+            ("Ministry/Competent Authority Approval", "HIGHER_APPROVAL", "ApprovingOfficer", "MINISTRY_OF_LANDS", "Ministry-Approval-02", 49, "Completed"),
+            ("Presidential Secretariat Processing", "PRESIDENTIAL_PROCESSING", "RouteController", "PRESIDENTIAL_SECRETARIAT", "Route-Control", 49, "NotApplicable"),
+            ("Lease Instrument Finalization", "LEASE_INSTRUMENT_FINALIZATION", "LegalOfficer", "LCGD", "LCGD-Legal-03", 54, "Completed"),
+            ("Land Registry Registration", "LAND_REGISTRY_REGISTRATION", "RouteController", "LAND_REGISTRY", "Route-Control", 54, "NotApplicable"),
+            ("Return to DS", "RETURN_TO_DS", "DispatchOfficer", "DS", "DS-Dispatch-01", 58, "Completed"),
+            (Component3WorkflowGovernanceProjection.AnomalyModelV1TerminalActivity, "DS_FINAL_NOTIFICATION", "LandOfficer", "DS", "DS-Land-02", 60, "Completed")
+        };
+
+        var events = definitions.Select((definition, index) =>
+        {
+            var instant = start.AddDays(definition.Day);
+            return new Component3WorkflowProjectionEvent(
+                $"{command.CaseId}-EVT-{index + 1:D2}",
+                index + 1,
+                definition.Activity,
+                definition.Stage,
+                definition.Role,
+                definition.Institution,
+                instant,
+                definition.Outcome,
+                $"SyntheticPp1Seed:{command.CaseId}:event:{index + 1}",
+                definition.Resource,
+                instant.ToString("yyyy-MM-dd'T'HH:mm:ss"));
+        }).ToArray();
+
+        var roadmapStart = new TimingBoundaryEvidence(
+            start,
+            TimingBoundaryEvidenceStatus.Confirmed,
+            "SyntheticPp1Seed",
+            $"{command.CaseId}:complete-proposal",
+            command.CaseId,
+            command.WorkflowRunId);
+        var handover = new TimingBoundaryEvidence(
+            start.AddDays(60),
+            TimingBoundaryEvidenceStatus.Confirmed,
+            "SyntheticPp1Seed",
+            $"{command.CaseId}:applicant-final-notification",
+            command.CaseId,
+            command.WorkflowRunId);
+        var inputHash = Component3WorkflowGovernanceProjection.ComputeCanonicalSha256(
+            command.WorkflowRunId,
+            command.CaseId,
+            "LandLeaseApproval",
+            Component3WorkflowTraceStatus.Completed,
+            Component3WorkflowTraceCompleteness.CompletedTraceEligibleForAnomalyScoring,
+            "DS_FINAL_NOTIFICATION",
+            Component3EventTimestampSemantics.ExactUtcTimestamp,
+            Component3WorkflowGovernanceProjection.RequiredColomboTimeZone,
+            events,
+            roadmapStart,
+            handover,
+            provenance);
+
+        return new Component3WorkflowGovernanceProjection(
+            command.Component3ProjectionId,
+            command.WorkflowRunId,
+            command.CaseId,
+            "LandLeaseApproval",
+            Component3WorkflowTraceStatus.Completed,
+            Component3WorkflowTraceCompleteness.CompletedTraceEligibleForAnomalyScoring,
+            "DS_FINAL_NOTIFICATION",
             Component3EventTimestampSemantics.ExactUtcTimestamp,
             Component3WorkflowGovernanceProjection.RequiredColomboTimeZone,
             events,
