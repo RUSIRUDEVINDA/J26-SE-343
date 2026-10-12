@@ -9,6 +9,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.ComplaintClassifica
 using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Application.Queries;
+using StateLandGovernance.GovernanceIntelligence.Application.Timing;
 using StateLandGovernance.GovernanceIntelligence.Application.WorkflowAnomaly;
 
 namespace StateLandGovernance.GovernanceIntelligence.Presentation.Controllers;
@@ -312,6 +313,33 @@ public class GovernanceIntelligenceController : ControllerBase
         return Ok(receipt);
     }
 
+    [HttpGet("audits/history/cases/{caseId}")]
+    public async Task<IActionResult> GetAuditHistoryByCase(
+        string caseId, [FromQuery] int limit,
+        [FromServices] GetAuditHistoryByCaseQueryHandler handler,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            return Ok(await handler.HandleAsync(
+                new GetAuditHistoryByCaseQuery(caseId, limit == 0 ? 100 : limit), cancellationToken));
+        }
+        catch (ArgumentException exception)
+        {
+            return BadRequest(exception.Message);
+        }
+    }
+
+    /// <summary>
+    /// Idempotently anchors an audit record or reconciles incomplete local receipt metadata.
+    /// </summary>
+    [HttpPost("audits/{auditRecordId:guid}/anchor")]
+    public async Task<IActionResult> AnchorAuditRecord(
+        Guid auditRecordId,
+        [FromServices] AnchorAuditRecordCommandHandler handler,
+        CancellationToken cancellationToken) =>
+        Ok(await handler.HandleAsync(new AnchorAuditRecordCommand(auditRecordId), cancellationToken));
+
     /// <summary>
     /// Verifies the on-chain ledger integrity for an off-chain audit record against the blockchain service.
     /// </summary>
@@ -355,8 +383,145 @@ public class GovernanceIntelligenceController : ControllerBase
         var result = await dashboardHandler.HandleAsync(new GetGovernanceDashboardQuery(), cancellationToken);
         return Ok(result);
     }
+
+    [HttpPost("workflow-anomalies/assess")]
+    public async Task<IActionResult> AssessWorkflowAnomaly(
+        [FromBody] AssessWorkflowAnomalyRequestDto request,
+        [FromServices] AssessWorkflowAnomalyCommandHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(
+            AssessWorkflowAnomalyCommand.FromProjection(request.WorkflowProjectionId, request.CaseId, request.WorkflowRunId),
+            cancellationToken);
+        return result.IsSuccess ? Ok(result.Assessment) : BadRequest(result.Error);
+    }
+
+    [HttpGet("workflow-anomalies/{assessmentId:guid}")]
+    public async Task<IActionResult> GetWorkflowAnomalyAssessment(
+        Guid assessmentId,
+        [FromServices] GetWorkflowAnomalyAssessmentQueryHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(new GetWorkflowAnomalyAssessmentQuery(assessmentId), cancellationToken);
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpGet("workflow-anomalies/history/cases/{caseId}")]
+    public async Task<IActionResult> GetWorkflowAnomalyHistoryByCase(
+        string caseId, [FromQuery] int limit,
+        [FromServices] GetWorkflowAnomalyHistoryByCaseQueryHandler handler,
+        CancellationToken cancellationToken) =>
+        Ok(await handler.HandleAsync(new GetWorkflowAnomalyHistoryByCaseQuery(caseId, NormalizeLimit(limit)), cancellationToken));
+
+    [HttpGet("workflow-anomalies/history/workflow-runs/{workflowRunId:guid}")]
+    public async Task<IActionResult> GetWorkflowAnomalyHistoryByWorkflowRun(
+        Guid workflowRunId, [FromQuery] int limit,
+        [FromServices] GetWorkflowAnomalyHistoryByWorkflowRunQueryHandler handler,
+        CancellationToken cancellationToken) =>
+        Ok(await handler.HandleAsync(new GetWorkflowAnomalyHistoryByWorkflowRunQuery(workflowRunId, NormalizeLimit(limit)), cancellationToken));
+
+    [HttpPost("lease-timing/assess")]
+    public async Task<IActionResult> AssessLeaseTiming(
+        [FromBody] CalculateLeaseApprovalTimingRequestDto request,
+        [FromServices] CalculateLeaseApprovalTimingCommandHandler handler,
+        CancellationToken cancellationToken) =>
+        Ok(await handler.HandleAsync(new CalculateLeaseApprovalTimingCommand(request.WorkflowProjectionId, request.AssessmentAtUtc), cancellationToken));
+
+    [HttpGet("lease-timing/{assessmentId:guid}")]
+    public async Task<IActionResult> GetLeaseTimingAssessment(
+        Guid assessmentId,
+        [FromServices] GetLeaseApprovalTimingAssessmentQueryHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(new GetLeaseApprovalTimingAssessmentQuery(assessmentId), cancellationToken);
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpGet("lease-timing/history/cases/{caseId}")]
+    public async Task<IActionResult> GetLeaseTimingHistoryByCase(
+        string caseId, [FromQuery] int limit,
+        [FromServices] GetLeaseApprovalTimingHistoryByCaseQueryHandler handler,
+        CancellationToken cancellationToken) =>
+        Ok(await handler.HandleAsync(new GetLeaseApprovalTimingHistoryByCaseQuery(caseId, NormalizeLimit(limit)), cancellationToken));
+
+    [HttpGet("lease-timing/history/workflow-runs/{workflowRunId:guid}")]
+    public async Task<IActionResult> GetLeaseTimingHistoryByWorkflowRun(
+        Guid workflowRunId, [FromQuery] int limit,
+        [FromServices] GetLeaseApprovalTimingHistoryByWorkflowRunQueryHandler handler,
+        CancellationToken cancellationToken) =>
+        Ok(await handler.HandleAsync(new GetLeaseApprovalTimingHistoryByWorkflowRunQuery(workflowRunId, NormalizeLimit(limit)), cancellationToken));
+
+    [HttpGet("screening/{assessmentId:guid}")]
+    public async Task<IActionResult> GetScreeningAssessment(
+        Guid assessmentId,
+        [FromServices] GetEarlyGovernanceScreeningAssessmentQueryHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(new GetEarlyGovernanceScreeningAssessmentQuery(assessmentId), cancellationToken);
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpGet("screening/history/cases/{caseId}")]
+    public async Task<IActionResult> GetScreeningHistory(
+        string caseId, [FromQuery] int limit,
+        [FromServices] GetEarlyGovernanceScreeningHistoryQueryHandler handler,
+        CancellationToken cancellationToken) =>
+        Ok(await handler.HandleAsync(new GetEarlyGovernanceScreeningHistoryQuery(caseId, NormalizeLimit(limit)), cancellationToken));
+
+    [HttpGet("referrals/history/cases/{caseId}")]
+    public async Task<IActionResult> GetReferralHistory(
+        string caseId, [FromQuery] int limit,
+        [FromServices] GetEarlyGovernanceReferralHistoryQueryHandler handler,
+        CancellationToken cancellationToken) =>
+        Ok(await handler.HandleAsync(new GetEarlyGovernanceReferralHistoryQuery(caseId, NormalizeLimit(limit)), cancellationToken));
+
+    [HttpPost("referrals/{referralId:guid}/deliver")]
+    public async Task<IActionResult> DeliverReferral(
+        Guid referralId,
+        [FromServices] DeliverEarlyGovernanceReferralCommandHandler handler,
+        CancellationToken cancellationToken) =>
+        Ok(await handler.HandleAsync(new DeliverEarlyGovernanceReferralCommand(referralId), cancellationToken));
+
+    [HttpGet("complaints/{assessmentId:guid}")]
+    public async Task<IActionResult> GetComplaintAssessment(
+        Guid assessmentId,
+        [FromServices] GetComplaintClassificationAssessmentQueryHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(new GetComplaintClassificationAssessmentQuery(assessmentId), cancellationToken);
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpGet("complaints/history/cases/{caseId}")]
+    public async Task<IActionResult> GetComplaintHistory(
+        string caseId, [FromQuery] int limit,
+        [FromServices] GetComplaintClassificationHistoryQueryHandler handler,
+        CancellationToken cancellationToken) =>
+        Ok(await handler.HandleAsync(new GetComplaintClassificationHistoryQuery(caseId, NormalizeLimit(limit)), cancellationToken));
+
+    [HttpPost("pp1/seeds")]
+    public async Task<IActionResult> ApplyPp1Seed(
+        [FromBody] ApplyPp1SeedScenarioCommand command,
+        [FromServices] ApplyPp1SeedScenarioCommandHandler? handler,
+        CancellationToken cancellationToken)
+    {
+        if (handler is null)
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "PP1 synthetic integration is not enabled.");
+        return Ok(await handler.HandleAsync(command, cancellationToken));
+    }
+
+    private static int NormalizeLimit(int limit) => limit == 0 ? 100 : limit;
 }
 
 public sealed record WorkflowAnomalyRequestDto(
     string CaseId,
     IReadOnlyList<WorkflowAnomalyEvent> Events);
+
+public sealed record AssessWorkflowAnomalyRequestDto(
+    string CaseId,
+    Guid WorkflowRunId,
+    Guid WorkflowProjectionId);
+
+public sealed record CalculateLeaseApprovalTimingRequestDto(
+    Guid WorkflowProjectionId,
+    DateTimeOffset? AssessmentAtUtc = null);
