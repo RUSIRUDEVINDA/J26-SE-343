@@ -1,4 +1,6 @@
 :root {
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Playfair Display", Georgia, "Times New Roman", Times, serif;
   --color-page-bg: #fffdfc;
   --color-primary: #850906;
   --color-nav-inactive: #f5ebea;
