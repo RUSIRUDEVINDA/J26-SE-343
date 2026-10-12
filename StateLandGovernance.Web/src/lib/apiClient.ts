@@ -1,4 +1,13 @@
-import type { ApiErrorResponse } from "../shared/types/common";
+import type { ApiErrorResponse } from "@/shared/types/common";
+import {
+  ensureApplicantAccessToken,
+  ensureOfficerAccessToken,
+  isDemoOwnerHeaderEnabled,
+  landIntelligenceBearerHeaders,
+} from "@/modules/component-01-land-intelligence/utils/landIntelligenceSession";
+
+export type LandIntelligenceApiAuthRole = "applicant" | "officer" | "none";
+import { landIntelligenceOwnerHeaders } from "@/modules/component-01-land-intelligence/utils/landIntelligenceOwner";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
 
@@ -19,17 +28,59 @@ export class ApiClientError extends Error {
 }
 
 function ensureBaseUrl(): string {
-  if (!baseUrl) {
-    throw new Error(
-      "NEXT_PUBLIC_API_BASE_URL is not configured. Copy .env.local.example to .env.local.",
-    );
+  if (baseUrl) {
+    return baseUrl;
   }
-  return baseUrl;
+
+  if (
+    process.env.NODE_ENV === "development" ||
+    (typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"))
+  ) {
+    return "http://localhost:5264";
+  }
+
+  throw new Error(
+    "NEXT_PUBLIC_API_BASE_URL is not configured. Copy .env.local.example to .env.local.",
+  );
+}
+
+async function resolveAccessToken(
+  authRole: LandIntelligenceApiAuthRole,
+): Promise<string | null> {
+  if (authRole === "none") {
+    return null;
+  }
+  if (authRole === "officer") {
+    return await ensureOfficerAccessToken();
+  }
+  return await ensureApplicantAccessToken();
+}
+
+async function mergeHeaders(
+  init?: HeadersInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
+): Promise<HeadersInit> {
+  const accessToken = await resolveAccessToken(authRole);
+  const demoOwner =
+    authRole === "applicant" &&
+    isDemoOwnerHeaderEnabled() &&
+    !accessToken
+      ? landIntelligenceOwnerHeaders()
+      : {};
+
+  return {
+    ...landIntelligenceBearerHeaders(accessToken),
+    ...demoOwner,
+    ...init,
+  };
 }
 
 async function parseError(response: Response): Promise<ApiClientError> {
   try {
     const body = (await response.json()) as ApiErrorResponse;
+
     return new ApiClientError({
       status: body.status ?? response.status,
       title: body.title ?? response.statusText,
@@ -45,19 +96,28 @@ async function parseError(response: Response): Promise<ApiClientError> {
   }
 }
 
-export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
+export async function apiGet<T>(
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
   const response = await fetch(url, {
     ...init,
     method: "GET",
-    headers: {
-      Accept: "application/json",
-      ...init?.headers,
-    },
+    headers: await mergeHeaders(
+      {
+        Accept: "application/json",
+        ...init?.headers,
+      },
+      authRole,
+    ),
   });
+
   if (!response.ok) {
     throw await parseError(response);
   }
+
   return (await response.json()) as T;
 }
 
@@ -65,20 +125,119 @@ export async function apiPost<T>(
   path: string,
   body: unknown,
   init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
   const response = await fetch(url, {
     ...init,
     method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...init?.headers,
-    },
+    headers: await mergeHeaders(
+      {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...init?.headers,
+      },
+      authRole,
+    ),
     body: JSON.stringify(body),
   });
+
   if (!response.ok) {
     throw await parseError(response);
   }
+
   return (await response.json()) as T;
+}
+
+export async function apiPostFormData<T>(
+  path: string,
+  formData: FormData,
+  init?: RequestInit,
+): Promise<T> {
+  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
+  let response: Response;
+
+  try {
+    response = await fetch(url, {
+      ...init,
+      method: "POST",
+      headers: mergeHeaders({
+        Accept: "application/json",
+        ...init?.headers,
+      }),
+      body: formData,
+    });
+  } catch {
+    throw new ApiClientError({
+      status: 0,
+      title: "Network Error",
+      detail:
+        "Unable to reach the OCR API. Check that the ASP.NET Core API is running.",
+    });
+  }
+
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+
+  return (await response.json()) as T;
+}
+
+export async function apiPut<T>(
+  path: string,
+  body: unknown,
+  init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
+): Promise<T> {
+  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
+  const response = await fetch(url, {
+    ...init,
+    method: "PUT",
+    headers: await mergeHeaders(
+      {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...init?.headers,
+      },
+      authRole,
+    ),
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  return (await response.json()) as T;
+}
+
+export async function apiDelete(
+  path: string,
+  init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
+): Promise<void> {
+  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
+  const response = await fetch(url, {
+    ...init,
+    method: "DELETE",
+    headers: await mergeHeaders(
+      {
+        Accept: "application/json",
+        ...init?.headers,
+      },
+      authRole,
+    ),
+  });
+
+  if (!response.ok) {
+    throw await parseError(response);
+  }
 }

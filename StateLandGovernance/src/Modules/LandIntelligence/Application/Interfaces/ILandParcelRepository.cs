@@ -24,4 +24,12 @@ public interface ILandParcelRepository
     Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default);
 
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Distinct GIS-derived soil group names for parcels in the optional district (case-insensitive).
+    /// Empty when the district has no imported soil coverage.
+    /// </summary>
+    Task<IReadOnlyList<string>> ListDerivedSoilGroupOptionsAsync(
+        string? district = null,
+        CancellationToken cancellationToken = default);
 }

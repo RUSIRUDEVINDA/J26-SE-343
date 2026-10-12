@@ -155,9 +155,12 @@ public sealed class DocumentAnalysisExecutionService : IDocumentAnalysisExecutio
                 throw new InvalidOperationException($"AnalysisRun {analysisRunId} is in unhandled state {run.State}.");
         }
 
-        // 5. Capability validation - OCR vertical slice strictly supports OCR capabilities only
+        // 5. Capability validation - Supports OCR and Governed Semantic Document Intelligence capabilities
         var hasUnsupportedCapabilities = run.RequestedCapabilities.Any(c =>
-            !string.Equals(c.Value, "Ocr", StringComparison.OrdinalIgnoreCase));
+            !string.Equals(c.Value, "Ocr", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(c.Value, "SemanticExtraction", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(c.Value, "Classification", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(c.Value, "Analyze", StringComparison.OrdinalIgnoreCase));
 
         // 6. Claim/Start the analysis run (Transitions Requested -> Running, increments revision by 1, 1 DB Commit)
         var startCommand = new StartDocumentAnalysisRunCommand(
@@ -176,7 +179,7 @@ public sealed class DocumentAnalysisExecutionService : IDocumentAnalysisExecutio
                 analysisRunId,
                 currentRevision,
                 "UNSUPPORTED_CAPABILITY",
-                "Requested capabilities include unsupported semantic models. OCR vertical slice supports 'Ocr' capability only.",
+                "Requested capabilities include unsupported models. Supported capabilities are 'Ocr', 'SemanticExtraction', 'Classification', 'Analyze'.",
                 CancellationToken.None);
         }
 
@@ -268,11 +271,11 @@ public sealed class DocumentAnalysisExecutionService : IDocumentAnalysisExecutio
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            // CRITICAL INVARIANT: Zero semantic facts. OCR transcript artifacts only.
-            var candidateFacts = Array.Empty<ExtractedCandidateFactDto>();
+            // Map candidate facts from intelligence service (machine output, candidate only, non-authoritative)
+            var candidateFacts = ocrResult.Candidates ?? Array.Empty<ExtractedCandidateFactDto>();
 
             // Complete analysis run through Application command handler (1 DB Commit)
-            var outcome = ocrResult.Artifacts.Count > 0 ? "OutputsProduced" : "NoFindings";
+            var outcome = (ocrResult.Artifacts.Count > 0 || candidateFacts.Count > 0) ? "OutputsProduced" : "NoFindings";
 
             var completeCommand = new CompleteDocumentAnalysisCommand(
                 DocumentAnalysisId: documentAnalysisId,

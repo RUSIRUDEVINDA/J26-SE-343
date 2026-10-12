@@ -11,10 +11,19 @@ param(
     [string]$Password = "",
     [string]$DatabaseName = "land_intel_colombo_demo",
     [string]$PsqlPath = "C:\Program Files\PostgreSQL\17\bin\psql.exe",
-    [string]$OsmGeoJsonRelativePath = "data\gis\experiments\colombo\osm_motor_roads_colombo_buffer.geojson"
+    [string]$OsmGeoJsonRelativePath = "data\gis\experiments\colombo\osm_motor_roads_colombo_buffer.geojson",
+    [switch]$IUnderstandThisIsSyntheticDemoData
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not $IUnderstandThisIsSyntheticDemoData) {
+    throw @"
+Refused: ColomboDemoSetup inserts DEMO-* synthetic parcels and is not for the normal Land Intelligence UI.
+Use docs/COLOMBO_REAL_PARCEL_IMPORT.md and LAND_INTELLIGENCE_CONNECTION -> land_intel_colombo_real_demo (or real_pilot).
+To proceed intentionally, pass -IUnderstandThisIsSyntheticDemoData.
+"@
+}
 
 if ($DatabaseName -ne "land_intel_colombo_demo") {
     throw "This setup only creates/uses 'land_intel_colombo_demo' (got '$DatabaseName')."

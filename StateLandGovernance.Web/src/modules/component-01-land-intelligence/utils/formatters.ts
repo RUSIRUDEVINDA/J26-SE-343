@@ -1,5 +1,5 @@
 import { areaUnitLabels } from "./enumMappings";
-import type { AreaUnit } from "../types/landIntelligence";
+import { AreaUnit } from "../types/landIntelligence";
 
 /** Formats the rule-based suitability score (0–100 scale from the API). Not a probability. */
 export function formatRuleScore(score: number): string {
@@ -22,6 +22,26 @@ export function formatArea(value: number, unit: AreaUnit): string {
   return `${value} ${unitLabel}`;
 }
 
+/** Converts a parcel area to hectares for lease-interest proposal fields. */
+export function convertAreaToHectares(
+  value: number,
+  unit: AreaUnit,
+): number | null {
+  if (value == null || Number.isNaN(value) || value < 0) {
+    return null;
+  }
+  switch (unit) {
+    case AreaUnit.Hectares:
+      return value;
+    case AreaUnit.SquareMeters:
+      return value / 10_000;
+    case AreaUnit.Acres:
+      return value * 0.40468564224;
+    default:
+      return null;
+  }
+}
+
 export function displayOrUnavailable(value: string | null | undefined): string {
   if (value === undefined || value === null || value.trim() === "") {
     return "Unavailable";
@@ -36,15 +56,83 @@ export function displayOrUnknown(value: string | null | undefined): string {
   return value;
 }
 
-export function suitabilityBadgeLabel(score: number, hardRejected: boolean): string {
+export type RecommendationResultStatus =
+  | "recommended"
+  | "needs-review"
+  | "hard-rejected";
+
+export function recommendationResultStatus(
+  score: number,
+  hardRejected: boolean,
+): RecommendationResultStatus {
   if (hardRejected) {
-    return "Hard constraint rejected";
+    return "hard-rejected";
   }
   if (score >= 80) {
-    return "Higher rule-based score";
+    return "recommended";
   }
-  if (score >= 60) {
-    return "Mid rule-based score";
+  return "needs-review";
+}
+
+export function suitabilityBadgeLabel(score: number, hardRejected: boolean): string {
+  switch (recommendationResultStatus(score, hardRejected)) {
+    case "hard-rejected":
+      return "Hard constraint rejected";
+    case "recommended":
+      return "Recommended";
+    default:
+      return "Needs review";
   }
-  return "Lower rule-based score";
+}
+
+/** Extracts source-reported land-use label from purpose-alignment criterion text when present. */
+export function extractSourceReportedLandUseFromCriteria(
+  summaries: Array<string | null | undefined>,
+): string | null {
+  for (const summary of summaries) {
+    if (!summary) {
+      continue;
+    }
+    const match = summary.match(
+      /Source-reported land use \(([^)]+)\)/i,
+    );
+    if (match?.[1] && match[1].trim().toLowerCase() !== "unavailable") {
+      return match[1].trim();
+    }
+  }
+  return null;
+}
+
+/** Splits a long explanation into short bullets for progressive disclosure. */
+export function explanationToBullets(explanation: string): {
+  lead: string;
+  positives: string[];
+  concerns: string[];
+} {
+  const text = explanation.trim();
+  if (!text) {
+    return { lead: "Unavailable", positives: [], concerns: [] };
+  }
+
+  const positiveMatch = text.match(
+    /Positive factors:\s*([\s\S]+?)(?:\.\s*Negative factors:|\.\s*This parcel|$)/i,
+  );
+  const negativeMatch = text.match(
+    /Negative factors:\s*([\s\S]+?)(?:\.\s*This parcel|$)/i,
+  );
+
+  const splitFactors = (raw: string | undefined) =>
+    (raw ?? "")
+      .split(";")
+      .map((part) => part.replace(/\.\s*$/, "").trim())
+      .filter(Boolean);
+
+  const lead =
+    text.split(/Positive factors:/i)[0]?.trim().replace(/\.$/, "") || text;
+
+  return {
+    lead,
+    positives: splitFactors(positiveMatch?.[1]),
+    concerns: splitFactors(negativeMatch?.[1]),
+  };
 }

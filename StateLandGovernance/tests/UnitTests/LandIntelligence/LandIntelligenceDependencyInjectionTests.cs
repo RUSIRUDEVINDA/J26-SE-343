@@ -53,7 +53,7 @@ public sealed class LandIntelligenceDependencyInjectionTests
         using var provider = services.BuildServiceProvider();
         var evaluators = provider.GetServices<IRecommendationCriterionEvaluator>().ToList();
 
-        Assert.Equal(10, evaluators.Count);
+        Assert.Equal(8, evaluators.Count);
         Assert.Equal(
             evaluators.Count,
             evaluators.Select(e => e.GetType()).Distinct().Count());
@@ -72,7 +72,7 @@ public sealed class LandIntelligenceDependencyInjectionTests
         using var provider = services.BuildServiceProvider();
         var evaluators = provider.GetServices<IRecommendationCriterionEvaluator>().ToList();
 
-        Assert.Equal(20, evaluators.Count);
+        Assert.Equal(16, evaluators.Count);
         Assert.Equal(2, evaluators.Count(e => e.GetType().Name == nameof(PurposeAlignmentCriterionEvaluator)));
         Assert.Equal(2, evaluators.Count(e => e.GetType().Name == nameof(RequiredAreaCriterionEvaluator)));
     }

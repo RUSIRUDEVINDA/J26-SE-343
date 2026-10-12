@@ -124,7 +124,7 @@ internal static class DeterministicRecommendationScenarioFactory
             ScenarioParcelRole.MediumSuitability => (
                 LandCategoryType.StateLand,
                 targetPurpose,
-                4.5m,
+                5.2m,
                 "Western",
                 "Gampaha",
                 1200m,

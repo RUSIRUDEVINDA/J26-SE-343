@@ -9,13 +9,20 @@ namespace StateLandGovernance.LandIntelligence.Application.DTOs;
 public sealed record LandRecommendationSearchRequest
 {
     public required LandUseType RequiredPurpose { get; init; }
+    /// <summary>Target area (ha) for continuous area-match scoring in Find Suitable Land.</summary>
+    public decimal? TargetAreaHectares { get; init; }
+    /// <summary>Legacy alias — treated as <see cref="TargetAreaHectares"/> when target is unset (not a minimum filter).</summary>
     public decimal? RequiredAreaHectares { get; init; }
+    /// <summary>Legacy alias — treated as <see cref="TargetAreaHectares"/> when target and required are unset.</summary>
+    public decimal? PreferredAreaHectares { get; init; }
+    /// <summary>Deprecated — no longer applied to area scoring (continuous target match is used instead).</summary>
     public decimal AreaTolerancePercent { get; init; } = 15m;
     public PreferredLocationCriteria? PreferredLocation { get; init; }
+    /// <summary>Legacy domain category filter — use only for synthetic/domain-managed parcels.</summary>
     public LandCategoryType? RequiredLandCategory { get; init; }
     public LandUseType? RequiredLandUse { get; init; }
-    public AccessibilityCriteria? Accessibility { get; init; }
-    public EnvironmentalCriteria? Environmental { get; init; }
+    /// <summary>Exact match on source-reported land-use code or English label (real cadastre).</summary>
+    public string? SourceReportedLandUse { get; init; }
     public RegulatoryCriteria? Regulatory { get; init; }
     public IReadOnlyList<CustomCriterionCriteria>? AdditionalCriteria { get; init; }
     public Guid? TargetParcelId { get; init; }
@@ -27,18 +34,6 @@ public sealed record PreferredLocationCriteria
     public string? Province { get; init; }
     public string? District { get; init; }
     public string? DivisionalSecretariat { get; init; }
-}
-
-public sealed record AccessibilityCriteria
-{
-    public decimal? MaxRoadDistanceMeters { get; init; }
-    public bool RequireRoadAccess { get; init; }
-}
-
-public sealed record EnvironmentalCriteria
-{
-    public RestrictionSeverity MaxAllowedEnvironmentalSeverity { get; init; } = RestrictionSeverity.Medium;
-    public bool RejectProhibitiveEnvironmentalRestrictions { get; init; } = true;
 }
 
 public sealed record RegulatoryCriteria
@@ -66,7 +61,25 @@ public sealed record CriterionEvaluationDto(
     decimal WeightedScore,
     string Summary,
     AttributeProvenanceDto? DataProvenance = null,
-    string? AttributePath = null);
+    string? AttributePath = null,
+    bool WasAssessed = true,
+    string? NotAssessedReason = null);
+
+public sealed record RecommendationFilterStageDto(
+    string Name,
+    int CandidateCount,
+    string Description);
+
+public sealed record RecommendationUnavailableCriterionDto(
+    string Key,
+    string Reason);
+
+public sealed record RecommendationSearchTransparencyDto(
+    IReadOnlyList<string> AppliedFilters,
+    int CandidateCountBeforeFilters,
+    int CandidateCountAfterFilters,
+    IReadOnlyList<RecommendationFilterStageDto> FilterStages,
+    IReadOnlyList<RecommendationUnavailableCriterionDto> UnavailableCriteria);
 
 public sealed record RestrictionSummaryDto(
     string RestrictionType,
@@ -86,10 +99,27 @@ public sealed record LandParcelRecommendationResult(
     IReadOnlyList<RecommendationEvidenceDto> Evidence,
     string Explanation,
     bool HardConstraintRejected = false,
-    string? HardConstraintReason = null);
+    string? HardConstraintReason = null,
+    /// <summary>State-land screening status label (not legal availability).</summary>
+    string? CandidateStatusLabel = null,
+    string? CandidateStatusReason = null,
+    string? SourceReportedClaimantCategoryCode = null,
+    string? SourceReportedClaimantCategoryDisplay = null,
+    string? SourceParcelStatusCode = null,
+    string? SourceProvenanceLabel = null,
+    DateTimeOffset? SourceImportedAtUtc = null,
+    string? ProjectLeaseReadyLabel = null,
+    bool IsProjectLeaseReadyDesignated = false,
+    bool IsProjectLeaseReadyEffective = false,
+    decimal? ParcelAreaHectares = null,
+    int DisplayOrder = 0,
+    int RuleScoreRank = 0,
+    int RuleScoreTieCount = 0,
+    bool IsTiedOnRuleScore = false);
 
 public sealed record LandRecommendationSearchResponse(
     LandUseType RequiredPurpose,
     IReadOnlyList<LandParcelRecommendationResult> Recommendations,
     int CandidateCount,
-    DateTimeOffset GeneratedAt);
+    DateTimeOffset GeneratedAt,
+    RecommendationSearchTransparencyDto? Transparency = null);

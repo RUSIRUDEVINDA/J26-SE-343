@@ -55,7 +55,7 @@ export function KnowledgeGraphView() {
     <>
       <PageHeading
         title="Land Knowledge Graph"
-        subtitle="Neo4j view of persisted GIS intelligence (list view)."
+        subtitle="Neo4j relationships when configured. Graph edges reflect persisted GIS enrichment only; if the database has no enrichment snapshots, relationships may be empty even when cadastre parcels exist."
       />
 
       <div className="parcelFormRow">

@@ -70,24 +70,14 @@ export interface PreferredLocationCriteria {
   divisionalSecretariat?: string | null;
 }
 
-export interface AccessibilityCriteria {
-  maxRoadDistanceMeters?: number | null;
-  requireRoadAccess: boolean;
-}
-
-export interface EnvironmentalCriteria {
-  maxAllowedEnvironmentalSeverity: RestrictionSeverity;
-  rejectProhibitiveEnvironmentalRestrictions: boolean;
-}
-
 export interface LandRecommendationSearchRequest {
   requiredPurpose: LandUseType;
   requiredAreaHectares?: number | null;
   areaTolerancePercent?: number;
   preferredLocation?: PreferredLocationCriteria | null;
+  /** Legacy domain category — not used for real Colombo cadastre. */
   requiredLandCategory?: LandCategoryType | null;
-  accessibility?: AccessibilityCriteria | null;
-  environmental?: EnvironmentalCriteria | null;
+  sourceReportedLandUse?: string | null;
   maxResults?: number;
 }
 
@@ -110,6 +100,27 @@ export interface CriterionEvaluationResponse {
   summary: string;
   dataProvenance?: AttributeProvenanceResponse | null;
   attributePath?: string | null;
+  wasAssessed?: boolean;
+  notAssessedReason?: string | null;
+}
+
+export interface RecommendationFilterStageResponse {
+  name: string;
+  candidateCount: number;
+  description: string;
+}
+
+export interface RecommendationUnavailableCriterionResponse {
+  key: string;
+  reason: string;
+}
+
+export interface RecommendationSearchTransparencyResponse {
+  appliedFilters: string[];
+  candidateCountBeforeFilters: number;
+  candidateCountAfterFilters: number;
+  filterStages: RecommendationFilterStageResponse[];
+  unavailableCriteria: RecommendationUnavailableCriterionResponse[];
 }
 
 export interface RestrictionSummaryResponse {
@@ -139,6 +150,14 @@ export interface LandParcelRecommendationResponse {
   explanation: string;
   hardConstraintRejected: boolean;
   hardConstraintReason?: string | null;
+  /** Screening status only — not legal lease availability. */
+  candidateStatusLabel?: string | null;
+  candidateStatusReason?: string | null;
+  sourceReportedClaimantCategoryCode?: string | null;
+  sourceReportedClaimantCategoryDisplay?: string | null;
+  sourceParcelStatusCode?: string | null;
+  sourceProvenanceLabel?: string | null;
+  sourceImportedAtUtc?: string | null;
 }
 
 export interface LandRecommendationSearchResultsResponse {
@@ -146,6 +165,7 @@ export interface LandRecommendationSearchResultsResponse {
   recommendations: LandParcelRecommendationResponse[];
   candidateCount: number;
   generatedAt: string;
+  transparency?: RecommendationSearchTransparencyResponse | null;
 }
 
 export interface ParcelIdentifierResponse {
@@ -161,6 +181,51 @@ export interface LandCategoryResponse {
 export interface LandUseResponse {
   type: LandUseType;
   description?: string | null;
+}
+
+/** Source-reported cadastral metadata for real imported parcels (no ownership or claimant fields). */
+export interface ResearchSimulatedLeaseWorkflowResponse {
+  researchRecordId: string;
+  scenarioId: string;
+  simulatedLeaseStatus: string;
+  isSimulatedLeaseStatus: boolean;
+  datasetUsage?: string | null;
+  notice?: string | null;
+}
+
+export interface LandParcelAvailabilityResponse {
+  actualLeaseAvailabilityLabel: string;
+  researchRecordId?: string | null;
+  simulatedWorkflow?: ResearchSimulatedLeaseWorkflowResponse | null;
+}
+
+export interface ResearchDemoConfigResponse {
+  enabled: boolean;
+}
+
+export interface CadastralSourceMetadataResponse {
+  sourceProvenanceLabel: string;
+  sourceLayer: string;
+  sourceFeatureId: string;
+  sourceReportedLandUseCode?: string | null;
+  sourceReportedLandUseEnglishLabel?: string | null;
+  sourceReportedLandUseText?: string | null;
+  sourceReportedLandUseDisplay: string;
+  sourceReportedClaimantCategoryCode?: string | null;
+  sourceReportedClaimantCategoryEnglishLabel?: string | null;
+  sourceReportedClaimantCategoryDisplay: string;
+  sourceParcelStatusCode?: string | null;
+  gnIndex?: string | null;
+  coordinateStatus?: string | null;
+  importedAtUtc: string;
+  researchRecordId?: string | null;
+  mapMarkerLatitude?: number | null;
+  mapMarkerLongitude?: number | null;
+}
+
+export interface SourceReportedLandUseOptionResponse {
+  code: string;
+  englishLabel: string;
 }
 
 export interface LandAreaResponse {
@@ -209,6 +274,8 @@ export interface LandParcelResponse {
   environmentalRestrictionCount: number;
   infrastructureFeatureCount: number;
   regulatoryReferenceCount: number;
+  cadastralSource?: CadastralSourceMetadataResponse | null;
+  availability?: LandParcelAvailabilityResponse | null;
 }
 
 export interface SpatialConstraintResponse {
@@ -244,6 +311,7 @@ export interface LandSearchResultResponse {
   areaUnit: AreaUnit;
   centroidLatitude: number;
   centroidLongitude: number;
+  cadastralSource?: CadastralSourceMetadataResponse | null;
 }
 
 export interface LandSearchResultsResponse {
@@ -259,15 +327,8 @@ export interface FindSuitableLandFormState {
   preferredProvince: string;
   preferredDistrict: string;
   preferredDivisionalSecretariat: string;
-  requiredLandCategory: LandCategoryType | "";
-  maxRoadDistanceMeters: string;
-  requireRoadAccess: boolean;
-  environmentalPreference: string;
-  rejectProhibitiveEnvironmentalRestrictions: boolean;
+  sourceReportedLandUse: string;
   maxResults: string;
-  waterProximityPreference: string;
-  soilGroupPreference: string;
-  additionalRequirements: string;
 }
 
 export const RECOMMENDATIONS_SESSION_KEY =
@@ -281,4 +342,115 @@ export interface RecommendationsSessionPayload {
   response: LandRecommendationSearchResultsResponse;
   submittedAt: string;
   formState?: FindSuitableLandFormState;
+}
+
+export type LeaseInterestApplicantKind = 1 | 2;
+
+export type LeaseInterestRequestStatus =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6;
+
+export interface LeaseInterestApplicant {
+  kind: LeaseInterestApplicantKind;
+  legalName: string;
+  contactPhone: string;
+  contactEmail: string;
+  postalAddress: string;
+  organizationName?: string | null;
+  organizationRegistrationNumber?: string | null;
+}
+
+export interface LeaseInterestProposal {
+  requestedPurpose: LandUseType;
+  plannedActivitiesDescription: string;
+  requestedAreaHectares?: number | null;
+  desiredStartPeriod: string;
+  requestedDurationYears: number;
+  projectSummary: string;
+}
+
+export interface LeaseInterestSupportingInfo {
+  supportingNotes: string;
+}
+
+export interface UpsertLeaseInterestDraft {
+  applicant: LeaseInterestApplicant;
+  proposal: LeaseInterestProposal;
+  supporting: LeaseInterestSupportingInfo;
+  consentToPreliminaryAssessment: boolean;
+}
+
+export interface LeaseInterestStatusHistoryEntry {
+  status: LeaseInterestRequestStatus;
+  changedAtUtc: string;
+  note?: string | null;
+}
+
+export interface LeaseInterestCostLine {
+  code: string;
+  label: string;
+  status: string;
+  amount?: number | null;
+  currency?: string | null;
+  rateSource?: string | null;
+  effectiveDate?: string | null;
+  formula?: string | null;
+}
+
+export interface LeaseInterestCostSummary {
+  currency: string;
+  disclaimer: string;
+  numericEstimateAvailable: boolean;
+  lines: LeaseInterestCostLine[];
+}
+
+export interface LeaseInterestRequestDetail {
+  id: string;
+  landParcelId: string;
+  status: LeaseInterestRequestStatus;
+  acknowledgementReference?: string | null;
+  createdAtUtc: string;
+  updatedAtUtc: string;
+  submittedAtUtc?: string | null;
+  applicant: LeaseInterestApplicant;
+  proposal: LeaseInterestProposal;
+  supporting: LeaseInterestSupportingInfo;
+  consentToPreliminaryAssessment: boolean;
+  statusHistory: LeaseInterestStatusHistoryEntry[];
+  costSummary: LeaseInterestCostSummary;
+}
+
+export interface LeaseInterestRequestSummary {
+  id: string;
+  landParcelId: string;
+  status: LeaseInterestRequestStatus;
+  acknowledgementReference?: string | null;
+  createdAtUtc: string;
+  updatedAtUtc: string;
+  submittedAtUtc?: string | null;
+  requestedPurpose: LandUseType;
+  requestedDurationYears?: number | null;
+}
+
+export interface ParcelShortlistItem {
+  landParcelId: string;
+  savedAtUtc: string;
+  cadastralNumber?: string | null;
+  district?: string | null;
+  areaHectares?: number | null;
+}
+
+export interface LeaseInterestDocumentChecklistItem {
+  code: string;
+  label: string;
+  note: string;
+}
+
+export interface LeaseInterestDocumentChecklist {
+  items: LeaseInterestDocumentChecklistItem[];
+  storageNote: string;
 }

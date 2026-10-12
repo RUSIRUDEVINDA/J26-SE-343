@@ -115,3 +115,59 @@ class ErrorResponse(BaseModel):
         default=None,
         description="Correlation ID associated with the failed request.",
     )
+
+
+class EvidenceSpan(BaseModel):
+    """Grounded evidence citation linking a candidate fact to an OCR page."""
+
+    page_number: int = Field(..., ge=1, description="1-based page number where evidence was located.")
+    quote: str = Field(..., description="Verbatim quote from the page text.")
+    start_offset: Optional[int] = Field(default=None, description="Character start offset on the page.")
+    end_offset: Optional[int] = Field(default=None, description="Character end offset on the page.")
+
+
+class DocumentClassificationResult(BaseModel):
+    """Non-authoritative document classification suggestion."""
+
+    code: str = Field(..., description="Classification category code from the allowed taxonomy.")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Heuristic model confidence score (0.0 to 1.0).")
+
+
+class ExtractedCandidateFact(BaseModel):
+    """Unverified machine candidate fact extracted from document text."""
+
+    field_code: str = Field(..., description="Canonical field identifier from the catalog.")
+    value_kind: str = Field(..., description="Data type of the value (Text, Integer, Decimal, etc.).")
+    canonical_value: str = Field(..., description="Extracted canonical string value.")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Heuristic candidate confidence score (0.0 to 1.0).")
+    evidence: Optional[EvidenceSpan] = Field(default=None, description="Grounded source evidence span.")
+    is_evidence_verified: bool = Field(default=False, description="Whether evidence was deterministically grounded in source OCR text.")
+    validation_warning: Optional[str] = Field(default=None, description="Warning if quote could not be strictly grounded.")
+
+
+class DurationBreakdown(BaseModel):
+    """Operational latency breakdown across processing stages."""
+
+    ocr_duration_ms: float = Field(..., ge=0.0, description="Time spent in OCR text extraction.")
+    semantic_duration_ms: float = Field(..., ge=0.0, description="Time spent in semantic extraction.")
+    total_duration_ms: float = Field(..., ge=0.0, description="Total pipeline execution duration.")
+
+
+class AnalyzeResponse(BaseModel):
+    """Complete structured response for governed semantic document intelligence."""
+
+    request_id: str = Field(..., description="Correlation ID for request tracing.")
+    language_mode: str = Field(..., description="OCR language configuration used.")
+    preprocessed: bool = Field(..., description="Whether OpenCV preprocessing was applied.")
+    page_count: int = Field(..., ge=1, description="Total number of processed pages.")
+    pages: List[OCRPageResult] = Field(..., description="Sequential list of page OCR results.")
+    classification: DocumentClassificationResult = Field(..., description="Suggested non-authoritative document classification.")
+    facts: List[ExtractedCandidateFact] = Field(default_factory=list, description="List of unverified candidate facts.")
+    model_identifier: str = Field(..., description="Identifier of the semantic extraction model.")
+    prompt_version: str = Field(..., description="Version of the extraction prompt used.")
+    duration_breakdown: DurationBreakdown = Field(..., description="Latency metrics per pipeline stage.")
+    warnings: List[str] = Field(default_factory=list, description="Operational and evidence grounding warnings.")
+    governance_notice: str = Field(
+        default="Machine-extracted candidate information. Not human verified. Not authoritative.",
+        description="Mandatory governance disclaimer.",
+    )

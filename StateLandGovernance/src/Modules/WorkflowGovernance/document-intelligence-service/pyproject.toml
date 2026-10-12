@@ -18,13 +18,13 @@ dependencies = [
     "pillow>=10.2.0",
     "pymupdf>=1.24.0",
     "pydantic>=2.6.0",
-    "pydantic-settings>=2.2.0"
+    "pydantic-settings>=2.2.0",
+    "httpx>=0.27.0"
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0.0",
-    "httpx>=0.27.0"
+    "pytest>=8.0.0"
 ]
 
 [tool.pytest.ini_options]
@@ -32,4 +32,5 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 markers = [
     "integration: marks tests as requiring local Tesseract OCR installation (deselect with '-m \"not integration\"')",
+    "live_qwen: marks tests as requiring local Ollama with qwen3:1.7b model (deselect with '-m \"not live_qwen\"')",
 ]

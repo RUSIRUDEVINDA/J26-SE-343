@@ -1,0 +1,230 @@
+using Microsoft.EntityFrameworkCore;
+using StateLandGovernance.LandIntelligence.Application.DTOs;
+using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Application.LeaseInterest;
+using StateLandGovernance.LandIntelligence.Domain.Enums;
+using StateLandGovernance.LandIntelligence.Domain.Exceptions;
+using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
+using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities;
+using ValidationException = StateLandGovernance.LandIntelligence.Application.Interfaces.ValidationException;
+
+namespace StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest;
+
+public sealed class LeaseInterestOfficerReviewService : ILeaseInterestOfficerReviewService
+{
+    private const int MaxPageSize = 50;
+    private readonly LandIntelligenceDbContext _dbContext;
+    private readonly ILandParcelRepository _parcelRepository;
+    private readonly INicPersonalDataProtector _nicProtector;
+    private readonly ILeaseInterestOfficerActorContext _officerActor;
+    private readonly TimeProvider _timeProvider;
+
+    public LeaseInterestOfficerReviewService(
+        LandIntelligenceDbContext dbContext,
+        ILandParcelRepository parcelRepository,
+        INicPersonalDataProtector nicProtector,
+        ILeaseInterestOfficerActorContext officerActor,
+        TimeProvider timeProvider)
+    {
+        _dbContext = dbContext;
+        _parcelRepository = parcelRepository;
+        _nicProtector = nicProtector;
+        _officerActor = officerActor;
+        _timeProvider = timeProvider;
+    }
+
+    public async Task<LeaseInterestOfficerRequestDetailDto> GetForReviewAsync(
+        Guid requestId,
+        CancellationToken cancellationToken = default)
+    {
+        RequireOfficerActor();
+        var entity = await LoadRequestAsync(requestId, cancellationToken);
+        return await MapOfficerDetailAsync(entity, cancellationToken);
+    }
+
+    public async Task<LeaseInterestOfficerQueueResponseDto> ListQueueAsync(
+        LeaseInterestOfficerQueueRequestDto request,
+        CancellationToken cancellationToken = default)
+    {
+        RequireOfficerActor();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 20 : Math.Min(request.PageSize, MaxPageSize);
+
+        var query = _dbContext.LeaseInterestRequests
+            .AsNoTracking()
+            .Where(x =>
+                x.Status == LeaseInterestRequestStatus.PendingVerification
+                || x.Status == LeaseInterestRequestStatus.NeedsInformation);
+
+        var total = await query.CountAsync(cancellationToken);
+        var rows = await query
+            .OrderByDescending(x => x.SubmittedAtUtc ?? x.UpdatedAtUtc)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = new List<LeaseInterestOfficerQueueItemDto>();
+        foreach (var row in rows)
+        {
+            var parcel = await _parcelRepository.GetByIdAsync(row.LandParcelId, cancellationToken);
+            items.Add(
+                new LeaseInterestOfficerQueueItemDto(
+                    row.Id,
+                    row.LandParcelId,
+                    row.AcknowledgementReference,
+                    row.SubmittedAtUtc,
+                    row.Status,
+                    parcel?.Identifier.CadastralNumber,
+                    parcel?.Location.District));
+        }
+
+        return new LeaseInterestOfficerQueueResponseDto(items, total, page, pageSize);
+    }
+
+    public async Task<LeaseInterestOfficerRequestDetailDto> UpdateStatusAsync(
+        Guid requestId,
+        LeaseInterestOfficerStatusUpdateDto update,
+        CancellationToken cancellationToken = default)
+    {
+        var officerId = RequireOfficerActor();
+
+        if (string.IsNullOrWhiteSpace(update.Note))
+        {
+            throw new ValidationException(["Officer note is required for status updates."]);
+        }
+
+        var entity = await LoadRequestAsync(requestId, cancellationToken);
+
+        if (!LeaseInterestStatusTransitions.TryGetTransition(
+                entity.Status,
+                update.NewStatus,
+                out var rejection))
+        {
+            throw new LeaseInterestInvalidStateException(rejection!);
+        }
+
+        var now = _timeProvider.GetUtcNow();
+        entity.Status = update.NewStatus;
+        entity.UpdatedAtUtc = now;
+
+        AppendHistory(
+            entity.Id,
+            update.NewStatus,
+            now,
+            update.Note.Trim(),
+            LeaseInterestStatusActorKind.Officer,
+            officerId,
+            update.VisibleToApplicant);
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.Entry(entity).Collection(e => e.StatusHistory).LoadAsync(cancellationToken);
+        return await MapOfficerDetailAsync(entity, cancellationToken);
+    }
+
+    private Guid RequireOfficerActor()
+    {
+        if (!_officerActor.IsAuthenticated)
+        {
+            throw new LandIntelligenceAuthorizationException(
+                "An authenticated officer identity is required for this operation.");
+        }
+
+        return _officerActor.OfficerActorId!.Value;
+    }
+
+    private async Task<LeaseInterestRequestEntity> LoadRequestAsync(
+        Guid requestId,
+        CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.LeaseInterestRequests
+            .Include(x => x.StatusHistory)
+            .FirstOrDefaultAsync(x => x.Id == requestId, cancellationToken);
+
+        if (entity is null)
+        {
+            throw new LeaseInterestRequestNotFoundException(requestId);
+        }
+
+        if (entity.Status == LeaseInterestRequestStatus.Draft)
+        {
+            throw new LeaseInterestInvalidStateException(
+                "Draft requests are not available for officer review.");
+        }
+
+        return entity;
+    }
+
+    private async Task<LeaseInterestOfficerRequestDetailDto> MapOfficerDetailAsync(
+        LeaseInterestRequestEntity entity,
+        CancellationToken cancellationToken)
+    {
+        var draft = LeaseInterestPayloadSerializer.Deserialize(entity.PayloadJson);
+        var decryptedNic = _nicProtector.Decrypt(entity.ApplicantNicCiphertext);
+        draft = draft with
+        {
+            Applicant = LeaseInterestApplicantNic.MergeDecryptedNic(
+                LeaseInterestApplicantNic.ClearNicFromApplicant(draft.Applicant),
+                decryptedNic),
+        };
+        draft = draft with
+        {
+            Applicant = LeaseInterestApplicantNic.MaskForApiResponse(draft.Applicant),
+        };
+
+        var parcel = await _parcelRepository.GetByIdAsync(entity.LandParcelId, cancellationToken);
+        var history = entity.StatusHistory
+            .OrderBy(x => x.ChangedAtUtc)
+            .Select(MapHistoryEntry)
+            .ToList();
+
+        return new LeaseInterestOfficerRequestDetailDto(
+            entity.Id,
+            entity.LandParcelId,
+            entity.Status,
+            entity.AcknowledgementReference,
+            entity.CreatedAtUtc,
+            entity.UpdatedAtUtc,
+            entity.SubmittedAtUtc,
+            draft.Applicant,
+            draft.Proposal,
+            draft.Supporting,
+            entity.ConsentToPreliminaryAssessment,
+            history,
+            parcel?.Identifier.CadastralNumber,
+            parcel?.Location.District,
+            LeaseInterestStatusTransitions.ApplicantOutcomeSummary(entity.Status));
+    }
+
+    private static LeaseInterestStatusHistoryEntryDto MapHistoryEntry(
+        LeaseInterestStatusHistoryEntity entry) =>
+        new(
+            entry.Status,
+            entry.ChangedAtUtc,
+            entry.Note,
+            (LeaseInterestStatusActorKindDto)entry.ActorKind,
+            entry.ActorId,
+            entry.VisibleToApplicant);
+
+    private void AppendHistory(
+        Guid requestId,
+        LeaseInterestRequestStatus status,
+        DateTimeOffset changedAtUtc,
+        string? note,
+        LeaseInterestStatusActorKind actorKind,
+        Guid? actorId,
+        bool visibleToApplicant)
+    {
+        _dbContext.LeaseInterestStatusHistory.Add(new LeaseInterestStatusHistoryEntity
+        {
+            Id = Guid.NewGuid(),
+            LeaseInterestRequestId = requestId,
+            Status = status,
+            ChangedAtUtc = changedAtUtc,
+            Note = note,
+            ActorKind = actorKind,
+            ActorId = actorId,
+            VisibleToApplicant = visibleToApplicant,
+        });
+    }
+}

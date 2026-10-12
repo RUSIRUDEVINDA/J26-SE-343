@@ -13,8 +13,8 @@ export function AppHeader() {
         <Image
           src="/images/sri-lanka-emblem.png"
           alt="Coat of arms of Sri Lanka"
-          width={58}
-          height={58}
+          width={48}
+          height={48}
           className={styles.emblem}
           priority
         />
