@@ -29,6 +29,7 @@ public sealed record GovernanceInputProvenance
 {
     public const string Pp1SyntheticSeedVersion = "PP1-SYNTH-2026-10-v1";
     public const string FinalPp1SyntheticSeedVersion = "pp1-seed-contract-v2";
+    public const string CommissionerAnomalySyntheticSeedVersion = "pp1-anomaly-commissioner-v1";
     public const int MaxIdentifierLength = 128;
     public const int MaxVersionLength = 64;
 
@@ -223,12 +224,13 @@ public sealed record GovernanceInputProvenance
         if (!IsSynthetic ||
             ProvenanceKind != GovernanceProvenanceKind.SyntheticPp1Seed ||
             !string.Equals(SyntheticSeedVersion, Pp1SyntheticSeedVersion, StringComparison.Ordinal) &&
-            !string.Equals(SyntheticSeedVersion, FinalPp1SyntheticSeedVersion, StringComparison.Ordinal) ||
+            !string.Equals(SyntheticSeedVersion, FinalPp1SyntheticSeedVersion, StringComparison.Ordinal) &&
+            !string.Equals(SyntheticSeedVersion, CommissionerAnomalySyntheticSeedVersion, StringComparison.Ordinal) ||
             Purpose != GovernanceProvenancePurpose.PP1Demonstration)
         {
             throw new InvalidOperationException(
                 $"PP1 demonstration provenance requires IsSynthetic == true, ProvenanceKind == SyntheticPp1Seed, " +
-                $"SyntheticSeedVersion == '{Pp1SyntheticSeedVersion}' or '{FinalPp1SyntheticSeedVersion}', and Purpose == PP1Demonstration.");
+                $"SyntheticSeedVersion must be an approved PP1 seed contract, and Purpose must equal PP1Demonstration.");
         }
     }
 }

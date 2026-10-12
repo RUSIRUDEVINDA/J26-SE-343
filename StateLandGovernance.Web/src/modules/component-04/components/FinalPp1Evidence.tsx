@@ -9,6 +9,7 @@ import {
 } from "../services/governanceService";
 import { formatGovernanceTime } from "../adapters/presentation";
 import styles from "./GovernanceWorkspace.module.css";
+import { WorkflowAnomalyJourney } from "./WorkflowAnomalyJourney";
 
 const finalCases = [
   "PP1-FINAL-CLEAR-001", "PP1-FINAL-REFERRAL-001", "PP1-FINAL-DELAYED-001",
@@ -67,6 +68,7 @@ export function FinalPp1Evidence() {
     <p className={styles.muted}>Synthetic PP1 Seed · pp1-seed-contract-v2 · PP1 Demonstration</p>
     <p>Composite of latest available Component 4 assessments</p>
     <p className={styles.notice}>Synthetic upstream C1/C3 inputs; real Component 4 calculations, PostgreSQL persistence and ML inference. Component 3 termination was not executed. Besu evidence is shown only where persisted.</p>
+    <WorkflowAnomalyJourney initialCaseId="PP1-ANOMALY-COMMISSIONER-001" />
     {error && <p role="alert">{error}</p>}
     {!Object.keys(data).length && <p role="status">Loading final PP1 evidence…</p>}
     <div className={styles.stack}>{finalCases.map(caseId => {

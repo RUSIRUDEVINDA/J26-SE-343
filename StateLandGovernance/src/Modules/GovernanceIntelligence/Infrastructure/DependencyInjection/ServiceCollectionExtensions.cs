@@ -198,6 +198,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<GetWorkflowAnomalyAssessmentQueryHandler>();
         services.AddTransient<GetWorkflowAnomalyHistoryByCaseQueryHandler>();
         services.AddTransient<GetWorkflowAnomalyHistoryByWorkflowRunQueryHandler>();
+        services.AddTransient<GetWorkflowProjectionJourneyByCaseQueryHandler>();
         services.AddOptions<WorkflowAnomalyOptions>()
             .Bind(configuration.GetSection(WorkflowAnomalyOptions.SectionName))
             .ValidateOnStart();
