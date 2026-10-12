@@ -1,6 +1,4 @@
 using StateLandGovernance.LandIntelligence.Application.DTOs;
-using StateLandGovernance.LandIntelligence.Application.GisAdministrativeVerification;
-using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 
@@ -9,68 +7,19 @@ namespace StateLandGovernance.UnitTests.LandIntelligence.Recommendations;
 public sealed class GisDerivedRecommendationTests
 {
     [Fact]
-    public async Task RecommendAsync_keeps_candidate_when_gis_road_is_3km_and_max_is_5km()
+    public async Task RecommendAsync_does_not_filter_candidates_by_gis_road_distance()
     {
-        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithGisDerivedRoad(3000m, "GIS-ROAD-3KM");
-        var engine = RecommendationEngineTestFactory.Create(parcel);
+        var near = SyntheticRecommendationParcelFactory.CreateParcelWithGisDerivedRoad(3000m, "GIS-ROAD-3KM");
+        var far = SyntheticRecommendationParcelFactory.CreateParcelWithGisDerivedRoad(8000m, "GIS-ROAD-8KM");
+        var engine = RecommendationEngineTestFactory.Create(near, far);
 
-        var response = await engine.RecommendAsync(CreateRoadFilterRequest(5000m) with { TargetParcelId = parcel.Id });
+        var response = await engine.RecommendAsync(CreateRequest() with { MaxResults = 5 });
 
-        var recommendation = Assert.Single(response.Recommendations);
-        Assert.Contains("Nearest mapped road", recommendation.MatchingCriteria.Single(c => c.Key == "accessibility").Summary);
-    }
-
-    [Fact]
-    public async Task RecommendAsync_excludes_candidate_when_gis_road_is_8km_and_max_is_5km()
-    {
-        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithGisDerivedRoad(8000m, "GIS-ROAD-8KM");
-        var engine = RecommendationEngineTestFactory.Create(parcel);
-
-        var response = await engine.RecommendAsync(CreateRoadFilterRequest(5000m));
-
-        Assert.Empty(response.Recommendations);
-        Assert.Equal(0, response.CandidateCount);
-    }
-
-    [Fact]
-    public async Task RecommendAsync_excludes_when_hospital_near_and_gis_road_8km_despite_water_other_nearby()
-    {
-        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithGisDerivedNaturalWaterOnly(200m, "GIS-MIXED-BASE");
-        parcel.ReplaceInfrastructureFeatures([
-            new InfrastructureFeature(
-                InfrastructureFeatureType.WaterSupply,
-                "[SYNTHETIC] Hospital",
-                500m),
-            new InfrastructureFeature(
-                InfrastructureFeatureType.Other,
-                "[GIS-DERIVED] Canal",
-                200m,
-                "[GIS-DERIVED] Natural water proximity.",
-                AttributeProvenance.Derived(GisDerivedIntelligenceOwnership.SourceName)),
-            new InfrastructureFeature(
-                InfrastructureFeatureType.Road,
-                "[GIS-DERIVED] Mapped Road",
-                8000m,
-                "[GIS-DERIVED] Nearest mapped road.",
-                AttributeProvenance.Derived(GisDerivedIntelligenceOwnership.SourceName))
-        ]);
-
-        var engine = RecommendationEngineTestFactory.Create(parcel);
-
-        var response = await engine.RecommendAsync(CreateRoadFilterRequest(5000m));
-
-        Assert.Empty(response.Recommendations);
-    }
-
-    [Fact]
-    public async Task RecommendAsync_natural_water_other_record_does_not_satisfy_road_accessibility()
-    {
-        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithGisDerivedNaturalWaterOnly(500m);
-        var engine = RecommendationEngineTestFactory.Create(parcel);
-
-        var response = await engine.RecommendAsync(CreateRoadFilterRequest(5000m));
-
-        Assert.Empty(response.Recommendations);
+        Assert.Equal(2, response.CandidateCount);
+        Assert.Equal(2, response.Recommendations.Count);
+        Assert.DoesNotContain(
+            response.Recommendations.SelectMany(r => r.MatchingCriteria.Concat(r.FailedCriteria)),
+            c => c.Key is "accessibility" or "water-proximity" or "soil-group");
     }
 
     [Fact]
@@ -200,10 +149,11 @@ public sealed class GisDerivedRecommendationTests
         var response = await engine.RecommendAsync(CreateRequest() with { TargetParcelId = parcel.Id });
 
         var recommendation = Assert.Single(response.Recommendations);
-        var environmental = Assert.Single(recommendation.MatchingCriteria, c => c.Key == "environmental");
-        Assert.Contains("No environmental restrictions", environmental.Summary, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("safe", environmental.Summary, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("erosion", environmental.Summary, StringComparison.OrdinalIgnoreCase);
+        Assert.False(recommendation.HardConstraintRejected);
+        Assert.DoesNotContain(recommendation.Explanation, "safe", StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(
+            recommendation.MatchingCriteria.Concat(recommendation.FailedCriteria),
+            c => c.Key == "environmental");
     }
 
     [Fact]
@@ -233,44 +183,20 @@ public sealed class GisDerivedRecommendationTests
     }
 
     [Fact]
-    public async Task RecommendAsync_ranks_closer_gis_road_higher_than_distant_gis_road()
+    public async Task RecommendAsync_does_not_rank_by_gis_road_distance()
     {
         var nearer = SyntheticRecommendationParcelFactory.CreateParcelWithGisDerivedRoad(2000m, "GIS-RANK-NEAR");
         var farther = SyntheticRecommendationParcelFactory.CreateParcelWithGisDerivedRoad(7500m, "GIS-RANK-FAR");
-        farther.AddEnvironmentalRestriction(new EnvironmentalRestriction(
-            EnvironmentalRestrictionType.Wetland,
-            "[SYNTHETIC] Additional environmental review required",
-            RestrictionSeverity.Medium));
 
         var engine = RecommendationEngineTestFactory.Create(nearer, farther);
 
-        var response = await engine.RecommendAsync(CreateRequest() with
-        {
-            MaxResults = 2,
-            Accessibility = new AccessibilityCriteria
-            {
-                RequireRoadAccess = true,
-                MaxRoadDistanceMeters = 10000m
-            }
-        });
+        var response = await engine.RecommendAsync(CreateRequest() with { MaxResults = 2 });
 
         Assert.Equal(2, response.Recommendations.Count);
-        var nearerResult = response.Recommendations.Single(result => result.ParcelId == nearer.Id);
-        var fartherResult = response.Recommendations.Single(result => result.ParcelId == farther.Id);
-        Assert.True(nearerResult.SuitabilityScore > fartherResult.SuitabilityScore);
-        Assert.Equal(nearer.Id, response.Recommendations[0].ParcelId);
+        Assert.DoesNotContain(
+            response.Recommendations.SelectMany(r => r.MatchingCriteria.Concat(r.FailedCriteria)),
+            c => c.Key == "accessibility");
     }
-
-    private static LandRecommendationSearchRequest CreateRoadFilterRequest(decimal maxRoadDistanceMeters) =>
-        new()
-        {
-            RequiredPurpose = LandUseType.Agricultural,
-            Accessibility = new AccessibilityCriteria
-            {
-                MaxRoadDistanceMeters = maxRoadDistanceMeters
-            },
-            MaxResults = 5
-        };
 
     private static LandRecommendationSearchRequest CreateRequest() => new()
     {
@@ -278,12 +204,7 @@ public sealed class GisDerivedRecommendationTests
         RequiredAreaHectares = 1m,
         RequiredLandCategory = LandCategoryType.StateLand,
         RequiredLandUse = LandUseType.Agricultural,
-        Accessibility = new AccessibilityCriteria
-        {
-            RequireRoadAccess = true,
-            MaxRoadDistanceMeters = 10000m
-        },
-        Environmental = new EnvironmentalCriteria(),
         MaxResults = 5
     };
 }
+

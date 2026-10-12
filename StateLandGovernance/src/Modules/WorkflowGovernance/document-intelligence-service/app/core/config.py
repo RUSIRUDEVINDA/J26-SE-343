@@ -13,6 +13,17 @@ class Settings(BaseSettings):
     ocr_max_upload_mb: int = 25
     ocr_pdf_dpi: int = 300
     log_level: str = "INFO"
+    # Semantic Extraction / Ollama Settings
+    semantic_provider: str = "ollama"
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_model: str = "qwen3:1.7b"
+    ollama_timeout_seconds: float = 60.0
+    ollama_think: bool = False
+    ollama_temperature: float = 0.0
+    ollama_keep_alive: str = "5m"
+    semantic_prompt_version: str = "qwen-proposal-extraction-v2"
+    run_qwen_live_tests: bool = False
+    semantic_max_input_length: int = 8192
 
     allowed_media_types: Set[str] = {
         "application/pdf",

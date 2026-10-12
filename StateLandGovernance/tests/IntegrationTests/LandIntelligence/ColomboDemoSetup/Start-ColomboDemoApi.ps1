@@ -2,10 +2,19 @@
 # and experimental ML forced off. Does not rewrite .env. Password stays in-process only.
 
 param(
-    [string]$Urls = "http://127.0.0.1:5264"
+    [string]$Urls = "http://127.0.0.1:5264",
+    [switch]$IUnderstandThisIsSyntheticDemoData
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not $IUnderstandThisIsSyntheticDemoData) {
+    throw @"
+Refused: Start-ColomboDemoApi points the host at land_intel_colombo_demo (DEMO-* fixtures).
+For the normal UI use run-api.ps1 with LAND_INTELLIGENCE_CONNECTION -> land_intel_colombo_real_demo.
+To proceed intentionally, pass -IUnderstandThisIsSyntheticDemoData.
+"@
+}
 
 $solutionRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path
 if (-not (Test-Path (Join-Path $solutionRoot "StateLandGovernance.sln"))) {

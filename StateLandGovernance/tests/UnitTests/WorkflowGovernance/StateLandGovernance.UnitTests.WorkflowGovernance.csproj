@@ -26,6 +26,9 @@
     <ProjectReference Include="..\..\..\src\Modules\WorkflowGovernance\Application\StateLandGovernance.WorkflowGovernance.Application.csproj" />
     <ProjectReference Include="..\..\..\src\Modules\WorkflowGovernance\Infrastructure\StateLandGovernance.WorkflowGovernance.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\src\Modules\WorkflowGovernance\Presentation\StateLandGovernance.WorkflowGovernance.Presentation.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\GovernanceIntelligence\Domain\StateLandGovernance.GovernanceIntelligence.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\GovernanceIntelligence\Application\StateLandGovernance.GovernanceIntelligence.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\GovernanceIntelligence\Infrastructure\StateLandGovernance.GovernanceIntelligence.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

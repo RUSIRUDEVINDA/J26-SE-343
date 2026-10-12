@@ -26,14 +26,13 @@ public static class RecommendationInfrastructureExtensions
         });
 
         services.AddScoped<IExperimentalColomboMlEvidenceService, ExperimentalColomboMlEvidenceService>();
+        services.AddScoped<IRecommendationParcelContext, RecommendationParcelContext>();
 
         services.AddScoped<IRecommendationCriterionEvaluator, PurposeAlignmentCriterionEvaluator>();
-        services.AddScoped<IRecommendationCriterionEvaluator, RequiredAreaCriterionEvaluator>();
+        services.AddScoped<IRecommendationCriterionEvaluator, TargetAreaCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, LandCategoryCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, LandUseCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, LocationPreferenceCriterionEvaluator>();
-        services.AddScoped<IRecommendationCriterionEvaluator, AccessibilityCriterionEvaluator>();
-        services.AddScoped<IRecommendationCriterionEvaluator, EnvironmentalCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, RegulatoryCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, SpatialConstraintCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, CustomCriteriaEvaluator>();

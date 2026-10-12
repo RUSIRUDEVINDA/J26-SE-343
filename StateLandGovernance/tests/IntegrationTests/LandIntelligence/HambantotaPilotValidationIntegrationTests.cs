@@ -241,7 +241,7 @@ public sealed class HambantotaPilotValidationIntegrationTests : IAsyncLifetime
         {
             ParcelId = strongParcel.Id,
             ScenarioKey = "RoadFilterStrong",
-            ScenarioDescription = "Tight road distance filter should include on-road parcel.",
+            ScenarioDescription = "GIS road distance remains enrichment evidence; recommendation no longer filters by it.",
             LandUsePurposes = [LandUseType.Agricultural],
             MaxRoadDistanceMeters = tightFilterMeters,
             RequireRoadAccess = true,
@@ -252,27 +252,26 @@ public sealed class HambantotaPilotValidationIntegrationTests : IAsyncLifetime
         {
             ParcelId = weakParcel.Id,
             ScenarioKey = "RoadFilterWeak",
-            ScenarioDescription = "Tight road distance filter should fail accessibility for distant parcel.",
+            ScenarioDescription = "Distant mapped road parcel still returns a recommendation without accessibility scoring.",
             LandUsePurposes = [LandUseType.Agricultural],
             MaxRoadDistanceMeters = tightFilterMeters,
             RequireRoadAccess = true,
             SyncToKnowledgeGraph = false
         });
 
-        var strongAccessibility = Assert.Single(strongResult.Recommendations).MatchingCriteria
-            .Concat(Assert.Single(strongResult.Recommendations).FailedCriteria)
-            .Single(criterion => criterion.Key == "accessibility");
-        var weakAccessibility = Assert.Single(weakResult.Recommendations).MatchingCriteria
-            .Concat(Assert.Single(weakResult.Recommendations).FailedCriteria)
-            .Single(criterion => criterion.Key == "accessibility");
-
-        Assert.True(strongAccessibility.IsMet);
-        Assert.False(weakAccessibility.IsMet);
-        Assert.Contains("Nearest mapped road", weakAccessibility.Summary, StringComparison.OrdinalIgnoreCase);
+        var strongRecommendation = Assert.Single(strongResult.Recommendations);
+        var weakRecommendation = Assert.Single(weakResult.Recommendations);
+        Assert.DoesNotContain(
+            strongRecommendation.MatchingCriteria.Concat(strongRecommendation.FailedCriteria),
+            criterion => criterion.Key == "accessibility");
+        Assert.DoesNotContain(
+            weakRecommendation.MatchingCriteria.Concat(weakRecommendation.FailedCriteria),
+            criterion => criterion.Key == "accessibility");
+        Assert.True(weakResult.Metrics.MappedRoadDistanceMeters > strongResult.Metrics.MappedRoadDistanceMeters);
     }
 
     [Fact]
-    public async Task ValidateScenarioAsync_closer_mapped_road_improves_accessibility_ranking()
+    public async Task ValidateScenarioAsync_mapped_road_distances_remain_enrichment_metrics_not_ranking()
     {
         Assert.NotNull(_validationService);
         Assert.NotNull(_dbContext);
@@ -287,7 +286,7 @@ public sealed class HambantotaPilotValidationIntegrationTests : IAsyncLifetime
         {
             ParcelId = strongParcel.Id,
             ScenarioKey = "RoadRankingStrong",
-            ScenarioDescription = "Closer mapped road parcel for accessibility comparison.",
+            ScenarioDescription = "Closer mapped road parcel for enrichment comparison.",
             LandUsePurposes = [LandUseType.Agricultural],
             MaxRoadDistanceMeters = 50_000m,
             SyncToKnowledgeGraph = false
@@ -297,7 +296,7 @@ public sealed class HambantotaPilotValidationIntegrationTests : IAsyncLifetime
         {
             ParcelId = weakParcel.Id,
             ScenarioKey = "RoadRankingWeak",
-            ScenarioDescription = "Distant mapped road parcel for accessibility comparison.",
+            ScenarioDescription = "Distant mapped road parcel for enrichment comparison.",
             LandUsePurposes = [LandUseType.Agricultural],
             MaxRoadDistanceMeters = 50_000m,
             SyncToKnowledgeGraph = false
@@ -306,16 +305,11 @@ public sealed class HambantotaPilotValidationIntegrationTests : IAsyncLifetime
         var strongRecommendation = Assert.Single(strongResult.Recommendations);
         var weakRecommendation = Assert.Single(weakResult.Recommendations);
 
-        Assert.True(strongRecommendation.SuitabilityScore >= weakRecommendation.SuitabilityScore);
-
-        var strongAccessibilityScore = strongRecommendation.MatchingCriteria
-            .Concat(strongRecommendation.FailedCriteria)
-            .Single(criterion => criterion.Key == "accessibility").Score;
-        var weakAccessibilityScore = weakRecommendation.MatchingCriteria
-            .Concat(weakRecommendation.FailedCriteria)
-            .Single(criterion => criterion.Key == "accessibility").Score;
-
-        Assert.True(strongAccessibilityScore >= weakAccessibilityScore);
+        Assert.DoesNotContain(
+            strongRecommendation.MatchingCriteria.Concat(strongRecommendation.FailedCriteria)
+                .Concat(weakRecommendation.MatchingCriteria)
+                .Concat(weakRecommendation.FailedCriteria),
+            criterion => criterion.Key == "accessibility");
         Assert.NotNull(strongResult.Metrics.MappedRoadDistanceMeters);
         Assert.NotNull(weakResult.Metrics.MappedRoadDistanceMeters);
         Assert.True(weakResult.Metrics.MappedRoadDistanceMeters > strongResult.Metrics.MappedRoadDistanceMeters);

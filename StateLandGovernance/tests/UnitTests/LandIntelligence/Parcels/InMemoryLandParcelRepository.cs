@@ -54,4 +54,9 @@ internal sealed class InMemoryLandParcelRepository : ILandParcelRepository
         _parcels.RemoveAll(parcel => parcel.Id == id);
         return Task.CompletedTask;
     }
+
+    public Task<IReadOnlyList<string>> ListDerivedSoilGroupOptionsAsync(
+        string? district = null,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<string>>([]);
 }

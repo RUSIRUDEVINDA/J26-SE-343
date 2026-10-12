@@ -1,3 +1,4 @@
+import { StatusBadge } from "@/shared/components/StatusBadge";
 import type {
   LandParcelResponse,
   LandRelationshipResponse,
@@ -10,6 +11,10 @@ import {
   restrictionSeverityLabels,
 } from "../utils/enumMappings";
 import { displayOrUnavailable, displayOrUnknown, formatArea } from "../utils/formatters";
+import {
+  formatSourceReportedClaimantCategoryLine,
+  formatSourceReportedLandUseLine,
+} from "../utils/sourceReportedCadastre";
 import styles from "./ParcelDetails.module.css";
 import listStyles from "./Lists.module.css";
 
@@ -21,6 +26,9 @@ function DetailRow({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+const researchDemoUiEnabled =
+  process.env.NEXT_PUBLIC_LAND_INTELLIGENCE_RESEARCH_DEMO === "true";
 
 export function ParcelDetails({
   parcel,
@@ -49,21 +57,104 @@ export function ParcelDetails({
             value={displayOrUnavailable(parcel.identifier.surveyPlanReference)}
           />
           <DetailRow
-            label="Category"
+            label="Domain category"
             value={
-              landCategoryTypeLabels[parcel.category.type] ??
-              displayOrUnavailable(parcel.category.description)
+              parcel.cadastralSource
+                ? "Not classified (cadastre import — domain category unchanged)"
+                : landCategoryTypeLabels[parcel.category.type] ??
+                  displayOrUnavailable(parcel.category.description)
             }
           />
-          <DetailRow
-            label="Current use"
-            value={
-              parcel.currentUse
-                ? landUseTypeLabels[parcel.currentUse.type] ??
-                  displayOrUnavailable(parcel.currentUse.description)
-                : "Unavailable"
-            }
-          />
+          {parcel.cadastralSource ? (
+            <>
+              <DetailRow
+                label="Source-reported land use"
+                value={
+                  formatSourceReportedLandUseLine(parcel.cadastralSource) ||
+                  "Unavailable"
+                }
+              />
+              <DetailRow
+                label="Source-reported claimant category"
+                value={
+                  formatSourceReportedClaimantCategoryLine(parcel.cadastralSource) ||
+                  "Unavailable"
+                }
+              />
+              <DetailRow
+                label="Source parcel id"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.sourceFeatureId,
+                )}
+              />
+              <DetailRow
+                label="Source land-use code"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.sourceReportedLandUseCode,
+                )}
+              />
+              <DetailRow
+                label="Source land-use text"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.sourceReportedLandUseText,
+                )}
+              />
+              <DetailRow
+                label="Source parcel status code"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.sourceParcelStatusCode,
+                )}
+              />
+              <DetailRow
+                label="GN division index"
+                value={displayOrUnavailable(parcel.cadastralSource.gnIndex)}
+              />
+              <DetailRow
+                label="Source provenance"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.sourceProvenanceLabel,
+                )}
+              />
+              <DetailRow
+                label="Research record id"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.researchRecordId ??
+                    parcel.availability?.researchRecordId,
+                )}
+              />
+              <DetailRow
+                label="Actual lease availability"
+                value={
+                  parcel.availability?.actualLeaseAvailabilityLabel ??
+                  "Not verified"
+                }
+              />
+              {researchDemoUiEnabled &&
+              parcel.availability?.simulatedWorkflow ? (
+                <div className={styles.row}>
+                  <span className={styles.label}>Simulated workflow status</span>
+                  <span className={styles.value}>
+                    <StatusBadge tone="warning">
+                      {parcel.availability.simulatedWorkflow.simulatedLeaseStatus}
+                    </StatusBadge>
+                    <span className={styles.simulatedHint}>
+                      Simulated — not legal availability
+                    </span>
+                  </span>
+                </div>
+              ) : null}
+            </>
+          ) : (
+            <DetailRow
+              label="Current use"
+              value={
+                parcel.currentUse
+                  ? landUseTypeLabels[parcel.currentUse.type] ??
+                    displayOrUnavailable(parcel.currentUse.description)
+                  : "Unavailable"
+              }
+            />
+          )}
           <DetailRow
             label="Area"
             value={formatArea(parcel.area.value, parcel.area.unit)}

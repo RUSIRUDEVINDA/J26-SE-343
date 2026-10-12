@@ -1,110 +1,195 @@
-import { MapPin } from "lucide-react";
+"use client";
+
+import { useId, useState } from "react";
+import { ChevronDown, MapPin } from "lucide-react";
 import { Button } from "@/shared/components/Button";
 import { StatusBadge } from "@/shared/components/StatusBadge";
-import type { LandParcelRecommendationResponse } from "../types/landIntelligence";
+import type {
+  CriterionEvaluationResponse,
+  LandParcelRecommendationResponse,
+  RestrictionSeverity,
+} from "../types/landIntelligence";
 import { restrictionSeverityLabels } from "../utils/enumMappings";
 import {
   displayOrUnknown,
+  explanationToBullets,
+  extractSourceReportedLandUseFromCriteria,
   formatRuleScore,
+  recommendationResultStatus,
   suitabilityBadgeLabel,
 } from "../utils/formatters";
-import { CriteriaList } from "./CriteriaList";
 import { EvidenceList } from "./EvidenceList";
+import { SaveParcelButton } from "./SaveParcelButton";
 import styles from "./RecommendationCard.module.css";
-import listStyles from "./Lists.module.css";
+
+type DetailTab = "why" | "criteria" | "restrictions" | "evidence";
+
+function statusTone(
+  status: ReturnType<typeof recommendationResultStatus>,
+): "success" | "warning" | "danger" {
+  if (status === "hard-rejected") {
+    return "danger";
+  }
+  if (status === "recommended") {
+    return "success";
+  }
+  return "warning";
+}
+
+function scoreFillClass(
+  status: ReturnType<typeof recommendationResultStatus>,
+): string {
+  if (status === "hard-rejected") {
+    return styles.scoreFillRejected;
+  }
+  if (status === "recommended") {
+    return styles.scoreFillRecommended;
+  }
+  return styles.scoreFillNeedsReview;
+}
+
+function criterionStatusLabel(criterion: CriterionEvaluationResponse): {
+  label: string;
+  tone: "success" | "warning" | "danger" | "neutral";
+} {
+  if (criterion.wasAssessed === false) {
+    return { label: "Unavailable", tone: "warning" };
+  }
+  if (criterion.isMet) {
+    return { label: "Met", tone: "success" };
+  }
+  return { label: "Not met", tone: "danger" };
+}
+
+function restrictionSeverityClass(severity: RestrictionSeverity): string {
+  switch (severity) {
+    case 1:
+      return styles.restrictionItemLow;
+    case 2:
+      return styles.restrictionItemMedium;
+    case 3:
+      return styles.restrictionItemHigh;
+    case 4:
+      return styles.restrictionItemProhibitive;
+    default:
+      return "";
+  }
+}
 
 export function RecommendationCard({
   recommendation,
+  searchDistrict,
 }: {
   recommendation: LandParcelRecommendationResponse;
+  searchDistrict?: string | null;
 }) {
+  const [expanded, setExpanded] = useState(false);
+  const [tab, setTab] = useState<DetailTab>("why");
+  const panelId = useId();
+  const status = recommendationResultStatus(
+    recommendation.suitabilityScore,
+    recommendation.hardConstraintRejected,
+  );
   const badge = suitabilityBadgeLabel(
     recommendation.suitabilityScore,
     recommendation.hardConstraintRejected,
   );
+  const scorePct = Math.max(
+    0,
+    Math.min(100, recommendation.suitabilityScore),
+  );
+  const sourceLandUse = extractSourceReportedLandUseFromCriteria([
+    ...recommendation.matchingCriteria.map((c) => c.summary),
+    ...recommendation.failedCriteria.map((c) => c.summary),
+  ]);
+  const bullets = explanationToBullets(recommendation.explanation);
+  const allCriteria = [
+    ...recommendation.matchingCriteria,
+    ...recommendation.failedCriteria,
+  ];
+  const hasRestrictions = recommendation.restrictions.length > 0;
 
   return (
-    <article className={styles.card}>
-      <div className={styles.header}>
-        <div className={styles.rankBlock}>
-          <span className={styles.rank}>#{recommendation.rank}</span>
-          <div>
+    <article
+      className={`${styles.card} ${
+        recommendation.hardConstraintRejected ? styles.cardRejected : ""
+      }`}
+    >
+      <button
+        type="button"
+        className={styles.summary}
+        aria-expanded={expanded}
+        aria-controls={panelId}
+        onClick={() => setExpanded((open) => !open)}
+      >
+        <span className={styles.rank} aria-label={`Rank ${recommendation.rank}`}>
+          #{recommendation.rank}
+        </span>
+
+        <div className={styles.mainMeta}>
+          <div className={styles.titleRow}>
             <h3 className={styles.title}>
               {displayOrUnknown(recommendation.cadastralNumber)}
             </h3>
-            <p className={styles.subtitle}>
-              Parcel ID: {recommendation.parcelId}
-            </p>
-            <StatusBadge
-              tone={recommendation.hardConstraintRejected ? "danger" : "primary"}
-            >
-              {badge}
-            </StatusBadge>
+            <StatusBadge tone={statusTone(status)}>{badge}</StatusBadge>
           </div>
+          <p className={styles.metaLine}>
+            {searchDistrict
+              ? `Search district: ${searchDistrict}`
+              : "District: filter not applied"}
+            {" · "}
+            Area: Unavailable in recommendation payload
+          </p>
+          {recommendation.candidateStatusLabel ? (
+            <p className={styles.metaLine}>
+              Candidate status: {recommendation.candidateStatusLabel}
+            </p>
+          ) : null}
+          {recommendation.sourceReportedClaimantCategoryDisplay ? (
+            <p className={styles.metaLine}>
+              Source-reported claimant category:{" "}
+              {recommendation.sourceReportedClaimantCategoryDisplay}
+              {recommendation.sourceReportedClaimantCategoryCode
+                ? ` (code ${recommendation.sourceReportedClaimantCategoryCode})`
+                : ""}
+            </p>
+          ) : null}
+          {sourceLandUse ? (
+            <p className={styles.metaLine}>
+              Source-reported land use: {sourceLandUse}
+            </p>
+          ) : null}
+          <p className={styles.sourceNote}>
+            Decision-support screening only. Source-reported claimant category and
+            land use do not prove ownership, lease availability, or legal
+            suitability. Official confirmation is required.
+          </p>
         </div>
+
         <div
-          className={styles.score}
-          aria-label="Rule-based suitability score out of 100"
+          className={styles.scoreBlock}
+          aria-label={`Rule-based suitability score ${formatRuleScore(recommendation.suitabilityScore)} out of 100`}
         >
           <span className={styles.scoreValue}>
             {formatRuleScore(recommendation.suitabilityScore)}
           </span>
           <span className={styles.scoreHint}>/ 100 rule score</span>
+          <div className={styles.scoreTrack} aria-hidden>
+            <div
+              className={`${styles.scoreFill} ${scoreFillClass(status)}`}
+              style={{ width: `${scorePct}%` }}
+            />
+          </div>
         </div>
-      </div>
 
-      {recommendation.hardConstraintRejected ? (
-        <StatusBadge tone="danger">
-          Hard constraint rejected:{" "}
-          {displayOrUnknown(recommendation.hardConstraintReason)}
-        </StatusBadge>
-      ) : null}
+        <ChevronDown
+          className={`${styles.chevron} ${expanded ? styles.chevronOpen : ""}`}
+          size={18}
+          aria-hidden
+        />
+      </button>
 
-      <p className={styles.explanation}>
-        {displayOrUnknown(recommendation.explanation)}
-      </p>
-
-      <CriteriaList
-        title="Matching criteria"
-        criteria={recommendation.matchingCriteria}
-      />
-      <CriteriaList
-        title="Failed criteria"
-        criteria={recommendation.failedCriteria}
-      />
-
-      <section className={listStyles.section}>
-        <h4 className={listStyles.sectionTitle}>Restrictions</h4>
-        {recommendation.restrictions.length === 0 ? (
-          <p className={listStyles.empty}>None reported by the API</p>
-        ) : (
-          <ul className={listStyles.list}>
-            {recommendation.restrictions.map((item, index) => (
-              <li
-                key={`${item.restrictionType}-${index}`}
-                className={listStyles.item}
-              >
-                <p className={listStyles.meta}>
-                  <strong>{displayOrUnknown(item.restrictionType)}</strong> ·{" "}
-                  {restrictionSeverityLabels[item.severity] ?? "Unknown"} ·{" "}
-                  {displayOrUnknown(item.source)}
-                </p>
-                <p>{displayOrUnknown(item.description)}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <EvidenceList evidence={recommendation.evidence} />
-
-      <div className={styles.footer}>
-        <Button
-          href={`/land-intelligence/parcels/${recommendation.parcelId}`}
-          variant="primary"
-        >
-          View Full Parcel Intelligence
-        </Button>
+      <div className={styles.actionsRow}>
         <Button
           href={`/land-intelligence/parcels/${recommendation.parcelId}/map`}
           variant="secondary"
@@ -113,7 +198,219 @@ export function RecommendationCard({
           <MapPin size={16} aria-hidden />
           View on map
         </Button>
+        <Button
+          href={`/land-intelligence/parcels/${recommendation.parcelId}`}
+          variant="primary"
+        >
+          Parcel intelligence
+        </Button>
+        <SaveParcelButton parcelId={recommendation.parcelId} />
+        <Button
+          href={`/land-intelligence/parcels/${recommendation.parcelId}/lease-interest`}
+          variant="secondary"
+        >
+          Express lease interest
+        </Button>
       </div>
+
+      {expanded ? (
+        <div id={panelId} className={styles.details}>
+          {recommendation.hardConstraintRejected ? (
+            <p className={styles.hardBanner} role="status">
+              Hard constraint rejected:{" "}
+              {displayOrUnknown(recommendation.hardConstraintReason)}
+            </p>
+          ) : null}
+
+          <div className={styles.tabs} role="tablist" aria-label="Result details">
+            {(
+              [
+                ["why", "Why this rank"],
+                ["criteria", "Criteria"],
+                ["restrictions", `Restrictions${hasRestrictions ? ` (${recommendation.restrictions.length})` : ""}`],
+                ["evidence", "Evidence"],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={tab === id}
+                className={`${styles.tab} ${tab === id ? styles.tabActive : ""}`}
+                onClick={() => setTab(id)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.panel} role="tabpanel">
+            {tab === "why" ? (
+              <>
+                {recommendation.candidateStatusReason ? (
+                  <div className={styles.factorGroup}>
+                    <p className={styles.factorLabel}>Candidate screening</p>
+                    <p className={styles.lead}>
+                      {recommendation.candidateStatusLabel
+                        ? `${recommendation.candidateStatusLabel}. `
+                        : ""}
+                      {recommendation.candidateStatusReason}
+                    </p>
+                    <ul className={styles.factorList}>
+                      {recommendation.sourceProvenanceLabel ? (
+                        <li>
+                          Provenance: {recommendation.sourceProvenanceLabel}
+                        </li>
+                      ) : null}
+                      {recommendation.sourceParcelStatusCode ? (
+                        <li>
+                          Source parcel status code (not lease availability):{" "}
+                          {recommendation.sourceParcelStatusCode}
+                        </li>
+                      ) : (
+                        <li>
+                          Source parcel status: not provided — availability not
+                          verified
+                        </li>
+                      )}
+                      {recommendation.sourceImportedAtUtc ? (
+                        <li>
+                          Source imported:{" "}
+                          {new Date(
+                            recommendation.sourceImportedAtUtc,
+                          ).toLocaleString()}
+                        </li>
+                      ) : null}
+                    </ul>
+                  </div>
+                ) : null}
+                <p className={styles.lead}>{bullets.lead}</p>
+                {bullets.positives.length > 0 ? (
+                  <div className={styles.factorGroup}>
+                    <p className={styles.factorLabel}>Positive factors</p>
+                    <ul className={styles.factorList}>
+                      {bullets.positives.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {bullets.concerns.length > 0 ? (
+                  <div className={styles.factorGroup}>
+                    <p className={styles.factorLabel}>Concerns / failed criteria</p>
+                    <ul className={styles.factorList}>
+                      {bullets.concerns.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+              </>
+            ) : null}
+
+            {tab === "criteria" ? (
+              allCriteria.length === 0 ? (
+                <p className={styles.empty}>No criteria returned by the API.</p>
+              ) : (
+                <div style={{ overflowX: "auto" }}>
+                  <table className={styles.criteriaTable}>
+                    <thead>
+                      <tr>
+                        <th scope="col">Criterion</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Weight</th>
+                        <th scope="col">Source</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allCriteria.map((criterion) => {
+                        const statusInfo = criterionStatusLabel(criterion);
+                        return (
+                          <tr key={`${criterion.key}-${criterion.name}`}>
+                            <td>
+                              <span className={styles.criteriaName}>
+                                {criterion.name}
+                              </span>
+                              <span className={styles.criteriaSummary}>
+                                {displayOrUnknown(
+                                  criterion.wasAssessed === false
+                                    ? criterion.notAssessedReason ||
+                                        criterion.summary
+                                    : criterion.summary,
+                                )}
+                              </span>
+                            </td>
+                            <td>
+                              <StatusBadge tone={statusInfo.tone}>
+                                {statusInfo.label}
+                              </StatusBadge>
+                            </td>
+                            <td>{criterion.score}</td>
+                            <td>{criterion.weight}</td>
+                            <td>
+                              {criterion.dataProvenance?.sourceName
+                                ? displayOrUnknown(
+                                    criterion.dataProvenance.sourceName,
+                                  )
+                                : "Rule-based criterion"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )
+            ) : null}
+
+            {tab === "restrictions" ? (
+              !hasRestrictions ? (
+                <p className={styles.empty}>
+                  No restrictions reported for this parcel in the API response.
+                </p>
+              ) : (
+                <ul className={styles.restrictionList}>
+                  {recommendation.restrictions.map((item, index) => (
+                    <li
+                      key={`${item.restrictionType}-${index}`}
+                      className={`${styles.restrictionItem} ${restrictionSeverityClass(item.severity)}`}
+                    >
+                      <div className={styles.restrictionHeader}>
+                        <strong>
+                          {displayOrUnknown(item.restrictionType)}
+                        </strong>
+                        <StatusBadge
+                          tone={
+                            item.severity >= 4
+                              ? "danger"
+                              : item.severity >= 2
+                                ? "warning"
+                                : "neutral"
+                          }
+                        >
+                          {restrictionSeverityLabels[item.severity] ??
+                            "Unknown"}
+                        </StatusBadge>
+                        <span className={styles.sourceNote}>
+                          Source: {displayOrUnknown(item.source)}
+                        </span>
+                      </div>
+                      <p className={styles.restrictionDesc}>
+                        {displayOrUnknown(item.description)}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )
+            ) : null}
+
+            {tab === "evidence" ? (
+              <EvidenceList evidence={recommendation.evidence} />
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </article>
   );
 }

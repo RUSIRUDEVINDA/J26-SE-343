@@ -78,31 +78,3 @@ export const landCategoryOptions = [
     label,
   })),
 ];
-
-export const roadDistanceOptions = [
-  { value: "", label: "No preference", meters: null as number | null },
-  { value: "1000", label: "Within 1 km", meters: 1000 },
-  { value: "5000", label: "Within 5 km", meters: 5000 },
-  { value: "10000", label: "Within 10 km", meters: 10000 },
-];
-
-export const environmentalPreferenceOptions = [
-  {
-    value: "conservation",
-    label: "Outside mapped conservation intersections",
-    severity: RestrictionSeverity.Medium,
-    rejectProhibitive: true,
-  },
-  {
-    value: "strict",
-    label: "Strict — reject prohibitive restrictions",
-    severity: RestrictionSeverity.Low,
-    rejectProhibitive: true,
-  },
-  {
-    value: "permissive",
-    label: "Permissive — allow higher severity",
-    severity: RestrictionSeverity.High,
-    rejectProhibitive: false,
-  },
-];

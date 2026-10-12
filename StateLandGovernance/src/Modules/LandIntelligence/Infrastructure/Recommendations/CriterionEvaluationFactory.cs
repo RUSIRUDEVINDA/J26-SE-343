@@ -15,7 +15,9 @@ internal static class CriterionEvaluationFactory
         decimal weight,
         string summary,
         Domain.ValueObjects.AttributeProvenance? dataProvenance = null,
-        string? attributePath = null) =>
+        string? attributePath = null,
+        bool wasAssessed = true,
+        string? notAssessedReason = null) =>
         new(
             key,
             name,
@@ -23,8 +25,10 @@ internal static class CriterionEvaluationFactory
             isMet,
             Math.Clamp(score, 0m, 100m),
             weight,
-            Math.Clamp(score, 0m, 100m) * weight,
+            wasAssessed ? Math.Clamp(score, 0m, 100m) * weight : 0m,
             summary,
             AttributeProvenanceMapper.ToDto(dataProvenance),
-            attributePath);
+            attributePath,
+            wasAssessed,
+            notAssessedReason);
 }
