@@ -232,4 +232,3 @@ public sealed record GovernanceInputProvenance
         }
     }
 }
-
