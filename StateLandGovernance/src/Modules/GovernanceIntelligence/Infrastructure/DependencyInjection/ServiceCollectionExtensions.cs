@@ -7,11 +7,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Application.Projections;
 using StateLandGovernance.GovernanceIntelligence.Application.Queries;
+using StateLandGovernance.GovernanceIntelligence.Application.Timing;
+using StateLandGovernance.GovernanceIntelligence.Application.WorkflowAnomaly;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.Blockchain;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.ComplaintClassification;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.EarlyGovernanceReferral;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.WorkflowAnomaly;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.BackgroundServices;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
 
@@ -45,7 +49,18 @@ public static class ServiceCollectionExtensions
 
         services.AddComplaintClassifier(configuration);
         services.AddWorkflowAnomalyClient(configuration);
-        services.TryAddSingleton<IEarlyGovernanceReferralHandoff, UnconfiguredEarlyGovernanceReferralHandoff>();
+        var enablePp1SyntheticIntegration = environment.IsDevelopment() &&
+            configuration.GetValue<bool>("GovernanceIntelligence:Pp1:EnableSyntheticIntegration", false);
+        if (enablePp1SyntheticIntegration)
+        {
+            services.AddSingleton<IEarlyGovernanceReferralHandoff, SyntheticPp1ReferralHandoff>();
+            services.AddSingleton<IEarlyGovernanceReferralPolicy, Pp1EarlyGovernanceReferralPolicy>();
+            services.AddTransient<ApplyPp1SeedScenarioCommandHandler>();
+        }
+        else
+        {
+            services.TryAddSingleton<IEarlyGovernanceReferralHandoff, UnconfiguredEarlyGovernanceReferralHandoff>();
+        }
 
         var connectionString = configuration.GetConnectionString("GovernanceIntelligenceConnection")
             ?? Environment.GetEnvironmentVariable("GOVERNANCE_INTELLIGENCE_CONNECTION");
@@ -59,10 +74,15 @@ public static class ServiceCollectionExtensions
                 }));
 
             services.AddScoped<IGovernanceAuditRepository, PostgresGovernanceAuditRepository>();
+            services.AddScoped<IGovernanceAuditCaseHistoryReader, PostgresGovernanceAuditRepository>();
             services.AddScoped<IGovernanceEvaluationStore, PostgresGovernanceEvaluationStore>();
             services.AddScoped<IComplianceRuleCatalogue, PostgresComplianceRuleCatalogue>();
             services.AddScoped<IEarlyGovernanceScreeningStore, PostgresEarlyGovernanceScreeningStore>();
             services.AddScoped<IComplaintClassificationAssessmentStore, PostgresComplaintClassificationAssessmentStore>();
+            services.AddScoped<IComponent1GovernanceCaseProjectionStore, PostgresComponent1GovernanceCaseProjectionStore>();
+            services.AddScoped<IComponent3WorkflowGovernanceProjectionStore, PostgresComponent3WorkflowGovernanceProjectionStore>();
+            services.AddScoped<IWorkflowAnomalyAssessmentStore, PostgresWorkflowAnomalyAssessmentStore>();
+            services.AddScoped<ILeaseApprovalTimingAssessmentStore, PostgresLeaseApprovalTimingAssessmentStore>();
             services.AddScoped<IGovernanceAuditAnchorStore, PostgresGovernanceAuditAnchorStore>();
             services.AddScoped<IGovernanceDashboardReader, GovernanceDashboardReader>();
         }
@@ -79,6 +99,18 @@ public static class ServiceCollectionExtensions
             services.AddScoped<IComplaintClassificationAssessmentStore>(_ =>
                 throw new InvalidOperationException(
                     "Missing PostgreSQL configuration: Connection string 'GovernanceIntelligenceConnection' or environment variable 'GOVERNANCE_INTELLIGENCE_CONNECTION' is required for complaint classification persistence. In-memory storage is not supported."));
+            services.AddScoped<IComponent1GovernanceCaseProjectionStore>(_ =>
+                throw new InvalidOperationException(
+                    "Missing PostgreSQL configuration: Connection string 'GovernanceIntelligenceConnection' or environment variable 'GOVERNANCE_INTELLIGENCE_CONNECTION' is required for Component 1 case projection persistence. In-memory storage is not supported."));
+            services.AddScoped<IComponent3WorkflowGovernanceProjectionStore>(_ =>
+                throw new InvalidOperationException(
+                    "Missing PostgreSQL configuration: Connection string 'GovernanceIntelligenceConnection' or environment variable 'GOVERNANCE_INTELLIGENCE_CONNECTION' is required for Component 3 workflow projection persistence. In-memory storage is not supported."));
+            services.AddScoped<IWorkflowAnomalyAssessmentStore>(_ =>
+                throw new InvalidOperationException(
+                    "Missing PostgreSQL configuration: Connection string 'GovernanceIntelligenceConnection' or environment variable 'GOVERNANCE_INTELLIGENCE_CONNECTION' is required for workflow anomaly assessment persistence. In-memory storage is not supported."));
+            services.AddScoped<ILeaseApprovalTimingAssessmentStore>(_ =>
+                throw new InvalidOperationException(
+                    "Missing PostgreSQL configuration: Connection string 'GovernanceIntelligenceConnection' or environment variable 'GOVERNANCE_INTELLIGENCE_CONNECTION' is required for lease approval timing assessment persistence. In-memory storage is not supported."));
         }
         else
         {
@@ -87,8 +119,12 @@ public static class ServiceCollectionExtensions
         }
 
         services.AddTransient<GetAuditReceiptQueryHandler>();
+        services.AddTransient<GetAuditHistoryByCaseQueryHandler>();
         services.AddTransient<VerifyAuditIntegrityQueryHandler>();
         services.AddTransient<GetGovernanceDashboardQueryHandler>();
+        services.AddTransient<AnchorAuditRecordCommandHandler>();
+        services.AddTransient<GetComplaintClassificationAssessmentQueryHandler>();
+        services.AddTransient<GetComplaintClassificationHistoryQueryHandler>();
 
         services.AddHttpClient<IBlockchainAuditAnchorService, HttpBlockchainAuditAnchorService>(
             (serviceProvider, client) =>
@@ -97,8 +133,11 @@ public static class ServiceCollectionExtensions
                 var baseUrl = cfg.GetValue<string>("GovernanceIntelligence:Blockchain:BaseUrl") ?? "http://localhost:8550/";
                 if (!baseUrl.EndsWith('/')) baseUrl += "/";
                 client.BaseAddress = new Uri(baseUrl);
-                client.Timeout = TimeSpan.FromSeconds(5);
+                client.Timeout = TimeSpan.FromSeconds(30);
             });
+
+        // Dispatches persisted audit hashes asynchronously; evaluations remain independent of ledger availability.
+        services.AddHostedService<GovernanceAuditAnchorOutboxProcessor>();
 
         return services;
     }
@@ -154,6 +193,11 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(configuration);
 
         services.AddSingleton<IValidateOptions<WorkflowAnomalyOptions>, WorkflowAnomalyOptionsValidator>();
+        services.TryAddSingleton(TimeProvider.System);
+        services.AddTransient<AssessWorkflowAnomalyCommandHandler>();
+        services.AddTransient<GetWorkflowAnomalyAssessmentQueryHandler>();
+        services.AddTransient<GetWorkflowAnomalyHistoryByCaseQueryHandler>();
+        services.AddTransient<GetWorkflowAnomalyHistoryByWorkflowRunQueryHandler>();
         services.AddOptions<WorkflowAnomalyOptions>()
             .Bind(configuration.GetSection(WorkflowAnomalyOptions.SectionName))
             .ValidateOnStart();
