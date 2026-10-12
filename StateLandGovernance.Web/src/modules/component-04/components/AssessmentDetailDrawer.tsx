@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useRef } from "react";
 import { AlertCircle, CheckCircle, HelpCircle, X, Sparkles } from "lucide-react";
 import type { GovernanceCaseAssessment } from "../types/governance";
 import { StatusBadge } from "@/shared/components/StatusBadge";
@@ -11,11 +13,21 @@ interface Props {
 }
 
 export function AssessmentDetailDrawer({ caseAssessment, onClose }: Props) {
+  const drawerRef = useRef<HTMLElement>(null);
   const isWarning = caseAssessment.overallStatus === "ReviewRequired";
   const isSuccess = caseAssessment.overallStatus === "Clear";
 
+  useEffect(() => {
+    drawerRef.current?.focus();
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [onClose]);
+
   return (
-    <article className={styles.drawerContainer} aria-label={`Governance Detail for ${caseAssessment.caseId}`}>
+    <article ref={drawerRef} tabIndex={-1} className={styles.drawerContainer} role="region" aria-labelledby="governance-detail-title">
       <div className={styles.headerRow}>
         <div className={styles.headerLeft}>
           {isWarning ? (
@@ -26,7 +38,7 @@ export function AssessmentDetailDrawer({ caseAssessment, onClose }: Props) {
             <HelpCircle className={styles.statusIconNeutral} size={28} aria-hidden="true" />
           )}
           <div className={styles.titleArea}>
-            <h2>
+            <h2 id="governance-detail-title">
               {isWarning
                 ? "Governance Review Required"
                 : isSuccess
