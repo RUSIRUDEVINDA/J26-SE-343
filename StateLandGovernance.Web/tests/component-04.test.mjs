@@ -14,18 +14,31 @@ const {
   GovernanceMalformedResponseError, GovernanceRequestTimeoutError,
   describeGovernanceRequestError, evaluateCompliance, evaluateConflicts,
   evaluateGovernanceRisk, explainGovernance, evaluateConsensus, verifyConditions,
+  classifyComplaint, predictWorkflowAnomaly, parseWorkflowAnomalyRequest,
+  screenEarlyGovernance, parseEarlyScreeningSeedInput, getAuditReceipt, verifyAuditIntegrity,
 } = loadCommonJs("../src/modules/component-04/services/governanceService.ts");
 const { ApiClientError } = loadCommonJs("../src/lib/apiClient.ts");
 const { MOCK_GOVERNANCE_DASHBOARD_DATA: fixture } = loadCommonJs("../src/modules/component-04/services/mockGovernanceData.ts");
 const { demoAnomaly } = loadCommonJs("../src/modules/component-04/services/demoEvidence.ts");
 
-test("Live mode never loads demo results or makes speculative API calls", async () => {
+test("Live dashboard failure never falls back to demo success", async () => {
   let requests = 0;
   const original = global.fetch;
-  global.fetch = async () => { requests++; throw new Error("Unexpected network request"); };
+  global.fetch = async () => { requests++; throw new Error("Backend offline"); };
   try {
-    await assert.rejects(getGovernanceService("live").getDashboard(), GovernanceUnavailableError);
-    assert.equal(requests, 0);
+    await assert.rejects(getGovernanceService("live").getDashboard(), /Backend offline/);
+    assert.equal(requests, 1);
+  } finally { global.fetch = original; }
+});
+test("Live dashboard success renders only the real response", async () => {
+  const original = global.fetch;
+  const live = { summary: { totalCases: 0, totalAssessments: 0, clearCount: 0, reviewRequiredCount: 0, insufficientInfoCount: 0, lastUpdated: "2026-10-11T00:00:00Z" }, cases: [] };
+  global.fetch = async url => {
+    assert.equal(url, "http://governance.test/api/governance-intelligence/dashboard");
+    return { ok: true, json: async () => live };
+  };
+  try {
+    assert.deepEqual(await getGovernanceService("live").getDashboard(), live);
   } finally { global.fetch = original; }
 });
 test("Explicit demo reads are isolated and use unique assessment identities", async () => {
@@ -167,4 +180,75 @@ test("Evaluation timeout aborts the request and reports timeout instead of succe
     global.fetch = originalFetch;
     global.setTimeout = originalSetTimeout;
   }
+});
+
+test("Complaint v2 response preserves assessment identity, original text, and exactly four probabilities", async () => {
+  const original = global.fetch;
+  const categories = [
+    "Administrative / Procedural / Integrity",
+    "Lease Revenue / Payment / Enforcement",
+    "Unauthorized Allocation / Transfer / Use",
+    "Protected / Environmental Lease Misuse",
+  ];
+  const response = {
+    assessmentId: "0199b9bc-9898-7000-8000-000000000001", caseId: "FICTIONAL-C4-001",
+    complaintText: "Fictional complaint text.", modelVersion: "v2", predictedCategory: categories[0],
+    classProbabilities: Object.fromEntries(categories.map((category, index) => [category, index === 0 ? 0.7 : 0.1])),
+    advisoryNote: "Machine prediction for human review.", closedSetNote: "Closed-set taxonomy.", assessedAtUtc: "2026-10-11T00:00:00Z",
+  };
+  global.fetch = async (url, init) => {
+    assert.equal(url, "http://governance.test/api/governance-intelligence/classify-complaint");
+    assert.equal(init.method, "POST");
+    return { ok: true, json: async () => response };
+  };
+  try {
+    const result = await classifyComplaint({ caseId: response.caseId, complaintText: response.complaintText });
+    assert.equal(result.modelVersion, "v2");
+    assert.equal(result.assessmentId, response.assessmentId);
+    assert.deepEqual(Object.keys(result.classProbabilities), categories);
+  } finally { global.fetch = original; }
+});
+
+test("Malformed complaint success response fails closed", async () => {
+  const original = global.fetch;
+  global.fetch = async () => ({ ok: true, json: async () => ({ modelVersion: "v2", classProbabilities: {} }) });
+  try {
+    await assert.rejects(classifyComplaint({ caseId: "case", complaintText: "text" }), GovernanceMalformedResponseError);
+  } finally { global.fetch = original; }
+});
+
+test("Incomplete or out-of-order anomaly traces are rejected before HTTP submission", () => {
+  assert.throws(() => parseWorkflowAnomalyRequest({ caseId: "case", events: [] }), /at least one event/);
+  assert.throws(() => parseWorkflowAnomalyRequest({ caseId: "case", events: [{ eventSeq: 2, activity: "A", institution: "I", resource: "R", timestamp: "2026-01-01T08:00:00" }] }), /eventSeq 1/);
+  assert.throws(() => parseWorkflowAnomalyRequest({ caseId: "case", events: [{ eventSeq: 1, activity: "", institution: "I", resource: "R", timestamp: "2026-01-01T08:00:00" }] }), /nonblank activity/);
+});
+
+test("Workflow anomaly response exposes score, threshold, flag, advisory, and nine features", async () => {
+  const original = global.fetch;
+  const request = parseWorkflowAnomalyRequest({ caseId: "FICTIONAL-TRACE-001", events: [{ eventSeq: 1, activity: "Received", institution: "DS", resource: "Officer", timestamp: "2026-01-01T08:00:00" }] });
+  const featureValues = { eventCount: 1, elapsedDays: 0, maxGapHours: 0, meanGapHours: 0, uniqueActivities: 1, repeatedActivityCount: 0, resourceHandoffs: 0, institutionSwitches: 0, distinctResources: 1 };
+  const response = { caseId: request.caseId, modelVersion: "workflow_anomaly_model_v1", anomalyScore: 0.4, threshold: 0.5743688923115832, flagged: false, featureValues, advisoryNote: "Advisory statistical result." };
+  global.fetch = async () => ({ ok: true, json: async () => response });
+  try {
+    assert.deepEqual(await predictWorkflowAnomaly(request), response);
+    assert.equal(Object.keys(featureValues).length, 9);
+  } finally { global.fetch = original; }
+});
+
+test("Early-screening status and blockchain receipt responses are validated", async () => {
+  const original = global.fetch;
+  const screening = { caseId: "FICTIONAL-C4-001", inputVersion: "v1", overallStatus: "ReviewRequired", hasIncompleteEvidence: false, indicatorResults: [{ indicatorType: "LegalDispute", evidenceState: "VerifiedPresent", requiresReview: true, needsEvidence: false, reasonCode: "LEGAL_DISPUTE", message: "Review required.", evidenceReference: "FICTIONAL-EVIDENCE", recordedAtUtc: "2026-10-11T00:00:00Z" }] };
+  const receipt = { recordId: "0199b9bc-9898-7000-8000-000000000002", engineType: "Compliance", actionName: "Evaluate", governanceStatus: "ReviewRequired", decisionRecordedAt: "2026-10-11T00:00:00Z", recordHash: "abc", verificationStatus: "Match", anchorStatus: "Anchored", ledgerTransactionReference: "0x123", blockNumber: 1, anchoredAtUtc: "2026-10-11T00:00:01Z", verifiedAtUtc: "2026-10-11T00:00:02Z", explanation: "Digest matched.", recordVersion: "AUDIT-V2" };
+  global.fetch = async url => ({ ok: true, json: async () => url.includes("screen-early-governance") ? screening : receipt });
+  try {
+    const screened = await screenEarlyGovernance({ assessmentId: crypto.randomUUID(), workflowRunId: crypto.randomUUID(), caseId: screening.caseId, inputVersion: "v1", indicators: [] });
+    assert.equal(screened.overallStatus, "ReviewRequired");
+    assert.equal((await getAuditReceipt(receipt.recordId)).verificationStatus, "Match");
+    assert.equal((await verifyAuditIntegrity(receipt.recordId)).ledgerTransactionReference, "0x123");
+  } finally { global.fetch = original; }
+});
+
+test("Early-screening input rejects unknown and duplicate indicators", () => {
+  assert.throws(() => parseEarlyScreeningSeedInput({ caseId: "case", inputVersion: "v1", indicators: [{ indicatorType: "InventedIndicator", evidenceState: "Missing" }] }), /invalid type or evidence state/);
+  assert.throws(() => parseEarlyScreeningSeedInput({ caseId: "case", inputVersion: "v1", indicators: [{ indicatorType: "LegalDispute", evidenceState: "Missing" }, { indicatorType: "LegalDispute", evidenceState: "VerifiedAbsent" }] }), /duplicated/);
 });
