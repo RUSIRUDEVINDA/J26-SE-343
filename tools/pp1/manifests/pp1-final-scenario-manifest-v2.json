@@ -1,0 +1,822 @@
+{
+  "isSynthetic": true,
+  "manifestVersion": 2,
+  "originalCaseIdsProhibited": [
+    "PP1-CLEAR-001",
+    "PP1-COMBINED-001",
+    "PP1-COMPLAINT-001",
+    "PP1-DELAYED-001",
+    "PP1-REFERRAL-001"
+  ],
+  "provenanceKind": "SyntheticPp1Seed",
+  "purpose": "PP1Demonstration",
+  "scenarios": [
+    {
+      "caseId": "PP1-FINAL-CLEAR-001",
+      "complaintText": null,
+      "component1ProjectionId": "ec68f222-3267-5f95-b154-576a1bb17b9b",
+      "component3ProjectionId": "72c9e15d-884d-5e84-9a11-b633a4ed78b9",
+      "coreEngineRequests": {},
+      "engineApplicability": {
+        "ComplaintClassification": {
+          "reason": "hasComplaint=false; no complaint endpoint call is permitted.",
+          "status": "NotApplicable"
+        },
+        "EarlyScreening": {
+          "reason": "Uses supplied deterministic screening evidence.",
+          "status": "Applicable"
+        },
+        "LeaseTiming": {
+          "reason": "Uses only supplied timing-boundary evidence and may return Unavailable.",
+          "status": "Applicable"
+        },
+        "ReferralHandoff": {
+          "reason": "Screening does not require referral.",
+          "status": "NotApplicable"
+        },
+        "RegulatoryCompliance": {
+          "reason": "Absent from explicit engines collection.",
+          "status": "NotApplicable"
+        },
+        "WorkflowAnomaly": {
+          "reason": "Completed contiguous trace satisfies the frozen v1 input contract.",
+          "status": "Applicable"
+        }
+      },
+      "engines": [
+        "EarlyScreening",
+        "WorkflowAnomaly",
+        "LeaseTiming"
+      ],
+      "expectedDeterministicOutcomes": {
+        "anomaly": "EligibleForLaterComputation",
+        "complaint": "NotApplicable",
+        "normalFlowExitRequested": false,
+        "referral": "NotRequired",
+        "screening": "Clear",
+        "timing": "WithinExpectation"
+      },
+      "generatedAtUtc": "2026-10-12T12:00:00Z",
+      "hasComplaint": false,
+      "referralId": null,
+      "screeningAssessmentId": "5c4d1f77-a8d9-51f2-b064-ed0e7fe3913a",
+      "screeningEvidence": [
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-CLEAR-001:LegalDispute",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "LegalDispute"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-CLEAR-001:UnauthorizedOccupation",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnauthorizedOccupation"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-CLEAR-001:UnauthorizedConstruction",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnauthorizedConstruction"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-CLEAR-001:FamilyOrInheritanceClaim",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "FamilyOrInheritanceClaim"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-CLEAR-001:MultipleClaimants",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "MultipleClaimants"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-CLEAR-001:UnresolvedObjection",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnresolvedObjection"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-CLEAR-001:PreviousIllegalLandActivity",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "PreviousIllegalLandActivity"
+        }
+      ],
+      "sourceRecordVersions": {
+        "component1": "pp1-seed-contract-v2:component1",
+        "component3": "pp1-seed-contract-v2:component3"
+      },
+      "syntheticSeedId": "PP1-FINAL-CLEAR-001",
+      "syntheticSeedVersion": "pp1-seed-contract-v2",
+      "timingEvidence": {
+        "approvalHandover": {
+          "occurredAtUtc": "2026-08-18T12:00:00Z",
+          "status": "Confirmed"
+        },
+        "roadmapStart": {
+          "occurredAtUtc": "2026-07-04T12:00:00Z",
+          "status": "Confirmed"
+        }
+      },
+      "workflow": {
+        "events": [
+          {
+            "activity": "Application Received",
+            "anomalyInputTimestamp": "2026-07-04T12:00:00",
+            "eventId": "PP1-FINAL-CLEAR-001-EVT-01",
+            "eventSeq": 1,
+            "institution": "DS",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-01",
+            "timestampUtc": "2026-07-04T12:00:00Z"
+          },
+          {
+            "activity": "Document Review",
+            "anomalyInputTimestamp": "2026-07-11T12:00:00",
+            "eventId": "PP1-FINAL-CLEAR-001-EVT-02",
+            "eventSeq": 2,
+            "institution": "LCGD",
+            "resource": "Officer-B",
+            "stageCode": "STAGE-02",
+            "timestampUtc": "2026-07-11T12:00:00Z"
+          },
+          {
+            "activity": "Field Inspection",
+            "anomalyInputTimestamp": "2026-07-18T12:00:00",
+            "eventId": "PP1-FINAL-CLEAR-001-EVT-03",
+            "eventSeq": 3,
+            "institution": "LCGD",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-03",
+            "timestampUtc": "2026-07-18T12:00:00Z"
+          },
+          {
+            "activity": "Regional Approval",
+            "anomalyInputTimestamp": "2026-07-25T12:00:00",
+            "eventId": "PP1-FINAL-CLEAR-001-EVT-04",
+            "eventSeq": 4,
+            "institution": "DS",
+            "resource": "Officer-B",
+            "stageCode": "STAGE-04",
+            "timestampUtc": "2026-07-25T12:00:00Z"
+          },
+          {
+            "activity": "DS Final Notification",
+            "anomalyInputTimestamp": "2026-08-01T12:00:00",
+            "eventId": "PP1-FINAL-CLEAR-001-EVT-05",
+            "eventSeq": 5,
+            "institution": "LCGD",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-05",
+            "timestampUtc": "2026-08-01T12:00:00Z"
+          }
+        ],
+        "state": "Completed",
+        "terminalActivity": "DS Final Notification",
+        "traceCompleteness": "CompletedTraceEligibleForAnomalyScoring"
+      },
+      "workflowRunId": "29f25362-a5bf-5249-8168-17148f2b08b9"
+    },
+    {
+      "caseId": "PP1-FINAL-REFERRAL-001",
+      "complaintText": null,
+      "component1ProjectionId": "bba776f4-d550-5c62-a466-bb36abb911f5",
+      "component3ProjectionId": "d4d500ca-2da6-535c-a56a-2170d890353a",
+      "coreEngineRequests": {},
+      "engineApplicability": {
+        "ComplaintClassification": {
+          "reason": "hasComplaint=false; no complaint endpoint call is permitted.",
+          "status": "NotApplicable"
+        },
+        "EarlyScreening": {
+          "reason": "Uses supplied deterministic screening evidence.",
+          "status": "Applicable"
+        },
+        "LeaseTiming": {
+          "reason": "Uses only supplied timing-boundary evidence and may return Unavailable.",
+          "status": "Applicable"
+        },
+        "ReferralHandoff": {
+          "reason": "Deterministic screening is expected to require SyntheticPp1Handoff.",
+          "status": "Applicable"
+        },
+        "RegulatoryCompliance": {
+          "reason": "Absent from explicit engines collection.",
+          "status": "NotApplicable"
+        },
+        "WorkflowAnomaly": {
+          "reason": "Workflow is ongoing or incomplete; anomaly inference is not permitted.",
+          "status": "NotEligible"
+        }
+      },
+      "engines": [
+        "EarlyScreening",
+        "LeaseTiming",
+        "ReferralHandoff"
+      ],
+      "expectedDeterministicOutcomes": {
+        "anomaly": "NotEligible",
+        "complaint": "NotApplicable",
+        "normalFlowExitRequested": true,
+        "referral": "SyntheticPp1Handoff",
+        "screening": "ReviewRequired",
+        "timing": "BasedOnAvailableEvidence"
+      },
+      "generatedAtUtc": "2026-10-12T13:00:00Z",
+      "hasComplaint": false,
+      "referralId": "6201b243-9134-5f93-a6ae-9f1fd0375233",
+      "screeningAssessmentId": "3befa576-2e66-5ec3-8930-6fd1d617212c",
+      "screeningEvidence": [
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-REFERRAL-001:LegalDispute",
+          "evidenceState": "VerifiedPresent",
+          "indicatorType": "LegalDispute"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-REFERRAL-001:UnauthorizedOccupation",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnauthorizedOccupation"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-REFERRAL-001:UnauthorizedConstruction",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnauthorizedConstruction"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-REFERRAL-001:FamilyOrInheritanceClaim",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "FamilyOrInheritanceClaim"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-REFERRAL-001:MultipleClaimants",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "MultipleClaimants"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-REFERRAL-001:UnresolvedObjection",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnresolvedObjection"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-REFERRAL-001:PreviousIllegalLandActivity",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "PreviousIllegalLandActivity"
+        }
+      ],
+      "sourceRecordVersions": {
+        "component1": "pp1-seed-contract-v2:component1",
+        "component3": "pp1-seed-contract-v2:component3"
+      },
+      "syntheticSeedId": "PP1-FINAL-REFERRAL-001",
+      "syntheticSeedVersion": "pp1-seed-contract-v2",
+      "timingEvidence": {
+        "approvalHandover": {
+          "occurredAtUtc": null,
+          "status": "Unavailable"
+        },
+        "roadmapStart": {
+          "occurredAtUtc": "2026-07-04T13:00:00Z",
+          "status": "Confirmed"
+        }
+      },
+      "workflow": {
+        "events": [
+          {
+            "activity": "Application Received",
+            "anomalyInputTimestamp": "2026-07-04T13:00:00",
+            "eventId": "PP1-FINAL-REFERRAL-001-EVT-01",
+            "eventSeq": 1,
+            "institution": "DS",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-01",
+            "timestampUtc": "2026-07-04T13:00:00Z"
+          },
+          {
+            "activity": "Document Review",
+            "anomalyInputTimestamp": "2026-07-11T13:00:00",
+            "eventId": "PP1-FINAL-REFERRAL-001-EVT-02",
+            "eventSeq": 2,
+            "institution": "LCGD",
+            "resource": "Officer-B",
+            "stageCode": "STAGE-02",
+            "timestampUtc": "2026-07-11T13:00:00Z"
+          },
+          {
+            "activity": "Field Inspection",
+            "anomalyInputTimestamp": "2026-07-18T13:00:00",
+            "eventId": "PP1-FINAL-REFERRAL-001-EVT-03",
+            "eventSeq": 3,
+            "institution": "LCGD",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-03",
+            "timestampUtc": "2026-07-18T13:00:00Z"
+          },
+          {
+            "activity": "Regional Approval",
+            "anomalyInputTimestamp": "2026-07-25T13:00:00",
+            "eventId": "PP1-FINAL-REFERRAL-001-EVT-04",
+            "eventSeq": 4,
+            "institution": "DS",
+            "resource": "Officer-B",
+            "stageCode": "STAGE-04",
+            "timestampUtc": "2026-07-25T13:00:00Z"
+          }
+        ],
+        "state": "Ongoing",
+        "terminalActivity": "Regional Approval",
+        "traceCompleteness": "PartialTraceIneligibleForAnomalyScoring"
+      },
+      "workflowRunId": "fabc6128-ed8c-5013-b6dd-69aa5d61721e"
+    },
+    {
+      "caseId": "PP1-FINAL-DELAYED-001",
+      "complaintText": null,
+      "component1ProjectionId": "2ca54300-959f-58ed-8719-cca3ee6e9fb5",
+      "component3ProjectionId": "a4e8ba46-04a9-5f9b-ade7-2891705a1676",
+      "coreEngineRequests": {},
+      "engineApplicability": {
+        "ComplaintClassification": {
+          "reason": "hasComplaint=false; no complaint endpoint call is permitted.",
+          "status": "NotApplicable"
+        },
+        "EarlyScreening": {
+          "reason": "Uses supplied deterministic screening evidence.",
+          "status": "Applicable"
+        },
+        "LeaseTiming": {
+          "reason": "Uses only supplied timing-boundary evidence and may return Unavailable.",
+          "status": "Applicable"
+        },
+        "ReferralHandoff": {
+          "reason": "Screening does not require referral.",
+          "status": "NotApplicable"
+        },
+        "RegulatoryCompliance": {
+          "reason": "Absent from explicit engines collection.",
+          "status": "NotApplicable"
+        },
+        "WorkflowAnomaly": {
+          "reason": "Completed contiguous trace satisfies the frozen v1 input contract.",
+          "status": "Applicable"
+        }
+      },
+      "engines": [
+        "EarlyScreening",
+        "WorkflowAnomaly",
+        "LeaseTiming"
+      ],
+      "expectedDeterministicOutcomes": {
+        "anomaly": "EligibleForLaterComputation",
+        "complaint": "NotApplicable",
+        "normalFlowExitRequested": false,
+        "referral": "NotRequired",
+        "screening": "Clear",
+        "timing": "ExceededExpectation"
+      },
+      "generatedAtUtc": "2026-10-12T14:00:00Z",
+      "hasComplaint": false,
+      "referralId": null,
+      "screeningAssessmentId": "8afa2bc4-9ade-58fd-874d-b0efce92280a",
+      "screeningEvidence": [
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-DELAYED-001:LegalDispute",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "LegalDispute"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-DELAYED-001:UnauthorizedOccupation",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnauthorizedOccupation"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-DELAYED-001:UnauthorizedConstruction",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnauthorizedConstruction"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-DELAYED-001:FamilyOrInheritanceClaim",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "FamilyOrInheritanceClaim"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-DELAYED-001:MultipleClaimants",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "MultipleClaimants"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-DELAYED-001:UnresolvedObjection",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnresolvedObjection"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-DELAYED-001:PreviousIllegalLandActivity",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "PreviousIllegalLandActivity"
+        }
+      ],
+      "sourceRecordVersions": {
+        "component1": "pp1-seed-contract-v2:component1",
+        "component3": "pp1-seed-contract-v2:component3"
+      },
+      "syntheticSeedId": "PP1-FINAL-DELAYED-001",
+      "syntheticSeedVersion": "pp1-seed-contract-v2",
+      "timingEvidence": {
+        "approvalHandover": {
+          "occurredAtUtc": "2026-09-17T14:00:00Z",
+          "status": "Confirmed"
+        },
+        "roadmapStart": {
+          "occurredAtUtc": "2026-07-04T14:00:00Z",
+          "status": "Confirmed"
+        }
+      },
+      "workflow": {
+        "events": [
+          {
+            "activity": "Application Received",
+            "anomalyInputTimestamp": "2026-07-04T14:00:00",
+            "eventId": "PP1-FINAL-DELAYED-001-EVT-01",
+            "eventSeq": 1,
+            "institution": "DS",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-01",
+            "timestampUtc": "2026-07-04T14:00:00Z"
+          },
+          {
+            "activity": "Document Review",
+            "anomalyInputTimestamp": "2026-07-16T14:00:00",
+            "eventId": "PP1-FINAL-DELAYED-001-EVT-02",
+            "eventSeq": 2,
+            "institution": "LCGD",
+            "resource": "Officer-B",
+            "stageCode": "STAGE-02",
+            "timestampUtc": "2026-07-16T14:00:00Z"
+          },
+          {
+            "activity": "Field Inspection",
+            "anomalyInputTimestamp": "2026-07-28T14:00:00",
+            "eventId": "PP1-FINAL-DELAYED-001-EVT-03",
+            "eventSeq": 3,
+            "institution": "LCGD",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-03",
+            "timestampUtc": "2026-07-28T14:00:00Z"
+          },
+          {
+            "activity": "Regional Approval",
+            "anomalyInputTimestamp": "2026-08-09T14:00:00",
+            "eventId": "PP1-FINAL-DELAYED-001-EVT-04",
+            "eventSeq": 4,
+            "institution": "DS",
+            "resource": "Officer-B",
+            "stageCode": "STAGE-04",
+            "timestampUtc": "2026-08-09T14:00:00Z"
+          },
+          {
+            "activity": "DS Final Notification",
+            "anomalyInputTimestamp": "2026-08-21T14:00:00",
+            "eventId": "PP1-FINAL-DELAYED-001-EVT-05",
+            "eventSeq": 5,
+            "institution": "LCGD",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-05",
+            "timestampUtc": "2026-08-21T14:00:00Z"
+          }
+        ],
+        "state": "Completed",
+        "terminalActivity": "DS Final Notification",
+        "traceCompleteness": "CompletedTraceEligibleForAnomalyScoring"
+      },
+      "workflowRunId": "9a01c989-80da-5302-b20d-9da47c6b8700"
+    },
+    {
+      "caseId": "PP1-FINAL-COMPLAINT-001",
+      "complaintText": "Lease revenue payments were recorded, but an enforcement notice still requests the same amount.",
+      "component1ProjectionId": "ce488c73-0531-5d91-943b-ba2cecfea78f",
+      "component3ProjectionId": "fff96f68-23e0-5752-9d01-85795847f16a",
+      "coreEngineRequests": {},
+      "engineApplicability": {
+        "ComplaintClassification": {
+          "reason": "Complaint declared and validated.",
+          "status": "Applicable"
+        },
+        "EarlyScreening": {
+          "reason": "Uses supplied deterministic screening evidence.",
+          "status": "Applicable"
+        },
+        "LeaseTiming": {
+          "reason": "Uses only supplied timing-boundary evidence and may return Unavailable.",
+          "status": "Applicable"
+        },
+        "ReferralHandoff": {
+          "reason": "Screening does not require referral.",
+          "status": "NotApplicable"
+        },
+        "RegulatoryCompliance": {
+          "reason": "Absent from explicit engines collection.",
+          "status": "NotApplicable"
+        },
+        "WorkflowAnomaly": {
+          "reason": "Workflow is ongoing or incomplete; anomaly inference is not permitted.",
+          "status": "NotEligible"
+        }
+      },
+      "engines": [
+        "EarlyScreening",
+        "ComplaintClassification",
+        "LeaseTiming"
+      ],
+      "expectedDeterministicOutcomes": {
+        "anomaly": "NotEligible",
+        "complaint": "Applicable",
+        "normalFlowExitRequested": false,
+        "referral": "NotRequired",
+        "screening": "InsufficientInformation",
+        "timing": "Unavailable"
+      },
+      "generatedAtUtc": "2026-10-12T15:00:00Z",
+      "hasComplaint": true,
+      "referralId": null,
+      "screeningAssessmentId": "11eaa467-acf0-569f-87ae-d3bc19e0278e",
+      "screeningEvidence": [
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMPLAINT-001:LegalDispute",
+          "evidenceState": "Missing",
+          "indicatorType": "LegalDispute"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMPLAINT-001:UnauthorizedOccupation",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnauthorizedOccupation"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMPLAINT-001:UnauthorizedConstruction",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnauthorizedConstruction"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMPLAINT-001:FamilyOrInheritanceClaim",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "FamilyOrInheritanceClaim"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMPLAINT-001:MultipleClaimants",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "MultipleClaimants"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMPLAINT-001:UnresolvedObjection",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnresolvedObjection"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMPLAINT-001:PreviousIllegalLandActivity",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "PreviousIllegalLandActivity"
+        }
+      ],
+      "sourceRecordVersions": {
+        "component1": "pp1-seed-contract-v2:component1",
+        "component3": "pp1-seed-contract-v2:component3"
+      },
+      "syntheticSeedId": "PP1-FINAL-COMPLAINT-001",
+      "syntheticSeedVersion": "pp1-seed-contract-v2",
+      "timingEvidence": {
+        "approvalHandover": {
+          "occurredAtUtc": null,
+          "status": "Unavailable"
+        },
+        "roadmapStart": {
+          "occurredAtUtc": null,
+          "status": "Unconfirmed"
+        }
+      },
+      "workflow": {
+        "events": [
+          {
+            "activity": "Application Received",
+            "anomalyInputTimestamp": "2026-07-04T15:00:00",
+            "eventId": "PP1-FINAL-COMPLAINT-001-EVT-01",
+            "eventSeq": 1,
+            "institution": "DS",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-01",
+            "timestampUtc": "2026-07-04T15:00:00Z"
+          },
+          {
+            "activity": "Document Review",
+            "anomalyInputTimestamp": "2026-07-11T15:00:00",
+            "eventId": "PP1-FINAL-COMPLAINT-001-EVT-02",
+            "eventSeq": 2,
+            "institution": "LCGD",
+            "resource": "Officer-B",
+            "stageCode": "STAGE-02",
+            "timestampUtc": "2026-07-11T15:00:00Z"
+          },
+          {
+            "activity": "Field Inspection",
+            "anomalyInputTimestamp": "2026-07-18T15:00:00",
+            "eventId": "PP1-FINAL-COMPLAINT-001-EVT-03",
+            "eventSeq": 3,
+            "institution": "LCGD",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-03",
+            "timestampUtc": "2026-07-18T15:00:00Z"
+          }
+        ],
+        "state": "Ongoing",
+        "terminalActivity": "Field Inspection",
+        "traceCompleteness": "PartialTraceIneligibleForAnomalyScoring"
+      },
+      "workflowRunId": "39d38d06-0459-57c4-9d9c-343f7fa484d2"
+    },
+    {
+      "caseId": "PP1-FINAL-COMBINED-001",
+      "complaintText": "Protected land may have been transferred and occupied without authorization while review remains unresolved.",
+      "component1ProjectionId": "17d3c40a-909b-579a-8a51-a4fec9e416b7",
+      "component3ProjectionId": "6c1ae47a-04c3-5c24-9db6-3b7217ff3fd6",
+      "coreEngineRequests": {
+        "RegulatoryCompliance": {
+          "actionName": "PP1-FINAL-COMBINED-001 synthetic regulatory review",
+          "leaseAmount": 100000,
+          "leaseDurationYears": 30,
+          "proposedUse": "PublicPurposeLease",
+          "zoningArea": "PP1-SENSITIVE-ZONE"
+        }
+      },
+      "engineApplicability": {
+        "ComplaintClassification": {
+          "reason": "Complaint declared and validated.",
+          "status": "Applicable"
+        },
+        "EarlyScreening": {
+          "reason": "Uses supplied deterministic screening evidence.",
+          "status": "Applicable"
+        },
+        "LeaseTiming": {
+          "reason": "Uses only supplied timing-boundary evidence and may return Unavailable.",
+          "status": "Applicable"
+        },
+        "ReferralHandoff": {
+          "reason": "Deterministic screening is expected to require SyntheticPp1Handoff.",
+          "status": "Applicable"
+        },
+        "RegulatoryCompliance": {
+          "reason": "Explicitly listed core deterministic engine.",
+          "status": "Applicable"
+        },
+        "WorkflowAnomaly": {
+          "reason": "Completed contiguous trace satisfies the frozen v1 input contract.",
+          "status": "Applicable"
+        }
+      },
+      "engines": [
+        "EarlyScreening",
+        "ComplaintClassification",
+        "WorkflowAnomaly",
+        "LeaseTiming",
+        "ReferralHandoff",
+        "RegulatoryCompliance"
+      ],
+      "expectedDeterministicOutcomes": {
+        "anomaly": "EligibleForLaterComputation",
+        "complaint": "Applicable",
+        "normalFlowExitRequested": true,
+        "referral": "SyntheticPp1Handoff",
+        "screening": "ReviewRequired",
+        "timing": "ExceededExpectation"
+      },
+      "generatedAtUtc": "2026-10-12T16:00:00Z",
+      "hasComplaint": true,
+      "referralId": "ccfe29ff-bfee-5a2e-ba51-b53db6376ba8",
+      "screeningAssessmentId": "3845955c-a15f-52c4-839d-4b84c9b7ae8f",
+      "screeningEvidence": [
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMBINED-001:LegalDispute",
+          "evidenceState": "VerifiedPresent",
+          "indicatorType": "LegalDispute"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMBINED-001:UnauthorizedOccupation",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnauthorizedOccupation"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMBINED-001:UnauthorizedConstruction",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnauthorizedConstruction"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMBINED-001:FamilyOrInheritanceClaim",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "FamilyOrInheritanceClaim"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMBINED-001:MultipleClaimants",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "MultipleClaimants"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMBINED-001:UnresolvedObjection",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "UnresolvedObjection"
+        },
+        {
+          "evidenceReference": "SyntheticPp1Seed:PP1-FINAL-COMBINED-001:PreviousIllegalLandActivity",
+          "evidenceState": "VerifiedAbsent",
+          "indicatorType": "PreviousIllegalLandActivity"
+        }
+      ],
+      "sourceRecordVersions": {
+        "component1": "pp1-seed-contract-v2:component1",
+        "component3": "pp1-seed-contract-v2:component3"
+      },
+      "syntheticSeedId": "PP1-FINAL-COMBINED-001",
+      "syntheticSeedVersion": "pp1-seed-contract-v2",
+      "timingEvidence": {
+        "approvalHandover": {
+          "occurredAtUtc": "2026-09-17T16:00:00Z",
+          "status": "Confirmed"
+        },
+        "roadmapStart": {
+          "occurredAtUtc": "2026-07-04T16:00:00Z",
+          "status": "Confirmed"
+        }
+      },
+      "workflow": {
+        "events": [
+          {
+            "activity": "Application Received",
+            "anomalyInputTimestamp": "2026-07-04T16:00:00",
+            "eventId": "PP1-FINAL-COMBINED-001-EVT-01",
+            "eventSeq": 1,
+            "institution": "DS",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-01",
+            "timestampUtc": "2026-07-04T16:00:00Z"
+          },
+          {
+            "activity": "Document Review",
+            "anomalyInputTimestamp": "2026-07-16T16:00:00",
+            "eventId": "PP1-FINAL-COMBINED-001-EVT-02",
+            "eventSeq": 2,
+            "institution": "LCGD",
+            "resource": "Officer-B",
+            "stageCode": "STAGE-02",
+            "timestampUtc": "2026-07-16T16:00:00Z"
+          },
+          {
+            "activity": "Correction Requested",
+            "anomalyInputTimestamp": "2026-07-28T16:00:00",
+            "eventId": "PP1-FINAL-COMBINED-001-EVT-03",
+            "eventSeq": 3,
+            "institution": "LCGD",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-03",
+            "timestampUtc": "2026-07-28T16:00:00Z"
+          },
+          {
+            "activity": "Document Review",
+            "anomalyInputTimestamp": "2026-08-09T16:00:00",
+            "eventId": "PP1-FINAL-COMBINED-001-EVT-04",
+            "eventSeq": 4,
+            "institution": "DS",
+            "resource": "Officer-B",
+            "stageCode": "STAGE-04",
+            "timestampUtc": "2026-08-09T16:00:00Z"
+          },
+          {
+            "activity": "Field Inspection",
+            "anomalyInputTimestamp": "2026-08-21T16:00:00",
+            "eventId": "PP1-FINAL-COMBINED-001-EVT-05",
+            "eventSeq": 5,
+            "institution": "LCGD",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-05",
+            "timestampUtc": "2026-08-21T16:00:00Z"
+          },
+          {
+            "activity": "Regional Approval",
+            "anomalyInputTimestamp": "2026-09-02T16:00:00",
+            "eventId": "PP1-FINAL-COMBINED-001-EVT-06",
+            "eventSeq": 6,
+            "institution": "LCGD",
+            "resource": "Officer-B",
+            "stageCode": "STAGE-06",
+            "timestampUtc": "2026-09-02T16:00:00Z"
+          },
+          {
+            "activity": "DS Final Notification",
+            "anomalyInputTimestamp": "2026-09-14T16:00:00",
+            "eventId": "PP1-FINAL-COMBINED-001-EVT-07",
+            "eventSeq": 7,
+            "institution": "DS",
+            "resource": "Officer-A",
+            "stageCode": "STAGE-07",
+            "timestampUtc": "2026-09-14T16:00:00Z"
+          }
+        ],
+        "state": "Completed",
+        "terminalActivity": "DS Final Notification",
+        "traceCompleteness": "CompletedTraceEligibleForAnomalyScoring"
+      },
+      "workflowRunId": "15b01b00-6fb0-582f-980d-da953278311d"
+    }
+  ],
+  "syntheticSeedVersion": "pp1-seed-contract-v2"
+}
