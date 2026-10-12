@@ -592,6 +592,91 @@ export interface AuditCaseHistoryItem {
 
 export type PersistedHistoryItem = Readonly<Record<string, unknown>>;
 
+export interface WorkflowProjectionJourney {
+  projectionId: string;
+  caseId: string;
+  workflowRunId: string;
+  workflowState: string;
+  traceCompleteness: string;
+  assessmentEligibility: string;
+  legalRouteLabel: { availability: string; value: string | null };
+  isSynthetic: boolean;
+  provenanceKind: string;
+  purpose: string;
+  syntheticSeedId: string | null;
+  syntheticSeedVersion: string | null;
+  events: Array<{
+    eventSequence: number;
+    activity: string;
+    institution: string;
+    resource: string;
+    actorRole: string;
+    timestamp: string;
+    status: string;
+    evidenceReference: string | null;
+  }>;
+  routeApplicability: {
+    requiredClearances: { availability: string; value: string[] | null };
+    higherApprovalApplicable: { availability: string; value: boolean | null };
+    registrationApplicable: { availability: string; value: boolean | null };
+  };
+  completeProposalBoundary: WorkflowJourneyBoundary;
+  applicantHandoverBoundary: WorkflowJourneyBoundary;
+  ingestedAtUtc: string;
+}
+
+export interface WorkflowJourneyBoundary {
+  availability: string;
+  occurredAt: string | null;
+  source: string;
+  sourceReference: string;
+}
+
+export interface PersistedWorkflowAnomalyAssessment {
+  assessmentId: string;
+  workflowRunId: string;
+  caseId: string;
+  workflowProjectionId: string | null;
+  modelVersion: string;
+  anomalyScore: number;
+  threshold: number;
+  flagged: boolean;
+  eventCount: number;
+  elapsedDays: number;
+  maxGapHours: number;
+  meanGapHours: number;
+  uniqueActivities: number;
+  repeatedActivityCount: number;
+  resourceHandoffs: number;
+  institutionSwitches: number;
+  distinctResources: number;
+  advisoryNote: string;
+  assessedAtUtc: string;
+}
+
+function isWorkflowProjectionJourney(value: unknown): value is WorkflowProjectionJourney {
+  return hasStringFields(value, [
+    "projectionId", "caseId", "workflowRunId", "workflowState", "traceCompleteness",
+    "assessmentEligibility", "provenanceKind", "purpose", "ingestedAtUtc",
+  ]) && typeof value.isSynthetic === "boolean"
+    && Array.isArray(value.events)
+    && value.events.every(event => hasStringFields(event, ["activity", "institution", "resource", "actorRole", "timestamp", "status"])
+      && typeof event.eventSequence === "number")
+    && isObject(value.routeApplicability)
+    && isObject(value.completeProposalBoundary)
+    && isObject(value.applicantHandoverBoundary);
+}
+
+function isPersistedWorkflowAnomalyAssessment(value: unknown): value is PersistedWorkflowAnomalyAssessment {
+  const numericFields = [
+    "anomalyScore", "threshold", "eventCount", "elapsedDays", "maxGapHours", "meanGapHours",
+    "uniqueActivities", "repeatedActivityCount", "resourceHandoffs", "institutionSwitches", "distinctResources",
+  ];
+  return hasStringFields(value, ["assessmentId", "workflowRunId", "caseId", "modelVersion", "advisoryNote", "assessedAtUtc"])
+    && typeof value.flagged === "boolean"
+    && numericFields.every(field => isFiniteNumber(value[field]));
+}
+
 function isHistory(value: unknown): value is PersistedHistoryItem[] {
   return Array.isArray(value) && value.every(isObject);
 }
@@ -607,6 +692,32 @@ export const getComplaintHistoryByCase = (caseId: string, limit = 100) => getHis
 export const getWorkflowAnomalyHistoryByCase = (caseId: string, limit = 100) => getHistory("workflow-anomalies/history/cases", caseId, limit);
 export const getLeaseTimingHistoryByCase = (caseId: string, limit = 100) => getHistory("lease-timing/history/cases", caseId, limit);
 export const getReferralHistoryByCase = (caseId: string, limit = 100) => getHistory("referrals/history/cases", caseId, limit);
+
+export async function getWorkflowProjectionJourney(caseId: string): Promise<WorkflowProjectionJourney> {
+  const response = await apiGet<unknown>(`${governanceApiBasePath}/workflow-projections/cases/${encodeURIComponent(caseId)}`);
+  if (!isWorkflowProjectionJourney(response)) throw new GovernanceMalformedResponseError();
+  return response;
+}
+
+export async function getPersistedWorkflowAnomalyHistory(caseId: string): Promise<PersistedWorkflowAnomalyAssessment[]> {
+  const response = await apiGet<unknown>(`${governanceApiBasePath}/workflow-anomalies/history/cases/${encodeURIComponent(caseId)}?limit=100`);
+  if (!Array.isArray(response) || !response.every(isPersistedWorkflowAnomalyAssessment)) {
+    throw new GovernanceMalformedResponseError();
+  }
+  return response;
+}
+
+export async function assessPersistedWorkflowProjection(
+  projection: Pick<WorkflowProjectionJourney, "projectionId" | "caseId" | "workflowRunId">,
+): Promise<PersistedWorkflowAnomalyAssessment> {
+  const response = await postEvaluation<unknown>(`${governanceApiBasePath}/workflow-anomalies/assess`, {
+    workflowProjectionId: projection.projectionId,
+    caseId: projection.caseId,
+    workflowRunId: projection.workflowRunId,
+  });
+  if (!isPersistedWorkflowAnomalyAssessment(response)) throw new GovernanceMalformedResponseError();
+  return response;
+}
 
 export async function getAuditHistoryByCase(caseId: string, limit = 100): Promise<AuditCaseHistoryItem[]> {
   const response = await getHistory("audits/history/cases", caseId, limit);

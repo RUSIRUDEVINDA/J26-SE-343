@@ -4,24 +4,22 @@ import { Button } from "@/shared/components/Button";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { useGovernanceMode } from "./GovernanceWorkspace";
 import { Unavailable, Facts, Checks } from "./GovernancePanels";
-import { complaintCategories, demoComplaints, demoAnomaly, screeningIndicators } from "../services/demoEvidence";
+import { complaintCategories, demoComplaints, screeningIndicators } from "../services/demoEvidence";
 import { formatGovernanceTime } from "../adapters/presentation";
 import styles from "./GovernanceWorkspace.module.css";
 import { StructuredEvaluation } from "./LiveGovernanceEvaluations";
 import {
   classifyComplaint,
-  predictWorkflowAnomaly,
   screenEarlyGovernance,
   getAuditReceipt,
   verifyAuditIntegrity,
   describeGovernanceRequestError,
-  parseWorkflowAnomalyRequest,
   parseEarlyScreeningSeedInput,
   type ComplaintClassificationResponse,
-  type WorkflowAnomalyResponse,
   type EarlyScreeningResponse,
   type AuditVerificationReceiptResponse,
 } from "../services/governanceService";
+import { WorkflowAnomalyJourney } from "./WorkflowAnomalyJourney";
 
 
 export type Capability = "complaints" | "anomalies" | "screening" | "timing" | "commissioner" | "decision-review" | "summary" | "verification" | "audit" | "risk" | "explain" | "consensus" | "conditions";
@@ -202,121 +200,13 @@ function ComplaintView({ demo }: { demo: boolean }) {
 }
 
 function AnomalyView({ demo }: { demo: boolean }) {
-  const defaultTraceJson = JSON.stringify({
-    caseId: "SIM-C4-2026-001",
-    events: [
-      { eventSeq: 1, activity: "DS Application Received", institution: "DS", resource: "Simulated Intake Clerk", timestamp: "2026-01-21T08:30:00" },
-      { eventSeq: 2, activity: "DS Initial Review", institution: "DS", resource: "Simulated Officer A", timestamp: "2026-01-21T16:30:00" },
-      { eventSeq: 3, activity: "PLC/DLC Review", institution: "PLC/DLC", resource: "Simulated Reviewer B", timestamp: "2026-01-22T12:30:00" },
-      { eventSeq: 4, activity: "DS Technical Review", institution: "DS", resource: "Simulated Technical Officer", timestamp: "2026-01-23T12:30:00" },
-      { eventSeq: 5, activity: "DS Final Notification", institution: "DS", resource: "Simulated Officer C", timestamp: "2026-01-25T12:30:00" },
-    ]
-  }, null, 2);
-
-  const [inputJson, setInputJson] = useState(defaultTraceJson);
-  const [pending, setPending] = useState(false);
-  const [result, setResult] = useState<WorkflowAnomalyResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const item = demoAnomaly;
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (pending) return;
-    setPending(true);
-    setError(null);
-    setResult(null);
-    try {
-      const parsed = parseWorkflowAnomalyRequest(JSON.parse(inputJson));
-      const res = await predictWorkflowAnomaly(parsed);
-      setResult(res);
-    } catch (err) {
-      setError(describeGovernanceRequestError(err));
-    } finally {
-      setPending(false);
-    }
+  if (demo) {
+    return <Unavailable title="Live persisted journey paused in demo mode">
+      Switch to Live workspace to retrieve a persisted projection and assessment. No mock fallback is used for this Commissioner-facing journey.
+    </Unavailable>;
   }
 
-  return <div className={styles.split}>
-    <section className={styles.card}>
-      <h2>Completed workflow assessment</h2>
-      {demo ? (
-        <Unavailable title="Live anomaly evaluation paused in demo mode">
-          Switch to live mode to evaluate completed workflow traces against the frozen Isolation Forest model.
-        </Unavailable>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <div className={styles.field}>
-            <label htmlFor="anomaly-trace-json">Workflow Trace JSON (caseId &amp; sequential events)</label>
-            <textarea
-              id="anomaly-trace-json"
-              value={inputJson}
-              onChange={e => setInputJson(e.target.value)}
-              required
-              disabled={pending}
-              style={{ minHeight: "180px", fontFamily: "monospace", fontSize: "0.8rem" }}
-            />
-          </div>
-          <Button type="submit" disabled={pending}>
-            {pending ? "Evaluating Anomaly ML…" : "Evaluate Workflow Anomaly"}
-          </Button>
-          {error && <div className={styles.notice} role="alert"><p>{error}</p></div>}
-        </form>
-      )}
-      <h3>Model limitations</h3>
-      <p className={styles.muted}>
-        Frozen Isolation Forest model trained on synthetic workflow traces. Higher anomaly score indicates greater statistical divergence from standard procedure; score &gt; threshold is flagged for review.
-      </p>
-      <p className={styles.notice} role="note"><strong>Advisory statistical score:</strong> The anomaly score is not a probability or confidence value, and a flag is not evidence of corruption, fraud, misconduct, or illegality.</p>
-    </section>
-    <section className={styles.card}>
-      <h2>Statistical anomaly result</h2>
-      {demo ? (
-        <>
-          <StatusBadge tone="warning">{item.flagged ? "Flagged for review" : "Not flagged by this model"}</StatusBadge>
-          <Facts values={[["Anomaly score", item.anomalyScore], ["Threshold", item.threshold], ["Flagged", String(item.flagged)]]} />
-          <p className={styles.muted}>Illustrative rule: higher scores are more unusual; a score greater than the threshold is flagged.</p>
-          <h3>Feature values · fictional</h3>
-          <Facts values={Object.entries(item.features).map(([key, value]) => [key, value])} />
-        </>
-      ) : result ? (
-        <div aria-live="polite">
-          <StatusBadge tone={result.flagged ? "warning" : "success"}>
-            {result.flagged ? "Flagged for review" : "Not flagged by model"}
-          </StatusBadge>
-          <Facts
-            values={[
-              ["Case ID", result.caseId],
-              ["Model version", result.modelVersion],
-              ["Anomaly score", result.anomalyScore.toFixed(4)],
-              ["Threshold", result.threshold.toFixed(4)],
-              ["Flagged for review", String(result.flagged)],
-              ["Advisory Note", result.advisoryNote],
-            ]}
-          />
-          <Unavailable title="Anomaly history unavailable">Component 4 does not currently persist workflow-anomaly assessments. This current result exists only in this browser session.</Unavailable>
-          <h3>Extracted Trace Features</h3>
-          <Facts
-            values={[
-              ["Event Count", String(result.featureValues.eventCount)],
-              ["Elapsed Days", result.featureValues.elapsedDays.toFixed(2)],
-              ["Max Gap (Hours)", result.featureValues.maxGapHours.toFixed(1)],
-              ["Mean Gap (Hours)", result.featureValues.meanGapHours.toFixed(1)],
-              ["Unique Activities", String(result.featureValues.uniqueActivities)],
-              ["Repeated Activities", String(result.featureValues.repeatedActivityCount)],
-              ["Resource Handoffs", String(result.featureValues.resourceHandoffs)],
-              ["Institution Switches", String(result.featureValues.institutionSwitches)],
-              ["Distinct Resources", String(result.featureValues.distinctResources)],
-            ]}
-          />
-        </div>
-      ) : (
-        <Unavailable title="Awaiting evaluation">
-          Submit a completed workflow trace JSON on the left to view real statistical feature extraction and anomaly scoring.
-        </Unavailable>
-      )}
-    </section>
-  </div>;
+  return <WorkflowAnomalyJourney allowCaseLookup />;
 }
 
 function ScreeningView({ demo }: { demo: boolean }) {
