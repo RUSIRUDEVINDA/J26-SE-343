@@ -103,7 +103,9 @@ public sealed class PostgresGovernanceAuditAnchorStore : IGovernanceAuditAnchorS
             AnchorStatus: (AnchorStatus)entity.AnchorStatus,
             TransactionReference: entity.TransactionReference,
             BlockNumber: entity.BlockNumber,
-            AnchoredAtUtc: entity.AnchoredAtUtc
+            AnchoredAtUtc: entity.AnchoredAtUtc,
+            VerificationStatus: (AuditVerificationStatus)entity.VerificationStatus,
+            LastVerifiedAtUtc: entity.LastVerifiedAtUtc
         );
     }
 
