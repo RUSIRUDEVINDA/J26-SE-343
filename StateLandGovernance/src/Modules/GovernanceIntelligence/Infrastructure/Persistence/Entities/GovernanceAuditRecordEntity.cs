@@ -14,4 +14,5 @@ public sealed class GovernanceAuditRecordEntity
     public string Status { get; set; } = string.Empty;
     public string Details { get; set; } = string.Empty;
     public DateTime Timestamp { get; set; }
+    public string HashVersion { get; set; } = "AUDIT-V1";
 }
