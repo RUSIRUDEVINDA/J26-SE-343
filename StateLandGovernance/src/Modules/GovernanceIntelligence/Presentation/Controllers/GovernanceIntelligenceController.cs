@@ -420,6 +420,20 @@ public class GovernanceIntelligenceController : ControllerBase
         CancellationToken cancellationToken) =>
         Ok(await handler.HandleAsync(new GetWorkflowAnomalyHistoryByWorkflowRunQuery(workflowRunId, NormalizeLimit(limit)), cancellationToken));
 
+    [HttpGet("workflow-projections/cases/{caseId}")]
+    [ProducesResponseType(typeof(WorkflowProjectionJourneyDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetWorkflowProjectionJourneyByCase(
+        string caseId,
+        [FromServices] GetWorkflowProjectionJourneyByCaseQueryHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(
+            new GetWorkflowProjectionJourneyByCaseQuery(caseId),
+            cancellationToken);
+        return result is null ? NotFound() : Ok(result);
+    }
+
     [HttpPost("lease-timing/assess")]
     public async Task<IActionResult> AssessLeaseTiming(
         [FromBody] CalculateLeaseApprovalTimingRequestDto request,
