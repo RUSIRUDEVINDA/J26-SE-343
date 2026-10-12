@@ -25,7 +25,8 @@ public sealed record ScreenEarlyGovernanceCommand(
     Guid WorkflowRunId,
     string CaseId,
     string InputVersion,
-    IReadOnlyList<EarlyGovernanceIndicatorDto>? Indicators
+    IReadOnlyList<EarlyGovernanceIndicatorDto>? Indicators,
+    Guid? ReferralId = null
 );
 
 /// <summary>
@@ -69,6 +70,11 @@ public sealed class ScreenEarlyGovernanceCommandHandler
         if (command.WorkflowRunId == Guid.Empty)
         {
             throw new ArgumentException("WorkflowRunId cannot be empty.", nameof(command));
+        }
+
+        if (command.ReferralId == Guid.Empty)
+        {
+            throw new ArgumentException("ReferralId cannot be empty when provided.", nameof(command));
         }
 
         if (command.Indicators is null)
@@ -145,7 +151,7 @@ public sealed class ScreenEarlyGovernanceCommandHandler
                 .ToList();
 
             referral = new EarlyGovernanceReferralIntentDto(
-                Guid.NewGuid(),
+                command.ReferralId ?? Guid.NewGuid(),
                 command.AssessmentId,
                 command.AssessmentId,
                 resultDto.CaseId,

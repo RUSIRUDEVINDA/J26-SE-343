@@ -15,6 +15,8 @@ import {
   getAuditReceipt,
   verifyAuditIntegrity,
   describeGovernanceRequestError,
+  parseWorkflowAnomalyRequest,
+  parseEarlyScreeningSeedInput,
   type ComplaintClassificationResponse,
   type WorkflowAnomalyResponse,
   type EarlyScreeningResponse,
@@ -131,22 +133,26 @@ function ComplaintView({ demo }: { demo: boolean }) {
               <StatusBadge tone="warning">{result.predictedCategory}</StatusBadge>
               <Facts
                 values={[
+                  ["Assessment ID", result.assessmentId],
                   ["Case ID", result.caseId],
                   ["Model version", result.modelVersion],
                   ["Assessed at", formatGovernanceTime(result.assessedAtUtc)],
                   ["Advisory Note", result.advisoryNote],
+                  ["Closed-set note", result.closedSetNote],
                 ]}
               />
+              <h4>Original complaint</h4>
+              <p>{result.complaintText}</p>
               <div className={styles.scroll}>
                 <table className={styles.table}>
                   <thead>
                     <tr><th scope="col">Category</th><th scope="col">Model probability</th></tr>
                   </thead>
                   <tbody>
-                    {Object.entries(result.classProbabilities).map(([cat, prob]) => (
+                    {complaintCategories.map(cat => (
                       <tr key={cat}>
                         <th scope="row">{cat}</th>
-                        <td>{(prob * 100).toFixed(1)}% ({prob.toFixed(4)})</td>
+                        <td>{(result.classProbabilities[cat] * 100).toFixed(1)}% ({result.classProbabilities[cat].toFixed(4)})</td>
                       </tr>
                     ))}
                   </tbody>
@@ -185,7 +191,7 @@ function ComplaintView({ demo }: { demo: boolean }) {
         </>
       ) : (
         <>
-          <p>Real predictions are persisted in PostgreSQL table <code>governance_intelligence.complaint_classification_assessments</code> and indexed in the live Case Assessments dossier.</p>
+          <p>Successful live predictions are persisted by the Component 4 handler in PostgreSQL. The returned assessment ID above is the persisted identity; this screen does not invent one.</p>
           <div className={styles.actions}>
             <Button href="/component-04/cases" variant="secondary">View Live Case Dossiers</Button>
           </div>
@@ -221,10 +227,7 @@ function AnomalyView({ demo }: { demo: boolean }) {
     setError(null);
     setResult(null);
     try {
-      const parsed = JSON.parse(inputJson);
-      if (!parsed.caseId || !Array.isArray(parsed.events)) {
-        throw new Error("Payload must contain caseId and an array of events.");
-      }
+      const parsed = parseWorkflowAnomalyRequest(JSON.parse(inputJson));
       const res = await predictWorkflowAnomaly(parsed);
       setResult(res);
     } catch (err) {
@@ -264,6 +267,7 @@ function AnomalyView({ demo }: { demo: boolean }) {
       <p className={styles.muted}>
         Frozen Isolation Forest model trained on synthetic workflow traces. Higher anomaly score indicates greater statistical divergence from standard procedure; score &gt; threshold is flagged for review.
       </p>
+      <p className={styles.notice} role="note"><strong>Advisory statistical score:</strong> The anomaly score is not a probability or confidence value, and a flag is not evidence of corruption, fraud, misconduct, or illegality.</p>
     </section>
     <section className={styles.card}>
       <h2>Statistical anomaly result</h2>
@@ -290,6 +294,7 @@ function AnomalyView({ demo }: { demo: boolean }) {
               ["Advisory Note", result.advisoryNote],
             ]}
           />
+          <Unavailable title="Anomaly history unavailable">Component 4 does not currently persist workflow-anomaly assessments. This current result exists only in this browser session.</Unavailable>
           <h3>Extracted Trace Features</h3>
           <Facts
             values={[
@@ -346,13 +351,13 @@ function ScreeningView({ demo }: { demo: boolean }) {
     setError(null);
     setResult(null);
     try {
-      const parsed = JSON.parse(inputJson);
+      const parsed = parseEarlyScreeningSeedInput(JSON.parse(inputJson));
       const res = await screenEarlyGovernance({
         assessmentId: crypto.randomUUID(),
         workflowRunId: crypto.randomUUID(),
         caseId: parsed.caseId,
-        inputVersion: parsed.inputVersion || "v1",
-        indicators: parsed.indicators || []
+        inputVersion: parsed.inputVersion,
+        indicators: parsed.indicators
       });
       setResult(res);
     } catch (err) {
@@ -434,6 +439,7 @@ function ScreeningView({ demo }: { demo: boolean }) {
               </tbody>
             </table>
           </div>
+          <Unavailable title="Referral delivery not confirmed">This is a real Component 4 screening result. The response does not confirm a Component 3 Commissioner handoff or acknowledgement, so no successful referral is claimed.</Unavailable>
         </div>
       ) : (
         <Unavailable title="Awaiting screening">
@@ -539,7 +545,8 @@ function VerificationView({ demo }: { demo: boolean }) {
               ["Canonical Hash", receipt.recordHash],
               ["Anchor Status", receipt.anchorStatus],
               ["Verification Status", receipt.verificationStatus],
-              ["Block Number", receipt.blockNumber ? String(receipt.blockNumber) : "N/A"],
+              ["Ledger / transaction reference", receipt.ledgerTransactionReference ?? "N/A"],
+              ["Block Number", receipt.blockNumber !== null ? String(receipt.blockNumber) : "N/A"],
               ["Anchored At", receipt.anchoredAtUtc ? formatGovernanceTime(receipt.anchoredAtUtc) : "N/A"],
               ["Verified At", receipt.verifiedAtUtc ? formatGovernanceTime(receipt.verifiedAtUtc) : "N/A"],
               ["Explanation", receipt.explanation],
@@ -616,6 +623,11 @@ function AuditView({ demo }: { demo: boolean }) {
             ["Decision Recorded At", formatGovernanceTime(receipt.decisionRecordedAt)],
             ["Canonical Hash", receipt.recordHash],
             ["Anchor Status", receipt.anchorStatus],
+            ["Verification Status", receipt.verificationStatus],
+            ["Ledger / transaction reference", receipt.ledgerTransactionReference ?? "N/A"],
+            ["Block Number", receipt.blockNumber !== null ? String(receipt.blockNumber) : "N/A"],
+            ["Anchored At", receipt.anchoredAtUtc ? formatGovernanceTime(receipt.anchoredAtUtc) : "N/A"],
+            ["Verified At", receipt.verifiedAtUtc ? formatGovernanceTime(receipt.verifiedAtUtc) : "N/A"],
             ["Explanation", receipt.explanation],
           ]}
         />

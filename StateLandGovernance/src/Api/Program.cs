@@ -56,6 +56,7 @@ builder.Services.AddExplainableGovernanceEngine();
 builder.Services.AddGovernanceConsensusEngine();
 builder.Services.AddConditionalGovernanceVerification();
 builder.Services.AddEarlyGovernanceScreening();
+builder.Services.AddLeaseApprovalTimingMonitoring();
 
 builder.Services.AddCors(options =>
 {

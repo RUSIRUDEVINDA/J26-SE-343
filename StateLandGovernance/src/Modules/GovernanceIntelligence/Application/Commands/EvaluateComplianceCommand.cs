@@ -21,7 +21,8 @@ public sealed record EvaluateComplianceCommand(
     string? ProposedUse = null,
     decimal LeaseAmount = 0m,
     string? ZoningArea = null,
-    ProposalComplianceInputDto? Input = null
+    ProposalComplianceInputDto? Input = null,
+    string? CaseId = null
 );
 
 /// <summary>
@@ -57,6 +58,11 @@ public sealed class EvaluateComplianceCommandHandler
         ComplianceResult result;
 
         string? proposalId = string.IsNullOrWhiteSpace(command.Input?.ProposalId) ? null : command.Input.ProposalId;
+        string? caseId = string.IsNullOrWhiteSpace(command.CaseId) ? null : command.CaseId.Trim();
+        if (caseId?.Length > 100)
+        {
+            throw new ArgumentException("CaseId cannot exceed 100 characters.", nameof(command));
+        }
         string catalogueSource = "InMemoryDefault";
 
         if (command.Input != null)
@@ -123,7 +129,7 @@ public sealed class EvaluateComplianceCommandHandler
             $"Findings: {result.Findings.Count}, Violations: {result.Violations.Count}, Conditions: {result.Conditions.Count}, CatalogueSource={catalogueSource}",
             utcTimestamp);
 
-        await _evaluationStore.StoreComplianceEvaluationAsync(auditRecord, result, command.ActionName ?? "EvaluateCompliance", proposalId, cancellationToken);
+        await _evaluationStore.StoreComplianceEvaluationAsync(auditRecord, result, command.ActionName ?? "EvaluateCompliance", proposalId, caseId, cancellationToken);
 
         // Map to result DTO
         var violationDtos = result.Violations

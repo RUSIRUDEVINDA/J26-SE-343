@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { SYSTEM_TITLE } from "@/shared/constants/navigation";
@@ -5,12 +6,14 @@ import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-body",
+  variable: "--font-inter",
+  display: "swap",
 });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-display",
+  variable: "--font-playfair",
+  display: "swap",
 });
 
 export const metadata: Metadata = {

@@ -229,6 +229,14 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isNullableString(value: unknown): value is string | null {
+  return value === null || typeof value === "string";
+}
+
 function hasStringFields(value: unknown, fields: string[]): value is Record<string, unknown> {
   return isObject(value) && fields.every(field => typeof value[field] === "string");
 }
@@ -369,6 +377,29 @@ export interface ComplaintClassificationResponse {
   assessedAtUtc: string;
 }
 
+const complaintCategories = [
+  "Administrative / Procedural / Integrity",
+  "Lease Revenue / Payment / Enforcement",
+  "Unauthorized Allocation / Transfer / Use",
+  "Protected / Environmental Lease Misuse",
+] as const;
+
+function isComplaintClassificationResponse(value: unknown): value is ComplaintClassificationResponse {
+  if (!hasStringFields(value, [
+    "assessmentId", "caseId", "complaintText", "modelVersion", "predictedCategory",
+    "advisoryNote", "closedSetNote", "assessedAtUtc",
+  ]) || !isObject(value.classProbabilities)) return false;
+
+  const probabilities = value.classProbabilities as Record<string, unknown>;
+  const probabilityKeys = Object.keys(probabilities);
+  return complaintCategories.includes(value.predictedCategory as typeof complaintCategories[number])
+    && probabilityKeys.length === complaintCategories.length
+    && complaintCategories.every(category => {
+      const probability = probabilities[category];
+      return isFiniteNumber(probability) && probability >= 0 && probability <= 1;
+    });
+}
+
 export interface WorkflowAnomalyResponse {
   caseId: string;
   modelVersion: string;
@@ -387,6 +418,69 @@ export interface WorkflowAnomalyResponse {
     distinctResources: number;
   };
   advisoryNote: string;
+}
+
+export interface WorkflowAnomalyRequest {
+  caseId: string;
+  events: Array<{ eventSeq: number; activity: string; institution: string; resource: string; timestamp: string }>;
+}
+
+function isWorkflowAnomalyResponse(value: unknown): value is WorkflowAnomalyResponse {
+  if (!hasStringFields(value, ["caseId", "modelVersion", "advisoryNote"])
+    || !isFiniteNumber(value.anomalyScore)
+    || !isFiniteNumber(value.threshold)
+    || typeof value.flagged !== "boolean"
+    || !isObject(value.featureValues)) return false;
+
+  const featureValues = value.featureValues as Record<string, unknown>;
+  const featureFields = [
+    "eventCount", "elapsedDays", "maxGapHours", "meanGapHours", "uniqueActivities",
+    "repeatedActivityCount", "resourceHandoffs", "institutionSwitches", "distinctResources",
+  ];
+  return featureFields.every(field => isFiniteNumber(featureValues[field]));
+}
+
+export function parseWorkflowAnomalyRequest(value: unknown): WorkflowAnomalyRequest {
+  if (!isObject(value) || typeof value.caseId !== "string" || value.caseId.trim().length === 0) {
+    throw new Error("A nonblank caseId is required. No anomaly evaluation was submitted.");
+  }
+  if (value.caseId.length > 100) throw new Error("caseId must not exceed 100 characters. No anomaly evaluation was submitted.");
+  if (!Array.isArray(value.events) || value.events.length === 0) {
+    throw new Error("A completed trace must contain at least one event. No anomaly evaluation was submitted.");
+  }
+  if (value.events.length > 500) throw new Error("A trace may contain at most 500 events. No anomaly evaluation was submitted.");
+
+  const events = value.events.map((event, index) => {
+    if (!isObject(event)) throw new Error(`Event ${index + 1} is incomplete. No anomaly evaluation was submitted.`);
+    const expectedSequence = index + 1;
+    if (!Number.isInteger(event.eventSeq) || event.eventSeq !== expectedSequence) {
+      throw new Error(`Events must be ordered with eventSeq ${expectedSequence} at position ${expectedSequence}. No anomaly evaluation was submitted.`);
+    }
+    for (const field of ["activity", "institution", "resource", "timestamp"] as const) {
+      const fieldValue = event[field];
+      if (typeof fieldValue !== "string" || fieldValue.trim().length === 0) {
+        throw new Error(`Event ${expectedSequence} requires a nonblank ${field}. No anomaly evaluation was submitted.`);
+      }
+    }
+    const activity = event.activity as string;
+    const institution = event.institution as string;
+    const resource = event.resource as string;
+    const timestamp = event.timestamp as string;
+    if (/z$/i.test(timestamp) || /[+-]\d{2}:?\d{2}$/.test(timestamp)) {
+      throw new Error(`Event ${expectedSequence} timestamp must be a naive ISO-8601 value without a timezone. No anomaly evaluation was submitted.`);
+    }
+    if (Number.isNaN(Date.parse(timestamp))) {
+      throw new Error(`Event ${expectedSequence} timestamp is invalid. No anomaly evaluation was submitted.`);
+    }
+    return {
+      eventSeq: event.eventSeq,
+      activity: activity.trim(),
+      institution: institution.trim(),
+      resource: resource.trim(),
+      timestamp,
+    };
+  });
+  return { caseId: value.caseId.trim(), events };
 }
 
 export interface EarlyScreeningIndicatorResult {
@@ -408,6 +502,64 @@ export interface EarlyScreeningResponse {
   indicatorResults: EarlyScreeningIndicatorResult[];
 }
 
+export interface EarlyScreeningSeedInput {
+  caseId: string;
+  inputVersion: string;
+  indicators: Array<{ indicatorType: string; evidenceState: string; evidenceReference?: string | null; recordedAtUtc?: string | null }>;
+}
+
+const screeningIndicatorTypes = [
+  "LegalDispute", "UnauthorizedOccupation", "UnauthorizedConstruction", "FamilyOrInheritanceClaim",
+  "MultipleClaimants", "UnresolvedObjection", "PreviousIllegalLandActivity",
+];
+const screeningEvidenceStates = ["VerifiedPresent", "VerifiedAbsent", "Unverified", "Missing", "Unavailable", "NotApplicable"];
+
+export function parseEarlyScreeningSeedInput(value: unknown): EarlyScreeningSeedInput {
+  if (!isObject(value) || typeof value.caseId !== "string" || value.caseId.trim().length === 0
+    || typeof value.inputVersion !== "string" || value.inputVersion.trim().length === 0
+    || !Array.isArray(value.indicators)) {
+    throw new Error("Screening input requires nonblank caseId and inputVersion values plus an indicators array. No screening was submitted.");
+  }
+  const seen = new Set<string>();
+  const indicators = value.indicators.map((indicator, index) => {
+    if (!isObject(indicator)
+      || typeof indicator.indicatorType !== "string" || !screeningIndicatorTypes.includes(indicator.indicatorType)
+      || typeof indicator.evidenceState !== "string" || !screeningEvidenceStates.includes(indicator.evidenceState)) {
+      throw new Error(`Screening indicator ${index + 1} has an invalid type or evidence state. No screening was submitted.`);
+    }
+    if (seen.has(indicator.indicatorType)) throw new Error(`Screening indicator ${indicator.indicatorType} is duplicated. No screening was submitted.`);
+    seen.add(indicator.indicatorType);
+    if (indicator.evidenceReference !== undefined && !isNullableString(indicator.evidenceReference)) {
+      throw new Error(`Screening indicator ${index + 1} has an invalid evidence reference. No screening was submitted.`);
+    }
+    if (indicator.recordedAtUtc !== undefined && !isNullableString(indicator.recordedAtUtc)) {
+      throw new Error(`Screening indicator ${index + 1} has an invalid recorded timestamp. No screening was submitted.`);
+    }
+    return {
+      indicatorType: indicator.indicatorType,
+      evidenceState: indicator.evidenceState,
+      evidenceReference: indicator.evidenceReference as string | null | undefined,
+      recordedAtUtc: indicator.recordedAtUtc as string | null | undefined,
+    };
+  });
+  return { caseId: value.caseId.trim(), inputVersion: value.inputVersion.trim(), indicators };
+}
+
+function isEarlyScreeningResponse(value: unknown): value is EarlyScreeningResponse {
+  const validStatuses = ["Clear", "ReviewRequired", "InsufficientInformation"];
+  const isIndicator = (item: unknown) => hasStringFields(item, [
+    "indicatorType", "evidenceState", "reasonCode", "message",
+  ]) && typeof item.requiresReview === "boolean"
+    && typeof item.needsEvidence === "boolean"
+    && isNullableString(item.evidenceReference)
+    && isNullableString(item.recordedAtUtc);
+  return hasStringFields(value, ["caseId", "inputVersion", "overallStatus"])
+    && validStatuses.includes(value.overallStatus as string)
+    && typeof value.hasIncompleteEvidence === "boolean"
+    && Array.isArray(value.indicatorResults)
+    && value.indicatorResults.every(isIndicator);
+}
+
 export interface AuditVerificationReceiptResponse {
   recordId: string;
   engineType: string;
@@ -422,14 +574,67 @@ export interface AuditVerificationReceiptResponse {
   anchoredAtUtc: string | null;
   verifiedAtUtc: string | null;
   explanation: string;
+  recordVersion: string;
+}
+
+export interface AuditCaseHistoryItem {
+  auditRecordId: string;
+  caseId: string;
+  operationType: string;
+  hashVersion: string;
+  createdAtUtc: string;
+  anchorStatus: string;
+  transactionReference: string | null;
+  blockNumber: number | null;
+  lastVerificationStatus: string;
+  lastVerifiedAtUtc: string | null;
+}
+
+export type PersistedHistoryItem = Readonly<Record<string, unknown>>;
+
+function isHistory(value: unknown): value is PersistedHistoryItem[] {
+  return Array.isArray(value) && value.every(isObject);
+}
+
+async function getHistory(path: string, caseId: string, limit = 100): Promise<PersistedHistoryItem[]> {
+  const response = await apiGet<unknown>(`${governanceApiBasePath}/${path}/${encodeURIComponent(caseId)}?limit=${limit}`);
+  if (!isHistory(response)) throw new GovernanceMalformedResponseError();
+  return response;
+}
+
+export const getScreeningHistoryByCase = (caseId: string, limit = 100) => getHistory("screening/history/cases", caseId, limit);
+export const getComplaintHistoryByCase = (caseId: string, limit = 100) => getHistory("complaints/history/cases", caseId, limit);
+export const getWorkflowAnomalyHistoryByCase = (caseId: string, limit = 100) => getHistory("workflow-anomalies/history/cases", caseId, limit);
+export const getLeaseTimingHistoryByCase = (caseId: string, limit = 100) => getHistory("lease-timing/history/cases", caseId, limit);
+export const getReferralHistoryByCase = (caseId: string, limit = 100) => getHistory("referrals/history/cases", caseId, limit);
+
+export async function getAuditHistoryByCase(caseId: string, limit = 100): Promise<AuditCaseHistoryItem[]> {
+  const response = await getHistory("audits/history/cases", caseId, limit);
+  if (!response.every(item => hasStringFields(item, ["auditRecordId", "caseId", "operationType", "hashVersion", "createdAtUtc", "anchorStatus", "lastVerificationStatus"])))
+    throw new GovernanceMalformedResponseError();
+  return response as unknown as AuditCaseHistoryItem[];
+}
+
+function isAuditVerificationReceiptResponse(value: unknown): value is AuditVerificationReceiptResponse {
+  return hasStringFields(value, [
+    "recordId", "engineType", "actionName", "governanceStatus", "decisionRecordedAt",
+    "recordHash", "verificationStatus", "anchorStatus", "explanation", "recordVersion",
+  ]) && isNullableString(value.ledgerTransactionReference)
+    && (value.blockNumber === null || (typeof value.blockNumber === "number" && Number.isInteger(value.blockNumber)))
+    && isNullableString(value.anchoredAtUtc)
+    && isNullableString(value.verifiedAtUtc);
 }
 
 export async function classifyComplaint(request: { caseId: string; applicantId?: string; complaintText: string }): Promise<ComplaintClassificationResponse> {
-  return await postEvaluation<ComplaintClassificationResponse>(`${governanceApiBasePath}/classify-complaint`, request);
+  const response = await postEvaluation<unknown>(`${governanceApiBasePath}/classify-complaint`, request);
+  if (!isComplaintClassificationResponse(response)) throw new GovernanceMalformedResponseError();
+  return response;
 }
 
-export async function predictWorkflowAnomaly(request: { caseId: string; events: Array<{ eventSeq: number; activity: string; institution: string; resource: string; timestamp: string }> }): Promise<WorkflowAnomalyResponse> {
-  return await postEvaluation<WorkflowAnomalyResponse>(`${governanceApiBasePath}/predict-workflow-anomaly`, request);
+export async function predictWorkflowAnomaly(request: WorkflowAnomalyRequest): Promise<WorkflowAnomalyResponse> {
+  const response = await postEvaluation<unknown>(`${governanceApiBasePath}/predict-workflow-anomaly`, request);
+  if (!isWorkflowAnomalyResponse(response)) throw new GovernanceMalformedResponseError();
+  return response;
 }
 
 export async function screenEarlyGovernance(request: {
@@ -444,15 +649,21 @@ export async function screenEarlyGovernance(request: {
     recordedAtUtc?: string | null;
   }>;
 }): Promise<EarlyScreeningResponse> {
-  return await postEvaluation<EarlyScreeningResponse>(`${governanceApiBasePath}/screen-early-governance`, request);
+  const response = await postEvaluation<unknown>(`${governanceApiBasePath}/screen-early-governance`, request);
+  if (!isEarlyScreeningResponse(response)) throw new GovernanceMalformedResponseError();
+  return response;
 }
 
 export async function getAuditReceipt(auditRecordId: string): Promise<AuditVerificationReceiptResponse> {
-  return await apiGet<AuditVerificationReceiptResponse>(`${governanceApiBasePath}/audits/${auditRecordId}/receipt`);
+  const response = await apiGet<unknown>(`${governanceApiBasePath}/audits/${auditRecordId}/receipt`);
+  if (!isAuditVerificationReceiptResponse(response)) throw new GovernanceMalformedResponseError();
+  return response;
 }
 
 export async function verifyAuditIntegrity(auditRecordId: string): Promise<AuditVerificationReceiptResponse> {
-  return await postEvaluation<AuditVerificationReceiptResponse>(`${governanceApiBasePath}/audits/${auditRecordId}/verify`, {});
+  const response = await postEvaluation<unknown>(`${governanceApiBasePath}/audits/${auditRecordId}/verify`, {});
+  if (!isAuditVerificationReceiptResponse(response)) throw new GovernanceMalformedResponseError();
+  return response;
 }
 
 export interface IGovernanceService {
@@ -484,15 +695,27 @@ export class MockGovernanceService implements IGovernanceService {
  */
 export class GovernanceUnavailableError extends Error {}
 
+function isGovernanceDashboardData(value: unknown): value is GovernanceDashboardData {
+  if (!isObject(value) || !isObject(value.summary) || !Array.isArray(value.cases)) return false;
+  const summary = value.summary;
+  const countFields = ["totalCases", "totalAssessments", "clearCount", "reviewRequiredCount", "insufficientInfoCount"];
+  const summaryIsValid = countFields.every(field => typeof summary[field] === "number" && Number.isInteger(summary[field]) && summary[field] >= 0)
+    && typeof summary.lastUpdated === "string";
+  const caseStringFields = [
+    "assessmentId", "caseId", "parcelReference", "applicantReference", "overallStatus",
+    "complianceStatus", "conflictStatus", "earlyScreeningStatus", "anomalyStatus",
+    "consensusOutcome", "evaluatedAt", "version", "summaryFinding", "rationale", "recommendedNextStep",
+  ];
+  return summaryIsValid && value.cases.every(item => hasStringFields(item, caseStringFields)
+    && (item.workflowRunId === null || typeof item.workflowRunId === "string"));
+}
+
 export class LiveGovernanceService implements IGovernanceService {
   async getDashboard(): Promise<GovernanceDashboardData> {
-    const isTest = typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_BASE_URL === "http://governance.test";
-    if (isTest) {
-      throw new GovernanceUnavailableError("Live governance assessments are not available yet. No records have been loaded or evaluated.");
-    }
-
     try {
-      return await apiGet<GovernanceDashboardData>(`${governanceApiBasePath}/dashboard`);
+      const response = await apiGet<unknown>(`${governanceApiBasePath}/dashboard`);
+      if (!isGovernanceDashboardData(response)) throw new GovernanceMalformedResponseError();
+      return response;
     } catch (error) {
       if (error instanceof ApiClientError && error.status === 404) {
         throw new GovernanceUnavailableError("Live governance dashboard endpoint is not configured.");

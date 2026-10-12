@@ -83,6 +83,7 @@ public static class ServiceCollectionExtensions
         services.TryAddTransient<ScreenEarlyGovernanceCommandHandler>();
         services.TryAddTransient<DeliverEarlyGovernanceReferralCommandHandler>();
         services.TryAddTransient<GetEarlyGovernanceScreeningAssessmentQueryHandler>();
+        services.TryAddTransient<GetEarlyGovernanceScreeningHistoryQueryHandler>();
         services.TryAddTransient<GetEarlyGovernanceReferralHistoryQueryHandler>();
         services.TryAddSingleton<IEarlyGovernanceReferralPolicy, UnconfiguredEarlyGovernanceReferralPolicy>();
         services.TryAddSingleton<TimeProvider>(TimeProvider.System);
@@ -92,13 +93,18 @@ public static class ServiceCollectionExtensions
 
     /// <summary>
     /// Registers the deterministic lease-approval handover timing calculator.
-    /// This does not register a Component 3 source or expose an HTTP endpoint.
+    /// Registers the calculator plus application handlers; Component 3 data is consumed only
+    /// through the Component 4 projection-store abstraction.
     /// </summary>
     public static IServiceCollection AddLeaseApprovalTimingMonitoring(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
         services.TryAddSingleton<ILeaseApprovalTimingCalculator, LeaseApprovalTimingCalculator>();
+        services.TryAddTransient<CalculateLeaseApprovalTimingCommandHandler>();
+        services.TryAddTransient<GetLeaseApprovalTimingAssessmentQueryHandler>();
+        services.TryAddTransient<GetLeaseApprovalTimingHistoryByCaseQueryHandler>();
+        services.TryAddTransient<GetLeaseApprovalTimingHistoryByWorkflowRunQueryHandler>();
 
         return services;
     }

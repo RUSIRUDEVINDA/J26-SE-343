@@ -31,5 +31,15 @@ public enum AuditVerificationStatus
     /// <summary>
     /// Ledger verification service or network is temporarily unreachable.
     /// </summary>
-    Unavailable = 4
+    Unavailable = 4,
+    /// <summary>
+    /// A historical AUDIT-V1 digest agrees with the ledger, but PostgreSQL precision loss prevents
+    /// recomputing that original digest from the persisted record. This is not evidence of tampering.
+    /// </summary>
+    LegacyUnverifiable = 5,
+
+    /// <summary>
+    /// The persisted hash protocol version is unknown, so integrity verification fails closed.
+    /// </summary>
+    UnsupportedVersion = 6
 }

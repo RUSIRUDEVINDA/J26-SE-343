@@ -22,6 +22,9 @@ public class ComplianceEvaluationEntityConfiguration : IEntityTypeConfiguration<
         builder.Property(e => e.ProposalId)
             .HasMaxLength(100);
 
+        builder.Property(e => e.CaseId)
+            .HasMaxLength(100);
+
         builder.Property(e => e.Status)
             .HasMaxLength(50)
             .IsRequired();
@@ -46,6 +49,9 @@ public class ComplianceEvaluationEntityConfiguration : IEntityTypeConfiguration<
 
         builder.HasIndex(e => e.ProposalId)
             .HasDatabaseName("idx_comp_eval_proposal_id");
+
+        builder.HasIndex(e => e.CaseId)
+            .HasDatabaseName("idx_comp_eval_case_id");
 
         builder.HasIndex(e => e.DeterministicEvaluationId)
             .HasDatabaseName("idx_comp_eval_det_id");

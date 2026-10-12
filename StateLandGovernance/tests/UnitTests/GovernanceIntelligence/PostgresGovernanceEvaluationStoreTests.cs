@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
+using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Domain.ValueObjects;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
@@ -39,6 +40,7 @@ public class PostgresGovernanceEvaluationStoreTests
         var persistedAudit = await dbContext.GovernanceAuditRecords.FirstOrDefaultAsync(a => a.Id == audit.Id);
         Assert.NotNull(persistedAudit);
         Assert.Equal("CheckCompliance", persistedAudit.ActionName);
+        Assert.Equal(GovernanceAuditHasher.AuditV2, persistedAudit.HashVersion);
 
         var persistedEval = await dbContext.ComplianceEvaluations
             .FirstOrDefaultAsync(e => e.AuditRecordId == audit.Id);
@@ -46,6 +48,12 @@ public class PostgresGovernanceEvaluationStoreTests
         Assert.NotNull(persistedEval);
         Assert.Equal("Compliant", persistedEval!.Status);
         Assert.Equal("CheckCompliance", persistedEval.ActionName);
+
+        var outboxItem = await dbContext.GovernanceAuditAnchorOutbox
+            .FirstOrDefaultAsync(o => o.AuditRecordId == audit.Id);
+        Assert.NotNull(outboxItem);
+        Assert.Equal(0, outboxItem!.Status);
+        Assert.Equal(GovernanceAuditHasher.AuditV2, outboxItem.RecordVersion);
     }
 
     [Fact]

@@ -6,10 +6,13 @@ import { EmptyState } from "@/shared/components/EmptyState";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { useGovernanceData } from "../hooks/useGovernanceData";
 import { formatGovernanceTime } from "../adapters/presentation";
+import { useGovernanceMode } from "./GovernanceWorkspace";
 import styles from "./GovernanceWorkspace.module.css";
+import { FinalPp1Evidence } from "./FinalPp1Evidence";
 
 export function GovernanceDashboard() {
   const { state, retry } = useGovernanceData();
+  const mode = useGovernanceMode();
   const data = state.status === "success" ? state.data : null;
   const engines: { label: string; key: string; href: string; evaluationAvailable: boolean }[] = [
     { label: "Regulatory compliance", key: "compliance", href: "/component-04/cases/compliance", evaluationAvailable: true },
@@ -18,16 +21,17 @@ export function GovernanceDashboard() {
     { label: "Explainability", key: "explain", href: "/component-04/explain", evaluationAvailable: true },
     { label: "Institutional consensus", key: "consensus", href: "/component-04/consensus", evaluationAvailable: true },
     { label: "Conditional verification", key: "conditions", href: "/component-04/conditions", evaluationAvailable: true },
-    { label: "Completed-workflow anomaly", key: "anomalies", href: "/component-04/anomalies", evaluationAvailable: false },
-    { label: "Audit history", key: "audit", href: "/component-04/audit", evaluationAvailable: false },
-    { label: "Blockchain verification", key: "verification", href: "/component-04/verification", evaluationAvailable: false },
+    { label: "Completed-workflow anomaly", key: "anomalies", href: "/component-04/anomalies", evaluationAvailable: true },
+    { label: "Audit receipt", key: "audit", href: "/component-04/audit", evaluationAvailable: true },
+    { label: "Blockchain verification", key: "verification", href: "/component-04/verification", evaluationAvailable: true },
   ];
   return <>
     <header className={styles.heading}><h1>Governance Intelligence</h1><p>Decision-support overview across compliance, conflicts, risk, institutional verification and conditions.</p></header>
     {state.status === "loading" && <LoadingState message="Loading governance assessments…" />}
     {state.status === "error" && <><ErrorMessage title="Unable to load assessments" message={state.message} /><Button onClick={retry}>Retry loading</Button></>}
     {state.status === "unavailable" && <p className={styles.notice} role="status">{state.message} You can explore fictional examples using the demo control above.</p>}
-    <section className={styles.stats} aria-label="Governance overview">
+    {mode === "live" && <FinalPp1Evidence />}
+    <section className={styles.stats} aria-label="General live governance overview">
       {[
         ["Cases in this view", data?.summary.totalCases],
         ["Review required", data?.summary.reviewRequiredCount],
@@ -41,14 +45,14 @@ export function GovernanceDashboard() {
         <div className={styles.scroll}><table className={styles.table}><thead><tr><th scope="col">Engine</th><th scope="col">Results</th><th scope="col">Review</th></tr></thead><tbody>
           {engines.map(({ label, key, href, evaluationAvailable }) => {
             const isDemoSummary = data !== null && (key === "compliance" || key === "conflicts");
-            const result = isDemoSummary ? "Fictional summary" : evaluationAvailable ? "Evaluation route published" : "Unavailable";
+            const result = isDemoSummary ? "Fictional seed summary" : evaluationAvailable ? "Live backend route available" : "Unavailable";
             return <tr key={key}><th scope="row">{label}</th><td>{result}</td><td><Link href={href}>Open</Link></td></tr>;
           })}
         </tbody></table></div>
         <p className={styles.muted}>A clear result in one check does not mean all checks are complete. Risk scores and statistical anomaly scores are separate measures.</p>
       </section>
       <div className={styles.stack}><section className={styles.card}><h2>Recent Cases</h2>
-        {data?.cases.length ? <><p className={styles.muted}>Latest fictional assessment per case. Open a case to inspect its assessment identity and timestamp.</p><div className={styles.scroll}><table className={styles.table}><thead><tr><th scope="col">Case</th><th scope="col">Status</th><th scope="col">Updated</th></tr></thead><tbody>{data.cases.slice(0, 3).map(item => <tr key={item.assessmentId}><td><Link href={`/component-04/cases/assessment/${encodeURIComponent(item.assessmentId)}`}>{item.caseId}</Link></td><td>{item.overallStatus}</td><td>{formatGovernanceTime(item.evaluatedAt)}</td></tr>)}</tbody></table></div><div className={styles.actions}><Button href="/component-04/cases" variant="secondary">View all assessments</Button></div></> : <EmptyState title={data ? "No assessments recorded" : "Recent cases unavailable"} description={data ? "There are no records to display." : "Live case history is not connected."} />}
+        {data?.cases.length ? <><p className={styles.muted}>{mode === "demo" ? "Latest fictional seed snapshot per case." : "Latest persisted Component 4 assessment per case."} Open a case to inspect its assessment identity and timestamp.</p><div className={styles.scroll}><table className={styles.table}><thead><tr><th scope="col">Case</th><th scope="col">Status</th><th scope="col">Updated</th></tr></thead><tbody>{data.cases.slice(0, 3).map(item => <tr key={item.assessmentId}><td><Link href={`/component-04/cases/assessment/${encodeURIComponent(item.assessmentId)}`}>{item.caseId}</Link></td><td>{item.overallStatus}</td><td>{formatGovernanceTime(item.evaluatedAt)}</td></tr>)}</tbody></table></div><div className={styles.actions}><Button href="/component-04/cases" variant="secondary">View all assessments</Button></div></> : <EmptyState title={data ? "No assessments recorded" : "Recent cases unavailable"} description={data ? (mode === "demo" ? "There are no fictional seed records to display." : "The live backend returned no persisted Component 4 assessments.") : "Live case history is not connected."} />}
       </section><section className={styles.card}><h2>Governance Notice</h2><p>Outputs support authorized officers and do not constitute final legal approval or rejection.</p><p className={styles.muted}>Machine predictions require human review. No workflow is ended, referred or approved by opening these pages.</p></section></div>
     </div>
   </>;

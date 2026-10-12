@@ -4,8 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
+using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Domain.ValueObjects;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Mappings;
 
 namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
@@ -13,26 +15,31 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories
 public class PostgresGovernanceEvaluationStore : IGovernanceEvaluationStore
 {
     private readonly GovernanceIntelligenceDbContext _dbContext;
+    private readonly TimeProvider _timeProvider;
 
-    public PostgresGovernanceEvaluationStore(GovernanceIntelligenceDbContext dbContext)
+    public PostgresGovernanceEvaluationStore(
+        GovernanceIntelligenceDbContext dbContext,
+        TimeProvider? timeProvider = null)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
     public Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, CancellationToken cancellationToken = default)
     {
-        return StoreComplianceEvaluationAsync(auditRecord, result, actionName, proposalId: null, cancellationToken);
+        return StoreComplianceEvaluationAsync(auditRecord, result, actionName, proposalId: null, caseId: null, cancellationToken);
     }
 
-    public async Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, string? proposalId, CancellationToken cancellationToken = default)
+    public async Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, string? proposalId, string? caseId = null, CancellationToken cancellationToken = default)
     {
         if (auditRecord == null) throw new ArgumentNullException(nameof(auditRecord));
         if (result == null) throw new ArgumentNullException(nameof(result));
 
-        var (auditEntity, evalEntity) = ComplianceEvaluationMapper.MapToEntities(auditRecord, result, actionName, proposalId);
+        var (auditEntity, evalEntity) = ComplianceEvaluationMapper.MapToEntities(auditRecord, result, actionName, proposalId, caseId);
 
         await _dbContext.GovernanceAuditRecords.AddAsync(auditEntity, cancellationToken);
         await _dbContext.ComplianceEvaluations.AddAsync(evalEntity, cancellationToken);
+        await EnqueueAuditOutboxInternalAsync(auditRecord, cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -46,6 +53,7 @@ public class PostgresGovernanceEvaluationStore : IGovernanceEvaluationStore
 
         await _dbContext.GovernanceAuditRecords.AddAsync(auditEntity, cancellationToken);
         await _dbContext.ConflictEvaluations.AddAsync(evalEntity, cancellationToken);
+        await EnqueueAuditOutboxInternalAsync(auditRecord, cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -59,6 +67,7 @@ public class PostgresGovernanceEvaluationStore : IGovernanceEvaluationStore
 
         await _dbContext.GovernanceAuditRecords.AddAsync(auditEntity, cancellationToken);
         await _dbContext.RiskEvaluations.AddAsync(evalEntity, cancellationToken);
+        await EnqueueAuditOutboxInternalAsync(auditRecord, cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -72,6 +81,7 @@ public class PostgresGovernanceEvaluationStore : IGovernanceEvaluationStore
 
         await _dbContext.GovernanceAuditRecords.AddAsync(auditEntity, cancellationToken);
         await _dbContext.GovernanceExplanations.AddAsync(evalEntity, cancellationToken);
+        await EnqueueAuditOutboxInternalAsync(auditRecord, cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -85,6 +95,7 @@ public class PostgresGovernanceEvaluationStore : IGovernanceEvaluationStore
 
         await _dbContext.GovernanceAuditRecords.AddAsync(auditEntity, cancellationToken);
         await _dbContext.ConsensusEvaluations.AddAsync(evalEntity, cancellationToken);
+        await EnqueueAuditOutboxInternalAsync(auditRecord, cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -98,7 +109,29 @@ public class PostgresGovernanceEvaluationStore : IGovernanceEvaluationStore
 
         await _dbContext.GovernanceAuditRecords.AddAsync(auditEntity, cancellationToken);
         await _dbContext.ConditionalVerificationEvaluations.AddAsync(evalEntity, cancellationToken);
+        await EnqueueAuditOutboxInternalAsync(auditRecord, cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task EnqueueAuditOutboxInternalAsync(GovernanceAuditRecord auditRecord, CancellationToken cancellationToken)
+    {
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
+        var canonicalHash = GovernanceAuditHasher.ComputeCanonicalHash(auditRecord, auditRecord.HashVersion);
+
+        var outboxEntity = new GovernanceAuditAnchorOutboxEntity
+        {
+            Id = Guid.NewGuid(),
+            AuditRecordId = auditRecord.Id,
+            RecordHash = canonicalHash,
+            EngineType = (int)auditRecord.EngineType,
+            RecordVersion = auditRecord.HashVersion,
+            Status = 0, // Pending
+            RetryCount = 0,
+            NextAttemptAtUtc = now,
+            CreatedAtUtc = now
+        };
+
+        await _dbContext.GovernanceAuditAnchorOutbox.AddAsync(outboxEntity, cancellationToken);
     }
 }
