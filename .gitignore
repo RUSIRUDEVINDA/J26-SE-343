@@ -128,3 +128,8 @@ governance-blockchain-service/cache/
 /scratch/browser_evidence
 /Component4_Synthetic_Integration_Seeds
 instruction.md
+/.tmp-c4-build-audit
+/.tmp-auditv2-build
+
+# Component 4 local PostgreSQL backups
+backups/component4/*.dump
