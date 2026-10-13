@@ -10,7 +10,7 @@ loadCommonJs.extensions[".ts"] = (module, filename) => module._compile(
 process.env.NEXT_PUBLIC_API_BASE_URL = "http://governance.test";
 const { filterAssessments, conflictTone, formatGovernanceTime } = loadCommonJs("../src/modules/component-04/adapters/presentation.ts");
 const {
-  getGovernanceService, MockGovernanceService, GovernanceUnavailableError,
+  getGovernanceService, MockGovernanceService,
   GovernanceMalformedResponseError, GovernanceRequestTimeoutError,
   describeGovernanceRequestError, evaluateCompliance, evaluateConflicts,
   evaluateGovernanceRisk, explainGovernance, evaluateConsensus, verifyConditions,
@@ -20,6 +20,31 @@ const {
 const { ApiClientError } = loadCommonJs("../src/lib/apiClient.ts");
 const { MOCK_GOVERNANCE_DASHBOARD_DATA: fixture } = loadCommonJs("../src/modules/component-04/services/mockGovernanceData.ts");
 const { demoAnomaly } = loadCommonJs("../src/modules/component-04/services/demoEvidence.ts");
+const { getComplianceEvaluationPreset } = loadCommonJs("../src/modules/component-04/services/proposalPresets.ts");
+
+test("Component 4 landing dashboard contains only the business overview", () => {
+  const source = fs.readFileSync("src/modules/component-04/components/GovernanceDashboard.tsx", "utf8");
+  assert.doesNotMatch(source, /FinalPp1Evidence|PP1 Final Seed Scenarios/);
+  for (const section of ["General live governance overview", "Engine Summary", "Recent Cases", "Governance Notice"]) {
+    assert.match(source, new RegExp(section));
+  }
+});
+
+test("NPD compliance presets provide distinct complete, incomplete and adverse proposal JSON", () => {
+  const clean = getComplianceEvaluationPreset("proposal-1");
+  const incomplete = getComplianceEvaluationPreset("proposal-2");
+  const adverse = getComplianceEvaluationPreset("proposal-3");
+  const cleanInput = JSON.parse(clean.inputJson);
+  const incompleteInput = JSON.parse(incomplete.inputJson);
+  const adverseInput = JSON.parse(adverse.inputJson);
+
+  assert.equal(clean.caseId, "PP1-FINAL-CLEAR-001");
+  assert.equal(cleanInput.budget.submittedProjectBudget, cleanInput.financing.financingSources[0].amount);
+  assert.equal(incompleteInput.location.gramaNiladhariDivision, "");
+  assert.equal(incompleteInput.economicAppraisal.selectedMethod, "");
+  assert.notEqual(adverseInput.budget.submittedProjectBudget, adverseInput.financing.financingSources[0].amount);
+  assert.equal(adverseInput.evidenceReferences[0].evidenceId, adverseInput.evidenceReferences[1].evidenceId);
+});
 
 test("Live dashboard failure never falls back to demo success", async () => {
   let requests = 0;
@@ -89,6 +114,49 @@ test("Compliance evaluation uses only the published ASP.NET Core route and does 
     assert.equal(requests[0].url, "http://governance.test/api/governance-intelligence/evaluate-compliance");
     assert.equal(requests[0].init.method, "POST");
   } finally { global.fetch = original; }
+});
+test("Component 4 browser requests do not create Component 1 authentication sessions", async () => {
+  const originalFetch = global.fetch;
+  const originalWindow = global.window;
+  const requests = [];
+  global.window = {
+    location: { hostname: "localhost" },
+    sessionStorage: {
+      getItem: () => null,
+      setItem: () => undefined,
+      removeItem: () => undefined,
+    },
+  };
+  global.fetch = async (url) => {
+    requests.push(url);
+    return {
+      ok: true,
+      json: async () => ({
+        status: "Compliant",
+        violations: [],
+        conditions: [],
+        findings: [],
+        deterministicEvaluationId: "evaluation-no-land-session",
+      }),
+    };
+  };
+
+  try {
+    await evaluateCompliance({
+      actionName: "Review",
+      leaseDurationYears: 30,
+      proposedUse: "Agriculture",
+      leaseAmount: 1000,
+      zoningArea: "Zone A",
+    });
+    assert.deepEqual(requests, [
+      "http://governance.test/api/governance-intelligence/evaluate-compliance",
+    ]);
+  } finally {
+    global.fetch = originalFetch;
+    if (originalWindow === undefined) delete global.window;
+    else global.window = originalWindow;
+  }
 });
 test("Conflict evaluation uses the published route with decision snapshots", async () => {
   const original = global.fetch;
