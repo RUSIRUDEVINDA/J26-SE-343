@@ -14,6 +14,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.WorkflowAnomaly;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.Blockchain;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.ComplaintClassification;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.EarlyGovernanceReferral;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.Explainability;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.WorkflowAnomaly;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.BackgroundServices;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
@@ -49,6 +50,7 @@ public static class ServiceCollectionExtensions
 
         services.AddComplaintClassifier(configuration);
         services.AddWorkflowAnomalyClient(configuration);
+        services.AddGroqExplainability(configuration);
         var enablePp1SyntheticIntegration = environment.IsDevelopment() &&
             configuration.GetValue<bool>("GovernanceIntelligence:Pp1:EnableSyntheticIntegration", false);
         if (enablePp1SyntheticIntegration)
@@ -138,6 +140,36 @@ public static class ServiceCollectionExtensions
 
         // Dispatches persisted audit hashes asynchronously; evaluations remain independent of ledger availability.
         services.AddHostedService<GovernanceAuditAnchorOutboxProcessor>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddGroqExplainability(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        services.AddSingleton<IValidateOptions<GroqExplainabilityOptions>, GroqExplainabilityOptionsValidator>();
+        services.AddOptions<GroqExplainabilityOptions>()
+            .Bind(configuration.GetSection(GroqExplainabilityOptions.SectionName))
+            .PostConfigure(options =>
+            {
+                if (string.IsNullOrWhiteSpace(options.Token))
+                    options.Token = Environment.GetEnvironmentVariable("GROQ_API_KEY") ?? string.Empty;
+            })
+            .ValidateOnStart();
+
+        services.AddHttpClient<IGovernanceExplanationSimplifier, GroqGovernanceExplanationSimplifier>(
+            (serviceProvider, client) =>
+            {
+                var options = serviceProvider.GetRequiredService<IOptions<GroqExplainabilityOptions>>().Value;
+                if (!GroqExplainabilityOptions.TryCreateBaseUri(options.BaseUrl, out var baseUri))
+                    throw new InvalidOperationException($"{GroqExplainabilityOptions.SectionName}:BaseUrl is invalid.");
+                client.BaseAddress = baseUri;
+                client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+            });
 
         return services;
     }
