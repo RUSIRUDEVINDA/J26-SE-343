@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/shared/components/Button";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { useGovernanceMode } from "./GovernanceWorkspace";
@@ -13,12 +13,27 @@ import {
   screenEarlyGovernance,
   getAuditReceipt,
   verifyAuditIntegrity,
+  getScreeningHistoryByCase,
+  getComplaintHistoryByCase,
+  getWorkflowAnomalyHistoryByCase,
+  getLeaseTimingHistoryByCase,
+  getReferralHistoryByCase,
+  getAuditHistoryByCase,
   describeGovernanceRequestError,
   parseEarlyScreeningSeedInput,
   type ComplaintClassificationResponse,
   type EarlyScreeningResponse,
   type AuditVerificationReceiptResponse,
+  type PersistedHistoryItem,
+  type AuditCaseHistoryItem,
 } from "../services/governanceService";
+import {
+  getComplaintPreset,
+  getScreeningPresetJson,
+  PROPOSAL_PRESET_LIST,
+  PROPOSAL_PRESETS,
+  type ProposalPresetKey,
+} from "../services/proposalPresets";
 import { WorkflowAnomalyJourney } from "./WorkflowAnomalyJourney";
 
 
@@ -39,6 +54,39 @@ const titles: Record<Capability, [string, string]> = {
   conditions: ["Conditional Verification", "Evaluate supplied condition and evidence status."],
 };
 
+function ProposalPresetSelector({
+  selected,
+  onSelect,
+  disabled = false,
+}: {
+  selected: ProposalPresetKey;
+  onSelect: (key: ProposalPresetKey) => void;
+  disabled?: boolean;
+}) {
+  const active = PROPOSAL_PRESETS[selected];
+  return (
+    <div className={styles.notice} style={{ marginBottom: "1rem" }}>
+      <strong>Select a Proposal Example:</strong>
+      <div className={styles.actions} style={{ marginTop: "0.5rem" }}>
+        {PROPOSAL_PRESET_LIST.map(preset => (
+          <Button
+            key={preset.key}
+            type="button"
+            variant={selected === preset.key ? "primary" : "secondary"}
+            onClick={() => onSelect(preset.key)}
+            disabled={disabled}
+          >
+            {preset.shortLabel}
+          </Button>
+        ))}
+      </div>
+      <p className={styles.muted} style={{ marginTop: "0.5rem", marginBottom: 0 }}>
+        <strong>{active.title}:</strong> {active.summary}
+      </p>
+    </div>
+  );
+}
+
 export function GovernanceCapabilityPage({ capability }: { capability: Capability }) {
   const demo = useGovernanceMode() === "demo";
   return <>
@@ -46,10 +94,10 @@ export function GovernanceCapabilityPage({ capability }: { capability: Capabilit
     {capability === "complaints" && <ComplaintView demo={demo} />}
     {capability === "anomalies" && <AnomalyView demo={demo} />}
     {capability === "screening" && <ScreeningView demo={demo} />}
-    {capability === "timing" && <TimingView />}
-    {capability === "commissioner" && <QueueView />}
-    {capability === "decision-review" && <DecisionView />}
-    {capability === "summary" && <SummaryView />}
+    {capability === "timing" && <TimingView key={`timing-${demo}`} demo={demo} />}
+    {capability === "commissioner" && <QueueView key={`commissioner-${demo}`} demo={demo} />}
+    {capability === "decision-review" && <DecisionView key={`decision-review-${demo}`} demo={demo} />}
+    {capability === "summary" && <SummaryView key={`summary-${demo}`} demo={demo} />}
     {capability === "verification" && <VerificationView demo={demo} />}
     {capability === "audit" && <AuditView demo={demo} />}
     {["risk", "explain", "consensus", "conditions"].includes(capability) && (
@@ -57,7 +105,7 @@ export function GovernanceCapabilityPage({ capability }: { capability: Capabilit
         <h2>{titles[capability][0]}</h2>
         {demo
           ? <Unavailable title="Live evaluation paused in demo mode">Switch to live mode to submit an evaluation. No fictional risk, explanation, consensus, or verification result is generated.</Unavailable>
-          : <StructuredEvaluation capability={capability as "risk" | "explain" | "consensus" | "conditions"} />}
+          : <StructuredEvaluation key={capability} capability={capability as "risk" | "explain" | "consensus" | "conditions"} />}
       </section>
     )}
   </>;
@@ -65,13 +113,24 @@ export function GovernanceCapabilityPage({ capability }: { capability: Capabilit
 
 function ComplaintView({ demo }: { demo: boolean }) {
   const [selected, setSelected] = useState(0);
-  const [caseId, setCaseId] = useState("CASE-COMPLAINT-001");
-  const [complaintText, setComplaintText] = useState("The divisional secretariat officer accepted unauthorized payments directly without issuing formal government treasury receipts and bypassed gazetted valuation.");
+  const [presetKey, setPresetKey] = useState<ProposalPresetKey>("proposal-3");
+  const initial = getComplaintPreset("proposal-3");
+  const [caseId, setCaseId] = useState(initial.caseId);
+  const [complaintText, setComplaintText] = useState(initial.complaintText);
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<ComplaintClassificationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const item = demoComplaints[selected];
+
+  function selectPreset(nextKey: ProposalPresetKey) {
+    const preset = getComplaintPreset(nextKey);
+    setPresetKey(nextKey);
+    setCaseId(preset.caseId);
+    setComplaintText(preset.complaintText);
+    setResult(null);
+    setError(null);
+  }
 
   async function handleClassify(e: React.FormEvent) {
     e.preventDefault();
@@ -100,65 +159,68 @@ function ComplaintView({ demo }: { demo: boolean }) {
           Switch to live mode to submit complaint text to the real trained Python classifier.
         </Unavailable>
       ) : (
-        <form onSubmit={handleClassify}>
-          <div className={styles.field}>
-            <label htmlFor="complaint-case">Case ID</label>
-            <input
-              id="complaint-case"
-              value={caseId}
-              onChange={e => setCaseId(e.target.value)}
-              required
-              disabled={pending}
-            />
-          </div>
-          <div className={styles.field}>
-            <label htmlFor="complaint-text">Original complaint · English</label>
-            <textarea
-              id="complaint-text"
-              value={complaintText}
-              onChange={e => setComplaintText(e.target.value)}
-              required
-              disabled={pending}
-            />
-          </div>
-          <Button type="submit" disabled={pending}>
-            {pending ? "Classifying with ML…" : "Classify complaint"}
-          </Button>
-          {error && <div className={styles.notice} role="alert"><p>{error}</p></div>}
-          {result && (
-            <div aria-live="polite" style={{ marginTop: "1.2rem" }}>
-              <h3>Machine Prediction · Real ML Output</h3>
-              <StatusBadge tone="warning">{result.predictedCategory}</StatusBadge>
-              <Facts
-                values={[
-                  ["Assessment ID", result.assessmentId],
-                  ["Case ID", result.caseId],
-                  ["Model version", result.modelVersion],
-                  ["Assessed at", formatGovernanceTime(result.assessedAtUtc)],
-                  ["Advisory Note", result.advisoryNote],
-                  ["Closed-set note", result.closedSetNote],
-                ]}
+        <>
+          <ProposalPresetSelector selected={presetKey} onSelect={selectPreset} disabled={pending} />
+          <form onSubmit={handleClassify}>
+            <div className={styles.field}>
+              <label htmlFor="complaint-case">Case ID</label>
+              <input
+                id="complaint-case"
+                value={caseId}
+                onChange={e => setCaseId(e.target.value)}
+                required
+                disabled={pending}
               />
-              <h4>Original complaint</h4>
-              <p>{result.complaintText}</p>
-              <div className={styles.scroll}>
-                <table className={styles.table}>
-                  <thead>
-                    <tr><th scope="col">Category</th><th scope="col">Model probability</th></tr>
-                  </thead>
-                  <tbody>
-                    {complaintCategories.map(cat => (
-                      <tr key={cat}>
-                        <th scope="row">{cat}</th>
-                        <td>{(result.classProbabilities[cat] * 100).toFixed(1)}% ({result.classProbabilities[cat].toFixed(4)})</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
-          )}
-        </form>
+            <div className={styles.field}>
+              <label htmlFor="complaint-text">Original complaint · English</label>
+              <textarea
+                id="complaint-text"
+                value={complaintText}
+                onChange={e => setComplaintText(e.target.value)}
+                required
+                disabled={pending}
+              />
+            </div>
+            <Button type="submit" disabled={pending}>
+              {pending ? "Classifying with ML…" : "Classify complaint"}
+            </Button>
+            {error && <div className={styles.notice} role="alert"><p>{error}</p></div>}
+            {result && (
+              <div aria-live="polite" style={{ marginTop: "1.2rem" }}>
+                <h3>Machine Prediction · Real ML Output</h3>
+                <StatusBadge tone="warning">{result.predictedCategory}</StatusBadge>
+                <Facts
+                  values={[
+                    ["Assessment ID", result.assessmentId],
+                    ["Case ID", result.caseId],
+                    ["Model version", result.modelVersion],
+                    ["Assessed at", formatGovernanceTime(result.assessedAtUtc)],
+                    ["Advisory Note", result.advisoryNote],
+                    ["Closed-set note", result.closedSetNote],
+                  ]}
+                />
+                <h4>Original complaint</h4>
+                <p>{result.complaintText}</p>
+                <div className={styles.scroll}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr><th scope="col">Category</th><th scope="col">Model probability</th></tr>
+                    </thead>
+                    <tbody>
+                      {complaintCategories.map(cat => (
+                        <tr key={cat}>
+                          <th scope="row">{cat}</th>
+                          <td>{(result.classProbabilities[cat] * 100).toFixed(1)}% ({result.classProbabilities[cat].toFixed(4)})</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </form>
+        </>
       )}
       <h3>Model Context</h3>
       <p className={styles.muted}>
@@ -200,39 +262,33 @@ function ComplaintView({ demo }: { demo: boolean }) {
 }
 
 function AnomalyView({ demo }: { demo: boolean }) {
+  const [presetKey, setPresetKey] = useState<ProposalPresetKey>("proposal-1");
   if (demo) {
     return <Unavailable title="Live persisted journey paused in demo mode">
       Switch to Live workspace to retrieve a persisted projection and assessment. No mock fallback is used for this Commissioner-facing journey.
     </Unavailable>;
   }
 
-  return <WorkflowAnomalyJourney allowCaseLookup />;
+  const activeCaseId = PROPOSAL_PRESETS[presetKey].anomalyCaseId;
+  return <>
+    <ProposalPresetSelector selected={presetKey} onSelect={setPresetKey} />
+    <WorkflowAnomalyJourney key={activeCaseId} initialCaseId={activeCaseId} />
+  </>;
 }
 
 function ScreeningView({ demo }: { demo: boolean }) {
-  const defaultScreeningJson = JSON.stringify({
-    caseId: "SIM-C4-2026-001",
-    inputVersion: "v1",
-    indicators: [
-      {
-        indicatorType: "LegalDispute",
-        evidenceState: "VerifiedAbsent",
-        evidenceReference: "COURT-SEARCH-REF-2026-01",
-        recordedAtUtc: new Date().toISOString()
-      },
-      {
-        indicatorType: "UnauthorizedOccupation",
-        evidenceState: "VerifiedAbsent",
-        evidenceReference: "GRAMA-NILADHARI-REPORT-004",
-        recordedAtUtc: new Date().toISOString()
-      }
-    ]
-  }, null, 2);
-
-  const [inputJson, setInputJson] = useState(defaultScreeningJson);
+  const [presetKey, setPresetKey] = useState<ProposalPresetKey>("proposal-1");
+  const [inputJson, setInputJson] = useState(() => getScreeningPresetJson("proposal-1"));
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<EarlyScreeningResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  function selectPreset(nextKey: ProposalPresetKey) {
+    setPresetKey(nextKey);
+    setInputJson(getScreeningPresetJson(nextKey));
+    setResult(null);
+    setError(null);
+  }
 
   async function handleScreen(e: React.FormEvent) {
     e.preventDefault();
@@ -267,23 +323,26 @@ function ScreeningView({ demo }: { demo: boolean }) {
           <Checks items={screeningIndicators.map(([code, label]) => ({ label, status: "Missing", note: code }))} />
         </>
       ) : (
-        <form onSubmit={handleScreen}>
-          <div className={styles.field}>
-            <label htmlFor="screening-input-json">Screening Evidence JSON</label>
-            <textarea
-              id="screening-input-json"
-              value={inputJson}
-              onChange={e => setInputJson(e.target.value)}
-              required
-              disabled={pending}
-              style={{ minHeight: "180px", fontFamily: "monospace", fontSize: "0.8rem" }}
-            />
-          </div>
-          <Button type="submit" disabled={pending}>
-            {pending ? "Screening Indicators…" : "Run Early Governance Screening"}
-          </Button>
-          {error && <div className={styles.notice} role="alert"><p>{error}</p></div>}
-        </form>
+        <>
+          <ProposalPresetSelector selected={presetKey} onSelect={selectPreset} disabled={pending} />
+          <form onSubmit={handleScreen}>
+            <div className={styles.field}>
+              <label htmlFor="screening-input-json">Screening Evidence JSON</label>
+              <textarea
+                id="screening-input-json"
+                value={inputJson}
+                onChange={e => setInputJson(e.target.value)}
+                required
+                disabled={pending}
+                style={{ minHeight: "180px", fontFamily: "monospace", fontSize: "0.8rem" }}
+              />
+            </div>
+            <Button type="submit" disabled={pending}>
+              {pending ? "Screening Indicators…" : "Run Early Governance Screening"}
+            </Button>
+            {error && <div className={styles.notice} role="alert"><p>{error}</p></div>}
+          </form>
+        </>
       )}
     </section>
     <section className={styles.card}>
@@ -340,33 +399,384 @@ function ScreeningView({ demo }: { demo: boolean }) {
   </div>;
 }
 
-function TimingView() {
-  return <div className={styles.split}><section className={styles.card}><h2>Timing evidence</h2><Facts values={[["Confirmed complete-proposal start", "Unavailable"], ["Expected applicant handover", "Unavailable"], ["Actual applicant handover", "Unavailable"], ["Ongoing-case assessment time", "Unavailable"], ["Evidence provenance", "Not supplied"]]} /></section>
-    <section className={styles.card}><h2>Timing status</h2><Unavailable title="Timing cannot currently be assessed">Authoritative start and applicant-handover evidence are not connected.</Unavailable><p>The expectation is two calendar months. It is not 60 days, two working months or a proven statutory deadline.</p><p className={styles.muted}>Date conversion to Asia/Colombo, month-end handling and the outcome must come from the timing service. Lateness does not automatically trigger a referral.</p></section></div>;
+const timingLabel = (value: unknown) =>
+  ({
+    1: "WithinExpectation (<= 2 calendar months)",
+    2: "ExceededExpectation (> 2 calendar months)",
+    3: "BasedOnAvailableEvidence (Ongoing / within expectation)",
+    4: "BasedOnAvailableEvidence (Ongoing / exceeded expectation)",
+    5: "Unavailable",
+  }[Number(value)] ?? String(value ?? "Unavailable"));
+
+const referralLabel = (value: unknown) =>
+  ({
+    1: "Pending",
+    2: "Delivering",
+    3: "DeliveryFailed",
+    4: "Acknowledged",
+  }[Number(value)] ?? String(value ?? "Unavailable"));
+
+function TimingView({ demo }: { demo: boolean }) {
+  const [presetKey, setPresetKey] = useState<ProposalPresetKey>("proposal-3");
+  const [item, setItem] = useState<PersistedHistoryItem | null>(null);
+  const [loading, setLoading] = useState(!demo);
+
+  const activeCaseId = PROPOSAL_PRESETS[presetKey].caseId;
+
+  useEffect(() => {
+    if (demo) {
+      return;
+    }
+    let active = true;
+    getLeaseTimingHistoryByCase(activeCaseId, 5)
+      .then(items => {
+        if (active) setItem(items[0] ?? null);
+      })
+      .catch(() => {
+        if (active) setItem(null);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [activeCaseId, demo]);
+
+  const visibleItem = demo || loading ? null : item;
+  const str = (key: string) => (visibleItem?.[key] == null ? "Unavailable" : String(visibleItem[key]));
+
+  return <>
+    {!demo && <ProposalPresetSelector selected={presetKey} onSelect={key => { setLoading(true); setPresetKey(key); }} disabled={loading} />}
+    <div className={styles.split}>
+      <section className={styles.card}>
+        <h2>Timing evidence ({demo ? "Demo mode" : activeCaseId})</h2>
+        <Facts
+          values={[
+            ["Case ID", demo ? "Unavailable" : str("caseId")],
+            ["Confirmed complete-proposal start", demo ? "Unavailable" : str("completeProposalRoadmapStartDate")],
+            ["Expected applicant handover (2 calendar months)", demo ? "Unavailable" : str("expectedApprovalHandoverDate")],
+            ["Actual applicant handover", demo ? "Unavailable" : str("approvalHandoverDate")],
+            ["Ongoing-case assessment date (Asia/Colombo)", demo ? "Unavailable" : str("assessmentDateColombo")],
+            ["Elapsed calendar days", demo ? "Unavailable" : str("elapsedCalendarDays")],
+            ["Days beyond expected", demo ? "Unavailable" : str("daysBeyondExpected")],
+            ["Source workflow projection", demo ? "Not supplied" : str("workflowProjectionId")],
+          ]}
+        />
+      </section>
+      <section className={styles.card}>
+        <h2>Timing status</h2>
+        {!demo && visibleItem ? (
+          <>
+            <StatusBadge tone={Number(visibleItem.timingState) === 1 ? "success" : "warning"}>
+              {timingLabel(visibleItem.timingState)}
+            </StatusBadge>
+            <Facts
+              values={[
+                ["Assessment ID", str("assessmentId")],
+                ["Policy version", str("policyVersion")],
+                ["Calculated at", formatGovernanceTime(str("calculatedAtUtc"))],
+              ]}
+            />
+          </>
+        ) : (
+          <Unavailable title="Timing cannot currently be assessed">
+            Authoritative start and applicant-handover evidence are not connected.
+          </Unavailable>
+        )}
+        <p>The expectation is two calendar months. It is not 60 days, two working months or a proven statutory deadline.</p>
+        <p className={styles.muted}>Date conversion to Asia/Colombo, month-end handling and the outcome must come from the timing service. Lateness does not automatically trigger a referral.</p>
+      </section>
+    </div>
+  </>;
 }
 
-function QueueView() {
-  return <section className={styles.card}><h2>Commissioner review cases</h2><Unavailable title="Review queue unavailable">The Commissioner review queue and referral acknowledgements are not connected. No cases are represented as referred or ready for decision.</Unavailable>
-    <div className={styles.scroll}><table className={styles.table}><thead><tr>{["Case", "Applicant", "Reason for review", "Risk", "Current stage", "Age"].map(label => <th scope="col" key={label}>{label}</th>)}</tr></thead><tbody><tr><td colSpan={6}>Queue availability is unknown; this does not mean the queue is empty.</td></tr></tbody></table></div>
-    <p className={styles.muted}>The system does not make the Commissioner’s legal or administrative decision.</p><Button href="/component-04/commissioner/review" variant="secondary">Review evidence requirements</Button>
+function QueueView({ demo }: { demo: boolean }) {
+  const [rows, setRows] = useState<Array<{ preset: typeof PROPOSAL_PRESET_LIST[number]; referral?: PersistedHistoryItem; screeningStatus: string }>>([]);
+  const [loading, setLoading] = useState(!demo);
+
+  useEffect(() => {
+    if (demo) {
+      return;
+    }
+    let active = true;
+    Promise.all(
+      PROPOSAL_PRESET_LIST.map(async preset => {
+        try {
+          const [referrals, screenings] = await Promise.all([
+            getReferralHistoryByCase(preset.caseId, 5),
+            getScreeningHistoryByCase(preset.caseId, 5),
+          ]);
+          const scrResult = screenings[0]?.result as Record<string, unknown> | undefined;
+          return {
+            preset,
+            referral: referrals[0],
+            screeningStatus: scrResult?.overallStatus ? String(scrResult.overallStatus) : "Unavailable",
+          };
+        } catch {
+          return { preset, referral: undefined, screeningStatus: "Unavailable" };
+        }
+      }),
+    )
+      .then(result => {
+        if (active) setRows(result);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [demo]);
+
+  const visibleRows = demo || loading ? [] : rows;
+  const referredRows = visibleRows.filter(r => r.referral);
+
+  return <section className={styles.card}>
+    <h2>Commissioner review cases</h2>
+    {demo || referredRows.length === 0 ? (
+      <Unavailable title="Review queue unavailable">
+        The Commissioner review queue and referral acknowledgements are not connected. No cases are represented as referred or ready for decision.
+      </Unavailable>
+    ) : (
+      <div className={styles.notice} style={{ marginBottom: "1rem" }}>
+        <strong>Persisted Component 4 Referral Records (PostgreSQL):</strong> Showing {referredRows.length} referred PP1 proposals with acknowledged <code>SyntheticPp1Handoff</code> records alongside non-referred baseline Proposal 1. Actual Component 3 workflow termination is not executed by Component 4.
+      </div>
+    )}
+    <div className={styles.scroll}>
+      <table className={styles.table}>
+        <thead>
+          <tr>{["Case", "Applicant / Provenance", "Reason for review", "Screening", "Current referral state", "Handoff reference"].map(label => <th scope="col" key={label}>{label}</th>)}</tr>
+        </thead>
+        <tbody>
+          {!demo && visibleRows.length > 0 ? (
+            visibleRows.map(({ preset, referral, screeningStatus }) => (
+              <tr key={preset.caseId}>
+                <th scope="row">{preset.caseId}</th>
+                <td>SyntheticPp1Seed · pp1-seed-contract-v2</td>
+                <td>{referral ? "Early screening ReviewRequired (NormalFlowExitRequested)" : "Not referred (Screening Clear)"}</td>
+                <td>{screeningStatus}</td>
+                <td>{referral ? referralLabel(referral.deliveryState) : "Not Required"}</td>
+                <td>{referral ? String(referral.commissionerReviewProcessReference ?? referral.referralId) : "—"}</td>
+              </tr>
+            ))
+          ) : (
+            <tr><td colSpan={6}>{loading ? "Loading persisted referral records…" : "Queue availability is unknown; this does not mean the queue is empty."}</td></tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+    <p className={styles.muted}>The system does not make the Commissioner’s legal or administrative decision.</p>
+    <Button href="/component-04/commissioner/review" variant="secondary">Review evidence requirements</Button>
   </section>;
 }
 
-function DecisionView() {
-  return <div className={styles.split}><section className={styles.card}><h2>Case governance summary</h2><Checks items={["Regulatory compliance", "Conflict detection", "Institutional verification", "Conditions", "Governance risk"].map(label => ({ label, status: "Unavailable" }))} /></section>
-    <section className={styles.card}><h2>Evidence for decision</h2><Unavailable title="Decision recording unavailable">An authorized decision service and an acknowledged Commissioner review-process identity are required. No workflow action can be confirmed.</Unavailable>
-      <Facts values={[["Case ID", "Not supplied"], ["Review-process ID", "Not supplied"], ["Referral ID", "Not supplied"], ["Human-reviewed findings", "Unavailable"], ["Authorized decision", "Not recorded here"]]} />
-      <h3>Record authorized decision</h3><div className={styles.actions}>{["Continue processing", "Return for clarification", "Refer for independent review", "Legal review required"].map(label => <Button key={label} variant="secondary" disabled>{label}</Button>)}</div>
-    </section></div>;
+function DecisionView({ demo }: { demo: boolean }) {
+  const [presetKey, setPresetKey] = useState<ProposalPresetKey>("proposal-3");
+  const [dossier, setDossier] = useState<{
+    screening?: PersistedHistoryItem;
+    referral?: PersistedHistoryItem;
+    complaint?: PersistedHistoryItem;
+    anomaly?: PersistedHistoryItem;
+    timing?: PersistedHistoryItem;
+  }>({});
+  const [loading, setLoading] = useState(!demo);
+
+  const activeCaseId = PROPOSAL_PRESETS[presetKey].caseId;
+
+  useEffect(() => {
+    if (demo) {
+      return;
+    }
+    let active = true;
+    Promise.allSettled([
+      getScreeningHistoryByCase(activeCaseId, 5),
+      getReferralHistoryByCase(activeCaseId, 5),
+      getComplaintHistoryByCase(activeCaseId, 5),
+      getWorkflowAnomalyHistoryByCase(activeCaseId, 5),
+      getLeaseTimingHistoryByCase(activeCaseId, 5),
+    ])
+      .then(results => {
+        if (!active) return;
+        const pick = (idx: number) => (results[idx].status === "fulfilled" ? results[idx].value[0] : undefined);
+        setDossier({
+          screening: pick(0),
+          referral: pick(1),
+          complaint: pick(2),
+          anomaly: pick(3),
+          timing: pick(4),
+        });
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [activeCaseId, demo]);
+
+  const visibleDossier = demo || loading ? {} : dossier;
+  const scrResult = visibleDossier.screening?.result as Record<string, unknown> | undefined;
+  const screeningStatus = scrResult?.overallStatus ? String(scrResult.overallStatus) : "Unavailable";
+  const hasPersisted = Boolean(visibleDossier.screening || visibleDossier.referral || visibleDossier.complaint || visibleDossier.anomaly || visibleDossier.timing);
+
+  return <>
+    {!demo && <ProposalPresetSelector selected={presetKey} onSelect={key => { setLoading(true); setPresetKey(key); }} disabled={loading} />}
+    <div className={styles.split}>
+      <section className={styles.card}>
+        <h2>Case governance summary ({demo ? "Demo mode" : activeCaseId})</h2>
+        <Checks
+          items={
+            !demo && hasPersisted
+              ? [
+                  { label: "Early governance screening", status: screeningStatus, note: visibleDossier.screening ? String(visibleDossier.screening.assessmentId) : undefined },
+                  { label: "Commissioner referral handoff", status: visibleDossier.referral ? referralLabel(visibleDossier.referral.deliveryState) : "NotRequired" },
+                  { label: "Complaint ML classification", status: visibleDossier.complaint ? String(visibleDossier.complaint.predictedCategory) : "NotApplicable" },
+                  { label: "Workflow anomaly ML (v1)", status: visibleDossier.anomaly ? (visibleDossier.anomaly.flagged ? "Flagged for review" : "No statistical escalation") : "NotEligible" },
+                  { label: "Lease approval timing", status: visibleDossier.timing ? timingLabel(visibleDossier.timing.timingState) : "Unavailable" },
+                ]
+              : ["Regulatory compliance", "Conflict detection", "Institutional verification", "Conditions", "Governance risk"].map(label => ({ label, status: "Unavailable" }))
+          }
+        />
+      </section>
+      <section className={styles.card}>
+        <h2>Evidence for decision</h2>
+        <Unavailable title="Decision recording unavailable">
+          An authorized decision service and an acknowledged Commissioner review-process identity are required. No workflow action can be confirmed.
+        </Unavailable>
+        <Facts
+          values={[
+            ["Case ID", !demo && hasPersisted ? activeCaseId : "Not supplied"],
+            ["Review-process ID", !demo && visibleDossier.referral ? String(visibleDossier.referral.commissionerReviewProcessReference ?? "Unavailable") : "Not supplied"],
+            ["Referral ID", !demo && visibleDossier.referral ? String(visibleDossier.referral.referralId) : "Not supplied"],
+            ["Human-reviewed findings", "Unavailable"],
+            ["Authorized decision", "Not recorded here"],
+          ]}
+        />
+        <h3>Record authorized decision</h3>
+        <div className={styles.actions}>
+          {["Continue processing", "Return for clarification", "Refer for independent review", "Legal review required"].map(label => (
+            <Button key={label} variant="secondary" disabled>{label}</Button>
+          ))}
+        </div>
+      </section>
+    </div>
+  </>;
 }
 
-function SummaryView() {
-  return <div className={styles.split}><section className={styles.card}><h2>Check progress</h2><Checks items={["Regulatory compliance", "Conflict detection", "Early evidence screening", "Institutional consensus", "Conditional verification", "Workflow statistical anomaly"].map(label => ({ label, status: "Unavailable" }))} /><Button href="/component-04/cases" variant="secondary">Inspect individual assessments</Button></section>
-    <section className={styles.card}><h2>Why this status?</h2><Unavailable title="Final summary unavailable">No authoritative summary linking the case, workflow run and assessment snapshots has been retrieved. Separate examples cannot be combined into a final outcome.</Unavailable><h3>Evidence used</h3><Checks items={["Completed checks", "Pending checks", "Machine predictions", "Human-reviewed findings", "Referral delivery state", "Authorized decisions"].map(label => ({ label, status: "Unavailable" }))} /><div className={styles.actions}><Button disabled>Finish workflow and record details</Button></div><p className={styles.muted}>Final lease-decision and workflow execution remain with their authorized process.</p></section></div>;
+function SummaryView({ demo }: { demo: boolean }) {
+  const [presetKey, setPresetKey] = useState<ProposalPresetKey>("proposal-3");
+  const [dossier, setDossier] = useState<{
+    screening?: PersistedHistoryItem;
+    referral?: PersistedHistoryItem;
+    complaint?: PersistedHistoryItem;
+    anomaly?: PersistedHistoryItem;
+    timing?: PersistedHistoryItem;
+    audit?: AuditCaseHistoryItem;
+    receipt?: AuditVerificationReceiptResponse;
+  }>({});
+  const [loading, setLoading] = useState(!demo);
+
+  const activeCaseId = PROPOSAL_PRESETS[presetKey].caseId;
+
+  useEffect(() => {
+    if (demo) {
+      return;
+    }
+    let active = true;
+    Promise.allSettled([
+      getScreeningHistoryByCase(activeCaseId, 5),
+      getReferralHistoryByCase(activeCaseId, 5),
+      getComplaintHistoryByCase(activeCaseId, 5),
+      getWorkflowAnomalyHistoryByCase(activeCaseId, 5),
+      getLeaseTimingHistoryByCase(activeCaseId, 5),
+      getAuditHistoryByCase(activeCaseId, 5),
+    ])
+      .then(async results => {
+        if (!active) return;
+        const pick = (idx: number) => (results[idx].status === "fulfilled" ? (results[idx].value as PersistedHistoryItem[])[0] : undefined);
+        const audits = results[5].status === "fulfilled" ? (results[5].value as AuditCaseHistoryItem[]) : [];
+        let receipt: AuditVerificationReceiptResponse | undefined;
+        if (audits[0]) {
+          try {
+            receipt = await getAuditReceipt(audits[0].auditRecordId);
+          } catch {
+            receipt = undefined;
+          }
+        }
+        if (!active) return;
+        setDossier({
+          screening: pick(0),
+          referral: pick(1),
+          complaint: pick(2),
+          anomaly: pick(3),
+          timing: pick(4),
+          audit: audits[0],
+          receipt,
+        });
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [activeCaseId, demo]);
+
+  const scrResult = dossier.screening?.result as Record<string, unknown> | undefined;
+  const screeningStatus = scrResult?.overallStatus ? String(scrResult.overallStatus) : "Unavailable";
+  const hasPersisted = Boolean(dossier.screening || dossier.referral || dossier.complaint || dossier.anomaly || dossier.timing || dossier.audit);
+
+  return <>
+    {!demo && <ProposalPresetSelector selected={presetKey} onSelect={key => { setLoading(true); setPresetKey(key); }} disabled={loading} />}
+    <div className={styles.split}>
+      <section className={styles.card}>
+        <h2>Check progress ({demo ? "Demo mode" : activeCaseId})</h2>
+        <Checks
+          items={
+            !demo && hasPersisted
+              ? [
+                  { label: "Early evidence screening", status: screeningStatus },
+                  { label: "Complaint ML classification (v2)", status: dossier.complaint ? String(dossier.complaint.predictedCategory) : "NotApplicable" },
+                  { label: "Workflow statistical anomaly (v1)", status: dossier.anomaly ? `Score ${dossier.anomaly.anomalyScore} (${dossier.anomaly.flagged ? "Flagged" : "Clear"})` : "NotEligible" },
+                  { label: "Lease approval timing", status: dossier.timing ? timingLabel(dossier.timing.timingState) : "Unavailable" },
+                  { label: "Commissioner referral handoff", status: dossier.referral ? referralLabel(dossier.referral.deliveryState) : "NotRequired" },
+                  { label: "Audit / Besu blockchain receipt", status: dossier.receipt ? `${dossier.receipt.anchorStatus} · ${dossier.receipt.verificationStatus} (Block ${dossier.receipt.blockNumber ?? "N/A"})` : "No audited core op" },
+                ]
+              : ["Regulatory compliance", "Conflict detection", "Early evidence screening", "Institutional consensus", "Conditional verification", "Workflow statistical anomaly"].map(label => ({ label, status: "Unavailable" }))
+          }
+        />
+        <Button href="/component-04/cases" variant="secondary">Inspect individual assessments</Button>
+      </section>
+      <section className={styles.card}>
+        <h2>Why this status?</h2>
+        <Unavailable title="Final summary unavailable">
+          No authoritative summary linking the case, workflow run and assessment snapshots has been retrieved. Separate examples cannot be combined into a final outcome.
+        </Unavailable>
+        <h3>Evidence used</h3>
+        <Checks
+          items={[
+            { label: "Completed checks", status: !demo && hasPersisted ? "Persisted in PostgreSQL" : "Unavailable" },
+            { label: "Pending checks", status: !demo && hasPersisted ? (dossier.anomaly ? "None" : "Workflow ongoing / ineligible for post-workflow anomaly") : "Unavailable" },
+            { label: "Machine predictions", status: !demo && hasPersisted ? `Complaint: ${dossier.complaint ? "Computed (v2)" : "N/A"} · Anomaly: ${dossier.anomaly ? "Computed (v1)" : "Ineligible"}` : "Unavailable" },
+            { label: "Human-reviewed findings", status: "Unavailable" },
+            { label: "Referral delivery state", status: !demo && dossier.referral ? `${referralLabel(dossier.referral.deliveryState)} (SyntheticPp1Handoff)` : "Unavailable" },
+            { label: "Authorized decisions", status: "Unavailable" },
+          ]}
+        />
+        <div className={styles.actions}>
+          <Button disabled>Finish workflow and record details</Button>
+        </div>
+        <p className={styles.muted}>Final lease-decision and workflow execution remain with their authorized process.</p>
+      </section>
+    </div>
+  </>;
 }
+
+const DEFAULT_PP1_AUDIT_RECORD_ID = "083d4e8b-6a13-4791-8d65-e05b4f3515ea";
 
 function VerificationView({ demo }: { demo: boolean }) {
-  const [recordId, setRecordId] = useState("818f49f5-d954-4a4a-9305-a18133d1e2a2");
+  const [recordId, setRecordId] = useState(DEFAULT_PP1_AUDIT_RECORD_ID);
   const [pending, setPending] = useState(false);
   const [receipt, setReceipt] = useState<AuditVerificationReceiptResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -396,22 +806,37 @@ function VerificationView({ demo }: { demo: boolean }) {
           Switch to live mode to verify an authentic audit record on the blockchain.
         </Unavailable>
       ) : (
-        <form onSubmit={handleVerify}>
-          <div className={styles.field}>
-            <label htmlFor="verify-record-id">Audit Record GUID</label>
-            <input
-              id="verify-record-id"
-              value={recordId}
-              onChange={e => setRecordId(e.target.value)}
-              required
-              disabled={pending}
-            />
+        <>
+          <div className={styles.notice} style={{ marginBottom: "1rem" }}>
+            <strong>Proposal 3 (PP1-FINAL-COMBINED-001) Anchored Audit Record:</strong>
+            <div className={styles.actions} style={{ marginTop: "0.5rem" }}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setRecordId(DEFAULT_PP1_AUDIT_RECORD_ID)}
+                disabled={pending}
+              >
+                Use PP1-FINAL-COMBINED-001 (083d4e8b-6a13-4791-8d65-e05b4f3515ea)
+              </Button>
+            </div>
           </div>
-          <Button type="submit" disabled={pending}>
-            {pending ? "Verifying on Ledger…" : "Verify Record on Blockchain"}
-          </Button>
-          {error && <div className={styles.notice} role="alert"><p>{error}</p></div>}
-        </form>
+          <form onSubmit={handleVerify}>
+            <div className={styles.field}>
+              <label htmlFor="verify-record-id">Audit Record GUID</label>
+              <input
+                id="verify-record-id"
+                value={recordId}
+                onChange={e => setRecordId(e.target.value)}
+                required
+                disabled={pending}
+              />
+            </div>
+            <Button type="submit" disabled={pending}>
+              {pending ? "Verifying on Ledger…" : "Verify Record on Blockchain"}
+            </Button>
+            {error && <div className={styles.notice} role="alert"><p>{error}</p></div>}
+          </form>
+        </>
       )}
       <h3>Trust Architecture</h3>
       <p className={styles.muted}>
@@ -453,7 +878,7 @@ function VerificationView({ demo }: { demo: boolean }) {
 }
 
 function AuditView({ demo }: { demo: boolean }) {
-  const [recordId, setRecordId] = useState("818f49f5-d954-4a4a-9305-a18133d1e2a2");
+  const [recordId, setRecordId] = useState(DEFAULT_PP1_AUDIT_RECORD_ID);
   const [pending, setPending] = useState(false);
   const [receipt, setReceipt] = useState<AuditVerificationReceiptResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -482,22 +907,37 @@ function AuditView({ demo }: { demo: boolean }) {
         Switch to live mode to inspect authentic audit records.
       </Unavailable>
     ) : (
-      <form onSubmit={handleFetchReceipt} style={{ marginBottom: "1.5rem" }}>
-        <div className={styles.field}>
-          <label htmlFor="audit-record-id">Audit Record GUID</label>
-          <input
-            id="audit-record-id"
-            value={recordId}
-            onChange={e => setRecordId(e.target.value)}
-            required
-            disabled={pending}
-          />
+      <>
+        <div className={styles.notice} style={{ marginBottom: "1rem" }}>
+          <strong>Proposal 3 (PP1-FINAL-COMBINED-001) Read-Only Receipt Lookup:</strong>
+          <div className={styles.actions} style={{ marginTop: "0.5rem" }}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setRecordId(DEFAULT_PP1_AUDIT_RECORD_ID)}
+              disabled={pending}
+            >
+              Use PP1-FINAL-COMBINED-001 (083d4e8b-6a13-4791-8d65-e05b4f3515ea)
+            </Button>
+          </div>
         </div>
-        <Button type="submit" disabled={pending}>
-          {pending ? "Fetching Receipt…" : "Retrieve Audit Receipt"}
-        </Button>
-        {error && <div className={styles.notice} role="alert"><p>{error}</p></div>}
-      </form>
+        <form onSubmit={handleFetchReceipt} style={{ marginBottom: "1.5rem" }}>
+          <div className={styles.field}>
+            <label htmlFor="audit-record-id">Audit Record GUID</label>
+            <input
+              id="audit-record-id"
+              value={recordId}
+              onChange={e => setRecordId(e.target.value)}
+              required
+              disabled={pending}
+            />
+          </div>
+          <Button type="submit" disabled={pending}>
+            {pending ? "Fetching Receipt…" : "Retrieve Audit Receipt"}
+          </Button>
+          {error && <div className={styles.notice} role="alert"><p>{error}</p></div>}
+        </form>
+      </>
     )}
     {receipt && (
       <div aria-live="polite">
@@ -525,4 +965,3 @@ function AuditView({ demo }: { demo: boolean }) {
     )}
   </section>;
 }
-
