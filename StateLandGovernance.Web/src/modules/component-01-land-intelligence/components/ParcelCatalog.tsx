@@ -1,6 +1,6 @@
 import type { LandSearchResultResponse } from "../types/landIntelligence";
 import { landCategoryTypeLabels, landUseTypeLabels } from "../utils/enumMappings";
-import { formatSourceReportedLandUseLine } from "../utils/sourceReportedCadastre";
+import { sourceReportedLandUseDisplay } from "../utils/sourceReportedCadastre";
 import { formatArea } from "../utils/formatters";
 import styles from "./ParcelCatalog.module.css";
 
@@ -64,7 +64,7 @@ export function ParcelCatalog({
                   </td>
                   <td>
                     {parcel.cadastralSource
-                      ? formatSourceReportedLandUseLine(parcel.cadastralSource) ||
+                      ? sourceReportedLandUseDisplay(parcel.cadastralSource) ||
                         "—"
                       : parcel.currentUseType
                         ? landUseTypeLabels[parcel.currentUseType] ?? "Unknown"

@@ -12,8 +12,12 @@ import {
 } from "../utils/enumMappings";
 import { displayOrUnavailable, displayOrUnknown, formatArea } from "../utils/formatters";
 import {
-  formatSourceReportedClaimantCategoryLine,
-  formatSourceReportedLandUseLine,
+  gisCoverageBadgeTone,
+  gisCoverageStatusLabel,
+} from "../utils/gisCoverageStatus";
+import {
+  sourceReportedClaimantCategoryDisplay,
+  sourceReportedLandUseDisplay,
 } from "../utils/sourceReportedCadastre";
 import styles from "./ParcelDetails.module.css";
 import listStyles from "./Lists.module.css";
@@ -70,14 +74,14 @@ export function ParcelDetails({
               <DetailRow
                 label="Source-reported land use"
                 value={
-                  formatSourceReportedLandUseLine(parcel.cadastralSource) ||
+                  sourceReportedLandUseDisplay(parcel.cadastralSource) ||
                   "Unavailable"
                 }
               />
               <DetailRow
                 label="Source-reported claimant category"
                 value={
-                  formatSourceReportedClaimantCategoryLine(parcel.cadastralSource) ||
+                  sourceReportedClaimantCategoryDisplay(parcel.cadastralSource) ||
                   "Unavailable"
                 }
               />
@@ -123,12 +127,18 @@ export function ParcelDetails({
                 )}
               />
               <DetailRow
-                label="Actual lease availability"
+                label="Lease availability (project)"
                 value={
                   parcel.availability?.actualLeaseAvailabilityLabel ??
                   "Not verified"
                 }
               />
+              {parcel.availability?.projectLeaseReady?.designationNotice ? (
+                <DetailRow
+                  label="Project designation notice"
+                  value={parcel.availability.projectLeaseReady.designationNotice}
+                />
+              ) : null}
               {researchDemoUiEnabled &&
               parcel.availability?.simulatedWorkflow ? (
                 <div className={styles.row}>
@@ -220,6 +230,49 @@ export function ParcelDetails({
             value={String(parcel.regulatoryReferenceCount)}
           />
         </div>
+      </div>
+
+      <h3 className={styles.sectionTitle}>GIS enrichment</h3>
+      <div className={styles.card}>
+        {parcel.gisEnrichment ? (
+          <div className={styles.grid}>
+            <div className={styles.row}>
+              <span className={styles.label}>Overall status</span>
+              <span className={styles.value}>
+                <StatusBadge
+                  tone={gisCoverageBadgeTone(parcel.gisEnrichment.overallStatus)}
+                >
+                  {gisCoverageStatusLabel(parcel.gisEnrichment.overallStatus)}
+                </StatusBadge>
+              </span>
+            </div>
+            <DetailRow
+              label="GIS-detected district"
+              value={displayOrUnavailable(
+                parcel.gisEnrichment.detectedDistrict,
+              )}
+            />
+            <DetailRow
+              label="GIS-detected province"
+              value={displayOrUnavailable(
+                parcel.gisEnrichment.detectedProvince,
+              )}
+            />
+            <DetailRow
+              label="Enriched at (UTC)"
+              value={
+                parcel.gisEnrichment.enrichedAtUtc
+                  ? new Date(parcel.gisEnrichment.enrichedAtUtc).toISOString()
+                  : "Unavailable"
+              }
+            />
+            <p className={styles.noteText}>{parcel.gisEnrichment.assessmentNotice}</p>
+          </div>
+        ) : (
+          <p className={styles.noteText}>
+            GIS enrichment summary unavailable from the API.
+          </p>
+        )}
       </div>
 
       <h3 className={styles.sectionTitle}>Spatial constraints</h3>

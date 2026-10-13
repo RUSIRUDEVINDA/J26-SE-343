@@ -31,17 +31,33 @@
 
 .rank {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 2.35rem;
-  height: 2.35rem;
-  padding: 0 0.4rem;
-  border-radius: 999px;
+  gap: 0.1rem;
+  min-width: 3.25rem;
+  min-height: 2.35rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 12px;
   background: var(--color-primary);
   color: #fff;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.72rem;
+  line-height: 1.15;
   font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.rankOrder {
+  font-size: 0.78rem;
+}
+
+.rankTie {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.92;
 }
 
 .mainMeta {

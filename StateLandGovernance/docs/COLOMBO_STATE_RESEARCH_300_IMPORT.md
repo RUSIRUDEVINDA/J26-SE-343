@@ -75,3 +75,15 @@ npm run dev
 ## Recommendations
 
 The rule engine evaluates up to **2000** candidates (`MaxCandidates` in `RuleBasedLandRecommendationEngine`). For this 300-parcel database, all matching candidates are evaluated before top results are returned.
+
+## Dashboard GIS honesty
+
+After import, `GET /api/v1/land/parcels/gis-coverage` should report **Unavailable** enrichment and zero parcel-level GIS evidence until reference layers are imported and enrichment is run. The web dashboard reads this endpoint (not static labels).
+
+## Lease interest and officer pilot
+
+Requires NIC encryption keys and JWT/dev session configuration documented in **`COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md`**. Applicant routes: shortlist, lease interest, my requests. Officer review is available under research-demo gates only.
+
+## Full release checklist
+
+**`COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md`**

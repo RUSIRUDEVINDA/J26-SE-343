@@ -152,6 +152,25 @@
   font-weight: 700;
 }
 
+.areaUnitSelect {
+  min-width: 4.75rem;
+  max-width: 5.5rem;
+  padding: 0 0.5rem;
+  border: 1px solid var(--color-input-border);
+  border-left: none;
+  border-radius: 0 14px 14px 0;
+  background: var(--color-nav-inactive);
+  color: var(--color-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.areaUnitSelect:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 .fieldset {
   margin: 0;
   padding: 0;

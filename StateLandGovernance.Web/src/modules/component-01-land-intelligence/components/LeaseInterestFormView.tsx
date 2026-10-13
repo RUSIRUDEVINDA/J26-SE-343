@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
@@ -11,59 +12,38 @@ import {
   saveLeaseInterestDraft,
   submitLeaseInterest,
 } from "../services/citizenWorkspaceApi";
-import { getParcelById } from "../services/landIntelligenceApi";
+import {
+  getParcelById,
+  getParcelConstraints,
+} from "../services/landIntelligenceApi";
+import {
+  leaseInterestEligibilityBlock,
+  leaseInterestMissingParcelAreaBlock,
+} from "../utils/leaseInterestEligibility";
+import { proposalWithParcelArea } from "../utils/leaseInterestProposal";
+import {
+  leaseInterestApplicantOutcome,
+  leaseInterestStatusLabel,
+} from "../utils/leaseInterestStatus";
 import type {
   LandParcelResponse,
   LeaseInterestDocumentChecklist,
   LeaseInterestRequestDetail,
   UpsertLeaseInterestDraft,
 } from "../types/landIntelligence";
+import { AreaUnit } from "../types/landIntelligence";
 import { landUseTypeLabels } from "../utils/enumMappings";
+import { displayOrUnknown, formatArea } from "../utils/formatters";
+import { isLeaseInterestDraftReadyForSubmit } from "../utils/leaseInterestReview";
 import {
-  convertAreaToHectares,
-  displayOrUnknown,
-  formatArea,
-} from "../utils/formatters";
-import { formatSourceReportedLandUseLine } from "../utils/sourceReportedCadastre";
+  sourceReportedClaimantCategoryDisplay,
+  sourceReportedLandUseDisplay,
+} from "../utils/sourceReportedCadastre";
+import { LeaseInterestReviewStep } from "./LeaseInterestReviewStep";
+import { maskNic } from "../utils/nic";
 import styles from "./LeaseInterestFormView.module.css";
 
 const STEPS = ["Applicant", "Proposal", "Documents", "Review"] as const;
-
-function statusLabel(status: number): string {
-  switch (status) {
-    case 1:
-      return "Draft";
-    case 2:
-      return "Submitted";
-    case 3:
-      return "Pending verification";
-    case 4:
-      return "Needs information";
-    case 5:
-      return "Declined";
-    case 6:
-      return "Referred to authority";
-    default:
-      return "Unknown";
-  }
-}
-
-function proposalWithParcelArea(
-  proposal: UpsertLeaseInterestDraft["proposal"],
-  parcel: LandParcelResponse,
-): UpsertLeaseInterestDraft["proposal"] {
-  if (
-    proposal.requestedAreaHectares != null &&
-    proposal.requestedAreaHectares > 0
-  ) {
-    return proposal;
-  }
-  const hectares = convertAreaToHectares(parcel.area.value, parcel.area.unit);
-  if (hectares == null || hectares <= 0) {
-    return proposal;
-  }
-  return { ...proposal, requestedAreaHectares: hectares };
-}
 
 function emptyDraft(): UpsertLeaseInterestDraft {
   return {
@@ -75,6 +55,8 @@ function emptyDraft(): UpsertLeaseInterestDraft {
       postalAddress: "",
       organizationName: null,
       organizationRegistrationNumber: null,
+      nationalIdentityCardNumber: null,
+      representativeNationalIdentityCardNumber: null,
     },
     proposal: {
       requestedPurpose: 99,
@@ -89,7 +71,14 @@ function emptyDraft(): UpsertLeaseInterestDraft {
   };
 }
 
-export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
+export function LeaseInterestFormView({
+  parcelId,
+  onReviewStepChange,
+}: {
+  parcelId: string;
+  onReviewStepChange?: (onReview: boolean) => void;
+}) {
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [parcel, setParcel] = useState<LandParcelResponse | null>(null);
   const [request, setRequest] = useState<LeaseInterestRequestDetail | null>(
@@ -104,6 +93,9 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [spatialConstraints, setSpatialConstraints] = useState<
+    Awaited<ReturnType<typeof getParcelConstraints>>
+  >([]);
   const idempotencyKeyRef = useRef<string | null>(null);
 
   const readOnly = request != null && request.status !== 1;
@@ -112,12 +104,14 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
     setLoading(true);
     setError(null);
     try {
-      const [parcelRes, draftRes, checklistRes] = await Promise.all([
-        getParcelById(parcelId),
+      const parcelRes = await getParcelById(parcelId);
+      const constraintsRes = await getParcelConstraints(parcelId);
+      const [draftRes, checklistRes] = await Promise.all([
         getOrCreateLeaseInterestDraft(parcelId),
         getLeaseInterestDocumentChecklist(),
       ]);
       setParcel(parcelRes);
+      setSpatialConstraints(constraintsRes);
       setRequest(draftRes);
       setDraft({
         applicant: draftRes.applicant,
@@ -143,6 +137,10 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    onReviewStepChange?.(step === 3);
+  }, [step, onReviewStepChange]);
 
   useEffect(() => {
     if (!dirty) {
@@ -216,16 +214,63 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
     }
   }
 
-  const landUseLine = useMemo(() => {
-    if (!parcel?.cadastralSource) {
-      return displayOrUnknown(
-        parcel?.currentUse
-          ? landUseTypeLabels[parcel.currentUse.type]
-          : undefined,
-      );
+  const landUseDisplay = useMemo(() => {
+    if (!parcel) {
+      return "Unavailable";
     }
-    return formatSourceReportedLandUseLine(parcel.cadastralSource) || "Unavailable";
+    const fromCadastre = sourceReportedLandUseDisplay(parcel.cadastralSource);
+    if (fromCadastre) {
+      return fromCadastre;
+    }
+    return parcel.currentUse
+      ? landUseTypeLabels[parcel.currentUse.type]
+      : "Unavailable";
   }, [parcel]);
+
+  const claimantDisplay = useMemo(
+    () => sourceReportedClaimantCategoryDisplay(parcel?.cadastralSource),
+    [parcel],
+  );
+
+  const eligibilityBlock = useMemo(() => {
+    const restriction = leaseInterestEligibilityBlock(
+      parcel,
+      spatialConstraints,
+    );
+    if (restriction) {
+      return restriction;
+    }
+    return leaseInterestMissingParcelAreaBlock(parcel);
+  }, [parcel, spatialConstraints]);
+
+  const canSubmit = useMemo(
+    () =>
+      isLeaseInterestDraftReadyForSubmit(draft) && eligibilityBlock === null,
+    [draft, eligibilityBlock],
+  );
+
+  const projectLeaseReady = parcel?.availability?.projectLeaseReady;
+  const leaseAvailabilityNotice = useMemo(() => {
+    if (projectLeaseReady?.isEffectiveForLeaseFlow) {
+      return {
+        lead: "Lease-ready — project dataset assumption.",
+        body:
+          "This parcel is treated as lease-ready for the J26-SE-343 research dataset only. Expressing interest still requires officer verification and does not reserve land or create a lease. Simulated workflow status, if shown, is separate from this designation.",
+      };
+    }
+    if (projectLeaseReady?.excludedBecauseSourceReportedPrivate) {
+      return {
+        lead: "Not lease-ready for this project.",
+        body:
+          "Source-reported Private claimant category excludes this parcel from the project lease-ready assumption. Lease interest cannot be submitted here; hard restrictions and official verification still apply.",
+      };
+    }
+    return {
+      lead: "Availability not verified.",
+      body:
+        "Expressing lease interest records your request for preliminary assessment. It does not reserve land, create a lease, or establish payment obligations. Your requests are tied to your signed-in applicant session; NIC is collected for officer verification only and is not used for login.",
+    };
+  }, [projectLeaseReady]);
 
   if (loading) {
     return <LoadingState message="Loading lease interest form…" />;
@@ -239,32 +284,66 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
     <div className={styles.layout}>
       <section className={styles.panel} aria-label="Lease interest form">
         <p className={styles.notice} role="note">
-          <strong>Availability not verified.</strong> Expressing lease interest
-          records your request for preliminary assessment. It does not reserve
-          land, create a lease, or establish payment obligations.
+          <strong>{leaseAvailabilityNotice.lead}</strong>{" "}
+          {leaseAvailabilityNotice.body}
         </p>
 
-        {readOnly && request ? (
-          <p className={styles.notice} role="status">
-            Reference:{" "}
-            <strong>{request.acknowledgementReference ?? "—"}</strong> · Status:{" "}
-            <strong>{statusLabel(request.status)}</strong>
+        {eligibilityBlock && !readOnly ? (
+          <p className={styles.notice} role="alert">
+            <strong>Submission blocked.</strong> {eligibilityBlock.message}
           </p>
         ) : null}
 
-        <ol className={styles.steps} aria-label="Form steps">
-          {STEPS.map((label, index) => (
-            <li key={label}>
-              <button
-                type="button"
-                className={`${styles.step} ${step === index ? styles.stepActive : ""}`}
-                onClick={() => setStep(index)}
-              >
-                {index + 1}. {label}
-              </button>
-            </li>
-          ))}
-        </ol>
+        {readOnly && request ? (
+          <>
+            <p className={styles.notice} role="status">
+              Reference:{" "}
+              <strong>{request.acknowledgementReference ?? "—"}</strong> ·
+              Status:{" "}
+              <strong>{leaseInterestStatusLabel(request.status)}</strong>
+            </p>
+            <p className={styles.notice} role="note">
+              {leaseInterestApplicantOutcome(request.status)}
+            </p>
+            {request.statusHistory.length > 0 ? (
+              <div className={styles.reviewCard}>
+                <h3 className={styles.reviewCardTitle}>Status timeline</h3>
+                <ul className={styles.metaList}>
+                  {request.statusHistory.map((entry, index) => (
+                    <li key={`${entry.changedAtUtc}-${index}`}>
+                      <strong>{leaseInterestStatusLabel(entry.status)}</strong>
+                      {" · "}
+                      {new Date(entry.changedAtUtc).toLocaleString()}
+                      {entry.note ? ` — ${entry.note}` : ""}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </>
+        ) : null}
+
+        <nav className={styles.stepTrail} aria-label="Form progress">
+          <ol className={styles.steps}>
+            {STEPS.map((label, index) => (
+              <li key={label} className={styles.stepItem}>
+                {index > 0 ? (
+                  <span className={styles.stepSeparator} aria-hidden="true">
+                    →
+                  </span>
+                ) : null}
+                <button
+                  type="button"
+                  className={`${styles.step} ${step === index ? styles.stepActive : ""} ${step > index ? styles.stepComplete : ""}`}
+                  aria-current={step === index ? "step" : undefined}
+                  onClick={() => setStep(index)}
+                >
+                  {label}
+                </button>
+              </li>
+            ))}
+          </ol>
+        </nav>
 
         {error ? <ErrorMessage message={error} /> : null}
         {fieldErrors.length > 0 ? (
@@ -298,7 +377,7 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
               </select>
             </div>
             <div className={styles.field}>
-              <label htmlFor="legal-name">Legal name</label>
+              <label htmlFor="legal-name">Full name</label>
               <input
                 id="legal-name"
                 className={styles.input}
@@ -311,6 +390,38 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
                 }
               />
             </div>
+            {draft.applicant.kind === 1 ? (
+              <div className={`${styles.field} ${styles.full}`}>
+                <label htmlFor="applicant-nic">
+                  National Identity Card (NIC) number
+                </label>
+                <input
+                  id="applicant-nic"
+                  className={styles.input}
+                  disabled={readOnly}
+                  value={
+                    readOnly
+                      ? maskNic(draft.applicant.nationalIdentityCardNumber)
+                      : (draft.applicant.nationalIdentityCardNumber ?? "")
+                  }
+                  autoComplete="off"
+                  spellCheck={false}
+                  onChange={(e) =>
+                    patchDraft({
+                      applicant: {
+                        ...draft.applicant,
+                        nationalIdentityCardNumber: e.target.value,
+                      },
+                    })
+                  }
+                />
+                <p className={styles.fieldHint}>
+                  Collected to help officers match your interest request during
+                  preliminary verification. It is not used as your login identity
+                  and does not prove ownership of the parcel.
+                </p>
+              </div>
+            ) : null}
             {draft.applicant.kind === 2 ? (
               <>
                 <div className={styles.field}>
@@ -346,6 +457,39 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
                       })
                     }
                   />
+                </div>
+                <div className={`${styles.field} ${styles.full}`}>
+                  <label htmlFor="rep-nic">
+                    Representative NIC (signatory)
+                  </label>
+                  <input
+                    id="rep-nic"
+                    className={styles.input}
+                    disabled={readOnly}
+                    value={
+                      readOnly
+                        ? maskNic(
+                            draft.applicant.representativeNationalIdentityCardNumber,
+                          )
+                        : (draft.applicant.representativeNationalIdentityCardNumber ??
+                          "")
+                    }
+                    autoComplete="off"
+                    spellCheck={false}
+                    onChange={(e) =>
+                      patchDraft({
+                        applicant: {
+                          ...draft.applicant,
+                          representativeNationalIdentityCardNumber:
+                            e.target.value,
+                        },
+                      })
+                    }
+                  />
+                  <p className={styles.fieldHint}>
+                    NIC of the authorized representative named above (full name).
+                    Organization registration number stays separate.
+                  </p>
                 </div>
               </>
             ) : null}
@@ -462,25 +606,28 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
               />
             </div>
             <div className={styles.field}>
-              <label htmlFor="area">Requested area (ha, optional)</label>
+              <label htmlFor="area">Requested area (ha)</label>
               <input
                 id="area"
-                type="number"
-                min={0}
-                step="any"
-                className={styles.input}
+                type="text"
+                readOnly
+                className={`${styles.input} ${styles.inputReadOnly}`}
                 disabled={readOnly}
-                value={draft.proposal.requestedAreaHectares ?? ""}
-                onChange={(e) =>
-                  patchDraft({
-                    proposal: {
-                      ...draft.proposal,
-                      requestedAreaHectares:
-                        e.target.value === "" ? null : Number(e.target.value),
-                    },
-                  })
+                value={
+                  draft.proposal.requestedAreaHectares != null &&
+                  draft.proposal.requestedAreaHectares > 0
+                    ? formatArea(
+                        draft.proposal.requestedAreaHectares,
+                        AreaUnit.Hectares,
+                      )
+                    : "—"
                 }
+                aria-readonly="true"
               />
+              <p className={styles.fieldHint}>
+                Taken from the parcel record; you cannot request a different area
+                here.
+              </p>
             </div>
             <div className={`${styles.field} ${styles.full}`}>
               <label htmlFor="activities">Planned activities</label>
@@ -548,91 +695,92 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
           </div>
         ) : null}
 
-        {step === 3 && request ? (
-          <div>
-            <h3 style={{ marginTop: 0 }}>Review</h3>
-            <ul className={styles.metaList}>
-              <li>
-                Parcel: {displayOrUnknown(parcel?.identifier.cadastralNumber)} (
-                {parcelId})
-              </li>
-              <li>
-                Applicant: {draft.applicant.legalName} ·{" "}
-                {draft.applicant.contactEmail}
-              </li>
-              <li>
-                Purpose:{" "}
-                {landUseTypeLabels[draft.proposal.requestedPurpose] ?? "Unknown"}{" "}
-                · {draft.proposal.requestedDurationYears} years requested (not
-                approved term)
-              </li>
-            </ul>
-            <label className={styles.field} style={{ display: "flex", gap: 8 }}>
-              <input
-                type="checkbox"
-                disabled={readOnly}
-                checked={draft.consentToPreliminaryAssessment}
-                onChange={(e) =>
-                  patchDraft({ consentToPreliminaryAssessment: e.target.checked })
-                }
-              />
-              I consent to submit this information for preliminary assessment.
-            </label>
-            <h4>Cost summary (informational)</h4>
-            <p style={{ fontSize: "0.8rem" }}>{request.costSummary.disclaimer}</p>
-            <table className={styles.costTable}>
-              <thead>
-                <tr>
-                  <th>Line</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {request.costSummary.lines.map((line) => (
-                  <tr key={line.code}>
-                    <td>{line.label}</td>
-                    <td>
-                      {line.status === "PendingAuthorityAssessment"
-                        ? "Pending authority assessment"
-                        : line.status}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {step === 3 && request && parcel ? (
+          <LeaseInterestReviewStep
+            parcel={parcel}
+            parcelId={parcelId}
+            draft={draft}
+            request={request}
+            checklist={checklist}
+            readOnly={readOnly}
+            onEditApplicant={() => setStep(0)}
+            onEditProposal={() => setStep(1)}
+            onEditDocuments={() => setStep(2)}
+            onViewParcel={() =>
+              router.push(`/land-intelligence/parcels/${parcelId}`)
+            }
+            consentChecked={draft.consentToPreliminaryAssessment}
+            onConsentChange={(checked) =>
+              patchDraft({ consentToPreliminaryAssessment: checked })
+            }
+          />
         ) : null}
 
         {!readOnly ? (
-          <div className={styles.actions}>
-            {step > 0 ? (
-              <Button type="button" variant="secondary" onClick={() => setStep(step - 1)}>
-                Back
-              </Button>
-            ) : null}
-            {step < 3 ? (
-              <Button type="button" variant="primary" onClick={() => setStep(step + 1)}>
-                Continue
-              </Button>
-            ) : null}
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => void handleSaveDraft()}
-              disabled={saving}
-            >
-              {saving ? "Saving…" : "Save draft"}
-            </Button>
+          <div
+            className={
+              step === 3 ? styles.reviewActions : styles.actions
+            }
+          >
             {step === 3 ? (
-              <Button
-                type="button"
-                variant="primary"
-                onClick={() => void handleSubmit()}
-                disabled={submitting}
-              >
-                {submitting ? "Submitting…" : "Submit for verification"}
-              </Button>
-            ) : null}
+              <>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setStep(2)}
+                >
+                  Back
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => void handleSaveDraft()}
+                  disabled={saving}
+                >
+                  {saving ? "Saving…" : "Save draft"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={() => void handleSubmit()}
+                  disabled={submitting || !canSubmit}
+                  aria-disabled={submitting || !canSubmit}
+                >
+                  {submitting
+                    ? "Submitting…"
+                    : "Submit for preliminary verification"}
+                </Button>
+              </>
+            ) : (
+              <>
+                {step > 0 ? (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => setStep(step - 1)}
+                  >
+                    Back
+                  </Button>
+                ) : null}
+                {step < 3 ? (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => setStep(step + 1)}
+                  >
+                    Continue
+                  </Button>
+                ) : null}
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => void handleSaveDraft()}
+                  disabled={saving}
+                >
+                  {saving ? "Saving…" : "Save draft"}
+                </Button>
+              </>
+            )}
           </div>
         ) : (
           <div className={styles.actions}>
@@ -643,24 +791,41 @@ export function LeaseInterestFormView({ parcelId }: { parcelId: string }) {
         )}
       </section>
 
-      <aside className={styles.panel} aria-label="Parcel summary">
+      <aside className={styles.sideSummary} aria-label="Parcel summary">
         {parcel ? (
           <>
-            <h3 style={{ marginTop: 0 }}>Parcel summary</h3>
-            <ul className={styles.metaList}>
-              <li>
-                Cadastral: {displayOrUnknown(parcel.identifier.cadastralNumber)}
-              </li>
-              <li>District: {displayOrUnknown(parcel.location.district)}</li>
-              <li>Area: {formatArea(parcel.area.value, parcel.area.unit)}</li>
-              <li>Source land use: {landUseLine}</li>
-              <li>
-                Lease availability:{" "}
+            <h3 className={styles.sideSummaryTitle}>Parcel summary</h3>
+            <dl className={styles.sideDl}>
+              <dt>Cadastral number</dt>
+              <dd className={styles.cadastralValue}>
+                {displayOrUnknown(parcel.identifier.cadastralNumber)}
+              </dd>
+              <dt>District</dt>
+              <dd>{displayOrUnknown(parcel.location.district)}</dd>
+              <dt>Area</dt>
+              <dd>{formatArea(parcel.area.value, parcel.area.unit)}</dd>
+              <dt>Source-reported land use</dt>
+              <dd>{landUseDisplay}</dd>
+              {claimantDisplay ? (
+                <>
+                  <dt>Source-reported claimant</dt>
+                  <dd>{claimantDisplay}</dd>
+                </>
+              ) : null}
+              <dt>Lease availability</dt>
+              <dd>
                 {parcel.availability?.actualLeaseAvailabilityLabel ??
                   "Not verified"}
-              </li>
-            </ul>
-            <div className={styles.actions}>
+              </dd>
+            </dl>
+            <details className={styles.sideTechnical}>
+              <summary>Technical identifiers</summary>
+              <dl className={styles.sideDl}>
+                <dt>Parcel record id</dt>
+                <dd className={styles.monoValue}>{parcel.id}</dd>
+              </dl>
+            </details>
+            <div className={styles.sideActions}>
               <Button
                 href={`/land-intelligence/parcels/${parcelId}/map`}
                 variant="secondary"

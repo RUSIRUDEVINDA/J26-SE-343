@@ -85,6 +85,13 @@ internal static class DeterministicRecommendationScenarioFactory
             }
         }
 
+        if (spatialSeverity is null && role != ScenarioParcelRole.MissingData)
+        {
+            parcel.AttachGisDerivedIntelligence(new ParcelGisDerivedIntelligence(
+                GisEnrichmentOverallStatus.Complete,
+                null));
+        }
+
         return parcel;
     }
 
