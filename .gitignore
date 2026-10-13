@@ -133,3 +133,5 @@ instruction.md
 
 # Component 4 local PostgreSQL backups
 backups/component4/*.dump
+/StateLandGovernance/.tmp
+/.tmp

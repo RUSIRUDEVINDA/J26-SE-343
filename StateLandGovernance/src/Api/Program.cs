@@ -16,6 +16,8 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
 using StateLandGovernance.LandIntelligence.Presentation.DependencyInjection;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
+using StateLandGovernance.Api.Observability;
+using StateLandGovernance.BuildingBlocks.Observability;
 
 EnvFileLoader.LoadFromRepositoryRoot();
 
@@ -156,12 +158,23 @@ else
 app.UseLandIntelligenceCallerContext();
 app.UseLandIntelligenceExceptionHandling();
 
+app.UseRouting();
+app.UseMiddleware<PrometheusMetricsMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseCors("DevelopmentFrontend");
 }
 
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "Healthy",
+    service = "StateLandGovernance.Api",
+    dataMode = "Live"
+}));
+app.MapGet("/metrics", (PrometheusMetricsRegistry metrics) =>
+    Results.Text(metrics.Render(), "text/plain; version=0.0.4; charset=utf-8"));
 
 app.Run();
 
