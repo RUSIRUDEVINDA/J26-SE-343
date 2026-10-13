@@ -23,8 +23,7 @@ internal static class DeterministicRecommendationScenarioSupport
         new()
         {
             RequiredPurpose = purpose,
-            RequiredAreaHectares = 5m,
-            AreaTolerancePercent = 15m,
+            TargetAreaHectares = 5m,
             RequiredLandCategory = LandCategoryType.StateLand,
             RequiredLandUse = purpose,
             PreferredLocation = new PreferredLocationCriteria

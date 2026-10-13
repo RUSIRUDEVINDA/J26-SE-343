@@ -147,89 +147,72 @@ public sealed class RuleBasedLandRecommendationEngineTests
     }
 
     [Fact]
-    public async Task RecommendAsync_includes_parcel_larger_than_required_minimum_area()
-    {
-        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithArea(14.8m, "SYNTH-AREA-148");
-        var engine = RecommendationEngineTestFactory.Create(parcel);
-
-        var response = await engine.RecommendAsync(CreateAreaFilterRequest(requiredAreaHectares: 10m));
-
-        var recommendation = Assert.Single(response.Recommendations);
-        Assert.Equal(parcel.Id, recommendation.ParcelId);
-        Assert.Equal(1, response.CandidateCount);
-    }
-
-    [Fact]
-    public async Task RecommendAsync_includes_parcel_matching_required_minimum_area()
-    {
-        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithArea(10m, "SYNTH-AREA-100");
-        var engine = RecommendationEngineTestFactory.Create(parcel);
-
-        var response = await engine.RecommendAsync(CreateAreaFilterRequest(requiredAreaHectares: 10m));
-
-        Assert.Single(response.Recommendations);
-        Assert.Equal(1, response.CandidateCount);
-    }
-
-    [Fact]
-    public async Task RecommendAsync_excludes_parcel_below_required_minimum_area()
+    public async Task RecommendAsync_includes_parcel_smaller_than_target_with_reduced_area_score()
     {
         var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithArea(7m, "SYNTH-AREA-070");
         var engine = RecommendationEngineTestFactory.Create(parcel);
 
-        var response = await engine.RecommendAsync(CreateAreaFilterRequest(requiredAreaHectares: 10m));
+        var response = await engine.RecommendAsync(CreateAreaFilterRequest(targetAreaHectares: 10m));
 
-        Assert.Empty(response.Recommendations);
-        Assert.Equal(0, response.CandidateCount);
-    }
-
-    [Fact]
-    public async Task RecommendAsync_excludes_parcel_below_hard_minimum_even_when_within_scoring_tolerance()
-    {
-        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithArea(8.7m, "SYNTH-AREA-087");
-        var engine = RecommendationEngineTestFactory.Create(parcel);
-
-        var response = await engine.RecommendAsync(CreateAreaFilterRequest(
-            requiredAreaHectares: 10m,
-            areaTolerancePercent: 15m));
-
-        // Candidate selection uses a hard minimum-area floor; tolerance applies to scoring only.
-        Assert.Empty(response.Recommendations);
-        Assert.Equal(0, response.CandidateCount);
-    }
-
-    [Fact]
-    public async Task RecommendAsync_includes_parcel_well_above_required_minimum_when_tolerance_applies()
-    {
-        var parcel = SyntheticRecommendationParcelFactory.CreateParcelWithArea(20m, "SYNTH-AREA-200");
-        var engine = RecommendationEngineTestFactory.Create(parcel);
-
-        var response = await engine.RecommendAsync(CreateAreaFilterRequest(
-            requiredAreaHectares: 10m,
-            areaTolerancePercent: 15m));
-
-        Assert.Single(response.Recommendations);
+        var recommendation = Assert.Single(response.Recommendations);
+        var targetArea = Assert.Single(
+            recommendation.MatchingCriteria.Concat(recommendation.FailedCriteria),
+            c => c.Key == "target-area");
+        Assert.Equal(70m, targetArea.Score);
         Assert.Equal(1, response.CandidateCount);
     }
 
     [Fact]
-    public async Task RecommendAsync_places_oversized_required_area_in_matching_criteria()
+    public async Task RecommendAsync_scores_target_area_with_continuous_formula()
     {
         var parcel148 = SyntheticRecommendationParcelFactory.CreateParcelWithArea(14.8m, "SYNTH-AREA-148-MATCH");
         var parcel225 = SyntheticRecommendationParcelFactory.CreateParcelWithArea(22.5m, "SYNTH-AREA-225-MATCH");
         var engine = RecommendationEngineTestFactory.Create(parcel148, parcel225);
 
-        var response = await engine.RecommendAsync(CreateAreaFilterRequest(requiredAreaHectares: 10m));
+        var response = await engine.RecommendAsync(CreateAreaFilterRequest(targetAreaHectares: 10m));
 
-        foreach (var recommendation in response.Recommendations)
+        static decimal TargetAreaScore(LandParcelRecommendationResult recommendation) =>
+            recommendation.MatchingCriteria
+                .Concat(recommendation.FailedCriteria)
+                .Single(c => c.Key == "target-area")
+                .Score;
+
+        var score148 = TargetAreaScore(
+            response.Recommendations.Single(r => r.ParcelId == parcel148.Id));
+        var score225 = TargetAreaScore(
+            response.Recommendations.Single(r => r.ParcelId == parcel225.Id));
+
+        Assert.Equal(52m, score148);
+        Assert.Equal(0m, score225);
+        Assert.NotEqual(
+            response.Recommendations[0].SuitabilityScore,
+            response.Recommendations[1].SuitabilityScore);
+    }
+
+    [Fact]
+    public async Task RecommendAsync_marks_identical_rule_scores_as_tied_with_shared_rank()
+    {
+        var parcelA = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-TIE-AAA");
+        var parcelB = SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-TIE-BBB");
+        var engine = RecommendationEngineTestFactory.Create(parcelA, parcelB);
+
+        var response = await engine.RecommendAsync(new LandRecommendationSearchRequest
         {
-            var requiredArea = Assert.Single(
-                recommendation.MatchingCriteria,
-                c => c.Key == "required-area");
+            RequiredPurpose = LandUseType.Agricultural,
+            RequiredLandCategory = LandCategoryType.StateLand,
+            RequiredLandUse = LandUseType.Agricultural,
+            PreferredLocation = new PreferredLocationCriteria { Province = "Western" },
+            MaxResults = 5
+        });
 
-            Assert.True(requiredArea.IsMet);
-            Assert.DoesNotContain(recommendation.FailedCriteria, c => c.Key == "required-area");
-        }
+        Assert.Equal(2, response.Recommendations.Count);
+        Assert.All(response.Recommendations, r =>
+        {
+            Assert.True(r.IsTiedOnRuleScore);
+            Assert.Equal(2, r.RuleScoreTieCount);
+            Assert.Equal(1, r.RuleScoreRank);
+        });
+        Assert.Equal("SYNTH-TIE-AAA", response.Recommendations[0].CadastralNumber);
     }
 
     [Fact]
@@ -386,7 +369,8 @@ public sealed class RuleBasedLandRecommendationEngineTests
 
         Assert.Equal(7, evaluatedCriteria.Count);
         Assert.Contains(evaluatedCriteria, c => c.Key == "purpose-alignment");
-        Assert.Contains(evaluatedCriteria, c => c.Key == "required-area");
+        Assert.Contains(evaluatedCriteria, c => c.Key == "target-area");
+        Assert.DoesNotContain(evaluatedCriteria, c => c.Key is "required-area" or "preferred-area");
         Assert.Contains(evaluatedCriteria, c => c.Key == "land-category");
         Assert.Contains(evaluatedCriteria, c => c.Key == "land-use");
         Assert.Contains(evaluatedCriteria, c => c.Key == "location-preference");
@@ -454,14 +438,11 @@ public sealed class RuleBasedLandRecommendationEngineTests
         Assert.Equal(singleResult.SuitabilityScore, duplicatedResult.SuitabilityScore);
     }
 
-    private static LandRecommendationSearchRequest CreateAreaFilterRequest(
-        decimal requiredAreaHectares,
-        decimal areaTolerancePercent = 0m) =>
+    private static LandRecommendationSearchRequest CreateAreaFilterRequest(decimal targetAreaHectares) =>
         new()
         {
             RequiredPurpose = LandUseType.Agricultural,
-            RequiredAreaHectares = requiredAreaHectares,
-            AreaTolerancePercent = areaTolerancePercent,
+            TargetAreaHectares = targetAreaHectares,
             RequiredLandCategory = LandCategoryType.StateLand,
             RequiredLandUse = LandUseType.Agricultural,
             PreferredLocation = new PreferredLocationCriteria
@@ -474,7 +455,7 @@ public sealed class RuleBasedLandRecommendationEngineTests
     private static LandRecommendationSearchRequest CreateRequest() => new()
     {
         RequiredPurpose = LandUseType.Agricultural,
-        RequiredAreaHectares = 5m,
+        TargetAreaHectares = 5m,
         RequiredLandCategory = LandCategoryType.StateLand,
         RequiredLandUse = LandUseType.Agricultural,
         PreferredLocation = new PreferredLocationCriteria

@@ -259,6 +259,16 @@ internal static class SyntheticRecommendationParcelFactory
         return parcel;
     }
 
+    public static LandParcel CreateParcelWithCompleteGisSpatialCoverage(
+        string cadastralNumber = "SYNTH-GIS-COMPLETE-CLEAR")
+    {
+        var parcel = CreateSuitableParcel(cadastralNumber);
+        parcel.AttachGisDerivedIntelligence(new ParcelGisDerivedIntelligence(
+            GisEnrichmentOverallStatus.Complete,
+            null));
+        return parcel;
+    }
+
     private static LandParcel CreateBaseParcel(
         string cadastralNumber,
         LandCategoryType category,
@@ -484,7 +494,7 @@ internal static class RecommendationEngineTestFactory
         IRecommendationParcelContext? parcelContext = null) =>
     [
         new PurposeAlignmentCriterionEvaluator(parcelContext ?? CreateParcelContext()),
-        new RequiredAreaCriterionEvaluator(),
+        new TargetAreaCriterionEvaluator(),
         new LandCategoryCriterionEvaluator(),
         new LandUseCriterionEvaluator(),
         new LocationPreferenceCriterionEvaluator(),
@@ -503,11 +513,18 @@ internal static class RecommendationEngineTestFactory
             experimentalOptions: null,
             sources: null,
             context,
+            projectLeaseReady: null,
             parcels);
     }
 
     public static RuleBasedLandRecommendationEngine CreateWithSources(
         IReadOnlyDictionary<Guid, CadastralSourceMetadataDto> sources,
+        params LandParcel[] parcels) =>
+        CreateWithSources(sources, projectLeaseReady: null, parcels);
+
+    public static RuleBasedLandRecommendationEngine CreateWithSources(
+        IReadOnlyDictionary<Guid, CadastralSourceMetadataDto> sources,
+        IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>? projectLeaseReady,
         params LandParcel[] parcels)
     {
         var context = CreateParcelContext();
@@ -518,6 +535,7 @@ internal static class RecommendationEngineTestFactory
             experimentalOptions: null,
             sources,
             context,
+            projectLeaseReady,
             parcels);
     }
 
@@ -533,6 +551,7 @@ internal static class RecommendationEngineTestFactory
             experimentalOptions: null,
             sources: null,
             context,
+            projectLeaseReady: null,
             parcels);
     }
 
@@ -548,6 +567,7 @@ internal static class RecommendationEngineTestFactory
             experimentalOptions: null,
             sources: null,
             context,
+            projectLeaseReady: null,
             parcels);
     }
 
@@ -564,6 +584,7 @@ internal static class RecommendationEngineTestFactory
             experimentalOptions: null,
             sources: null,
             context,
+            projectLeaseReady: null,
             parcels);
     }
 
@@ -582,6 +603,7 @@ internal static class RecommendationEngineTestFactory
             experimentalOptions,
             sources: null,
             context,
+            projectLeaseReady: null,
             parcels);
     }
 
@@ -592,6 +614,7 @@ internal static class RecommendationEngineTestFactory
         ExperimentalColomboMlOptions? experimentalOptions,
         IReadOnlyDictionary<Guid, CadastralSourceMetadataDto>? sources,
         IRecommendationParcelContext parcelContext,
+        IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>? projectLeaseReady = null,
         params LandParcel[] parcels) =>
         new(
             new FakeLandParcelRepository(parcels),
@@ -600,7 +623,8 @@ internal static class RecommendationEngineTestFactory
             experimentalEvidence ?? new NoOpExperimentalColomboMlEvidenceService(),
             Options.Create(experimentalOptions ?? new ExperimentalColomboMlOptions { Enabled = false }),
             new FakeRealParcelSourceReadRepository(sources),
-            parcelContext);
+            parcelContext,
+            new FakeProjectLeaseReadyDesignationReadRepository(projectLeaseReady));
 
     public static RuleBasedLandRecommendationEngine CreateWithExperimental(
         IExperimentalColomboMlEvidenceService experimentalEvidence,
@@ -616,8 +640,48 @@ internal static class RecommendationEngineTestFactory
             options,
             sources: null,
             context,
+            projectLeaseReady: null,
             parcels);
     }
+}
+
+internal sealed class FakeProjectLeaseReadyDesignationReadRepository : IProjectLeaseReadyDesignationReadRepository
+{
+    private readonly IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord> _byParcel;
+    private readonly int _totalParcelCount;
+
+    public FakeProjectLeaseReadyDesignationReadRepository(
+        IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>? byParcel = null,
+        int totalParcelCount = 0)
+    {
+        _byParcel = byParcel ?? new Dictionary<Guid, ProjectLeaseReadyDesignationRecord>();
+        _totalParcelCount = totalParcelCount > 0 ? totalParcelCount : _byParcel.Count;
+    }
+
+    public Task<ProjectLeaseReadyDesignationRecord?> GetByParcelIdAsync(
+        Guid landParcelId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(_byParcel.TryGetValue(landParcelId, out var record) ? record : null);
+
+    public Task<IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>> GetByParcelIdsAsync(
+        IReadOnlyList<Guid> landParcelIds,
+        CancellationToken cancellationToken = default)
+    {
+        var result = landParcelIds
+            .Where(_byParcel.ContainsKey)
+            .ToDictionary(id => id, id => _byParcel[id]);
+        return Task.FromResult<IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>>(result);
+    }
+
+    public Task<IReadOnlyList<ProjectLeaseReadyDesignationRecord>> ListDesignatedAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<ProjectLeaseReadyDesignationRecord>>(_byParcel.Values.ToList());
+
+    public Task<int> CountDesignatedAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(_byParcel.Count);
+
+    public Task<int> CountTotalParcelsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(_totalParcelCount);
 }
 
 internal sealed class FakeRealParcelSourceReadRepository : IRealParcelSourceReadRepository
