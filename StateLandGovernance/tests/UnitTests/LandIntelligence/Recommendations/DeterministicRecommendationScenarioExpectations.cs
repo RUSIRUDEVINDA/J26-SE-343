@@ -22,21 +22,21 @@ internal static class DeterministicRecommendationScenarioExpectations
 
             "Far road distance no longer filters ranking; ties with high suitability and sorts by cadastral number."),
 
-        new($"{prefix}-B", ExpectedRank: 3, ExpectedExcluded: false,
+        new($"{prefix}-I", ExpectedRank: 3, ExpectedExcluded: false,
 
-            "Medium suitability: same province, moderate spatial constraint."),
+            "Regulatory complexity: five gazette references exceed configured limit; exact target area match."),
 
-        new($"{prefix}-I", ExpectedRank: 4, ExpectedExcluded: false,
+        new($"{prefix}-B", ExpectedRank: 4, ExpectedExcluded: false,
 
-            "Regulatory complexity: five gazette references exceed configured limit."),
+            "Medium suitability: same province, moderate spatial constraint; 5.2 ha vs 5 ha target lowers area score."),
 
-        new($"{prefix}-H", ExpectedRank: 5, ExpectedExcluded: false,
+        new($"{prefix}-C", ExpectedRank: 5, ExpectedExcluded: false,
 
-            "Missing data: soil characteristic absent so custom criterion fails."),
+            "Low suitability: high-severity spatial constraint reduces score (still assessed from recorded data)."),
 
-        new($"{prefix}-C", ExpectedRank: 6, ExpectedExcluded: false,
+        new($"{prefix}-H", ExpectedRank: 6, ExpectedExcluded: false,
 
-            "Low suitability: high-severity spatial constraint reduces score."),
+            "Missing data: soil characteristic absent so custom criterion fails; spatial GIS not assessed."),
 
         new($"{prefix}-D", ExpectedRank: 7, ExpectedExcluded: false,
 

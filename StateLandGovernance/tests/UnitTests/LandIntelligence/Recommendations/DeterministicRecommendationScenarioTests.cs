@@ -45,7 +45,7 @@ public sealed class DeterministicRecommendationScenarioTests
         }
 
         var high = run.ResultsByLabel[$"{prefix}-A"];
-        Assert.Empty(high.FailedCriteria);
+        Assert.Empty(high.FailedCriteria.Where(criterion => criterion.WasAssessed));
         Assert.Contains(high.MatchingCriteria, criterion => criterion.Key == "purpose-alignment");
         Assert.Contains(high.Evidence, evidence => evidence.RelatedCriterionName == "Purpose Alignment");
 

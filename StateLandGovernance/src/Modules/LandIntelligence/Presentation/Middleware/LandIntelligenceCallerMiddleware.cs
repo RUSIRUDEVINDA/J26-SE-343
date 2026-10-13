@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Http;
 using StateLandGovernance.LandIntelligence.Application.Configuration;
+using StateLandGovernance.LandIntelligence.Presentation.Security;
 
 namespace StateLandGovernance.LandIntelligence.Presentation.Middleware;
 
 /// <summary>
-/// Resolves a stable owner id from a trusted header for development and integration
-/// until platform-wide authentication is wired. Never read owner id from JSON bodies.
+/// Mirrors the authenticated applicant owner id into request items for diagnostics.
+/// Owner identity is resolved from JWT claims or (development-only) the demo owner scheme.
 /// </summary>
 public sealed class LandIntelligenceCallerMiddleware
 {
@@ -18,15 +19,10 @@ public sealed class LandIntelligenceCallerMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (context.Request.Headers.TryGetValue(
-                LandIntelligenceCallerHeaders.OwnerIdHeaderName,
-                out var headerValues))
+        var ownerId = LandIntelligenceOwnerIdResolver.ResolveOwnerId(context);
+        if (ownerId is { } id)
         {
-            var raw = headerValues.FirstOrDefault();
-            if (!string.IsNullOrWhiteSpace(raw) && Guid.TryParse(raw, out var ownerId) && ownerId != Guid.Empty)
-            {
-                context.Items[LandIntelligenceCallerHeaders.OwnerIdItemKey] = ownerId;
-            }
+            context.Items[LandIntelligenceCallerHeaders.OwnerIdItemKey] = id;
         }
 
         await _next(context);

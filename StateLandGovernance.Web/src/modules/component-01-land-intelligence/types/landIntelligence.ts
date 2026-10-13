@@ -1,3 +1,7 @@
+import type { TargetAreaInputUnit } from "../utils/targetAreaUnits";
+
+export type { TargetAreaInputUnit };
+
 export enum LandUseType {
   Agricultural = 1,
   Commercial = 2,
@@ -72,7 +76,12 @@ export interface PreferredLocationCriteria {
 
 export interface LandRecommendationSearchRequest {
   requiredPurpose: LandUseType;
+  /** Target area (ha) for continuous area-match scoring. */
+  targetAreaHectares?: number | null;
+  /** @deprecated Legacy alias — mapped to targetAreaHectares on the API when target is unset. */
   requiredAreaHectares?: number | null;
+  /** @deprecated Legacy alias — mapped to targetAreaHectares when target and required are unset. */
+  preferredAreaHectares?: number | null;
   areaTolerancePercent?: number;
   preferredLocation?: PreferredLocationCriteria | null;
   /** Legacy domain category — not used for real Colombo cadastre. */
@@ -158,6 +167,14 @@ export interface LandParcelRecommendationResponse {
   sourceParcelStatusCode?: string | null;
   sourceProvenanceLabel?: string | null;
   sourceImportedAtUtc?: string | null;
+  projectLeaseReadyLabel?: string | null;
+  isProjectLeaseReadyDesignated?: boolean;
+  isProjectLeaseReadyEffective?: boolean;
+  parcelAreaHectares?: number | null;
+  displayOrder?: number;
+  ruleScoreRank?: number;
+  ruleScoreTieCount?: number;
+  isTiedOnRuleScore?: boolean;
 }
 
 export interface LandRecommendationSearchResultsResponse {
@@ -193,14 +210,75 @@ export interface ResearchSimulatedLeaseWorkflowResponse {
   notice?: string | null;
 }
 
+export interface ProjectLeaseReadyDesignationResponse {
+  datasetKey: string;
+  researchRecordId: string;
+  designationLabel: string;
+  designationNotice: string;
+  isDesignatedInProjectDataset: boolean;
+  isEffectiveForLeaseFlow: boolean;
+  excludedBecauseSourceReportedPrivate: boolean;
+}
+
 export interface LandParcelAvailabilityResponse {
   actualLeaseAvailabilityLabel: string;
   researchRecordId?: string | null;
   simulatedWorkflow?: ResearchSimulatedLeaseWorkflowResponse | null;
+  projectLeaseReady?: ProjectLeaseReadyDesignationResponse | null;
+}
+
+export interface LandParcelMetricsResponse {
+  totalParcelCount: number;
+  projectLeaseReadyDesignatedCount: number;
+  projectLeaseReadyEffectiveCount: number;
+}
+
+export type GisIntelligenceCoverageStatus =
+  | "Unavailable"
+  | "Partial"
+  | "Available";
+
+export interface IndexedDistrictSummaryResponse {
+  province: string;
+  district: string;
+  parcelCount: number;
+}
+
+export interface GisIntelligenceLayerCoverageResponse {
+  layerKey: string;
+  displayName: string;
+  coverageStatus: GisIntelligenceCoverageStatus;
+  referenceFeatureCount: number;
+  parcelsWithEvidenceCount: number;
+  provenanceSummary: string;
+  limitationSummary: string;
+}
+
+export interface LandIntelligenceGisCoverageResponse {
+  totalParcelCount: number;
+  indexedDistricts: IndexedDistrictSummaryResponse[];
+  configuredEnrichmentDistricts: string[];
+  enrichmentSnapshotCount: number;
+  enrichmentCompleteCount: number;
+  enrichmentPartialCount: number;
+  enrichmentUnavailableCount: number;
+  overallEnrichmentStatus: GisIntelligenceCoverageStatus;
+  overallEnrichmentNotice: string;
+  intelligenceLayers: GisIntelligenceLayerCoverageResponse[];
+  measuredAtUtc: string;
+}
+
+export interface ParcelGisEnrichmentSummaryResponse {
+  overallStatus: GisIntelligenceCoverageStatus;
+  detectedProvince?: string | null;
+  detectedDistrict?: string | null;
+  enrichedAtUtc?: string | null;
+  assessmentNotice: string;
 }
 
 export interface ResearchDemoConfigResponse {
   enabled: boolean;
+  officerLeaseInterestNicLookupEnabled: boolean;
 }
 
 export interface CadastralSourceMetadataResponse {
@@ -276,6 +354,7 @@ export interface LandParcelResponse {
   regulatoryReferenceCount: number;
   cadastralSource?: CadastralSourceMetadataResponse | null;
   availability?: LandParcelAvailabilityResponse | null;
+  gisEnrichment?: ParcelGisEnrichmentSummaryResponse | null;
 }
 
 export interface SpatialConstraintResponse {
@@ -323,7 +402,8 @@ export interface LandSearchResultsResponse {
 
 export interface FindSuitableLandFormState {
   requiredPurpose: LandUseType | "";
-  requiredAreaHectares: string;
+  targetAreaValue: string;
+  targetAreaUnit: TargetAreaInputUnit;
   preferredProvince: string;
   preferredDistrict: string;
   preferredDivisionalSecretariat: string;
@@ -362,6 +442,8 @@ export interface LeaseInterestApplicant {
   postalAddress: string;
   organizationName?: string | null;
   organizationRegistrationNumber?: string | null;
+  nationalIdentityCardNumber?: string | null;
+  representativeNationalIdentityCardNumber?: string | null;
 }
 
 export interface LeaseInterestProposal {
@@ -388,6 +470,9 @@ export interface LeaseInterestStatusHistoryEntry {
   status: LeaseInterestRequestStatus;
   changedAtUtc: string;
   note?: string | null;
+  actorKind?: number;
+  actorId?: string | null;
+  visibleToApplicant?: boolean;
 }
 
 export interface LeaseInterestCostLine {
@@ -453,4 +538,71 @@ export interface LeaseInterestDocumentChecklistItem {
 export interface LeaseInterestDocumentChecklist {
   items: LeaseInterestDocumentChecklistItem[];
   storageNote: string;
+}
+
+export interface LeaseInterestOfficerLookupRequest {
+  nationalIdentityCardNumber: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface LeaseInterestOfficerLookupItem {
+  requestId: string;
+  landParcelId: string;
+  acknowledgementReference?: string | null;
+  submittedAtUtc?: string | null;
+  status: LeaseInterestRequestStatus;
+  cadastralNumber?: string | null;
+  district?: string | null;
+  requestedPurpose: LandUseType;
+  requestedDurationYears?: number | null;
+  maskedNationalIdentityCardNumber: string;
+}
+
+export interface LeaseInterestOfficerLookupResponse {
+  items: LeaseInterestOfficerLookupItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface LeaseInterestOfficerQueueItem {
+  requestId: string;
+  landParcelId: string;
+  acknowledgementReference?: string | null;
+  submittedAtUtc?: string | null;
+  status: LeaseInterestRequestStatus;
+  cadastralNumber?: string | null;
+  district?: string | null;
+}
+
+export interface LeaseInterestOfficerQueueResponse {
+  items: LeaseInterestOfficerQueueItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface LeaseInterestOfficerStatusUpdate {
+  newStatus: LeaseInterestRequestStatus;
+  note: string;
+  visibleToApplicant?: boolean;
+}
+
+export interface LeaseInterestOfficerRequestDetail {
+  id: string;
+  landParcelId: string;
+  status: LeaseInterestRequestStatus;
+  acknowledgementReference?: string | null;
+  createdAtUtc: string;
+  updatedAtUtc: string;
+  submittedAtUtc?: string | null;
+  applicant: LeaseInterestApplicant;
+  proposal: LeaseInterestProposal;
+  supporting: LeaseInterestSupportingInfo;
+  consentToPreliminaryAssessment: boolean;
+  statusHistory: LeaseInterestStatusHistoryEntry[];
+  cadastralNumber?: string | null;
+  district?: string | null;
+  applicantOutcomeSummary: string;
 }

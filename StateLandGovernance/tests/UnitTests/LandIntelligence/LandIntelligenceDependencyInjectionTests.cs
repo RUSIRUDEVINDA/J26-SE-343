@@ -21,6 +21,10 @@ public sealed class LandIntelligenceDependencyInjectionTests
                 "LAND_INTELLIGENCE_CONNECTION",
                 "Host=localhost;Port=5432;Database=land_intelligence_test;Username=test;Password=test");
         }
+
+        var testNicKey = Convert.ToBase64String(new byte[32]);
+        Environment.SetEnvironmentVariable("LEASE_INTEREST_NIC_ENCRYPTION_KEY", testNicKey);
+        Environment.SetEnvironmentVariable("LEASE_INTEREST_NIC_LOOKUP_KEY", testNicKey);
     }
 
     [Fact]
@@ -74,6 +78,6 @@ public sealed class LandIntelligenceDependencyInjectionTests
 
         Assert.Equal(16, evaluators.Count);
         Assert.Equal(2, evaluators.Count(e => e.GetType().Name == nameof(PurposeAlignmentCriterionEvaluator)));
-        Assert.Equal(2, evaluators.Count(e => e.GetType().Name == nameof(RequiredAreaCriterionEvaluator)));
+        Assert.Equal(2, evaluators.Count(e => e.GetType().Name == nameof(TargetAreaCriterionEvaluator)));
     }
 }

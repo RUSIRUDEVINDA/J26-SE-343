@@ -14,6 +14,8 @@ import {
   displayOrUnknown,
   explanationToBullets,
   extractSourceReportedLandUseFromCriteria,
+  formatParcelAreaHectares,
+  formatCriterionScore,
   formatRuleScore,
   recommendationResultStatus,
   suitabilityBadgeLabel,
@@ -108,6 +110,14 @@ export function RecommendationCard({
     ...recommendation.failedCriteria,
   ];
   const hasRestrictions = recommendation.restrictions.length > 0;
+  const displayOrder = recommendation.displayOrder ?? recommendation.rank;
+  const ruleScoreRank = recommendation.ruleScoreRank ?? recommendation.rank;
+  const isTied = recommendation.isTiedOnRuleScore === true;
+  const tieCount = recommendation.ruleScoreTieCount ?? 0;
+  const orderingLabel = isTied
+    ? `Tied · rule score rank ${ruleScoreRank} (${tieCount} parcel${tieCount === 1 ? "" : "s"})`
+    : `Rule score rank ${ruleScoreRank}`;
+  const orderingAria = `${orderingLabel}. Display order ${displayOrder} (cadastral sort — not suitability order).`;
 
   return (
     <article
@@ -122,8 +132,11 @@ export function RecommendationCard({
         aria-controls={panelId}
         onClick={() => setExpanded((open) => !open)}
       >
-        <span className={styles.rank} aria-label={`Rank ${recommendation.rank}`}>
-          #{recommendation.rank}
+        <span className={styles.rank} aria-label={orderingAria}>
+          <span className={styles.rankOrder}>Order {displayOrder}</span>
+          {isTied ? (
+            <span className={styles.rankTie}>Tied</span>
+          ) : null}
         </span>
 
         <div className={styles.mainMeta}>
@@ -138,11 +151,22 @@ export function RecommendationCard({
               ? `Search district: ${searchDistrict}`
               : "District: filter not applied"}
             {" · "}
-            Area: Unavailable in recommendation payload
+            Area: {formatParcelAreaHectares(recommendation.parcelAreaHectares)}
+            {" · "}
+            {orderingLabel}
           </p>
           {recommendation.candidateStatusLabel ? (
             <p className={styles.metaLine}>
               Candidate status: {recommendation.candidateStatusLabel}
+            </p>
+          ) : null}
+          {recommendation.projectLeaseReadyLabel ? (
+            <p className={styles.metaLine}>
+              Project lease-ready: {recommendation.projectLeaseReadyLabel}
+              {recommendation.isProjectLeaseReadyDesignated &&
+              !recommendation.isProjectLeaseReadyEffective
+                ? " (excluded — source-reported Private)"
+                : ""}
             </p>
           ) : null}
           {recommendation.sourceReportedClaimantCategoryDisplay ? (
@@ -225,7 +249,7 @@ export function RecommendationCard({
           <div className={styles.tabs} role="tablist" aria-label="Result details">
             {(
               [
-                ["why", "Why this rank"],
+                ["why", isTied ? "Why this score" : "Why this result"],
                 ["criteria", "Criteria"],
                 ["restrictions", `Restrictions${hasRestrictions ? ` (${recommendation.restrictions.length})` : ""}`],
                 ["evidence", "Evidence"],
@@ -346,7 +370,7 @@ export function RecommendationCard({
                                 {statusInfo.label}
                               </StatusBadge>
                             </td>
-                            <td>{criterion.score}</td>
+                            <td>{formatCriterionScore(criterion.score)}</td>
                             <td>{criterion.weight}</td>
                             <td>
                               {criterion.dataProvenance?.sourceName

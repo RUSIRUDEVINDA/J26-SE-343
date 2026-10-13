@@ -46,22 +46,21 @@ public sealed class LandParcelPersistenceMapperTests
     }
 
     [Fact]
-    public void RequiredAreaCriterionEvaluator_passes_for_persisted_14_8_hectare_parcel()
+    public void TargetAreaCriterionEvaluator_scores_persisted_parcel_with_continuous_formula()
     {
-        var parcel = LandParcelPersistenceMapper.ToDomain(CreateParcelEntity(14.8m, AreaUnit.SquareMeters));
+        var parcel = LandParcelPersistenceMapper.ToDomain(CreateParcelEntity(14.8m, AreaUnit.Hectares));
 
-        var evaluation = new RequiredAreaCriterionEvaluator().Evaluate(
+        var evaluation = new TargetAreaCriterionEvaluator().Evaluate(
             parcel,
             new LandRecommendationSearchRequest
             {
                 RequiredPurpose = LandUseType.Agricultural,
-                RequiredAreaHectares = 10m,
-                AreaTolerancePercent = 15m
+                TargetAreaHectares = 10m
             });
 
         Assert.True(evaluation.IsMet);
-        Assert.True(evaluation.Score > 0);
-        Assert.Contains("14.80 ha", evaluation.Summary, StringComparison.Ordinal);
+        Assert.Equal(52m, evaluation.Score);
+        Assert.Contains("Area match score", evaluation.Summary, StringComparison.Ordinal);
     }
 
     private static LandParcelEntity CreateParcelEntity(decimal areaValue, AreaUnit areaUnit)

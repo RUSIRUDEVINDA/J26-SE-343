@@ -49,6 +49,10 @@
   color: var(--color-primary);
 }
 
+.coverageIntro {
+  margin-bottom: 0.75rem;
+}
+
 .meta {
   margin: 0;
   color: var(--color-muted);
@@ -141,6 +145,14 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.45rem;
+}
+
+.intelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .intelItem {
