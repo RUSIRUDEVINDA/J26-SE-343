@@ -1,3 +1,4 @@
+/** Stable local subject id used when minting development applicant JWTs. */
 const STORAGE_KEY = "component01.landIntelligence.ownerId";
 
 export function getLandIntelligenceOwnerId(): string {
