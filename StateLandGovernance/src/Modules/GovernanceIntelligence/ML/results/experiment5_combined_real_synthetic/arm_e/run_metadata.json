@@ -1,0 +1,25 @@
+{
+  "arm": "arm_e",
+  "random_seed": 42,
+  "probability_class_order": [
+    "Administrative / Procedural / Integrity",
+    "Lease Revenue / Payment / Enforcement",
+    "Unauthorized Allocation / Transfer / Use",
+    "Protected / Environmental Lease Misuse"
+  ],
+  "real_training_weight": 1.0,
+  "synthetic_training": "all variants, each family total weight 1",
+  "pipeline": "word + character TF-IDF",
+  "character_tfidf": {
+    "analyzer": "char_wb",
+    "ngram_range": [
+      3,
+      5
+    ],
+    "lowercase": true,
+    "sublinear_tf": true,
+    "min_df": 1
+  },
+  "development_note": "Development grouped CV; not a final independent or prospective test.",
+  "model_saved": false
+}

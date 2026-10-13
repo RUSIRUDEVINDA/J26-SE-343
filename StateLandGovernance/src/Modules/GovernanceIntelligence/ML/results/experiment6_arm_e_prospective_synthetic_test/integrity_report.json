@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "input_hashes": {
+    "real_baseline": {
+      "path": "data/state_land_governance_confirmed_200.csv",
+      "sha256": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61"
+    },
+    "candidate_dataset": {
+      "path": "data/state_land_complaints_development_530.csv",
+      "sha256": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8"
+    },
+    "experiment5_development_review": {
+      "path": "candidate-data/v1/synthetic_family_review_pack_confirmed_20261007.csv",
+      "sha256": "0f4d839d9ad46223430cf5adb375775ce7ae12cc8b38b57f263eab790895fb74"
+    },
+    "prospective_corrected_review": {
+      "path": "candidate-data/v1/review-assistance/prospective_test_family_review_corrected_20261011.csv",
+      "sha256": "41bed6d4cb40a42e8e081e5b2e90a32a9df83897891142727ec1240887f72498"
+    },
+    "prospective_review_manifest": {
+      "path": "candidate-data/v1/review-assistance/prospective_test_review_manifest.json",
+      "sha256": "1e3b062018221985f27458082f76b26d252a5973ce7dc4176efe6621d5a47ce7"
+    },
+    "prospective_review_template": {
+      "path": "candidate-data/v1/review-assistance/prospective_test_family_review_template.csv",
+      "sha256": "866d1361bcc4fe7449d2cfda56aefc7b3cf7d69e82faf031b26d601bde822feb"
+    },
+    "experiment5_protocol": {
+      "path": "results/experiment5_combined_real_synthetic/experiment5_protocol.json",
+      "sha256": "d30472ecdd813ec0b0ab12f8661018bd16842fec2c859cf621eccca5c53e9f2b"
+    },
+    "experiment5_summary": {
+      "path": "results/experiment5_combined_real_synthetic/experiment5_summary.json",
+      "sha256": "467f5d3c6843a8ea8f34eff0fd0f071696c72c94115b4b226a99f58cb251a89d"
+    },
+    "experiment5_arm_e_metadata": {
+      "path": "results/experiment5_combined_real_synthetic/arm_e/run_metadata.json",
+      "sha256": "49a57418999ce510cc4029265fd00b40b80ec79452357a442df7924858e7280d"
+    },
+    "experiment5_population_manifest": {
+      "path": "results/experiment5_combined_real_synthetic/experiment5_population_manifest.csv",
+      "sha256": "3838dcd2a77620c0ffa7d466461a323e8982909c6724e58b32b0835ac9dedbd6"
+    }
+  },
+  "frozen_review_snapshot_sha256": "41bed6d4cb40a42e8e081e5b2e90a32a9df83897891142727ec1240887f72498",
+  "canonical_configuration_sha256": "a71710157a029de2df6a6329e276ceec12fc44433799960f862778d89fe68376",
+  "candidate_model_sha256": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+  "protected_inventory_before_sha256": "ca0728e93a62dcf9c33dbaec0ab85b66bd3badd8f0ea09808ae4b1b1d068183e",
+  "protected_inventory_after_sha256": "ca0728e93a62dcf9c33dbaec0ab85b66bd3badd8f0ea09808ae4b1b1d068183e",
+  "protected_file_count": 198,
+  "protected_inputs_unchanged": true,
+  "changed_protected_files": [],
+  "leakage_checks": {
+    "training_test_id_overlap": 0,
+    "training_test_family_overlap": 0,
+    "training_test_exact_text_overlap": 0,
+    "source_derived_training_records": 0,
+    "prospective_records_in_training": 0,
+    "prospective_records_in_experiment5_oof": 0
+  }
+}

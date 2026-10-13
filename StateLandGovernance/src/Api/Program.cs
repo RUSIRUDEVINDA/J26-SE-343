@@ -27,6 +27,14 @@ var isOcrDemoEnabled = builder.Environment.IsDevelopment()
 
 builder.Services.AddBuildingBlocks();
 
+var workflowConn = Environment.GetEnvironmentVariable("WORKFLOW_GOVERNANCE_CONNECTION")
+    ?? Environment.GetEnvironmentVariable("LAND_INTELLIGENCE_CONNECTION");
+
+if (!string.IsNullOrWhiteSpace(workflowConn))
+{
+    builder.Services.AddWorkflowGovernancePostgresPersistence(workflowConn);
+}
+
 builder.Services
     .AddWorkflowGovernanceApplication()
     .AddWorkflowGovernanceInfrastructure(builder.Environment)

@@ -803,4 +803,75 @@ public sealed class DocumentAnalysisExecutionServiceTests
         Assert.DoesNotContain("C:\\Users\\developer", result.FailureDescription);
         Assert.Contains("[path-redacted]", result.FailureDescription);
     }
+
+    [Fact]
+    public async Task ExecuteAsync_WithSemanticCapability_CompletesWithOutputsProducedAndForwardsCandidateFacts()
+    {
+        // Arrange
+        var (_, analysis, run, _) = CreateSampleGovernedAggregate(capability: "SemanticExtraction");
+
+        var candidateFacts = new[]
+        {
+            new ExtractedCandidateFactDto(
+                FactId: Guid.NewGuid(),
+                FactCode: "applicant_name",
+                ValueKind: "Text",
+                CanonicalValue: "Lanka Bio Tech Ltd",
+                ConfidenceScore: 0.95m,
+                EvidenceArtifactId: null,
+                PageNumber: 1,
+                Excerpt: "Applicant: Lanka Bio Tech Ltd"
+            ),
+            new ExtractedCandidateFactDto(
+                FactId: Guid.NewGuid(),
+                FactCode: "land_extent",
+                ValueKind: "Decimal",
+                CanonicalValue: "25.5",
+                ConfidenceScore: 0.90m,
+                EvidenceArtifactId: null,
+                PageNumber: 1,
+                Excerpt: "Extent: 25.5 acres"
+            )
+        };
+
+        _intelligenceService.Handler = (req, _) => Task.FromResult(new DocumentIntelligenceResult(
+            Provider: "FastApi-QwenSemantic",
+            ModelName: "Qwen/Qwen2.5-7B-Instruct",
+            ModelVersion: "qwen-proposal-extraction-v1",
+            Outcome: "Succeeded",
+            Artifacts: new[]
+            {
+                new AnalysisArtifactOutputDto(Guid.NewGuid(), "OcrDocumentTranscript", $"analysis-artifacts/{req.DocumentVersionId:D}/document-transcript.txt", "text/plain", "SHA-256", "doc-hash"),
+                new AnalysisArtifactOutputDto(Guid.NewGuid(), "SemanticRawResponse", $"analysis-artifacts/{req.DocumentVersionId:D}/semantic-extraction.json", "application/json", "SHA-256", "sem-hash")
+            },
+            Candidates: candidateFacts,
+            Warnings: new[] { "Candidate only notice" }
+        ));
+
+        // Act
+        var result = await _executionService.ExecuteAsync(
+            analysis.Id.Value,
+            run.Id.Value,
+            expectedAnalysisRevision: analysis.Revision);
+
+        // Assert
+        Assert.Equal("Completed", result.Status);
+        Assert.Equal(2, result.ArtifactCount);
+
+        var updatedAnalysis = await _analysisRepository.GetByIdAsync(analysis.Id);
+        Assert.NotNull(updatedAnalysis);
+        var completedRun = updatedAnalysis.Runs.Single(r => r.Id == run.Id);
+        Assert.Equal(AnalysisRunState.Completed, completedRun.State);
+        Assert.NotNull(completedRun.Result);
+        Assert.Equal(2, completedRun.Result.ExtractedFacts.Count);
+
+        var nameFact = completedRun.Result.ExtractedFacts.Single(f => f.FactCode.Value == "applicant_name");
+        Assert.Equal("Lanka Bio Tech Ltd", nameFact.FactValue.CanonicalValue);
+        Assert.Equal(AnalysisFactValueKind.Text, nameFact.FactValue.Kind);
+        Assert.Equal(0.95m, nameFact.ConfidenceScore?.Value);
+
+        var extentFact = completedRun.Result.ExtractedFacts.Single(f => f.FactCode.Value == "land_extent");
+        Assert.Equal("25.5", extentFact.FactValue.CanonicalValue);
+        Assert.Equal(AnalysisFactValueKind.Decimal, extentFact.FactValue.Kind);
+    }
 }

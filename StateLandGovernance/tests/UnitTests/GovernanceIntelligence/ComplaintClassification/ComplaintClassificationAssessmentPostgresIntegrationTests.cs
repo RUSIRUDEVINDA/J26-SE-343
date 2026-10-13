@@ -214,7 +214,7 @@ public sealed class ComplaintClassificationAssessmentPostgresIntegrationTests
             assessmentId,
             caseId,
             "A fictional complaint used only for PostgreSQL verification.",
-            "governance_classifier_v1",
+            "v2",
             ComplaintClassificationCategories.UnauthorizedAllocationTransferUse,
             probabilities,
             "Advisory output only; human review is required.",
