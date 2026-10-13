@@ -42,7 +42,7 @@ func main() {
 	}
 
 	anchorService := anchors.NewService(ledger)
-	handler := api.NewHandler(anchorService, ledger, "Hyperledger Besu (QBFT)", cfg.ChainID)
+	handler := api.NewHandler(anchorService, ledger, "Hyperledger Besu (QBFT)", cfg.ChainID, cfg.BlockchainMode)
 	router := api.SetupRouter(handler)
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
