@@ -8,7 +8,6 @@ import { useGovernanceData } from "../hooks/useGovernanceData";
 import { formatGovernanceTime } from "../adapters/presentation";
 import { useGovernanceMode } from "./GovernanceWorkspace";
 import styles from "./GovernanceWorkspace.module.css";
-import { FinalPp1Evidence } from "./FinalPp1Evidence";
 
 export function GovernanceDashboard() {
   const { state, retry } = useGovernanceData();
@@ -30,7 +29,6 @@ export function GovernanceDashboard() {
     {state.status === "loading" && <LoadingState message="Loading governance assessments…" />}
     {state.status === "error" && <><ErrorMessage title="Unable to load assessments" message={state.message} /><Button onClick={retry}>Retry loading</Button></>}
     {state.status === "unavailable" && <p className={styles.notice} role="status">{state.message} You can explore fictional examples using the demo control above.</p>}
-    {mode === "live" && <FinalPp1Evidence />}
     <section className={styles.stats} aria-label="General live governance overview">
       {[
         ["Cases in this view", data?.summary.totalCases],

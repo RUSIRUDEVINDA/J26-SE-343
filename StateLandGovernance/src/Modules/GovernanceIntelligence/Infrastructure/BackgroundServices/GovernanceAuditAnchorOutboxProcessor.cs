@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
+using StateLandGovernance.BuildingBlocks.Observability;
 
 namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.BackgroundServices;
 
@@ -19,14 +20,17 @@ public sealed class GovernanceAuditAnchorOutboxProcessor : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<GovernanceAuditAnchorOutboxProcessor> _logger;
+    private readonly PrometheusMetricsRegistry? _metrics;
     private readonly TimeSpan _pollingInterval = TimeSpan.FromSeconds(5);
 
     public GovernanceAuditAnchorOutboxProcessor(
         IServiceScopeFactory scopeFactory,
-        ILogger<GovernanceAuditAnchorOutboxProcessor> logger)
+        ILogger<GovernanceAuditAnchorOutboxProcessor> logger,
+        PrometheusMetricsRegistry? metrics = null)
     {
         _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _metrics = metrics;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -64,6 +68,7 @@ public sealed class GovernanceAuditAnchorOutboxProcessor : BackgroundService
         var anchorService = scope.ServiceProvider.GetRequiredService<IBlockchainAuditAnchorService>();
 
         var pendingItems = await anchorStore.GetPendingOutboxBatchAsync(10, stoppingToken);
+        _metrics?.SetOutboxReadyCount(pendingItems.Count);
         if (pendingItems.Count == 0)
         {
             return;
@@ -84,6 +89,7 @@ public sealed class GovernanceAuditAnchorOutboxProcessor : BackgroundService
             );
 
             var receipt = await anchorService.AnchorRecordAsync(request, stoppingToken);
+            _metrics?.RecordAnchorOutcome(receipt.AnchorStatus.ToString());
 
             if (receipt.AnchorStatus == AnchorStatus.Anchored)
             {

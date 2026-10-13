@@ -7,10 +7,12 @@ const evaluationTimeoutMs = 15_000;
 
 export interface ComplianceEvaluationRequest {
   actionName: string;
-  leaseDurationYears: number;
-  proposedUse: string;
-  leaseAmount: number;
-  zoningArea: string;
+  leaseDurationYears?: number;
+  proposedUse?: string;
+  leaseAmount?: number;
+  zoningArea?: string;
+  input?: Record<string, unknown>;
+  caseId?: string;
 }
 
 export interface ComplianceFinding {
@@ -133,6 +135,14 @@ export interface GovernanceExplanationResponse {
   explanations: GovernanceExplanationItem[];
   evaluationTimestamp: string;
   disclaimer: string;
+  plainLanguageEnhancement?: {
+    applied: boolean;
+    provider: string;
+    model: string;
+    promptVersion: string;
+    status: string;
+    outputHash: string | null;
+  } | null;
 }
 
 export interface GovernanceConsensusResponse {
@@ -216,7 +226,7 @@ async function postEvaluation<T>(path: string, payload: unknown): Promise<T> {
   const controller = new AbortController();
   const timeout = globalThis.setTimeout(() => controller.abort(), evaluationTimeoutMs);
   try {
-    return await apiPost<T>(path, payload, { signal: controller.signal });
+    return await apiPost<T>(path, payload, { signal: controller.signal }, "none");
   } catch (error) {
     if (controller.signal.aborted) throw new GovernanceRequestTimeoutError();
     throw error;
@@ -265,9 +275,17 @@ function isExplanationItem(value: unknown): value is GovernanceExplanationItem {
 }
 
 function isGovernanceExplanationResponse(value: unknown): value is GovernanceExplanationResponse {
+  const enhancement = isObject(value) ? value.plainLanguageEnhancement : undefined;
+  const validEnhancement = enhancement === undefined || enhancement === null || (
+    isObject(enhancement)
+    && typeof enhancement.applied === "boolean"
+    && hasStringFields(enhancement, ["provider", "model", "promptVersion", "status"])
+    && (enhancement.outputHash === null || typeof enhancement.outputHash === "string")
+  );
   return hasStringFields(value, ["explanationId", "subjectId", "overallSeverity", "evaluationTimestamp", "disclaimer"])
     && typeof value.requiresHumanReview === "boolean"
-    && Array.isArray(value.explanations) && value.explanations.every(isExplanationItem);
+    && Array.isArray(value.explanations) && value.explanations.every(isExplanationItem)
+    && validEnhancement;
 }
 
 const consensusNumberFields = [
@@ -682,7 +700,7 @@ function isHistory(value: unknown): value is PersistedHistoryItem[] {
 }
 
 async function getHistory(path: string, caseId: string, limit = 100): Promise<PersistedHistoryItem[]> {
-  const response = await apiGet<unknown>(`${governanceApiBasePath}/${path}/${encodeURIComponent(caseId)}?limit=${limit}`);
+  const response = await apiGet<unknown>(`${governanceApiBasePath}/${path}/${encodeURIComponent(caseId)}?limit=${limit}`, undefined, "none");
   if (!isHistory(response)) throw new GovernanceMalformedResponseError();
   return response;
 }
@@ -694,13 +712,13 @@ export const getLeaseTimingHistoryByCase = (caseId: string, limit = 100) => getH
 export const getReferralHistoryByCase = (caseId: string, limit = 100) => getHistory("referrals/history/cases", caseId, limit);
 
 export async function getWorkflowProjectionJourney(caseId: string): Promise<WorkflowProjectionJourney> {
-  const response = await apiGet<unknown>(`${governanceApiBasePath}/workflow-projections/cases/${encodeURIComponent(caseId)}`);
+  const response = await apiGet<unknown>(`${governanceApiBasePath}/workflow-projections/cases/${encodeURIComponent(caseId)}`, undefined, "none");
   if (!isWorkflowProjectionJourney(response)) throw new GovernanceMalformedResponseError();
   return response;
 }
 
 export async function getPersistedWorkflowAnomalyHistory(caseId: string): Promise<PersistedWorkflowAnomalyAssessment[]> {
-  const response = await apiGet<unknown>(`${governanceApiBasePath}/workflow-anomalies/history/cases/${encodeURIComponent(caseId)}?limit=100`);
+  const response = await apiGet<unknown>(`${governanceApiBasePath}/workflow-anomalies/history/cases/${encodeURIComponent(caseId)}?limit=100`, undefined, "none");
   if (!Array.isArray(response) || !response.every(isPersistedWorkflowAnomalyAssessment)) {
     throw new GovernanceMalformedResponseError();
   }
@@ -766,7 +784,7 @@ export async function screenEarlyGovernance(request: {
 }
 
 export async function getAuditReceipt(auditRecordId: string): Promise<AuditVerificationReceiptResponse> {
-  const response = await apiGet<unknown>(`${governanceApiBasePath}/audits/${auditRecordId}/receipt`);
+  const response = await apiGet<unknown>(`${governanceApiBasePath}/audits/${auditRecordId}/receipt`, undefined, "none");
   if (!isAuditVerificationReceiptResponse(response)) throw new GovernanceMalformedResponseError();
   return response;
 }
@@ -824,7 +842,7 @@ function isGovernanceDashboardData(value: unknown): value is GovernanceDashboard
 export class LiveGovernanceService implements IGovernanceService {
   async getDashboard(): Promise<GovernanceDashboardData> {
     try {
-      const response = await apiGet<unknown>(`${governanceApiBasePath}/dashboard`);
+      const response = await apiGet<unknown>(`${governanceApiBasePath}/dashboard`, undefined, "none");
       if (!isGovernanceDashboardData(response)) throw new GovernanceMalformedResponseError();
       return response;
     } catch (error) {
