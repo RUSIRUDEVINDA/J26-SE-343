@@ -130,6 +130,55 @@ public class GenerateGovernanceExplanationCommandHandlerTests
     }
 
     [Fact]
+    public async Task HandleAsync_HostedSimplificationApplied_ShouldReplaceOnlyDisplayTextAndAuditProvenance()
+    {
+        var evalStore = new InMemoryGovernanceEvaluationStore(_spyAuditRepository);
+        var simplifier = new StubSimplifier(new GovernanceExplanationSimplificationResult(
+            true,
+            "Groq",
+            "qwen/qwen3.8-27b",
+            "test-prompt-v1",
+            "Applied",
+            "abc123",
+            new Dictionary<string, string>()));
+        var inputDto = new GovernanceExplanationInputDto(
+            "PARCEL-PLAIN",
+            new ComplianceExplanationEvidenceDto(
+                "NonCompliant",
+                new[] { new ComplianceViolationSummaryDto("RULE-1", "Finance", "Technical funding mismatch") },
+                null),
+            null,
+            null);
+        var deterministic = _domainEngine.SynthesizeExplanation(
+            new StateLandGovernance.GovernanceIntelligence.Domain.ValueObjects.GovernanceExplanationInput(
+                "PARCEL-PLAIN",
+                new StateLandGovernance.GovernanceIntelligence.Domain.ValueObjects.ComplianceExplanationEvidence(
+                    "NonCompliant",
+                    new[] { new StateLandGovernance.GovernanceIntelligence.Domain.ValueObjects.ComplianceViolationSummary("RULE-1", "Finance", "Technical funding mismatch") },
+                    null),
+                null,
+                null),
+            _testTime.UtcDateTime);
+        simplifier.Result = simplifier.Result with
+        {
+            PlainLanguageExplanations = new Dictionary<string, string>
+            {
+                [deterministic.Explanations.Single().ItemId] = "The proposal needs corrected funding information before review can continue."
+            }
+        };
+        var handler = new GenerateGovernanceExplanationCommandHandler(_domainEngine, evalStore, _testTimeProvider, simplifier);
+
+        var result = await handler.HandleAsync(new GenerateGovernanceExplanationCommand("Explain", inputDto));
+
+        Assert.Equal("The proposal needs corrected funding information before review can continue.", result.Explanations.Single().PlainLanguageExplanation);
+        Assert.Equal("RULE-1", result.Explanations.Single().EvidenceSummaries[0].Split(':')[1].Trim());
+        Assert.True(result.PlainLanguageEnhancement!.Applied);
+        Assert.Contains("Provider: Groq", _spyAuditRepository.AddedRecords.Single().Details);
+        Assert.Contains("PromptVersion: test-prompt-v1", _spyAuditRepository.AddedRecords.Single().Details);
+        Assert.Contains("OutputHash: abc123", _spyAuditRepository.AddedRecords.Single().Details);
+    }
+
+    [Fact]
     public async Task HandleAsync_CancellationTokenPassed_ShouldPropagateToken()
     {
         var cts = new CancellationTokenSource();
@@ -171,5 +220,14 @@ public class GenerateGovernanceExplanationCommandHandlerTests
         var command = new GenerateGovernanceExplanationCommand("Action", inputDto);
 
         await Assert.ThrowsAsync<ArgumentException>(() => _handler.HandleAsync(command, CancellationToken.None));
+    }
+
+    private sealed class StubSimplifier : IGovernanceExplanationSimplifier
+    {
+        public StubSimplifier(GovernanceExplanationSimplificationResult result) => Result = result;
+        public GovernanceExplanationSimplificationResult Result { get; set; }
+        public Task<GovernanceExplanationSimplificationResult> SimplifyAsync(
+            GovernanceExplanationSimplificationRequest request,
+            CancellationToken cancellationToken = default) => Task.FromResult(Result);
     }
 }
