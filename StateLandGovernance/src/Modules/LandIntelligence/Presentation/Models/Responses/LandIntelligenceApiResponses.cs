@@ -86,16 +86,69 @@ public sealed record ResearchSimulatedLeaseWorkflowResponse(
     string? DatasetUsage,
     string? Notice);
 
+public sealed record ProjectLeaseReadyDesignationResponse(
+    string DatasetKey,
+    string ResearchRecordId,
+    string DesignationLabel,
+    string DesignationNotice,
+    bool IsDesignatedInProjectDataset,
+    bool IsEffectiveForLeaseFlow,
+    bool ExcludedBecauseSourceReportedPrivate);
+
 public sealed record LandParcelAvailabilityResponse(
     string ActualLeaseAvailabilityLabel,
     string? ResearchRecordId,
-    ResearchSimulatedLeaseWorkflowResponse? SimulatedWorkflow);
+    ResearchSimulatedLeaseWorkflowResponse? SimulatedWorkflow,
+    ProjectLeaseReadyDesignationResponse? ProjectLeaseReady = null);
 
-public sealed record ResearchDemoConfigResponse(bool Enabled);
+public sealed record LandParcelMetricsResponse(
+    int TotalParcelCount,
+    int ProjectLeaseReadyDesignatedCount,
+    int ProjectLeaseReadyEffectiveCount);
+
+public sealed record IndexedDistrictSummaryResponse(
+    string Province,
+    string District,
+    int ParcelCount);
+
+public sealed record GisIntelligenceLayerCoverageResponse(
+    string LayerKey,
+    string DisplayName,
+    string CoverageStatus,
+    int ReferenceFeatureCount,
+    int ParcelsWithEvidenceCount,
+    string ProvenanceSummary,
+    string LimitationSummary);
+
+public sealed record LandIntelligenceGisCoverageResponse(
+    int TotalParcelCount,
+    IReadOnlyList<IndexedDistrictSummaryResponse> IndexedDistricts,
+    IReadOnlyList<string> ConfiguredEnrichmentDistricts,
+    int EnrichmentSnapshotCount,
+    int EnrichmentCompleteCount,
+    int EnrichmentPartialCount,
+    int EnrichmentUnavailableCount,
+    string OverallEnrichmentStatus,
+    string OverallEnrichmentNotice,
+    IReadOnlyList<GisIntelligenceLayerCoverageResponse> IntelligenceLayers,
+    DateTimeOffset MeasuredAtUtc);
+
+public sealed record ParcelGisEnrichmentSummaryResponse(
+    string OverallStatus,
+    string? DetectedProvince,
+    string? DetectedDistrict,
+    DateTimeOffset? EnrichedAtUtc,
+    string AssessmentNotice);
+
+public sealed record ResearchDemoConfigResponse(
+    bool Enabled,
+    bool OfficerLeaseInterestNicLookupEnabled);
 
 public sealed record SourceReportedLandUseOptionResponse(
     string Code,
     string EnglishLabel);
+
+public sealed record DerivedSoilGroupOptionsResponse(IReadOnlyList<string> Options);
 
 public sealed record LandParcelResponse(
     Guid Id,
@@ -111,7 +164,8 @@ public sealed record LandParcelResponse(
     int InfrastructureFeatureCount,
     int RegulatoryReferenceCount,
     CadastralSourceMetadataResponse? CadastralSource = null,
-    LandParcelAvailabilityResponse? Availability = null);
+    LandParcelAvailabilityResponse? Availability = null,
+    ParcelGisEnrichmentSummaryResponse? GisEnrichment = null);
 
 public sealed record LandSearchResultResponse(
     Guid Id,
@@ -124,7 +178,8 @@ public sealed record LandSearchResultResponse(
     AreaUnit AreaUnit,
     double CentroidLatitude,
     double CentroidLongitude,
-    CadastralSourceMetadataResponse? CadastralSource = null);
+    CadastralSourceMetadataResponse? CadastralSource = null,
+    LandParcelAvailabilityResponse? Availability = null);
 
 public sealed record LandSearchResultsResponse(
     IReadOnlyList<LandSearchResultResponse> Results,
@@ -220,7 +275,15 @@ public sealed record LandParcelRecommendationResponse(
     string? SourceReportedClaimantCategoryDisplay = null,
     string? SourceParcelStatusCode = null,
     string? SourceProvenanceLabel = null,
-    DateTimeOffset? SourceImportedAtUtc = null);
+    DateTimeOffset? SourceImportedAtUtc = null,
+    string? ProjectLeaseReadyLabel = null,
+    bool IsProjectLeaseReadyDesignated = false,
+    bool IsProjectLeaseReadyEffective = false,
+    decimal? ParcelAreaHectares = null,
+    int DisplayOrder = 0,
+    int RuleScoreRank = 0,
+    int RuleScoreTieCount = 0,
+    bool IsTiedOnRuleScore = false);
 
 public sealed record LandRecommendationSearchResultsResponse(
     LandUseType RequiredPurpose,
