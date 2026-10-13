@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import {
   assessPersistedWorkflowProjection,
@@ -13,19 +13,19 @@ import {
 import styles from "./WorkflowAnomalyJourney.module.css";
 
 const DEFAULT_CASE_ID = "PP1-ANOMALY-COMMISSIONER-001";
+const MINIMUM_VISIBLE_INFERENCE_MS = 1400;
 
 export function WorkflowAnomalyJourney({
   initialCaseId = DEFAULT_CASE_ID,
-  allowCaseLookup = false,
 }: {
   initialCaseId?: string;
-  allowCaseLookup?: boolean;
 }) {
-  const [caseId, setCaseId] = useState(initialCaseId);
   const [projection, setProjection] = useState<WorkflowProjectionJourney | null>(null);
   const [assessment, setAssessment] = useState<PersistedWorkflowAnomalyAssessment | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [error, setError] = useState<string | null>(null);
+  const [inferenceRunning, setInferenceRunning] = useState(false);
+  const [processedEventCount, setProcessedEventCount] = useState(0);
 
   const load = useCallback(async (requestedCaseId: string) => {
     setState("loading");
@@ -50,22 +50,36 @@ export function WorkflowAnomalyJourney({
     return () => { cancelled = true; };
   }, [initialCaseId, load]);
 
-  async function submitLookup(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const normalized = caseId.trim();
-    if (normalized) await load(normalized);
-  }
+  useEffect(() => {
+    if (!inferenceRunning || !projection?.events.length) return;
+    const intervalMilliseconds = Math.max(
+      80,
+      Math.floor(MINIMUM_VISIBLE_INFERENCE_MS / projection.events.length),
+    );
+    const timer = window.setInterval(() => {
+      setProcessedEventCount(current => Math.min(current + 1, projection.events.length - 1));
+    }, intervalMilliseconds);
+    return () => window.clearInterval(timer);
+  }, [inferenceRunning, projection]);
 
   async function runAssessment() {
-    if (!projection || state === "loading") return;
-    setState("loading");
+    if (!projection || state === "loading" || inferenceRunning) return;
+    setInferenceRunning(true);
+    setProcessedEventCount(0);
     setError(null);
     try {
-      setAssessment(await assessPersistedWorkflowProjection(projection));
+      const [nextAssessment] = await Promise.all([
+        assessPersistedWorkflowProjection(projection),
+        new Promise<void>(resolve => window.setTimeout(resolve, MINIMUM_VISIBLE_INFERENCE_MS)),
+      ]);
+      setProcessedEventCount(projection.events.length);
+      setAssessment(nextAssessment);
       setState("ready");
     } catch (requestError) {
       setError(describeGovernanceRequestError(requestError));
       setState("error");
+    } finally {
+      setInferenceRunning(false);
     }
   }
 
@@ -74,14 +88,16 @@ export function WorkflowAnomalyJourney({
       <div><p className={styles.eyebrow}>Commissioner review aid</p><h2 id="workflow-anomaly-journey-title">Workflow anomaly journey</h2></div>
       <StatusBadge tone="primary">Advisory ML</StatusBadge>
     </header>
-    {allowCaseLookup && <form className={styles.lookup} onSubmit={submitLookup}>
-      <label htmlFor="workflow-journey-case">Case ID</label>
-      <input id="workflow-journey-case" value={caseId} onChange={event => setCaseId(event.target.value)} required disabled={state === "loading"} />
-      <button className={styles.action} type="submit" disabled={state === "loading"}>{state === "loading" ? "Retrieving persisted evidence…" : "Retrieve case journey"}</button>
-    </form>}
     {state === "loading" && <p role="status" className={styles.loading}>Retrieving the persisted projection and assessment. No intermediate analysis stages are simulated.</p>}
     {error && <div role="alert" className={styles.error}><strong>Journey unavailable</strong><p>{error}</p></div>}
-    {projection && <WorkflowAnomalyJourneyView projection={projection} assessment={assessment} onAssess={runAssessment} busy={state === "loading"} />}
+    {projection && <WorkflowAnomalyJourneyView
+      projection={projection}
+      assessment={assessment}
+      onAssess={runAssessment}
+      busy={state === "loading" || inferenceRunning}
+      processing={inferenceRunning}
+      processedEventCount={processedEventCount}
+    />}
   </section>;
 }
 
@@ -90,11 +106,15 @@ export function WorkflowAnomalyJourneyView({
   assessment,
   onAssess,
   busy = false,
+  processing = false,
+  processedEventCount = 0,
 }: {
   projection: WorkflowProjectionJourney;
   assessment: PersistedWorkflowAnomalyAssessment | null;
   onAssess?: () => void;
   busy?: boolean;
+  processing?: boolean;
+  processedEventCount?: number;
 }) {
   const features = assessment ? [
     ["Event count", assessment.eventCount],
@@ -123,27 +143,37 @@ export function WorkflowAnomalyJourneyView({
       <p>Synthetic C1/C3 handoff evidence is shown separately from real Component 4 feature extraction, frozen-model inference, and PostgreSQL persistence.</p>
     </div>
 
-    <details className={styles.routeEvidence} open>
-      <summary>Route evidence and availability</summary>
-      <dl>
-        <div><dt>Legal-route label</dt><dd>{availableText(projection.legalRouteLabel)}</dd></div>
-        <div><dt>Required clearances metadata</dt><dd>{availableText(projection.routeApplicability.requiredClearances)}</dd></div>
-        <div><dt>Higher approval applicability</dt><dd>{availableText(projection.routeApplicability.higherApprovalApplicable)}</dd></div>
-        <div><dt>Registration applicability</dt><dd>{availableText(projection.routeApplicability.registrationApplicable)}</dd></div>
-        <div><dt>Complete-proposal boundary</dt><dd>{boundaryText(projection.completeProposalBoundary)}</dd></div>
-        <div><dt>Applicant handover/final notification boundary</dt><dd>{boundaryText(projection.applicantHandoverBoundary)}</dd></div>
-      </dl>
-      <p>Unavailable structured metadata is not inferred from activity wording. Confirmed stored events remain visible below.</p>
-    </details>
+    {assessment && !processing && projection.assessmentEligibility === "Eligible" && onAssess && <section className={styles.pending} aria-label="Run a fresh workflow anomaly assessment">
+      <h3>Run the workflow anomaly model again</h3>
+      <p>The result below is persisted history. Running again performs a new frozen-model inference and persists a new assessment for this workflow trace.</p>
+      <button className={styles.action} onClick={onAssess} disabled={busy}>{busy ? "Running frozen-model assessment…" : "Run and persist a new frozen-model assessment"}</button>
+    </section>}
 
     <section aria-labelledby="institutional-route-title">
       <h3 id="institutional-route-title">Institutional workflow timeline</h3>
+      {processing && <p className={styles.processingStatus} role="status" aria-live="polite">
+        Applying the workflow anomaly model to trace event {Math.min(processedEventCount + 1, projection.events.length)} of {projection.events.length}…
+      </p>}
       <ol className={styles.timeline}>
         {projection.events.map((event, index) => {
           const conditional = event.status.toLowerCase() === "notapplicable";
           const repeated = /correction|re-submission|repeated/i.test(event.activity);
-          return <li key={`${event.eventSequence}-${event.activity}`} className={conditional ? styles.notApplicable : styles.completed}>
-            <div className={styles.marker} aria-hidden="true">{conditional ? "—" : "✓"}</div>
+          const active = processing && index === Math.min(processedEventCount, projection.events.length - 1);
+          const processed = !processing || index < processedEventCount;
+          const markerClass = active
+            ? styles.processing
+            : processed
+              ? conditional ? styles.notApplicable : styles.completed
+              : styles.pendingStep;
+          const markerLabel = active
+            ? `Analyzing event ${index + 1} of ${projection.events.length}`
+            : processed
+              ? conditional ? `Event ${index + 1} not applicable` : `Event ${index + 1} processed`
+              : `Event ${index + 1} waiting`;
+          return <li key={`${event.eventSequence}-${event.activity}`} className={markerClass}>
+            <div className={styles.marker} aria-label={markerLabel}>
+              {active ? <span className={styles.spinner} aria-hidden="true" /> : processed ? conditional ? "—" : "✓" : index + 1}
+            </div>
             <article>
               <div className={styles.eventHeading}><strong>{event.eventSequence}. {event.activity}</strong><StatusBadge tone={conditional ? "neutral" : "success"}>{conditional ? "Not applicable" : event.status}</StatusBadge></div>
               <p>{event.institution} · {event.actorRole} · {event.resource}</p>
@@ -161,7 +191,7 @@ export function WorkflowAnomalyJourneyView({
       {projection.assessmentEligibility === "Eligible" && onAssess && <button className={styles.action} onClick={onAssess} disabled={busy}>Run and persist frozen-model assessment</button>}
     </section>}
 
-    {assessment && <>
+    {assessment && !processing && <>
       <section aria-labelledby="analysis-checklist-title">
         <h3 id="analysis-checklist-title">Confirmed analysis checklist</h3>
         <ol className={styles.checklist}>{[
@@ -198,15 +228,6 @@ export function WorkflowAnomalyJourneyView({
 
     <p className={styles.disclaimer} role="note">The anomaly score is not a probability or confidence value. It does not establish corruption, misconduct, legal non-compliance or officer guilt.</p>
   </div>;
-}
-
-function availableText<T>(field: { availability: string; value: T | null }): string {
-  if (field.availability === "Unavailable" || field.value === null) return "Unavailable";
-  return Array.isArray(field.value) ? field.value.join(", ") : String(field.value);
-}
-
-function boundaryText(boundary: { availability: string; occurredAt: string | null; source: string }): string {
-  return boundary.occurredAt ? `${boundary.availability} · ${boundary.occurredAt} · ${boundary.source}` : boundary.availability;
 }
 
 function gapText(previous: string | undefined, current: string): string {
