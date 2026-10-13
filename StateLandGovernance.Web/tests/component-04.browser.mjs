@@ -21,22 +21,18 @@ const output = process.env.C4_SCREENSHOT_DIR || path.join(tmpdir(), "c4-frontend
     page.on("request", request => { if (request.url().includes("/api/governance-intelligence/")) requests.push(request.url()); });
     const response = await page.goto("http://localhost:3000/component-04", { waitUntil: "networkidle" });
     assert.equal(response.status(), 200);
-    await page.getByRole("heading", { name: "PP1 Final Seed Scenarios" }).waitFor();
-    const ids = ["PP1-FINAL-CLEAR-001", "PP1-FINAL-REFERRAL-001", "PP1-FINAL-DELAYED-001", "PP1-FINAL-COMPLAINT-001", "PP1-FINAL-COMBINED-001"];
-    for (const id of ids) {
-      const dossier = page.locator(`[data-testid="final-${id}"]`);
-      await dossier.waitFor();
-      await dossier.locator("summary").click();
-      await dossier.getByRole("heading", { name: "Audit / blockchain" }).waitFor();
-    }
-    await page.getByText("Last Verification Status: Match", { exact: false }).waitFor();
-    await page.screenshot({ path: path.join(output, "pp1-final-live-desktop.png"), fullPage: true });
+    await page.getByRole("heading", { name: "Governance Intelligence" }).waitFor();
+    await page.getByRole("heading", { name: "Engine Summary" }).waitFor();
+    await page.getByRole("heading", { name: "Recent Cases" }).waitFor();
+    await page.getByRole("heading", { name: "Governance Notice" }).waitFor();
+    assert.equal(await page.getByRole("heading", { name: "PP1 Final Seed Scenarios" }).count(), 0);
+    await page.screenshot({ path: path.join(output, "component-04-dashboard-live-desktop.png"), fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, "live mobile overflow");
-    await page.screenshot({ path: path.join(output, "pp1-final-live-mobile.png"), fullPage: true });
+    await page.screenshot({ path: path.join(output, "component-04-dashboard-live-mobile.png"), fullPage: true });
     assert.ok(requests.some(url => url.endsWith("/dashboard")), "live dashboard request");
-    assert.ok(requests.some(url => url.includes("/audits/history/cases/PP1-FINAL-COMBINED-001")), "live case audit request");
-    assert.ok(requests.some(url => /\/audits\/[^/]+\/receipt$/.test(new URL(url).pathname)), "live receipt request");
+    assert.equal(requests.some(url => url.includes("/audits/history/cases/")), false, "dashboard must not load case audit histories");
+    assert.equal(requests.some(url => /\/audits\/[^/]+\/receipt$/.test(new URL(url).pathname)), false, "dashboard must not load receipts");
     assert.equal(requests.some(url => url.endsWith("/verify")), false, "page load must not verify");
     assert.deepEqual(errors, []);
     await browser.close();
