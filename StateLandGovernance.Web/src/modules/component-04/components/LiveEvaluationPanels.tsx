@@ -13,6 +13,12 @@ import {
   type GovernanceDecisionSnapshot,
 } from "../services/governanceService";
 import { Facts } from "./GovernancePanels";
+import {
+  getComplianceEvaluationPreset,
+  PROPOSAL_PRESET_LIST,
+  PROPOSAL_PRESETS,
+  type ProposalPresetKey,
+} from "../services/proposalPresets";
 import styles from "./GovernanceWorkspace.module.css";
 
 function complianceTone(status: string): "neutral" | "success" | "warning" | "danger" {
@@ -33,18 +39,39 @@ function RequestError({ title, message }: { title: string; message: string }) {
 }
 
 export function LiveComplianceEvaluation() {
-  const [actionName, setActionName] = useState("");
-  const [leaseDurationYears, setLeaseDurationYears] = useState("0");
-  const [proposedUse, setProposedUse] = useState("");
-  const [leaseAmount, setLeaseAmount] = useState("0");
-  const [zoningArea, setZoningArea] = useState("");
+  const initialPreset = getComplianceEvaluationPreset("proposal-1");
+  const [selectedPreset, setSelectedPreset] = useState<ProposalPresetKey>("proposal-1");
+  const [actionName, setActionName] = useState(initialPreset.actionName);
+  const [caseId, setCaseId] = useState(initialPreset.caseId);
+  const [inputJson, setInputJson] = useState(initialPreset.inputJson);
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<ComplianceEvaluationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  function applyPreset(presetKey: ProposalPresetKey) {
+    const preset = getComplianceEvaluationPreset(presetKey);
+    setSelectedPreset(presetKey);
+    setActionName(preset.actionName);
+    setCaseId(preset.caseId);
+    setInputJson(preset.inputJson);
+    setResult(null);
+    setError(null);
+  }
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending) return;
+
+    let input: Record<string, unknown>;
+    try {
+      const parsed: unknown = JSON.parse(inputJson);
+      if (parsed === null || Array.isArray(parsed) || typeof parsed !== "object") throw new SyntaxError();
+      input = parsed as Record<string, unknown>;
+    } catch {
+      setError("Proposal input must be a valid JSON object. No evaluation was submitted.");
+      setResult(null);
+      return;
+    }
 
     setPending(true);
     setError(null);
@@ -52,10 +79,8 @@ export function LiveComplianceEvaluation() {
     try {
       const response = await evaluateCompliance({
         actionName: actionName.trim(),
-        leaseDurationYears: Number.parseInt(leaseDurationYears, 10) || 0,
-        proposedUse: proposedUse.trim(),
-        leaseAmount: Number.parseFloat(leaseAmount) || 0,
-        zoningArea: zoningArea.trim(),
+        caseId: caseId.trim(),
+        input,
       });
       setResult(response);
     } catch (requestError) {
@@ -67,13 +92,24 @@ export function LiveComplianceEvaluation() {
 
   return <section className={styles.card} aria-labelledby="live-compliance-title">
     <h2 id="live-compliance-title">Live compliance evaluation</h2>
-    <p className={styles.muted}>This calls the published ASP.NET Core evaluation route. It creates an evaluation record and does not retrieve or update a case history. Submissions are not retried automatically.</p>
+    <p className={styles.muted}>This calls the full NPD proposal contract on the published ASP.NET Core route. It evaluates the JSON against the active rule catalogue and creates an evaluation record. Submissions are not retried automatically.</p>
+    <div className={styles.notice} style={{ marginBottom: "1rem" }}>
+      <strong>Select a Proposal Example to auto-fill input:</strong>
+      <div className={styles.actions} style={{ marginTop: "0.5rem" }}>
+        {PROPOSAL_PRESET_LIST.map(preset => <Button
+          key={preset.key}
+          type="button"
+          variant={selectedPreset === preset.key ? "primary" : "secondary"}
+          onClick={() => applyPreset(preset.key)}
+          disabled={pending}
+        >{preset.shortLabel}</Button>)}
+      </div>
+      <p className={styles.muted} style={{ marginTop: "0.5rem", marginBottom: 0 }}><strong>{PROPOSAL_PRESETS[selectedPreset].title}:</strong> {PROPOSAL_PRESETS[selectedPreset].summary}</p>
+    </div>
     <form onSubmit={submit}>
       <div className={styles.field}><label htmlFor="compliance-action-name">Action name</label><input id="compliance-action-name" value={actionName} onChange={event => setActionName(event.target.value)} required disabled={pending} /></div>
-      <div className={styles.field}><label htmlFor="compliance-duration">Lease duration (years)</label><input id="compliance-duration" type="number" min="0" value={leaseDurationYears} onChange={event => setLeaseDurationYears(event.target.value)} disabled={pending} /></div>
-      <div className={styles.field}><label htmlFor="compliance-use">Proposed use</label><input id="compliance-use" value={proposedUse} onChange={event => setProposedUse(event.target.value)} disabled={pending} /></div>
-      <div className={styles.field}><label htmlFor="compliance-amount">Lease amount</label><input id="compliance-amount" type="number" min="0" step="0.01" value={leaseAmount} onChange={event => setLeaseAmount(event.target.value)} disabled={pending} /></div>
-      <div className={styles.field}><label htmlFor="compliance-zone">Zoning area</label><input id="compliance-zone" value={zoningArea} onChange={event => setZoningArea(event.target.value)} disabled={pending} /></div>
+      <div className={styles.field}><label htmlFor="compliance-case-id">Case ID</label><input id="compliance-case-id" value={caseId} onChange={event => setCaseId(event.target.value)} required disabled={pending} /></div>
+      <div className={styles.field}><label htmlFor="compliance-input">Proposal input (JSON)</label><textarea id="compliance-input" value={inputJson} onChange={event => setInputJson(event.target.value)} required disabled={pending} style={{ minHeight: "360px", fontFamily: "monospace", fontSize: "0.82rem" }} /></div>
       <Button type="submit" disabled={pending}>{pending ? "Evaluating…" : "Run compliance evaluation"}</Button>
     </form>
     {error && <RequestError title="Compliance evaluation unavailable" message={error} />}
