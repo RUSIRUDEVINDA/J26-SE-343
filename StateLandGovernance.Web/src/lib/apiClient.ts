@@ -6,8 +6,9 @@ import {
   landIntelligenceBearerHeaders,
 } from "@/modules/component-01-land-intelligence/utils/landIntelligenceSession";
 
-export type LandIntelligenceApiAuthRole = "applicant" | "officer" | "none";
 import { landIntelligenceOwnerHeaders } from "@/modules/component-01-land-intelligence/utils/landIntelligenceOwner";
+
+export type LandIntelligenceApiAuthRole = "applicant" | "officer" | "none";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
 
@@ -99,6 +100,7 @@ async function parseError(response: Response): Promise<ApiClientError> {
 export async function apiGet<T>(
   path: string,
   init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
@@ -154,6 +156,7 @@ export async function apiPostFormData<T>(
   path: string,
   formData: FormData,
   init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
@@ -163,10 +166,13 @@ export async function apiPostFormData<T>(
     response = await fetch(url, {
       ...init,
       method: "POST",
-      headers: mergeHeaders({
-        Accept: "application/json",
-        ...init?.headers,
-      }),
+      headers: await mergeHeaders(
+        {
+          Accept: "application/json",
+          ...init?.headers,
+        },
+        authRole,
+      ),
       body: formData,
     });
   } catch {
