@@ -17,6 +17,12 @@ import {
   type GovernanceExplanationResponse,
   type GovernanceRiskResponse,
 } from "../services/governanceService";
+import {
+  getStructuredEvaluationPreset,
+  PROPOSAL_PRESET_LIST,
+  PROPOSAL_PRESETS,
+  type ProposalPresetKey,
+} from "../services/proposalPresets";
 import styles from "./GovernanceWorkspace.module.css";
 
 type EvaluationKind = "risk" | "explain" | "consensus" | "conditions";
@@ -82,11 +88,22 @@ function parseRequest(actionName: string, inputText: string, kind: EvaluationKin
 
 export function StructuredEvaluation({ capability }: { capability: EvaluationKind }) {
   const spec = specifications[capability];
-  const [actionName, setActionName] = useState("");
-  const [input, setInput] = useState("");
+  const initialPreset = getStructuredEvaluationPreset(capability, "proposal-3");
+  const [selectedPreset, setSelectedPreset] = useState<ProposalPresetKey>("proposal-3");
+  const [actionName, setActionName] = useState(initialPreset.actionName);
+  const [input, setInput] = useState(initialPreset.inputJson);
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<EvaluationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  function applyPreset(presetKey: ProposalPresetKey) {
+    const next = getStructuredEvaluationPreset(capability, presetKey);
+    setSelectedPreset(presetKey);
+    setActionName(next.actionName);
+    setInput(next.inputJson);
+    setResult(null);
+    setError(null);
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -116,8 +133,29 @@ export function StructuredEvaluation({ capability }: { capability: EvaluationKin
     }
   }
 
+  const activeMeta = PROPOSAL_PRESETS[selectedPreset];
+
   return <>
     <p className={styles.muted}>Published route: <code>{spec.path}</code>. This is a user-initiated ASP.NET Core evaluation. It records a new evaluation; it does not retrieve history or act on a workflow. No automatic retry is performed.</p>
+    <div className={styles.notice} style={{ marginBottom: "1rem" }}>
+      <strong>Select a Proposal Example to auto-fill input:</strong>
+      <div className={styles.actions} style={{ marginTop: "0.5rem" }}>
+        {PROPOSAL_PRESET_LIST.map(preset => (
+          <Button
+            key={preset.key}
+            type="button"
+            variant={selectedPreset === preset.key ? "primary" : "secondary"}
+            onClick={() => applyPreset(preset.key)}
+            disabled={pending}
+          >
+            {preset.shortLabel}
+          </Button>
+        ))}
+      </div>
+      <p className={styles.muted} style={{ marginTop: "0.5rem", marginBottom: 0 }}>
+        <strong>{activeMeta.title}:</strong> {activeMeta.summary}
+      </p>
+    </div>
     <form onSubmit={submit} aria-busy={pending}>
       <div className={styles.field}>
         <label htmlFor={`${capability}-action-name`}>Action name</label>
@@ -125,7 +163,7 @@ export function StructuredEvaluation({ capability }: { capability: EvaluationKin
       </div>
       <div className={styles.field}>
         <label htmlFor={`${capability}-input`}>Evaluation input (JSON)</label>
-        <textarea id={`${capability}-input`} value={input} onChange={event => setInput(event.target.value)} required disabled={pending} aria-describedby={`${capability}-input-guidance`} />
+        <textarea id={`${capability}-input`} value={input} onChange={event => setInput(event.target.value)} required disabled={pending} aria-describedby={`${capability}-input-guidance`} style={{ minHeight: "220px", fontFamily: "monospace", fontSize: "0.82rem" }} />
       </div>
       <p id={`${capability}-input-guidance`} className={styles.muted}>{spec.guidance}</p>
       <Button type="submit" disabled={pending}>{pending ? "Evaluating…" : `Run ${spec.label.toLowerCase()}`}</Button>
@@ -165,6 +203,9 @@ function EvaluationResult({ kind, result }: { kind: EvaluationKind; result: Eval
         <dt>Subject</dt><dd>{result.subjectId}</dd>
         <dt>Human review required</dt><dd>{result.requiresHumanReview ? "Yes" : "No"}</dd>
         <dt>Evaluated at</dt><dd>{formatGovernanceTime(result.evaluationTimestamp)}</dd>
+        <dt>Plain-language source</dt><dd>{result.plainLanguageEnhancement?.applied
+          ? `${result.plainLanguageEnhancement.provider} · ${result.plainLanguageEnhancement.model} · ${result.plainLanguageEnhancement.promptVersion}`
+          : `Deterministic fallback · ${result.plainLanguageEnhancement?.status ?? "Not reported"}`}</dd>
       </dl>
       {result.explanations.length === 0 ? <p>No explanation items were returned.</p> : result.explanations.map(item => <article className={styles.notice} key={item.itemId}>
         <h4>{item.title}</h4><p>{item.plainLanguageExplanation}</p>
