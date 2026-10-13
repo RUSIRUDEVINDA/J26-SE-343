@@ -6,7 +6,24 @@ export function formatRuleScore(score: number): string {
   if (Number.isNaN(score)) {
     return "Unavailable";
   }
-  return score.toFixed(1);
+  if (score === 100) {
+    return "100";
+  }
+  const truncated = Math.trunc(score * 100) / 100;
+  const safe = truncated >= 100 ? 99.99 : truncated;
+  return safe.toFixed(2);
+}
+
+/** Formats an individual criterion score from the API (may be fractional). */
+export function formatCriterionScore(score: number): string {
+  if (Number.isNaN(score)) {
+    return "Unavailable";
+  }
+  if (score === 100) {
+    return "100";
+  }
+  const truncated = Math.trunc(score * 100) / 100;
+  return truncated.toFixed(2);
 }
 
 /** @deprecated Prefer formatRuleScore — retained for callers that expect a labelled score. */
@@ -14,12 +31,41 @@ export function formatPercent(score: number): string {
   return formatRuleScore(score);
 }
 
+function formatAreaNumeric(value: number, unit: AreaUnit): string {
+  if (unit === AreaUnit.Hectares) {
+    if (value === 0) {
+      return "0";
+    }
+    if (Math.abs(value) < 0.01) {
+      return value.toLocaleString(undefined, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 6,
+      });
+    }
+    if (Math.abs(value) < 1) {
+      return value.toLocaleString(undefined, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 4,
+      });
+    }
+  }
+  return value.toLocaleString(undefined, { maximumFractionDigits: 4 });
+}
+
+/** Formats a parcel area already expressed in hectares (recommendation API). */
+export function formatParcelAreaHectares(hectares: number | null | undefined): string {
+  if (hectares == null || Number.isNaN(hectares)) {
+    return "Unavailable";
+  }
+  return `${formatAreaNumeric(hectares, AreaUnit.Hectares)} ha`;
+}
+
 export function formatArea(value: number, unit: AreaUnit): string {
   if (value === undefined || value === null || Number.isNaN(value)) {
     return "Unavailable";
   }
   const unitLabel = areaUnitLabels[unit] ?? "Unknown";
-  return `${value} ${unitLabel}`;
+  return `${formatAreaNumeric(value, unit)} ${unitLabel}`;
 }
 
 /** Converts a parcel area to hectares for lease-interest proposal fields. */

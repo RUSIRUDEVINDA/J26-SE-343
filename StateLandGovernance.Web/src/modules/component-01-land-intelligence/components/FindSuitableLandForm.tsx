@@ -18,13 +18,20 @@ import {
   type SourceReportedLandUseOptionResponse,
 } from "../types/landIntelligence";
 import { landUseTypeLabels, landUseTypeOptions } from "../utils/enumMappings";
+import {
+  convertTargetAreaToHectares,
+  parseTargetAreaInputUnit,
+  targetAreaUnitOptions,
+  targetAreaUnitShortLabel,
+} from "../utils/targetAreaUnits";
 import styles from "./FindSuitableLandForm.module.css";
 
 const FORM_STORE_EVENT = "component01.findSuitableLandForm";
 
 const initialState: FindSuitableLandFormState = {
   requiredPurpose: "",
-  requiredAreaHectares: "",
+  targetAreaValue: "",
+  targetAreaUnit: "hectares",
   preferredProvince: "",
   preferredDistrict: "Colombo",
   preferredDivisionalSecretariat: "",
@@ -40,7 +47,7 @@ type FormSnapshot = {
 type FieldErrors = Partial<
   Record<
     | "requiredPurpose"
-    | "requiredAreaHectares"
+    | "targetAreaValue"
     | "maxResults"
     | "sourceReportedLandUse",
     string
@@ -56,10 +63,22 @@ function parseStoredForm(raw: string | null): FindSuitableLandFormState {
     return initialState;
   }
   try {
-    const parsed = JSON.parse(raw) as Partial<FindSuitableLandFormState>;
+    const parsed = JSON.parse(raw) as Partial<
+      FindSuitableLandFormState & {
+        targetAreaHectares?: string;
+        requiredAreaHectares?: string;
+        preferredAreaHectares?: string;
+      }
+    >;
     return {
       requiredPurpose: parsed.requiredPurpose ?? "",
-      requiredAreaHectares: parsed.requiredAreaHectares ?? "",
+      targetAreaValue:
+        parsed.targetAreaValue ??
+        parsed.targetAreaHectares ??
+        parsed.preferredAreaHectares ??
+        parsed.requiredAreaHectares ??
+        "",
+      targetAreaUnit: parseTargetAreaInputUnit(parsed.targetAreaUnit),
       preferredProvince: parsed.preferredProvince ?? "",
       preferredDistrict: parsed.preferredDistrict ?? "Colombo",
       preferredDivisionalSecretariat:
@@ -133,9 +152,11 @@ function buildSummary(form: FindSuitableLandFormState): string {
     );
   }
 
-  const area = form.requiredAreaHectares.trim();
-  if (area) {
-    parts.push(`Minimum ${area} ha`);
+  const targetArea = form.targetAreaValue.trim();
+  if (targetArea) {
+    parts.push(
+      `Target ${targetArea} ${targetAreaUnitShortLabel(form.targetAreaUnit)}`,
+    );
   }
 
   return parts.join(" • ");
@@ -245,14 +266,18 @@ export function FindSuitableLandForm() {
     if (form.requiredPurpose === "") {
       next.requiredPurpose = "Select a required purpose to continue.";
     }
-    const areaValue = form.requiredAreaHectares.trim();
+    const areaValue = form.targetAreaValue.trim();
     const parsedArea =
       areaValue === "" ? undefined : Number.parseFloat(areaValue);
-    if (areaValue !== "" && (Number.isNaN(parsedArea) || parsedArea! <= 0)) {
-      next.requiredAreaHectares =
-        "Enter a minimum area greater than zero (hectares).";
+    if (areaValue !== "") {
+      if (Number.isNaN(parsedArea) || parsedArea! <= 0) {
+        next.targetAreaValue =
+          "Enter a target area greater than zero, or leave blank.";
+      } else if (convertTargetAreaToHectares(parsedArea!, form.targetAreaUnit) === null) {
+        next.targetAreaValue = "Could not convert the target area to hectares.";
+      }
     }
-    patchFieldErrors(["requiredPurpose", "requiredAreaHectares"], next);
+    patchFieldErrors(["requiredPurpose", "targetAreaValue"], next);
     return Object.keys(next).length === 0;
   }
 
@@ -300,9 +325,13 @@ export function FindSuitableLandForm() {
       return;
     }
 
-    const areaValue = form.requiredAreaHectares.trim();
-    const parsedArea =
+    const areaValue = form.targetAreaValue.trim();
+    const parsedAreaInput =
       areaValue === "" ? undefined : Number.parseFloat(areaValue);
+    const parsedTargetArea =
+      parsedAreaInput === undefined
+        ? undefined
+        : convertTargetAreaToHectares(parsedAreaInput, form.targetAreaUnit);
     const parsedMaxResults = Number.parseInt(form.maxResults.trim(), 10);
 
     const province = form.preferredProvince.trim();
@@ -311,7 +340,7 @@ export function FindSuitableLandForm() {
 
     const request = {
       requiredPurpose: form.requiredPurpose as LandUseType,
-      requiredAreaHectares: parsedArea ?? null,
+      targetAreaHectares: parsedTargetArea ?? null,
       preferredLocation:
         province || district || ds
           ? {
@@ -368,8 +397,8 @@ export function FindSuitableLandForm() {
               1. Essential
             </h2>
             <p className={styles.panelSubtitle}>
-              Purpose you need and an optional minimum area. Required purpose
-              must be selected before search.
+              Purpose you need and an optional target area. Required purpose must
+              be selected before search.
             </p>
             <div className={styles.grid}>
               <div className={styles.field}>
@@ -419,33 +448,55 @@ export function FindSuitableLandForm() {
               </div>
 
               <div className={styles.field}>
-                <label className={styles.label} htmlFor="requiredAreaHectares">
-                  Minimum land area
+                <label className={styles.label} htmlFor="targetAreaValue">
+                  Target area
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
                 <div className={styles.areaWrap}>
                   <input
-                    id="requiredAreaHectares"
-                    className={`${styles.input} ${fieldErrors.requiredAreaHectares ? styles.inputError : ""}`}
+                    id="targetAreaValue"
+                    className={`${styles.input} ${fieldErrors.targetAreaValue ? styles.inputError : ""}`}
                     inputMode="decimal"
-                    value={form.requiredAreaHectares}
+                    value={form.targetAreaValue}
                     onChange={(e) =>
-                      updateField("requiredAreaHectares", e.target.value)
+                      updateField("targetAreaValue", e.target.value)
                     }
-                    placeholder="e.g. 0.5"
-                    aria-invalid={Boolean(fieldErrors.requiredAreaHectares)}
-                    aria-describedby="area-hint area-error"
+                    placeholder="e.g. 0.05"
+                    aria-invalid={Boolean(fieldErrors.targetAreaValue)}
+                    aria-describedby="target-area-hint target-area-error"
                   />
-                  <span className={styles.areaSuffix} aria-hidden="true">
-                    ha
-                  </span>
+                  <select
+                    id="targetAreaUnit"
+                    className={styles.areaUnitSelect}
+                    value={form.targetAreaUnit}
+                    onChange={(e) =>
+                      updateField(
+                        "targetAreaUnit",
+                        parseTargetAreaInputUnit(e.target.value),
+                      )
+                    }
+                    aria-label="Target area unit"
+                  >
+                    {targetAreaUnitOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.shortLabel}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <p id="area-hint" className={styles.hint}>
-                  Parcels smaller than this value are excluded from results.
+                <p id="target-area-hint" className={styles.hint}>
+                  Converted to hectares for scoring against parcel areas in the
+                  database. Perches use the Sri Lankan square perch (25 m²).
+                  Smaller or larger parcels stay in results. Score: 100 × (1 −
+                  |actual − target| / target), minimum 0.
                 </p>
-                {fieldErrors.requiredAreaHectares ? (
-                  <p id="area-error" className={styles.fieldError} role="alert">
-                    {fieldErrors.requiredAreaHectares}
+                {fieldErrors.targetAreaValue ? (
+                  <p
+                    id="target-area-error"
+                    className={styles.fieldError}
+                    role="alert"
+                  >
+                    {fieldErrors.targetAreaValue}
                   </p>
                 ) : null}
               </div>

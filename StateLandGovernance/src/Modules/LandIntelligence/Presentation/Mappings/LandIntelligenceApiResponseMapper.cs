@@ -24,7 +24,8 @@ internal static class LandIntelligenceApiResponseMapper
             dto.InfrastructureFeatureCount,
             dto.RegulatoryReferenceCount,
             ToCadastralSourceResponse(dto.CadastralSource),
-            ToAvailabilityResponse(dto.Availability));
+            ToAvailabilityResponse(dto.Availability),
+            ToGisEnrichmentSummaryResponse(dto.GisEnrichment));
 
     public static LandSearchResultsResponse ToResponse(LandSearchResponse response) =>
         new(
@@ -73,6 +74,47 @@ internal static class LandIntelligenceApiResponseMapper
             dto.Criteria.Select(ToCriterionResponse).ToList(),
             dto.Evidence.Select(ToEvidenceResponse).ToList());
 
+    public static LandParcelMetricsResponse ToResponse(LandParcelMetricsDto dto) =>
+        new(dto.TotalParcelCount, dto.ProjectLeaseReadyDesignatedCount, dto.ProjectLeaseReadyEffectiveCount);
+
+    public static LandIntelligenceGisCoverageResponse ToResponse(LandIntelligenceGisCoverageDto dto) =>
+        new(
+            dto.TotalParcelCount,
+            dto.IndexedDistricts
+                .Select(item => new IndexedDistrictSummaryResponse(item.Province, item.District, item.ParcelCount))
+                .ToList(),
+            dto.ConfiguredEnrichmentDistricts,
+            dto.EnrichmentSnapshotCount,
+            dto.EnrichmentCompleteCount,
+            dto.EnrichmentPartialCount,
+            dto.EnrichmentUnavailableCount,
+            dto.OverallEnrichmentStatus.ToString(),
+            dto.OverallEnrichmentNotice,
+            dto.IntelligenceLayers.Select(ToGisLayerCoverageResponse).ToList(),
+            dto.MeasuredAtUtc);
+
+    private static GisIntelligenceLayerCoverageResponse ToGisLayerCoverageResponse(
+        GisIntelligenceLayerCoverageDto dto) =>
+        new(
+            dto.LayerKey,
+            dto.DisplayName,
+            dto.CoverageStatus.ToString(),
+            dto.ReferenceFeatureCount,
+            dto.ParcelsWithEvidenceCount,
+            dto.ProvenanceSummary,
+            dto.LimitationSummary);
+
+    private static ParcelGisEnrichmentSummaryResponse? ToGisEnrichmentSummaryResponse(
+        ParcelGisEnrichmentSummaryDto? dto) =>
+        dto is null
+            ? null
+            : new ParcelGisEnrichmentSummaryResponse(
+                dto.OverallStatus.ToString(),
+                dto.DetectedProvince,
+                dto.DetectedDistrict,
+                dto.EnrichedAtUtc,
+                dto.AssessmentNotice);
+
     private static LandSearchResultResponse ToSearchResultResponse(LandSearchResultDto dto) =>
         new(
             dto.Id,
@@ -85,7 +127,8 @@ internal static class LandIntelligenceApiResponseMapper
             dto.AreaUnit,
             dto.CentroidLatitude,
             dto.CentroidLongitude,
-            ToCadastralSourceResponse(dto.CadastralSource));
+            ToCadastralSourceResponse(dto.CadastralSource),
+            ToAvailabilityResponse(dto.Availability));
 
     private static CadastralSourceMetadataResponse? ToCadastralSourceResponse(CadastralSourceMetadataDto? dto) =>
         dto is null
@@ -123,7 +166,21 @@ internal static class LandIntelligenceApiResponseMapper
                         dto.SimulatedWorkflow.SimulatedLeaseStatus,
                         dto.SimulatedWorkflow.IsSimulatedLeaseStatus,
                         dto.SimulatedWorkflow.DatasetUsage,
-                        dto.SimulatedWorkflow.Notice));
+                        dto.SimulatedWorkflow.Notice),
+                ToProjectLeaseReadyResponse(dto.ProjectLeaseReady));
+
+    private static ProjectLeaseReadyDesignationResponse? ToProjectLeaseReadyResponse(
+        ProjectLeaseReadyDesignationDto? dto) =>
+        dto is null
+            ? null
+            : new ProjectLeaseReadyDesignationResponse(
+                dto.DatasetKey,
+                dto.ResearchRecordId,
+                dto.DesignationLabel,
+                dto.DesignationNotice,
+                dto.IsDesignatedInProjectDataset,
+                dto.IsEffectiveForLeaseFlow,
+                dto.ExcludedBecauseSourceReportedPrivate);
 
     private static SpatialReferenceResponse ToSpatialResponse(SpatialReferenceDto dto) =>
         new(
@@ -187,7 +244,15 @@ internal static class LandIntelligenceApiResponseMapper
             dto.SourceReportedClaimantCategoryDisplay,
             dto.SourceParcelStatusCode,
             dto.SourceProvenanceLabel,
-            dto.SourceImportedAtUtc);
+            dto.SourceImportedAtUtc,
+            dto.ProjectLeaseReadyLabel,
+            dto.IsProjectLeaseReadyDesignated,
+            dto.IsProjectLeaseReadyEffective,
+            dto.ParcelAreaHectares,
+            dto.DisplayOrder,
+            dto.RuleScoreRank,
+            dto.RuleScoreTieCount,
+            dto.IsTiedOnRuleScore);
 
     private static CriterionEvaluationResponse ToCriterionEvaluationResponse(CriterionEvaluationDto dto) =>
         new(

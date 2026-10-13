@@ -7,13 +7,14 @@ import type { NavItem } from "@/shared/constants/navigation";
 export function PageLayout({
   children,
   showSidebar = true,
-  navigationItems,
-  navigationLabel,
-  navigationBasePath,
-  navigationCompactMobile,
+  navigationItems: _navigationItems,
+  navigationLabel: _navigationLabel,
+  navigationBasePath: _navigationBasePath,
+  navigationCompactMobile: _navigationCompactMobile,
 }: {
   children: ReactNode;
   showSidebar?: boolean;
+  /** Reserved for module-specific sidebars (e.g. component-04); Land Intelligence uses built-in nav. */
   navigationItems?: NavItem[];
   navigationLabel?: string;
   navigationBasePath?: string;
@@ -23,7 +24,7 @@ export function PageLayout({
     <div className={styles.shell}>
       <AppHeader />
       <div className={showSidebar ? styles.bodyWithSidebar : styles.body}>
-        {showSidebar ? <Sidebar items={navigationItems} label={navigationLabel} basePath={navigationBasePath} compactMobile={navigationCompactMobile} /> : null}
+        {showSidebar ? <Sidebar /> : null}
         <main className={styles.main}>{children}</main>
       </div>
     </div>

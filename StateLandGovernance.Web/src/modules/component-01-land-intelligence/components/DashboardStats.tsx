@@ -1,40 +1,51 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/shared/components/Button";
 import { StatusBadge } from "@/shared/components/StatusBadge";
-import { listParcelsSummary } from "../services/landIntelligenceApi";
+import {
+  getLandIntelligenceGisCoverage,
+  getLandParcelMetrics,
+  listParcelsSummary,
+} from "../services/landIntelligenceApi";
+import type { LandIntelligenceGisCoverageResponse } from "../types/landIntelligence";
+import {
+  gisCoverageBadgeTone,
+  gisCoverageStatusLabel,
+} from "../utils/gisCoverageStatus";
 import styles from "./DashboardStats.module.css";
-
-const AVAILABLE_INTELLIGENCE: Array<{
-  name: string;
-  note?: string;
-  warn?: boolean;
-}> = [
-  { name: "Administrative verification" },
-  { name: "Road accessibility" },
-  { name: "Water proximity", note: "Evidence" },
-  { name: "GIS soil group", note: "Evidence" },
-  { name: "Conservation intersections" },
-  { name: "Erosion observations", note: "May be unavailable", warn: true },
-];
 
 export function DashboardStats() {
   const [parcelTotal, setParcelTotal] = useState<string | null>(null);
+  const [leaseReadyEffective, setLeaseReadyEffective] = useState<string | null>(
+    null,
+  );
+  const [gisCoverage, setGisCoverage] =
+    useState<LandIntelligenceGisCoverageResponse | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    listParcelsSummary()
-      .then((result) => {
+    Promise.all([
+      listParcelsSummary(),
+      getLandParcelMetrics(),
+      getLandIntelligenceGisCoverage(),
+    ])
+      .then(([summary, metrics, coverage]) => {
         if (!cancelled) {
-          setParcelTotal(String(result.totalCount));
+          setParcelTotal(String(summary.totalCount));
+          setLeaseReadyEffective(
+            String(metrics.projectLeaseReadyEffectiveCount),
+          );
+          setGisCoverage(coverage);
           setLoadFailed(false);
         }
       })
       .catch(() => {
         if (!cancelled) {
           setParcelTotal(null);
+          setLeaseReadyEffective(null);
+          setGisCoverage(null);
           setLoadFailed(true);
         }
       });
@@ -43,17 +54,60 @@ export function DashboardStats() {
     };
   }, []);
 
-  const parcelDisplay = loadFailed
+  const parcelDisplay = loadFailed ? "Unavailable" : (parcelTotal ?? "…");
+  const leaseReadyDisplay = loadFailed
     ? "Unavailable"
-    : (parcelTotal ?? "…");
+    : (leaseReadyEffective ?? "…");
+
+  const primaryDistrict = useMemo(() => {
+    if (!gisCoverage?.indexedDistricts.length) {
+      return null;
+    }
+    const top = gisCoverage.indexedDistricts[0];
+    return {
+      province: top.province,
+      district: top.district,
+      count: top.parcelCount,
+    };
+  }, [gisCoverage]);
+
+  const enrichmentStatus = gisCoverage?.overallEnrichmentStatus ?? null;
+  const enrichmentLabel = enrichmentStatus
+    ? gisCoverageStatusLabel(enrichmentStatus)
+    : loadFailed
+      ? "Unavailable"
+      : "…";
+
+  const configuredDistrictsText =
+    gisCoverage && gisCoverage.configuredEnrichmentDistricts.length > 0
+      ? gisCoverage.configuredEnrichmentDistricts.join(", ")
+      : "None configured";
 
   return (
     <div className={styles.dashboard}>
       <section className={styles.metrics} aria-label="Key status">
         <article className={`${styles.card} ${styles.metricCard}`}>
-          <p className={styles.label}>Pilot district</p>
-          <p className={styles.value}>Colombo</p>
-          <span className={styles.chip}>Western Province</span>
+          <p className={styles.label}>Indexed districts (live)</p>
+          {primaryDistrict ? (
+            <>
+              <p className={styles.value}>{primaryDistrict.district}</p>
+              <span className={styles.chip}>{primaryDistrict.province}</span>
+              <p className={styles.meta}>
+                {primaryDistrict.count} parcel
+                {primaryDistrict.count === 1 ? "" : "s"} in this district
+                {gisCoverage && gisCoverage.indexedDistricts.length > 1
+                  ? ` · ${gisCoverage.indexedDistricts.length} district(s) total`
+                  : ""}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className={styles.value}>Unavailable</p>
+              <p className={styles.meta}>
+                District counts are derived from indexed parcel location fields.
+              </p>
+            </>
+          )}
         </article>
 
         <article className={`${styles.card} ${styles.metricCard}`}>
@@ -70,14 +124,42 @@ export function DashboardStats() {
         </article>
 
         <article className={`${styles.card} ${styles.metricCard}`}>
-          <p className={styles.label}>Enrichment</p>
+          <p className={styles.label}>Lease-ready (project dataset)</p>
+          <p
+            className={`${styles.value} ${styles.valueAccent}`}
+            aria-live="polite"
+          >
+            {leaseReadyDisplay}
+          </p>
+          <p className={styles.meta}>
+            Parcels marked &quot;Lease-ready — project dataset assumption&quot;
+            after excluding source-reported Private. Not official government
+            verification.
+          </p>
+        </article>
+
+        <article className={`${styles.card} ${styles.metricCard}`}>
+          <p className={styles.label}>GIS enrichment (database)</p>
           <div className={styles.enrichmentRow}>
-            <StatusBadge tone="warning">Partial</StatusBadge>
+            {enrichmentStatus ? (
+              <StatusBadge tone={gisCoverageBadgeTone(enrichmentStatus)}>
+                {enrichmentLabel}
+              </StatusBadge>
+            ) : (
+              <StatusBadge tone="neutral">{enrichmentLabel}</StatusBadge>
+            )}
           </div>
           <p className={styles.enrichmentExplain}>
-            Some GIS evidence may be unavailable for individual parcels.
-            Missing layers are never treated as a positive match.
+            {gisCoverage?.overallEnrichmentNotice ??
+              "Measured from enrichment snapshots in the connected database. Missing layers are never treated as a positive match."}
           </p>
+          {gisCoverage ? (
+            <p className={styles.meta}>
+              Configured enrichment districts: {configuredDistrictsText}. Snapshots:{" "}
+              {gisCoverage.enrichmentSnapshotCount} of{" "}
+              {gisCoverage.totalParcelCount}.
+            </p>
+          ) : null}
         </article>
       </section>
 
@@ -93,7 +175,7 @@ export function DashboardStats() {
                 This dashboard does not include a spatial chart or map layer.
                 Browse parcel intelligence for individual records, or run Find
                 Suitable Land to compare parcels using recorded attributes and
-                GIS-derived evidence.
+                GIS-derived evidence where it exists in the database.
               </p>
             </div>
             <div className={styles.actions}>
@@ -111,21 +193,41 @@ export function DashboardStats() {
         </article>
 
         <article className={styles.card}>
-          <h2 className={styles.sectionTitle}>Available intelligence</h2>
-          <ul className={styles.intelList}>
-            {AVAILABLE_INTELLIGENCE.map((item) => (
-              <li key={item.name} className={styles.intelItem}>
-                <p className={styles.intelName}>{item.name}</p>
-                {item.note ? (
-                  <p
-                    className={`${styles.intelNote} ${item.warn ? styles.intelNoteWarn : ""}`}
-                  >
-                    {item.note}
+          <h2 className={styles.sectionTitle}>GIS intelligence coverage</h2>
+          <p className={`${styles.meta} ${styles.coverageIntro}`}>
+            Per-layer counts are measured from reference tables and parcel-level
+            GIS evidence in the connected database. &quot;Unavailable&quot; means
+            the layer was not assessed for indexed parcels—not that the parcel
+            is clear.
+          </p>
+          {loadFailed ? (
+            <p className={styles.emptyText} role="alert">
+              Coverage could not be loaded from the API.
+            </p>
+          ) : null}
+          {!loadFailed && !gisCoverage ? (
+            <p className={styles.emptyText}>Loading coverage…</p>
+          ) : null}
+          {gisCoverage ? (
+            <ul className={styles.intelList}>
+              {gisCoverage.intelligenceLayers.map((layer) => (
+                <li key={layer.layerKey} className={styles.intelItem}>
+                  <div className={styles.intelHeader}>
+                    <p className={styles.intelName}>{layer.displayName}</p>
+                    <StatusBadge tone={gisCoverageBadgeTone(layer.coverageStatus)}>
+                      {gisCoverageStatusLabel(layer.coverageStatus)}
+                    </StatusBadge>
+                  </div>
+                  <p className={styles.intelNote}>
+                    Reference features: {layer.referenceFeatureCount} · Parcels
+                    with evidence: {layer.parcelsWithEvidenceCount} /{" "}
+                    {gisCoverage.totalParcelCount}
                   </p>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+                  <p className={styles.intelNote}>{layer.limitationSummary}</p>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </article>
       </section>
     </div>

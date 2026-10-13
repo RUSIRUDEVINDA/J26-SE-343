@@ -1,5 +1,7 @@
 import { apiGet, apiPost } from "@/lib/apiClient";
 import type {
+  LandIntelligenceGisCoverageResponse,
+  LandParcelMetricsResponse,
   LandParcelResponse,
   LandRecommendationSearchRequest,
   LandRecommendationSearchResultsResponse,
@@ -83,9 +85,10 @@ export async function listDerivedSoilGroupOptions(
     search.set("district", district.trim());
   }
   const suffix = search.toString() ? `?${search.toString()}` : "";
-  return apiGet<string[]>(
+  const response = await apiGet<{ options: string[] }>(
     `/api/v1/land/parcels/derived-soil-group-options${suffix}`,
   );
+  return response.options ?? [];
 }
 
 /** Loads every parcel page (API page size max 100). */
@@ -118,4 +121,14 @@ export async function listAllParcels(
 
 export async function listParcelsSummary(): Promise<LandSearchResultsResponse> {
   return listParcels({ page: 1, pageSize: 1 });
+}
+
+export async function getLandParcelMetrics(): Promise<LandParcelMetricsResponse> {
+  return apiGet<LandParcelMetricsResponse>("/api/v1/land/parcels/metrics");
+}
+
+export async function getLandIntelligenceGisCoverage(): Promise<LandIntelligenceGisCoverageResponse> {
+  return apiGet<LandIntelligenceGisCoverageResponse>(
+    "/api/v1/land/parcels/gis-coverage",
+  );
 }

@@ -97,20 +97,20 @@ public sealed class SourceReportedPurposeAlignmentTests
         {
             RequiredPurpose = LandUseType.Agricultural,
             PreferredLocation = new PreferredLocationCriteria { District = "Colombo" },
-            RequiredAreaHectares = 1m,
+            TargetAreaHectares = 1m,
             SourceReportedLandUse = "73",
             MaxResults = 10
         });
 
-        // Far-road parcel remains a candidate — road distance is not a recommendation filter.
-        Assert.Equal(2, response.CandidateCount);
+        // Target area scores parcels but does not exclude smaller parcels; road distance is not a filter.
+        Assert.Equal(3, response.CandidateCount);
         Assert.Contains(response.Recommendations, r => r.CadastralNumber == "REAL-IN");
         Assert.Contains(response.Recommendations, r => r.CadastralNumber == "REAL-FAR");
+        Assert.Contains(response.Recommendations, r => r.CadastralNumber == "REAL-SMALL");
         Assert.DoesNotContain(response.Recommendations, r => r.CadastralNumber == "REAL-OUT");
-        Assert.DoesNotContain(response.Recommendations, r => r.CadastralNumber == "REAL-SMALL");
         Assert.NotNull(response.Transparency);
         Assert.Contains(response.Transparency!.FilterStages, s => s.Name == "District");
-        Assert.Contains(response.Transparency.FilterStages, s => s.Name == "Minimum area");
+        Assert.DoesNotContain(response.Transparency.FilterStages, s => s.Name == "Minimum area");
         Assert.DoesNotContain(response.Transparency.FilterStages, s => s.Name == "Maximum road distance");
     }
 

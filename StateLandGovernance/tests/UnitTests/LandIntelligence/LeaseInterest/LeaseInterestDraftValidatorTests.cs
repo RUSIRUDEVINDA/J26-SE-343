@@ -19,6 +19,8 @@ public sealed class LeaseInterestDraftValidatorTests
                 "ada@example.com",
                 "1 Example Road, Colombo",
                 null,
+                null,
+                "123456789V",
                 null),
             new LeaseInterestProposalDto(
                 LandUseType.Commercial,
@@ -49,5 +51,31 @@ public sealed class LeaseInterestDraftValidatorTests
         var errors = CreateValidator().Validate(ValidDraft(consent: false), forSubmit: true);
 
         Assert.Contains(errors, e => e.Contains("Consent"));
+    }
+
+    [Fact]
+    public void Validate_SubmitRequiresValidIndividualNic()
+    {
+        var draft = ValidDraft() with
+        {
+            Applicant = ValidDraft().Applicant with { NationalIdentityCardNumber = "bad" },
+        };
+
+        var errors = CreateValidator().Validate(draft, forSubmit: true);
+
+        Assert.Contains(errors, e => e.Contains("valid Sri Lankan NIC"));
+    }
+
+    [Fact]
+    public void Validate_SubmitAcceptsOldNicFormat()
+    {
+        var draft = ValidDraft() with
+        {
+            Applicant = ValidDraft().Applicant with { NationalIdentityCardNumber = "123456789V" },
+        };
+
+        var errors = CreateValidator().Validate(draft, forSubmit: true);
+
+        Assert.DoesNotContain(errors, e => e.Contains("NIC"));
     }
 }

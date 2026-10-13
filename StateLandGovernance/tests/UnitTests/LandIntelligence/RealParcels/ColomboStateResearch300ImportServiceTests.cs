@@ -6,7 +6,9 @@ namespace StateLandGovernance.UnitTests.LandIntelligence.RealParcels;
 
 public sealed class ColomboStateResearch300ImportServiceTests
 {
+    // Requires StateLandGovernance/data/gis/.../state_research_300 (gitignored). Excluded from CI via Category!=Integration.
     [Fact]
+    [Trait("Category", "Integration")]
     public async Task DryRun_ValidatesThreeHundredParcelsAndMatchingIds()
     {
         var root = ResolveDatasetRoot();
@@ -25,7 +27,9 @@ public sealed class ColomboStateResearch300ImportServiceTests
         Assert.Equal(0, report.Failed);
     }
 
+    // Requires StateLandGovernance/data/gis/.../state_research_300 (gitignored). Excluded from CI via Category!=Integration.
     [Fact]
+    [Trait("Category", "Integration")]
     public void Stored_centroid_uses_csv_centroid_not_map_marker_for_known_record()
     {
         var root = ResolveDatasetRoot();
