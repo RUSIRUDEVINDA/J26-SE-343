@@ -71,7 +71,7 @@ describe("Commissioner workflow anomaly journey", () => {
     assert.match(html, /Not applicable/);
     assert.match(html, /Correction \/ repeated-stage marker/);
     assert.match(html, /<ol/);
-    assert.match(html, /<details[^>]*open/);
+    assert.doesNotMatch(html, /Route evidence and availability/);
   });
 
   it("renders synthetic provenance, confirmed processing stages, and all nine features", () => {
@@ -100,7 +100,36 @@ describe("Commissioner workflow anomaly journey", () => {
     assert.match(partial, /Persisted anomaly assessment not found/);
     assert.match(partial, /Officer review has not been performed/);
     assert.doesNotMatch(partial, /Run and persist frozen-model assessment/);
-    assert.match(partial, /Required clearances metadata<\/dt><dd>Unavailable/);
+    assert.doesNotMatch(partial, /Route evidence and availability/);
+  });
+
+  it("allows an eligible persisted trace to run a fresh model inference", () => {
+    const html = renderToString(React.createElement(WorkflowAnomalyJourneyView, {
+      projection,
+      assessment,
+      onAssess: () => undefined,
+    }));
+
+    assert.match(html, /Run the workflow anomaly model again/);
+    assert.match(html, /Run and persist a new frozen-model assessment/);
+    assert.ok(html.indexOf("Synthetic C1/C3 handoff evidence") < html.indexOf("Run the workflow anomaly model again"));
+    assert.ok(html.indexOf("Run the workflow anomaly model again") < html.indexOf("Institutional workflow timeline"));
+  });
+
+  it("shows live sequential trace progress while model inference is running", () => {
+    const html = renderToString(React.createElement(WorkflowAnomalyJourneyView, {
+      projection,
+      assessment,
+      processing: true,
+      processedEventCount: 1,
+      busy: true,
+    }));
+
+    const textWithoutHydrationMarkers = html.replace(/<!--.*?-->/g, "");
+    assert.match(textWithoutHydrationMarkers, /Applying the workflow anomaly model to trace event 2 of 4/);
+    assert.match(html, /aria-label="Event 1 processed"/);
+    assert.match(html, /aria-label="Analyzing event 2 of 4"/);
+    assert.match(html, /aria-label="Event 3 waiting"/);
   });
 
   it("contains no client threshold calculation, raw JSON path, mock fallback, or audit verification call", () => {
@@ -108,5 +137,6 @@ describe("Commissioner workflow anomaly journey", () => {
     assert.doesNotMatch(componentSource, /flagged\s*=|anomalyScore\s*>|\.anomalyScore\s*>/);
     assert.doesNotMatch(componentSource, /JSON\.parse|textarea|Workflow Trace JSON/);
     assert.doesNotMatch(componentSource, /mock|demoEvidence|getAuditReceipt|verifyAuditIntegrity/i);
+    assert.doesNotMatch(componentSource, /Route evidence and availability|Retrieve case journey|allowCaseLookup/);
   });
 });
