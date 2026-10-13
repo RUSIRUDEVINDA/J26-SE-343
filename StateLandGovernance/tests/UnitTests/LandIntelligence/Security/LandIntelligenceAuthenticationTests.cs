@@ -92,7 +92,7 @@ public sealed class LandIntelligenceAuthenticationTests
     }
 
     [Fact]
-    public void Authorization_policies_require_expected_roles()
+    public async Task Authorization_policies_require_expected_roles()
     {
         Environment.SetEnvironmentVariable("LAND_INTELLIGENCE_JWT_SIGNING_KEY", TestSigningKeyBase64);
 
@@ -104,7 +104,7 @@ public sealed class LandIntelligenceAuthenticationTests
             new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build(),
             hostEnvironment);
 
-        using var provider = services.BuildServiceProvider();
+        await using var provider = services.BuildServiceProvider();
         var authorization = provider.GetRequiredService<Microsoft.AspNetCore.Authorization.IAuthorizationService>();
 
         var officerPrincipal = new ClaimsPrincipal(
@@ -117,15 +117,15 @@ public sealed class LandIntelligenceAuthenticationTests
                 [new Claim(ClaimTypes.Role, LandIntelligenceAuth.Roles.Applicant)],
                 LandIntelligenceAuth.Schemes.JwtBearer));
 
-        var officerResult = authorization.AuthorizeAsync(
+        var officerResult = await authorization.AuthorizeAsync(
             officerPrincipal,
             null,
-            LandIntelligenceAuth.Policies.Officer).GetAwaiter().GetResult();
+            LandIntelligenceAuth.Policies.Officer);
 
-        var applicantOnOfficerPolicy = authorization.AuthorizeAsync(
+        var applicantOnOfficerPolicy = await authorization.AuthorizeAsync(
             applicantPrincipal,
             null,
-            LandIntelligenceAuth.Policies.Officer).GetAwaiter().GetResult();
+            LandIntelligenceAuth.Policies.Officer);
 
         Assert.True(officerResult.Succeeded);
         Assert.False(applicantOnOfficerPolicy.Succeeded);

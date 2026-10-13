@@ -167,7 +167,9 @@ public sealed class ProjectLeaseReadyDesignationTests
         Assert.Contains("\"ResearchRecordId\"", ColomboStateResearch300ProjectLeaseReadyPersistence.UpsertSql, StringComparison.Ordinal);
     }
 
+    // Requires StateLandGovernance/data/gis/.../state_research_300 (gitignored). Excluded from CI via Category!=Integration.
     [Fact]
+    [Trait("Category", "Integration")]
     public void StateResearchCsv_HasThreeHundredDistinctRecordIdsForDesignationScope()
     {
         var root = ResolveDatasetRoot();
@@ -197,7 +199,9 @@ public sealed class ProjectLeaseReadyDesignationTests
         Assert.Equal(ColomboStateResearchProjectLeaseReady.ExpectedDesignationCount - privateCount, recordIds.Count - privateCount);
     }
 
+    // Requires StateLandGovernance/data/gis/.../state_research_300 (gitignored). Excluded from CI via Category!=Integration.
     [Fact]
+    [Trait("Category", "Integration")]
     public async Task ImportDryRun_ValidatesThreeHundredParcels_ForLeaseReadyImportScope()
     {
         var root = ResolveDatasetRoot();
