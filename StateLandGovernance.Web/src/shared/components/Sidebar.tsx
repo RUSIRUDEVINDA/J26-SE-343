@@ -2,9 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { getResearchDemoConfig } from "@/modules/component-01-land-intelligence/services/researchDemoApi";
 import {
   component01NavItems,
   LAND_INTELLIGENCE_BASE,
+  officerLeaseInterestLookupNavItem,
+  officerLeaseInterestQueueNavItem,
+  type NavItem,
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
 
@@ -24,11 +29,41 @@ function isActive(pathname: string, href: string): boolean {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [officerLookupEnabled, setOfficerLookupEnabled] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void getResearchDemoConfig()
+      .then((config) => {
+        if (!cancelled) {
+          setOfficerLookupEnabled(config.officerLeaseInterestNicLookupEnabled);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setOfficerLookupEnabled(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const navItems = useMemo((): NavItem[] => {
+    if (!officerLookupEnabled) {
+      return component01NavItems;
+    }
+    return [
+      ...component01NavItems,
+      officerLeaseInterestQueueNavItem,
+      officerLeaseInterestLookupNavItem,
+    ];
+  }, [officerLookupEnabled]);
 
   return (
     <aside className={styles.sidebar} aria-label="Land Intelligence navigation">
       <nav className={styles.nav}>
-        {component01NavItems.map((item) => {
+        {navItems.map((item) => {
           const active = isActive(pathname, item.href);
           const className = [
             styles.link,
