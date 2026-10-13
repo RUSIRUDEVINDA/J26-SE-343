@@ -30,6 +30,35 @@ test("Component 4 landing dashboard contains only the business overview", () => 
   }
 });
 
+test("Component 4 layout forwards its complete module navigation to the shared sidebar", () => {
+  const layoutSource = fs.readFileSync("src/app/component-04/layout.tsx", "utf8");
+  const pageLayoutSource = fs.readFileSync("src/shared/components/PageLayout.tsx", "utf8");
+
+  for (const label of [
+    "Dashboard",
+    "Case assessments",
+    "Complaint intelligence",
+    "Workflow anomalies",
+    "Early screening",
+    "Governance risk",
+    "Explainability",
+    "Institutional consensus",
+    "Condition verification",
+    "Lease approval timing",
+    "Commissioner review",
+    "Governance summary",
+    "Audit history",
+    "Verification record",
+  ]) {
+    assert.match(layoutSource, new RegExp(`label: "${label}"`));
+  }
+
+  assert.match(pageLayoutSource, /items=\{navigationItems\}/);
+  assert.match(pageLayoutSource, /label=\{navigationLabel\}/);
+  assert.match(pageLayoutSource, /basePath=\{navigationBasePath\}/);
+  assert.match(pageLayoutSource, /compactMobile=\{navigationCompactMobile\}/);
+});
+
 test("NPD compliance presets provide distinct complete, incomplete and adverse proposal JSON", () => {
   const clean = getComplianceEvaluationPreset("proposal-1");
   const incomplete = getComplianceEvaluationPreset("proposal-2");
