@@ -62,12 +62,68 @@ def _result(case_id=None) -> dict:
     }
 
 
+def _anomaly_result(case_id: str) -> dict:
+    return {
+        "case_id": case_id,
+        "model_version": "workflow-anomaly-stub-v1",
+        "anomaly_score": 0.42,
+        "threshold": 0.57,
+        "flagged": False,
+        "feature_values": {
+            "event_count": 1.0,
+            "elapsed_days": 0.0,
+            "max_gap_hours": 0.0,
+            "mean_gap_hours": 0.0,
+            "unique_activities": 1.0,
+            "repeated_activity_count": 0.0,
+            "resource_handoffs": 0.0,
+            "institution_switches": 0.0,
+            "distinct_resources": 1.0,
+        },
+        "advisory_note": "Advisory anomaly prediction only.",
+    }
+
+
 def test_healthy_startup_returns_readiness_and_model_version(tmp_path):
     app = create_app(_settings(tmp_path), artifact_loader=lambda **_: _artifact())
     with TestClient(app) as client:
         response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ready", "model_version": "v2"}
+
+
+def test_metrics_report_live_model_and_request_activity_without_payload(tmp_path):
+    sensitive_text = "FICTIONAL-SENSITIVE-PROMETHEUS-TEXT"
+    app = create_app(
+        _settings(tmp_path),
+        artifact_loader=lambda **_: _artifact(),
+        predictor=lambda _text, _artifact, case_id: _result(case_id),
+        anomaly_predictor=lambda payload, *, bundle: _anomaly_result(payload["case_id"]),
+    )
+    with TestClient(app) as client:
+        assert client.post("/predict", json={"complaint_text": sensitive_text}).status_code == 200
+        assert client.post(
+            "/workflow-anomaly/predict",
+            json={
+                "case_id": "METRICS-WORKFLOW-CHECK",
+                "events": [{
+                    "event_seq": 1,
+                    "activity": "Application received",
+                    "institution": "Divisional Secretariat",
+                    "resource": "Land Officer",
+                    "timestamp": "2026-10-13T08:00:00Z",
+                }],
+            },
+        ).status_code == 200
+        response = client.get("/metrics")
+
+    assert response.status_code == 200
+    assert 'state_land_governance_ml_info{model_version="v2",data_mode="live-inference"} 1' in response.text
+    assert 'state_land_governance_ml_model_ready{model="complaint-classifier",version="v2"} 1' in response.text
+    assert 'state_land_governance_ml_model_ready{model="workflow-anomaly",version="workflow-anomaly-stub-v1"} 1' in response.text
+    assert 'state_land_governance_ml_http_requests_total{method="POST",path="/predict",status="200"} 1' in response.text
+    assert 'state_land_governance_ml_http_requests_total{method="POST",path="/workflow-anomaly/predict",status="200"} 1' in response.text
+    assert sensitive_text not in response.text
 
 
 def test_startup_failure_is_not_silently_recovered(tmp_path):
