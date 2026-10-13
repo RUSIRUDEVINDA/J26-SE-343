@@ -15,6 +15,7 @@ using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
 using StateLandGovernance.LandIntelligence.Presentation.DependencyInjection;
+using StateLandGovernance.LandIntelligence.Presentation.Security;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
 
 EnvFileLoader.LoadFromRepositoryRoot();
@@ -64,6 +65,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddLandIntelligenceAuthentication(builder.Configuration, builder.Environment);
 builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
 builder.Services.AddLandIntelligencePresentation();
 
@@ -144,13 +146,15 @@ else
     dbContext.Database.Migrate();
 }
 
-app.UseLandIntelligenceCallerContext();
-app.UseLandIntelligenceExceptionHandling();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseCors("DevelopmentFrontend");
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseLandIntelligenceCallerContext();
+app.UseLandIntelligenceExceptionHandling();
 
 app.MapControllers();
 
