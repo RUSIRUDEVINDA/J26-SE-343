@@ -4,16 +4,18 @@ Synthetic parcel-suitability dataset generator
 Component 1 - Intelligent Land Knowledge Graph and Spatial Recommendation Platform
 J26-SE-343
 
-Generates a labelled dataset that mirrors the fields actually produced by your
-.NET domain model (LandParcel, AdministrativeLocation, LandCharacteristics,
-ParcelGisDerivedIntelligence, SpatialConstraint, EnvironmentalRestriction) plus
-an applicant-requested purpose, so the ML experiment lines up with Table 2 of
-the proposal ("Data / Participants / Experimental Inputs").
+Generates a labelled dataset from parcel fields that are trustworthy for the
+standard (non-Colombo) ML path: cadastre/admin attributes, applicant purpose,
+environmental restrictions, and spatial-constraint flags.
+
+Road, water, and soil measurements are NOT invented and are NOT used for
+labelling. Columns may appear as null / "Unknown" so callers see that GIS
+evidence is unavailable — the same posture as the Colombo research import
+without enrichment snapshots.
 
 USE THIS ONLY until real, expert-labelled or validated-historical data is
-available (per section 3.5 Validation Strategy). Replace this script's output
-with a real export the moment you have one — the report should say clearly
-whether results are from synthetic or real data.
+available. Replace this script's output with a real export when you have one —
+reports must say clearly whether results are from synthetic or real data.
 
 Run:
     python generate_synthetic_dataset.py --n 3000 --out parcels_dataset.csv
@@ -32,11 +34,23 @@ PROVINCES_DISTRICTS = {
 }
 
 LAND_CATEGORY = ["StateLand", "CrownLand", "ReservedLand", "Other"]
-SOIL_GROUPS = ["Reddish Brown Earth", "Alluvial", "Lateritic", "Regosol", "Bog and Half-Bog", "Unknown"]
 TERRAIN = ["Flat", "Undulating", "Hilly", "Steep", "Unknown"]
-ENV_RESTRICTION = ["None", "ProtectedArea", "ForestReserve", "WaterBodyBuffer", "Wetland", "WildlifeCorridor"]
-RESTRICTION_SEVERITY = {"None": "None", "ProtectedArea": "High", "ForestReserve": "High",
-                         "WaterBodyBuffer": "Medium", "Wetland": "Medium", "WildlifeCorridor": "Prohibitive"}
+ENV_RESTRICTION = [
+    "None",
+    "ProtectedArea",
+    "ForestReserve",
+    "WaterBodyBuffer",
+    "Wetland",
+    "WildlifeCorridor",
+]
+RESTRICTION_SEVERITY = {
+    "None": "None",
+    "ProtectedArea": "High",
+    "ForestReserve": "High",
+    "WaterBodyBuffer": "Medium",
+    "Wetland": "Medium",
+    "WildlifeCorridor": "Prohibitive",
+}
 PURPOSES = ["Agricultural", "Residential", "Commercial"]
 GIS_STATUS = ["Complete", "Partial", "Unavailable"]
 
@@ -47,6 +61,7 @@ def sample_parcels(n: int, rng: np.random.Generator) -> pd.DataFrame:
     provinces = rng.choice(list(PROVINCES_DISTRICTS.keys()), size=n)
     districts = [rng.choice(PROVINCES_DISTRICTS[p]) for p in provinces]
 
+    # Research-aligned GIS posture: most rows lack enrichment (Unavailable/Partial).
     df = pd.DataFrame({
         "parcel_id": [f"P{100000 + i}" for i in range(n)],
         "requested_purpose": rng.choice(PURPOSES, size=n),
@@ -55,38 +70,28 @@ def sample_parcels(n: int, rng: np.random.Generator) -> pd.DataFrame:
         "province": provinces,
         "district": districts,
         "elevation_meters": np.round(rng.normal(250, 220, size=n).clip(0, 2200), 1),
-        "distance_to_road_m": np.round(rng.exponential(scale=600, size=n).clip(5, 15000), 1),
-        "distance_to_water_m": np.round(rng.exponential(scale=900, size=n).clip(5, 20000), 1),
-        "gis_enrichment_status": rng.choice(GIS_STATUS, size=n, p=[0.65, 0.25, 0.10]),
+        "gis_enrichment_status": rng.choice(GIS_STATUS, size=n, p=[0.20, 0.30, 0.50]),
     })
 
-    # Soil / terrain: sometimes missing ("Unknown"), matching "missing evidence
-    # stays Unknown/Unavailable" rule from the proposal rather than being imputed
-    # into a favourable value.
-    soil = rng.choice(SOIL_GROUPS[:-1], size=n)
+    # Road / water / soil: never invent confirmed measurements.
+    df["distance_to_road_m"] = np.nan
+    df["distance_to_water_m"] = np.nan
+    df["derived_soil_group"] = "Unknown"
+    df["soil_overlap_percentage"] = np.nan
+
     terrain = rng.choice(TERRAIN[:-1], size=n)
-    missing_soil = rng.random(n) < 0.12
-    missing_terrain = rng.random(n) < 0.10
-    df["derived_soil_group"] = np.where(missing_soil, "Unknown", soil)
-    df["soil_overlap_percentage"] = np.where(
-        missing_soil, np.nan, np.round(rng.uniform(30, 100, size=n), 1)
-    )
+    missing_terrain = rng.random(n) < 0.35
     df["terrain_description"] = np.where(missing_terrain, "Unknown", terrain)
 
-    # Environmental restriction: mostly None, occasionally a real constraint
     env = rng.choice(ENV_RESTRICTION, size=n, p=[0.72, 0.07, 0.06, 0.06, 0.05, 0.04])
     df["environmental_restriction_type"] = env
     df["environmental_restriction_severity"] = [RESTRICTION_SEVERITY[e] for e in env]
 
-    # Spatial constraint flag (zoning / buffer / setback) independent-ish of env restriction
     df["spatial_constraint_present"] = rng.random(n) < 0.18
 
-    # Force GIS-unavailable rows to blank out derived fields, as the real
-    # pipeline would (Unknown/Unavailable rather than a fabricated value).
+    # When GIS is Unavailable, blank optional physical attributes (elevation/terrain).
     unavailable = df["gis_enrichment_status"] == "Unavailable"
-    df.loc[unavailable, ["distance_to_road_m", "distance_to_water_m", "derived_soil_group",
-                          "soil_overlap_percentage", "terrain_description"]] = np.nan
-    df.loc[unavailable, "derived_soil_group"] = "Unknown"
+    df.loc[unavailable, "elevation_meters"] = np.nan
     df.loc[unavailable, "terrain_description"] = "Unknown"
 
     return df
@@ -94,56 +99,49 @@ def sample_parcels(n: int, rng: np.random.Generator) -> pd.DataFrame:
 
 def rule_based_label(row: pd.Series, rng: np.random.Generator) -> str:
     """
-    Deterministic-ish ground truth used only to generate a plausible synthetic
-    target. Mirrors the *kind* of hard-constraint-first logic your rule engine
-    uses (section 3.3/3.5): a Prohibitive/High restriction blocks Suitable
-    regardless of score, missing evidence never resolves to a favourable value.
+    Synthetic target from trustworthy fields only.
+
+    Does not use road, water, or soil. Hard restrictions block Suitable.
+    Missing GIS evidence never resolves to a favourable boost.
     """
     score = 0.0
     purpose = row["requested_purpose"]
-
-    # Hard constraint: prohibitive / high-severity restriction caps suitability
     severity = row["environmental_restriction_severity"]
     hard_block = severity in ("Prohibitive", "High")
 
-    # Road accessibility (matters more for Commercial/Residential)
-    road = row["distance_to_road_m"]
-    if pd.notna(road):
-        if purpose in ("Commercial", "Residential"):
-            score += 2.0 if road < 300 else (1.0 if road < 1000 else -1.0)
-        else:
-            score += 1.0 if road < 1500 else 0.0
-
-    # Water proximity (matters more for Agricultural)
-    water = row["distance_to_water_m"]
-    if pd.notna(water):
-        if purpose == "Agricultural":
-            score += 2.0 if water < 500 else (1.0 if water < 1500 else -0.5)
-        else:
-            score += 0.5 if water < 2000 else 0.0
-
-    # Soil (Agricultural only, unknown soil is neutral, not favourable)
-    soil = row["derived_soil_group"]
-    if purpose == "Agricultural" and soil not in ("Unknown", None):
-        score += 1.5 if soil in ("Reddish Brown Earth", "Alluvial") else 0.0
-
-    # Area adequacy heuristic
     area = row["area_hectares"]
     min_area = {"Agricultural": 1.0, "Residential": 0.05, "Commercial": 0.1}[purpose]
-    score += 1.0 if area >= min_area else -1.5
+    score += 1.5 if area >= min_area else -1.5
 
-    # Spatial constraint (zoning/setback) is a soft negative, not a hard block
+    category = row["land_category"]
+    if category == "ReservedLand":
+        score -= 1.5
+    elif category == "StateLand":
+        score += 0.5
+    elif category == "CrownLand":
+        score += 0.25
+
     if row["spatial_constraint_present"]:
         score -= 1.0
 
-    # GIS data completeness: partial/unavailable data pulls toward the
-    # cautious middle class rather than "Suitable"
+    # Medium severity soft penalty (High/Prohibitive handled as hard_block).
+    if severity == "Medium":
+        score -= 0.75
+
     if row["gis_enrichment_status"] == "Partial":
         score -= 0.5
     elif row["gis_enrichment_status"] == "Unavailable":
-        score -= 1.5
+        score -= 1.0
 
-    # Add noise so the problem isn't trivially separable for the model
+    elev = row["elevation_meters"]
+    if pd.notna(elev) and purpose == "Agricultural" and elev > 1200:
+        score -= 0.5
+
+    terrain = row["terrain_description"]
+    if purpose in ("Residential", "Commercial") and terrain == "Steep":
+        score -= 0.5
+
+    # Keep realistic noise — do not reduce noise to chase an accuracy target.
     score += rng.normal(0, 0.9)
 
     if hard_block:
@@ -170,6 +168,11 @@ def main():
     print(f"Wrote {len(df)} rows to {args.out}")
     print("\nLabel distribution:")
     print(df["suitability_label"].value_counts())
+    print("\nRoad/water/soil: all unavailable (not invented).")
+    print(
+        f"distance_to_road_m non-null: {df['distance_to_road_m'].notna().sum()}; "
+        f"soil groups non-Unknown: {(df['derived_soil_group'] != 'Unknown').sum()}"
+    )
 
 
 if __name__ == "__main__":
