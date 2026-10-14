@@ -606,7 +606,41 @@ public sealed class FastApiDocumentIntelligenceServiceTests
 
         var client = sp.GetRequiredService<IDocumentIntelligenceService>();
         Assert.NotNull(client);
-        Assert.IsType<FastApiDocumentIntelligenceService>(client);
+        var typedClient = Assert.IsType<FastApiDocumentIntelligenceService>(client);
+        Assert.Equal(TimeSpan.FromSeconds(45), typedClient.ConfiguredHttpClientTimeout);
+    }
+
+    [Fact]
+    public void AddWorkflowGovernanceDocumentIntelligence_WithDevelopment600SecondsTimeout_BindsConfiguredHttpClientTimeout()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddScoped<IDocumentContentReader>(_ => new FakeDocumentContentReader());
+        services.AddScoped<IAnalysisArtifactWriter>(_ => new InMemoryAnalysisArtifactWriter());
+        services.AddWorkflowGovernanceDocumentIntelligence(options =>
+        {
+            options.BaseUrl = "http://127.0.0.1:8009";
+            options.DefaultLanguageMode = "sin+eng";
+            options.RequestTimeoutSeconds = 600;
+        });
+
+        using var sp = services.BuildServiceProvider();
+        var client = sp.GetRequiredService<IDocumentIntelligenceService>();
+        var typedClient = Assert.IsType<FastApiDocumentIntelligenceService>(client);
+
+        Assert.Equal(TimeSpan.FromSeconds(600), typedClient.ConfiguredHttpClientTimeout);
+    }
+
+    [Fact]
+    public void DocumentIntelligenceOptions_DefaultValues_Have30SecondsTimeoutAndValidateSuccessfully()
+    {
+        var options = new DocumentIntelligenceOptions
+        {
+            BaseUrl = "http://127.0.0.1:8009"
+        };
+
+        Assert.Equal(30, options.RequestTimeoutSeconds);
+        options.Validate();
     }
 
     [Fact]

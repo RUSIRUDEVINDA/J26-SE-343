@@ -26,6 +26,27 @@ def normalize_whitespace_for_matching(text: str) -> str:
     return " ".join(normalized.split())
 
 
+def _build_zero_width_resilient_pattern(text: str) -> Optional[str]:
+    """
+    Builds a regex pattern allowing optional zero-width formatting codepoints
+    (ZWNJ \\u200c, ZWSP \\u200b, BOM \\ufeff) between characters and whitespace.
+    Crucially preserves meaningful Sinhala characters such as ZWJ (\\u200d)
+    which forms conjunct consonants (e.g. repaya, yansaya, rakaransaya).
+    """
+    if not text:
+        return None
+    tokens = text.split()
+    token_pats = []
+    for t in tokens:
+        # Strip only invisible formatting codepoints, NEVER strip \\u200d (meaningful Sinhala ZWJ)
+        cleaned = re.sub(r"[\u200b\u200c\ufeff]", "", t)
+        if cleaned:
+            token_pats.append(r"[\u200b\u200c\ufeff]*".join(re.escape(c) for c in cleaned))
+    if not token_pats:
+        return None
+    return r"[\s\u200b\u200c\ufeff]+".join(token_pats)
+
+
 def find_quote_offsets(
     page_text: str,
     quote: str,
@@ -63,6 +84,33 @@ def find_quote_offsets(
         match = re.search(pattern, norm_page, flags=re.IGNORECASE)
         if match:
             return match.start(), match.end(), True
+
+    # 4. Zero-width character resilient matching directly in norm_page
+    # Ensures offsets match original text exactly without index shift,
+    # and strictly preserves meaningful Sinhala characters like ZWJ (\u200d)
+    zw_pattern = _build_zero_width_resilient_pattern(norm_quote)
+    if zw_pattern:
+        zw_match = re.search(zw_pattern, norm_page, flags=re.IGNORECASE)
+        if zw_match:
+            return zw_match.start(), zw_match.end(), True
+
+    # 5. Quote-trimmed matching (strips surrounding quotation marks or trailing punctuation from cited quote)
+    stripped_q = re.sub(r"^[\"\'“‘\(\[\s]+|[\"\'”’\)\]\.\,\:\;\s]+$", "", norm_quote)
+    if stripped_q and stripped_q != norm_quote:
+        idx_sq = norm_page.find(stripped_q)
+        if idx_sq != -1:
+            return idx_sq, idx_sq + len(stripped_q), True
+        sq_tokens = [re.escape(t) for t in stripped_q.split()]
+        if sq_tokens:
+            sq_pattern = r"\s+".join(sq_tokens)
+            sq_match = re.search(sq_pattern, norm_page, flags=re.IGNORECASE)
+            if sq_match:
+                return sq_match.start(), sq_match.end(), True
+        zw_sq_pattern = _build_zero_width_resilient_pattern(stripped_q)
+        if zw_sq_pattern:
+            zw_sq_match = re.search(zw_sq_pattern, norm_page, flags=re.IGNORECASE)
+            if zw_sq_match:
+                return zw_sq_match.start(), zw_sq_match.end(), True
 
     return None, None, False
 

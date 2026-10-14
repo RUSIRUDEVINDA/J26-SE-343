@@ -16,7 +16,7 @@ class DocumentChunk:
 
 def chunk_document_pages(
     pages: List[Dict[str, any]],
-    max_characters_per_chunk: int = 12000,
+    max_characters_per_chunk: int = 3000,
 ) -> List[DocumentChunk]:
     """
     Deterministically group document pages into sequential chunks that respect

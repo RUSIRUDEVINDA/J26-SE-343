@@ -1,9 +1,12 @@
 using StateLandGovernance.BuildingBlocks.DependencyInjection;
 using StateLandGovernance.WorkflowGovernance.Application;
 using StateLandGovernance.WorkflowGovernance.Infrastructure;
+using StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations;
 using StateLandGovernance.WorkflowGovernance.Presentation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
@@ -46,6 +49,15 @@ if (isOcrDemoEnabled)
     builder.Services
         .AddWorkflowGovernanceLocalDocumentStorage(builder.Configuration)
         .AddWorkflowGovernanceDocumentIntelligence(builder.Configuration);
+}
+
+var governanceConn = Environment.GetEnvironmentVariable("GOVERNANCE_INTELLIGENCE_CONNECTION")
+    ?? builder.Configuration.GetConnectionString("GovernanceIntelligenceConnection")
+    ?? workflowConn;
+
+if (!string.IsNullOrWhiteSpace(governanceConn))
+{
+    builder.Configuration["ConnectionStrings:GovernanceIntelligenceConnection"] = governanceConn;
 }
 
 builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
@@ -134,6 +146,18 @@ if (app.Environment.IsDevelopment())
                 "Workflow Governance API v1");
         }
     });
+
+    if (isOcrDemoEnabled)
+    {
+        var docOpt = app.Services.GetService<IOptions<DocumentIntelligenceOptions>>()?.Value;
+        if (docOpt != null)
+        {
+            app.Logger.LogInformation(
+                "[WorkflowGovernance] DocumentIntelligence configured with BaseUrl: {BaseUrl}, RequestTimeoutSeconds: {Timeout}s",
+                docOpt.BaseUrl,
+                docOpt.RequestTimeoutSeconds);
+        }
+    }
 
     try
     {

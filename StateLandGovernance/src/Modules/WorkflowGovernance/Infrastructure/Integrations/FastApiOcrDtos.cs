@@ -75,26 +75,58 @@ internal sealed record FastApiAnalyzeResponseDto(
     [property: JsonPropertyName("pages")] IReadOnlyList<FastApiOcrPageDto> Pages,
     [property: JsonPropertyName("classification")] FastApiClassificationDto Classification,
     [property: JsonPropertyName("facts")] IReadOnlyList<FastApiCandidateFactDto> Facts,
+    [property: JsonPropertyName("all_candidates")] IReadOnlyList<FastApiCandidateFactDto>? AllCandidates,
+    [property: JsonPropertyName("field_inventory")] IReadOnlyList<FastApiGovernedFieldInventoryItemDto>? FieldInventory,
+    [property: JsonPropertyName("candidate_count")] int CandidateCount,
+    [property: JsonPropertyName("accepted_count")] int AcceptedCount,
+    [property: JsonPropertyName("rejected_count")] int RejectedCount,
+    [property: JsonPropertyName("conflict_count")] int ConflictCount,
+    [property: JsonPropertyName("ungrounded_count")] int UngroundedCount,
     [property: JsonPropertyName("model_identifier")] string ModelIdentifier,
     [property: JsonPropertyName("prompt_version")] string PromptVersion,
     [property: JsonPropertyName("duration_breakdown")] FastApiDurationBreakdownDto DurationBreakdown,
     [property: JsonPropertyName("warnings")] IReadOnlyList<string>? Warnings,
-    [property: JsonPropertyName("governance_notice")] string GovernanceNotice
+    [property: JsonPropertyName("governance_notice")] string GovernanceNotice,
+    [property: JsonPropertyName("semantic_provider")] string? SemanticProvider = null
 );
 
 internal sealed record FastApiClassificationDto(
     [property: JsonPropertyName("code")] string Code,
-    [property: JsonPropertyName("confidence")] double Confidence
+    [property: JsonPropertyName("confidence")] double? Confidence
 );
 
 internal sealed record FastApiCandidateFactDto(
     [property: JsonPropertyName("field_code")] string FieldCode,
     [property: JsonPropertyName("value_kind")] string ValueKind,
     [property: JsonPropertyName("canonical_value")] string CanonicalValue,
+    [property: JsonPropertyName("raw_value")] string? RawValue,
+    [property: JsonPropertyName("normalized_value")] string? NormalizedValue,
     [property: JsonPropertyName("confidence")] double Confidence,
     [property: JsonPropertyName("evidence")] FastApiEvidenceSpanDto? Evidence,
     [property: JsonPropertyName("is_evidence_verified")] bool IsEvidenceVerified,
-    [property: JsonPropertyName("validation_warning")] string? ValidationWarning
+    [property: JsonPropertyName("is_semantic_valid")] bool IsSemanticValid,
+    [property: JsonPropertyName("validation_status")] string? ValidationStatus,
+    [property: JsonPropertyName("candidate_status")] string? CandidateStatus,
+    [property: JsonPropertyName("validation_warning")] string? ValidationWarning,
+    [property: JsonPropertyName("validation_reasons")] IReadOnlyList<string>? ValidationReasons,
+    [property: JsonPropertyName("rank")] int Rank,
+    [property: JsonPropertyName("is_preferred")] bool IsPreferred,
+    [property: JsonPropertyName("source_type")] string? SourceType = null,
+    [property: JsonPropertyName("normalized_english_value")] string? NormalizedEnglishValue = null
+);
+
+internal sealed record FastApiGovernedFieldInventoryItemDto(
+    [property: JsonPropertyName("field_code")] string FieldCode,
+    [property: JsonPropertyName("display_name")] string DisplayName,
+    [property: JsonPropertyName("status")] string Status,
+    [property: JsonPropertyName("preferred_value")] string? PreferredValue,
+    [property: JsonPropertyName("raw_value")] string? RawValue,
+    [property: JsonPropertyName("page_number")] int? PageNumber,
+    [property: JsonPropertyName("confidence")] double? Confidence,
+    [property: JsonPropertyName("is_grounded")] bool IsGrounded,
+    [property: JsonPropertyName("candidate_count")] int CandidateCount,
+    [property: JsonPropertyName("source_type")] string? SourceType = null,
+    [property: JsonPropertyName("normalized_english_value")] string? NormalizedEnglishValue = null
 );
 
 internal sealed record FastApiEvidenceSpanDto(
