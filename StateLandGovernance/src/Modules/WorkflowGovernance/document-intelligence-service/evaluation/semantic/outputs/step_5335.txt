@@ -1,0 +1,119 @@
+Created At: 2026-10-13T19:38:08+05:30
+Completed At: 2026-10-13T19:38:08+05:30
+File Path: `file:///d:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance/src/Modules/WorkflowGovernance/document-intelligence-service/app/semantic/gemini_extractor.py`
+Total Lines: 508
+Total Bytes: 23884
+Showing lines 250 to 360
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+250:             f"If a field is not present in the document, omit it."
+251:         )
+252: 
+253:         # 3. Call Gemini API
+254:         try:
+255:             gemini_response = self.client.generate_content(
+256:                 prompt=user_prompt,
+257:                 system_instruction=GEMINI_SYSTEM_INSTRUCTION,
+258:                 schema=GEMINI_RESPONSE_SCHEMA,
+259:                 temperature=self.temperature,
+260:             )
+261:         except GeminiAuthenticationError as ex:
+262:             logger.error(f"Gemini authentication failed: {ex}")
+263:             warnings.append(str(ex))
+264:             if self.raise_on_error:
+265:                 raise
+266:             return self._build_unavailable_result(start_time, warnings, error_msg=str(ex))
+267:         except (GeminiTimeoutError, GeminiRateLimitError, GeminiServerError, GeminiResponseError, GeminiError) as ex:
+268:             logger.error(f"Gemini API execution failure: {ex}")
+269:             warnings.append(f"Gemini API failure: {str(ex)}")
+270:             if self.raise_on_error:
+271:                 raise
+272:             return self._build_unavailable_result(start_time, warnings, error_msg=str(ex))
+273: 
+274:         # 4. Parse document classification
+275:         doc_class_data = gemini_response.get("documentClassification", {})
+276:         classification_code = doc_class_data.get("code", "Unknown")
+277:         if classification_code not in DOCUMENT_CLASSIFICATION_TAXONOMY:
+278:             classification_code = "Other"
+279:         classification_conf = doc_class_data.get("confidence", 0.5)
+280:         overall_classification = SemanticClassificationDto(
+281:             code=classification_code,
+282:             confidence=classification_conf,
+283:         )
+284: 
+285:         # 5. Process candidate fields through COMMON deterministic grounding and validation
+286:         raw_fields = gemini_response.get("extractedFields", [])
+287:         candidates_by_field: Dict[str, List[SemanticFactDto]] = {code: [] for code in CANONICAL_FIELDS}
+288:         all_candidates_list: List[SemanticFactDto] = []
+289: 
+290:         for f_data in raw_fields:
+291:             code = f_data.get("fieldCode")
+292:             if code not in CANONICAL_FIELDS:
+293:                 continue
+294: 
+295:             raw_val = str(f_data.get("value") or f_data.get("rawValue") or "").strip()
+296:             norm_en = f_data.get("normalizedEnglishValue")
+297:             src_type = f_data.get("sourceType", "Explicit")
+298:             conf = float(f_data.get("confidence", 0.8))
+299:             conf = max(0.0, min(1.0, conf))
+300: 
+301:             # Resolve page number and evidence quote
+302:             page_nums = f_data.get("pageNumbers") or ([f_data["pageNumber"]] if "pageNumber" in f_data else [])
+303:             candidate_pages = [p for p in page_nums if isinstance(p, int) and p in page_texts] or ([page_nums[0]] if page_nums else [1])
+304:             quotes = f_data.get("originalEvidenceQuotes", [])
+305:             candidate_quotes = [q.strip() for q in quotes if q and q.strip()] or [raw_val.strip()]
+306: 
+307:             # COMMON DETERMINISTIC EVIDENCE GROUNDING: verify across cited pages and quotes
+308:             best_grounding = None
+309:             page_num = candidate_pages[0] if candidate_pages else 1
+310:             quote = candidate_quotes[0] if candidate_quotes else raw_val
+311: 
+312:             for p_candidate in candidate_pages:
+313:                 for q_candidate in candidate_quotes:
+314:                     g = ground_evidence(page_texts, p_candidate, q_candidate)
+315:                     if g.is_verified:
+316:                         best_grounding = g
+317:                         page_num = p_candidate
+318:                         quote = q_candidate
+319:                         break
+320:                 if best_grounding and best_grounding.is_verified:
+321:                     break
+322: 
+323:             if not best_grounding:
+324:                 grounding = ground_evidence(page_texts, page_num, quote)
+325:             else:
+326:                 grounding = best_grounding
+327: 
+328:             # Common deterministic field validation
+329:             val_result = validate_candidate_field(
+330:                 field_code=code,
+331:                 value=raw_val,
+332:                 quote=quote,
+333:                 page_number=page_num,
+334:             )
+335: 
+336:             # Resolve status
+337:             if not grounding.is_verified:
+338:                 cand_status = "Ungrounded"
+339:                 warnings.append(
+340:                     f"Gemini candidate for '{code}' on page {page_num} could not be verified against OCR text."
+341:                 )
+342:             elif not val_result.is_valid:
+343:                 cand_status = "Rejected"
+344:             else:
+345:                 cand_status = "Accepted"
+346: 
+347:             reasons = list(val_result.reasons)
+348:             if f_data.get("reason"):
+349:                 reasons.append(f"Model rationale: {f_data['reason']}")
+350: 
+351:             # Domain invariant: remove control characters from canonical value
+352:             canon_val = val_result.normalized_value or raw_val
+353:             canon_val = re.sub(r"[\r\n\t\x00-\x1f\x7f-\x9f]+", " ", canon_val).strip()
+354: 
+355:             fact_dto = SemanticFactDto(
+356:                 field_code=code,
+357:                 value_kind=CANONICAL_FIELDS[code].value_kind,
+358:                 canonical_value=canon_val,
+359:                 raw_value=raw_val,
+360:                 normalized_value=norm_en or val_result.normalized_value,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
