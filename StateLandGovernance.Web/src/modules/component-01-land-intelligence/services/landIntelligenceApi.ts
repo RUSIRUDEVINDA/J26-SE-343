@@ -7,6 +7,7 @@ import type {
   LandRecommendationSearchResultsResponse,
   LandRelationshipsResponse,
   LandSearchResultsResponse,
+  ResearchSupplementParcelResponse,
   SourceReportedLandUseOptionResponse,
   SpatialConstraintResponse,
 } from "../types/landIntelligence";
@@ -74,6 +75,12 @@ export async function listSourceReportedLandUseOptions(): Promise<
 > {
   return apiGet<SourceReportedLandUseOptionResponse[]>(
     "/api/v1/land/parcels/source-reported-land-use-options",
+  );
+}
+
+export async function listResearchSupplement(): Promise<ResearchSupplementParcelResponse[]> {
+  return apiGet<ResearchSupplementParcelResponse[]>(
+    "/api/v1/land/parcels/research-supplement",
   );
 }
 

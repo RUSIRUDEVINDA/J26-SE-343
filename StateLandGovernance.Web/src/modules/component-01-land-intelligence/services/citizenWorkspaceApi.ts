@@ -1,4 +1,4 @@
-import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/apiClient";
+import { apiDelete, apiGet, apiGetOrNull, apiPost, apiPut } from "@/lib/apiClient";
 import type {
   LeaseInterestDocumentChecklist,
   LeaseInterestRequestDetail,
@@ -21,13 +21,35 @@ export async function removeParcelFromShortlist(
   await apiDelete(`/api/v1/land/me/shortlist/${landParcelId}`);
 }
 
-export async function getOrCreateLeaseInterestDraft(
+/**
+ * Looks up an existing request for the parcel without creating a draft.
+ * Returns null when the applicant has not started a request yet (HTTP 204).
+ */
+export async function findLeaseInterestForParcel(
+  landParcelId: string,
+): Promise<LeaseInterestRequestDetail | null> {
+  return apiGetOrNull<LeaseInterestRequestDetail>(
+    `/api/v1/land/me/parcels/${landParcelId}/lease-interest`,
+  );
+}
+
+/**
+ * Explicit Start request — creates a draft only when none exists for this parcel.
+ */
+export async function startLeaseInterestDraft(
   landParcelId: string,
 ): Promise<LeaseInterestRequestDetail> {
   return apiPost<LeaseInterestRequestDetail>(
     `/api/v1/land/me/parcels/${landParcelId}/lease-interest/draft`,
     {},
   );
+}
+
+/** @deprecated Prefer findLeaseInterestForParcel + startLeaseInterestDraft. */
+export async function getOrCreateLeaseInterestDraft(
+  landParcelId: string,
+): Promise<LeaseInterestRequestDetail> {
+  return startLeaseInterestDraft(landParcelId);
 }
 
 export async function saveLeaseInterestDraft(
