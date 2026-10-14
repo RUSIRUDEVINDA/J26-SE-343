@@ -6,6 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using StateLandGovernance.BuildingBlocks.CQRS;
+using StateLandGovernance.BuildingBlocks.DependencyInjection;
+using StateLandGovernance.GovernanceIntelligence.Application.Commands;
+using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.DependencyInjection;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.WorkflowGovernance.Application;
 using StateLandGovernance.WorkflowGovernance.Application.Commands;
 using StateLandGovernance.WorkflowGovernance.Application.DTOs;
@@ -202,6 +208,42 @@ public sealed class WorkflowGovernanceHostDiTests
     }
 
     [Fact]
+    public void DevelopmentDemoComposition_WithDevelopmentConfiguration_Binds600SecondsTimeout()
+    {
+        var services = new ServiceCollection();
+
+        var environment = new StubHostEnvironment { EnvironmentName = "Development" };
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["WorkflowGovernance:OcrDemo:Enabled"] = "true",
+                ["WorkflowGovernance:DocumentIntelligence:BaseUrl"] = "http://127.0.0.1:8009",
+                ["WorkflowGovernance:DocumentIntelligence:RequestTimeoutSeconds"] = "600",
+                ["WorkflowGovernance:LocalStorage:RootPath"] = ".test-data/workflow-governance"
+            })
+            .Build();
+
+        services.AddLogging();
+        services.AddWorkflowGovernanceApplication();
+        services.AddWorkflowGovernanceInfrastructure(environment);
+        services.AddWorkflowGovernancePresentation(configuration);
+        services.AddWorkflowGovernanceLocalDocumentStorage(configuration);
+        services.AddWorkflowGovernanceDocumentIntelligence(configuration);
+
+        using var provider = services.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateScopes = true,
+            ValidateOnBuild = true
+        });
+
+        using var scope = provider.CreateScope();
+        var intelligenceService = scope.ServiceProvider.GetRequiredService<IDocumentIntelligenceService>();
+        var typedService = Assert.IsType<FastApiDocumentIntelligenceService>(intelligenceService);
+
+        Assert.Equal(TimeSpan.FromSeconds(600), typedService.ConfiguredHttpClientTimeout);
+    }
+
+    [Fact]
     public void PreExistingRepositories_AreNotOverriddenByInfrastructureRegistration()
     {
         var services = new ServiceCollection();
@@ -252,6 +294,77 @@ public sealed class WorkflowGovernanceHostDiTests
         Assert.IsType<PostgresDocumentCompletenessAssessmentRepository>(assessmentRepo);
     }
 
+    [Fact]
+    public void HostComposition_WithComponent4Present_ResolvesComponent4ScreeningGatewayWithoutConstructorAmbiguity()
+    {
+        var services = new ServiceCollection();
+        var environment = new StubHostEnvironment { EnvironmentName = "Development" };
+        var configuration = new ConfigurationBuilder().Build();
+
+        services.AddLogging();
+        services.AddBuildingBlocks();
+        services.AddWorkflowGovernanceApplication();
+        services.AddWorkflowGovernanceInfrastructure(environment);
+
+        // Component 4 services as configured in Api/Program.cs
+        services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
+        services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRuleProvider>();
+        services.AddGovernanceIntelligenceInfrastructure(configuration, environment);
+        services.AddSingleton<IGovernanceAuditCaseHistoryReader, StubAuditCaseHistoryReader>();
+        services.AddTransient<EvaluateComplianceCommandHandler>();
+
+        // Build with strict validation (ValidateScopes = true, ValidateOnBuild = true) exactly like Api in Development
+        using var provider = services.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateScopes = true,
+            ValidateOnBuild = true
+        });
+
+        using var scope = provider.CreateScope();
+        var gateway = scope.ServiceProvider.GetRequiredService<IComponent4ScreeningGateway>();
+
+        Assert.NotNull(gateway);
+        Assert.IsType<Component4ScreeningGateway>(gateway);
+    }
+
+    [Fact]
+    public void HostComposition_InDevelopmentWithPostgresPersistence_ResolvesAuditHistoryHandlerAndReader()
+    {
+        var services = new ServiceCollection();
+        var environment = new StubHostEnvironment { EnvironmentName = "Development" };
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:GovernanceIntelligenceConnection"] =
+                    "Host=localhost;Port=5432;Database=state_land_governance;Username=postgres;Password=postgres"
+            })
+            .Build();
+
+        services.AddLogging();
+        services.AddBuildingBlocks();
+        services.AddWorkflowGovernanceApplication();
+        services.AddWorkflowGovernanceInfrastructure(environment);
+
+        services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
+        services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRuleProvider>();
+        services.AddGovernanceIntelligenceInfrastructure(configuration, environment);
+
+        // Build with strict validation (ValidateScopes = true, ValidateOnBuild = true) exactly like Api in Development
+        using var provider = services.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateScopes = true,
+            ValidateOnBuild = true
+        });
+
+        using var scope = provider.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<StateLandGovernance.GovernanceIntelligence.Application.Queries.GetAuditHistoryByCaseQueryHandler>();
+        var reader = scope.ServiceProvider.GetRequiredService<StateLandGovernance.GovernanceIntelligence.Application.Interfaces.IGovernanceAuditCaseHistoryReader>();
+
+        Assert.NotNull(handler);
+        Assert.NotNull(reader);
+        Assert.IsType<StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories.PostgresGovernanceAuditRepository>(reader);
+    }
+
     private sealed class CustomTestGovernedDocumentRepository : IGovernedDocumentRepository
     {
         public Task<StateLandGovernance.WorkflowGovernance.Domain.Documents.GovernedDocument?> GetByIdAsync(
@@ -288,5 +401,13 @@ public sealed class WorkflowGovernanceHostDiTests
         public string ApplicationName { get; set; } = "StateLandGovernance.Api";
         public string ContentRootPath { get; set; } = AppContext.BaseDirectory;
         public Microsoft.Extensions.FileProviders.IFileProvider ContentRootFileProvider { get; set; } = null!;
+    }
+
+    private sealed class StubAuditCaseHistoryReader : StateLandGovernance.GovernanceIntelligence.Application.Interfaces.IGovernanceAuditCaseHistoryReader
+    {
+        public Task<IReadOnlyList<StateLandGovernance.GovernanceIntelligence.Application.DTOs.GovernanceAuditCaseHistoryDto>> GetByCaseIdAsync(
+            string caseId, int limit, CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<StateLandGovernance.GovernanceIntelligence.Application.DTOs.GovernanceAuditCaseHistoryDto>>(
+                Array.Empty<StateLandGovernance.GovernanceIntelligence.Application.DTOs.GovernanceAuditCaseHistoryDto>());
     }
 }
