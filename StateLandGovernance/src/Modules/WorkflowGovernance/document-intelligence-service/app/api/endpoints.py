@@ -14,6 +14,7 @@ from app.models.schemas import (
     ErrorResponse,
     EvidenceSpan,
     ExtractedCandidateFact,
+    GovernedFieldInventoryItem,
     HealthResponse,
     OCRResponse,
 )
@@ -29,6 +30,14 @@ from app.semantic.ollama_client import (
     OllamaModelNotFoundError,
     OllamaTimeoutError,
 )
+from app.semantic.gemini_client import (
+    GeminiAuthenticationError,
+    GeminiError,
+    GeminiRateLimitError,
+    GeminiServerError,
+    GeminiTimeoutError,
+)
+
 
 router = APIRouter()
 ocr_engine = OCREngine()
@@ -233,6 +242,11 @@ async def process_analyze(
         default=None,
         description="Optional intake document category hint (e.g. 'LeaseProposal', 'Deed').",
     ),
+    semantic_provider: Optional[str] = Query(
+        default=None,
+        description="Override semantic extractor provider: 'qwen', 'gemini', or 'stub'. Defaults to configured SEMANTIC_PROVIDER.",
+        pattern="^(qwen|ollama|gemini|stub)$",
+    ),
     x_request_id: Optional[str] = Header(
         default=None,
         alias="X-Request-ID",
@@ -313,7 +327,7 @@ async def process_analyze(
     ]
 
     try:
-        extractor = get_semantic_extractor()
+        extractor = get_semantic_extractor(provider=semantic_provider) if semantic_provider else get_semantic_extractor()
         semantic_result = extractor.extract(
             pages=pages_for_extraction,
             category_hint=category_hint,
@@ -342,6 +356,36 @@ async def process_analyze(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected failure occurred during semantic extraction.",
         )
+    except GeminiAuthenticationError as ex:
+        logger.error(f"[{request_id}] Gemini authentication error: {ex}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(ex),
+        )
+    except GeminiRateLimitError as ex:
+        logger.error(f"[{request_id}] Gemini rate limit exceeded: {ex}")
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Gemini API rate limit exceeded.",
+        )
+    except GeminiTimeoutError as ex:
+        logger.error(f"[{request_id}] Gemini extraction timed out: {ex}")
+        raise HTTPException(
+            status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+            detail="Gemini semantic extraction timed out.",
+        )
+    except GeminiServerError as ex:
+        logger.error(f"[{request_id}] Gemini server error: {ex}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Gemini API upstream server error.",
+        )
+    except GeminiError as ex:
+        logger.error(f"[{request_id}] Gemini extraction failure: {ex}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected failure occurred during Gemini semantic extraction.",
+        )
     except Exception as ex:
         logger.error(f"[{request_id}] Unexpected semantic extraction error: {ex}", exc_info=True)
         raise HTTPException(
@@ -353,11 +397,13 @@ async def process_analyze(
     total_duration = (time.perf_counter() - start_total) * 1000.0
 
     # 5. Assemble mapped schema
-    candidate_facts = [
-        ExtractedCandidateFact(
+    def map_candidate_fact(f) -> ExtractedCandidateFact:
+        return ExtractedCandidateFact(
             field_code=f.field_code,
             value_kind=f.value_kind,
             canonical_value=f.canonical_value,
+            raw_value=getattr(f, "raw_value", f.canonical_value),
+            normalized_value=getattr(f, "normalized_value", None),
             confidence=f.confidence,
             evidence=EvidenceSpan(
                 page_number=f.page_number,
@@ -366,9 +412,38 @@ async def process_analyze(
                 end_offset=f.end_offset,
             ),
             is_evidence_verified=f.is_evidence_verified,
+            is_semantic_valid=getattr(f, "is_semantic_valid", True),
+            validation_status=getattr(f, "validation_status", "Valid"),
+            candidate_status=getattr(f, "candidate_status", "Accepted"),
             validation_warning=f.validation_warning,
+            validation_reasons=getattr(f, "validation_reasons", []),
+            rank=getattr(f, "rank", 1),
+            is_preferred=getattr(f, "is_preferred", False),
+            source_type=getattr(f, "source_type", "Explicit"),
+            normalized_english_value=getattr(f, "normalized_english_value", None),
         )
-        for f in semantic_result.facts
+
+    preferred_facts = [map_candidate_fact(f) for f in semantic_result.facts]
+    all_candidate_facts = [
+        map_candidate_fact(f)
+        for f in getattr(semantic_result, "all_candidates", semantic_result.facts)
+    ]
+
+    field_inventory_items = [
+        item if isinstance(item, GovernedFieldInventoryItem) else GovernedFieldInventoryItem(
+            field_code=item["field_code"],
+            display_name=item["display_name"],
+            status=item["status"],
+            preferred_value=item.get("preferred_value"),
+            raw_value=item.get("raw_value"),
+            page_number=item.get("page_number"),
+            confidence=item.get("confidence"),
+            is_grounded=item.get("is_grounded", False),
+            candidate_count=item.get("candidate_count", 0),
+            source_type=item.get("source_type"),
+            normalized_english_value=item.get("normalized_english_value"),
+        )
+        for item in getattr(semantic_result, "field_inventory", [])
     ]
 
     return AnalyzeResponse(
@@ -381,8 +456,16 @@ async def process_analyze(
             code=semantic_result.classification.code,
             confidence=semantic_result.classification.confidence,
         ),
-        facts=candidate_facts,
+        facts=preferred_facts,
+        all_candidates=all_candidate_facts,
+        field_inventory=field_inventory_items,
+        candidate_count=getattr(semantic_result, "candidate_count", len(all_candidate_facts)),
+        accepted_count=getattr(semantic_result, "accepted_count", len(preferred_facts)),
+        rejected_count=getattr(semantic_result, "rejected_count", 0),
+        conflict_count=getattr(semantic_result, "conflict_count", 0),
+        ungrounded_count=getattr(semantic_result, "ungrounded_count", 0),
         model_identifier=semantic_result.model_identifier,
+        semantic_provider=getattr(extractor, "provider_name", semantic_provider or settings.semantic_provider),
         prompt_version=semantic_result.prompt_version,
         duration_breakdown=DurationBreakdown(
             ocr_duration_ms=round(ocr_response.duration_ms, 2),
