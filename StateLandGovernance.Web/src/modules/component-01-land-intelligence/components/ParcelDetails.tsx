@@ -127,17 +127,23 @@ export function ParcelDetails({
                 )}
               />
               <DetailRow
-                label="Lease availability (project)"
+                label="Lease availability (official)"
                 value={
                   parcel.availability?.actualLeaseAvailabilityLabel ??
                   "Not verified"
                 }
               />
-              {parcel.availability?.projectLeaseReady?.designationNotice ? (
-                <DetailRow
-                  label="Project designation notice"
-                  value={parcel.availability.projectLeaseReady.designationNotice}
-                />
+              {parcel.availability?.projectLeaseReady ? (
+                <>
+                  <DetailRow
+                    label="Project designation"
+                    value={parcel.availability.projectLeaseReady.designationLabel}
+                  />
+                  <DetailRow
+                    label="Project designation notice"
+                    value={parcel.availability.projectLeaseReady.designationNotice}
+                  />
+                </>
               ) : null}
               {researchDemoUiEnabled &&
               parcel.availability?.simulatedWorkflow ? (
@@ -303,8 +309,15 @@ export function ParcelDetails({
 
       <h3 className={styles.sectionTitle}>Knowledge graph relationships</h3>
       <p className={styles.noteText}>
-        Loaded independently from Neo4j. A graph failure does not block parcel
-        facts above. Neo4j is not required for search or recommendations.
+        Loaded independently from the relationships API (Neo4j when configured,
+        otherwise PostGIS baseline). A graph failure does not block parcel facts
+        above. Neo4j is not required for search or recommendations.
+      </p>
+      <p className={styles.noteText}>
+        <a href={`/land-intelligence/knowledge-graph?parcelId=${parcel.id}`}>
+          Open relationship explorer
+        </a>{" "}
+        for {displayOrUnknown(parcel.identifier.cadastralNumber)}
       </p>
       {relationshipsLoading ? (
         <p className={listStyles.empty}>Loading relationships…</p>
@@ -318,29 +331,47 @@ export function ParcelDetails({
       !relationshipsError &&
       relationships &&
       relationships.length === 0 ? (
-        <p className={listStyles.empty}>No relationships returned.</p>
+        <div className={styles.note} role="note">
+          <p className={listStyles.empty}>No relationships returned.</p>
+          <p className={styles.noteText}>
+            Accurate empty result — edges are not invented. Populate Neo4j sync
+            and/or GIS enrichment snapshots, or open the explorer for setup
+            steps.
+          </p>
+        </div>
       ) : null}
       {relationships && relationships.length > 0 ? (
         <ul className={listStyles.list}>
-          {relationships.map((item, index) => (
-            <li
-              key={`${item.relationshipType}-${item.sourceNodeId}-${index}`}
-              className={listStyles.item}
-            >
-              <p className={listStyles.meta}>
-                <strong>{item.relationshipType}</strong>
-              </p>
-              <p>
-                {item.sourceNodeType} ({item.sourceNodeId}) →{" "}
-                {item.targetNodeType} ({item.targetNodeId})
-              </p>
-              {item.description ? (
+          {relationships.map((item, index) => {
+            const sourceLabel =
+              item.sourceNodeType === "LandParcel" &&
+              item.sourceNodeId === parcel.id
+                ? displayOrUnknown(parcel.identifier.cadastralNumber)
+                : `${item.sourceNodeType} (${item.sourceNodeId})`;
+            const targetLabel =
+              item.targetNodeType === "LandParcel" &&
+              item.targetNodeId === parcel.id
+                ? displayOrUnknown(parcel.identifier.cadastralNumber)
+                : `${item.targetNodeType} (${item.targetNodeId})`;
+            return (
+              <li
+                key={`${item.relationshipType}-${item.sourceNodeId}-${index}`}
+                className={listStyles.item}
+              >
                 <p className={listStyles.meta}>
-                  {displayOrUnavailable(item.description)}
+                  <strong>{item.relationshipType}</strong>
                 </p>
-              ) : null}
-            </li>
-          ))}
+                <p>
+                  {sourceLabel} → {targetLabel}
+                </p>
+                {item.description ? (
+                  <p className={listStyles.meta}>
+                    {displayOrUnavailable(item.description)}
+                  </p>
+                ) : null}
+              </li>
+            );
+          })}
         </ul>
       ) : null}
     </div>

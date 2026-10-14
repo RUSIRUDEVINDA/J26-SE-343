@@ -1,5 +1,5 @@
-import type { LandSearchResultResponse } from "../types/landIntelligence";
-import { landCategoryTypeLabels, landUseTypeLabels } from "../utils/enumMappings";
+import type { LandSearchResultResponse, ResearchSupplementParcelResponse } from "../types/landIntelligence";
+import { landUseTypeLabels } from "../utils/enumMappings";
 import { sourceReportedLandUseDisplay } from "../utils/sourceReportedCadastre";
 import { formatArea } from "../utils/formatters";
 import styles from "./ParcelCatalog.module.css";
@@ -9,12 +9,24 @@ export function ParcelCatalog({
   totalCount,
   selectedId,
   onSelect,
+  supplementByParcelId,
+  currentPage,
+  pageSize,
+  onPageChange,
+  onCadastralSearch,
 }: {
   parcels: LandSearchResultResponse[];
   totalCount: number;
   selectedId?: string | null;
   onSelect: (id: string) => void;
+  supplementByParcelId?: Map<string, ResearchSupplementParcelResponse>;
+  currentPage?: number;
+  pageSize?: number;
+  onPageChange?: (page: number) => void;
+  onCadastralSearch?: (query: string) => void;
 }) {
+  const totalPages = pageSize ? Math.ceil(totalCount / pageSize) : 1;
+
   return (
     <section className={styles.wrap} aria-label="Available land parcels">
       <div className={styles.header}>
@@ -24,16 +36,26 @@ export function ParcelCatalog({
           {totalCount === 1 ? "" : "s"}
         </p>
       </div>
+      {onCadastralSearch && (
+        <div className={styles.searchRow}>
+          <input
+            type="text"
+            className={styles.searchInput}
+            placeholder="Search by cadastral number..."
+            onChange={(e) => onCadastralSearch(e.target.value)}
+            aria-label="Search parcels by cadastral number"
+          />
+        </div>
+      )}
       <div className={styles.tableScroll}>
         <table className={styles.table}>
           <thead>
             <tr>
               <th scope="col">Cadastral no.</th>
               <th scope="col">District</th>
-              <th scope="col">Domain category</th>
               <th scope="col">Source-reported land use</th>
+              <th scope="col">Project research group</th>
               <th scope="col">Area</th>
-              <th scope="col">Centroid</th>
               <th scope="col">
                 <span className="sr-only">Actions</span>
               </th>
@@ -59,22 +81,26 @@ export function ParcelCatalog({
                   <td>{parcel.district}</td>
                   <td>
                     {parcel.cadastralSource
-                      ? "—"
-                      : landCategoryTypeLabels[parcel.categoryType] ?? "Unknown"}
-                  </td>
-                  <td>
-                    {parcel.cadastralSource
                       ? sourceReportedLandUseDisplay(parcel.cadastralSource) ||
                         "—"
                       : parcel.currentUseType
                         ? landUseTypeLabels[parcel.currentUseType] ?? "Unknown"
                         : "—"}
                   </td>
-                  <td>{formatArea(parcel.areaValue, parcel.areaUnit)}</td>
-                  <td className={styles.mono}>
-                    {parcel.centroidLatitude.toFixed(5)},{" "}
-                    {parcel.centroidLongitude.toFixed(5)}
+                  <td>
+                    {supplementByParcelId?.get(parcel.id) ? (
+                      <span title={supplementByParcelId.get(parcel.id)?.classificationBasis}>
+                        {supplementByParcelId.get(parcel.id)?.supplementGroup}
+                        <small style={{ display: "block" }}>
+                          {supplementByParcelId.get(parcel.id)?.classificationBasis ===
+                          "GIS-derived LUPPD coverage (at least 80%)"
+                            ? `${supplementByParcelId.get(parcel.id)?.gisOverlapPercent.toFixed(1)}% mapped coverage`
+                            : "Original source label"}
+                        </small>
+                      </span>
+                    ) : "—"}
                   </td>
+                  <td>{formatArea(parcel.areaValue, parcel.areaUnit)}</td>
                   <td className={styles.actionsCell}>
                     <button
                       type="button"
@@ -83,6 +109,12 @@ export function ParcelCatalog({
                     >
                       View details
                     </button>
+                    <a
+                      className={styles.viewLink}
+                      href={`/land-intelligence/knowledge-graph?parcelId=${parcel.id}`}
+                    >
+                      Relationships
+                    </a>
                   </td>
                 </tr>
               );
@@ -90,6 +122,31 @@ export function ParcelCatalog({
           </tbody>
         </table>
       </div>
+      {onPageChange && totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            type="button"
+            className={styles.pageButton}
+            disabled={currentPage === 1}
+            onClick={() => onPageChange(currentPage - 1)}
+            aria-label="Previous page"
+          >
+            Previous
+          </button>
+          <span className={styles.pageInfo}>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            type="button"
+            className={styles.pageButton}
+            disabled={currentPage === totalPages}
+            onClick={() => onPageChange(currentPage + 1)}
+            aria-label="Next page"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </section>
   );
 }
