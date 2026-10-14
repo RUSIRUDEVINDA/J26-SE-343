@@ -1,12 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import {
+  getLandIntelligenceGisCoverage,
   listSourceReportedLandUseOptions,
+  listResearchSupplement,
   searchRecommendations,
 } from "../services/landIntelligenceApi";
 import {
@@ -14,8 +16,11 @@ import {
   LandUseType,
   RECOMMENDATIONS_SESSION_KEY,
   type FindSuitableLandFormState,
+  type IndexedDistrictSummaryResponse,
+  type LandIntelligenceGisCoverageResponse,
   type RecommendationsSessionPayload,
   type SourceReportedLandUseOptionResponse,
+  type ResearchSupplementParcelResponse,
 } from "../types/landIntelligence";
 import { landUseTypeLabels, landUseTypeOptions } from "../utils/enumMappings";
 import {
@@ -27,6 +32,8 @@ import {
 import styles from "./FindSuitableLandForm.module.css";
 
 const FORM_STORE_EVENT = "component01.findSuitableLandForm";
+const PROJECT_LAND_USE_GROUPS = ["Coconut", "Wetland", "Scrub / low jungle"] as const;
+const HIDDEN_SOURCE_LABELS = new Set(["not checked", "other"]);
 
 const initialState: FindSuitableLandFormState = {
   requiredPurpose: "",
@@ -36,7 +43,7 @@ const initialState: FindSuitableLandFormState = {
   preferredDistrict: "Colombo",
   preferredDivisionalSecretariat: "",
   sourceReportedLandUse: "",
-  maxResults: "10",
+  maxResults: "30",
 };
 
 type FormSnapshot = {
@@ -83,8 +90,12 @@ function parseStoredForm(raw: string | null): FindSuitableLandFormState {
       preferredDistrict: parsed.preferredDistrict ?? "Colombo",
       preferredDivisionalSecretariat:
         parsed.preferredDivisionalSecretariat ?? "",
-      sourceReportedLandUse: parsed.sourceReportedLandUse ?? "",
-      maxResults: parsed.maxResults ?? "10",
+      sourceReportedLandUse: parsed.sourceReportedLandUse === "75"
+        ? "cover:Coconut"
+        : parsed.sourceReportedLandUse ?? "",
+      maxResults: parsed.sourceReportedLandUse === "75" && parsed.maxResults === "10"
+        ? "30"
+        : parsed.maxResults ?? "30",
     };
   } catch {
     return initialState;
@@ -177,7 +188,13 @@ export function FindSuitableLandForm() {
   const [sourceLandUseOptions, setSourceLandUseOptions] = useState<
     SourceReportedLandUseOptionResponse[]
   >([]);
+  const [researchSupplement, setResearchSupplement] = useState<ResearchSupplementParcelResponse[]>([]);
   const [sourceLandUseChecked, setSourceLandUseChecked] = useState(false);
+  const [gisCoverage, setGisCoverage] = useState<LandIntelligenceGisCoverageResponse | null>(null);
+  const [landUseOpen, setLandUseOpen] = useState(false);
+  const [landUseMenuAbove, setLandUseMenuAbove] = useState(false);
+  const landUseDropdownRef = useRef<HTMLDivElement>(null);
+  const landUseTriggerRef = useRef<HTMLButtonElement>(null);
 
   const persist = useCallback((next: FindSuitableLandFormState) => {
     setDraft(next);
@@ -200,49 +217,126 @@ export function FindSuitableLandForm() {
 
   useEffect(() => {
     let cancelled = false;
-    listSourceReportedLandUseOptions()
-      .then((options) => {
-        if (!cancelled) {
-          setSourceLandUseOptions(options);
-          setSourceLandUseChecked(true);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setSourceLandUseOptions([]);
-          setSourceLandUseChecked(true);
-        }
-      });
+    Promise.allSettled([
+      listSourceReportedLandUseOptions(),
+      listResearchSupplement(),
+      getLandIntelligenceGisCoverage(),
+    ]).then(([source, supplement, coverage]) => {
+      if (cancelled) return;
+      setSourceLandUseOptions(source.status === "fulfilled" ? source.value : []);
+      setResearchSupplement(supplement.status === "fulfilled" ? supplement.value : []);
+      setGisCoverage(coverage.status === "fulfilled" ? coverage.value : null);
+      setSourceLandUseChecked(true);
+    });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const sourceLandUseDisabled =
-    sourceLandUseChecked && sourceLandUseOptions.length === 0;
+  const sourceCoconutCount = sourceLandUseOptions.find((option) => option.code === "75")?.parcelCount ?? 0;
+  const projectChoices = researchSupplement.length > 0
+    ? PROJECT_LAND_USE_GROUPS.map((group) => ({
+        value: `cover:${group}`,
+        label: group === "Scrub / low jungle" ? "Scrub and low jungle" : group,
+        count: researchSupplement.filter((row) => row.supplementGroup === group).length
+          + (group === "Coconut" ? sourceCoconutCount : 0),
+        origin: "project" as const,
+      })).filter((choice) => choice.count > 0)
+    : [];
+  const sourceChoices = sourceLandUseOptions
+    .filter((option) => option.parcelCount > 0)
+    .filter((option) => !(researchSupplement.length > 0 && option.code === "75"))
+    .filter((option) => !HIDDEN_SOURCE_LABELS.has(option.englishLabel.trim().toLowerCase()))
+    .map((option) => ({
+      value: option.code,
+      label: option.englishLabel,
+      count: option.parcelCount,
+      origin: "source" as const,
+    }));
+  const landUseChoices = [...projectChoices, ...sourceChoices]
+    .sort((a, b) => a.label.localeCompare(b.label));
+  const sourceLandUseDisabled = sourceLandUseChecked && landUseChoices.length === 0;
+  const selectedLandUseChoice = landUseChoices.find((choice) => choice.value === form.sourceReportedLandUse);
 
-  const evidence: Array<{ label: string; status: EvidenceStatus }> = [
-    {
+  useEffect(() => {
+    if (sourceLandUseChecked && form.sourceReportedLandUse && !selectedLandUseChoice) {
+      persist({ ...form, sourceReportedLandUse: "" });
+    }
+  }, [sourceLandUseChecked, form, selectedLandUseChoice, persist]);
+
+  useEffect(() => {
+    if (!landUseOpen) return;
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (!landUseDropdownRef.current?.contains(event.target as Node)) {
+        setLandUseOpen(false);
+      }
+    };
+    const closeOnOutsideFocus = (event: FocusEvent) => {
+      if (!landUseDropdownRef.current?.contains(event.target as Node)) {
+        setLandUseOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("focusin", closeOnOutsideFocus);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("focusin", closeOnOutsideFocus);
+    };
+  }, [landUseOpen]);
+
+  function focusLandUseOption(index: number) {
+    const options = landUseDropdownRef.current?.querySelectorAll<HTMLButtonElement>(
+      "[data-land-use-option]",
+    );
+    if (!options?.length) return;
+    options[Math.max(0, Math.min(index, options.length - 1))]?.focus();
+  }
+
+  function showLandUseMenu(focusIndex: number) {
+    const rect = landUseTriggerRef.current?.getBoundingClientRect();
+    if (rect) {
+      const roomBelow = window.innerHeight - rect.bottom;
+      setLandUseMenuAbove(roomBelow < Math.min(340, window.innerHeight * 0.45) && rect.top > roomBelow);
+    }
+    setLandUseOpen(true);
+    requestAnimationFrame(() => focusLandUseOption(focusIndex));
+  }
+
+  const availableDistricts = gisCoverage?.indexedDistricts.map(d => d.district) ?? [];
+
+  const evidence: Array<{ label: string; status: EvidenceStatus }> = [];
+  if (gisCoverage) {
+    evidence.push({
       label: "Parcel records",
-      status: form.preferredDistrict.trim() ? "Available" : "Partial coverage",
-    },
-    {
+      status: gisCoverage.totalParcelCount > 0 ? "Available" : "Unavailable",
+    });
+    evidence.push({
       label: "Source-reported land use",
       status: !sourceLandUseChecked
         ? "Partial coverage"
         : sourceLandUseOptions.length > 0
           ? "Available"
           : "Unavailable",
-    },
-    {
+    });
+    evidence.push({
+      label: "Project land-cover classification",
+      status: !sourceLandUseChecked
+        ? "Partial coverage"
+        : researchSupplement.length > 0
+          ? "Available"
+          : "Unavailable",
+    });
+    evidence.push({
       label: "Hard legal / environmental restrictions",
-      status: "Partial coverage",
-    },
-    {
+      status: gisCoverage.intelligenceLayers.some(l => l.layerKey === "legal_restrictions")
+        ? "Available"
+        : "Partial coverage",
+    });
+    evidence.push({
       label: "Source-reported claimant screening",
       status: "Available",
-    },
-  ];
+    });
+  }
 
   function patchFieldErrors(
     keys: Array<keyof FieldErrors>,
@@ -267,14 +361,18 @@ export function FindSuitableLandForm() {
       next.requiredPurpose = "Select a required purpose to continue.";
     }
     const areaValue = form.targetAreaValue.trim();
-    const parsedArea =
-      areaValue === "" ? undefined : Number.parseFloat(areaValue);
     if (areaValue !== "") {
-      if (Number.isNaN(parsedArea) || parsedArea! <= 0) {
-        next.targetAreaValue =
-          "Enter a target area greater than zero, or leave blank.";
-      } else if (convertTargetAreaToHectares(parsedArea!, form.targetAreaUnit) === null) {
-        next.targetAreaValue = "Could not convert the target area to hectares.";
+      // Reject if contains non-numeric characters (except decimal point)
+      if (!/^[0-9]*\.?[0-9]+$/.test(areaValue)) {
+        next.targetAreaValue = "Enter a valid positive number (e.g., 0.05 or 5).";
+      } else {
+        const parsedArea = Number.parseFloat(areaValue);
+        if (Number.isNaN(parsedArea) || parsedArea <= 0) {
+          next.targetAreaValue =
+            "Enter a target area greater than zero, or leave blank.";
+        } else if (convertTargetAreaToHectares(parsedArea, form.targetAreaUnit) === null) {
+          next.targetAreaValue = "Could not convert the target area to hectares.";
+        }
       }
     }
     patchFieldErrors(["requiredPurpose", "targetAreaValue"], next);
@@ -284,14 +382,19 @@ export function FindSuitableLandForm() {
   function validateLocation(): boolean {
     const next: FieldErrors = {};
     const maxResultsRaw = form.maxResults.trim();
-    const parsedMaxResults = Number.parseInt(maxResultsRaw, 10);
-    if (
-      maxResultsRaw === "" ||
-      Number.isNaN(parsedMaxResults) ||
-      parsedMaxResults < 1 ||
-      parsedMaxResults > 100
-    ) {
+    // Reject if contains non-integer characters
+    if (maxResultsRaw !== "" && !/^[0-9]+$/.test(maxResultsRaw)) {
       next.maxResults = "Result limit must be a whole number from 1 to 100.";
+    } else {
+      const parsedMaxResults = Number.parseInt(maxResultsRaw, 10);
+      if (
+        maxResultsRaw === "" ||
+        Number.isNaN(parsedMaxResults) ||
+        parsedMaxResults < 1 ||
+        parsedMaxResults > 100
+      ) {
+        next.maxResults = "Result limit must be a whole number from 1 to 100.";
+      }
     }
     patchFieldErrors(["maxResults"], next);
     return Object.keys(next).length === 0;
@@ -299,7 +402,10 @@ export function FindSuitableLandForm() {
 
   function validateSourceFilters(): boolean {
     const next: FieldErrors = {};
-    if (form.sourceReportedLandUse && sourceLandUseOptions.length === 0) {
+    if (form.sourceReportedLandUse.startsWith("cover:") &&
+        !researchSupplement.some((row) => row.supplementGroup === form.sourceReportedLandUse.slice(6))) {
+      next.sourceReportedLandUse = "Project land-cover evidence is unavailable for this selection.";
+    } else if (form.sourceReportedLandUse && !form.sourceReportedLandUse.startsWith("cover:") && sourceLandUseOptions.length === 0) {
       next.sourceReportedLandUse =
         "Unavailable for the selected district because this layer has not been imported.";
     }
@@ -349,10 +455,12 @@ export function FindSuitableLandForm() {
               divisionalSecretariat: ds || null,
             }
           : null,
-      sourceReportedLandUse:
-        sourceLandUseOptions.length > 0
-          ? form.sourceReportedLandUse.trim() || null
-          : null,
+      sourceReportedLandUse: form.sourceReportedLandUse.startsWith("cover:")
+        ? null
+        : form.sourceReportedLandUse.trim() || null,
+      researchLandCoverGroup: form.sourceReportedLandUse.startsWith("cover:")
+        ? form.sourceReportedLandUse.slice(6)
+        : null,
       maxResults: parsedMaxResults,
     };
 
@@ -371,7 +479,30 @@ export function FindSuitableLandForm() {
       );
       window.dispatchEvent(new Event("component01.recommendations"));
       writeFormStore(form);
-      router.push("/land-intelligence/recommendations");
+
+      // Build URL parameters for reproducible search
+      const params = new URLSearchParams();
+      params.set("purpose", String(request.requiredPurpose));
+      if (request.targetAreaHectares != null) {
+        params.set("area", String(request.targetAreaHectares));
+      }
+      if (request.preferredLocation?.district) {
+        params.set("district", request.preferredLocation.district);
+      }
+      if (request.preferredLocation?.province) {
+        params.set("province", request.preferredLocation.province);
+      }
+      if (request.sourceReportedLandUse) {
+        params.set("landUse", request.sourceReportedLandUse);
+      }
+      if (request.researchLandCoverGroup) {
+        params.set("landCover", request.researchLandCoverGroup);
+      }
+      if (request.maxResults != null) {
+        params.set("maxResults", String(request.maxResults));
+      }
+
+      router.push(`/land-intelligence/recommendations?${params.toString()}`);
     } catch (err) {
       if (err instanceof ApiClientError) {
         setError(err.detail || err.title);
@@ -432,10 +563,7 @@ export function FindSuitableLandForm() {
                     </option>
                   ))}
                 </select>
-                <p id="purpose-hint" className={styles.hint}>
-                  Required purpose affects ranking based on available parcel
-                  evidence.
-                </p>
+               
                 {fieldErrors.requiredPurpose ? (
                   <p
                     id="purpose-error"
@@ -484,12 +612,6 @@ export function FindSuitableLandForm() {
                     ))}
                   </select>
                 </div>
-                <p id="target-area-hint" className={styles.hint}>
-                  Converted to hectares for scoring against parcel areas in the
-                  database. Perches use the Sri Lankan square perch (25 m²).
-                  Smaller or larger parcels stay in results. Score: 100 × (1 −
-                  |actual − target| / target), minimum 0.
-                </p>
                 {fieldErrors.targetAreaValue ? (
                   <p
                     id="target-area-error"
@@ -517,19 +639,39 @@ export function FindSuitableLandForm() {
                   Preferred district
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
-                <input
-                  id="preferredDistrict"
-                  className={styles.input}
-                  value={form.preferredDistrict}
-                  onChange={(e) =>
-                    updateField("preferredDistrict", e.target.value)
-                  }
-                  placeholder="e.g. Colombo (leave blank for all)"
-                  aria-describedby="district-hint"
-                />
+                {availableDistricts.length > 0 ? (
+                  <select
+                    id="preferredDistrict"
+                    className={styles.select}
+                    value={form.preferredDistrict}
+                    onChange={(e) =>
+                      updateField("preferredDistrict", e.target.value)
+                    }
+                    aria-describedby="district-hint"
+                  >
+                    <option value="">All indexed districts</option>
+                    {availableDistricts.map((district) => (
+                      <option key={district} value={district}>
+                        {district}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    id="preferredDistrict"
+                    className={styles.input}
+                    value={form.preferredDistrict}
+                    onChange={(e) =>
+                      updateField("preferredDistrict", e.target.value)
+                    }
+                    placeholder="e.g. Colombo (leave blank for all)"
+                    aria-describedby="district-hint"
+                  />
+                )}
                 <p id="district-hint" className={styles.hint}>
-                  Case-insensitive district filter. Unsupported districts are
-                  not remapped to Colombo.
+                  {availableDistricts.length > 0
+                    ? ""
+                    : "Loading indexed districts..."}
                 </p>
               </div>
 
@@ -538,15 +680,33 @@ export function FindSuitableLandForm() {
                   Preferred province
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
-                <input
-                  id="preferredProvince"
-                  className={styles.input}
-                  value={form.preferredProvince}
-                  onChange={(e) =>
-                    updateField("preferredProvince", e.target.value)
-                  }
-                  placeholder="e.g. Western"
-                />
+                {gisCoverage && gisCoverage.indexedDistricts.length > 0 ? (
+                  <select
+                    id="preferredProvince"
+                    className={styles.select}
+                    value={form.preferredProvince}
+                    onChange={(e) =>
+                      updateField("preferredProvince", e.target.value)
+                    }
+                  >
+                    <option value="">All indexed provinces</option>
+                    {[...new Set(gisCoverage.indexedDistricts.map(d => d.province))].map((province) => (
+                      <option key={province} value={province}>
+                        {province}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    id="preferredProvince"
+                    className={styles.input}
+                    value={form.preferredProvince}
+                    onChange={(e) =>
+                      updateField("preferredProvince", e.target.value)
+                    }
+                    placeholder="e.g. Western"
+                  />
+                )}
               </div>
 
               <div className={styles.field}>
@@ -568,6 +728,8 @@ export function FindSuitableLandForm() {
                     )
                   }
                   placeholder="Optional"
+                  disabled
+                  aria-disabled="true"
                 />
               </div>
 
@@ -585,9 +747,7 @@ export function FindSuitableLandForm() {
                   aria-invalid={Boolean(fieldErrors.maxResults)}
                   aria-describedby="max-results-hint max-results-error"
                 />
-                <p id="max-results-hint" className={styles.hint}>
-                  Limits how many ranked parcels are returned (1–100).
-                </p>
+                
                 {fieldErrors.maxResults ? (
                   <p
                     id="max-results-error"
@@ -605,50 +765,97 @@ export function FindSuitableLandForm() {
             <h2 id="source-heading" className={styles.panelTitle}>
               3. Source filters
             </h2>
-            <p className={styles.panelSubtitle}>
-              Optionally filter by source-reported land use. Known legal and
-              environmental hard restrictions are always applied. Road, water,
-              and soil distance preferences are not part of this search.
-            </p>
+            
             <div className={styles.grid}>
               <div className={`${styles.field} ${styles.fullWidth}`}>
                 <label className={styles.label} htmlFor="sourceReportedLandUse">
-                  Source-reported land use
+                  Land-use evidence
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
-                <select
-                  id="sourceReportedLandUse"
-                  className={styles.select}
-                  value={
-                    sourceLandUseDisabled ? "" : form.sourceReportedLandUse
-                  }
-                  onChange={(e) =>
-                    updateField("sourceReportedLandUse", e.target.value)
-                  }
-                  disabled={sourceLandUseDisabled}
-                  aria-disabled={sourceLandUseDisabled}
-                  aria-describedby="source-land-use-hint"
-                >
-                  <option value="">
-                    {sourceLandUseDisabled
+                <div className={styles.landUseDropdown} ref={landUseDropdownRef}>
+                  <button
+                    id="sourceReportedLandUse"
+                    ref={landUseTriggerRef}
+                    type="button"
+                    className={`${styles.landUseTrigger} ${fieldErrors.sourceReportedLandUse ? styles.selectError : ""}`}
+                    aria-haspopup="listbox"
+                    aria-expanded={landUseOpen}
+                    aria-controls="source-land-use-options"
+                    aria-describedby="source-land-use-hint"
+                    disabled={sourceLandUseDisabled}
+                    onClick={() => {
+                      if (landUseOpen) {
+                        setLandUseOpen(false);
+                      } else {
+                        showLandUseMenu(
+                          Math.max(0, landUseChoices.findIndex((choice) => choice.value === form.sourceReportedLandUse) + 1),
+                        );
+                      }
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "ArrowDown" && !landUseOpen) {
+                        event.preventDefault();
+                        showLandUseMenu(0);
+                      }
+                    }}
+                  >
+                    <span>{sourceLandUseDisabled
                       ? "Unavailable for current coverage"
-                      : "All source-reported land uses"}
-                  </option>
-                  {sourceLandUseOptions.map((option) => (
-                    <option key={option.code} value={option.code}>
-                      {option.englishLabel}
-                    </option>
-                  ))}
-                </select>
+                      : selectedLandUseChoice
+                        ? `${selectedLandUseChoice.label} (${selectedLandUseChoice.count})`
+                        : "All land uses"}</span>
+                    <span className={styles.landUseChevron} aria-hidden="true">⌄</span>
+                  </button>
+                  {landUseOpen && !sourceLandUseDisabled ? (
+                    <div
+                      id="source-land-use-options"
+                      className={`${styles.landUseMenu} ${landUseMenuAbove ? styles.landUseMenuAbove : ""}`}
+                      role="listbox"
+                      aria-label="Land-use evidence"
+                      onKeyDown={(event) => {
+                        if (event.key === "Escape") {
+                          event.preventDefault();
+                          setLandUseOpen(false);
+                          landUseTriggerRef.current?.focus();
+                        } else if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+                          event.preventDefault();
+                          const options = landUseDropdownRef.current?.querySelectorAll<HTMLButtonElement>("[data-land-use-option]");
+                          const current = Array.from(options ?? []).findIndex((option) => option === document.activeElement);
+                          const next = event.key === "Home" ? 0
+                            : event.key === "End" ? (options?.length ?? 1) - 1
+                              : current + (event.key === "ArrowDown" ? 1 : -1);
+                          focusLandUseOption(next);
+                        }
+                      }}
+                    >
+                      <button type="button" role="option" data-land-use-option aria-selected={!selectedLandUseChoice}
+                        className={styles.landUseOption}
+                        onClick={() => { updateField("sourceReportedLandUse", ""); setLandUseOpen(false); landUseTriggerRef.current?.focus(); }}>
+                        <span>All land uses</span>
+                      </button>
+                      {landUseChoices.map((choice) => (
+                        <button key={choice.value} type="button" role="option" data-land-use-option
+                          aria-selected={selectedLandUseChoice?.value === choice.value}
+                          className={styles.landUseOption}
+                          onClick={() => { updateField("sourceReportedLandUse", choice.value); setLandUseOpen(false); landUseTriggerRef.current?.focus(); }}>
+                          <span>{choice.label}</span><span className={styles.landUseCount}>{choice.count}</span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
                 {sourceLandUseDisabled ? (
-                  <p className={styles.unavailableNote} role="status">
+                  <p id="source-land-use-hint" className={styles.unavailableNote} role="status">
                     Unavailable for the selected district because this layer has
                     not been imported.
                   </p>
                 ) : (
                   <p id="source-land-use-hint" className={styles.hint}>
-                    Source-reported land use comes from cadastral data and does
-                    not prove legal availability.
+                    {selectedLandUseChoice?.origin === "project"
+                      ? "Matches the project land-cover group. The original cadastral label remains separate in parcel details."
+                      : selectedLandUseChoice?.origin === "source"
+                        ? "Matches this exact source-reported cadastral land-use label."
+                        : "Choose a land use to narrow results, or leave this as All land uses."}
                   </p>
                 )}
                 {fieldErrors.sourceReportedLandUse ? (
@@ -659,13 +866,6 @@ export function FindSuitableLandForm() {
               </div>
             </div>
           </section>
-        </div>
-
-        <div className={styles.warning} role="note">
-          <strong>Decision-support only:</strong> Results compare recorded
-          parcels for review. They do not prove ownership, lease availability,
-          or legal suitability. Official confirmation is required. Known hard
-          legal and environmental restrictions are still rejected.
         </div>
 
         {error ? (
@@ -682,26 +882,32 @@ export function FindSuitableLandForm() {
         <p className={styles.sideSubtitle}>
           {form.preferredDistrict.trim()
             ? `Signals for ${form.preferredDistrict.trim()}.`
-            : "Signals across indexed districts."}{" "}
-          GIS road, water, and soil layers may appear on parcel details but are
-          not used as search filters here.
+            : "Signals across indexed districts."}
         </p>
-        <ul className={styles.evidenceList}>
-          {evidence.map((item) => (
-            <li key={item.label} className={styles.evidenceItem}>
-              <span className={styles.evidenceLabel}>{item.label}</span>
-              <span
-                className={`${styles.evidenceStatus} ${statusClass(item.status)}`}
-              >
-                {item.status}
-              </span>
-            </li>
-          ))}
-        </ul>
-        <p className={styles.sideNote}>
-          Partial coverage means some parcels may lack that layer. Missing
-          evidence is never treated as a positive match.
-        </p>
+        {gisCoverage && evidence.length > 0 ? (
+          <>
+            <ul className={styles.evidenceList}>
+              {evidence.map((item) => (
+                <li key={item.label} className={styles.evidenceItem}>
+                  <span className={styles.evidenceLabel}>{item.label}</span>
+                  <span
+                    className={`${styles.evidenceStatus} ${statusClass(item.status)}`}
+                  >
+                    {item.status}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className={styles.sideNote}>
+              Partial coverage means some parcels may lack that layer. Missing
+              evidence is never treated as a positive match.
+            </p>
+          </>
+        ) : (
+          <p className={styles.sideNote}>
+            Loading evidence coverage information...
+          </p>
+        )}
       </aside>
 
       <div className={styles.actionBar}>
