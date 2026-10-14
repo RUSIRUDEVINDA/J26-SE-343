@@ -16,12 +16,14 @@ import {
   getParcelConstraints,
   getParcelRelationships,
   listAllParcels,
+  listResearchSupplement,
   listSourceReportedLandUseOptions,
 } from "@/modules/component-01-land-intelligence/services/landIntelligenceApi";
 import type {
   LandParcelResponse,
   LandRelationshipResponse,
   LandSearchResultResponse,
+  ResearchSupplementParcelResponse,
   SourceReportedLandUseOptionResponse,
   SpatialConstraintResponse,
 } from "@/modules/component-01-land-intelligence/types/landIntelligence";
@@ -53,6 +55,9 @@ export function ParcelIntelligenceView({
   const [sourceLandUseOptions, setSourceLandUseOptions] = useState<
     SourceReportedLandUseOptionResponse[]
   >([]);
+  const [supplement, setSupplement] = useState<ResearchSupplementParcelResponse[]>([]);
+  const [supplementGroupFilter, setSupplementGroupFilter] = useState("");
+  const [supplementError, setSupplementError] = useState<string | null>(null);
   const [detailError, setDetailError] = useState<string | null>(null);
   const [relationshipsError, setRelationshipsError] = useState<string | null>(
     null,
@@ -172,6 +177,22 @@ export function ParcelIntelligenceView({
   }, [showCatalog]);
 
   useEffect(() => {
+    if (!showCatalog) return;
+    let cancelled = false;
+    listResearchSupplement()
+      .then((rows) => {
+        if (!cancelled) {
+          setSupplement(rows);
+          setSupplementError(null);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setSupplementError("Project GIS categories could not be loaded. The original cadastral land-use filter remains available.");
+      });
+    return () => { cancelled = true; };
+  }, [showCatalog]);
+
+  useEffect(() => {
     if (!showCatalog) {
       return;
     }
@@ -220,6 +241,12 @@ export function ParcelIntelligenceView({
     void loadParcelDetails(trimmed, false);
   }, [initialParcelId, loadParcelDetails]);
 
+  const supplementByParcelId = new Map(supplement.map((row) => [row.parcelId, row]));
+  const displayedParcels = supplementGroupFilter
+    ? parcels.filter((item) => supplementByParcelId.get(item.id)?.supplementGroup === supplementGroupFilter)
+    : parcels;
+  const supplementGroups = ["Coconut", "Scrub / low jungle", "Wetland", "Other State parcel"];
+
   return (
     <>
       <PageHeading
@@ -245,7 +272,21 @@ export function ParcelIntelligenceView({
             <option value="">All source-reported land uses</option>
             {sourceLandUseOptions.map((option) => (
               <option key={option.code} value={option.code}>
-                {option.code} — {option.englishLabel}
+                {option.code} — {option.englishLabel} ({option.parcelCount})
+              </option>
+            ))}
+          </select>
+          <select
+            className="parcelInput"
+            value={supplementGroupFilter}
+            onChange={(e) => setSupplementGroupFilter(e.target.value)}
+            aria-label="Project research group filter"
+            disabled={supplement.length === 0}
+          >
+            <option value="">All project research groups</option>
+            {supplementGroups.map((group) => (
+              <option key={group} value={group}>
+                {group} ({supplement.filter((row) => row.supplementGroup === group).length})
               </option>
             ))}
           </select>
@@ -253,6 +294,12 @@ export function ParcelIntelligenceView({
             Apply filters
           </Button>
         </div>
+      ) : null}
+
+      {showCatalog && supplementError ? <ErrorMessage message={supplementError} /> : null}
+      {showCatalog && supplement.length > 0 ? (
+        <p style={{ marginBottom: "1rem" }}>
+        </p>
       ) : null}
 
       <div className="parcelFormRow">
@@ -276,19 +323,22 @@ export function ParcelIntelligenceView({
         <LoadingState message="Loading available parcels…" />
       ) : null}
       {showCatalog && listError ? <ErrorMessage message={listError} /> : null}
-      {showCatalog && !listLoading && !listError && parcels.length === 0 ? (
+      {showCatalog && !listLoading && !listError && displayedParcels.length === 0 ? (
         <EmptyState
-          title="No parcels indexed"
-          description="The API returned no land parcels. Ensure the backend is running against the real Colombo cadastre database (LAND_INTELLIGENCE_CONNECTION) and that import has been applied."
+          title={supplementGroupFilter ? "No parcels match these filters" : "No parcels indexed"}
+          description={supplementGroupFilter
+            ? "Try a different project research group or source land-use filter."
+            : "The API returned no land parcels. Check that the Colombo research import has been applied."}
         />
       ) : null}
-      {showCatalog && !listLoading && !listError && parcels.length > 0 ? (
+      {showCatalog && !listLoading && !listError && displayedParcels.length > 0 ? (
         <div className="stack" style={{ marginBottom: "1.25rem" }}>
           <ParcelCatalog
-            parcels={parcels}
-            totalCount={totalCount}
+            parcels={displayedParcels}
+            totalCount={supplementGroupFilter ? displayedParcels.length : totalCount}
             selectedId={selectedId}
             onSelect={(id) => void loadParcelDetails(id)}
+            supplementByParcelId={supplementByParcelId}
           />
         </div>
       ) : null}
@@ -308,7 +358,7 @@ export function ParcelIntelligenceView({
               href={`/land-intelligence/parcels/${parcel.id}/lease-interest`}
               variant="primary"
             >
-              Express lease interest
+              Express preliminary interest
             </Button>
             <Button href="/land-intelligence/shortlist" variant="secondary">
               Open shortlist
