@@ -11,6 +11,8 @@ export function RecommendationAssessmentPanel({
   resultCount: number;
   transparency?: RecommendationSearchTransparencyResponse | null;
 }) {
+  const unavailable = transparency?.unavailableCriteria ?? [];
+
   return (
     <aside className={styles.panel} aria-labelledby="assessment-panel-title">
       <h2 id="assessment-panel-title" className={styles.title}>
@@ -21,25 +23,32 @@ export function RecommendationAssessmentPanel({
         <h3 className={styles.sectionTitle}>How to read these results</h3>
         <ul className={styles.bullets}>
           <li>
-            Rank and rule score come from configured criteria only — not legal
-            approval or ownership.
+            The total is a <strong>match across assessed search criteria</strong>{" "}
+            — not legal suitability, ownership verification, or lease approval.
           </li>
           <li>
-            Expand a card for why it ranked, criteria, restrictions, and
-            provenance.
+            A displayed <strong>100</strong> means every assessed criterion
+            matched fully. Near area matches (for example 0.045 ha vs 0.05 ha
+            target → area 90) keep the total below 100.
           </li>
           <li>
-            Missing GIS evidence stays Unavailable and is never treated as a
-            positive match.
+            Road, water, and soil preferences are not part of search or rule
+            scoring.
+          </li>
+          <li>
+            Missing environmental / GIS evidence is{" "}
+            <strong>not assessed</strong> and is never treated as a positive
+            match.
           </li>
         </ul>
       </section>
 
       <section className={styles.section}>
-        <h3 className={styles.sectionTitle}>Rule score</h3>
+        <h3 className={styles.sectionTitle}>Match score</h3>
         <p className={styles.copy}>
-          The rule score is a weighted 0–100 summary of assessed criteria. It is
-          not a probability of lease suitability or a legal determination.
+          Weighted 0–100 summary of criteria that were actually assessed for
+          each parcel. Unassessed items do not contribute weight and cannot
+          inflate the score.
         </p>
       </section>
 
@@ -50,14 +59,14 @@ export function RecommendationAssessmentPanel({
             <span className={`${styles.swatch} ${styles.recommended}`} aria-hidden />
             <div>
               <strong>Recommended</strong>
-              <p>Higher rule-based score; review evidence before any decision.</p>
+              <p>Higher match across assessed criteria; review evidence before any decision.</p>
             </div>
           </li>
           <li>
             <span className={`${styles.swatch} ${styles.needsReview}`} aria-hidden />
             <div>
               <strong>Needs review</strong>
-              <p>Mid/lower score or unmet criteria; inspect failed items.</p>
+              <p>Mid/lower match or unmet criteria; inspect failed and not-assessed items.</p>
             </div>
           </li>
           <li>
@@ -74,9 +83,19 @@ export function RecommendationAssessmentPanel({
         <h3 className={styles.sectionTitle}>GIS data limitations</h3>
         <p className={styles.copy}>
           Source-reported land use is Survey Department/iLAS metadata — not a
-          legal availability determination. Mapped road/water distances and
-          conservation intersections apply only where coverage exists.
+          legal availability determination. Mapped conservation intersections
+          apply only where enrichment coverage exists. Road/water/soil layers
+          may appear on parcel details but do not score the ranking.
         </p>
+        {unavailable.length > 0 ? (
+          <ul className={styles.bullets} aria-label="Not assessed criteria">
+            {unavailable.map((item) => (
+              <li key={item.key}>
+                <strong>{item.key}</strong>: {item.reason} (not assessed)
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </section>
 
       <section className={styles.section}>

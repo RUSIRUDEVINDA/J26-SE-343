@@ -75,11 +75,6 @@ export function OfficerLeaseInterestLookupView() {
 
   return (
     <div className={styles.layout}>
-      <div className={styles.demoLabel} role="status">
-        Research demo — matches applicant-entered NIC only. Does not infer ownership,
-        tenancy, or lease availability. Not available in production.
-      </div>
-
       <p className={styles.hint}>
         <Link
           href="/land-intelligence/officer/lease-interest-queue"

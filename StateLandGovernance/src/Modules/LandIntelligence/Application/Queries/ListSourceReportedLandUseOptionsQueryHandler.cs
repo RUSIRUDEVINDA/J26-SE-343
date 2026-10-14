@@ -27,7 +27,7 @@ public sealed class ListSourceReportedLandUseOptionsQueryHandler
         }
 
         return ColomboCadastreSourceDomains.ListLandUseFilterOptions()
-            .Select(option => new SourceReportedLandUseOptionDto(option.Code, option.EnglishLabel))
+            .Select(option => new SourceReportedLandUseOptionDto(option.Code, option.EnglishLabel, 0))
             .ToList();
     }
 }

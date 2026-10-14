@@ -90,6 +90,10 @@
 
 .actionsCell {
   white-space: nowrap;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.85rem;
+  align-items: center;
 }
 
 .viewLink {
@@ -108,4 +112,66 @@
 .viewLink:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+.searchRow {
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.searchInput:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.85rem 1.1rem;
+  border-top: 1px solid var(--color-card-border);
+}
+
+.pageButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.pageButton:hover:not(:disabled) {
+  background: #faf8f8;
+}
+
+.pageButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+@media (max-width: 768px) {
+  .searchInput {
+    max-width: 100%;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }

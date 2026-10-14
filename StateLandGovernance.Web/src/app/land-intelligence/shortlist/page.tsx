@@ -99,7 +99,7 @@ export default function ShortlistPage() {
                   href={`/land-intelligence/parcels/${item.landParcelId}/lease-interest`}
                   variant="primary"
                 >
-                  Express lease interest
+                  Express preliminary interest
                 </Button>
                 <Button
                   type="button"
@@ -114,7 +114,7 @@ export default function ShortlistPage() {
         </ul>
       ) : null}
       <p style={{ marginTop: "1rem", fontSize: "0.8rem" }}>
-        <Link href="/land-intelligence/my-requests">View my lease interest requests</Link>
+        <Link href="/land-intelligence/my-requests">View my preliminary interest requests</Link>
       </p>
     </>
   );

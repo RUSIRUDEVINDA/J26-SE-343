@@ -9,8 +9,9 @@ import { LoadingState } from "@/shared/components/LoadingState";
 import { PageHeading } from "@/shared/components/PageLayout";
 import { getLeaseInterestRequest } from "@/modules/component-01-land-intelligence/services/citizenWorkspaceApi";
 import type { LeaseInterestRequestDetail } from "@/modules/component-01-land-intelligence/types/landIntelligence";
-import { landUseTypeLabels } from "@/modules/component-01-land-intelligence/utils/enumMappings";
+import { leaseInterestPurposeDisplay } from "@/modules/component-01-land-intelligence/utils/leaseInterestPurposeDisplay";
 import {
+  isLeaseInterestDraftStatus,
   leaseInterestApplicantOutcome,
   leaseInterestStatusLabel,
 } from "@/modules/component-01-land-intelligence/utils/leaseInterestStatus";
@@ -68,13 +69,26 @@ export default function MyRequestDetailPage() {
           <p className={styles.outcome}>
             {leaseInterestApplicantOutcome(detail.status)}
           </p>
-          <p className={styles.meta}>
-            Purpose:{" "}
-            {landUseTypeLabels[detail.proposal.requestedPurpose] ?? "Unknown"}
-            {detail.proposal.requestedDurationYears != null
-              ? ` · ${detail.proposal.requestedDurationYears} years requested`
-              : ""}
-          </p>
+          {(() => {
+            const purpose = leaseInterestPurposeDisplay(
+              detail.proposal.requestedPurpose,
+              detail.status,
+            );
+            if (!purpose && detail.proposal.requestedDurationYears == null) {
+              return null;
+            }
+            return (
+              <p className={styles.meta}>
+                {purpose ? `Purpose: ${purpose}` : null}
+                {purpose && detail.proposal.requestedDurationYears != null
+                  ? " · "
+                  : null}
+                {detail.proposal.requestedDurationYears != null
+                  ? `${detail.proposal.requestedDurationYears} years requested`
+                  : null}
+              </p>
+            );
+          })()}
           <h3 className={styles.sectionTitle}>Status timeline</h3>
           <ul className={styles.timeline}>
             {detail.statusHistory.map((entry, index) => (
@@ -86,12 +100,14 @@ export default function MyRequestDetailPage() {
             ))}
           </ul>
           <div className={styles.actions}>
-            <Button
-              href={`/land-intelligence/parcels/${detail.landParcelId}/lease-interest`}
-              variant="secondary"
-            >
-              Open parcel form
-            </Button>
+            {isLeaseInterestDraftStatus(detail.status) ? (
+              <Button
+                href={`/land-intelligence/parcels/${detail.landParcelId}/lease-interest`}
+                variant="primary"
+              >
+                Continue draft
+              </Button>
+            ) : null}
             <Button href="/land-intelligence/my-requests" variant="ghost">
               Back to list
             </Button>

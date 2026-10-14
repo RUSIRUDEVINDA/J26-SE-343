@@ -11,9 +11,14 @@ availability, lease eligibility, planning approval, or suitability. The source p
 says reuse beyond public reference is subject to approval by the Survey Department
 and Registrar General's Department. Claimant names and other PII are never imported.
 
-## Recommended database for the normal UI/API
+## Database for this full-cadastre import
 
-Set repository-root `.env`:
+**J26-SE-343 Component 1 research demo** uses the separate 300-parcel database
+`land_intel_colombo_state_research` — see
+[COLOMBO_STATE_RESEARCH_300_IMPORT.md](./COLOMBO_STATE_RESEARCH_300_IMPORT.md) and
+[COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md](./COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md).
+
+For **this** full cadastre import, set repository-root `.env`:
 
 ```text
 LAND_INTELLIGENCE_CONNECTION=Host=localhost;Port=5432;Database=land_intel_colombo_real_demo;Username=postgres;Password=<local>
@@ -21,7 +26,8 @@ LAND_INTELLIGENCE_CONNECTION=Host=localhost;Port=5432;Database=land_intel_colomb
 
 (`land_intel_colombo_real_pilot` remains valid for the 150-parcel pilot.) Do **not**
 use `land_intel_colombo_demo` for normal frontend demos — that database holds
-`DEMO-*` test fixtures only.
+`DEMO-*` test fixtures only. Official lease availability remains unknown / not
+verified on imported cadastre alone.
 
 ## Dry-run import
 

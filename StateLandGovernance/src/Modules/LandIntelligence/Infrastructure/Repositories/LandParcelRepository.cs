@@ -146,6 +146,24 @@ public sealed class LandParcelRepository : ILandParcelRepository
                         || (source.LandUseEnglishLabel != null && source.LandUseEnglishLabel.ToLower() == filter))));
         }
 
+        if (!string.IsNullOrWhiteSpace(request.ResearchLandCoverGroup))
+        {
+            var group = request.ResearchLandCoverGroup.Trim();
+            if (group is not ("Coconut" or "Wetland" or "Scrub / low jungle" or "Other State parcel"))
+            {
+                query = query.Where(_ => false);
+            }
+            else
+            {
+                var mappedIds = _dbContext.Database.SqlQuery<Guid>(
+                    $"SELECT \"LandParcelId\" AS \"Value\" FROM land_intelligence.research_supplement_land_cover WHERE \"SupplementGroup\" = {group}");
+                var includeOriginalCoconut = group == "Coconut";
+                query = query.Where(parcel => mappedIds.Contains(parcel.Id)
+                    || (includeOriginalCoconut && _dbContext.RealParcelSources.Any(source =>
+                        source.LandParcelId == parcel.Id && source.LandUseCode == "75")));
+            }
+        }
+
         if (!string.IsNullOrWhiteSpace(request.DerivedSoilGroup))
         {
             var soilFilter = request.DerivedSoilGroup.Trim().ToLower();

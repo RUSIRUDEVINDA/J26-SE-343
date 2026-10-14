@@ -87,6 +87,7 @@ export interface LandRecommendationSearchRequest {
   /** Legacy domain category — not used for real Colombo cadastre. */
   requiredLandCategory?: LandCategoryType | null;
   sourceReportedLandUse?: string | null;
+  researchLandCoverGroup?: string | null;
   maxResults?: number;
 }
 
@@ -229,8 +230,8 @@ export interface LandParcelAvailabilityResponse {
 
 export interface LandParcelMetricsResponse {
   totalParcelCount: number;
-  projectLeaseReadyDesignatedCount: number;
-  projectLeaseReadyEffectiveCount: number;
+  projectDesignatedParcelsCount: number;
+  projectDesignatedParcelsEffectiveCount: number;
 }
 
 export type GisIntelligenceCoverageStatus =
@@ -304,6 +305,7 @@ export interface CadastralSourceMetadataResponse {
 export interface SourceReportedLandUseOptionResponse {
   code: string;
   englishLabel: string;
+  parcelCount: number;
 }
 
 export interface LandAreaResponse {
@@ -398,6 +400,18 @@ export interface LandSearchResultsResponse {
   page: number;
   pageSize: number;
   totalCount: number;
+}
+
+/** Project research overlay; never replaces the original cadastral land-use label. */
+export interface ResearchSupplementParcelResponse {
+  parcelId: string;
+  recordId: string;
+  supplementGroup: string;
+  classificationBasis: string;
+  originalLandUseLabel: string;
+  gisOverlapPercent: number;
+  liveVerifiedAtUtc: string;
+  availabilityNotice: string;
 }
 
 export interface FindSuitableLandFormState {
@@ -519,6 +533,7 @@ export interface LeaseInterestRequestSummary {
   submittedAtUtc?: string | null;
   requestedPurpose: LandUseType;
   requestedDurationYears?: number | null;
+  cadastralNumber?: string | null;
 }
 
 export interface ParcelShortlistItem {

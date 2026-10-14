@@ -1,18 +1,21 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/shared/components/Button";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { PageHeading } from "@/shared/components/PageLayout";
 import { RecommendationAssessmentPanel } from "@/modules/component-01-land-intelligence/components/RecommendationAssessmentPanel";
 import { RecommendationCard } from "@/modules/component-01-land-intelligence/components/RecommendationCard";
+import { listResearchSupplement, searchRecommendations } from "@/modules/component-01-land-intelligence/services/landIntelligenceApi";
 import {
   FIND_SUITABLE_LAND_FORM_SESSION_KEY,
   RECOMMENDATIONS_SESSION_KEY,
   type FindSuitableLandFormState,
   type LandRecommendationSearchRequest,
+  type LandRecommendationSearchResultsResponse,
   type RecommendationsSessionPayload,
+  type ResearchSupplementParcelResponse,
 } from "@/modules/component-01-land-intelligence/types/landIntelligence";
 import { landUseTypeLabels } from "@/modules/component-01-land-intelligence/utils/enumMappings";
 import {
@@ -116,6 +119,11 @@ function buildSummaryChips(
       label: `Source land use: ${request.sourceReportedLandUse}`,
     });
   }
+  if (request.researchLandCoverGroup) {
+    chips.push({
+      label: `Project land cover: ${request.researchLandCoverGroup}${request.researchLandCoverGroup === "Coconut" ? " (original or GIS)" : ""}`,
+    });
+  }
 
   return chips;
 }
@@ -153,6 +161,63 @@ function ResultsSkeleton() {
 
 export function RecommendationsView() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [researchSupplement, setResearchSupplement] = useState<ResearchSupplementParcelResponse[]>([]);
+  const [loadingFromUrl, setLoadingFromUrl] = useState(false);
+  const [urlError, setUrlError] = useState<string | null>(null);
+  const [urlResponse, setUrlResponse] = useState<LandRecommendationSearchResultsResponse | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    listResearchSupplement()
+      .then((rows) => { if (!cancelled) setResearchSupplement(rows); })
+      .catch(() => { if (!cancelled) setResearchSupplement([]); });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Load from URL parameters if present
+  useEffect(() => {
+    const purpose = searchParams.get("purpose");
+    if (!purpose) {
+      return;
+    }
+
+    let cancelled = false;
+    setLoadingFromUrl(true);
+    setUrlError(null);
+
+    const request: LandRecommendationSearchRequest = {
+      requiredPurpose: Number(purpose) as any,
+      targetAreaHectares: searchParams.get("area") ? Number(searchParams.get("area")) : undefined,
+      preferredLocation: (searchParams.get("district") || searchParams.get("province")) ? {
+        district: searchParams.get("district") || undefined,
+        province: searchParams.get("province") || undefined,
+        divisionalSecretariat: undefined,
+      } : undefined,
+      sourceReportedLandUse: searchParams.get("landUse") || undefined,
+      researchLandCoverGroup: searchParams.get("landCover") || undefined,
+      maxResults: searchParams.get("maxResults") ? Number(searchParams.get("maxResults")) : undefined,
+    };
+
+    searchRecommendations(request)
+      .then((response) => {
+        if (!cancelled) {
+          setUrlResponse(response);
+          setLoadingFromUrl(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setUrlError("Failed to load results from URL parameters.");
+          setLoadingFromUrl(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams]);
+
   const hydrated = useSyncExternalStore(
     subscribeNoop,
     getClientHydrated,
@@ -163,6 +228,7 @@ export function RecommendationsView() {
     getPayloadSnapshot,
     getServerPayloadSnapshot,
   );
+  const supplementByParcelId = new Map(researchSupplement.map((row) => [row.parcelId, row]));
 
   if (!hydrated) {
     return (
@@ -176,7 +242,47 @@ export function RecommendationsView() {
     );
   }
 
-  if (!payload) {
+  if (loadingFromUrl) {
+    return (
+      <>
+        <PageHeading
+          title="Suitable Land Results"
+          subtitle="Loading results from URL parameters…"
+        />
+        <ResultsSkeleton />
+      </>
+    );
+  }
+
+  if (urlError) {
+    return (
+      <>
+        <PageHeading
+          title="Suitable Land Results"
+          subtitle="Ranked parcels from the Component 1 recommendation engine."
+        />
+        <EmptyState
+          title="Failed to load results"
+          description={urlError}
+          action={
+            <Button
+              href="/land-intelligence/find-suitable-land"
+              variant="primary"
+            >
+              Find Suitable Land
+            </Button>
+          }
+        />
+      </>
+    );
+  }
+
+  // Use URL response if available, otherwise fall back to sessionStorage
+  const response = urlResponse || payload?.response;
+  const request = urlResponse ? null : payload?.request;
+  const formState = urlResponse ? null : payload?.formState;
+
+  if (!response) {
     return (
       <>
         <PageHeading
@@ -198,12 +304,10 @@ export function RecommendationsView() {
       </>
     );
   }
-
-  const { request, response, formState } = payload;
   const transparency = response.transparency;
-  const chips = buildSummaryChips(request, formState);
+  const chips = request && formState ? buildSummaryChips(request, formState) : [];
   const canClearFilters = hasRestrictiveFilters(formState);
-  const searchDistrict = request.preferredLocation?.district?.trim() || null;
+  const searchDistrict = request?.preferredLocation?.district?.trim() || null;
 
   function clearRestrictiveFilters() {
     if (!formState) {
@@ -232,7 +336,7 @@ export function RecommendationsView() {
     <>
       <PageHeading
         title="Suitable Land Results"
-        subtitle="Rule-based scores only (not ML or legal availability). Tied scores share a rank; display order is cadastral and does not imply suitability."
+        subtitle=""
         action={
           <Button
             href="/land-intelligence/find-suitable-land"
@@ -252,14 +356,20 @@ export function RecommendationsView() {
           </span>
         </div>
         <div className={styles.chipRow}>
-          {chips.map((chip) => (
-            <span
-              key={chip.label}
-              className={`${styles.chip} ${chip.muted ? styles.chipMuted : ""}`}
-            >
-              {chip.label}
+          {chips.length > 0 ? (
+            chips.map((chip) => (
+              <span
+                key={chip.label}
+                className={`${styles.chip} ${chip.muted ? styles.chipMuted : ""}`}
+              >
+                {chip.label}
+              </span>
+            ))
+          ) : (
+            <span className={`${styles.chip} ${styles.chipMuted}`}>
+              Search parameters loaded from URL
             </span>
-          ))}
+          )}
         </div>
         {transparency && transparency.filterStages.length > 0 ? (
           <p className={styles.pipeline}>
@@ -314,6 +424,7 @@ export function RecommendationsView() {
                 key={item.parcelId}
                 recommendation={item}
                 searchDistrict={searchDistrict}
+                researchCover={supplementByParcelId.get(item.parcelId)}
               />
             ))}
           </div>

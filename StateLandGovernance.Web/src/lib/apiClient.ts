@@ -119,7 +119,26 @@ export async function apiGet<T>(
     throw await parseError(response);
   }
 
-  return (await response.json()) as T;
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  const text = await response.text();
+  if (!text) {
+    return undefined as T;
+  }
+
+  return JSON.parse(text) as T;
+}
+
+/** GET that maps HTTP 204 / empty body to null. */
+export async function apiGetOrNull<T>(
+  path: string,
+  init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
+): Promise<T | null> {
+  const result = await apiGet<T | undefined>(path, init, authRole);
+  return result ?? null;
 }
 
 export async function apiPost<T>(

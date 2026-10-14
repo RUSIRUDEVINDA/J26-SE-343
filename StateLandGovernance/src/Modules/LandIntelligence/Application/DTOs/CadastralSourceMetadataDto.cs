@@ -35,4 +35,5 @@ public sealed record CadastralSourceMetadataDto(
 
 public sealed record SourceReportedLandUseOptionDto(
     string Code,
-    string EnglishLabel);
+    string EnglishLabel,
+    int ParcelCount);

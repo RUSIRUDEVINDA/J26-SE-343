@@ -10,11 +10,11 @@ export function LeaseInterestPageClient({ parcelId }: { parcelId: string }) {
   return (
     <>
       <PageHeading
-        title={onReviewStep ? "Review lease interest" : "Express lease interest"}
+        title={onReviewStep ? "Review preliminary interest" : "Express preliminary interest"}
         subtitle={
           onReviewStep
             ? "Check your details before submitting for preliminary assessment."
-            : "Submit a preliminary interest request for officer verification. This is not a reservation or approval."
+            : "Start a request only when ready. Viewing this page alone does not create a draft. Submission is preliminary verification only — not a reservation or approval."
         }
       />
       <LeaseInterestFormView

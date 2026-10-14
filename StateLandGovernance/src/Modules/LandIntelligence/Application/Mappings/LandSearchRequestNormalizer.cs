@@ -11,6 +11,7 @@ public static class LandSearchRequestNormalizer
             District = TrimOrNull(request.District),
             DivisionalSecretariat = TrimOrNull(request.DivisionalSecretariat),
             SourceReportedLandUse = TrimOrNull(request.SourceReportedLandUse),
+            ResearchLandCoverGroup = TrimOrNull(request.ResearchLandCoverGroup),
         };
 
     private static string? TrimOrNull(string? value) =>
