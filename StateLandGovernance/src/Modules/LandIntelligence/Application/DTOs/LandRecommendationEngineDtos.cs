@@ -23,6 +23,8 @@ public sealed record LandRecommendationSearchRequest
     public LandUseType? RequiredLandUse { get; init; }
     /// <summary>Exact match on source-reported land-use code or English label (real cadastre).</summary>
     public string? SourceReportedLandUse { get; init; }
+    /// <summary>Project land-cover group, kept separate from the original source land-use label.</summary>
+    public string? ResearchLandCoverGroup { get; init; }
     public RegulatoryCriteria? Regulatory { get; init; }
     public IReadOnlyList<CustomCriterionCriteria>? AdditionalCriteria { get; init; }
     public Guid? TargetParcelId { get; init; }
