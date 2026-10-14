@@ -19,6 +19,7 @@ using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
 using StateLandGovernance.LandIntelligence.Presentation.DependencyInjection;
+using StateLandGovernance.LandIntelligence.Presentation.Security;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
 using StateLandGovernance.Api.Observability;
 using StateLandGovernance.BuildingBlocks.Observability;
@@ -101,6 +102,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
 builder.Services.AddLandIntelligencePresentation();
+builder.Services.AddLandIntelligenceAuthentication(builder.Configuration, builder.Environment);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -230,6 +232,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseCors("DevelopmentFrontend");
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok(new

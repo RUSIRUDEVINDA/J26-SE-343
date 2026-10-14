@@ -2,9 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { getResearchDemoConfig } from "@/modules/component-01-land-intelligence/services/researchDemoApi";
 import {
   component01NavItems,
   LAND_INTELLIGENCE_BASE,
+  officerLeaseInterestLookupNavItem,
+  officerLeaseInterestQueueNavItem,
   type NavItem,
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
@@ -35,6 +39,46 @@ export function Sidebar({
   compactMobile?: boolean;
 }) {
   const pathname = usePathname();
+  const [officerLookupEnabled, setOfficerLookupEnabled] = useState(false);
+  const isLandIntelligenceNav = basePath === LAND_INTELLIGENCE_BASE;
+
+  useEffect(() => {
+    if (!isLandIntelligenceNav) {
+      return;
+    }
+    let cancelled = false;
+    void getResearchDemoConfig()
+      .then((config) => {
+        if (!cancelled) {
+          setOfficerLookupEnabled(config.officerLeaseInterestNicLookupEnabled);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setOfficerLookupEnabled(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isLandIntelligenceNav]);
+
+  const navItems = useMemo((): NavItem[] => {
+    if (!isLandIntelligenceNav || !officerLookupEnabled) {
+      return items;
+    }
+    const alreadyPresent = items.some(
+      (item) => item.href === officerLeaseInterestQueueNavItem.href,
+    );
+    if (alreadyPresent) {
+      return items;
+    }
+    return [
+      ...items,
+      officerLeaseInterestQueueNavItem,
+      officerLeaseInterestLookupNavItem,
+    ];
+  }, [items, isLandIntelligenceNav, officerLookupEnabled]);
 
   return (
     <aside
@@ -42,7 +86,7 @@ export function Sidebar({
       aria-label={label}
     >
       <nav className={styles.nav}>
-        {items.map((item) => {
+        {navItems.map((item) => {
           const active = isActive(pathname, item.href, basePath);
           const className = [
             styles.link,
