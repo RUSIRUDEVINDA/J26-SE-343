@@ -23,8 +23,22 @@ public sealed record BlockchainAnchorReceipt(
     AnchorStatus AnchorStatus,
     string? TransactionReference,
     long? BlockNumber,
-    DateTime? AnchoredAtUtc
+    DateTime? AnchoredAtUtc,
+    AuditVerificationStatus VerificationStatus = AuditVerificationStatus.Pending,
+    DateTime? LastVerifiedAtUtc = null
 );
+
+public sealed record GovernanceAuditCaseHistoryDto(
+    Guid AuditRecordId,
+    string CaseId,
+    string OperationType,
+    string HashVersion,
+    DateTime CreatedAtUtc,
+    string AnchorStatus,
+    string? TransactionReference,
+    long? BlockNumber,
+    string LastVerificationStatus,
+    DateTime? LastVerifiedAtUtc);
 
 /// <summary>
 /// Neutral application model representing an audit record integrity verification outcome.
@@ -56,5 +70,6 @@ public sealed record GovernanceAuditVerificationReceiptDto(
     long? BlockNumber,
     DateTime? AnchoredAtUtc,
     DateTime? VerifiedAtUtc,
-    string Explanation
+    string Explanation,
+    string RecordVersion = "AUDIT-V1"
 );

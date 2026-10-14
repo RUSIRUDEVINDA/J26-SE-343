@@ -17,5 +17,6 @@ public interface IDocumentAnalysisExecutionService
         Guid analysisRunId,
         int expectedAnalysisRevision,
         string? languageHint = null,
+        string? semanticProvider = null,
         CancellationToken cancellationToken = default);
 }

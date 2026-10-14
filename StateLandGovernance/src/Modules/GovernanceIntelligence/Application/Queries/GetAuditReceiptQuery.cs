@@ -35,13 +35,32 @@ public sealed class GetAuditReceiptQueryHandler
             return null;
         }
 
-        var currentHash = GovernanceAuditHasher.ComputeCanonicalHash(auditRecord);
         var receipt = await _anchorStore.GetReceiptByAuditRecordIdAsync(query.AuditRecordId, cancellationToken);
 
+        if (!GovernanceAuditHasher.IsSupportedVersion(auditRecord.HashVersion))
+        {
+            return new GovernanceAuditVerificationReceiptDto(
+                RecordId: auditRecord.Id,
+                EngineType: auditRecord.EngineType.ToString(),
+                ActionName: auditRecord.ActionName,
+                GovernanceStatus: auditRecord.Status,
+                DecisionRecordedAt: auditRecord.Timestamp,
+                RecordHash: receipt?.RecordHash ?? string.Empty,
+                VerificationStatus: AuditVerificationStatus.UnsupportedVersion.ToString(),
+                AnchorStatus: (receipt?.AnchorStatus ?? AnchorStatus.NotAnchored).ToString(),
+                LedgerTransactionReference: receipt?.TransactionReference,
+                BlockNumber: receipt?.BlockNumber,
+                AnchoredAtUtc: receipt?.AnchoredAtUtc,
+                VerifiedAtUtc: null,
+                Explanation: $"Audit hash version '{auditRecord.HashVersion}' is unsupported; verification is fail-closed.",
+                RecordVersion: auditRecord.HashVersion);
+        }
+
+        var currentHash = GovernanceAuditHasher.ComputeCanonicalHash(auditRecord, auditRecord.HashVersion);
+
         var anchorStatus = receipt?.AnchorStatus ?? AnchorStatus.NotAnchored;
-        var verificationStatus = anchorStatus == AnchorStatus.Anchored
-            ? AuditVerificationStatus.Pending.ToString()
-            : AuditVerificationStatus.NotAnchored.ToString();
+        var verificationStatus = receipt?.VerificationStatus.ToString()
+            ?? AuditVerificationStatus.NotAnchored.ToString();
 
         return new GovernanceAuditVerificationReceiptDto(
             RecordId: auditRecord.Id,
@@ -55,10 +74,11 @@ public sealed class GetAuditReceiptQueryHandler
             LedgerTransactionReference: receipt?.TransactionReference,
             BlockNumber: receipt?.BlockNumber,
             AnchoredAtUtc: receipt?.AnchoredAtUtc,
-            VerifiedAtUtc: null,
+            VerifiedAtUtc: receipt?.LastVerifiedAtUtc,
             Explanation: receipt != null
                 ? $"Ledger receipt status: {receipt.AnchorStatus}"
-                : "No blockchain anchor receipt has been recorded for this governance record."
+                : "No blockchain anchor receipt has been recorded for this governance record.",
+            RecordVersion: auditRecord.HashVersion
         );
     }
 }

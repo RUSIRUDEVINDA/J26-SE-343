@@ -6,7 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using StateLandGovernance.BuildingBlocks.CQRS;
+using StateLandGovernance.WorkflowGovernance.Application.Commands;
+using StateLandGovernance.WorkflowGovernance.Application.DTOs;
 using StateLandGovernance.WorkflowGovernance.Application.Interfaces;
+using StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Repositories;
 
@@ -37,6 +42,13 @@ public static class DependencyInjection
     {
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IWorkflowInstanceRepository, WorkflowInstanceRepository>();
+        services.TryAddScoped<IComponent4ScreeningGateway>(sp =>
+            new Component4ScreeningGateway(
+                sp,
+                sp.GetRequiredService<ILeaseCaseRepository>(),
+                sp.GetRequiredService<ICommandHandler<RecordScreeningResultCommand, ScreeningResultDto>>(),
+                sp.GetService<TimeProvider>() ?? TimeProvider.System,
+                sp.GetService<ILogger<Component4ScreeningGateway>>()));
 
         if (!allowInMemoryLeasePersistence)
         {
@@ -63,7 +75,6 @@ public static class DependencyInjection
         services.TryAddScoped<IDocumentCompletenessAssessmentRepository>(_ => null!);
         services.TryAddScoped<IProposalTemplateProvider>(_ => null!);
         services.TryAddScoped<IDocumentRequirementProvider>(_ => null!);
-        services.TryAddScoped<IComponent4ScreeningGateway>(_ => null!);
 
         return services;
     }

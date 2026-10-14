@@ -500,6 +500,117 @@ def test_ollama_extractor_conflicting_values_preserved_with_warning():
     assert any("Conflicting candidates extracted for field 'land_extent'" in w for w in res.warnings)
 
 
+def test_settings_ollama_timeout_configuration_driven():
+    """Verify settings resolve 240s in development, 60s in production, and accept overrides."""
+    from app.core.config import Settings
+
+    dev_settings = Settings(environment="development")
+    assert dev_settings.ollama_timeout_seconds == 240.0
+
+    prod_settings = Settings(environment="production")
+    assert prod_settings.ollama_timeout_seconds == 60.0
+
+    custom_settings = Settings(ollama_timeout_seconds=180.0)
+    assert custom_settings.ollama_timeout_seconds == 180.0
+
+    with pytest.raises(ValueError):
+        Settings(ollama_timeout_seconds=0.0)
+
+    with pytest.raises(ValueError):
+        Settings(ollama_timeout_seconds=-10.0)
+
+
+def test_ollama_client_and_extractor_timeout_override():
+    """Verify OllamaClient and OllamaQwenSemanticExtractor accept custom timeout."""
+    client = OllamaClient(timeout_seconds=45.0)
+    assert client.timeout_seconds == 45.0
+
+    extractor = OllamaQwenSemanticExtractor(timeout_seconds=120.0)
+    assert extractor.client.timeout_seconds == 120.0
+
+
+def test_ollama_extractor_timeout_produces_unavailable_classification_and_warning():
+    """
+    Verify that when Ollama chat times out on all chunks:
+    1. It produces code='Unavailable' and confidence=None (NOT Unknown 0.0%).
+    2. Candidate facts list is strictly empty.
+    3. Warnings include timeout notice and incomplete inference warning.
+    4. Test executes instantaneously with mock client (does not wait 240s).
+    """
+    client = OllamaClient(timeout_seconds=240.0)
+    client.list_models = lambda: [{"name": "qwen3:1.7b"}]
+
+    def mock_timeout_chat(**kwargs):
+        raise OllamaTimeoutError("Ollama chat request timed out after 240.0s for model 'qwen3:1.7b'.")
+
+    client.chat = mock_timeout_chat
+    extractor = OllamaQwenSemanticExtractor(client=client, model_name="qwen3:1.7b")
+
+    pages = [{"page_number": 1, "text": "Applicant Name: Test Corporation"}]
+    res = extractor.extract(pages)
+
+    assert res.classification.code == "Unavailable"
+    assert res.classification.confidence is None
+    assert len(res.facts) == 0
+    assert any("Chunk 0 Ollama failure" in w and "timed out" in w for w in res.warnings)
+    assert any("Semantic inference did not complete" in w for w in res.warnings)
+
+
+def test_api_analyze_with_unavailable_semantic_classification(monkeypatch):
+    """Verify FastAPI /v1/analyze endpoint renders Unavailable with null confidence when semantic fails."""
+    from app.ocr.engine import OCRResponse, OCRPageResult
+    from app.semantic.extractor import SemanticExtractionResult, SemanticClassificationDto
+
+    fake_ocr = OCRResponse(
+        request_id="test-req-1",
+        language_mode="eng",
+        preprocessed=True,
+        page_count=1,
+        pages=[
+            OCRPageResult(
+                page_number=1,
+                raw_text="Sample raw text",
+                clean_text="Sample clean text",
+                text="Sample text",
+                character_count=16,
+                confidence=None,
+            )
+        ],
+        total_character_count=16,
+        duration_ms=10.0,
+    )
+
+    class MockFailingExtractor(BaseSemanticExtractor):
+        def extract(self, pages, category_hint=None):
+            return SemanticExtractionResult(
+                classification=SemanticClassificationDto(code="Unavailable", confidence=None),
+                facts=[],
+                raw_model_response="",
+                prompt_version=PROMPT_VERSION,
+                model_identifier="qwen3:1.7b",
+                duration_ms=20.0,
+                warnings=["Chunk 0 Ollama failure: Ollama chat request timed out after 240.0s for model 'qwen3:1.7b'."],
+            )
+
+    monkeypatch.setattr("app.api.endpoints.ocr_engine.process_document", lambda **kwargs: fake_ocr)
+    monkeypatch.setattr("app.api.endpoints.get_semantic_extractor", lambda: MockFailingExtractor())
+
+    pdf_bytes = b"%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R >>\nendobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer\n<< /Size 4 /Root 1 0 R >>\nstartxref\n165\n%%EOF\n"
+
+    res = client.post(
+        "/v1/analyze",
+        files={"file": ("test.pdf", pdf_bytes, "application/pdf")},
+        data={"language_mode": "eng", "preprocess": "true"},
+    )
+
+    assert res.status_code == 200
+    data = res.json()
+    assert data["classification"]["code"] == "Unavailable"
+    assert data["classification"]["confidence"] is None
+    assert data["facts"] == []
+    assert any("timed out" in w for w in data["warnings"])
+
+
 # === 9. GATED REAL OLLAMA LIVE TESTS ===
 
 LIVE_GATE = not os.getenv("RUN_QWEN_LIVE_TESTS", "").lower() in ("true", "1", "yes")

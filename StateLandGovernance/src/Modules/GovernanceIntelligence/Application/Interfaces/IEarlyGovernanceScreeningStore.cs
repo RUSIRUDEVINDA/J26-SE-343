@@ -11,6 +11,9 @@ namespace StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 /// </summary>
 public interface IEarlyGovernanceScreeningStore
 {
+    public const int DefaultHistoryLimit = 100;
+    public const int MaxHistoryLimit = 200;
+
     /// <summary>
     /// Persists a new early governance screening evaluation snapshot using caller-supplied assessment identity and timestamp.
     /// </summary>
@@ -36,6 +39,11 @@ public interface IEarlyGovernanceScreeningStore
     /// </summary>
     Task<StoredEarlyGovernanceScreeningDto?> GetByIdAsync(
         Guid assessmentId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<StoredEarlyGovernanceScreeningDto>> GetAssessmentHistoryByCaseIdAsync(
+        string caseId,
+        int limit = DefaultHistoryLimit,
         CancellationToken cancellationToken = default);
 
     Task<StoredEarlyGovernanceReferralDto?> GetReferralByIdAsync(

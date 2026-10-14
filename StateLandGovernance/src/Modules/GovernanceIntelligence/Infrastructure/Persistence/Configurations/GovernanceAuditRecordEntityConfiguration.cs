@@ -11,7 +11,9 @@ public sealed class GovernanceAuditRecordEntityConfiguration : IEntityTypeConfig
 {
     public void Configure(EntityTypeBuilder<GovernanceAuditRecordEntity> builder)
     {
-        builder.ToTable("governance_audit_records", GovernanceIntelligenceDbContext.SchemaName);
+        builder.ToTable("governance_audit_records", GovernanceIntelligenceDbContext.SchemaName, t => t.HasCheckConstraint(
+            "CK_gov_audit_records_hash_version",
+            "\"HashVersion\" IN ('AUDIT-V1', 'AUDIT-V2')"));
 
         builder.HasKey(x => x.Id);
 
@@ -30,6 +32,11 @@ public sealed class GovernanceAuditRecordEntityConfiguration : IEntityTypeConfig
         builder.Property(x => x.Timestamp)
             .HasColumnType("timestamp with time zone")
             .IsRequired();
+
+        builder.Property(x => x.HashVersion)
+            .HasMaxLength(16)
+            .IsRequired()
+            .HasDefaultValue("AUDIT-V1");
 
         builder.HasIndex(x => x.Timestamp)
             .HasDatabaseName("idx_gov_audit_timestamp");

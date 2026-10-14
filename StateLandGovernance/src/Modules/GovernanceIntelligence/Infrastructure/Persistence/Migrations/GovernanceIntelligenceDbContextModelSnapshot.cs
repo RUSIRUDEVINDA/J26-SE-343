@@ -109,6 +109,10 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                     b.Property<Guid>("AuditRecordId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("CaseId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<string>("DeterministicEvaluationId")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -138,6 +142,9 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                     b.HasIndex("AuditRecordId")
                         .IsUnique()
                         .HasDatabaseName("idx_uniq_compliance_eval_audit_id");
+
+                    b.HasIndex("CaseId")
+                        .HasDatabaseName("idx_comp_eval_case_id");
 
                     b.HasIndex("DeterministicEvaluationId")
                         .HasDatabaseName("idx_comp_eval_det_id");
@@ -218,6 +225,420 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .HasDatabaseName("idx_uniq_rule_code_version");
 
                     b.ToTable("compliance_rules", "governance_intelligence");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.Component1CaseProjectionEntity", b =>
+                {
+                    b.Property<Guid>("ProjectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("projection_id");
+
+                    b.Property<string>("BoundaryConfirmationStatus")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("boundary_confirmation_status");
+
+                    b.Property<string>("CaseId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("case_id");
+
+                    b.Property<string>("DistrictName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("district_name");
+
+                    b.Property<string>("DivisionCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("division_code");
+
+                    b.Property<bool>("EncumbranceOrDisputeFlag")
+                        .HasColumnType("boolean")
+                        .HasColumnName("encumbrance_or_dispute_flag");
+
+                    b.Property<decimal>("ExtentHa")
+                        .HasPrecision(14, 4)
+                        .HasColumnType("numeric(14,4)")
+                        .HasColumnName("extent_ha");
+
+                    b.Property<DateTimeOffset>("GeneratedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("generated_at_utc");
+
+                    b.Property<string>("GnDivisionCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("gn_division_code");
+
+                    b.Property<DateTimeOffset>("IngestedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ingested_at_utc");
+
+                    b.Property<string>("InputSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("input_sha256");
+
+                    b.Property<bool>("IsSynthetic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_synthetic");
+
+                    b.Property<string>("LandParcelId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("land_parcel_id");
+
+                    b.Property<string>("OverlappingSensitiveZoneCodesJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("overlapping_sensitive_zone_codes_json");
+
+                    b.Property<string>("OwnershipEvidenceStatus")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("ownership_evidence_status");
+
+                    b.Property<string>("ParcelEvidenceRefsJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("parcel_evidence_refs_json");
+
+                    b.Property<string>("ProtectedZoneOverlapState")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("protected_zone_overlap_state");
+
+                    b.Property<string>("ProvenanceKind")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("provenance_kind");
+
+                    b.Property<string>("ProvinceName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("province_name");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("purpose");
+
+                    b.Property<string>("RequestedLandUseCategory")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("requested_land_use_category");
+
+                    b.Property<DateTimeOffset>("SourceObservedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("source_observed_at_utc");
+
+                    b.Property<string>("SourceRecordId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("source_record_id");
+
+                    b.Property<string>("SourceRecordVersion")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("source_record_version");
+
+                    b.Property<string>("SourceSystem")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("source_system");
+
+                    b.Property<string>("SyntheticSeedId")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("synthetic_seed_id");
+
+                    b.Property<string>("SyntheticSeedVersion")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("synthetic_seed_version");
+
+                    b.HasKey("ProjectionId");
+
+                    b.HasIndex("CaseId")
+                        .HasDatabaseName("ix_c1_case_projections_case_id");
+
+                    b.HasIndex("LandParcelId")
+                        .HasDatabaseName("ix_c1_case_projections_land_parcel_id");
+
+                    b.HasIndex("CaseId", "SourceRecordVersion", "InputSha256")
+                        .IsUnique()
+                        .HasDatabaseName("ux_c1_case_projections_case_version_sha256");
+
+                    b.ToTable("component1_case_projections", "governance_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("ck_c1_case_projections_boundary_confirmation_status", "boundary_confirmation_status IN ('BoundaryConfirmed', 'BoundaryPendingSurvey', 'BoundaryDisputed', 'BoundaryEvidenceMissing')");
+
+                            t.HasCheckConstraint("ck_c1_case_projections_case_id_not_blank", "length(btrim(case_id)) > 0");
+
+                            t.HasCheckConstraint("ck_c1_case_projections_extent_ha_positive", "extent_ha > 0");
+
+                            t.HasCheckConstraint("ck_c1_case_projections_input_sha256_len", "char_length(input_sha256) = 64");
+
+                            t.HasCheckConstraint("ck_c1_case_projections_land_parcel_id_not_blank", "length(btrim(land_parcel_id)) > 0");
+
+                            t.HasCheckConstraint("ck_c1_case_projections_ownership_evidence_status", "ownership_evidence_status IN ('EvidenceProvided', 'EvidenceMissing', 'EvidenceConflicting', 'EvidenceIncomplete')");
+
+                            t.HasCheckConstraint("ck_c1_case_projections_protected_zone_overlap_state", "protected_zone_overlap_state IN ('NoProtectedZoneOverlap', 'ProtectedZoneOverlapDetected', 'ProtectedZoneEvidenceIncomplete', 'ProtectedZoneCheckNotPerformed')");
+
+                            t.HasCheckConstraint("ck_c1_case_projections_provenance_kind", "provenance_kind IN ('RealComponent1', 'RealComponent3', 'SyntheticFixture', 'SyntheticPp1Seed')");
+
+                            t.HasCheckConstraint("ck_c1_case_projections_purpose", "purpose IN ('PP1Demonstration', 'AutomatedTest', 'LocalDevelopment', 'ProductionPeerIntegration')");
+
+                            t.HasCheckConstraint("ck_c1_case_projections_synthetic_consistency", "(is_synthetic = true AND provenance_kind IN ('SyntheticFixture', 'SyntheticPp1Seed') AND synthetic_seed_id IS NOT NULL AND length(btrim(synthetic_seed_id)) > 0 AND synthetic_seed_version IS NOT NULL AND length(btrim(synthetic_seed_version)) > 0) OR (is_synthetic = false AND provenance_kind NOT IN ('SyntheticFixture', 'SyntheticPp1Seed') AND synthetic_seed_id IS NULL AND synthetic_seed_version IS NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.Component3WorkflowProjectionEntity", b =>
+                {
+                    b.Property<Guid>("ProjectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("projection_id");
+
+                    b.Property<DateTimeOffset?>("ApprovalHandoverOccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("approval_handover_occurred_at");
+
+                    b.Property<string>("ApprovalHandoverSource")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("approval_handover_source");
+
+                    b.Property<string>("ApprovalHandoverSourceReference")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("approval_handover_source_reference");
+
+                    b.Property<string>("ApprovalHandoverStatus")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("approval_handover_status");
+
+                    b.Property<string>("CaseId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("case_id");
+
+                    b.Property<DateTimeOffset?>("CompleteProposalRoadmapStartOccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("complete_proposal_roadmap_start_occurred_at");
+
+                    b.Property<string>("CompleteProposalRoadmapStartSource")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("complete_proposal_roadmap_start_source");
+
+                    b.Property<string>("CompleteProposalRoadmapStartSourceReference")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("complete_proposal_roadmap_start_source_reference");
+
+                    b.Property<string>("CompleteProposalRoadmapStartStatus")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("complete_proposal_roadmap_start_status");
+
+                    b.Property<string>("CurrentOrTerminalStageCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("current_or_terminal_stage_code");
+
+                    b.Property<int>("EventCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("event_count");
+
+                    b.Property<string>("EventTimeZone")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("event_time_zone");
+
+                    b.Property<string>("EventTimestampSemantics")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)")
+                        .HasColumnName("event_timestamp_semantics");
+
+                    b.Property<string>("EventsSnapshotJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("events_snapshot_json");
+
+                    b.Property<string>("FinalEventActivity")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("final_event_activity");
+
+                    b.Property<DateTimeOffset>("FirstEventTimestampUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("first_event_timestamp_utc");
+
+                    b.Property<DateTimeOffset>("GeneratedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("generated_at_utc");
+
+                    b.Property<DateTimeOffset>("IngestedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ingested_at_utc");
+
+                    b.Property<string>("InputSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("input_sha256");
+
+                    b.Property<bool>("IsSynthetic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_synthetic");
+
+                    b.Property<DateTimeOffset>("LastEventTimestampUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_event_timestamp_utc");
+
+                    b.Property<string>("ProvenanceKind")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("provenance_kind");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("purpose");
+
+                    b.Property<DateTimeOffset>("SourceObservedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("source_observed_at_utc");
+
+                    b.Property<string>("SourceRecordId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("source_record_id");
+
+                    b.Property<string>("SourceRecordVersion")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("source_record_version");
+
+                    b.Property<string>("SourceSystem")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("source_system");
+
+                    b.Property<string>("SyntheticSeedId")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("synthetic_seed_id");
+
+                    b.Property<string>("SyntheticSeedVersion")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("synthetic_seed_version");
+
+                    b.Property<string>("TraceCompleteness")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("trace_completeness");
+
+                    b.Property<string>("TraceStatus")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("trace_status");
+
+                    b.Property<Guid>("WorkflowRunId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workflow_run_id");
+
+                    b.Property<string>("WorkflowType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("workflow_type");
+
+                    b.HasKey("ProjectionId");
+
+                    b.HasIndex("CaseId")
+                        .HasDatabaseName("ix_c3_workflow_projections_case_id");
+
+                    b.HasIndex("WorkflowRunId")
+                        .HasDatabaseName("ix_c3_workflow_projections_workflow_run_id");
+
+                    b.HasIndex("WorkflowRunId", "SourceRecordVersion", "InputSha256")
+                        .IsUnique()
+                        .HasDatabaseName("ux_c3_workflow_projections_run_version_sha256");
+
+                    b.ToTable("component3_workflow_projections", "governance_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("ck_c3_workflow_projections_anomaly_eligibility_consistency", "trace_completeness <> 'CompletedTraceEligibleForAnomalyScoring' OR (trace_status <> 'Ongoing' AND final_event_activity = 'DS Final Notification')");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_case_id_not_blank", "length(btrim(case_id)) > 0");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_event_chronology", "last_event_timestamp_utc >= first_event_timestamp_utc");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_event_count_positive", "event_count > 0");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_event_time_zone", "event_time_zone = 'Asia/Colombo'");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_event_timestamp_semantics", "event_timestamp_semantics IN ('ExactUtcTimestamp', 'LocalBusinessDayWithColomboOffset', 'CalendarDateOnlyMidnightColombo')");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_handover_instant_consistency", "(approval_handover_status = 'Confirmed' AND approval_handover_occurred_at IS NOT NULL AND trace_status <> 'Ongoing') OR (approval_handover_status = 'Unavailable' AND approval_handover_occurred_at IS NULL) OR (approval_handover_status = 'Unconfirmed')");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_handover_status", "approval_handover_status IN ('Confirmed', 'Unconfirmed', 'Unavailable')");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_input_sha256_len", "char_length(input_sha256) = 64");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_provenance_kind", "provenance_kind IN ('RealComponent1', 'RealComponent3', 'SyntheticFixture', 'SyntheticPp1Seed')");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_purpose", "purpose IN ('PP1Demonstration', 'AutomatedTest', 'LocalDevelopment', 'ProductionPeerIntegration')");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_roadmap_start_instant_consistency", "(complete_proposal_roadmap_start_status = 'Confirmed' AND complete_proposal_roadmap_start_occurred_at IS NOT NULL) OR (complete_proposal_roadmap_start_status = 'Unavailable' AND complete_proposal_roadmap_start_occurred_at IS NULL) OR (complete_proposal_roadmap_start_status = 'Unconfirmed')");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_roadmap_start_status", "complete_proposal_roadmap_start_status IN ('Confirmed', 'Unconfirmed', 'Unavailable')");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_synthetic_consistency", "(is_synthetic = true AND provenance_kind IN ('SyntheticFixture', 'SyntheticPp1Seed') AND synthetic_seed_id IS NOT NULL AND length(btrim(synthetic_seed_id)) > 0 AND synthetic_seed_version IS NOT NULL AND length(btrim(synthetic_seed_version)) > 0) OR (is_synthetic = false AND provenance_kind NOT IN ('SyntheticFixture', 'SyntheticPp1Seed') AND synthetic_seed_id IS NULL AND synthetic_seed_version IS NULL)");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_trace_completeness", "trace_completeness IN ('CompletedTraceEligibleForAnomalyScoring', 'PartialTraceIneligibleForAnomalyScoring', 'InvalidOrIncompleteTrace')");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_trace_status", "trace_status IN ('Completed', 'Ongoing', 'Stopped', 'Cancelled', 'Suspended')");
+
+                            t.HasCheckConstraint("ck_c3_workflow_projections_workflow_type_not_blank", "length(btrim(workflow_type)) > 0");
+                        });
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ConditionResultEntity", b =>
@@ -664,6 +1085,123 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                     b.ToTable("early_governance_screening_evaluations", "governance_intelligence");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceAuditAnchorOutboxEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AuditRecordId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("EngineType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LastErrorMessage")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime>("NextAttemptAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RecordHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("RecordVersion")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuditRecordId")
+                        .HasDatabaseName("idx_gov_anchor_outbox_audit_record_id");
+
+                    b.HasIndex("Status", "NextAttemptAtUtc")
+                        .HasDatabaseName("idx_gov_anchor_outbox_status_next_attempt");
+
+                    b.ToTable("governance_audit_anchor_outbox", "governance_intelligence");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceAuditAnchorReceiptEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AnchorStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("AnchoredAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("AuditRecordId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long?>("BlockNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ContractAddress")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime?>("LastVerifiedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RecordHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TransactionReference")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("VerificationStatus")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnchorStatus")
+                        .HasDatabaseName("idx_gov_anchor_receipt_status");
+
+                    b.HasIndex("AuditRecordId")
+                        .IsUnique()
+                        .HasDatabaseName("idx_gov_anchor_receipt_audit_record_id");
+
+                    b.HasIndex("RecordHash")
+                        .HasDatabaseName("idx_gov_anchor_receipt_record_hash");
+
+                    b.ToTable("governance_audit_anchor_receipts", "governance_intelligence");
+                });
+
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceAuditRecordEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -681,6 +1219,13 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
 
                     b.Property<int>("EngineType")
                         .HasColumnType("integer");
+
+                    b.Property<string>("HashVersion")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasDefaultValue("AUDIT-V1");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -701,7 +1246,10 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                     b.HasIndex("Timestamp")
                         .HasDatabaseName("idx_gov_audit_timestamp");
 
-                    b.ToTable("governance_audit_records", "governance_intelligence");
+                    b.ToTable("governance_audit_records", "governance_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_gov_audit_records_hash_version", "\"HashVersion\" IN ('AUDIT-V1', 'AUDIT-V2')");
+                        });
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.GovernanceExplanationEvaluationEntity", b =>
@@ -851,6 +1399,182 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .HasDatabaseName("idx_inst_pos_institution_id");
 
                     b.ToTable("institution_positions", "governance_intelligence");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.LeaseApprovalTimingAssessmentEntity", b =>
+                {
+                    b.Property<Guid>("AssessmentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("assessment_id");
+
+                    b.Property<string>("AdvisoryNote")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("advisory_note");
+
+                    b.Property<DateOnly?>("ApprovalHandoverDate")
+                        .HasColumnType("date")
+                        .HasColumnName("approval_handover_date");
+
+                    b.Property<DateTimeOffset>("AssessedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("assessed_at_utc");
+
+                    b.Property<DateOnly>("AssessmentDateColombo")
+                        .HasColumnType("date")
+                        .HasColumnName("assessment_date_colombo");
+
+                    b.Property<string>("CaseId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("case_id");
+
+                    b.Property<DateOnly?>("CompleteProposalRoadmapStartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("complete_proposal_roadmap_start_date");
+
+                    b.Property<int?>("DaysBeyondExpected")
+                        .HasColumnType("integer")
+                        .HasColumnName("days_beyond_expected");
+
+                    b.Property<int?>("DaysElapsed")
+                        .HasColumnType("integer")
+                        .HasColumnName("days_elapsed");
+
+                    b.Property<string>("EvidenceState")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("evidence_state");
+
+                    b.Property<DateOnly?>("ExpectedApprovalHandoverDate")
+                        .HasColumnType("date")
+                        .HasColumnName("expected_approval_handover_date");
+
+                    b.Property<DateTimeOffset>("GeneratedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("generated_at_utc");
+
+                    b.Property<string>("InputSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("input_sha256");
+
+                    b.Property<bool>("IsSynthetic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_synthetic");
+
+                    b.Property<string>("PolicyVersion")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("policy_version");
+
+                    b.Property<string>("ProvenanceKind")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("provenance_kind");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("purpose");
+
+                    b.Property<DateTimeOffset>("SourceObservedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("source_observed_at_utc");
+
+                    b.Property<string>("SourceRecordId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("source_record_id");
+
+                    b.Property<string>("SourceRecordVersion")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("source_record_version");
+
+                    b.Property<string>("SourceSystem")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("source_system");
+
+                    b.Property<string>("SyntheticSeedId")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("synthetic_seed_id");
+
+                    b.Property<string>("SyntheticSeedVersion")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("synthetic_seed_version");
+
+                    b.Property<string>("TimeZoneId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("time_zone_id");
+
+                    b.Property<string>("TimingState")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("timing_state");
+
+                    b.Property<Guid?>("WorkflowProjectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workflow_projection_id");
+
+                    b.Property<Guid>("WorkflowRunId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workflow_run_id");
+
+                    b.HasKey("AssessmentId");
+
+                    b.HasIndex("CaseId")
+                        .HasDatabaseName("ix_lease_approval_timing_assessments_case_id");
+
+                    b.HasIndex("WorkflowRunId")
+                        .HasDatabaseName("ix_lease_approval_timing_assessments_workflow_run_id");
+
+                    b.HasIndex("WorkflowRunId", "PolicyVersion", "InputSha256")
+                        .IsUnique()
+                        .HasDatabaseName("ux_lease_approval_timing_assessments_run_policy_sha256");
+
+                    b.ToTable("lease_approval_timing_assessments", "governance_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_advisory_note_not_blank", "length(btrim(advisory_note)) > 0");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_case_id_not_blank", "length(btrim(case_id)) > 0");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_days_non_negative", "(days_elapsed IS NULL OR days_elapsed >= 0) AND (days_beyond_expected IS NULL OR days_beyond_expected >= 0)");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_evidence_state_not_blank", "length(btrim(evidence_state)) > 0");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_input_sha256_len", "char_length(input_sha256) = 64");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_policy_version_not_blank", "length(btrim(policy_version)) > 0");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_provenance_kind", "provenance_kind IN ('RealComponent1', 'RealComponent3', 'SyntheticFixture', 'SyntheticPp1Seed')");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_purpose", "purpose IN ('PP1Demonstration', 'AutomatedTest', 'LocalDevelopment', 'ProductionPeerIntegration')");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_synthetic_consistency", "(is_synthetic = true AND provenance_kind IN ('SyntheticFixture', 'SyntheticPp1Seed') AND synthetic_seed_id IS NOT NULL AND length(btrim(synthetic_seed_id)) > 0 AND synthetic_seed_version IS NOT NULL AND length(btrim(synthetic_seed_version)) > 0) OR (is_synthetic = false AND provenance_kind NOT IN ('SyntheticFixture', 'SyntheticPp1Seed') AND synthetic_seed_id IS NULL AND synthetic_seed_version IS NULL)");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_time_zone_colombo", "time_zone_id = 'Asia/Colombo'");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_timing_state", "timing_state IN ('WithinExpectedTwoCalendarMonths', 'ExceededExpectedTwoCalendarMonths', 'OngoingWithinExpectedTwoCalendarMonths', 'OngoingExceededExpectedTwoCalendarMonths', 'UnavailableEvidence')");
+
+                            t.HasCheckConstraint("ck_lease_approval_timing_assessments_unavailable_consistency", "(timing_state = 'UnavailableEvidence' AND days_beyond_expected IS NULL) OR (timing_state <> 'UnavailableEvidence' AND complete_proposal_roadmap_start_date IS NOT NULL AND expected_approval_handover_date IS NOT NULL AND days_beyond_expected IS NOT NULL)");
+                        });
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.RegulatorySourceEntity", b =>
@@ -1043,6 +1767,191 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .HasDatabaseName("idx_rule_param_rule_id");
 
                     b.ToTable("rule_parameters", "governance_intelligence");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.WorkflowAnomalyAssessmentEntity", b =>
+                {
+                    b.Property<Guid>("AssessmentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("assessment_id");
+
+                    b.Property<string>("AdvisoryNote")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("advisory_note");
+
+                    b.Property<double>("AnomalyScore")
+                        .HasColumnType("double precision")
+                        .HasColumnName("anomaly_score");
+
+                    b.Property<DateTimeOffset>("AssessedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("assessed_at_utc");
+
+                    b.Property<string>("CaseId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("case_id");
+
+                    b.Property<int>("DistinctResources")
+                        .HasColumnType("integer")
+                        .HasColumnName("distinct_resources");
+
+                    b.Property<double>("ElapsedDays")
+                        .HasColumnType("double precision")
+                        .HasColumnName("elapsed_days");
+
+                    b.Property<int>("EventCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("event_count");
+
+                    b.Property<bool>("Flagged")
+                        .HasColumnType("boolean")
+                        .HasColumnName("flagged");
+
+                    b.Property<DateTimeOffset>("GeneratedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("generated_at_utc");
+
+                    b.Property<string>("InputSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("input_sha256");
+
+                    b.Property<int>("InstitutionSwitches")
+                        .HasColumnType("integer")
+                        .HasColumnName("institution_switches");
+
+                    b.Property<bool>("IsSynthetic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_synthetic");
+
+                    b.Property<double>("MaxGapHours")
+                        .HasColumnType("double precision")
+                        .HasColumnName("max_gap_hours");
+
+                    b.Property<double>("MeanGapHours")
+                        .HasColumnType("double precision")
+                        .HasColumnName("mean_gap_hours");
+
+                    b.Property<string>("ModelArtifactSha256")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("model_artifact_sha256");
+
+                    b.Property<string>("ModelVersion")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("model_version");
+
+                    b.Property<string>("ProvenanceKind")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("provenance_kind");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("purpose");
+
+                    b.Property<int>("RepeatedActivityCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("repeated_activity_count");
+
+                    b.Property<int>("ResourceHandoffs")
+                        .HasColumnType("integer")
+                        .HasColumnName("resource_handoffs");
+
+                    b.Property<DateTimeOffset>("SourceObservedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("source_observed_at_utc");
+
+                    b.Property<string>("SourceRecordId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("source_record_id");
+
+                    b.Property<string>("SourceRecordVersion")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("source_record_version");
+
+                    b.Property<string>("SourceSystem")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("source_system");
+
+                    b.Property<string>("SyntheticSeedId")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("synthetic_seed_id");
+
+                    b.Property<string>("SyntheticSeedVersion")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("synthetic_seed_version");
+
+                    b.Property<double>("Threshold")
+                        .HasColumnType("double precision")
+                        .HasColumnName("threshold");
+
+                    b.Property<int>("UniqueActivities")
+                        .HasColumnType("integer")
+                        .HasColumnName("unique_activities");
+
+                    b.Property<Guid?>("WorkflowProjectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workflow_projection_id");
+
+                    b.Property<Guid>("WorkflowRunId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workflow_run_id");
+
+                    b.HasKey("AssessmentId");
+
+                    b.HasIndex("CaseId")
+                        .HasDatabaseName("ix_workflow_anomaly_assessments_case_id");
+
+                    b.HasIndex("WorkflowRunId")
+                        .HasDatabaseName("ix_workflow_anomaly_assessments_workflow_run_id");
+
+                    b.HasIndex("WorkflowRunId", "ModelVersion", "InputSha256")
+                        .IsUnique()
+                        .HasDatabaseName("ux_workflow_anomaly_assessments_run_model_sha256");
+
+                    b.ToTable("workflow_anomaly_assessments", "governance_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_advisory_note_not_blank", "length(btrim(advisory_note)) > 0");
+
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_case_id_not_blank", "length(btrim(case_id)) > 0");
+
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_durations_non_negative", "elapsed_days >= 0 AND max_gap_hours >= 0 AND mean_gap_hours >= 0");
+
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_event_count_positive", "event_count > 0");
+
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_feature_counts_valid", "unique_activities > 0 AND repeated_activity_count >= 0 AND resource_handoffs >= 0 AND institution_switches >= 0 AND distinct_resources > 0");
+
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_input_sha256_len", "char_length(input_sha256) = 64");
+
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_model_sha256_len", "model_artifact_sha256 IS NULL OR char_length(model_artifact_sha256) = 64");
+
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_model_version_not_blank", "length(btrim(model_version)) > 0");
+
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_provenance_kind", "provenance_kind IN ('RealComponent1', 'RealComponent3', 'SyntheticFixture', 'SyntheticPp1Seed')");
+
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_purpose", "purpose IN ('PP1Demonstration', 'AutomatedTest', 'LocalDevelopment', 'ProductionPeerIntegration')");
+
+                            t.HasCheckConstraint("ck_workflow_anomaly_assessments_synthetic_consistency", "(is_synthetic = true AND provenance_kind IN ('SyntheticFixture', 'SyntheticPp1Seed') AND synthetic_seed_id IS NOT NULL AND length(btrim(synthetic_seed_id)) > 0 AND synthetic_seed_version IS NOT NULL AND length(btrim(synthetic_seed_version)) > 0) OR (is_synthetic = false AND provenance_kind NOT IN ('SyntheticFixture', 'SyntheticPp1Seed') AND synthetic_seed_id IS NULL AND synthetic_seed_version IS NULL)");
+                        });
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceEvaluationEntity", b =>

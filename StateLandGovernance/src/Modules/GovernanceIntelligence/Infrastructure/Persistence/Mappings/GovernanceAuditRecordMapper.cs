@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities;
@@ -11,12 +10,6 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
 /// </summary>
 internal static class GovernanceAuditRecordMapper
 {
-    private static readonly ConstructorInfo DomainConstructor = typeof(GovernanceAuditRecord).GetConstructor(
-        BindingFlags.NonPublic | BindingFlags.Instance,
-        null,
-        new[] { typeof(Guid), typeof(EngineType), typeof(string), typeof(string), typeof(string), typeof(DateTime) },
-        null) ?? throw new InvalidOperationException("Private constructor for GovernanceAuditRecord not found.");
-
     public static GovernanceAuditRecordEntity ToEntity(GovernanceAuditRecord domain)
     {
         if (domain is null)
@@ -31,7 +24,8 @@ internal static class GovernanceAuditRecordMapper
             ActionName = domain.ActionName,
             Status = domain.Status,
             Details = domain.Details,
-            Timestamp = domain.Timestamp
+            Timestamp = domain.Timestamp,
+            HashVersion = domain.HashVersion
         };
     }
 
@@ -42,14 +36,13 @@ internal static class GovernanceAuditRecordMapper
             throw new ArgumentNullException(nameof(entity));
         }
 
-        return (GovernanceAuditRecord)DomainConstructor.Invoke(new object[]
-        {
+        return GovernanceAuditRecord.Rehydrate(
             entity.Id,
             (EngineType)entity.EngineType,
             entity.ActionName,
             entity.Status,
             entity.Details,
-            entity.Timestamp
-        });
+            entity.Timestamp,
+            entity.HashVersion);
     }
 }

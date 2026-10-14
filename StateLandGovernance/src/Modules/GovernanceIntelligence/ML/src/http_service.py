@@ -9,14 +9,17 @@ from __future__ import annotations
 import logging
 import os
 import sys
+import time
 from contextlib import asynccontextmanager
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
+from threading import Lock
 from typing import Any, Callable
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from starlette.concurrency import run_in_threadpool
 
@@ -38,6 +41,73 @@ from anomaly_detection.bundle import (
 from anomaly_detection.inference import InferenceInputError, infer_payload_with_bundle
 
 logger = logging.getLogger(__name__)
+
+
+class _PrometheusMetrics:
+    """Privacy-safe, dependency-free operational counters for the local demonstrator."""
+
+    def __init__(self) -> None:
+        self._lock = Lock()
+        self._requests: dict[tuple[str, str, str], list[float]] = defaultdict(
+            lambda: [0.0, 0.0]
+        )
+
+    def observe(self, method: str, path: str, status: int, elapsed: float) -> None:
+        key = (method.upper(), path[:120] or "unmatched", str(status))
+        with self._lock:
+            measurement = self._requests[key]
+            measurement[0] += 1
+            measurement[1] += max(0.0, elapsed)
+
+    def render(
+        self,
+        complaint_model_version: str,
+        complaint_ready: bool,
+        anomaly_model_version: str,
+        anomaly_ready: bool,
+    ) -> str:
+        ready_value = 1 if complaint_ready and anomaly_ready else 0
+        lines = [
+            "# HELP state_land_governance_ml_info Static information about the validated ML service.",
+            "# TYPE state_land_governance_ml_info gauge",
+            f'state_land_governance_ml_info{{model_version="{_prometheus_escape(complaint_model_version)}",data_mode="live-inference"}} 1',
+            "# HELP state_land_governance_ml_ready Whether all required validated model artifacts are loaded.",
+            "# TYPE state_land_governance_ml_ready gauge",
+            f"state_land_governance_ml_ready {ready_value}",
+            "# HELP state_land_governance_ml_model_ready Whether each validated ML model artifact is loaded.",
+            "# TYPE state_land_governance_ml_model_ready gauge",
+            'state_land_governance_ml_model_ready{model="complaint-classifier",version="'
+            f'{_prometheus_escape(complaint_model_version)}"}} {1 if complaint_ready else 0}',
+            'state_land_governance_ml_model_ready{model="workflow-anomaly",version="'
+            f'{_prometheus_escape(anomaly_model_version)}"}} {1 if anomaly_ready else 0}',
+            "# HELP state_land_governance_ml_http_requests_total HTTP requests processed by the ML service.",
+            "# TYPE state_land_governance_ml_http_requests_total counter",
+            "# HELP state_land_governance_ml_http_request_duration_seconds HTTP request duration in seconds.",
+            "# TYPE state_land_governance_ml_http_request_duration_seconds summary",
+        ]
+        with self._lock:
+            snapshot = sorted(self._requests.items())
+        for (method, path, status), (count, duration) in snapshot:
+            labels = (
+                f'method="{_prometheus_escape(method)}",'
+                f'path="{_prometheus_escape(path)}",status="{status}"'
+            )
+            lines.append(
+                f"state_land_governance_ml_http_requests_total{{{labels}}} {int(count)}"
+            )
+            lines.append(
+                "state_land_governance_ml_http_request_duration_seconds_sum"
+                f"{{{labels}}} {duration:.6f}"
+            )
+            lines.append(
+                "state_land_governance_ml_http_request_duration_seconds_count"
+                f"{{{labels}}} {int(count)}"
+            )
+        return "\n".join(lines) + "\n"
+
+
+def _prometheus_escape(value: str) -> str:
+    return value.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
 
 DEFAULT_MAX_REQUEST_CHARS = 10_000
 DEFAULT_MAX_ANOMALY_REQUEST_BYTES = 262_144
@@ -318,6 +388,21 @@ def create_app(
     application.state.model_artifact = None
     application.state.anomaly_bundle = None
     application.state.service_settings = resolved_settings
+    application.state.prometheus_metrics = _PrometheusMetrics()
+
+    @application.middleware("http")
+    async def observe_http(request: Request, call_next):
+        if request.url.path == "/metrics":
+            return await call_next(request)
+        started_at = time.perf_counter()
+        response = await call_next(request)
+        application.state.prometheus_metrics.observe(
+            request.method,
+            request.url.path,
+            response.status_code,
+            time.perf_counter() - started_at,
+        )
+        return response
 
     @application.exception_handler(RequestValidationError)
     async def sanitized_validation_error(
@@ -332,6 +417,21 @@ def create_app(
         if artifact is None:
             raise HTTPException(status_code=503, detail="Classifier is not ready.")
         return HealthResponse(status="ready", model_version=artifact["model_version"])
+
+    @application.get("/metrics", response_class=PlainTextResponse, include_in_schema=False)
+    async def metrics() -> PlainTextResponse:
+        artifact = application.state.model_artifact
+        anomaly_bundle = application.state.anomaly_bundle
+        body = application.state.prometheus_metrics.render(
+            resolved_settings.model_version,
+            artifact is not None,
+            anomaly_bundle.bundle_version if anomaly_bundle is not None else "unavailable",
+            anomaly_bundle is not None,
+        )
+        return PlainTextResponse(
+            body,
+            media_type="text/plain; version=0.0.4; charset=utf-8",
+        )
 
     @application.post("/predict", response_model=PredictionResponse)
     async def predict(request: PredictionRequest) -> PredictionResponse:

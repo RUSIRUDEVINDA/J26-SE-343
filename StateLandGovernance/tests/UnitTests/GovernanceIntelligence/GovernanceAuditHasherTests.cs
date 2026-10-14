@@ -144,7 +144,7 @@ public class GovernanceAuditHasherTests
     }
 
     [Fact]
-    public void BuildCanonicalPayload_StartsWithAuditV1AndContainsExpectedFields()
+    public void BuildCanonicalPayload_NewRecordStartsWithAuditV2AndContainsExpectedFields()
     {
         // Arrange
         var record = RecreateRecordWithFixedId(_testId, GovernanceAuditRecord.Create(
@@ -158,10 +158,65 @@ public class GovernanceAuditHasherTests
         var payload = GovernanceAuditHasher.BuildCanonicalPayload(record);
 
         // Assert
-        Assert.StartsWith("AUDIT-V1|", payload);
+        Assert.StartsWith("AUDIT-V2|", payload);
         Assert.Contains(_testId.ToString("D").ToLowerInvariant(), payload);
         Assert.Contains("EVALUATERISK", payload);
         Assert.Contains("EVALUATED", payload);
+    }
+
+    [Fact]
+    public void ComputeCanonicalHash_AuditV1KnownFixture_PreservesHistoricalDigest()
+    {
+        var record = GovernanceAuditRecord.Rehydrate(
+            _testId,
+            EngineType.RegulatoryCompliance,
+            "Action",
+            "Status",
+            "Details",
+            new DateTime(2026, 10, 9, 10, 30, 0, 123, DateTimeKind.Utc).AddTicks(4567),
+            GovernanceAuditHasher.AuditV1);
+
+        Assert.Equal("3c19ec4cf5ef5060e8d2d557e00f7493f80cdd0f0a15ada432955cfe1a381b0b",
+            GovernanceAuditHasher.ComputeCanonicalHash(record));
+    }
+
+    [Fact]
+    public void ComputeCanonicalHash_AuditV2KnownFixture_TruncatesToMicrosecondsWithoutRounding()
+    {
+        var record = GovernanceAuditRecord.Rehydrate(
+            _testId,
+            EngineType.RegulatoryCompliance,
+            "Action",
+            "Status",
+            "Details",
+            new DateTime(2026, 10, 9, 10, 30, 0, 123, DateTimeKind.Utc).AddTicks(4567),
+            GovernanceAuditHasher.AuditV2);
+
+        var payload = GovernanceAuditHasher.BuildCanonicalPayload(record);
+
+        Assert.Contains("2026-10-09T10:30:00.1234560Z", payload);
+        Assert.DoesNotContain("123457", payload);
+        Assert.Equal("a44daf100a79d5463012e649a666330dff0a6b6824e1d1ac75f57dbfe5956591",
+            GovernanceAuditHasher.ComputeCanonicalHash(record));
+    }
+
+    [Fact]
+    public void ComputeCanonicalHash_AuditV2NormalizesEquivalentUtcInstants()
+    {
+        var utc = GovernanceAuditRecord.Rehydrate(_testId, EngineType.RegulatoryCompliance, "Action", "Status", "Details",
+            new DateTime(2026, 10, 9, 10, 30, 0, DateTimeKind.Utc), GovernanceAuditHasher.AuditV2);
+        var localOffset = GovernanceAuditRecord.Rehydrate(_testId, EngineType.RegulatoryCompliance, "Action", "Status", "Details",
+            new DateTimeOffset(2026, 10, 9, 16, 0, 0, TimeSpan.FromHours(5.5)).UtcDateTime, GovernanceAuditHasher.AuditV2);
+
+        Assert.Equal(GovernanceAuditHasher.ComputeCanonicalHash(utc), GovernanceAuditHasher.ComputeCanonicalHash(localOffset));
+    }
+
+    [Fact]
+    public void ComputeCanonicalHash_UnknownVersion_FailsClosed()
+    {
+        var record = GovernanceAuditRecord.Rehydrate(_testId, EngineType.RegulatoryCompliance, "Action", "Status", "Details", _testTimestamp, "AUDIT-V99");
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => GovernanceAuditHasher.ComputeCanonicalHash(record));
     }
 
     private static GovernanceAuditRecord RecreateRecordWithFixedId(Guid id, GovernanceAuditRecord template)

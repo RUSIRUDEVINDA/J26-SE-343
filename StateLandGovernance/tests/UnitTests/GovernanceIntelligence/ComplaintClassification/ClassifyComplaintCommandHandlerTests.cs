@@ -247,5 +247,11 @@ public sealed class ClassifyComplaintCommandHandlerTests
             Guid assessmentId,
             CancellationToken cancellationToken = default) =>
             Task.FromResult(Assessments.SingleOrDefault(item => item.AssessmentId == assessmentId));
+
+        public Task<IReadOnlyList<ComplaintClassificationAssessment>> GetByCaseIdAsync(
+            string caseId, int limit = IComplaintClassificationAssessmentStore.DefaultHistoryLimit,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<ComplaintClassificationAssessment>>(
+                Assessments.Where(item => item.CaseId == caseId).Take(limit).ToArray());
     }
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"governance-blockchain-service/internal/anchors"
@@ -15,7 +16,7 @@ import (
 func setupTestServer() (http.Handler, *besu.MockLedgerClient) {
 	mockLedger := besu.NewMockLedgerClient("", false)
 	anchorService := anchors.NewService(mockLedger)
-	handler := api.NewHandler(anchorService, mockLedger, "Hyperledger Besu (QBFT)", 1337)
+	handler := api.NewHandler(anchorService, mockLedger, "Hyperledger Besu (QBFT)", 1337, "mock")
 	router := api.SetupRouter(handler)
 	return router, mockLedger
 }
@@ -39,6 +40,9 @@ func TestHealthEndpoint(t *testing.T) {
 	if resp["status"] != "Healthy" {
 		t.Errorf("expected status Healthy, got %v", resp["status"])
 	}
+	if resp["blockchainMode"] != "mock" {
+		t.Errorf("expected explicit mock mode, got %v", resp["blockchainMode"])
+	}
 
 	// 2. Degraded when offline
 	mockLedger.SetOffline(true)
@@ -50,6 +54,33 @@ func TestHealthEndpoint(t *testing.T) {
 	_ = json.Unmarshal(w2.Body.Bytes(), &resp2)
 	if resp2["status"] != "Degraded" {
 		t.Errorf("expected status Degraded, got %v", resp2["status"])
+	}
+}
+
+func TestMetricsEndpointReportsModeConnectivityAndOutcomes(t *testing.T) {
+	router, _ := setupTestServer()
+	payload, _ := json.Marshal(anchors.AnchorRequest{
+		AuditRecordID: "99999999-2222-3333-4444-555555555555",
+		RecordHash:    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+	})
+	router.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(http.MethodPost, "/api/v1/anchors", bytes.NewReader(payload)))
+
+	req := httptest.NewRequest(http.MethodGet, "/metrics", nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected metrics status 200, got %d", w.Code)
+	}
+	body := w.Body.String()
+	for _, expected := range []string{
+		`state_land_governance_blockchain_info{mode="mock"`,
+		"state_land_governance_blockchain_ledger_connected 1",
+		`state_land_governance_blockchain_anchor_requests_total{status="Anchored"} 1`,
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("expected metrics to contain %q; body=%s", expected, body)
+		}
 	}
 }
 

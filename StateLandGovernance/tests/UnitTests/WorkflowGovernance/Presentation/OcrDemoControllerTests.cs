@@ -254,6 +254,201 @@ public sealed class OcrDemoControllerTests
     }
 
     [Fact]
+    public async Task Demo_AnalyzeMode_ReturnsCandidateFactsClassificationAndDurations()
+    {
+        // Arrange
+        var controller = CreateController();
+        var fileBytes = new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2D }; // PDF header
+        var file = CreateFormFile("lease_application.pdf", "application/pdf", fileBytes);
+
+        var semanticJson = """
+        {
+          "schema_version": "1.0",
+          "classification": {
+            "document_type": "LeaseApplication",
+            "confidence": 0.96
+          },
+          "facts": [
+            {
+              "fact_code": "applicant_name",
+              "canonical_value": "Lanka Bio Fuels PLC",
+              "value_kind": "Entity",
+              "confidence": 0.95,
+              "evidence": {
+                "page": 1,
+                "exact_quote": "Applicant Name: Lanka Bio Fuels PLC",
+                "is_evidence_verified": true
+              }
+            },
+            {
+              "fact_code": "land_extent",
+              "canonical_value": "10.5",
+              "value_kind": "Decimal",
+              "confidence": 0.90,
+              "evidence": {
+                "page": 1,
+                "exact_quote": "Extent 10.5 acres",
+                "is_evidence_verified": false
+              }
+            }
+          ],
+          "duration_breakdown": {
+            "ocr_duration_ms": 1150.0,
+            "semantic_duration_ms": 3200.0,
+            "total_duration_ms": 4350.0
+          }
+        }
+        """;
+
+        _executionService.OnExecute = async (analysisId, runId, revision, lang) =>
+        {
+            var analysis = await _analysisRepo.GetByIdAsync(new DocumentAnalysisId(analysisId));
+            var run = analysis!.Runs.First(r => r.Id.Value == runId);
+
+            var docArtifactRef = new AnalysisResultArtifactReference(
+                new AnalysisResultArtifactId(Guid.NewGuid()),
+                "OcrDocumentTranscript",
+                "artifacts/test/doc-transcript.txt",
+                "text/plain",
+                new AnalysisArtifactChecksum("SHA-256", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+
+            var semanticArtifactRef = new AnalysisResultArtifactReference(
+                new AnalysisResultArtifactId(Guid.NewGuid()),
+                "SemanticRawResponse",
+                "artifacts/test/semantic-response.json",
+                "application/json",
+                new AnalysisArtifactChecksum("SHA-256", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+
+            analysis.StartRun(new AnalysisRunId(runId), DateTime.UtcNow);
+            analysis.CompleteRun(
+                new AnalysisRunId(runId),
+                new AnalysisRunResultId(Guid.NewGuid()),
+                AnalysisResultOutcome.OutputsProduced,
+                new[] { docArtifactRef, semanticArtifactRef },
+                Array.Empty<ExtractedFactInput>(),
+                DateTime.UtcNow);
+
+            _artifactReader.Storage[docArtifactRef.StorageReference] = Encoding.UTF8.GetBytes("Transcript text");
+            _artifactReader.Storage[semanticArtifactRef.StorageReference] = Encoding.UTF8.GetBytes(semanticJson);
+
+            return new DocumentAnalysisExecutionResult(analysisId, runId, "Completed", 2);
+        };
+
+        // Act
+        var result = await controller.ProcessDemoDocumentAsync(file, "sin+eng", "analyze", CancellationToken.None);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(200, okResult.StatusCode);
+
+        var response = Assert.IsType<OcrDemoResponse>(okResult.Value);
+        Assert.Equal("Completed", response.Status);
+        Assert.Equal("analyze", response.ExecutionMode);
+        Assert.NotNull(response.Classification);
+        Assert.Equal("LeaseApplication", response.Classification.DocumentType);
+        Assert.Equal(0.96, response.Classification.Confidence);
+
+        Assert.NotNull(response.CandidateFacts);
+        Assert.Equal(2, response.CandidateFacts.Count);
+
+        var fact1 = response.CandidateFacts[0];
+        Assert.Equal("applicant_name", fact1.FactCode);
+        Assert.Equal("Lanka Bio Fuels PLC", fact1.CanonicalValue);
+        Assert.True(fact1.IsGrounded);
+        Assert.Null(fact1.ValidationWarning);
+
+        var fact2 = response.CandidateFacts[1];
+        Assert.Equal("land_extent", fact2.FactCode);
+        Assert.False(fact2.IsGrounded);
+        Assert.Equal("Evidence not verified against OCR transcript", fact2.ValidationWarning);
+
+        Assert.NotNull(response.DurationBreakdown);
+        Assert.Equal(1150.0, response.DurationBreakdown.OcrDurationMs);
+        Assert.Equal(3200.0, response.DurationBreakdown.SemanticDurationMs);
+        Assert.Equal(4350.0, response.DurationBreakdown.TotalDurationMs);
+        Assert.Equal("Completed", response.SemanticStatus);
+    }
+
+    [Fact]
+    public async Task Demo_AnalyzeMode_WhenSemanticTimesOut_ReturnsUnavailableClassificationAndFailedSemanticStatus()
+    {
+        // Arrange
+        var controller = CreateController();
+        var file = CreateFormFile("timeout-sample.pdf", "application/pdf", new byte[] { 0x25, 0x50, 0x44, 0x46, 0x31 });
+
+        const string timeoutSemanticJson = """
+        {
+            "request_id": "test-req-timeout",
+            "language_mode": "sin+eng",
+            "preprocessed": true,
+            "page_count": 1,
+            "pages": [],
+            "classification": {
+                "code": "Unavailable",
+                "confidence": null
+            },
+            "facts": [],
+            "warnings": [
+                "Chunk 0 Ollama failure: Ollama chat request timed out after 240.0s for model 'qwen3:1.7b'.",
+                "Semantic inference did not complete. No valid classification or candidate facts could be extracted."
+            ],
+            "governance_notice": "Candidate only"
+        }
+        """;
+
+        _executionService.OnExecute = async (analysisId, runId, revision, lang) =>
+        {
+            var analysis = await _analysisRepo.GetByIdAsync(new DocumentAnalysisId(analysisId));
+
+            var docArtifactRef = new AnalysisResultArtifactReference(
+                new AnalysisResultArtifactId(Guid.NewGuid()),
+                "OcrDocumentTranscript",
+                "artifacts/test/doc-transcript-timeout.txt",
+                "text/plain",
+                new AnalysisArtifactChecksum("SHA-256", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+
+            var semanticArtifactRef = new AnalysisResultArtifactReference(
+                new AnalysisResultArtifactId(Guid.NewGuid()),
+                "SemanticRawResponse",
+                "artifacts/test/semantic-response-timeout.json",
+                "application/json",
+                new AnalysisArtifactChecksum("SHA-256", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+
+            analysis!.StartRun(new AnalysisRunId(runId), DateTime.UtcNow);
+            analysis.CompleteRun(
+                new AnalysisRunId(runId),
+                new AnalysisRunResultId(Guid.NewGuid()),
+                AnalysisResultOutcome.OutputsProduced,
+                new[] { docArtifactRef, semanticArtifactRef },
+                Array.Empty<ExtractedFactInput>(),
+                DateTime.UtcNow);
+
+            _artifactReader.Storage[docArtifactRef.StorageReference] = Encoding.UTF8.GetBytes("OCR completed successfully.");
+            _artifactReader.Storage[semanticArtifactRef.StorageReference] = Encoding.UTF8.GetBytes(timeoutSemanticJson);
+
+            return new DocumentAnalysisExecutionResult(analysisId, runId, "Completed", 2);
+        };
+
+        // Act
+        var result = await controller.ProcessDemoDocumentAsync(file, "sin+eng", "analyze", CancellationToken.None);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var response = Assert.IsType<OcrDemoResponse>(okResult.Value);
+
+        Assert.Equal("Completed", response.Status);
+        Assert.Equal("analyze", response.ExecutionMode);
+        Assert.Equal("Failed / Timed Out", response.SemanticStatus);
+
+        Assert.NotNull(response.Classification);
+        Assert.Equal("Unavailable", response.Classification.DocumentType);
+        Assert.Null(response.Classification.Confidence);
+
+        Assert.Null(response.CandidateFacts);
+        Assert.Contains(response.Warnings, w => w.Contains("timed out"));
+    }
+
+    [Fact]
     public async Task Demo_ExecutionFailure_IntegrityChecksumMismatch_Returns422()
     {
         // Arrange
@@ -432,6 +627,7 @@ public sealed class OcrDemoControllerTests
             Guid analysisRunId,
             int expectedAnalysisRevision,
             string? languageHint = null,
+            string? semanticProvider = null,
             CancellationToken cancellationToken = default)
         {
             if (OnExecute != null)

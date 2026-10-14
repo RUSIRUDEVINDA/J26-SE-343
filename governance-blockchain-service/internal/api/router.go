@@ -10,6 +10,7 @@ func SetupRouter(h *Handler) http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/health", h.HealthHandler)
+	mux.HandleFunc("/metrics", h.MetricsHandler)
 	mux.HandleFunc("/api/v1/anchors", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/api/v1/anchors" || r.URL.Path == "/api/v1/anchors/" {
 			h.PostAnchorHandler(w, r)

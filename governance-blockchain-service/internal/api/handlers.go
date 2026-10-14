@@ -10,18 +10,26 @@ import (
 )
 
 type Handler struct {
-	anchorService *anchors.Service
-	ledger        besu.LedgerClient
-	networkName   string
-	chainID       int64
+	anchorService  *anchors.Service
+	ledger         besu.LedgerClient
+	networkName    string
+	chainID        int64
+	blockchainMode string
+	metrics        *Metrics
 }
 
-func NewHandler(anchorService *anchors.Service, ledger besu.LedgerClient, networkName string, chainID int64) *Handler {
+func NewHandler(anchorService *anchors.Service, ledger besu.LedgerClient, networkName string, chainID int64, blockchainMode ...string) *Handler {
+	mode := "unknown"
+	if len(blockchainMode) > 0 && strings.TrimSpace(blockchainMode[0]) != "" {
+		mode = strings.TrimSpace(blockchainMode[0])
+	}
 	return &Handler{
-		anchorService: anchorService,
-		ledger:        ledger,
-		networkName:   networkName,
-		chainID:       chainID,
+		anchorService:  anchorService,
+		ledger:         ledger,
+		networkName:    networkName,
+		chainID:        chainID,
+		blockchainMode: mode,
+		metrics:        NewMetrics(),
 	}
 }
 
@@ -43,6 +51,7 @@ func (h *Handler) HealthHandler(w http.ResponseWriter, r *http.Request) {
 		"network":         h.networkName,
 		"chainId":         h.chainID,
 		"ledgerConnected": connected,
+		"blockchainMode":  h.blockchainMode,
 	}
 	writeJSON(w, http.StatusOK, resp)
 }
@@ -67,9 +76,11 @@ func (h *Handler) PostAnchorHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := h.anchorService.AnchorRecord(r.Context(), req)
 	if err != nil {
+		h.metrics.RecordAnchor("Rejected")
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 		return
 	}
+	h.metrics.RecordAnchor(resp.AnchorStatus)
 
 	statusCode := http.StatusOK
 	if resp.AnchorStatus == "Anchored" {
@@ -110,9 +121,11 @@ func (h *Handler) AnchorByIDHandler(w http.ResponseWriter, r *http.Request) {
 
 		resp, err := h.anchorService.VerifyRecord(r.Context(), recordID, req.ExpectedHash)
 		if err != nil {
+			h.metrics.RecordVerification("Rejected")
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 			return
 		}
+		h.metrics.RecordVerification(resp.VerificationStatus)
 
 		writeJSON(w, http.StatusOK, resp)
 		return

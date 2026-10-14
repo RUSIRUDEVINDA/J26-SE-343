@@ -58,7 +58,19 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _contentReader = contentReader ?? throw new ArgumentNullException(nameof(contentReader));
         _artifactWriter = artifactWriter ?? throw new ArgumentNullException(nameof(artifactWriter));
+
+        _logger.LogInformation(
+            "FastApiDocumentIntelligenceService initialized with BaseUrl: {BaseUrl}, RequestTimeoutSeconds: {Timeout}s, HttpClient.Timeout: {HttpTimeout}s",
+            _options.BaseUrl,
+            _options.RequestTimeoutSeconds,
+            _httpClient.Timeout.TotalSeconds);
     }
+
+    /// <summary>
+    /// Gets the timeout configured on the underlying HttpClient.
+    /// Exposes effective timeout binding for diagnostics, logging, and integration testing.
+    /// </summary>
+    public TimeSpan ConfiguredHttpClientTimeout => _httpClient.Timeout;
 
     public async Task<DocumentIntelligenceResult> AnalyzeDocumentAsync(
         DocumentIntelligenceRequest request,
@@ -152,6 +164,10 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
         if (isSemantic && !string.IsNullOrWhiteSpace(request.LogicalCategory))
         {
             uriBuilder.Append("&category_hint=").Append(Uri.EscapeDataString(request.LogicalCategory));
+        }
+        if (isSemantic && !string.IsNullOrWhiteSpace(request.SemanticProvider))
+        {
+            uriBuilder.Append("&semantic_provider=").Append(Uri.EscapeDataString(request.SemanticProvider));
         }
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, uriBuilder.ToString())
@@ -557,6 +573,29 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
         }
 
         var trimmed = rawValue.Trim();
+
+        // Domain invariant: AnalysisFactValue strictly forbids control characters (e.g. \r, \n, \t).
+        // Replace all control characters with spaces and collapse consecutive whitespace.
+        var sanitizedBuilder = new StringBuilder(trimmed.Length);
+        bool prevSpace = false;
+        foreach (char c in trimmed)
+        {
+            if (char.IsControl(c) || char.IsWhiteSpace(c))
+            {
+                if (!prevSpace)
+                {
+                    sanitizedBuilder.Append(' ');
+                    prevSpace = true;
+                }
+            }
+            else
+            {
+                sanitizedBuilder.Append(c);
+                prevSpace = false;
+            }
+        }
+        trimmed = sanitizedBuilder.ToString().Trim();
+
         switch (normalizedValueKind)
         {
             case "Decimal":
@@ -607,8 +646,15 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
         }
 
         // Add non-authoritative governance notice
-        warnings.Add($"Document classified as '{analyze.Classification.Code}' with machine confidence {analyze.Classification.Confidence:P0}. " +
-                     "Machine output is candidate-only, not authoritative.");
+        if (analyze.Classification.Code == "Unavailable" || !analyze.Classification.Confidence.HasValue)
+        {
+            warnings.Add("Semantic inference did not complete. Machine classification is unavailable.");
+        }
+        else
+        {
+            warnings.Add($"Document classified as '{analyze.Classification.Code}' with machine confidence {analyze.Classification.Confidence.Value:P0}. " +
+                         "Machine output is candidate-only, not authoritative.");
+        }
 
         // 1. Build composite full-document text artifact & page artifacts
         var fullTextBuilder = new StringBuilder();
@@ -773,10 +819,20 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
                 }
             }
 
+            var resolvedProvider = !string.IsNullOrWhiteSpace(analyze.SemanticProvider)
+                ? (analyze.SemanticProvider.Equals("gemini", StringComparison.OrdinalIgnoreCase) ? "FastApi-GeminiSemantic"
+                   : analyze.SemanticProvider.Equals("qwen", StringComparison.OrdinalIgnoreCase) ? "FastApi-QwenSemantic"
+                   : $"FastApi-{analyze.SemanticProvider}")
+                : (analyze.ModelIdentifier?.Contains("gemini", StringComparison.OrdinalIgnoreCase) == true
+                    ? "FastApi-GeminiSemantic"
+                    : (request.SemanticProvider?.Contains("gemini", StringComparison.OrdinalIgnoreCase) == true
+                        ? "FastApi-GeminiSemantic"
+                        : "FastApi-QwenSemantic"));
+
             return new DocumentIntelligenceResult(
-                Provider: "FastApi-QwenSemantic",
-                ModelName: analyze.ModelIdentifier,
-                ModelVersion: analyze.PromptVersion,
+                Provider: resolvedProvider,
+                ModelName: analyze.ModelIdentifier ?? (resolvedProvider.Contains("Gemini") ? "gemini-flash-latest" : "qwen3:1.7b"),
+                ModelVersion: analyze.PromptVersion ?? "1.0.0",
                 Outcome: "Succeeded",
                 Artifacts: artifacts,
                 Candidates: candidateFacts,

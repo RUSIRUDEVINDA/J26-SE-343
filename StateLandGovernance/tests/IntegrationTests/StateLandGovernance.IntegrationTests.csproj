@@ -26,4 +26,17 @@
     <ProjectReference Include="..\..\src\Modules\LandIntelligence\Infrastructure\StateLandGovernance.LandIntelligence.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Nested experimental utilities are independent projects, not integration-test sources. -->
+    <Compile Remove="LandIntelligence\ColomboDemoSetup\**\*" />
+    <Compile Remove="LandIntelligence\ColomboExperimentalGisVerify\**\*" />
+    <Compile Remove="LandIntelligence\ColomboExperimentalMlE2EVerify\**\*" />
+    <EmbeddedResource Remove="LandIntelligence\ColomboDemoSetup\**\*" />
+    <EmbeddedResource Remove="LandIntelligence\ColomboExperimentalGisVerify\**\*" />
+    <EmbeddedResource Remove="LandIntelligence\ColomboExperimentalMlE2EVerify\**\*" />
+    <None Remove="LandIntelligence\ColomboDemoSetup\**\*" />
+    <None Remove="LandIntelligence\ColomboExperimentalGisVerify\**\*" />
+    <None Remove="LandIntelligence\ColomboExperimentalMlE2EVerify\**\*" />
+  </ItemGroup>
+
 </Project>

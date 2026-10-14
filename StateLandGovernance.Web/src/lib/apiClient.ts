@@ -4,11 +4,10 @@ import {
   ensureOfficerAccessToken,
   isDemoOwnerHeaderEnabled,
   landIntelligenceBearerHeaders,
-} from "@/modules/component-01-land-intelligence/utils/landIntelligenceSession";
-
-import { landIntelligenceOwnerHeaders } from "@/modules/component-01-land-intelligence/utils/landIntelligenceOwner";
+} from "../modules/component-01-land-intelligence/utils/landIntelligenceSession";
 
 export type LandIntelligenceApiAuthRole = "applicant" | "officer" | "none";
+import { landIntelligenceOwnerHeaders } from "../modules/component-01-land-intelligence/utils/landIntelligenceOwner";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
 
@@ -149,18 +148,23 @@ export async function apiPost<T>(
   authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+  const headers = await mergeHeaders(
+    {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...init?.headers,
+    },
+    authRole,
+  );
+
+  if (init?.signal?.aborted) {
+    throw new DOMException("The request was aborted.", "AbortError");
+  }
 
   const response = await fetch(url, {
     ...init,
     method: "POST",
-    headers: await mergeHeaders(
-      {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        ...init?.headers,
-      },
-      authRole,
-    ),
+    headers,
     body: JSON.stringify(body),
   });
 
@@ -175,7 +179,6 @@ export async function apiPostFormData<T>(
   path: string,
   formData: FormData,
   init?: RequestInit,
-  authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
@@ -185,13 +188,10 @@ export async function apiPostFormData<T>(
     response = await fetch(url, {
       ...init,
       method: "POST",
-      headers: await mergeHeaders(
-        {
-          Accept: "application/json",
-          ...init?.headers,
-        },
-        authRole,
-      ),
+      headers: await mergeHeaders({
+        Accept: "application/json",
+        ...init?.headers,
+      }),
       body: formData,
     });
   } catch {

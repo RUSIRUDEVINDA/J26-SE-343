@@ -35,11 +35,13 @@ public sealed class AnchorAuditRecordCommandHandler
         var auditRecord = await _auditRepository.GetByIdAsync(command.AuditRecordId, cancellationToken)
             ?? throw new ArgumentException($"Audit record with ID {command.AuditRecordId} not found.", nameof(command));
 
-        var canonicalHash = GovernanceAuditHasher.ComputeCanonicalHash(auditRecord);
+        var canonicalHash = GovernanceAuditHasher.ComputeCanonicalHash(auditRecord, auditRecord.HashVersion);
 
         // Check if an anchor receipt already exists
         var existingReceipt = await _anchorStore.GetReceiptByAuditRecordIdAsync(command.AuditRecordId, cancellationToken);
-        if (existingReceipt != null && existingReceipt.AnchorStatus == AnchorStatus.Anchored)
+        if (existingReceipt != null &&
+            existingReceipt.AnchorStatus == AnchorStatus.Anchored &&
+            IsFactualLedgerReference(existingReceipt.TransactionReference, existingReceipt.BlockNumber))
         {
             return existingReceipt;
         }
@@ -48,7 +50,7 @@ public sealed class AnchorAuditRecordCommandHandler
             AuditRecordId: auditRecord.Id,
             RecordHash: canonicalHash,
             EngineType: auditRecord.EngineType.ToString(),
-            RecordVersion: GovernanceAuditHasher.CanonicalFormatVersion
+            RecordVersion: auditRecord.HashVersion
         );
 
         // Attempt direct anchor dispatch
@@ -61,7 +63,7 @@ public sealed class AnchorAuditRecordCommandHandler
                 auditRecord.Id,
                 canonicalHash,
                 auditRecord.EngineType,
-                GovernanceAuditHasher.CanonicalFormatVersion,
+                auditRecord.HashVersion,
                 cancellationToken);
         }
 
@@ -69,4 +71,10 @@ public sealed class AnchorAuditRecordCommandHandler
 
         return receipt;
     }
+
+    private static bool IsFactualLedgerReference(string? transactionReference, long? blockNumber) =>
+        blockNumber is > 0 &&
+        transactionReference is { Length: 66 } &&
+        transactionReference.StartsWith("0x", StringComparison.OrdinalIgnoreCase) &&
+        transactionReference[2..].All(Uri.IsHexDigit);
 }

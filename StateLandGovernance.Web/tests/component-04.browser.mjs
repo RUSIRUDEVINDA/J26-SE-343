@@ -8,10 +8,50 @@ const { chromium } = loadCommonJs(process.env.C4_PLAYWRIGHT_MODULE || "playwrigh
 const output = process.env.C4_SCREENSHOT_DIR || path.join(tmpdir(), "c4-frontend-verification");
 (async () => {
   await fs.mkdir(output, { recursive: true });
-  const browser = await chromium.launch({ headless: true });
+  const launchOptions = { headless: true };
+  if (process.env.C4_BROWSER_EXECUTABLE_PATH) launchOptions.executablePath = process.env.C4_BROWSER_EXECUTABLE_PATH;
+  else if (process.env.C4_BROWSER_CHANNEL) launchOptions.channel = process.env.C4_BROWSER_CHANNEL;
+  const browser = await chromium.launch(launchOptions);
   const page = await browser.newPage({ viewport: { width: 1728, height: 1117 } });
   const errors = [];
   const requests = [];
+  if (process.env.C4_LIVE_WALKTHROUGH === "1") {
+    page.on("pageerror", error => errors.push(error.message));
+    page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
+    page.on("request", request => { if (request.url().includes("/api/governance-intelligence/")) requests.push(request.url()); });
+    const response = await page.goto("http://localhost:3000/component-04", { waitUntil: "networkidle" });
+    assert.equal(response.status(), 200);
+    await page.getByRole("heading", { name: "Governance Intelligence" }).waitFor();
+    await page.getByRole("heading", { name: "Engine Summary" }).waitFor();
+    await page.getByRole("heading", { name: "Recent Cases" }).waitFor();
+    await page.getByRole("heading", { name: "Governance Notice" }).waitFor();
+    assert.equal(await page.getByRole("heading", { name: "PP1 Final Seed Scenarios" }).count(), 0);
+    await page.screenshot({ path: path.join(output, "component-04-dashboard-live-desktop.png"), fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, "live mobile overflow");
+    await page.screenshot({ path: path.join(output, "component-04-dashboard-live-mobile.png"), fullPage: true });
+    assert.ok(requests.some(url => url.endsWith("/dashboard")), "live dashboard request");
+    assert.equal(requests.some(url => url.includes("/audits/history/cases/")), false, "dashboard must not load case audit histories");
+    assert.equal(requests.some(url => /\/audits\/[^/]+\/receipt$/.test(new URL(url).pathname)), false, "dashboard must not load receipts");
+    assert.equal(requests.some(url => url.endsWith("/verify")), false, "page load must not verify");
+    assert.deepEqual(errors, []);
+    await browser.close();
+    console.log(JSON.stringify({ mode: "live", requests: requests.length, screenshots: output }));
+    return;
+  }
+  const apiPattern = "**/api/governance-intelligence/**";
+  const complaintCategories = ["Administrative / Procedural / Integrity", "Lease Revenue / Payment / Enforcement", "Unauthorized Allocation / Transfer / Use", "Protected / Environmental Lease Misuse"];
+  await page.route(apiPattern, async route => {
+    const pathname = new URL(route.request().url()).pathname;
+    let body;
+    if (pathname.endsWith("/dashboard")) body = { summary: { totalCases: 0, totalAssessments: 0, clearCount: 0, reviewRequiredCount: 0, insufficientInfoCount: 0, lastUpdated: "2026-10-11T00:00:00Z" }, cases: [] };
+    else if (pathname.endsWith("/classify-complaint")) body = { assessmentId: "0199b9bc-9898-7000-8000-000000000001", caseId: "CASE-COMPLAINT-001", complaintText: "Fictional browser-test complaint.", modelVersion: "v2", predictedCategory: complaintCategories[0], classProbabilities: Object.fromEntries(complaintCategories.map((category, index) => [category, index === 0 ? 0.7 : 0.1])), advisoryNote: "Machine prediction for human review.", closedSetNote: "Closed-set taxonomy.", assessedAtUtc: "2026-10-11T00:00:00Z" };
+    else if (pathname.endsWith("/predict-workflow-anomaly")) body = { caseId: "SIM-C4-2026-001", modelVersion: "workflow_anomaly_model_v1", anomalyScore: 0.688338019923785, threshold: 0.5743688923115832, flagged: true, featureValues: { eventCount: 5, elapsedDays: 4.17, maxGapHours: 48, meanGapHours: 25, uniqueActivities: 5, repeatedActivityCount: 0, resourceHandoffs: 4, institutionSwitches: 4, distinctResources: 5 }, advisoryNote: "Advisory statistical result." };
+    else if (pathname.endsWith("/screen-early-governance")) body = { caseId: "SIM-C4-2026-001", inputVersion: "v1", overallStatus: "Clear", hasIncompleteEvidence: false, indicatorResults: [] };
+    else if (pathname.includes("/audits/") && pathname.endsWith("/verify")) body = { recordId: "818f49f5-d954-4a4a-9305-a18133d1e2a2", engineType: "Compliance", actionName: "Evaluate", governanceStatus: "Clear", decisionRecordedAt: "2026-10-11T00:00:00Z", recordHash: "abc", verificationStatus: "Match", anchorStatus: "Anchored", ledgerTransactionReference: "0x123", blockNumber: 1, anchoredAtUtc: "2026-10-11T00:00:01Z", verifiedAtUtc: "2026-10-11T00:00:02Z", explanation: "Digest matched." };
+    else return route.fulfill({ status: 503, contentType: "application/problem+json", body: JSON.stringify({ status: 503, title: "Unavailable", detail: "Test dependency unavailable." }) });
+    return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
+  });
   page.on("pageerror", error => errors.push(error.message));
   page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
   page.on("request", request => { if (/\/api\/|:8000|:8001/.test(request.url())) requests.push(request.url()); });
@@ -26,7 +66,8 @@ const output = process.env.C4_SCREENSHOT_DIR || path.join(tmpdir(), "c4-frontend
     assert.equal(await page.locator("img").evaluateAll(images => images.every(image => image.getBoundingClientRect().width > 0 && image.getBoundingClientRect().height > 0)), true, route + " visible assets");
     assert.equal(await page.locator("main").count(), 1, route + " has exactly one main");
     await page.getByText("Loading", { exact: false }).count(); // Loading is allowed while the read settles.
-    if (route === "" || route === "/cases") await page.getByText("Live governance assessments are not available yet.", { exact: false }).waitFor();
+    if (route === "") await page.getByText("no persisted Component 4 assessments", { exact: false }).waitFor();
+    if (route === "/cases") await page.getByText("No governance assessments found", { exact: false }).waitFor();
     assert.equal(await page.getByText("DEMO DATA", { exact: true }).count(), 0, "live mode starts without demo fixtures");
     await page.screenshot({ path: path.join(output, (route.slice(1).replaceAll("/", "-") || "dashboard") + "-live-desktop.png"), fullPage: true });
     await page.getByRole("button", { name: "Explore demo data" }).click();
@@ -66,14 +107,39 @@ const output = process.env.C4_SCREENSHOT_DIR || path.join(tmpdir(), "c4-frontend
   await page.getByRole("link", { name: "Complaint intelligence", exact: true }).first().click();
   await page.getByRole("combobox", { name: "Assessment", exact: true }).selectOption("1");
   await page.getByText("DEMO-COMPLAINT-001", { exact: true }).waitFor();
-  assert.equal(await page.getByRole("button", { name: "Classify complaint" }).isDisabled(), true);
+  assert.equal(await page.getByRole("button", { name: "Classify complaint" }).count(), 0);
   await page.getByRole("button", { name: "Return to live" }).click();
   assert.equal(await page.getByRole("combobox", { name: "Assessment", exact: true }).count(), 0);
   assert.equal(await page.getByText("DEMO-COMPLAINT-001", { exact: true }).count(), 0);
+  // Mocked HTTP boundaries verify frontend rendering only; they are not live evidence.
+  await page.getByLabel("Original complaint · English").fill("Fictional browser-test complaint.");
+  await page.getByRole("button", { name: "Classify complaint" }).click();
+  await page.getByRole("heading", { name: "Machine Prediction · Real ML Output" }).waitFor();
+  await page.getByText("v2", { exact: true }).waitFor();
+  assert.equal(await page.getByRole("table").getByRole("row").count(), 5);
+  await page.goto(base + "/component-04/anomalies");
+  await page.getByRole("button", { name: "Evaluate Workflow Anomaly" }).click();
+  await page.getByText("workflow_anomaly_model_v1", { exact: true }).waitFor();
+  await page.getByText("Anomaly history unavailable", { exact: true }).waitFor();
+  assert.equal(await page.getByText("confidence", { exact: true }).count(), 0);
+  assert.match(await page.locator("main").innerText(), /not a probability or confidence value/i);
+  const anomalyRequestsBeforeInvalid = requests.filter(url => url.includes("predict-workflow-anomaly")).length;
+  await page.getByLabel(/Workflow Trace JSON/).fill(JSON.stringify({ caseId: "case", events: [{ eventSeq: 1, activity: "", institution: "DS", resource: "Officer", timestamp: "2026-01-01T08:00:00" }] }));
+  await page.getByRole("button", { name: "Evaluate Workflow Anomaly" }).click();
+  await page.getByRole("alert").filter({ hasText: "nonblank activity" }).waitFor();
+  assert.equal(requests.filter(url => url.includes("predict-workflow-anomaly")).length, anomalyRequestsBeforeInvalid);
+  await page.goto(base + "/component-04/screening");
+  await page.getByRole("button", { name: "Run Early Governance Screening" }).click();
+  await page.getByText("Clear", { exact: true }).first().waitFor();
+  await page.getByText("Referral delivery not confirmed", { exact: true }).waitFor();
+  await page.goto(base + "/component-04/verification");
+  await page.getByRole("button", { name: "Verify Record on Blockchain" }).click();
+  await page.getByText("Match", { exact: true }).first().waitFor();
+  await page.getByText("0x123", { exact: true }).waitFor();
   // Component 1 navigation keeps its own labels and route matching.
   const c4Requests = [...requests];
   const c4Errors = [...errors];
-  assert.deepEqual(c4Requests, []);
+  assert.ok(c4Requests.some(url => url.endsWith("/dashboard")));
   assert.deepEqual(c4Errors, []);
   await page.goto(base + "/land-intelligence");
   await page.getByRole("complementary", { name: "Land Intelligence navigation" }).waitFor();

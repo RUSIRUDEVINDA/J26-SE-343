@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -55,11 +54,6 @@ public sealed class GovernanceDashboardReader : IGovernanceDashboardReader
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        if (candidateCaseIds.Count == 0)
-        {
-            candidateCaseIds = new List<string?> { "SIM-C4-2026-001", "SIM-C4-2026-002", "SIM-C4-2026-003", "SIM-C4-2026-004", "SIM-C4-2026-005" };
-        }
-
         var cases = new List<GovernanceCaseAssessmentDto>();
         int clearCount = 0;
         int reviewCount = 0;
@@ -74,12 +68,12 @@ public sealed class GovernanceDashboardReader : IGovernanceDashboardReader
             var cmpl = complaintsList.FirstOrDefault(c => string.Equals(c.CaseId, cId, StringComparison.OrdinalIgnoreCase));
             var conf = conflictList.FirstOrDefault(c => c.Findings.Any(f => string.Equals(f.SubjectId, cId, StringComparison.OrdinalIgnoreCase)));
 
-            string compStatus = comp?.Status ?? "Compliant";
-            string confStatus = (conf != null && conf.DetectedConflictsCount > 0)
-                ? "ConflictDetected"
-                : "Clear";
+            string compStatus = comp?.Status ?? "NotAssessed";
+            string confStatus = conf is null
+                ? "NotAssessed"
+                : conf.DetectedConflictsCount > 0 ? "ConflictDetected" : "Clear";
 
-            string earlyStatus = "Clear";
+            string earlyStatus = scrn is null ? "NotAssessed" : "Clear";
             if (scrn != null && !string.IsNullOrEmpty(scrn.ResultSnapshotJson))
             {
                 if (scrn.ResultSnapshotJson.Contains("ReviewRequired", StringComparison.OrdinalIgnoreCase) ||
@@ -93,12 +87,13 @@ public sealed class GovernanceDashboardReader : IGovernanceDashboardReader
                 }
             }
 
+            bool hasIncompleteAssessment = comp is null || conf is null || scrn is null;
             string overallStatus = (compStatus.Contains("Review", StringComparison.OrdinalIgnoreCase) ||
                                    compStatus.Contains("NonCompliant", StringComparison.OrdinalIgnoreCase) ||
                                    confStatus == "ConflictDetected" ||
                                    earlyStatus == "ReviewRequired")
                 ? "ReviewRequired"
-                : (compStatus.Contains("Insufficient", StringComparison.OrdinalIgnoreCase) || earlyStatus == "InsufficientInformation")
+                : (hasIncompleteAssessment || compStatus.Contains("Insufficient", StringComparison.OrdinalIgnoreCase) || earlyStatus == "InsufficientInformation")
                     ? "InsufficientInformation"
                     : "Clear";
 
@@ -126,25 +121,25 @@ public sealed class GovernanceDashboardReader : IGovernanceDashboardReader
                     ModelVersion: cmpl.ModelVersion);
             }
 
-            var assessmentId = "ASSESSMENT-" + (comp?.Id.ToString()[..8].ToUpperInvariant() ??
-                                                scrn?.AssessmentId.ToString()[..8].ToUpperInvariant() ??
-                                                cmpl?.AssessmentId.ToString()[..8].ToUpperInvariant() ??
-                                                Guid.NewGuid().ToString()[..8].ToUpperInvariant());
+            var assessmentId = (comp?.Id ?? scrn?.AssessmentId ?? cmpl!.AssessmentId).ToString();
+            var evaluatedAt = comp?.EvaluationTimestamp
+                ?? scrn?.CreatedAtUtc.UtcDateTime
+                ?? cmpl!.AssessedAtUtc.UtcDateTime;
 
             cases.Add(new GovernanceCaseAssessmentDto(
                 AssessmentId: assessmentId,
                 WorkflowRunId: scrn?.WorkflowRunId?.ToString(),
                 CaseId: cId,
-                ParcelReference: "PARCEL-" + cId.Replace("SIM-C4-2026-", "").Replace("NPD-PROP-2026-", ""),
-                ApplicantReference: "State Lease Applicant (" + cId + ")",
+                ParcelReference: "Unavailable",
+                ApplicantReference: "Unavailable",
                 OverallStatus: overallStatus,
                 ComplianceStatus: compStatus,
                 ConflictStatus: confStatus,
                 EarlyScreeningStatus: earlyStatus,
                 AnomalyStatus: "NotAssessed",
-                ConsensusOutcome: "ConsensusReached",
-                EvaluatedAt: (comp?.EvaluationTimestamp ?? scrn?.CreatedAtUtc.UtcDateTime ?? cmpl?.AssessedAtUtc.UtcDateTime ?? DateTime.UtcNow).ToString("o"),
-                Version: "v1.0-live",
+                ConsensusOutcome: "NotAssessed",
+                EvaluatedAt: evaluatedAt.ToString("o"),
+                Version: "Persisted Component 4 records",
                 SummaryFinding: "Computed governance intelligence findings persisted in PostgreSQL development database.",
                 Rationale: "Evaluated by real .NET governance engines against regulatory and administrative policies.",
                 RecommendedNextStep: "Review governance dossier in Component 4 management console.",
