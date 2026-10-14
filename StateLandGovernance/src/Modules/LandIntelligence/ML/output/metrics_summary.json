@@ -1,29 +1,155 @@
 {
-  "Logistic Regression": {
-    "accuracy": 0.625,
-    "precision_macro": 0.6349242442556174,
-    "recall_macro": 0.6215242376766877,
-    "f1_macro": 0.6268282064024661,
-    "f1_weighted": 0.6245012184971427,
-    "cv_f1_macro_mean": 0.6224446103559483,
-    "cv_f1_macro_std": 0.02146215675095819
+  "dataset": {
+    "rows": 3000,
+    "train_rows": 2400,
+    "test_rows": 600,
+    "test_size": 0.2,
+    "seed": 42,
+    "label_source": "synthetic_rule_without_road_water_soil",
+    "features_used": [
+      "area_hectares",
+      "elevation_meters",
+      "requested_purpose",
+      "land_category",
+      "province",
+      "district",
+      "gis_enrichment_status",
+      "terrain_description",
+      "environmental_restriction_type",
+      "environmental_restriction_severity",
+      "spatial_constraint_present"
+    ],
+    "features_excluded_unavailable": [
+      "distance_to_road_m",
+      "distance_to_water_m",
+      "derived_soil_group",
+      "soil_overlap_percentage"
+    ]
   },
-  "Decision Tree": {
-    "accuracy": 0.6666666666666666,
-    "precision_macro": 0.6802900038227738,
-    "recall_macro": 0.6557407571926629,
-    "f1_macro": 0.6650407341203692,
-    "f1_weighted": 0.667357950651095,
-    "cv_f1_macro_mean": 0.675337545491072,
-    "cv_f1_macro_std": 0.018342013145396782
+  "target_held_out_accuracy": 0.8,
+  "target_achieved": false,
+  "models": {
+    "Dummy Majority": {
+      "accuracy": 0.495,
+      "precision_macro": 0.165,
+      "recall_macro": 0.3333333333333333,
+      "f1_macro": 0.22073578595317725,
+      "f1_weighted": 0.3277926421404682,
+      "per_class": {
+        "Unsuitable": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 279
+        },
+        "Moderately Suitable": {
+          "precision": 0.495,
+          "recall": 1.0,
+          "f1": 0.6622073578595318,
+          "support": 297
+        },
+        "Suitable": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 24
+        }
+      },
+      "cv_f1_macro_mean": 0.22073557806241575,
+      "cv_f1_macro_std": 0.0003045173201907635
+    },
+    "Logistic Regression": {
+      "accuracy": 0.6233333333333333,
+      "precision_macro": 0.5297319497845009,
+      "recall_macro": 0.6123873140002173,
+      "f1_macro": 0.5209406323981686,
+      "f1_weighted": 0.6537372565685857,
+      "per_class": {
+        "Unsuitable": {
+          "precision": 0.7741935483870968,
+          "recall": 0.6881720430107527,
+          "f1": 0.7286527514231499,
+          "support": 279
+        },
+        "Moderately Suitable": {
+          "precision": 0.6829268292682927,
+          "recall": 0.5656565656565656,
+          "f1": 0.6187845303867403,
+          "support": 297
+        },
+        "Suitable": {
+          "precision": 0.1320754716981132,
+          "recall": 0.5833333333333334,
+          "f1": 0.2153846153846154,
+          "support": 24
+        }
+      },
+      "cv_f1_macro_mean": 0.5262760777945731,
+      "cv_f1_macro_std": 0.01483282183026221
+    },
+    "Decision Tree": {
+      "accuracy": 0.6483333333333333,
+      "precision_macro": 0.5325771453047535,
+      "recall_macro": 0.5787353824988234,
+      "f1_macro": 0.524428526053459,
+      "f1_weighted": 0.6764377284913188,
+      "per_class": {
+        "Unsuitable": {
+          "precision": 0.7874015748031497,
+          "recall": 0.7168458781362007,
+          "f1": 0.7504690431519699,
+          "support": 279
+        },
+        "Moderately Suitable": {
+          "precision": 0.69921875,
+          "recall": 0.6026936026936027,
+          "f1": 0.6473779385171791,
+          "support": 297
+        },
+        "Suitable": {
+          "precision": 0.1111111111111111,
+          "recall": 0.4166666666666667,
+          "f1": 0.17543859649122806,
+          "support": 24
+        }
+      },
+      "cv_f1_macro_mean": 0.5254606229897677,
+      "cv_f1_macro_std": 0.017286086112655915
+    },
+    "Random Forest": {
+      "accuracy": 0.765,
+      "precision_macro": 0.5903656564178837,
+      "recall_macro": 0.5954934651171211,
+      "f1_macro": 0.5926960489998084,
+      "f1_weighted": 0.7664218174579477,
+      "per_class": {
+        "Unsuitable": {
+          "precision": 0.8172043010752689,
+          "recall": 0.8172043010752689,
+          "f1": 0.8172043010752689,
+          "support": 279
+        },
+        "Moderately Suitable": {
+          "precision": 0.7687074829931972,
+          "recall": 0.7609427609427609,
+          "f1": 0.7648054145516074,
+          "support": 297
+        },
+        "Suitable": {
+          "precision": 0.18518518518518517,
+          "recall": 0.20833333333333334,
+          "f1": 0.19607843137254902,
+          "support": 24
+        }
+      },
+      "cv_f1_macro_mean": 0.5956029919494076,
+      "cv_f1_macro_std": 0.020259292315489976
+    }
   },
-  "Random Forest": {
-    "accuracy": 0.6816666666666666,
-    "precision_macro": 0.6993206251104825,
-    "recall_macro": 0.6809782406878595,
-    "f1_macro": 0.6877725907577267,
-    "f1_weighted": 0.6812913843113708,
-    "cv_f1_macro_mean": 0.6785436689176587,
-    "cv_f1_macro_std": 0.01048355567431848
-  }
+  "notes": [
+    "ML is supplementary evidence only; rule-based scoring remains authoritative.",
+    "Road, water, and soil were excluded and not invented.",
+    "Cross-validation uses the training fold only.",
+    "Experimental Colombo GIS ML must stay separate (output_colombo_* / port 8501)."
+  ]
 }
