@@ -88,6 +88,27 @@ public sealed class LandCitizenWorkspaceController : ControllerBase
         return Ok(detail);
     }
 
+    [HttpGet("parcels/{landParcelId:guid}/lease-interest")]
+    [ProducesResponseType(typeof(LeaseInterestRequestDetailDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<LeaseInterestRequestDetailDto>> FindForParcelAsync(
+        Guid landParcelId,
+        CancellationToken cancellationToken)
+    {
+        var detail = await _leaseInterest.FindForParcelAsync(landParcelId, cancellationToken);
+        if (detail is null)
+        {
+            return NoContent();
+        }
+
+        return Ok(detail);
+    }
+
+    /// <summary>
+    /// Explicitly starts a draft for the parcel, or resumes the existing draft without duplicating.
+    /// Viewing the form must use GET parcels/{{id}}/lease-interest instead.
+    /// </summary>
     [HttpPost("parcels/{landParcelId:guid}/lease-interest/draft")]
     [ProducesResponseType(typeof(LeaseInterestRequestDetailDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<LeaseInterestRequestDetailDto>> GetOrCreateDraftAsync(
