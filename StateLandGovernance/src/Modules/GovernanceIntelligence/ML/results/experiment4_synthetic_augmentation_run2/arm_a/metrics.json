@@ -1,0 +1,18 @@
+{
+  "Accuracy": 0.77,
+  "Macro_F1_sklearn": 0.7685,
+  "Macro_F1_from_per_class": {
+    "value": 0.7684
+  },
+  "Weighted_F1": 0.7685,
+  "Macro_Precision_sklearn": 0.7708,
+  "Macro_Precision_from_per_class": {
+    "value": 0.7708
+  },
+  "Macro_Recall_sklearn": 0.77,
+  "Macro_Recall_from_per_class": {
+    "value": 0.77
+  },
+  "Misclassified": 46,
+  "note_zero_division": "sklearn metrics use zero_division=0 (undefined \u2192 0.0). per_class metrics record 'undefined' when denominator is 0. Macro averages from per_class may differ from sklearn macro values when any class has an undefined metric."
+}

@@ -1,0 +1,50 @@
+{
+  "model_features": [
+    "event_count",
+    "elapsed_days",
+    "max_gap_hours",
+    "mean_gap_hours",
+    "unique_activities",
+    "repeated_activity_count",
+    "resource_handoffs",
+    "institution_switches",
+    "distinct_resources"
+  ],
+  "definitions": {
+    "event_count": "Number of accepted events in case.",
+    "elapsed_days": "Last minus first timestamp in original event_seq order, divided by 86400 seconds.",
+    "max_gap_hours": "Maximum adjacent timestamp difference in event_seq order / 3600.",
+    "mean_gap_hours": "Arithmetic mean of adjacent timestamp differences / 3600.",
+    "unique_activities": "Number of distinct activity_canonical values.",
+    "repeated_activity_count": "event_count minus unique_activities; extra occurrences, not number of loops.",
+    "resource_handoffs": "Adjacent changes of the (institution, resource) pair.",
+    "institution_switches": "Adjacent changes of institution.",
+    "distinct_resources": "Distinct (institution, resource) pairs; shared raw resource names are institution-scoped."
+  },
+  "scoring_scope": "complete accepted synthetic case only; not validated for in-flight prefixes",
+  "normalization": "Strip only terminal (Repeated), (Re-submission), (Correction Requested) in derived activity_canonical; preserve raw activity. This is generator-specific, not a production taxonomy.",
+  "excluded_inputs": [
+    "case_id",
+    "label",
+    "perturbation_type",
+    "simulation_marker",
+    "raw_activity_text",
+    "resource_identifiers",
+    "source_parent_case_id",
+    "source_family_id",
+    "exact_trace_group",
+    "split",
+    "preparation_status",
+    "legal_route",
+    "land_purpose",
+    "province",
+    "applicant_type",
+    "land_extent_perches",
+    "inter_provincial",
+    "required_higher_approval",
+    "registration_requirement"
+  ],
+  "missing_value_policy": "Reject incomplete accepted input; do not impute from all splits.",
+  "precision": "Unrounded recomputed floats; originals used 2 decimals.",
+  "timezone": "Unspecified naive timestamps; no UTC assignment or business-calendar correction."
+}

@@ -1,0 +1,73 @@
+.shell {
+  min-height: 100vh;
+  padding: 1rem 1.25rem 1.5rem;
+  background: var(--color-page-bg);
+}
+
+.body,
+.bodyWithSidebar {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 0.85rem;
+  align-items: flex-start;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding-top: 0.15rem;
+}
+
+.headingRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  line-height: 1.25;
+}
+
+.pageSubtitle {
+  margin: 0.35rem 0 0;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  max-width: 46rem;
+}
+
+.headingAction {
+  flex-shrink: 0;
+  padding-top: 0.1rem;
+}
+
+@media (max-width: 900px) {
+  .shell {
+    padding: 0.85rem;
+  }
+
+  .bodyWithSidebar {
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .headingRow {
+    flex-direction: column;
+  }
+
+  .headingAction {
+    width: 100%;
+  }
+
+  .headingAction > * {
+    width: 100%;
+    text-align: center;
+  }
+}

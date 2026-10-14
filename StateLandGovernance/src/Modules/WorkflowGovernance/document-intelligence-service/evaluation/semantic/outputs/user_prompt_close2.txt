@@ -1,0 +1,54 @@
+<USER_REQUEST>
+DOCUMENT-INTELLIGENCE-CLOSE-2 — Audit Live Gemini Output and Fix Reconciliation
+
+The latest live comparison succeeded. Preserve its raw response and evaluation artifacts before changes.
+
+Reported results:
+Qwen historical strict score: 12/17.
+Gemini strict score: 8/17.
+Gemini reported critical score: 6/9, inconsistent with displayed verdicts.
+Gemini reported duration: 61.2 seconds after an initial 503.
+
+Complete these tasks:
+
+1. Audit scoring consistently for BOTH providers:
+- Recompute strict and weighted scores directly from field verdicts.
+- Explain and correct Gemini's critical-score discrepancy.
+- Apply identical punctuation and approved text-normalization rules to project titles.
+- Review proposed_land_use = පොල් වගාව against the coconut-cultivation reference.
+- Keep semantic correctness, grounding and final-output status separate.
+- Report expected-present correctness separately from correct missing-field abstention.
+- Do not change references merely to improve scores.
+
+2. Inspect the saved Gemini response:
+For DSD, land extent and unit, show actual candidate value, original evidence quote, cited page, grounding failure reason and final status.
+Determine whether failures come from translated quotes, wrong pages, mismatched OCR representations, parsing or genuinely unsupported assertions.
+Fix demonstrated implementation defects without weakening evidence requirements.
+
+3. Fix ledger reconciliation:
+Rejected or ungrounded candidates must not create conflicts against eligible, valid, grounded candidates.
+Preserve genuine conflicts and the human-verification boundary.
+Add regression tests for rejected noise, ungrounded noise, genuine conflicting values and no eligible candidates.
+
+4. Record exact Gemini model ID, request attempts and timing:
+Separate total wall time including retry/backoff from successful-attempt duration where instrumentation allows.
+Do not present historical Qwen timing as a fresh controlled speed comparison.
+
+5. Re-evaluate saved outputs where possible without additional API calls.
+If extractor changes require a fresh Gemini run, provide the exact command and clearly version the new artifacts.
+
+6. Run relevant tests and git diff --check.
+Do not commit, optimize OCR yet, change canonical fields, modify WorkflowGovernance.Domain or GovernanceIntelligence, or start Batch 4B.
+
+Return corrected tables, changed files, test results and the remaining extraction defects. Keep Qwen as production default pending evidence.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-13T18:42:04+05:30.
+
+The user's current state is as follows:
+Active Document: d:\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\StateLandGovernance\src\Modules\WorkflowGovernance\document-intelligence-service\evaluation\ocr\ground_truth\proposal1_page03.txt (LANGUAGE_UNSPECIFIED)
+Cursor is on line: 15
+Other open documents:
+- d:\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\StateLandGovernance\src\Modules\WorkflowGovernance\document-intelligence-service\evaluation\ocr\ground_truth\proposal1_page14.txt (LANGUAGE_UNSPECIFIED)
+- d:\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\StateLandGovernance\src\Modules\WorkflowGovernance\document-intelligence-service\app\evaluation\semantic_metrics.py (LANGUAGE_UNSPECIFIED)
+</ADDITIONAL_METADATA>

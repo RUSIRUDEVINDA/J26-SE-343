@@ -1,0 +1,6 @@
+Fold,Train_Size,Test_Size,Accuracy,Macro_F1,Weighted_F1,Test_Administrative___Procedural___Integrity,Test_Lease_Revenue___Payment___Enforcement,Test_Unauthorized_Allocation___Transfer___Use,Test_Protected___Environmental_Lease_Misuse
+1,175,25,0.64,0.5687,0.6328,8,1,6,10
+2,161,39,0.8205,0.8212,0.8146,9,8,13,9
+3,141,59,0.5932,0.5843,0.5923,16,25,9,9
+4,159,41,0.7805,0.7946,0.7857,8,10,9,14
+5,164,36,0.8333,0.8479,0.8295,9,6,13,8

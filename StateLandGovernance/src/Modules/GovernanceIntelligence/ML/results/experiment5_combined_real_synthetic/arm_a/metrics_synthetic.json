@@ -1,0 +1,25 @@
+{
+  "support": 225,
+  "correct": 187,
+  "incorrect": 38,
+  "accuracy": 0.8311111111111111,
+  "balanced_accuracy": 0.8383561492114123,
+  "macro_precision": 0.8347225569932449,
+  "macro_recall": 0.8383561492114123,
+  "macro_f1": 0.8313497648591988,
+  "weighted_f1": 0.8307373758664325,
+  "all_class_metrics_defined": true,
+  "no_zero_recall_class": true,
+  "family_metrics": {
+    "family_support": 75,
+    "family_majority_accuracy": 0.92,
+    "family_majority_macro_f1": 0.9228139344418413,
+    "families_all_three_variants_correct": 47,
+    "correct_variants_distribution": {
+      "0": 0,
+      "1": 10,
+      "2": 18,
+      "3": 47
+    }
+  }
+}

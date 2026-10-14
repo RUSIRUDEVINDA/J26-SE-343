@@ -1,63 +1,27 @@
 # State Land Governance — Backend
 
-**AI-Assisted Digital Governance for State Land Lease Management in Sri Lanka**
+An Intelligent AI-Driven Digital Lease Governance Ecosystem for Transparent and Efficient State Land Lease Management in Sri Lanka.
 
-ASP.NET Core 8 modular monolith backend using Clean Architecture principles. This repository contains **structural scaffolding only** — no business logic, database, authentication, or API endpoints are implemented yet.
+## Run the API locally
 
-## Solution Structure
+Configure environment variables at the **repository root** (copy `.env.example` → `.env`, set `LAND_INTELLIGENCE_CONNECTION`).
 
-```
-StateLandGovernance/
-├── src/
-│   ├── Api/                    # Single deployable Web API host
-│   ├── Modules/                # Four independent business modules
-│   ├── Shared/                 # Cross-module shared abstractions
-│   └── BuildingBlocks/         # Reusable architectural primitives
-├── tests/                      # Unit, integration, and architecture tests
-└── docs/                       # Architecture and domain documentation
+```powershell
+# From this folder (StateLandGovernance)
+.\run-api.ps1
+
+# Or explicitly
+dotnet run --project src\Api\StateLandGovernance.Api.csproj
 ```
 
-## Modules
+If `dotnet run` fails with **MSB3027 / file is locked by StateLandGovernance.Api**, an old API instance is still running. Stop it first:
 
-| Module | Responsibility (future) |
-|---|---|
-| **LandIntelligence** | Land parcel data, GIS/PostGIS integration, spatial analysis |
-| **LeaseFeasibility** | Lease viability assessment, AI-assisted scoring |
-| **WorkflowGovernance** | Approval workflows, document processing, compliance routing |
-| **GovernanceIntelligence** | Knowledge graph (Neo4j), governance analytics, AI insights |
-
-## Dependency Direction
-
-```
-Presentation → Application → Domain
-Infrastructure → Application + Domain (+ Shared.Infrastructure)
-Api → Module Presentation + Module Infrastructure (composition root)
+```powershell
+.\stop-api.ps1
 ```
 
-- **Domain** has no dependency on Infrastructure or Application.
-- **Application** defines interfaces; Infrastructure implements them.
-- **Api** is the composition root — the only project that wires Infrastructure into DI.
+Then run `.\run-api.ps1` again. Only one API instance can use port **5264** at a time.
 
-## Getting Started
+Swagger: [http://localhost:5264/swagger](http://localhost:5264)
 
-```bash
-cd StateLandGovernance
-dotnet build
-dotnet run --project src/Api/StateLandGovernance.Api.csproj
-```
-
-## Technology Placeholders
-
-Future integrations will be placed in:
-
-- **PostgreSQL / EF Core** — `Shared/Infrastructure/Persistence/`, module `Infrastructure/Persistence/`
-- **PostGIS / GIS** — `LandIntelligence/Infrastructure/Integrations/`
-- **Neo4j** — `GovernanceIntelligence/Infrastructure/Integrations/`
-- **Redis** — `Shared/Infrastructure/Persistence/`
-- **Object Storage** — `Shared/Infrastructure/Storage/`
-- **AI / ML** — `LeaseFeasibility/`, `GovernanceIntelligence/` Integrations
-- **Document Processing** — `WorkflowGovernance/Infrastructure/Integrations/`
-
-## Next Steps
-
-Implement incrementally: shared building blocks → domain entities → application layer → infrastructure → API endpoints.
+The Next.js frontend lives in `StateLandGovernance.Web/` at the repo root.

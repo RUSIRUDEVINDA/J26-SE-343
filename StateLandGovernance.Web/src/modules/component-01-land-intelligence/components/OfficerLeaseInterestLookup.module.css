@@ -1,0 +1,116 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 1100px;
+}
+
+.demoLabel {
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.searchForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  background: #fff;
+}
+
+.field {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.field label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.hint {
+  margin: 0.4rem 0 0;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  line-height: 1.4;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.resultSummary {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.table th,
+.table td {
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.table th {
+  font-weight: 700;
+  background: var(--color-nav-inactive);
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.78rem;
+}
+
+.rowLink {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.rowLink:hover {
+  text-decoration: underline;
+}
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.pagerLabel {
+  font-size: 0.84rem;
+  color: var(--color-muted);
+}

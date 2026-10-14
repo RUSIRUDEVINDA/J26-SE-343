@@ -1,0 +1,489 @@
+{
+  "dataset_row_count": 200,
+  "source_group_count": 170,
+  "combined_group_count": 143,
+  "qualifying_text_pair_count": 192,
+  "group_size_distribution": {
+    "1": 113,
+    "2": 26,
+    "3": 3,
+    "26": 1
+  },
+  "largest_group": {
+    "combined_group": "CG-STATE-LEASE-030",
+    "size": 26,
+    "members": [
+      "STATE-LEASE-030",
+      "STATE-LEASE-031",
+      "STATE-LEASE-032",
+      "STATE-LEASE-033",
+      "STATE-LEASE-034",
+      "STATE-LEASE-035",
+      "STATE-LEASE-036",
+      "STATE-LEASE-044",
+      "STATE-LEASE-045",
+      "STATE-LEASE-046",
+      "STATE-LEASE-047",
+      "STATE-LEASE-048",
+      "STATE-LEASE-049",
+      "STATE-LEASE-050",
+      "STATE-LEASE-051",
+      "STATE-LEASE-052",
+      "STATE-LEASE-053",
+      "STATE-LEASE-054",
+      "STATE-LEASE-055",
+      "STATE-LEASE-056",
+      "STATE-LEASE-057",
+      "STATE-LEASE-058",
+      "STATE-LEASE-059",
+      "STATE-LEASE-060",
+      "STATE-LEASE-061",
+      "STATE-LEASE-062"
+    ]
+  },
+  "label_distribution_per_group": {
+    "CG-STATE-LEASE-001": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-STATE-LEASE-002": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-STATE-LEASE-003": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-STATE-LEASE-004": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-STATE-LEASE-005": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-STATE-LEASE-006": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-STATE-LEASE-007": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-STATE-LEASE-008": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-STATE-LEASE-009": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-STATE-LEASE-010": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-STATE-LEASE-011": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-STATE-LEASE-012": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-STATE-LEASE-013": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-014": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-015": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-016": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-017": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-STATE-LEASE-018": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-019": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-020": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-021": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-022": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-STATE-LEASE-023": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-024": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-STATE-LEASE-025": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-026": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-STATE-LEASE-027": {
+      "Administrative / Procedural / Integrity": 2
+    },
+    "CG-STATE-LEASE-029": {
+      "Unauthorized Allocation / Transfer / Use": 1,
+      "Lease Revenue / Payment / Enforcement": 1,
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-STATE-LEASE-030": {
+      "Lease Revenue / Payment / Enforcement": 17,
+      "Administrative / Procedural / Integrity": 7,
+      "Unauthorized Allocation / Transfer / Use": 2
+    },
+    "CG-STATE-LEASE-037": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-STATE-LEASE-038": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-STATE-LEASE-039": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-STATE-LEASE-040": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-STATE-LEASE-041": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-STATE-LEASE-042": {
+      "Administrative / Procedural / Integrity": 2
+    },
+    "CG-WEB-063": {
+      "Administrative / Procedural / Integrity": 2
+    },
+    "CG-WEB-065": {
+      "Administrative / Procedural / Integrity": 1,
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-067": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-068": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-069": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-070": {
+      "Lease Revenue / Payment / Enforcement": 2,
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-073": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-074": {
+      "Unauthorized Allocation / Transfer / Use": 1,
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-076": {
+      "Lease Revenue / Payment / Enforcement": 3
+    },
+    "CG-WEB-081": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-082": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-083": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-084": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-085": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-086": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-087": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-088": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-089": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-090": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-091": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-092": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-093": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-094": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-095": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-096": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-097": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-098": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-099": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-100": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-101": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-102": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-103": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-104": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-105": {
+      "Administrative / Procedural / Integrity": 1
+    },
+    "CG-WEB-106": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-107": {
+      "Lease Revenue / Payment / Enforcement": 2
+    },
+    "CG-WEB-108": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-109": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-110": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-112": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-113": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-114": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-115": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-116": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-117": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-118": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-119": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-120": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-121": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-122": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-123": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-124": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-125": {
+      "Lease Revenue / Payment / Enforcement": 1
+    },
+    "CG-WEB-126": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-127": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-128": {
+      "Unauthorized Allocation / Transfer / Use": 2
+    },
+    "CG-WEB-129": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-130": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-131": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-133": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-134": {
+      "Unauthorized Allocation / Transfer / Use": 2
+    },
+    "CG-WEB-135": {
+      "Unauthorized Allocation / Transfer / Use": 2
+    },
+    "CG-WEB-136": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-137": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-140": {
+      "Unauthorized Allocation / Transfer / Use": 2
+    },
+    "CG-WEB-141": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-142": {
+      "Unauthorized Allocation / Transfer / Use": 2
+    },
+    "CG-WEB-143": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-145": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-147": {
+      "Unauthorized Allocation / Transfer / Use": 2
+    },
+    "CG-WEB-148": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-149": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-150": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-152": {
+      "Unauthorized Allocation / Transfer / Use": 2
+    },
+    "CG-WEB-153": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-154": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-155": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-157": {
+      "Unauthorized Allocation / Transfer / Use": 2
+    },
+    "CG-WEB-158": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-159": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-160": {
+      "Unauthorized Allocation / Transfer / Use": 1
+    },
+    "CG-WEB-162": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-163": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-164": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-165": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-167": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-168": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-170": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-171": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-172": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-173": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-174": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-177": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-178": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-179": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-180": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-183": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-184": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-185": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-186": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-189": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-190": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-191": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-192": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-195": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-196": {
+      "Protected / Environmental Lease Misuse": 2
+    },
+    "CG-WEB-197": {
+      "Protected / Environmental Lease Misuse": 1
+    },
+    "CG-WEB-198": {
+      "Protected / Environmental Lease Misuse": 1
+    }
+  },
+  "grouping_parameters": {
+    "shingle_k": 5,
+    "jaccard_threshold": 0.5,
+    "case_normalization": "lower",
+    "whitespace_normalization": "collapsed"
+  },
+  "conservative_grouping_notice": "Transitive union-find merging of source documents, exact text matches, and near-duplicate shingle overlaps creates broad composite clusters. This prevents narrative template leakage across cross-validation folds, making Experiment 2 a conservative sensitivity baseline. It does not establish incident identity."
+}

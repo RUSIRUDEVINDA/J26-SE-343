@@ -59,9 +59,79 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
+## Local GIS reference datasets (not committed; imported via H2 pipeline)
+StateLandGovernance/data/gis/
+
 ## Environment / secrets
 .env
 .env.*
 !.env.example
+!.env.local.example
+
+## Next.js (StateLandGovernance.Web)
+StateLandGovernance.Web/.next/
+StateLandGovernance.Web/node_modules/
 appsettings.Local.json
 secrets.json
+
+## Cursor rules
+.rules/rules
+/skill-creator
+
+## Antigravity local agent files
+.agents/
+.Rules/rules/
+.research-log/
+
+## Research-log generated/local scripts and artefacts
+scripts/export_research_log.py
+scripts/test_export_research_log.py
+scripts/run_research_log_export.bat
+*.xlsx
+
+## Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+ENV/
+env/
+.Python
+.ipynb_checkpoints/
+*.egg-info/
+dist/
+build/
+.coverage
+htmlcov/
+
+## GovernanceIntelligence generated ML artefacts
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/models/*.joblib
+
+## Generated evaluation results
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/state_land_governance_confirmed_200.csv
+StateLandGovernance/src/Modules/GovernanceIntelligence/ML/data/state_land_governance_confirmed_200.csv
+## Governance Blockchain Service
+governance-blockchain-service/node_modules/
+governance-blockchain-service/deployment.json
+governance-blockchain-service/network/besu/nodes/**/key
+governance-blockchain-service/network/besu/**/key.priv
+governance-blockchain-service/network/besu/generated/
+governance-blockchain-service/network/besu/qbft-out/
+governance-blockchain-service/artifacts/
+governance-blockchain-service/cache/
+
+## WorkflowGovernance Local Development / Demo Storage
+.local-data/
+
+/scratch/browser_evidence
+/Component4_Synthetic_Integration_Seeds
+instruction.md
+/.tmp-c4-build-audit
+/.tmp-auditv2-build
+
+# Component 4 local PostgreSQL backups
+backups/component4/*.dump
+/StateLandGovernance/.tmp
+/.tmp

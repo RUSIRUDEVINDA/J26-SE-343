@@ -1,0 +1,71 @@
+{
+  "candidate": "colombo_osm_backend_compatible",
+  "model_activation_enabled": false,
+  "target": "suitability_label",
+  "numeric_features": [
+    "area_hectares",
+    "distance_to_road_m",
+    "distance_to_water_m"
+  ],
+  "categorical_features": [
+    "requested_purpose",
+    "land_category",
+    "gis_enrichment_status",
+    "derived_soil_group",
+    "spatial_constraint_present"
+  ],
+  "excluded_simulated_environmental_predictors": {
+    "environmental_restriction_type": "Simulated in dataset; ExperimentalColomboMlFeatureAdapter cannot supply equivalent typed GIS values and must abstain rather than fabricate.",
+    "environmental_restriction_severity": "Simulated in dataset; excluded with type for the same adapter reason."
+  },
+  "missing_evidence_policy": {
+    "spatial_constraint_present_null": "Adapter leaves null when conservation assessment is unavailable. Never coerce null/Unknown to False. Backend-compatible serving must abstain from experimental prediction when SpatialConstraintPresent is null.",
+    "handle_unknown_ignore": "OneHotEncoder(handle_unknown='ignore') is an engineering fallback only; it is not evidence of predictive validity for unseen categories.",
+    "labels_still_simulated": "suitability_label remains rule-simulated and may have used environmental restriction signals that are no longer predictors. Never retarget labels to inflate scores. Real-world validity requires independent evaluation and real suitability labels."
+  },
+  "expanded_feature_names": [
+    "num__area_hectares",
+    "num__distance_to_road_m",
+    "num__distance_to_water_m",
+    "cat__requested_purpose_Agricultural",
+    "cat__requested_purpose_Commercial",
+    "cat__requested_purpose_Residential",
+    "cat__land_category_CrownLand",
+    "cat__land_category_Other",
+    "cat__land_category_ReservedLand",
+    "cat__land_category_StateLand",
+    "cat__gis_enrichment_status_AssessedComplete",
+    "cat__gis_enrichment_status_AssessedPartial",
+    "cat__derived_soil_group_Alluvial soils of variable drainage and texture; flat terrain",
+    "cat__derived_soil_group_Bog and Half-Bog soils; flat terrain",
+    "cat__derived_soil_group_Red-Yellow Podzolic soils with soft or hard laterite; rolling and undulating terrain",
+    "cat__derived_soil_group_Red-Yellow Podzolic soils with strongly mottled subsoil & Low Humic Gley soils; rolling and undulating terrain",
+    "cat__derived_soil_group_Red-Yellow Podzolic soils; steeply dissected, hilly and rolling terrain",
+    "cat__derived_soil_group_Regosols on Recent beach sands; flat terrain",
+    "cat__derived_soil_group_Unknown",
+    "cat__derived_soil_group_Water",
+    "cat__spatial_constraint_present_False",
+    "cat__spatial_constraint_present_True"
+  ],
+  "spatial_constraint_present_encoding": {
+    "training": "cast to string; NaN -> 'Unknown' before OneHotEncoder",
+    "serving": "Adapter sets bool when assessment Available; null triggers abstention. Do not convert null to false.",
+    "categories_expected": [
+      "True",
+      "False",
+      "Unknown"
+    ]
+  },
+  "label_limitations": "suitability_label remains rule-simulated and may have used environmental restriction signals that are no longer predictors. Never retarget labels to inflate scores. Real-world validity requires independent evaluation and real suitability labels.",
+  "compatible_adapter_fields": [
+    "requested_purpose",
+    "land_category",
+    "area_hectares",
+    "distance_to_road_m",
+    "distance_to_water_m",
+    "gis_enrichment_status",
+    "derived_soil_group",
+    "spatial_constraint_present"
+  ],
+  "independent_evaluation_required": "Real-world validity requires an independent evaluation set and real suitability labels that were not used during development."
+}

@@ -1,0 +1,26 @@
+{
+  "status": "unpromoted candidate; not deployed",
+  "evaluation_type": "synthetic prospective evaluation",
+  "configuration_sha256": "a71710157a029de2df6a6329e276ceec12fc44433799960f862778d89fe68376",
+  "model_sha256": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+  "training_population": {
+    "real_records": 200,
+    "development_synthetic_records": 225,
+    "development_synthetic_families": 75
+  },
+  "sample_weight_policy": {
+    "real_record": 1.0,
+    "synthetic_variant": 0.3333333333333333,
+    "synthetic_family_total": 1.0
+  },
+  "dependency_versions": {
+    "python": "3.13.1",
+    "numpy": "2.3.1",
+    "pandas": "2.3.3",
+    "scikit_learn": "1.7.2",
+    "scipy": "1.16.3",
+    "joblib": "1.5.2"
+  },
+  "fit_count": 1,
+  "prospective_data_used_in_fitting": false
+}

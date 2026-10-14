@@ -1,0 +1,211 @@
+{
+  "document_type": "experiment3_corrected_summary",
+  "generated_at": "2026-09-21T14:42:10.945097+00:00",
+  "important_caveat": "These are development cross-validation results using frozen Experiment 2 fold assignments. They are not untouched held-out test results. Any improvement is a provisional signal only.",
+  "primary_run_directory": "StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment3_boilerplate_removal",
+  "source_artifact_paths": {
+    "preprocessing_audit_csv": "StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment3_boilerplate_removal\\preprocessing_audit.csv",
+    "arm_a_oof_csv": "StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment3_boilerplate_removal\\exp3a_baseline_rerun\\oof_predictions.csv",
+    "arm_b_oof_csv": "StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment3_boilerplate_removal\\exp3b_cleaned_text\\oof_predictions.csv",
+    "exp2_oof_csv": "StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment2_source_text\\out_of_fold_predictions.csv",
+    "dataset_csv": "StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\data\\state_land_governance_confirmed_200.csv"
+  },
+  "sha256_hashes": {
+    "dataset_csv": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61",
+    "exp3_audit_csv": "624287c4bb44deaf6a836d56b56e767fe51ad5d3abc208e37b21f25f29dd86c0",
+    "exp3_arm_a_oof_csv": "3ca315d15dd7a46c50dc4a75715f6b00923f32743a373e14275e2c6bc5e9012c",
+    "exp3_arm_b_oof_csv": "ea681a6970d53eec8128733cc0229da376bba5383def1eb9d1dda136ae71e7bf",
+    "exp2_oof_csv": "ac8476849840ca67061ac27c469dd6bab305aa7b51edc1443bf117bd07fe8491"
+  },
+  "boilerplate_phrases": [
+    "was identified in official audit/report material as a government/state land lease case involving",
+    "The Land Commissioner has confirmed that this is a genuine, direct, distinct state-land lease incident.",
+    "File-level details should be retained from the Commissioner's records when available."
+  ],
+  "arm_a_overall_metrics": {
+    "Accuracy": 0.725,
+    "Macro_F1": 0.7242,
+    "Weighted_F1": 0.7242,
+    "Macro_Precision": 0.7318,
+    "Macro_Recall": 0.725,
+    "Misclassified": 55
+  },
+  "arm_b_overall_metrics": {
+    "Accuracy": 0.77,
+    "Macro_F1": 0.7685,
+    "Weighted_F1": 0.7685,
+    "Macro_Precision": 0.7708,
+    "Macro_Recall": 0.77,
+    "Misclassified": 46
+  },
+  "arm_a_per_class_metrics": {
+    "Administrative / Procedural / Integrity": {
+      "TP": 36,
+      "FP": 10,
+      "FN": 14,
+      "TN": 140,
+      "Precision": 0.7826,
+      "Recall": 0.72,
+      "F1": 0.75,
+      "FPR": 0.0667
+    },
+    "Lease Revenue / Payment / Enforcement": {
+      "TP": 35,
+      "FP": 11,
+      "FN": 15,
+      "TN": 139,
+      "Precision": 0.7609,
+      "Recall": 0.7,
+      "F1": 0.7292,
+      "FPR": 0.0733
+    },
+    "Unauthorized Allocation / Transfer / Use": {
+      "TP": 32,
+      "FP": 12,
+      "FN": 18,
+      "TN": 138,
+      "Precision": 0.7273,
+      "Recall": 0.64,
+      "F1": 0.6809,
+      "FPR": 0.08
+    },
+    "Protected / Environmental Lease Misuse": {
+      "TP": 42,
+      "FP": 22,
+      "FN": 8,
+      "TN": 128,
+      "Precision": 0.6562,
+      "Recall": 0.84,
+      "F1": 0.7368,
+      "FPR": 0.1467
+    }
+  },
+  "arm_b_per_class_metrics": {
+    "Administrative / Procedural / Integrity": {
+      "TP": 37,
+      "FP": 8,
+      "FN": 13,
+      "TN": 142,
+      "Precision": 0.8222,
+      "Recall": 0.74,
+      "F1": 0.7789,
+      "FPR": 0.0533
+    },
+    "Lease Revenue / Payment / Enforcement": {
+      "TP": 42,
+      "FP": 12,
+      "FN": 8,
+      "TN": 138,
+      "Precision": 0.7778,
+      "Recall": 0.84,
+      "F1": 0.8077,
+      "FPR": 0.08
+    },
+    "Unauthorized Allocation / Transfer / Use": {
+      "TP": 33,
+      "FP": 12,
+      "FN": 17,
+      "TN": 138,
+      "Precision": 0.7333,
+      "Recall": 0.66,
+      "F1": 0.6947,
+      "FPR": 0.08
+    },
+    "Protected / Environmental Lease Misuse": {
+      "TP": 42,
+      "FP": 14,
+      "FN": 8,
+      "TN": 136,
+      "Precision": 0.75,
+      "Recall": 0.84,
+      "F1": 0.7925,
+      "FPR": 0.0933
+    }
+  },
+  "delta_b_minus_a": {
+    "Accuracy": 0.045,
+    "Macro_F1": 0.0443,
+    "Weighted_F1": 0.0443,
+    "Macro_Precision": 0.039,
+    "Macro_Recall": 0.045,
+    "Misclassified": -9
+  },
+  "transitions": {
+    "all_200": {
+      "population": "all_200",
+      "n": 200,
+      "arm_a_correct": 145,
+      "arm_b_correct": 154,
+      "both_correct": 145,
+      "both_wrong": 46,
+      "helped": 9,
+      "hurt": 0,
+      "arithmetic_check_passed": true,
+      "helped_ids": [
+        "STATE-LEASE-044",
+        "STATE-LEASE-046",
+        "STATE-LEASE-047",
+        "STATE-LEASE-048",
+        "STATE-LEASE-051",
+        "STATE-LEASE-053",
+        "STATE-LEASE-055",
+        "STATE-LEASE-061",
+        "WEB-157"
+      ],
+      "hurt_ids": []
+    },
+    "changed_19": {
+      "population": "changed_19",
+      "n": 19,
+      "arm_a_correct": 9,
+      "arm_b_correct": 17,
+      "both_correct": 9,
+      "both_wrong": 2,
+      "helped": 8,
+      "hurt": 0,
+      "arithmetic_check_passed": true,
+      "helped_ids": [
+        "STATE-LEASE-044",
+        "STATE-LEASE-046",
+        "STATE-LEASE-047",
+        "STATE-LEASE-048",
+        "STATE-LEASE-051",
+        "STATE-LEASE-053",
+        "STATE-LEASE-055",
+        "STATE-LEASE-061"
+      ],
+      "hurt_ids": []
+    },
+    "unchanged_181": {
+      "population": "unchanged_181",
+      "n": 181,
+      "arm_a_correct": 136,
+      "arm_b_correct": 137,
+      "both_correct": 136,
+      "both_wrong": 44,
+      "helped": 1,
+      "hurt": 0,
+      "arithmetic_check_passed": true,
+      "helped_ids": [
+        "WEB-157"
+      ],
+      "hurt_ids": []
+    }
+  },
+  "arithmetic_checks_passed": true,
+  "arm_a_vs_experiment2_identity": {
+    "identical_predicted_labels": 200,
+    "different_predicted_labels": 0,
+    "identical_fold_assignments": 200,
+    "identical_true_labels": 200,
+    "max_probability_diff": 0.0,
+    "note": "Arm A is prediction-identical to Experiment 2 across all 200 records, including fold assignments, true labels, and saved probabilities."
+  },
+  "error_in_original_json": {
+    "field": "changed_records_analysis.cleaning_helped_count",
+    "erroneous_value": 9,
+    "correct_value": 8,
+    "cause": "In the original evaluate_experiment3.py, cleaning_helped_count was computed from all 200 records using audit_df['Cleaning_Helped'].sum(), not restricted to the 19 changed records. The 9th improvement (WEB-157) is in the unchanged subset. This summary uses values computed directly from the saved OOF CSVs."
+  },
+  "web_157_note": "WEB-157 improved in Arm B despite its text containing none of the three boilerplate phrases. Its prediction changed from 'Protected / Environmental Lease Misuse' (Arm A) to 'Unauthorized Allocation / Transfer / Use' (Arm B, correct). This occurred in Fold 5. The mechanism is indirect: removing boilerplate from 19 records in the same fold's training partition altered TF-IDF vocabulary weighting, which changed the decision for this boundary case. The text of WEB-157 was not modified."
+}

@@ -1,0 +1,835 @@
+parcel_id,model,y_true,y_pred
+COL-OSM-42-000000,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000012,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000019,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000023,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000030,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000032,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000036,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000041,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000048,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000049,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000051,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000052,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000059,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000061,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000068,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000077,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000081,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000082,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000083,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000087,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000089,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000090,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000098,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000103,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000112,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000125,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000134,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000137,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000138,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000150,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000154,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000155,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000156,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000157,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000163,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000164,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000189,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000194,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000197,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000205,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000220,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000223,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000225,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000231,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000236,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000243,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000250,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000252,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000256,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000285,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000287,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000292,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000293,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000294,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000313,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000318,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000325,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000327,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000329,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000338,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000341,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000342,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000344,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000347,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000357,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000360,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000363,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000379,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000383,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000388,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000389,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000390,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000393,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000401,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000404,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000408,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000409,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000411,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000415,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000421,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000422,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000428,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000430,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000431,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000433,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000434,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000439,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000447,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000464,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000472,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000480,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000481,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000483,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000486,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000494,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000496,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000497,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000500,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000502,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000510,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000511,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000526,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000535,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000541,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000554,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000560,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000562,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000564,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000565,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000571,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000572,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000573,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000576,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000580,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000583,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000584,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000588,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000593,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000595,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000603,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000611,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000612,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000615,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000637,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000649,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000659,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000660,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000670,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000675,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000685,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000689,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000697,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000710,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000716,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000719,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000723,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000732,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000757,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000767,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000783,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000784,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000790,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000793,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000800,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000813,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000830,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000837,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000846,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000848,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000851,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000853,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000855,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000858,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000864,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000870,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000884,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000888,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000898,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000902,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000906,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000907,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000917,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000925,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000927,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000928,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000930,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000934,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000936,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000937,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000939,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000942,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-000952,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000955,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000959,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000965,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000967,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000970,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000971,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000981,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000992,Dummy Majority,Suitable,Suitable
+COL-OSM-42-000993,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000995,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001002,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001010,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001012,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001013,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001014,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001019,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001033,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001035,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001038,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-001055,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001061,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001066,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001089,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-001092,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-001097,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001115,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001117,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001132,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001133,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001138,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001142,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-001144,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001160,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001161,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001170,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001179,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-001181,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001184,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001187,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001188,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001193,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001195,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001196,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001198,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001199,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001202,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001205,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001212,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001214,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001219,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001223,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001227,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001228,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001230,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-001231,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001240,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001246,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001247,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001258,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001259,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001260,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001261,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001274,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001280,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001284,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001286,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-001290,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001295,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001305,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001306,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001309,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001310,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001311,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001324,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001327,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001351,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001362,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001364,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001367,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001370,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001389,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-001393,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001398,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001404,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001409,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001413,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001414,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-001416,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001421,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001431,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001434,Dummy Majority,Unsuitable,Suitable
+COL-OSM-42-001444,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001452,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001454,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001459,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001461,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001463,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001465,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001469,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001470,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001475,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001476,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-001480,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001484,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001487,Dummy Majority,Suitable,Suitable
+COL-OSM-42-001497,Dummy Majority,Moderately Suitable,Suitable
+COL-OSM-42-000000,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000012,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-000019,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000023,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000030,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000032,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000036,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000041,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000048,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000049,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000051,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000052,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000059,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000061,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000068,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-000077,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000081,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000082,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000083,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000087,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000089,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000090,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000098,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000103,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000112,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000125,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000134,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000137,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000138,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000150,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000154,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000155,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000156,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000157,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000163,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000164,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000189,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000194,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000197,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000205,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000220,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000223,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000225,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000231,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000236,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000243,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000250,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000252,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000256,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-000285,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000287,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000292,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000293,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000294,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000313,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000318,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000325,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000327,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000329,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000338,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000341,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000342,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000344,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000347,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000357,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000360,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000363,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000379,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000383,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000388,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000389,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000390,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000393,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-000401,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000404,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000408,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000409,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000411,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000415,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000421,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000422,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000428,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000430,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000431,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000433,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000434,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000439,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000447,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000464,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000472,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000480,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000481,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000483,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000486,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000494,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000496,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000497,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000500,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000502,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000510,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000511,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000526,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000535,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000541,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000554,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000560,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000562,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000564,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000565,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000571,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000572,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000573,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000576,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-000580,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000583,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000584,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000588,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000593,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000595,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000603,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000611,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000612,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000615,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000637,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000649,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000659,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000660,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000670,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000675,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000685,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000689,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000697,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000710,Logistic Regression,Suitable,Unsuitable
+COL-OSM-42-000716,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000719,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000723,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000732,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000757,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000767,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000783,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000784,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000790,Logistic Regression,Suitable,Unsuitable
+COL-OSM-42-000793,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000800,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000813,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000830,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000837,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000846,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000848,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000851,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000853,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000855,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000858,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000864,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000870,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000884,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000888,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000898,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000902,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000906,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000907,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000917,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000925,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-000927,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000928,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000930,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000934,Logistic Regression,Unsuitable,Moderately Suitable
+COL-OSM-42-000936,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000937,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000939,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000942,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-000952,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-000955,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000959,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000965,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000967,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000970,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-000971,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000981,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000992,Logistic Regression,Suitable,Suitable
+COL-OSM-42-000993,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000995,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001002,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001010,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001012,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001013,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001014,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001019,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001033,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001035,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-001038,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-001055,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001061,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001066,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001089,Logistic Regression,Unsuitable,Moderately Suitable
+COL-OSM-42-001092,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-001097,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001115,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001117,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-001132,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001133,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001138,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001142,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-001144,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001160,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001161,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001170,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-001179,Logistic Regression,Unsuitable,Moderately Suitable
+COL-OSM-42-001181,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001184,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001187,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001188,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001193,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001195,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-001196,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001198,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001199,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001202,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001205,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001212,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-001214,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001219,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001223,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001227,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-001228,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001230,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-001231,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-001240,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001246,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001247,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001258,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001259,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-001260,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001261,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001274,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001280,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-001284,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001286,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-001290,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001295,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001305,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001306,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001309,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001310,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001311,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001324,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001327,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-001351,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001362,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001364,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001367,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001370,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001389,Logistic Regression,Unsuitable,Moderately Suitable
+COL-OSM-42-001393,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-001398,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-001404,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001409,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001413,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001414,Logistic Regression,Unsuitable,Unsuitable
+COL-OSM-42-001416,Logistic Regression,Moderately Suitable,Unsuitable
+COL-OSM-42-001421,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001431,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001434,Logistic Regression,Unsuitable,Moderately Suitable
+COL-OSM-42-001444,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001452,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001454,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001459,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001461,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001463,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001465,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001469,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001470,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001475,Logistic Regression,Moderately Suitable,Suitable
+COL-OSM-42-001476,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001480,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001484,Logistic Regression,Suitable,Suitable
+COL-OSM-42-001487,Logistic Regression,Suitable,Moderately Suitable
+COL-OSM-42-001497,Logistic Regression,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000000,Random Forest,Suitable,Suitable
+COL-OSM-42-000012,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-000019,Random Forest,Suitable,Suitable
+COL-OSM-42-000023,Random Forest,Suitable,Suitable
+COL-OSM-42-000030,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000032,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000036,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000041,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000048,Random Forest,Suitable,Suitable
+COL-OSM-42-000049,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000051,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000052,Random Forest,Suitable,Suitable
+COL-OSM-42-000059,Random Forest,Suitable,Suitable
+COL-OSM-42-000061,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000068,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-000077,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000081,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000082,Random Forest,Suitable,Suitable
+COL-OSM-42-000083,Random Forest,Suitable,Suitable
+COL-OSM-42-000087,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000089,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000090,Random Forest,Suitable,Suitable
+COL-OSM-42-000098,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000103,Random Forest,Suitable,Suitable
+COL-OSM-42-000112,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000125,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000134,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000137,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000138,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000150,Random Forest,Suitable,Suitable
+COL-OSM-42-000154,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000155,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000156,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000157,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000163,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000164,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000189,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000194,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000197,Random Forest,Suitable,Suitable
+COL-OSM-42-000205,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000220,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000223,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000225,Random Forest,Suitable,Suitable
+COL-OSM-42-000231,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000236,Random Forest,Suitable,Suitable
+COL-OSM-42-000243,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000250,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000252,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000256,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-000285,Random Forest,Suitable,Suitable
+COL-OSM-42-000287,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000292,Random Forest,Suitable,Suitable
+COL-OSM-42-000293,Random Forest,Suitable,Suitable
+COL-OSM-42-000294,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000313,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000318,Random Forest,Suitable,Suitable
+COL-OSM-42-000325,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000327,Random Forest,Suitable,Suitable
+COL-OSM-42-000329,Random Forest,Suitable,Suitable
+COL-OSM-42-000338,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000341,Random Forest,Suitable,Suitable
+COL-OSM-42-000342,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000344,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000347,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000357,Random Forest,Suitable,Suitable
+COL-OSM-42-000360,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000363,Random Forest,Unsuitable,Moderately Suitable
+COL-OSM-42-000379,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000383,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000388,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000389,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000390,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000393,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-000401,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000404,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000408,Random Forest,Suitable,Suitable
+COL-OSM-42-000409,Random Forest,Moderately Suitable,Unsuitable
+COL-OSM-42-000411,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000415,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000421,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000422,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000428,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000430,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000431,Random Forest,Moderately Suitable,Unsuitable
+COL-OSM-42-000433,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000434,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000439,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000447,Random Forest,Suitable,Suitable
+COL-OSM-42-000464,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000472,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000480,Random Forest,Suitable,Suitable
+COL-OSM-42-000481,Random Forest,Suitable,Suitable
+COL-OSM-42-000483,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000486,Random Forest,Suitable,Suitable
+COL-OSM-42-000494,Random Forest,Suitable,Suitable
+COL-OSM-42-000496,Random Forest,Suitable,Suitable
+COL-OSM-42-000497,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000500,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000502,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000510,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000511,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000526,Random Forest,Suitable,Suitable
+COL-OSM-42-000535,Random Forest,Suitable,Suitable
+COL-OSM-42-000541,Random Forest,Suitable,Suitable
+COL-OSM-42-000554,Random Forest,Suitable,Suitable
+COL-OSM-42-000560,Random Forest,Moderately Suitable,Unsuitable
+COL-OSM-42-000562,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000564,Random Forest,Suitable,Suitable
+COL-OSM-42-000565,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000571,Random Forest,Suitable,Suitable
+COL-OSM-42-000572,Random Forest,Suitable,Suitable
+COL-OSM-42-000573,Random Forest,Suitable,Suitable
+COL-OSM-42-000576,Random Forest,Suitable,Suitable
+COL-OSM-42-000580,Random Forest,Suitable,Suitable
+COL-OSM-42-000583,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000584,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000588,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000593,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000595,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000603,Random Forest,Suitable,Suitable
+COL-OSM-42-000611,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000612,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000615,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000637,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000649,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000659,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000660,Random Forest,Suitable,Suitable
+COL-OSM-42-000670,Random Forest,Suitable,Suitable
+COL-OSM-42-000675,Random Forest,Suitable,Suitable
+COL-OSM-42-000685,Random Forest,Suitable,Suitable
+COL-OSM-42-000689,Random Forest,Suitable,Suitable
+COL-OSM-42-000697,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000710,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-000716,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000719,Random Forest,Suitable,Suitable
+COL-OSM-42-000723,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000732,Random Forest,Suitable,Suitable
+COL-OSM-42-000757,Random Forest,Suitable,Suitable
+COL-OSM-42-000767,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000783,Random Forest,Suitable,Suitable
+COL-OSM-42-000784,Random Forest,Suitable,Suitable
+COL-OSM-42-000790,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-000793,Random Forest,Suitable,Suitable
+COL-OSM-42-000800,Random Forest,Suitable,Suitable
+COL-OSM-42-000813,Random Forest,Suitable,Suitable
+COL-OSM-42-000830,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000837,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000846,Random Forest,Suitable,Suitable
+COL-OSM-42-000848,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000851,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000853,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000855,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000858,Random Forest,Moderately Suitable,Unsuitable
+COL-OSM-42-000864,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000870,Random Forest,Suitable,Suitable
+COL-OSM-42-000884,Random Forest,Suitable,Suitable
+COL-OSM-42-000888,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000898,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000902,Random Forest,Unsuitable,Moderately Suitable
+COL-OSM-42-000906,Random Forest,Unsuitable,Moderately Suitable
+COL-OSM-42-000907,Random Forest,Suitable,Suitable
+COL-OSM-42-000917,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000925,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-000927,Random Forest,Suitable,Suitable
+COL-OSM-42-000928,Random Forest,Suitable,Suitable
+COL-OSM-42-000930,Random Forest,Suitable,Suitable
+COL-OSM-42-000934,Random Forest,Unsuitable,Moderately Suitable
+COL-OSM-42-000936,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000937,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000939,Random Forest,Suitable,Suitable
+COL-OSM-42-000942,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-000952,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000955,Random Forest,Suitable,Suitable
+COL-OSM-42-000959,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000965,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000967,Random Forest,Suitable,Suitable
+COL-OSM-42-000970,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-000971,Random Forest,Suitable,Suitable
+COL-OSM-42-000981,Random Forest,Suitable,Suitable
+COL-OSM-42-000992,Random Forest,Suitable,Suitable
+COL-OSM-42-000993,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-000995,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001002,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001010,Random Forest,Suitable,Suitable
+COL-OSM-42-001012,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001013,Random Forest,Suitable,Suitable
+COL-OSM-42-001014,Random Forest,Suitable,Suitable
+COL-OSM-42-001019,Random Forest,Suitable,Suitable
+COL-OSM-42-001033,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001035,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001038,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-001055,Random Forest,Suitable,Suitable
+COL-OSM-42-001061,Random Forest,Suitable,Suitable
+COL-OSM-42-001066,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001089,Random Forest,Unsuitable,Moderately Suitable
+COL-OSM-42-001092,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-001097,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001115,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001117,Random Forest,Moderately Suitable,Unsuitable
+COL-OSM-42-001132,Random Forest,Suitable,Suitable
+COL-OSM-42-001133,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001138,Random Forest,Suitable,Suitable
+COL-OSM-42-001142,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-001144,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001160,Random Forest,Suitable,Suitable
+COL-OSM-42-001161,Random Forest,Suitable,Suitable
+COL-OSM-42-001170,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001179,Random Forest,Unsuitable,Moderately Suitable
+COL-OSM-42-001181,Random Forest,Suitable,Suitable
+COL-OSM-42-001184,Random Forest,Suitable,Suitable
+COL-OSM-42-001187,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001188,Random Forest,Suitable,Suitable
+COL-OSM-42-001193,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001195,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001196,Random Forest,Suitable,Suitable
+COL-OSM-42-001198,Random Forest,Suitable,Suitable
+COL-OSM-42-001199,Random Forest,Suitable,Suitable
+COL-OSM-42-001202,Random Forest,Suitable,Suitable
+COL-OSM-42-001205,Random Forest,Suitable,Suitable
+COL-OSM-42-001212,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-001214,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001219,Random Forest,Suitable,Suitable
+COL-OSM-42-001223,Random Forest,Suitable,Suitable
+COL-OSM-42-001227,Random Forest,Suitable,Suitable
+COL-OSM-42-001228,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001230,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-001231,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-001240,Random Forest,Suitable,Suitable
+COL-OSM-42-001246,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001247,Random Forest,Suitable,Suitable
+COL-OSM-42-001258,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001259,Random Forest,Moderately Suitable,Unsuitable
+COL-OSM-42-001260,Random Forest,Suitable,Suitable
+COL-OSM-42-001261,Random Forest,Suitable,Suitable
+COL-OSM-42-001274,Random Forest,Suitable,Suitable
+COL-OSM-42-001280,Random Forest,Suitable,Suitable
+COL-OSM-42-001284,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001286,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-001290,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001295,Random Forest,Suitable,Suitable
+COL-OSM-42-001305,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001306,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001309,Random Forest,Suitable,Suitable
+COL-OSM-42-001310,Random Forest,Suitable,Suitable
+COL-OSM-42-001311,Random Forest,Suitable,Suitable
+COL-OSM-42-001324,Random Forest,Suitable,Suitable
+COL-OSM-42-001327,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-001351,Random Forest,Suitable,Suitable
+COL-OSM-42-001362,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001364,Random Forest,Suitable,Suitable
+COL-OSM-42-001367,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001370,Random Forest,Suitable,Suitable
+COL-OSM-42-001389,Random Forest,Unsuitable,Moderately Suitable
+COL-OSM-42-001393,Random Forest,Suitable,Moderately Suitable
+COL-OSM-42-001398,Random Forest,Suitable,Suitable
+COL-OSM-42-001404,Random Forest,Suitable,Suitable
+COL-OSM-42-001409,Random Forest,Suitable,Suitable
+COL-OSM-42-001413,Random Forest,Suitable,Suitable
+COL-OSM-42-001414,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-001416,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001421,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001431,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001434,Random Forest,Unsuitable,Unsuitable
+COL-OSM-42-001444,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001452,Random Forest,Suitable,Suitable
+COL-OSM-42-001454,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001459,Random Forest,Suitable,Suitable
+COL-OSM-42-001461,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001463,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001465,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001469,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001470,Random Forest,Moderately Suitable,Moderately Suitable
+COL-OSM-42-001475,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001476,Random Forest,Moderately Suitable,Suitable
+COL-OSM-42-001480,Random Forest,Suitable,Suitable
+COL-OSM-42-001484,Random Forest,Suitable,Suitable
+COL-OSM-42-001487,Random Forest,Suitable,Suitable
+COL-OSM-42-001497,Random Forest,Moderately Suitable,Moderately Suitable

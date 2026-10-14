@@ -1,0 +1,156 @@
+{
+  "experiment": "Experiment 4 Arm A",
+  "description": "Cleaned-text TF-IDF + LR on 200 baseline records, frozen Experiment 2/3 fold assignments replayed. No synthetic or source-derived records in training or evaluation. Reproduction reference: Experiment 3 Arm B.",
+  "generated_at": "2026-09-30T19:53:50.534273+00:00",
+  "important_caveat": "Development cross-validation results on 200 baseline records. Frozen folds are replayed, not freshly generated. Not untouched held-out test results.",
+  "input_files": {
+    "candidate_dataset": {
+      "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\data\\state_land_complaints_development_530.csv",
+      "sha256": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8",
+      "baseline_rows_selected": 200,
+      "origin_filter": "Existing baseline"
+    },
+    "original_dataset": {
+      "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\data\\state_land_governance_confirmed_200.csv",
+      "sha256": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61"
+    },
+    "frozen_fold_reference": {
+      "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment2_source_text\\out_of_fold_predictions.csv",
+      "sha256": "ac8476849840ca67061ac27c469dd6bab305aa7b51edc1443bf117bd07fe8491",
+      "description": "Experiment 2 OOF \u2014 Combined_Group and Fold columns used as frozen inputs."
+    },
+    "reproduction_reference": {
+      "path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment3_boilerplate_removal\\exp3b_cleaned_text\\oof_predictions.csv",
+      "sha256": "ea681a6970d53eec8128733cc0229da376bba5383def1eb9d1dda136ae71e7bf",
+      "description": "Experiment 3 Arm B OOF \u2014 used for prediction-level comparison only."
+    }
+  },
+  "baseline_vs_original": {
+    "joined_rows": 200,
+    "text_mismatches": 0,
+    "label_mismatches": 0,
+    "source_group_id_mismatches": 0,
+    "description": "Field values compared by Research_ID; identical compared field values confirmed."
+  },
+  "pipeline": {
+    "steps": [
+      "BoilerplateStripper",
+      "TfidfVectorizer",
+      "LogisticRegression"
+    ],
+    "factory": "boilerplate_transformer.build_pipeline_with_cleaner()",
+    "boilerplate_phrases": [
+      "was identified in official audit/report material as a government/state land lease case involving",
+      "The Land Commissioner has confirmed that this is a genuine, direct, distinct state-land lease incident.",
+      "File-level details should be retained from the Commissioner's records when available."
+    ],
+    "tfidf_config": {
+      "lowercase": true,
+      "stop_words": "english",
+      "ngram_range": [
+        1,
+        2
+      ],
+      "sublinear_tf": true
+    },
+    "lr_config": {
+      "C": 1.0,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "class_weight": "balanced",
+      "max_iter": 2000,
+      "random_state": 42
+    },
+    "note": "Parameters taken from config.TFIDF_CONFIG and config.LR_CONFIG; not tuned for this experiment."
+  },
+  "fold_replay": {
+    "source": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment2_source_text\\out_of_fold_predictions.csv",
+    "description": "Exact Experiment 2/3 Combined_Group fold assignments replayed. No new splitting performed.",
+    "unique_folds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "fold_counts": {
+      "1": 25,
+      "2": 39,
+      "3": 59,
+      "4": 41,
+      "5": 36
+    }
+  },
+  "synthetic_records": {
+    "in_training": 0,
+    "in_evaluation": 0,
+    "note": "Arm A excludes all synthetic records. Arm B (not yet implemented) will add reviewed eligible families."
+  },
+  "source_derived_records": {
+    "in_training": 0,
+    "in_evaluation": 0,
+    "note": "Source-derived records are excluded from Experiment 4."
+  },
+  "environment": {
+    "python_version": "3.13.1 (tags/v3.13.1:0671451, Dec  3 2024, 19:06:28) [MSC v.1942 64 bit (AMD64)]",
+    "sklearn_version": "1.7.2",
+    "pandas_version": "2.3.3",
+    "numpy_version": "2.3.1",
+    "git": {
+      "commit": "a380c3cdb98b724eb1fc63cafc9a36ee757cbd96",
+      "working_tree_clean": false,
+      "note": "git revision alone does not capture uncommitted code. working_tree_clean=False means the reported commit may not describe the running code."
+    }
+  },
+  "output_directory": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\results\\experiment4_synthetic_augmentation",
+  "reproduction_check": {
+    "reproduction_status": "PASS",
+    "description": "Comparison of Experiment 4 Arm A vs saved Experiment 3 Arm B by Research_ID. Probability tolerance: 0.0001.",
+    "historical_reference_note": "Historical values (accuracy 0.7700, macro-F1 ~0.7685) are reference observations from the saved Experiment 3 Arm B, not hardcoded targets.",
+    "prediction_mismatches": {
+      "count": 0,
+      "ids": []
+    },
+    "true_label_mismatches": {
+      "count": 0,
+      "ids": []
+    },
+    "fold_mismatches": {
+      "count": 0,
+      "ids": []
+    },
+    "max_abs_probability_diff": 0.0,
+    "probability_tolerance": 0.0001,
+    "probabilities_within_tolerance": true,
+    "new_arm_a": {
+      "Accuracy": 0.77,
+      "Macro_F1": 0.7685
+    },
+    "reference_exp3b": {
+      "Accuracy": 0.77,
+      "Macro_F1": 0.7685
+    },
+    "metric_deltas": {
+      "Accuracy": 0.0,
+      "Macro_F1": 0.0
+    }
+  },
+  "arm_a_metrics": {
+    "Accuracy": 0.77,
+    "Macro_F1_sklearn": 0.7685,
+    "Macro_F1_from_per_class": {
+      "value": 0.7684
+    },
+    "Weighted_F1": 0.7685,
+    "Macro_Precision_sklearn": 0.7708,
+    "Macro_Precision_from_per_class": {
+      "value": 0.7708
+    },
+    "Macro_Recall_sklearn": 0.77,
+    "Macro_Recall_from_per_class": {
+      "value": 0.77
+    },
+    "Misclassified": 46,
+    "note_zero_division": "sklearn metrics use zero_division=0 (undefined \u2192 0.0). per_class metrics record 'undefined' when denominator is 0. Macro averages from per_class may differ from sklearn macro values when any class has an undefined metric."
+  }
+}

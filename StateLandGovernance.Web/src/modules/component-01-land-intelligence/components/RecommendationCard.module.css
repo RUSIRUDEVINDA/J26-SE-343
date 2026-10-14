@@ -1,0 +1,385 @@
+.card {
+  background: #fff;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.cardRejected {
+  border-color: #f0c4c2;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.85rem 1rem;
+  align-items: start;
+  padding: 1rem 1.15rem;
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.summary:focus-visible {
+  outline: none;
+  box-shadow: inset var(--focus-ring);
+}
+
+.rank {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  min-width: 3.25rem;
+  min-height: 2.35rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.72rem;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.rankOrder {
+  font-size: 0.78rem;
+}
+
+.rankTie {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.92;
+}
+
+.mainMeta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.metaLine {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  line-height: 1.35;
+}
+
+.sourceNote {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  line-height: 1.3;
+}
+
+.scoreBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  min-width: 5.5rem;
+}
+
+.scoreValue {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.scoreHint {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.scoreCaption {
+  font-size: 0.68rem;
+  color: var(--color-muted);
+  line-height: 1.25;
+  text-align: right;
+  max-width: 9rem;
+}
+
+.scoreTrack {
+  width: 100%;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: var(--color-nav-inactive);
+  overflow: hidden;
+}
+
+.scoreFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+.scoreFillRecommended {
+  background: #2e7d32;
+}
+
+.scoreFillNeedsReview {
+  background: #b7791f;
+}
+
+.scoreFillRejected {
+  background: #850906;
+}
+
+.chevron {
+  color: var(--color-muted);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+  margin-top: 0.35rem;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 1.15rem 1rem;
+}
+
+.mapButton {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.mapButton:not(:disabled):hover {
+  background: #faf4f4;
+  filter: none;
+}
+
+.details {
+  border-top: 1px solid var(--color-card-border);
+  padding: 0 1.15rem 1.15rem;
+  background: #fffcfb;
+}
+
+.hardBanner {
+  margin: 1rem 0 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 12px;
+  background: #fdecea;
+  border: 1px solid #f0c4c2;
+  color: #850906;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 1rem 0 0.75rem;
+}
+
+.tab {
+  border: 1px solid var(--color-input-border);
+  background: #fff;
+  color: var(--color-text);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.tabActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.panel {
+  min-width: 0;
+}
+
+.lead {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.factorGroup {
+  margin: 0 0 0.85rem;
+}
+
+.factorLabel {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-muted);
+}
+
+.factorList {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.factorList li + li {
+  margin-top: 0.3rem;
+}
+
+.criteriaTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.criteriaTable th,
+.criteriaTable td {
+  text-align: left;
+  padding: 0.55rem 0.4rem;
+  border-bottom: 1px solid var(--color-card-border);
+  vertical-align: top;
+}
+
+.criteriaTable th {
+  color: var(--color-muted);
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.criteriaName {
+  font-weight: 600;
+}
+
+.criteriaSummary {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--color-muted);
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.restrictionList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.restrictionItem {
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-card-border);
+  background: #fff;
+}
+
+.restrictionItemLow {
+  border-color: #d7e3d8;
+  background: #f7fbf7;
+}
+
+.restrictionItemMedium,
+.restrictionItemHigh {
+  border-color: var(--color-warning-border);
+  background: var(--color-warning-bg);
+}
+
+.restrictionItemProhibitive {
+  border-color: #f0c4c2;
+  background: #fdecea;
+}
+
+.restrictionHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.restrictionDesc {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .summary {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .scoreBlock {
+    grid-column: 2;
+    align-items: flex-start;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .chevron {
+    grid-column: 1;
+    grid-row: 1;
+    margin-top: 0;
+  }
+
+  .rank {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .mainMeta {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .criteriaTable th:nth-child(4),
+  .criteriaTable td:nth-child(4),
+  .criteriaTable th:nth-child(5),
+  .criteriaTable td:nth-child(5) {
+    display: none;
+  }
+}

@@ -1,0 +1,125 @@
+using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using StateLandGovernance.GovernanceIntelligence.Application.Commands;
+using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Application.Queries;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Commands;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Application.Timing;
+using StateLandGovernance.GovernanceIntelligence.Domain.Services;
+
+namespace Microsoft.Extensions.DependencyInjection;
+
+/// <summary>
+/// Extension methods for setting up Governance Intelligence dependencies in an IServiceCollection.
+/// </summary>
+public static class ServiceCollectionExtensions
+{
+    /// <summary>
+    /// Registers Governance Intelligence Phase 3 conflict detection and time services.
+    /// </summary>
+    public static IServiceCollection AddGovernanceConflictDetection(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IGovernanceConflictEngine, GovernanceConflictEngine>();
+        services.TryAddTransient<DetectConflictsCommandHandler>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Governance Intelligence Phase 4 risk and corruption intelligence services.
+    /// </summary>
+    public static IServiceCollection AddGovernanceRiskIntelligence(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IGovernanceRiskEngine, GovernanceRiskEngine>();
+        services.TryAddTransient<EvaluateGovernanceRiskCommandHandler>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Governance Intelligence Phase 5 explainable governance engine services.
+    /// </summary>
+    public static IServiceCollection AddExplainableGovernanceEngine(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IExplainableGovernanceEngine, ExplainableGovernanceEngine>();
+        services.TryAddTransient<GenerateGovernanceExplanationCommandHandler>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Governance Intelligence Phase 6 multi-institution governance consensus services.
+    /// </summary>
+    public static IServiceCollection AddGovernanceConsensusEngine(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IGovernanceConsensusEngine, GovernanceConsensusEngine>();
+        services.TryAddTransient<EvaluateGovernanceConsensusCommandHandler>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Governance Intelligence Phase 7 conditional governance verification services.
+    /// </summary>
+    public static IServiceCollection AddConditionalGovernanceVerification(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IConditionalGovernanceVerificationEngine, ConditionalGovernanceVerificationEngine>();
+        services.TryAddTransient<EvaluateConditionalVerificationCommandHandler>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Early Governance Screening engine and command handler.
+    /// </summary>
+    public static IServiceCollection AddEarlyGovernanceScreening(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IEarlyGovernanceScreeningEngine, EarlyGovernanceScreeningEngine>();
+        services.TryAddTransient<ScreenEarlyGovernanceCommandHandler>();
+        services.TryAddTransient<DeliverEarlyGovernanceReferralCommandHandler>();
+        services.TryAddTransient<GetEarlyGovernanceScreeningAssessmentQueryHandler>();
+        services.TryAddTransient<GetEarlyGovernanceScreeningHistoryQueryHandler>();
+        services.TryAddTransient<GetEarlyGovernanceReferralHistoryQueryHandler>();
+        services.TryAddSingleton<IEarlyGovernanceReferralPolicy, UnconfiguredEarlyGovernanceReferralPolicy>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the deterministic lease-approval handover timing calculator.
+    /// Registers the calculator plus application handlers; Component 3 data is consumed only
+    /// through the Component 4 projection-store abstraction.
+    /// </summary>
+    public static IServiceCollection AddLeaseApprovalTimingMonitoring(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.TryAddSingleton<ILeaseApprovalTimingCalculator, LeaseApprovalTimingCalculator>();
+        services.TryAddTransient<CalculateLeaseApprovalTimingCommandHandler>();
+        services.TryAddTransient<GetLeaseApprovalTimingAssessmentQueryHandler>();
+        services.TryAddTransient<GetLeaseApprovalTimingHistoryByCaseQueryHandler>();
+        services.TryAddTransient<GetLeaseApprovalTimingHistoryByWorkflowRunQueryHandler>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Governance Intelligence screening orchestration services and in-memory consolidated store.
+    /// </summary>
+    public static IServiceCollection AddGovernanceScreeningOrchestration(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.TryAddTransient<OrchestrateGovernanceScreeningCommandHandler>();
+
+        return services;
+    }
+}

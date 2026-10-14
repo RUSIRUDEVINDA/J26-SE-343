@@ -1,0 +1,207 @@
+{
+  "schema_version": 2,
+  "verification_timestamp_utc": "2026-10-11T08:12:20.350770+00:00",
+  "overall_status": "PASS",
+  "model_version": "v2",
+  "artifact": {
+    "path": "models/v2/governance_classifier_v2.joblib",
+    "sha256": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+    "size_bytes": 1001516
+  },
+  "metadata": {
+    "path": "models/v2/model_metadata_v2.json",
+    "sha256": "70a4aba1936b72f2556df6e4baba5eb12e74e8846c51b338267fb7eb947a2d5c",
+    "size_bytes": 12601
+  },
+  "pipeline_validation": {
+    "status": "PASS",
+    "steps": [
+      "boilerplate",
+      "features",
+      "clf"
+    ],
+    "estimator_types": {
+      "boilerplate": "BoilerplateStripper",
+      "clf": "LogisticRegression",
+      "features": "FeatureUnion",
+      "word": "TfidfVectorizer",
+      "character": "TfidfVectorizer"
+    },
+    "fitted_classes_order": [
+      "Administrative / Procedural / Integrity",
+      "Lease Revenue / Payment / Enforcement",
+      "Protected / Environmental Lease Misuse",
+      "Unauthorized Allocation / Transfer / Use"
+    ],
+    "stable_parameters": {
+      "clf__C": 1.0,
+      "clf__class_weight": "balanced",
+      "clf__fit_intercept": true,
+      "clf__max_iter": 2000,
+      "clf__multi_class": "auto",
+      "clf__penalty": "l2",
+      "clf__random_state": 42,
+      "clf__solver": "lbfgs",
+      "clf__tol": 0.0001,
+      "features__character__analyzer": "char_wb",
+      "features__character__binary": false,
+      "features__character__lowercase": true,
+      "features__character__max_df": 1.0,
+      "features__character__max_features": null,
+      "features__character__min_df": 1,
+      "features__character__ngram_range": [
+        3,
+        5
+      ],
+      "features__character__norm": "l2",
+      "features__character__smooth_idf": true,
+      "features__character__stop_words": null,
+      "features__character__sublinear_tf": true,
+      "features__word__analyzer": "word",
+      "features__word__binary": false,
+      "features__word__lowercase": true,
+      "features__word__max_df": 1.0,
+      "features__word__max_features": null,
+      "features__word__min_df": 1,
+      "features__word__ngram_range": [
+        1,
+        2
+      ],
+      "features__word__norm": "l2",
+      "features__word__smooth_idf": true,
+      "features__word__stop_words": "english",
+      "features__word__sublinear_tf": true
+    }
+  },
+  "fresh_process_prediction": {
+    "status": "PASS",
+    "process_mode": "fresh_python_process",
+    "model_version": "v2",
+    "fictional_input_count": 4,
+    "probability_tolerance": 1e-10,
+    "complaint_text_recorded": false,
+    "predetermined_class_assertions": false,
+    "training_invoked": false,
+    "cases": [
+      {
+        "case_id": "FICTIONAL-SMOKE-1",
+        "input_sha256": "935fae064b84834b806691b91e4994dc9ca0b1366c2ceb4dddf7671d2b890b77",
+        "predicted_category": "Administrative / Procedural / Integrity",
+        "probability_keys": [
+          "Administrative / Procedural / Integrity",
+          "Lease Revenue / Payment / Enforcement",
+          "Protected / Environmental Lease Misuse",
+          "Unauthorized Allocation / Transfer / Use"
+        ],
+        "probability_sum": 0.9999999999999998,
+        "contract_status": "PASS"
+      },
+      {
+        "case_id": "FICTIONAL-SMOKE-2",
+        "input_sha256": "cfe919be07bcf2eeea130a2dd71e864eecc3c1a8d0a3446b790b4cc4e9caa3ce",
+        "predicted_category": "Lease Revenue / Payment / Enforcement",
+        "probability_keys": [
+          "Administrative / Procedural / Integrity",
+          "Lease Revenue / Payment / Enforcement",
+          "Protected / Environmental Lease Misuse",
+          "Unauthorized Allocation / Transfer / Use"
+        ],
+        "probability_sum": 1.0,
+        "contract_status": "PASS"
+      },
+      {
+        "case_id": "FICTIONAL-SMOKE-3",
+        "input_sha256": "5e3f783c5c11476659090bd015c9796bc24df5e2935532594ac850db5eca6a3c",
+        "predicted_category": "Unauthorized Allocation / Transfer / Use",
+        "probability_keys": [
+          "Administrative / Procedural / Integrity",
+          "Lease Revenue / Payment / Enforcement",
+          "Protected / Environmental Lease Misuse",
+          "Unauthorized Allocation / Transfer / Use"
+        ],
+        "probability_sum": 1.0,
+        "contract_status": "PASS"
+      },
+      {
+        "case_id": "FICTIONAL-SMOKE-4",
+        "input_sha256": "3a6d2e416ce5d1c39ef96cf8239a6866948ed39260cf584431ea256ed2801ced",
+        "predicted_category": "Protected / Environmental Lease Misuse",
+        "probability_keys": [
+          "Administrative / Procedural / Integrity",
+          "Lease Revenue / Payment / Enforcement",
+          "Protected / Environmental Lease Misuse",
+          "Unauthorized Allocation / Transfer / Use"
+        ],
+        "probability_sum": 1.0,
+        "contract_status": "PASS"
+      }
+    ]
+  },
+  "evidence_validation": {
+    "candidate_hash": "PASS",
+    "configuration": "PASS",
+    "input_hashes": "PASS",
+    "populations": "PASS",
+    "leakage": "PASS",
+    "saved_predictions": "PASS",
+    "aggregate_metrics": "PASS",
+    "per_class_metrics": "PASS",
+    "confusion_matrix": "PASS",
+    "family_metrics": "PASS",
+    "probabilities": "PASS",
+    "promotion_decision": "PASS",
+    "protected_input_inventory": "PASS",
+    "recorded_fit_count": "PASS"
+  },
+  "evidence_hashes": {
+    "candidate_metadata": "1725b8abd9c20a5ff1f17964546fe6f89841cda1fe94484371e79d3e4d794876",
+    "candidate_sha256_record": "fd6b3671381decf84bc3edc4c6d2c3e8d81e54ae367adbb91ab2b10aeef76f1d",
+    "training_manifest": "ff99c44734138e9cbf93ede4bc041db4247578ad04779a9ec3d97947818701f9",
+    "prospective_manifest": "faf64e66e77e978030edd047e5a6c0ef9399553614e90236b1a875b6fde6f551",
+    "review_snapshot": "41bed6d4cb40a42e8e081e5b2e90a32a9df83897891142727ec1240887f72498",
+    "predictions": "cd097846ccb234b4168396bbab18c4b4d964fcc7f3c694f8ea5d3dbdc344bd67",
+    "family_predictions": "b7db1c005c76e5e78932dbc9a551725458c1274b5f01833544a4c5348600e826",
+    "metrics": "6e06564b90c7d9eb412c9e3f56c7c5948e75681cdc730c7a08c9eb02a7a88110",
+    "per_class_metrics": "22dc24641cfe25452c07dbc32bd5297de4c73a6c6e61b80a30c85939b734d39d",
+    "confusion_matrix": "b86659c68aad6c7a8ecfad73fe0b361438555b33b70d2a0bb153d6cf9db990a3",
+    "integrity_report": "910b57ec03be668b9f4e7b9167c5ae8a2368ae68c8d5779108d596add2f14f9b",
+    "promotion_decision": "fbe77a672ff1331c0ca09a77c9fbbc5af0b8533ad45d55f44499933e50cad368",
+    "evaluation_metadata": "73b416e2d2d38633b24a5d807c64b3ab408d0755dc922b03ede93c7562b2df23",
+    "experiment6_report": "5ccf6e7fdb6a55157bb974c91872ccbca438e75bbb212dfb9da8779298d72557",
+    "candidate": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+    "experiment6_input:real_baseline": "26979f18f292f8a33a5ff960123a168f0652a5d8e11032b930b4dc7fcf070c61",
+    "experiment6_input:candidate_dataset": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8",
+    "experiment6_input:experiment5_development_review": "0f4d839d9ad46223430cf5adb375775ce7ae12cc8b38b57f263eab790895fb74",
+    "experiment6_input:prospective_corrected_review": "41bed6d4cb40a42e8e081e5b2e90a32a9df83897891142727ec1240887f72498",
+    "experiment6_input:prospective_review_manifest": "1e3b062018221985f27458082f76b26d252a5973ce7dc4176efe6621d5a47ce7",
+    "experiment6_input:prospective_review_template": "866d1361bcc4fe7449d2cfda56aefc7b3cf7d69e82faf031b26d601bde822feb",
+    "experiment6_input:experiment5_protocol": "d30472ecdd813ec0b0ab12f8661018bd16842fec2c859cf621eccca5c53e9f2b",
+    "experiment6_input:experiment5_summary": "467f5d3c6843a8ea8f34eff0fd0f071696c72c94115b4b226a99f58cb251a89d",
+    "experiment6_input:experiment5_arm_e_metadata": "49a57418999ce510cc4029265fd00b40b80ec79452357a442df7924858e7280d",
+    "experiment6_input:experiment5_population_manifest": "3838dcd2a77620c0ffa7d466461a323e8982909c6724e58b32b0835ac9dedbd6"
+  },
+  "protected_source_inventory": {
+    "status": "PASS",
+    "file_count": 221,
+    "before_sha256": "0cd68aef61891e3322ca425fce97323da1ee85d08c4f2b1c97199d4b35bec8d7",
+    "after_sha256": "0cd68aef61891e3322ca425fce97323da1ee85d08c4f2b1c97199d4b35bec8d7"
+  },
+  "byte_identity": {
+    "status": "PASS",
+    "source_sha256": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+    "destination_sha256": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+    "byte_for_byte_equal": true,
+    "candidate_reserialized": false
+  },
+  "training_invoked_during_promotion": false,
+  "limitations": [
+    "Experiment 6 is a synthetic prospective evaluation, not real-world accuracy.",
+    "No independent departmental validation has been performed.",
+    "Development and prospective synthetic families share a common generator origin.",
+    "Closed-set four-class model with no validated out-of-scope detector.",
+    "Raw logistic-regression probabilities are not demonstrated to be calibrated.",
+    "Output is advisory and does not determine guilt, legal liability, final approval, or administrative action.",
+    "The saved metadata records one fit, but the joblib and evidence do not provide an immutable invocation log proving the historical fit count independently."
+  ],
+  "security_note": "Only trusted local joblib artifacts may be loaded; matching hashes do not make an untrusted pickle safe."
+}

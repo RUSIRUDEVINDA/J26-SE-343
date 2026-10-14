@@ -1,0 +1,60 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+  external_labels:
+    system: state-land-governance
+    environment: viva-local
+
+scrape_configs:
+  - job_name: aspnet-api
+    static_configs:
+      - targets: ["host.docker.internal:5264"]
+    metrics_path: /metrics
+
+  - job_name: governance-ml
+    static_configs:
+      - targets: ["host.docker.internal:8104"]
+    metrics_path: /metrics
+
+  - job_name: blockchain-gateway
+    static_configs:
+      - targets: ["host.docker.internal:8550"]
+    metrics_path: /metrics
+
+  - job_name: besu
+    static_configs:
+      - targets:
+          - validator1:9545
+          - validator2:9545
+          - validator3:9545
+          - validator4:9545
+          - rpc-node:9545
+
+  - job_name: service-probes
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://host.docker.internal:3000
+        labels:
+          service: frontend
+      - targets:
+          - http://host.docker.internal:5264/health
+        labels:
+          service: aspnet-api
+      - targets:
+          - http://host.docker.internal:8104/health
+        labels:
+          service: governance-ml
+      - targets:
+          - http://host.docker.internal:8550/health
+        labels:
+          service: blockchain-gateway
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115

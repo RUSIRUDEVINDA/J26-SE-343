@@ -1,0 +1,65 @@
+.section {
+  margin-top: 1rem;
+}
+
+.sectionTitle {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.item {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.meta {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.evidenceWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mlSection {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid #c9d7ff;
+  background: #f3f7ff;
+}
+
+.mlDisclaimer {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  color: #334;
+  line-height: 1.45;
+}

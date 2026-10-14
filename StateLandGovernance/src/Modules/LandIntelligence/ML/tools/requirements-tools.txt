@@ -1,0 +1,5 @@
+# GIS road-preparation tools (Colombo experiment). Install separately from ML serving deps.
+geopandas>=0.14
+pyogrio>=0.7
+shapely>=2.0
+pyproj>=3.6
