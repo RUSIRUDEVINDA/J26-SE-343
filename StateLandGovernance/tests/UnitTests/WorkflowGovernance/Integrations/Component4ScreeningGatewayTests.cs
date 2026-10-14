@@ -604,7 +604,7 @@ public class Component4ScreeningGatewayTests
             throw new InvalidOperationException("Simulated audit store cluster crash.");
         }
 
-        public Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, string? proposalId, CancellationToken cancellationToken = default)
+        public Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, string? proposalId, string? caseId = null, CancellationToken cancellationToken = default)
         {
             throw new InvalidOperationException("Simulated audit store cluster crash.");
         }

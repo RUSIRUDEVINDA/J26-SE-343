@@ -129,8 +129,8 @@ class EvidenceSpan(BaseModel):
 class DocumentClassificationResult(BaseModel):
     """Non-authoritative document classification suggestion."""
 
-    code: str = Field(..., description="Classification category code from the allowed taxonomy.")
-    confidence: float = Field(..., ge=0.0, le=1.0, description="Heuristic model confidence score (0.0 to 1.0).")
+    code: str = Field(..., description="Classification category code from the allowed taxonomy or 'Unavailable'.")
+    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0, description="Heuristic model confidence score (0.0 to 1.0) or None if unavailable.")
 
 
 class ExtractedCandidateFact(BaseModel):
@@ -139,10 +139,36 @@ class ExtractedCandidateFact(BaseModel):
     field_code: str = Field(..., description="Canonical field identifier from the catalog.")
     value_kind: str = Field(..., description="Data type of the value (Text, Integer, Decimal, etc.).")
     canonical_value: str = Field(..., description="Extracted canonical string value.")
+    raw_value: Optional[str] = Field(default=None, description="Raw unnormalized value produced by the model.")
+    normalized_value: Optional[str] = Field(default=None, description="Deterministically normalized value if available.")
     confidence: float = Field(..., ge=0.0, le=1.0, description="Heuristic candidate confidence score (0.0 to 1.0).")
     evidence: Optional[EvidenceSpan] = Field(default=None, description="Grounded source evidence span.")
     is_evidence_verified: bool = Field(default=False, description="Whether evidence was deterministically grounded in source OCR text.")
+    is_semantic_valid: bool = Field(default=True, description="Whether candidate passed deterministic field semantic validation.")
+    validation_status: str = Field(default="Valid", description="'Valid', 'Invalid', or 'NeedsReview'.")
+    candidate_status: str = Field(default="Accepted", description="'Accepted', 'Rejected', 'Conflict', 'NeedsReview', or 'Ungrounded'.")
     validation_warning: Optional[str] = Field(default=None, description="Warning if quote could not be strictly grounded.")
+    validation_reasons: List[str] = Field(default_factory=list, description="Detailed deterministic validation and governance reasons.")
+    rank: int = Field(default=1, description="Relative deterministic rank among candidates for this field (1 = preferred).")
+    is_preferred: bool = Field(default=False, description="True if chosen as the preferred candidate for this field.")
+    source_type: Optional[str] = Field(default="Explicit", description="'Explicit', 'Derived', or 'SemanticSummary'.")
+    normalized_english_value: Optional[str] = Field(default=None, description="Concise English semantic normalization if available.")
+
+
+class GovernedFieldInventoryItem(BaseModel):
+    """Entry in the comprehensive 17-field inventory representing extraction state."""
+
+    field_code: str = Field(..., description="Canonical field code from the 17-field catalog.")
+    display_name: str = Field(..., description="Human-readable display name.")
+    status: str = Field(..., description="Field governance status: Extracted, Missing, Rejected, Conflict, Needs Review, Ungrounded.")
+    preferred_value: Optional[str] = Field(default=None, description="Preferred governed value or None if missing/rejected.")
+    raw_value: Optional[str] = Field(default=None, description="Raw model candidate value if produced.")
+    page_number: Optional[int] = Field(default=None, description="Source page number of preferred candidate.")
+    confidence: Optional[float] = Field(default=None, description="Confidence of preferred candidate.")
+    is_grounded: bool = Field(default=False, description="Whether preferred candidate has verified evidence grounding.")
+    candidate_count: int = Field(default=0, description="Total candidates produced for this field.")
+    source_type: Optional[str] = Field(default=None, description="'Explicit', 'Derived', or 'SemanticSummary'.")
+    normalized_english_value: Optional[str] = Field(default=None, description="Concise English semantic normalization if available.")
 
 
 class DurationBreakdown(BaseModel):
@@ -162,8 +188,16 @@ class AnalyzeResponse(BaseModel):
     page_count: int = Field(..., ge=1, description="Total number of processed pages.")
     pages: List[OCRPageResult] = Field(..., description="Sequential list of page OCR results.")
     classification: DocumentClassificationResult = Field(..., description="Suggested non-authoritative document classification.")
-    facts: List[ExtractedCandidateFact] = Field(default_factory=list, description="List of unverified candidate facts.")
+    facts: List[ExtractedCandidateFact] = Field(default_factory=list, description="List of unverified candidate facts (preferred and accepted).")
+    all_candidates: List[ExtractedCandidateFact] = Field(default_factory=list, description="Complete set of all candidates produced (including rejected, conflicting, and ungrounded).")
+    field_inventory: List[GovernedFieldInventoryItem] = Field(default_factory=list, description="Complete 17-field catalog inventory showing status and preferred values.")
+    candidate_count: int = Field(default=0, description="Total candidate facts produced by the model.")
+    accepted_count: int = Field(default=0, description="Number of accepted candidates.")
+    rejected_count: int = Field(default=0, description="Number of rejected candidates.")
+    conflict_count: int = Field(default=0, description="Number of conflicting candidates.")
+    ungrounded_count: int = Field(default=0, description="Number of ungrounded candidates.")
     model_identifier: str = Field(..., description="Identifier of the semantic extraction model.")
+    semantic_provider: Optional[str] = Field(default=None, description="Identifier of the semantic provider ('gemini', 'qwen', 'stub').")
     prompt_version: str = Field(..., description="Version of the extraction prompt used.")
     duration_breakdown: DurationBreakdown = Field(..., description="Latency metrics per pipeline stage.")
     warnings: List[str] = Field(default_factory=list, description="Operational and evidence grounding warnings.")

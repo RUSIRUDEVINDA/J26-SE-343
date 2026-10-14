@@ -40,6 +40,7 @@ public sealed class Component4ScreeningGateway : IComponent4ScreeningGateway
     private readonly TimeProvider _timeProvider;
     private readonly ILogger<Component4ScreeningGateway>? _logger;
 
+    [ActivatorUtilitiesConstructor]
     public Component4ScreeningGateway(
         IServiceProvider serviceProvider,
         ILeaseCaseRepository leaseCaseRepository,

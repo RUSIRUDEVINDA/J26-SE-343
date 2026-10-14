@@ -45,7 +45,7 @@ class OllamaClient:
         timeout_seconds: Optional[float] = None,
     ):
         self.base_url = (base_url or settings.ollama_base_url).rstrip("/")
-        self.timeout_seconds = timeout_seconds or settings.ollama_timeout_seconds
+        self.timeout_seconds = timeout_seconds if timeout_seconds is not None else settings.ollama_timeout_seconds
 
     def check_health(self) -> bool:
         """Check if Ollama service is reachable and responsive."""
@@ -144,6 +144,8 @@ class OllamaClient:
             "think": think,
             "options": {
                 "temperature": temperature,
+                "num_predict": 500,
+                "repeat_penalty": 1.15,
             },
             "keep_alive": keep_alive,
         }

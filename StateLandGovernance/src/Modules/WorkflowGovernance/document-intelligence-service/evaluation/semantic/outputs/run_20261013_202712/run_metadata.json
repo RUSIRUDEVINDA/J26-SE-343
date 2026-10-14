@@ -1,0 +1,15 @@
+{
+  "timestamp_utc": "20261013_202712",
+  "ocr_input_sha256": "d14104fe895e3b215be378c04f1e8e4374a9f125d31d44db2003687246158a2c",
+  "ocr_page_count": 18,
+  "gemini_configured_model_id": "gemini-flash-latest",
+  "qwen_model_id": "qwen3:1.7b",
+  "gemini_api_key_configured": true,
+  "gemini_key_source": ".env",
+  "gemini_provenance": "live_api_exception",
+  "gemini_execution_status": "Failed",
+  "timing_provenance": {
+    "qwen": "Historical (Full 18-page Proposal1 run, scratch/proposal1_full_result_v4.json)",
+    "gemini": "Failed (HTTP 429 Rate Limit / Quota Exceeded: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a)"
+  }
+}

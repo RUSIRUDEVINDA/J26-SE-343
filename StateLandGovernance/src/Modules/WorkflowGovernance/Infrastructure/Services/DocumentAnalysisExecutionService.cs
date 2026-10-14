@@ -72,6 +72,7 @@ public sealed class DocumentAnalysisExecutionService : IDocumentAnalysisExecutio
         Guid analysisRunId,
         int expectedAnalysisRevision,
         string? languageHint = null,
+        string? semanticProvider = null,
         CancellationToken cancellationToken = default)
     {
         if (documentAnalysisId == Guid.Empty) throw new ArgumentException("DocumentAnalysisId cannot be empty.", nameof(documentAnalysisId));
@@ -250,6 +251,20 @@ public sealed class DocumentAnalysisExecutionService : IDocumentAnalysisExecutio
                     cancellationToken);
             }
 
+            // Resolve semantic provider hint: explicit parameter takes priority, followed by ModelReference
+            var effectiveProvider = semanticProvider;
+            if (string.IsNullOrWhiteSpace(effectiveProvider) && run.ModelReference?.ModelName != null)
+            {
+                if (run.ModelReference.ModelName.Contains("Gemini", StringComparison.OrdinalIgnoreCase))
+                {
+                    effectiveProvider = "gemini";
+                }
+                else if (run.ModelReference.ModelName.Contains("Qwen", StringComparison.OrdinalIgnoreCase))
+                {
+                    effectiveProvider = "qwen";
+                }
+            }
+
             // Construct DocumentIntelligenceRequest from authoritative governed data
             var ocrRequest = new DocumentIntelligenceRequest(
                 GovernedDocumentId: analysis.GovernedDocumentId.Value,
@@ -261,7 +276,8 @@ public sealed class DocumentAnalysisExecutionService : IDocumentAnalysisExecutio
                 MediaType: version.MediaType,
                 LogicalCategory: governedDoc.LogicalCategory,
                 RequestedCapabilities: run.RequestedCapabilities.Select(c => c.Value).ToList(),
-                LanguageHint: normalizedLanguage
+                LanguageHint: normalizedLanguage,
+                SemanticProvider: effectiveProvider
             );
 
             // Execute external document intelligence:
