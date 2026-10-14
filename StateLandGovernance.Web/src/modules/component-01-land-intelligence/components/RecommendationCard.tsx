@@ -8,6 +8,7 @@ import type {
   CriterionEvaluationResponse,
   LandParcelRecommendationResponse,
   RestrictionSeverity,
+  ResearchSupplementParcelResponse,
 } from "../types/landIntelligence";
 import { restrictionSeverityLabels } from "../utils/enumMappings";
 import {
@@ -21,7 +22,6 @@ import {
   suitabilityBadgeLabel,
 } from "../utils/formatters";
 import { EvidenceList } from "./EvidenceList";
-import { SaveParcelButton } from "./SaveParcelButton";
 import styles from "./RecommendationCard.module.css";
 
 type DetailTab = "why" | "criteria" | "restrictions" | "evidence";
@@ -55,7 +55,7 @@ function criterionStatusLabel(criterion: CriterionEvaluationResponse): {
   tone: "success" | "warning" | "danger" | "neutral";
 } {
   if (criterion.wasAssessed === false) {
-    return { label: "Unavailable", tone: "warning" };
+    return { label: "Not assessed", tone: "neutral" };
   }
   if (criterion.isMet) {
     return { label: "Met", tone: "success" };
@@ -81,9 +81,11 @@ function restrictionSeverityClass(severity: RestrictionSeverity): string {
 export function RecommendationCard({
   recommendation,
   searchDistrict,
+  researchCover,
 }: {
   recommendation: LandParcelRecommendationResponse;
   searchDistrict?: string | null;
+  researchCover?: ResearchSupplementParcelResponse;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [tab, setTab] = useState<DetailTab>("why");
@@ -155,49 +157,29 @@ export function RecommendationCard({
             {" · "}
             {orderingLabel}
           </p>
-          {recommendation.candidateStatusLabel ? (
-            <p className={styles.metaLine}>
-              Candidate status: {recommendation.candidateStatusLabel}
-            </p>
-          ) : null}
-          {recommendation.projectLeaseReadyLabel ? (
-            <p className={styles.metaLine}>
-              Project lease-ready: {recommendation.projectLeaseReadyLabel}
-              {recommendation.isProjectLeaseReadyDesignated &&
-              !recommendation.isProjectLeaseReadyEffective
-                ? " (excluded — source-reported Private)"
-                : ""}
-            </p>
-          ) : null}
-          {recommendation.sourceReportedClaimantCategoryDisplay ? (
-            <p className={styles.metaLine}>
-              Source-reported claimant category:{" "}
-              {recommendation.sourceReportedClaimantCategoryDisplay}
-              {recommendation.sourceReportedClaimantCategoryCode
-                ? ` (code ${recommendation.sourceReportedClaimantCategoryCode})`
-                : ""}
-            </p>
-          ) : null}
           {sourceLandUse ? (
             <p className={styles.metaLine}>
-              Source-reported land use: {sourceLandUse}
+              Land use: {sourceLandUse}
             </p>
           ) : null}
-          <p className={styles.sourceNote}>
-            Decision-support screening only. Source-reported claimant category and
-            land use do not prove ownership, lease availability, or legal
-            suitability. Official confirmation is required.
-          </p>
+          {researchCover ? (
+            <p className={styles.metaLine}>
+              Project land cover: {researchCover.supplementGroup}
+            </p>
+          ) : null}
         </div>
 
         <div
           className={styles.scoreBlock}
-          aria-label={`Rule-based suitability score ${formatRuleScore(recommendation.suitabilityScore)} out of 100`}
+          aria-label={`Match across assessed search criteria ${formatRuleScore(recommendation.suitabilityScore)} out of 100. Not legal suitability or lease approval.`}
         >
           <span className={styles.scoreValue}>
             {formatRuleScore(recommendation.suitabilityScore)}
           </span>
-          <span className={styles.scoreHint}>/ 100 rule score</span>
+          <span className={styles.scoreHint}>/ 100 match</span>
+          <span className={styles.scoreCaption}>
+            Assessed search criteria only
+          </span>
           <div className={styles.scoreTrack} aria-hidden>
             <div
               className={`${styles.scoreFill} ${scoreFillClass(status)}`}
@@ -228,12 +210,11 @@ export function RecommendationCard({
         >
           Parcel intelligence
         </Button>
-        <SaveParcelButton parcelId={recommendation.parcelId} />
         <Button
           href={`/land-intelligence/parcels/${recommendation.parcelId}/lease-interest`}
           variant="secondary"
         >
-          Express lease interest
+          Express preliminary interest
         </Button>
       </div>
 
@@ -308,6 +289,32 @@ export function RecommendationCard({
                     </ul>
                   </div>
                 ) : null}
+                {recommendation.projectLeaseReadyLabel ? (
+                  <div className={styles.factorGroup}>
+                    <p className={styles.factorLabel}>Project designation</p>
+                    <p className={styles.lead}>
+                      {recommendation.projectLeaseReadyLabel}
+                      {recommendation.isProjectLeaseReadyDesignated &&
+                      !recommendation.isProjectLeaseReadyEffective
+                        ? " (excluded — source-reported Private)"
+                        : ""}
+                    </p>
+                  </div>
+                ) : null}
+                {recommendation.sourceReportedClaimantCategoryDisplay ? (
+                  <div className={styles.factorGroup}>
+                    <p className={styles.factorLabel}>Source-reported claimant category</p>
+                    <p className={styles.lead}>
+                      {recommendation.sourceReportedClaimantCategoryDisplay}
+                      {recommendation.sourceReportedClaimantCategoryCode
+                        ? ` (code ${recommendation.sourceReportedClaimantCategoryCode})`
+                        : ""}
+                    </p>
+                    <p className={styles.sourceNote}>
+                      This is preliminary screening only — not a legal ownership determination.
+                    </p>
+                  </div>
+                ) : null}
                 <p className={styles.lead}>{bullets.lead}</p>
                 {bullets.positives.length > 0 ? (
                   <div className={styles.factorGroup}>
@@ -329,6 +336,11 @@ export function RecommendationCard({
                     </ul>
                   </div>
                 ) : null}
+                <p className={styles.sourceNote}>
+                  Decision-support screening only. Source-reported claimant category and
+                  land use do not prove ownership, lease availability, or legal
+                  suitability. Official confirmation is required.
+                </p>
               </>
             ) : null}
 
@@ -370,8 +382,16 @@ export function RecommendationCard({
                                 {statusInfo.label}
                               </StatusBadge>
                             </td>
-                            <td>{formatCriterionScore(criterion.score)}</td>
-                            <td>{criterion.weight}</td>
+                            <td>
+                              {criterion.wasAssessed === false
+                                ? "—"
+                                : formatCriterionScore(criterion.score)}
+                            </td>
+                            <td>
+                              {criterion.wasAssessed === false
+                                ? "—"
+                                : criterion.weight}
+                            </td>
                             <td>
                               {criterion.dataProvenance?.sourceName
                                 ? displayOrUnknown(
