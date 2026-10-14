@@ -5,6 +5,7 @@ using StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations;
 using StateLandGovernance.WorkflowGovernance.Presentation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
@@ -73,6 +74,16 @@ builder.Services.AddEarlyGovernanceScreening();
 builder.Services.AddLeaseApprovalTimingMonitoring();
 builder.Services.AddGovernanceScreeningOrchestration();
 
+// Disambiguate Component4ScreeningGateway constructor registration for Microsoft DI
+builder.Services.RemoveAll<StateLandGovernance.WorkflowGovernance.Application.Interfaces.IComponent4ScreeningGateway>();
+builder.Services.AddScoped<StateLandGovernance.WorkflowGovernance.Application.Interfaces.IComponent4ScreeningGateway>(sp =>
+    new StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations.Component4ScreeningGateway(
+        sp.GetRequiredService<EvaluateComplianceCommandHandler>(),
+        sp.GetRequiredService<StateLandGovernance.WorkflowGovernance.Application.Interfaces.ILeaseCaseRepository>(),
+        sp.GetRequiredService<StateLandGovernance.WorkflowGovernance.Application.Interfaces.ICommandHandler<StateLandGovernance.WorkflowGovernance.Application.Commands.RecordScreeningResultCommand, StateLandGovernance.WorkflowGovernance.Application.DTOs.ScreeningResultDto>>(),
+        sp.GetService<TimeProvider>(),
+        sp.GetService<Microsoft.Extensions.Logging.ILogger<StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations.Component4ScreeningGateway>>()));
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -94,6 +105,22 @@ builder.Services.AddLandIntelligencePresentation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SwaggerDoc("all", new OpenApiInfo
+    {
+        Title = "State Land Governance — All Platform Services (Unified)",
+        Version = "v1",
+        Description =
+            "Unified interactive API surface capturing all platform services: Land Intelligence (C1), Workflow Governance (C3), and AI Governance Intelligence (C4)."
+    });
+
+    options.SwaggerDoc("governance-intelligence", new OpenApiInfo
+    {
+        Title = "State Land Governance — Component 4 Governance Intelligence API",
+        Version = "v1",
+        Description =
+            "AI-driven regulatory compliance, conflict detection, early governance screening, risk assessment, explanation, and consensus verification."
+    });
+
     options.SwaggerDoc(LandIntelligenceApiGroups.External, new OpenApiInfo
     {
         Title = "State Land Governance — Component 1 External Read API",
@@ -122,7 +149,14 @@ builder.Services.AddSwaggerGen(options =>
     }
 
     options.DocInclusionPredicate((documentName, apiDescription) =>
-        string.Equals(apiDescription.GroupName, documentName, StringComparison.Ordinal));
+    {
+        if (string.Equals(documentName, "all", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return string.Equals(apiDescription.GroupName, documentName, StringComparison.OrdinalIgnoreCase);
+    });
 });
 
 var app = builder.Build();
@@ -132,6 +166,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
+        options.SwaggerEndpoint(
+            "/swagger/all/swagger.json",
+            "All Platform Services (Unified) v1");
+        options.SwaggerEndpoint(
+            "/swagger/governance-intelligence/swagger.json",
+            "Component 4 — Governance Intelligence API v1");
         options.SwaggerEndpoint(
             $"/swagger/{LandIntelligenceApiGroups.External}/swagger.json",
             "Land Intelligence External Read API v1");

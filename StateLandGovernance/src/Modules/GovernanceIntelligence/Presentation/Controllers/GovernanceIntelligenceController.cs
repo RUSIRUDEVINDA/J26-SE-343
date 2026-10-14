@@ -23,6 +23,7 @@ namespace StateLandGovernance.GovernanceIntelligence.Presentation.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/governance-intelligence")]
+[ApiExplorerSettings(GroupName = "governance-intelligence")]
 public class GovernanceIntelligenceController : ControllerBase
 {
     private readonly EvaluateComplianceCommandHandler _complianceHandler;
