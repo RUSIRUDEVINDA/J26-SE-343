@@ -26,21 +26,36 @@ export function CriteriaList({
     <section className={styles.section}>
       <h4 className={styles.sectionTitle}>{title}</h4>
       <ul className={styles.list}>
-        {criteria.map((item) => (
+        {criteria.map((item) => {
+          const notAssessed = item.wasAssessed === false;
+          return (
           <li key={`${item.key}-${item.name}`} className={styles.item}>
             <div className={styles.itemHeader}>
               <strong>{item.name}</strong>
-              <StatusBadge tone={item.isMet ? "success" : "danger"}>
-                {item.isMet ? "Met" : "Not met"}
+              <StatusBadge
+                tone={
+                  notAssessed ? "neutral" : item.isMet ? "success" : "danger"
+                }
+              >
+                {notAssessed ? "Not assessed" : item.isMet ? "Met" : "Not met"}
               </StatusBadge>
             </div>
             <p className={styles.meta}>
-              {criterionCategoryLabels[item.category] ?? "Unknown category"} ·
-              Score {item.score} · Weight {item.weight}
+              {criterionCategoryLabels[item.category] ?? "Unknown category"}
+              {notAssessed
+                ? " · Not included in match score"
+                : ` · Score ${item.score} · Weight ${item.weight}`}
             </p>
-            <p>{displayOrUnknown(item.summary)}</p>
+            <p>
+              {displayOrUnknown(
+                notAssessed
+                  ? item.notAssessedReason || item.summary
+                  : item.summary,
+              )}
+            </p>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </section>
   );
