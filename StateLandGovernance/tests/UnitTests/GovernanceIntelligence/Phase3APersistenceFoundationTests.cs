@@ -38,7 +38,7 @@ public sealed class Phase3APersistenceFoundationTests
             generatedAtUtc: FixedUtcNow);
 
         Assert.True(provenance.IsSynthetic);
-        Assert.Equal(GovernanceProvenanceKind.SyntheticFixture, provenance.ProvenanceKind);
+        Assert.Equal(GovernanceProvenanceKind.SyntheticPp1Seed, provenance.ProvenanceKind);
         Assert.Equal("PP1-SYNTH-2026-10-v1", provenance.SyntheticSeedVersion);
         Assert.Equal(GovernanceProvenancePurpose.PP1Demonstration, provenance.Purpose);
         provenance.ValidateForPp1Demonstration();

@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Application.Queries;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Commands;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Application.Timing;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 
@@ -105,6 +107,18 @@ public static class ServiceCollectionExtensions
         services.TryAddTransient<GetLeaseApprovalTimingAssessmentQueryHandler>();
         services.TryAddTransient<GetLeaseApprovalTimingHistoryByCaseQueryHandler>();
         services.TryAddTransient<GetLeaseApprovalTimingHistoryByWorkflowRunQueryHandler>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Governance Intelligence screening orchestration services and in-memory consolidated store.
+    /// </summary>
+    public static IServiceCollection AddGovernanceScreeningOrchestration(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.TryAddTransient<OrchestrateGovernanceScreeningCommandHandler>();
 
         return services;
     }

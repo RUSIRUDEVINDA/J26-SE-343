@@ -9,6 +9,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Application.Projections;
 using StateLandGovernance.GovernanceIntelligence.Application.Queries;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Application.Timing;
 using StateLandGovernance.GovernanceIntelligence.Application.WorkflowAnomaly;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.Blockchain;
@@ -119,6 +120,8 @@ public static class ServiceCollectionExtensions
             throw new InvalidOperationException(
                 "Governance Intelligence PostgreSQL connection string 'GOVERNANCE_INTELLIGENCE_CONNECTION' is missing in production environment.");
         }
+
+        services.TryAddSingleton<IConsolidatedGovernanceScreeningStore, InMemoryConsolidatedGovernanceScreeningStore>();
 
         services.AddTransient<GetAuditReceiptQueryHandler>();
         services.AddTransient<GetAuditHistoryByCaseQueryHandler>();

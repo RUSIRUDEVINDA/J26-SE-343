@@ -9,6 +9,10 @@ using StateLandGovernance.GovernanceIntelligence.Application.ComplaintClassifica
 using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Application.Queries;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Commands;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Contracts;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Fixtures;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Application.Timing;
 using StateLandGovernance.GovernanceIntelligence.Application.WorkflowAnomaly;
 
@@ -522,6 +526,87 @@ public class GovernanceIntelligenceController : ControllerBase
         if (handler is null)
             return StatusCode(StatusCodes.Status503ServiceUnavailable, "PP1 synthetic integration is not enabled.");
         return Ok(await handler.HandleAsync(command, cancellationToken));
+    }
+
+    /// <summary>
+    /// Executes the multi-engine governance screening orchestration against an immutable snapshot.
+    /// Idempotent: identical case snapshot returns existing consolidated result without re-evaluating.
+    /// </summary>
+    [HttpPost("screening/orchestrate")]
+    [ProducesResponseType(typeof(ConsolidatedGovernanceScreeningResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> OrchestrateScreening(
+        [FromBody] GovernanceScreeningCaseInputDto input,
+        [FromServices] OrchestrateGovernanceScreeningCommandHandler handler,
+        CancellationToken cancellationToken)
+    {
+        if (input is null)
+        {
+            return BadRequest("Screening case input cannot be null.");
+        }
+
+        try
+        {
+            var result = await handler.HandleAsync(new OrchestrateGovernanceScreeningCommand(input), cancellationToken);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Retrieves the latest consolidated screening result for a case.
+    /// </summary>
+    [HttpGet("screening/cases/{caseId}/latest")]
+    [ProducesResponseType(typeof(ConsolidatedGovernanceScreeningResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetLatestScreeningForCase(
+        string caseId,
+        [FromServices] IConsolidatedGovernanceScreeningStore store,
+        CancellationToken cancellationToken)
+    {
+        var result = await store.GetLatestByCaseIdAsync(caseId, cancellationToken);
+        return result is null ? NotFound($"No screening assessment found for case '{caseId}'.") : Ok(result);
+    }
+
+    /// <summary>
+    /// Retrieves the consolidated screening history for a case.
+    /// </summary>
+    [HttpGet("screening/cases/{caseId}/history-consolidated")]
+    [ProducesResponseType(typeof(IReadOnlyList<ConsolidatedGovernanceScreeningResultDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetScreeningHistoryForCase(
+        string caseId,
+        [FromQuery] int limit,
+        [FromServices] IConsolidatedGovernanceScreeningStore store,
+        CancellationToken cancellationToken)
+    {
+        var history = await store.GetHistoryByCaseIdAsync(caseId, NormalizeLimit(limit), cancellationToken);
+        return Ok(history);
+    }
+
+    /// <summary>
+    /// Retrieves all available development case fixtures for testing Component 4 in isolation.
+    /// Explicitly marked with synthetic provenance.
+    /// </summary>
+    [HttpGet("screening/fixtures")]
+    [ProducesResponseType(typeof(IReadOnlyList<GovernanceScreeningCaseInputDto>), StatusCodes.Status200OK)]
+    public IActionResult GetDevelopmentFixtures()
+    {
+        return Ok(C4DevelopmentCaseFixtureProvider.GetAllFixtures());
+    }
+
+    /// <summary>
+    /// Retrieves a specific development case fixture by case ID.
+    /// </summary>
+    [HttpGet("screening/fixtures/{caseId}")]
+    [ProducesResponseType(typeof(GovernanceScreeningCaseInputDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult GetDevelopmentFixtureById(string caseId)
+    {
+        var fixture = C4DevelopmentCaseFixtureProvider.TryGetByCaseId(caseId);
+        return fixture is null ? NotFound($"Fixture for case '{caseId}' not found.") : Ok(fixture);
     }
 
     private static int NormalizeLimit(int limit) => limit == 0 ? 100 : limit;

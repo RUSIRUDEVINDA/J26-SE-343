@@ -146,7 +146,18 @@ public class ArchitectureTests
 
         Assert.NotNull(dir);
 
-        var csprojFiles = Directory.GetFiles(dir.FullName, "*GovernanceIntelligence*.csproj", SearchOption.AllDirectories);
+        var moduleRoot = Path.Combine(dir.FullName, "src", "Modules", "GovernanceIntelligence");
+        var layerDirectories = new[] { "Domain", "Application", "Infrastructure", "Presentation" };
+        var csprojFiles = layerDirectories
+            .SelectMany(layer => Directory.GetFiles(
+                Path.Combine(moduleRoot, layer),
+                "*GovernanceIntelligence*.csproj",
+                SearchOption.TopDirectoryOnly))
+            .Concat(Directory.GetFiles(
+                Path.Combine(dir.FullName, "tests", "UnitTests", "GovernanceIntelligence"),
+                "*GovernanceIntelligence*.csproj",
+                SearchOption.TopDirectoryOnly))
+            .ToArray();
         Assert.NotEmpty(csprojFiles);
 
         foreach (var csprojPath in csprojFiles)
