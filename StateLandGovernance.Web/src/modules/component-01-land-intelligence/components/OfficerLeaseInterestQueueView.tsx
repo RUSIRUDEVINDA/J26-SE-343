@@ -126,18 +126,20 @@ export function OfficerLeaseInterestQueueView() {
                       </td>
                       <td>{row.district ?? "—"}</td>
                       <td>
-                        <Link
-                          href={`/land-intelligence/officer/lease-interest-review/${row.requestId}`}
-                          className={styles.rowLink}
-                        >
-                          Review
-                        </Link>
-                        <Link
-                          href={`/land-intelligence/parcels/${row.landParcelId}`}
-                          className={styles.rowLink}
-                        >
-                          Parcel
-                        </Link>
+                        <div className={styles.rowActions}>
+                          <Link
+                            href={`/land-intelligence/officer/lease-interest-review/${row.requestId}`}
+                            className={styles.rowLink}
+                          >
+                            Review
+                          </Link>
+                          <Link
+                            href={`/land-intelligence/parcels/${row.landParcelId}`}
+                            className={styles.rowLink}
+                          >
+                            Parcel
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   ))}
