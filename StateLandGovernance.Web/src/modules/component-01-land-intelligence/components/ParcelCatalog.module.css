@@ -135,11 +135,36 @@
 
 .pagination {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: 1rem;
+  justify-content: space-between;
+  gap: 0.85rem 1.25rem;
   padding: 0.85rem 1.1rem;
   border-top: 1px solid var(--color-card-border);
+}
+
+.pageSizeControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.84rem;
+  color: var(--color-muted);
+}
+
+.pageSizeSelect {
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 6px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.pageNav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .pageButton {
@@ -172,6 +197,10 @@
 
   .pagination {
     flex-direction: column;
-    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .pageNav {
+    justify-content: space-between;
   }
 }

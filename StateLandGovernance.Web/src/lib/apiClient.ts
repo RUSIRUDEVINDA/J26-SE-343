@@ -1,12 +1,20 @@
 import type { ApiErrorResponse } from "@/shared/types/common";
 import {
+  SESSION_EXPIRED_DETAIL,
+  SESSION_EXPIRED_TITLE,
   ensureApplicantAccessToken,
+  ensureAuthorityAccessToken,
   ensureOfficerAccessToken,
   isDemoOwnerHeaderEnabled,
   landIntelligenceBearerHeaders,
+  sendWithSessionRetry,
 } from "../modules/component-01-land-intelligence/utils/landIntelligenceSession";
 
-export type LandIntelligenceApiAuthRole = "applicant" | "officer" | "none";
+export type LandIntelligenceApiAuthRole =
+  | "applicant"
+  | "officer"
+  | "authority"
+  | "none";
 import { landIntelligenceOwnerHeaders } from "../modules/component-01-land-intelligence/utils/landIntelligenceOwner";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
@@ -55,6 +63,9 @@ async function resolveAccessToken(
   if (authRole === "officer") {
     return await ensureOfficerAccessToken();
   }
+  if (authRole === "authority") {
+    return await ensureAuthorityAccessToken();
+  }
   return await ensureApplicantAccessToken();
 }
 
@@ -77,15 +88,56 @@ async function mergeHeaders(
   };
 }
 
+function flattenApiErrors(errors: unknown): string[] | undefined {
+  if (!errors) {
+    return undefined;
+  }
+  if (Array.isArray(errors)) {
+    const list = errors.filter((item): item is string => typeof item === "string");
+    return list.length > 0 ? list : undefined;
+  }
+  if (typeof errors !== "object") {
+    return undefined;
+  }
+
+  const messages: string[] = [];
+  for (const [key, value] of Object.entries(errors as Record<string, unknown>)) {
+    const entries = Array.isArray(value) ? value : [value];
+    for (const entry of entries) {
+      if (typeof entry !== "string" || !entry.trim()) {
+        continue;
+      }
+      if (key === "input" || key === "$") {
+        messages.push(entry);
+        continue;
+      }
+      const field = key
+        .replace(/^\$\./, "")
+        .replace(/([A-Z])/g, " $1")
+        .replace(/[._]/g, " ")
+        .trim()
+        .toLowerCase();
+      messages.push(field ? `${field}: ${entry}` : entry);
+    }
+  }
+  return messages.length > 0 ? messages : undefined;
+}
+
 async function parseError(response: Response): Promise<ApiClientError> {
   try {
-    const body = (await response.json()) as ApiErrorResponse;
+    const body = (await response.json()) as ApiErrorResponse & {
+      errors?: unknown;
+    };
+    const errors = flattenApiErrors(body.errors);
 
     return new ApiClientError({
       status: body.status ?? response.status,
       title: body.title ?? response.statusText,
-      detail: body.detail ?? "Request failed.",
-      errors: body.errors,
+      detail:
+        body.detail ??
+        errors?.[0] ??
+        "Request failed.",
+      errors,
     });
   } catch {
     return new ApiClientError({
@@ -96,6 +148,42 @@ async function parseError(response: Response): Promise<ApiClientError> {
   }
 }
 
+function sessionExpiredError(status: number): ApiClientError {
+  return new ApiClientError({
+    status,
+    title: SESSION_EXPIRED_TITLE,
+    detail: SESSION_EXPIRED_DETAIL,
+  });
+}
+
+/**
+ * Sends a request with the role's token. On the first 401/403 the research-demo
+ * token is renewed and the request is retried exactly once. Unusable sessions
+ * are cleared. Returns only successful responses; failures throw
+ * ApiClientError. Role authorization is still enforced by the API.
+ */
+async function authorizedFetch(
+  url: string,
+  buildInit: () => Promise<RequestInit>,
+  authRole: LandIntelligenceApiAuthRole,
+): Promise<Response> {
+  const { response, retried, renewalFailed } = await sendWithSessionRetry(
+    authRole,
+    async () => fetch(url, await buildInit()),
+  );
+
+  if (response.ok) {
+    return response;
+  }
+
+  // 401 after renewal (or no renewal possible) means the session is unusable.
+  if (response.status === 401 && (retried || renewalFailed)) {
+    throw sessionExpiredError(401);
+  }
+
+  throw await parseError(response);
+}
+
 export async function apiGet<T>(
   path: string,
   init?: RequestInit,
@@ -103,21 +191,21 @@ export async function apiGet<T>(
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
-  const response = await fetch(url, {
-    ...init,
-    method: "GET",
-    headers: await mergeHeaders(
-      {
-        Accept: "application/json",
-        ...init?.headers,
-      },
-      authRole,
-    ),
-  });
-
-  if (!response.ok) {
-    throw await parseError(response);
-  }
+  const response = await authorizedFetch(
+    url,
+    async () => ({
+      ...init,
+      method: "GET",
+      headers: await mergeHeaders(
+        {
+          Accept: "application/json",
+          ...init?.headers,
+        },
+        authRole,
+      ),
+    }),
+    authRole,
+  );
 
   if (response.status === 204) {
     return undefined as T;
@@ -148,29 +236,27 @@ export async function apiPost<T>(
   authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
-  const headers = await mergeHeaders(
-    {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...init?.headers,
-    },
-    authRole,
-  );
-
   if (init?.signal?.aborted) {
     throw new DOMException("The request was aborted.", "AbortError");
   }
 
-  const response = await fetch(url, {
-    ...init,
-    method: "POST",
-    headers,
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    throw await parseError(response);
-  }
+  const response = await authorizedFetch(
+    url,
+    async () => ({
+      ...init,
+      method: "POST",
+      headers: await mergeHeaders(
+        {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          ...init?.headers,
+        },
+        authRole,
+      ),
+      body: JSON.stringify(body),
+    }),
+    authRole,
+  );
 
   return (await response.json()) as T;
 }
@@ -185,26 +271,29 @@ export async function apiPostFormData<T>(
   let response: Response;
 
   try {
-    response = await fetch(url, {
-      ...init,
-      method: "POST",
-      headers: await mergeHeaders({
-        Accept: "application/json",
-        ...init?.headers,
+    response = await authorizedFetch(
+      url,
+      async () => ({
+        ...init,
+        method: "POST",
+        headers: await mergeHeaders({
+          Accept: "application/json",
+          ...init?.headers,
+        }),
+        body: formData,
       }),
-      body: formData,
-    });
-  } catch {
+      "applicant",
+    );
+  } catch (err) {
+    if (err instanceof ApiClientError) {
+      throw err;
+    }
     throw new ApiClientError({
       status: 0,
       title: "Network Error",
       detail:
         "Unable to reach the OCR API. Check that the ASP.NET Core API is running.",
     });
-  }
-
-  if (!response.ok) {
-    throw await parseError(response);
   }
 
   return (await response.json()) as T;
@@ -218,23 +307,23 @@ export async function apiPut<T>(
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
-  const response = await fetch(url, {
-    ...init,
-    method: "PUT",
-    headers: await mergeHeaders(
-      {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        ...init?.headers,
-      },
-      authRole,
-    ),
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    throw await parseError(response);
-  }
+  const response = await authorizedFetch(
+    url,
+    async () => ({
+      ...init,
+      method: "PUT",
+      headers: await mergeHeaders(
+        {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          ...init?.headers,
+        },
+        authRole,
+      ),
+      body: JSON.stringify(body),
+    }),
+    authRole,
+  );
 
   if (response.status === 204) {
     return undefined as T;
@@ -250,19 +339,19 @@ export async function apiDelete(
 ): Promise<void> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
-  const response = await fetch(url, {
-    ...init,
-    method: "DELETE",
-    headers: await mergeHeaders(
-      {
-        Accept: "application/json",
-        ...init?.headers,
-      },
-      authRole,
-    ),
-  });
-
-  if (!response.ok) {
-    throw await parseError(response);
-  }
+  await authorizedFetch(
+    url,
+    async () => ({
+      ...init,
+      method: "DELETE",
+      headers: await mergeHeaders(
+        {
+          Accept: "application/json",
+          ...init?.headers,
+        },
+        authRole,
+      ),
+    }),
+    authRole,
+  );
 }
