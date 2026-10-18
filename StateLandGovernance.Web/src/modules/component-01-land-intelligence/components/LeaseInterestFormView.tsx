@@ -33,14 +33,19 @@ import type {
   LeaseInterestRequestDetail,
   UpsertLeaseInterestDraft,
 } from "../types/landIntelligence";
-import { AreaUnit } from "../types/landIntelligence";
-import { landUseTypeLabels } from "../utils/enumMappings";
+import {
+  AreaUnit,
+  isSupportedLandUseType,
+  LandUseType,
+} from "../types/landIntelligence";
+import { landUseTypeLabels, landUseTypeOptions } from "../utils/enumMappings";
 import { displayOrUnknown, formatArea } from "../utils/formatters";
 import { isLeaseInterestDraftReadyForSubmit } from "../utils/leaseInterestReview";
 import {
   sourceReportedClaimantCategoryDisplay,
   sourceReportedLandUseDisplay,
 } from "../utils/sourceReportedCadastre";
+import { useModalDialogA11y } from "../hooks/useModalDialogA11y";
 import { LeaseInterestReviewStep } from "./LeaseInterestReviewStep";
 import { maskNic } from "../utils/nic";
 import styles from "./LeaseInterestFormView.module.css";
@@ -61,7 +66,8 @@ function emptyDraft(): UpsertLeaseInterestDraft {
       representativeNationalIdentityCardNumber: null,
     },
     proposal: {
-      requestedPurpose: 99,
+      // 0 = unset (LandUseType has no member at 0); applicant must pick a supported purpose.
+      requestedPurpose: 0 as LandUseType,
       plannedActivitiesDescription: "",
       requestedAreaHectares: null,
       desiredStartPeriod: "",
@@ -113,6 +119,10 @@ export function LeaseInterestFormView({
   const redirectedSubmittedRef = useRef(false);
 
   const readOnly = request != null && !isLeaseInterestDraftStatus(request.status);
+  const fieldErrorA11y =
+    fieldErrors.length > 0
+      ? ({ "aria-invalid": true, "aria-describedby": "lease-interest-field-errors" } as const)
+      : {};
 
   const applyExistingRequest = useCallback(
     (
@@ -180,18 +190,10 @@ export function LeaseInterestFormView({
     onReviewStepChange?.(step === 3);
   }, [step, onReviewStepChange]);
 
-  useEffect(() => {
-    if (!submitSuccessOpen) {
-      return;
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setSubmitSuccessOpen(false);
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [submitSuccessOpen]);
+  const { dialogRef: submitSuccessDialogRef } = useModalDialogA11y({
+    open: submitSuccessOpen,
+    onClose: () => setSubmitSuccessOpen(false),
+  });
 
   async function handleStartRequest() {
     if (starting || request) {
@@ -474,7 +476,7 @@ export function LeaseInterestFormView({
 
         {error ? <ErrorMessage message={error} /> : null}
         {fieldErrors.length > 0 ? (
-          <ul className={styles.error} role="alert">
+          <ul id="lease-interest-field-errors" className={styles.error} role="alert">
             {fieldErrors.map((item) => (
               <li key={item}>{item}</li>
             ))}
@@ -507,6 +509,7 @@ export function LeaseInterestFormView({
               <label htmlFor="legal-name">Full name</label>
               <input
                 id="legal-name"
+                {...fieldErrorA11y}
                 className={styles.input}
                 disabled={readOnly}
                 value={draft.applicant.legalName}
@@ -524,6 +527,7 @@ export function LeaseInterestFormView({
                 </label>
                 <input
                   id="applicant-nic"
+                {...fieldErrorA11y}
                   className={styles.input}
                   disabled={readOnly}
                   value={
@@ -555,6 +559,7 @@ export function LeaseInterestFormView({
                   <label htmlFor="org-name">Organization name</label>
                   <input
                     id="org-name"
+                {...fieldErrorA11y}
                     className={styles.input}
                     disabled={readOnly}
                     value={draft.applicant.organizationName ?? ""}
@@ -572,6 +577,7 @@ export function LeaseInterestFormView({
                   <label htmlFor="org-reg">Registration number</label>
                   <input
                     id="org-reg"
+                {...fieldErrorA11y}
                     className={styles.input}
                     disabled={readOnly}
                     value={draft.applicant.organizationRegistrationNumber ?? ""}
@@ -591,6 +597,7 @@ export function LeaseInterestFormView({
                   </label>
                   <input
                     id="rep-nic"
+                {...fieldErrorA11y}
                     className={styles.input}
                     disabled={readOnly}
                     value={
@@ -624,6 +631,7 @@ export function LeaseInterestFormView({
               <label htmlFor="phone">Contact phone</label>
               <input
                 id="phone"
+                {...fieldErrorA11y}
                 className={styles.input}
                 disabled={readOnly}
                 value={draft.applicant.contactPhone}
@@ -638,6 +646,7 @@ export function LeaseInterestFormView({
               <label htmlFor="email">Email</label>
               <input
                 id="email"
+                {...fieldErrorA11y}
                 type="email"
                 className={styles.input}
                 disabled={readOnly}
@@ -653,6 +662,7 @@ export function LeaseInterestFormView({
               <label htmlFor="address">Postal address</label>
               <textarea
                 id="address"
+                {...fieldErrorA11y}
                 className={styles.textarea}
                 disabled={readOnly}
                 value={draft.applicant.postalAddress}
@@ -675,21 +685,30 @@ export function LeaseInterestFormView({
               <label htmlFor="purpose">Requested purpose</label>
               <select
                 id="purpose"
+                {...fieldErrorA11y}
                 className={styles.select}
                 disabled={readOnly}
-                value={draft.proposal.requestedPurpose}
+                value={
+                  isSupportedLandUseType(draft.proposal.requestedPurpose)
+                    ? draft.proposal.requestedPurpose
+                    : ""
+                }
                 onChange={(e) =>
                   patchDraft({
                     proposal: {
                       ...draft.proposal,
-                      requestedPurpose: Number(e.target.value),
+                      requestedPurpose:
+                        e.target.value === ""
+                          ? (0 as LandUseType)
+                          : (Number(e.target.value) as LandUseType),
                     },
                   })
                 }
               >
-                {Object.entries(landUseTypeLabels).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
+                <option value="">Select purpose</option>
+                {landUseTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
                   </option>
                 ))}
               </select>
@@ -698,6 +717,7 @@ export function LeaseInterestFormView({
               <label htmlFor="duration">Requested duration (years)</label>
               <input
                 id="duration"
+                {...fieldErrorA11y}
                 type="number"
                 min={1}
                 max={30}
@@ -718,6 +738,7 @@ export function LeaseInterestFormView({
               <label htmlFor="start">Desired start period</label>
               <input
                 id="start"
+                {...fieldErrorA11y}
                 type="date"
                 className={styles.input}
                 disabled={readOnly}
@@ -760,6 +781,7 @@ export function LeaseInterestFormView({
               <label htmlFor="activities">Planned activities</label>
               <textarea
                 id="activities"
+                {...fieldErrorA11y}
                 className={styles.textarea}
                 disabled={readOnly}
                 value={draft.proposal.plannedActivitiesDescription}
@@ -777,6 +799,7 @@ export function LeaseInterestFormView({
               <label htmlFor="summary">Project summary</label>
               <textarea
                 id="summary"
+                {...fieldErrorA11y}
                 className={styles.textarea}
                 disabled={readOnly}
                 value={draft.proposal.projectSummary}
@@ -977,10 +1000,12 @@ export function LeaseInterestFormView({
           onClick={() => setSubmitSuccessOpen(false)}
         >
           <div
+            ref={submitSuccessDialogRef}
             className={styles.modalDialog}
             role="dialog"
             aria-modal="true"
             aria-labelledby="lease-interest-submit-success-title"
+            aria-describedby="lease-interest-submit-success-body"
             onClick={(e) => e.stopPropagation()}
           >
             <h2
@@ -989,7 +1014,7 @@ export function LeaseInterestFormView({
             >
               Submitted for preliminary verification
             </h2>
-            <p className={styles.successBody}>
+            <p id="lease-interest-submit-success-body" className={styles.successBody}>
               Your acknowledgement reference is{" "}
               <strong>{request.acknowledgementReference}</strong>. You can track
               progress from My requests.
