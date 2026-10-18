@@ -8,7 +8,10 @@ import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { PageHeading } from "@/shared/components/PageLayout";
 import { StatusBadge } from "@/shared/components/StatusBadge";
-import { listMyLeaseInterestRequests } from "@/modules/component-01-land-intelligence/services/citizenWorkspaceApi";
+import {
+  deleteLeaseInterestDraft,
+  listMyLeaseInterestRequests,
+} from "@/modules/component-01-land-intelligence/services/citizenWorkspaceApi";
 import type { LeaseInterestRequestSummary } from "@/modules/component-01-land-intelligence/types/landIntelligence";
 import { leaseInterestPurposeDisplay } from "@/modules/component-01-land-intelligence/utils/leaseInterestPurposeDisplay";
 import {
@@ -33,7 +36,15 @@ function formatShortDate(iso: string | null | undefined): string {
   });
 }
 
-function RequestRow({ item }: { item: LeaseInterestRequestSummary }) {
+function RequestRow({
+  item,
+  onDeleted,
+}: {
+  item: LeaseInterestRequestSummary;
+  onDeleted: (requestId: string) => void;
+}) {
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const isDraft = isLeaseInterestDraftStatus(item.status);
   const purpose = leaseInterestPurposeDisplay(
     item.requestedPurpose,
@@ -43,6 +54,30 @@ function RequestRow({ item }: { item: LeaseInterestRequestSummary }) {
     item.acknowledgementReference ??
     (isDraft ? `Draft · ${item.id.slice(0, 8)}` : item.id.slice(0, 8));
   const parcelLabel = item.cadastralNumber?.trim() || item.landParcelId.slice(0, 8);
+
+  async function handleDeleteDraft() {
+    const confirmed = window.confirm(
+      "Delete this draft? Your saved answers will be removed and cannot be recovered.",
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteLeaseInterestDraft(item.id);
+      onDeleted(item.id);
+    } catch (err) {
+      if (err instanceof ApiClientError) {
+        setDeleteError(err.detail || err.title);
+      } else {
+        setDeleteError("Unable to delete this draft.");
+      }
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   return (
     <li className={styles.row}>
@@ -76,15 +111,29 @@ function RequestRow({ item }: { item: LeaseInterestRequestSummary }) {
             </dd>
           </div>
         </dl>
+        {deleteError ? (
+          <p className={styles.rowDeleteError} role="alert">{deleteError}</p>
+        ) : null}
       </div>
       <div className={styles.rowActions}>
         {isDraft ? (
-          <Button
-            href={`/land-intelligence/parcels/${item.landParcelId}/lease-interest`}
-            variant="primary"
-          >
-            Continue draft
-          </Button>
+          <>
+            <Button
+              href={`/land-intelligence/parcels/${item.landParcelId}/lease-interest`}
+              variant="primary"
+            >
+              Continue draft
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className={styles.deleteButton}
+              disabled={deleting}
+              onClick={() => void handleDeleteDraft()}
+            >
+              {deleting ? "Deleting…" : "Delete draft"}
+            </Button>
+          </>
         ) : (
           <Button
             href={`/land-intelligence/my-requests/${item.id}`}
@@ -102,10 +151,12 @@ function RequestSection({
   title,
   items,
   emptyLabel,
+  onDraftDeleted,
 }: {
   title: string;
   items: LeaseInterestRequestSummary[];
   emptyLabel: string;
+  onDraftDeleted?: (requestId: string) => void;
 }) {
   return (
     <section className={styles.section} aria-labelledby={`${title}-heading`}>
@@ -120,7 +171,11 @@ function RequestSection({
       ) : (
         <ul className={styles.list}>
           {items.map((item) => (
-            <RequestRow key={item.id} item={item} />
+            <RequestRow
+              key={item.id}
+              item={item}
+              onDeleted={(requestId) => onDraftDeleted?.(requestId)}
+            />
           ))}
         </ul>
       )}
@@ -209,6 +264,9 @@ export default function MyRequestsPage() {
             title="Drafts"
             items={drafts}
             emptyLabel="No drafts in progress."
+            onDraftDeleted={(requestId) =>
+              setItems((prev) => prev.filter((row) => row.id !== requestId))
+            }
           />
           <RequestSection
             title="Submitted"

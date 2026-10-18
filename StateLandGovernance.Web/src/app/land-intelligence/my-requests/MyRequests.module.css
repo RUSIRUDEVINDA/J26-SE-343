@@ -121,6 +121,24 @@
   flex-wrap: wrap;
   gap: 0.4rem;
   flex-shrink: 0;
+  align-items: center;
+}
+
+.rowDeleteError {
+  margin: 0.35rem 0 0;
+  width: 100%;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: #8a1f1f;
+}
+
+.deleteButton {
+  color: #8a1f1f;
+}
+
+.deleteButton:hover:not(:disabled) {
+  color: #6b1515;
+  background: #fdeeee;
 }
 
 .errorBlock {
@@ -189,6 +207,123 @@
   line-height: 1.5;
 }
 
+.valuationSection {
+  margin-top: 1.25rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--color-card-border);
+}
+
+.valuationBadge {
+  margin: 0 0 0.5rem;
+  display: inline-block;
+  padding: 0.25rem 0.55rem;
+  border-radius: 8px;
+  background: #eaf7ef;
+  color: #176339;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.valuationNote {
+  margin: 0 0 0.75rem;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
+.valuationError {
+  margin: 0 0 0.5rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  background: #fdeeee;
+  color: #8a1f1f;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.valuationDl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1.25rem;
+  font-size: 0.85rem;
+}
+
+.valuationDl div {
+  min-width: 0;
+}
+
+.valuationDl dt {
+  margin: 0 0 0.2rem;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.valuationDl dd {
+  margin: 0;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.nextAction {
+  margin: 0.85rem 0 0;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  background: #fff5e6;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.formalLeaseNote {
+  margin: 0.75rem 0 0;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  background: #eaf7ef;
+  color: #176339;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+.technicalDetails {
+  margin-top: 1.25rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px dashed var(--color-card-border);
+  border-radius: 10px;
+  background: var(--color-nav-inactive);
+  font-size: 0.8rem;
+}
+
+.technicalDetails summary {
+  cursor: pointer;
+  font-weight: 650;
+  color: var(--color-muted);
+}
+
+.technicalDl {
+  margin: 0.65rem 0 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.technicalDl dt {
+  margin: 0 0 0.15rem;
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.technicalDl dd {
+  margin: 0;
+}
+
+.monoValue {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.76rem;
+  overflow-wrap: anywhere;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -197,6 +332,10 @@
 }
 
 @media (max-width: 640px) {
+  .valuationDl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .row {
     align-items: stretch;
   }
