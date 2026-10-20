@@ -3,20 +3,15 @@ import { PageLayout } from "@/shared/components/PageLayout";
 import { GovernanceWorkspace } from "@/modules/component-04/components/GovernanceWorkspace";
 
 const navigation = [
-  { label: "Dashboard", href: "/component-04", icon: "▦" },
-  { label: "Case assessments", href: "/component-04/cases", icon: "▤" },
-  { label: "Complaint intelligence", href: "/component-04/complaints", icon: "◇" },
-  { label: "Workflow anomalies", href: "/component-04/anomalies", icon: "◎" },
-  { label: "Early screening", href: "/component-04/screening", icon: "▤" },
-  { label: "Governance risk", href: "/component-04/risk", icon: "◇" },
-  { label: "Explainability", href: "/component-04/explain", icon: "▤" },
-  { label: "Institutional consensus", href: "/component-04/consensus", icon: "◇" },
-  { label: "Condition verification", href: "/component-04/conditions", icon: "▤" },
-  { label: "Lease approval timing", href: "/component-04/timing", icon: "◷" },
-  { label: "Commissioner review", href: "/component-04/commissioner", icon: "◇" },
-  { label: "Governance summary", href: "/component-04/summary", icon: "▤" },
-  { label: "Audit history", href: "/component-04/audit", icon: "▤" },
-  { label: "Verification record", href: "/component-04/verification", icon: "◎" },
+  { label: "Overview", href: "/component-04", icon: "01" },
+  { label: "Progressive screening", href: "/component-04/screening", icon: "02" },
+  { label: "Assessment history", href: "/component-04/history", icon: "03" },
+  { label: "Complaint intelligence", href: "/component-04/complaints", icon: "04" },
+  { label: "Post-workflow analysis", href: "/component-04/post-workflow", icon: "05" },
+  { label: "Governance follow-up", href: "/component-04/follow-up", icon: "06" },
+  { label: "Integrity and audit", href: "/component-04/integrity", icon: "07" },
+  { label: "Evaluation evidence", href: "/component-04/evaluation", icon: "08" },
+  { label: "Development inputs", href: "/component-04/development", icon: "09" },
 ];
 
 export default function Component04Layout({ children }: { children: ReactNode }) {

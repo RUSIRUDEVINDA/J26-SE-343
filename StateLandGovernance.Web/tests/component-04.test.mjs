@@ -35,20 +35,8 @@ test("Component 4 layout forwards its complete module navigation to the shared s
   const pageLayoutSource = fs.readFileSync("src/shared/components/PageLayout.tsx", "utf8");
 
   for (const label of [
-    "Dashboard",
-    "Case assessments",
-    "Complaint intelligence",
-    "Workflow anomalies",
-    "Early screening",
-    "Governance risk",
-    "Explainability",
-    "Institutional consensus",
-    "Condition verification",
-    "Lease approval timing",
-    "Commissioner review",
-    "Governance summary",
-    "Audit history",
-    "Verification record",
+    "Overview", "Progressive screening", "Assessment history", "Complaint intelligence",
+    "Post-workflow analysis", "Governance follow-up", "Integrity and audit",
   ]) {
     assert.match(layoutSource, new RegExp(`label: "${label}"`));
   }
