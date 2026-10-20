@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
@@ -476,7 +477,9 @@ public class GovernanceIntelligenceController : ControllerBase
         [FromServices] GetEarlyGovernanceScreeningAssessmentQueryHandler handler,
         CancellationToken cancellationToken)
     {
+        if (!CanAccessConsolidatedCase(User.FindFirstValue("authority_case_id") ?? "")) return StatusCode(StatusCodes.Status403Forbidden);
         var result = await handler.HandleAsync(new GetEarlyGovernanceScreeningAssessmentQuery(assessmentId), cancellationToken);
+        if (result != null && !CanAccessConsolidatedCase(result.Result.CaseId)) return StatusCode(StatusCodes.Status403Forbidden);
         return result is null ? NotFound() : Ok(result);
     }
 
@@ -484,8 +487,11 @@ public class GovernanceIntelligenceController : ControllerBase
     public async Task<IActionResult> GetScreeningHistory(
         string caseId, [FromQuery] int limit,
         [FromServices] GetEarlyGovernanceScreeningHistoryQueryHandler handler,
-        CancellationToken cancellationToken) =>
-        Ok(await handler.HandleAsync(new GetEarlyGovernanceScreeningHistoryQuery(caseId, NormalizeLimit(limit)), cancellationToken));
+        CancellationToken cancellationToken)
+    {
+        if (!CanAccessConsolidatedCase(caseId)) return StatusCode(StatusCodes.Status403Forbidden);
+        return Ok(await handler.HandleAsync(new GetEarlyGovernanceScreeningHistoryQuery(caseId, NormalizeLimit(limit)), cancellationToken));
+    }
 
     [HttpGet("referrals/history/cases/{caseId}")]
     public async Task<IActionResult> GetReferralHistory(
@@ -545,6 +551,7 @@ public class GovernanceIntelligenceController : ControllerBase
         {
             return BadRequest("Screening case input cannot be null.");
         }
+        if (!CanAccessConsolidatedCase(input.CaseId, dispatch: true)) return StatusCode(StatusCodes.Status403Forbidden);
 
         try
         {
@@ -568,6 +575,7 @@ public class GovernanceIntelligenceController : ControllerBase
         [FromServices] IConsolidatedGovernanceScreeningStore store,
         CancellationToken cancellationToken)
     {
+        if (!CanAccessConsolidatedCase(caseId)) return StatusCode(StatusCodes.Status403Forbidden);
         var result = await store.GetLatestByCaseIdAsync(caseId, cancellationToken);
         return result is null ? NotFound($"No screening assessment found for case '{caseId}'.") : Ok(result);
     }
@@ -583,8 +591,24 @@ public class GovernanceIntelligenceController : ControllerBase
         [FromServices] IConsolidatedGovernanceScreeningStore store,
         CancellationToken cancellationToken)
     {
+        if (!CanAccessConsolidatedCase(caseId)) return StatusCode(StatusCodes.Status403Forbidden);
         var history = await store.GetHistoryByCaseIdAsync(caseId, NormalizeLimit(limit), cancellationToken);
         return Ok(history);
+    }
+
+    // Consolidated responses contain case evidence and complaints. Public fixture endpoints
+    // remain separate; Development headers never authorize access to persisted case results.
+    private bool CanAccessConsolidatedCase(string caseId, bool dispatch = false)
+    {
+        if (User.Identity?.IsAuthenticated != true || string.IsNullOrWhiteSpace(caseId) ||
+            !User.HasClaim("authority_case_id", caseId) ||
+            !Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var actor) || actor == Guid.Empty ||
+            !long.TryParse(User.FindFirstValue("exp"), out var expiry) || expiry <= DateTimeOffset.UtcNow.ToUnixTimeSeconds()) return false;
+        // Human officer requests use C3's completeness/snapshot checks. A direct peer dispatch
+        // needs an explicitly issued service capability, not the general workspace capability.
+        if (dispatch) return User.HasClaim("capability", "ConsolidatedScreeningDispatcher");
+        return (User.IsInRole("Officer") || User.IsInRole("ComplianceOfficer") || User.IsInRole("LandOfficer")) &&
+            User.HasClaim("capability", "CaseWorkspaceReviewer");
     }
 
     /// <summary>
