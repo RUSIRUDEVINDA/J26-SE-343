@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { readDevelopmentSession, type DevelopmentUser } from "@/lib/developmentSession";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -35,6 +37,14 @@ export function Sidebar({
   compactMobile?: boolean;
 }) {
   const pathname = usePathname();
+  const [user,setUser]=useState<DevelopmentUser|null>(null);
+  useEffect(()=>{const update=()=>setUser(readDevelopmentSession()?.user||null);update();window.addEventListener("development-session-changed",update);return()=>window.removeEventListener("development-session-changed",update);},[]);
+  const visibleItems=items.filter(item=>{
+    if(!user||!item.href.startsWith("/workflow-governance"))return true;
+    if(!user.institution)return item.href.includes("/applicant/");
+    if(user.institution==="DS"||user.institution==="DEVELOPMENT_RESEARCH")return item.href.endsWith("/cases")||item.href.endsWith("/ocr-demo")||(user.institution==="DS"&&item.href.endsWith("/assignments"));
+    return item.href.endsWith("/commissioner")&&user.institution==="COMMISSIONER";
+  });
 
   return (
     <aside
@@ -42,7 +52,7 @@ export function Sidebar({
       aria-label={label}
     >
       <nav className={styles.nav}>
-        {items.map((item) => {
+        {visibleItems.map((item) => {
           const active = isActive(pathname, item.href, basePath);
           const className = [
             styles.link,

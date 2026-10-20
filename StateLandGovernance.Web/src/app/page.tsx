@@ -14,7 +14,15 @@ export default function HomePage() {
           module.available ? (
             <Link key={module.id} href={module.href} className="landingCard">
               <h2>{module.title}</h2>
-              <p>{module.id === "component-02" ? "Open the financial assessment and proposal design preview." : "Open module dashboard and spatial recommendation tools."}</p>
+              <p>
+                {module.id === "component-02"
+                  ? "Open the financial assessment and proposal design preview."
+                  : module.id === "component-03"
+                  ? "Case intake, OCR fact extraction, human verification and workflow tracking."
+                  : module.id === "component-04"
+                  ? "Governance intelligence, conflict checks, and screening oversight."
+                  : "Open module dashboard and spatial recommendation tools."}
+              </p>
             </Link>
           ) : (
             <div

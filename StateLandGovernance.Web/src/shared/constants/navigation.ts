@@ -66,6 +66,35 @@ export const officerLeaseInterestQueueNavItem: NavItem = {
   icon: "⚑",
 };
 
+export const WORKFLOW_GOVERNANCE_BASE = "/workflow-governance";
+
+export const workflowGovernanceNavItems: NavItem[] = [
+  { label: "Intake assignment", href: `${WORKFLOW_GOVERNANCE_BASE}/assignments`, icon: "?" },
+  { label: "My applications", href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/cases`, icon: "?" },
+  { label: "Commissioner rejection reports", href: `${WORKFLOW_GOVERNANCE_BASE}/commissioner`, icon: "▤" },
+  {
+    label: "Case Queue",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/cases`,
+    icon: "▤",
+    primary: true,
+  },
+  {
+    label: "New Case Intake",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/intake`,
+    icon: "✦",
+  },
+  {
+    label: "Track Application",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/tracking`,
+    icon: "☰",
+  },
+  {
+    label: "OCR Intelligence Lab",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/ocr-demo`,
+    icon: "◎",
+  },
+];
+
 export const moduleLandingLinks = [
   {
     id: "component-01",
@@ -82,8 +111,8 @@ export const moduleLandingLinks = [
   {
     id: "component-03",
     title: "Workflow Governance",
-    href: "/component-03",
-    available: false,
+    href: `${WORKFLOW_GOVERNANCE_BASE}/cases`,
+    available: true,
   },
   {
     id: "component-04",
