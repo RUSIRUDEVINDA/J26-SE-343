@@ -239,7 +239,7 @@ public class Component4ScreeningGatewayTests
             TimeProvider.System);
 
         var factEntries = snapshot.Entries.Select(e => new ScreeningFactEntryDto(
-            e.SourceExtractedFactId.Value,
+            e.SourceExtractedFactId?.Value,
             e.FactCode.Value,
             e.EffectiveValue.CanonicalValue,
             e.EffectiveValue.Kind.ToString(),
@@ -378,7 +378,7 @@ public class Component4ScreeningGatewayTests
             c4Handler, caseRepo, recordHandler, TimeProvider.System);
 
         var facts = snapshot.Entries.Select(e => new ScreeningFactEntryDto(
-            e.SourceExtractedFactId.Value,
+            e.SourceExtractedFactId?.Value,
             e.FactCode.Value,
             e.EffectiveValue.CanonicalValue,
             e.EffectiveValue.Kind.ToString(),
@@ -443,7 +443,7 @@ public class Component4ScreeningGatewayTests
             reqId, leaseCase.Id, snapshotA.Id.Value, ScreeningOutcome.Pending, "Pending A", DateTime.UtcNow));
 
         var factsA = snapshotA.Entries.Select(e => new ScreeningFactEntryDto(
-            e.SourceExtractedFactId.Value,
+            e.SourceExtractedFactId?.Value,
             e.FactCode.Value,
             e.EffectiveValue.CanonicalValue,
             e.EffectiveValue.Kind.ToString(),

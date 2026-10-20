@@ -25,9 +25,10 @@ public class ScreeningOrchestrationTests
 
     private const string Sha256V1 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
-    private static (LeaseCase LeaseCase, GovernedDocument Document, DocumentAnalysis Analysis, VerifiedFactSnapshot Snapshot) CreateCaseWithVerifiedSnapshot(
+    public static (LeaseCase LeaseCase, GovernedDocument Document, DocumentAnalysis Analysis, VerifiedFactSnapshot Snapshot) CreateCaseWithVerifiedSnapshot(
         Guid? leaseCaseId = null,
-        Guid? actorId = null)
+        Guid? actorId = null,
+        string applicationReference = "APP-SCR-001")
     {
         var caseId = new LeaseCaseId(leaseCaseId ?? Guid.NewGuid());
         var actId = actorId ?? Guid.NewGuid();
@@ -48,7 +49,7 @@ public class ScreeningOrchestrationTests
             verificationTime,
             validUntil);
 
-        var leaseCase = new LeaseCase(caseId, "APP-SCR-001", actId, now, caseAuthority);
+        var leaseCase = new LeaseCase(caseId, applicationReference, actId, now, caseAuthority);
 
         var docId = new GovernedDocumentId(Guid.NewGuid());
         var docScope = new AuthorityScope(AuthorityScopeKind.GovernedDocument, docId.Value.ToString("D"));
