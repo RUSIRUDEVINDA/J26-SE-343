@@ -77,13 +77,15 @@ public static class FactVerificationMapper
         }
 
         return new VerifiedFactEntryDto(
-            SourceExtractedFactId: entry.SourceExtractedFactId.Value,
+            SourceExtractedFactId: entry.SourceExtractedFactId?.Value,
             VerificationId: entry.VerificationId.Value,
             FactCode: entry.FactCode.Value,
             EffectiveValue: ToDto(entry.EffectiveValue),
             Decision: entry.Decision.ToString(),
             VerifyingActorId: entry.VerifyingActorId,
-            VerifiedAt: entry.VerifiedAt
+            VerifiedAt: entry.VerifiedAt,
+            SourceKind: entry.SourceKind,
+            HumanEvidence: entry.HumanEvidence is { } h ? new HumanEvidenceFactDto(h.Id, h.DocumentId.Value, h.VersionId.Value, h.Checksum.Value, h.PageNumber, h.Quote, h.ReviewReason, h.ActorId, h.RecordedAtUtc, h.VerifiedCapability, h.AuthorityScopeIdentifier, h.AuthorityValidFromUtc, h.AuthorityVerificationTimeUtc, h.AuthorityValidUntilUtc) : null
         );
     }
 

@@ -21,7 +21,7 @@ public sealed record Component4ScreeningRequest(
 /// Verified fact entry dispatched to Component 4 for regulatory and institutional assessment.
 /// </summary>
 public sealed record ScreeningFactEntryDto(
-    Guid SourceExtractedFactId,
+    Guid? SourceExtractedFactId,
     string FactCode,
     string CanonicalValue,
     string ValueKind,
