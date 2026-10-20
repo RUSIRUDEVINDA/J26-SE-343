@@ -124,6 +124,82 @@ namespace StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Migr
                     b.ToTable("analysis_runs", "workflow_governance");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.CaseAssignmentEntity", b =>
+                {
+                    b.Property<Guid>("CaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Revision")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StateJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("CaseId");
+
+                    b.ToTable("case_assignments", "workflow_governance");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.CompletenessDefinitionEntity", b =>
+                {
+                    b.Property<string>("Kind")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Identifier")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Version")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("ApprovedByActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("DefinitionJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("SourceReference")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Kind", "Identifier", "Version");
+
+                    b.ToTable("completeness_definitions", "workflow_governance");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.CorrectionRecordEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LeaseCaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("RecordJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("Revision")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LeaseCaseId");
+
+                    b.ToTable("correction_records", "workflow_governance");
+                });
+
             modelBuilder.Entity("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.DocumentAnalysisEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -455,6 +531,10 @@ namespace StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Migr
                         .HasColumnType("character varying(100)")
                         .HasColumnName("divisional_secretary_capability");
 
+                    b.Property<string>("PolicyJson")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("policy_json");
+
                     b.Property<string>("RuleSetName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -484,6 +564,34 @@ namespace StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Migr
                         .HasDatabaseName("ix_institutional_routing_configs_rule");
 
                     b.ToTable("institutional_routing_configs", "workflow_governance");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.IntakeJurisdictionPolicyEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("PolicyJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Identifier", "Version")
+                        .IsUnique();
+
+                    b.ToTable("intake_jurisdiction_policies", "workflow_governance");
                 });
 
             modelBuilder.Entity("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.LeaseCaseEntity", b =>
@@ -578,6 +686,12 @@ namespace StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Migr
                         .IsRequired()
                         .HasColumnType("jsonb")
                         .HasColumnName("workflow_plan_history_json");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 
@@ -902,6 +1016,24 @@ namespace StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Migr
                         .IsRequired();
 
                     b.Navigation("DocumentAnalysis");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.CaseAssignmentEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.LeaseCaseEntity", null)
+                        .WithMany()
+                        .HasForeignKey("CaseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.CorrectionRecordEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.LeaseCaseEntity", null)
+                        .WithMany()
+                        .HasForeignKey("LeaseCaseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Entities.DocumentAnalysisEntity", b =>

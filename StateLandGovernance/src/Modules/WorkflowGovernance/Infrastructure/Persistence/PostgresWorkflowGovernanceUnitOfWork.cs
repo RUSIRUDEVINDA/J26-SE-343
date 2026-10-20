@@ -230,6 +230,10 @@ public sealed class PostgresWorkflowGovernanceUnitOfWork : IWorkflowGovernanceUn
     {
         foreach (var entry in ex.Entries)
         {
+            if (entry.Entity is WorkflowExecutionEntity)
+                throw new InvalidOperationException("Workflow execution revision conflict. Reload before retrying.", ex);
+            if (entry.Entity is CorrectionRecordEntity)
+                throw new InvalidOperationException("Correction revision conflict. Reload before retrying.", ex);
             if (entry.Entity is LeaseCaseEntity leaseCase)
             {
                 var expected = (int)(entry.OriginalValues[nameof(LeaseCaseEntity.Revision)] ?? 0);

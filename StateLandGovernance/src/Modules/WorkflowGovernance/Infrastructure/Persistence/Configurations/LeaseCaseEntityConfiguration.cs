@@ -12,6 +12,9 @@ public sealed class LeaseCaseEntityConfiguration : IEntityTypeConfiguration<Leas
         builder.ToTable("lease_cases", WorkflowGovernanceDbContext.SchemaName);
 
         builder.HasKey(e => e.Id);
+        // Fulfilment methods do not advance the frozen domain revision. PostgreSQL xmin
+        // protects those updates too, without adding a physical column or changing Domain.
+        builder.Property<uint>("xmin").IsRowVersion();
 
         builder.Property(e => e.Id)
             .HasColumnName("id")
