@@ -116,24 +116,9 @@ export function LeaseInterestReviewStep({
       : "Unavailable");
   const claimant = sourceReportedClaimantCategoryDisplay(parcel.cadastralSource);
   const costGroups = groupCostLines(request.costSummary.lines);
-  const submitted = request.status !== 1;
 
   return (
     <div className={styles.reviewStack}>
-      {submitted && request.acknowledgementReference ? (
-        <div className={styles.successPanel} role="status">
-          <h3 className={styles.successTitle}>Submitted for preliminary verification</h3>
-          <p className={styles.successBody}>
-            Your acknowledgement reference is{" "}
-            <strong>{request.acknowledgementReference}</strong>. You can track
-            progress from My requests.
-          </p>
-          <Button href="/land-intelligence/my-requests" variant="primary">
-            View my requests
-          </Button>
-        </div>
-      ) : null}
-
       <ReviewCard
         title="Selected parcel"
         editLabel="View parcel"
@@ -162,16 +147,22 @@ export function LeaseInterestReviewStep({
             />
           ) : null}
           <ReviewRow
-            label="Lease availability (project)"
+            label="Lease availability (official)"
             value={
               parcel.availability?.actualLeaseAvailabilityLabel ?? "Not verified"
             }
           />
-          {parcel.availability?.projectLeaseReady?.designationNotice ? (
-            <ReviewRow
-              label="Project designation notice"
-              value={parcel.availability.projectLeaseReady.designationNotice}
-            />
+          {parcel.availability?.projectLeaseReady ? (
+            <>
+              <ReviewRow
+                label="Project designation"
+                value={parcel.availability.projectLeaseReady.designationLabel}
+              />
+              <ReviewRow
+                label="Project designation notice"
+                value={parcel.availability.projectLeaseReady.designationNotice}
+              />
+            </>
           ) : null}
         </dl>
         <div className={styles.reviewCardFooter}>

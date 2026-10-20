@@ -10,9 +10,4 @@ export function ResearchDemoBanner() {
     return null;
   }
 
-  return (
-    <div className={styles.banner} role="status">
-      Research demonstration — lease statuses are simulated.
-    </div>
-  );
 }

@@ -19,8 +19,15 @@ loadCommonJs.extensions[".ts"] = (module, filename) =>
 const {
   leaseInterestStatusLabel,
   leaseInterestApplicantOutcome,
+  isLeaseInterestDraftStatus,
 } = loadCommonJs(
   "../src/modules/component-01-land-intelligence/utils/leaseInterestStatus.ts",
+);
+const { leaseInterestPurposeDisplay } = loadCommonJs(
+  "../src/modules/component-01-land-intelligence/utils/leaseInterestPurposeDisplay.ts",
+);
+const { formatRuleScore, formatCriterionScore } = loadCommonJs(
+  "../src/modules/component-01-land-intelligence/utils/formatters.ts",
 );
 const {
   gisCoverageStatusLabel,
@@ -141,4 +148,19 @@ test("missing parcel area blocks lease interest eligibility", () => {
     area: { value: 0, unit: 2 },
   });
   assert.equal(block?.code, "missing-parcel-area");
+});
+
+test("draft default purpose Other is not shown as applicant selection", () => {
+  assert.equal(leaseInterestPurposeDisplay(99, 1), null);
+  assert.equal(leaseInterestPurposeDisplay(1, 1), "Agricultural");
+  assert.equal(leaseInterestPurposeDisplay(99, 3), "Other");
+  assert.equal(isLeaseInterestDraftStatus(1), true);
+  assert.equal(isLeaseInterestDraftStatus(3), false);
+});
+
+test("match score display shows 100 only for exact 100 and truncates near-perfect", () => {
+  assert.equal(formatRuleScore(100), "100");
+  assert.equal(formatRuleScore(99.999), "99.99");
+  assert.equal(formatRuleScore(95.55), "95.55");
+  assert.equal(formatCriterionScore(90), "90.00");
 });

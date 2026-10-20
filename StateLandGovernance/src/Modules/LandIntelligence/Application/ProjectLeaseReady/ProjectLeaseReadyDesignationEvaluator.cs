@@ -23,11 +23,10 @@ public static class ProjectLeaseReadyDesignationEvaluator
         var excludedPrivate = screening.Outcome == ExcludedPrivate;
 
         var isEffective = !excludedPrivate;
-        var displayLabel = isEffective
-            ? ColomboStateResearchProjectLeaseReady.DesignationLabel
-            : excludedPrivate
-                ? PrivateExclusionLeaseLabel
-                : LandParcelAvailabilityMapper.NotVerifiedLabel;
+        // The actual lease availability label remains "Not verified" for all research parcels
+        // unless an independent authoritative availability record exists.
+        // Project designations are separate and never populate this field.
+        var displayLabel = LandParcelAvailabilityMapper.NotVerifiedLabel;
 
         var dto = new ProjectLeaseReadyDesignationDto(
             designation.DatasetKey,

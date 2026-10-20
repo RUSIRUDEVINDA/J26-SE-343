@@ -103,8 +103,8 @@ public sealed record LandParcelAvailabilityResponse(
 
 public sealed record LandParcelMetricsResponse(
     int TotalParcelCount,
-    int ProjectLeaseReadyDesignatedCount,
-    int ProjectLeaseReadyEffectiveCount);
+    int ProjectDesignatedParcelsCount,
+    int ProjectDesignatedParcelsEffectiveCount);
 
 public sealed record IndexedDistrictSummaryResponse(
     string Province,
@@ -146,7 +146,8 @@ public sealed record ResearchDemoConfigResponse(
 
 public sealed record SourceReportedLandUseOptionResponse(
     string Code,
-    string EnglishLabel);
+    string EnglishLabel,
+    int ParcelCount);
 
 public sealed record DerivedSoilGroupOptionsResponse(IReadOnlyList<string> Options);
 

@@ -294,15 +294,6 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 []));
         }
 
-        var beforeCount = await _landParcelRepository.CountSearchAsync(new LandSearchRequest
-        {
-            Page = 1,
-            PageSize = 1
-        }, cancellationToken);
-        stages.Add(new RecommendationFilterStageDto(
-            "Indexed parcels (DEMO-* excluded)",
-            beforeCount,
-            "All searchable parcels before recommendation filters."));
 
         var district = request.PreferredLocation?.District?.Trim();
         if (!string.IsNullOrWhiteSpace(district))
@@ -322,6 +313,11 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         if (!string.IsNullOrWhiteSpace(request.SourceReportedLandUse))
         {
             appliedFilters.Add($"sourceReportedLandUse={request.SourceReportedLandUse.Trim()}");
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.ResearchLandCoverGroup))
+        {
+            appliedFilters.Add($"researchLandCoverGroup={request.ResearchLandCoverGroup.Trim()}");
         }
 
         var targetArea = request.ResolveTargetAreaHectares();
@@ -383,6 +379,25 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 $"Exact match on '{sourceLandUseFilter}'."));
         }
 
+        if (!string.IsNullOrWhiteSpace(request.ResearchLandCoverGroup))
+        {
+            var group = request.ResearchLandCoverGroup.Trim();
+            var count = await _landParcelRepository.CountSearchAsync(new LandSearchRequest
+            {
+                Province = provinceFilter,
+                District = district,
+                ResearchLandCoverGroup = group,
+                Page = 1,
+                PageSize = 1
+            }, cancellationToken);
+            stages.Add(new RecommendationFilterStageDto(
+                "Project land-cover group",
+                count,
+                group == "Coconut"
+                    ? "Coconut from original cadastral labels or at least 80% mapped project GIS coverage."
+                    : $"Research group '{group}' from original cadastral labels or mapped GIS coverage."));
+        }
+
         // Source-reported Private claimant category is excluded from state-land candidates.
         // This is screening only — not ownership or lease-availability confirmation.
         var sourceByParcelId = await _realParcelSourceReadRepository.GetByParcelIdsAsync(
@@ -415,7 +430,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
 
         return (candidates, new RecommendationSearchTransparencyDto(
             appliedFilters,
-            beforeCount,
+            beforeClaimant,
             candidates.Count,
             stages,
             []));
@@ -437,6 +452,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 CategoryType = template.CategoryType,
                 CurrentUseType = template.CurrentUseType,
                 SourceReportedLandUse = template.SourceReportedLandUse,
+                ResearchLandCoverGroup = template.ResearchLandCoverGroup,
                 MinArea = template.MinArea,
                 MaxArea = template.MaxArea,
                 MinLatitude = template.MinLatitude,
@@ -483,6 +499,9 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             SourceReportedLandUse = string.IsNullOrWhiteSpace(request.SourceReportedLandUse)
                 ? null
                 : request.SourceReportedLandUse.Trim(),
+            ResearchLandCoverGroup = string.IsNullOrWhiteSpace(request.ResearchLandCoverGroup)
+                ? null
+                : request.ResearchLandCoverGroup.Trim(),
             Page = 1,
             PageSize = CandidatePageSize
         };

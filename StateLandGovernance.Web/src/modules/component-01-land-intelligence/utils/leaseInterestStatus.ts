@@ -19,6 +19,32 @@ export function leaseInterestStatusLabel(status: LeaseInterestRequestStatus): st
   }
 }
 
+export function leaseInterestStatusBadgeTone(
+  status: LeaseInterestRequestStatus,
+): "neutral" | "success" | "warning" | "danger" | "primary" {
+  switch (status) {
+    case 1:
+      return "neutral";
+    case 2:
+    case 3:
+      return "primary";
+    case 4:
+      return "warning";
+    case 5:
+      return "danger";
+    case 6:
+      return "warning";
+    default:
+      return "neutral";
+  }
+}
+
+export function isLeaseInterestDraftStatus(
+  status: LeaseInterestRequestStatus,
+): boolean {
+  return status === 1;
+}
+
 export function leaseInterestApplicantOutcome(status: LeaseInterestRequestStatus): string {
   switch (status) {
     case 1:

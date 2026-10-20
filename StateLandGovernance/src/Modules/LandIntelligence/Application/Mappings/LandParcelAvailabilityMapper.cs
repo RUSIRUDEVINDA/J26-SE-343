@@ -3,6 +3,12 @@ using StateLandGovernance.LandIntelligence.Application.ProjectLeaseReady;
 
 namespace StateLandGovernance.LandIntelligence.Application.Mappings;
 
+/// <summary>
+/// Composes applicant-facing availability labels. Project lease-ready and simulated
+/// workflow data must never be treated as official government lease availability.
+/// When no designation exists, status remains Unknown / Not verified — never inferred
+/// from claimant category, land use, GIS, or ML.
+/// </summary>
 public static class LandParcelAvailabilityMapper
 {
     public const string NotVerifiedLabel = "Not verified";

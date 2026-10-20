@@ -1,27 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { readDevelopmentSession, type DevelopmentUser } from "@/lib/developmentSession";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  readDevelopmentSession,
+  type DevelopmentUser,
+} from "@/lib/developmentSession";
+import { getResearchDemoConfig } from "@/modules/component-01-land-intelligence/services/researchDemoApi";
+import {
   component01NavItems,
   LAND_INTELLIGENCE_BASE,
+  officerLeaseInterestLookupNavItem,
+  officerLeaseInterestQueueNavItem,
   type NavItem,
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
 
-function isActive(pathname: string, href: string, basePath: string): boolean {
+function isActive(
+  pathname: string,
+  href: string,
+  basePath: string,
+): boolean {
   if (href === basePath) {
     return pathname === href;
   }
+
   if (href.endsWith("/parcels")) {
     return (
       pathname === href ||
       pathname.startsWith(`${href}/`) ||
-      pathname.startsWith(`${LAND_INTELLIGENCE_BASE}/parcel-intelligence`)
+      pathname.startsWith(
+        `${LAND_INTELLIGENCE_BASE}/parcel-intelligence`,
+      )
     );
   }
+
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -37,23 +51,114 @@ export function Sidebar({
   compactMobile?: boolean;
 }) {
   const pathname = usePathname();
-  const [user,setUser]=useState<DevelopmentUser|null>(null);
-  useEffect(()=>{const update=()=>setUser(readDevelopmentSession()?.user||null);update();window.addEventListener("development-session-changed",update);return()=>window.removeEventListener("development-session-changed",update);},[]);
-  const visibleItems=items.filter(item=>{
-    if(!user||!item.href.startsWith("/workflow-governance"))return true;
-    if(!user.institution)return item.href.includes("/applicant/");
-    if(user.institution==="DS"||user.institution==="DEVELOPMENT_RESEARCH")return item.href.endsWith("/cases")||item.href.endsWith("/ocr-demo")||(user.institution==="DS"&&item.href.endsWith("/assignments"));
-    return item.href.endsWith("/commissioner")&&user.institution==="COMMISSIONER";
-  });
+  const [user, setUser] = useState<DevelopmentUser | null>(null);
+  const [officerLookupEnabled, setOfficerLookupEnabled] =
+    useState(false);
+
+  const isLandIntelligenceNav = basePath === LAND_INTELLIGENCE_BASE;
+
+  useEffect(() => {
+    const update = () => {
+      setUser(readDevelopmentSession()?.user || null);
+    };
+
+    update();
+
+    window.addEventListener("development-session-changed", update);
+
+    return () => {
+      window.removeEventListener(
+        "development-session-changed",
+        update,
+      );
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isLandIntelligenceNav) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void getResearchDemoConfig()
+      .then((config) => {
+        if (!cancelled) {
+          setOfficerLookupEnabled(
+            config.officerLeaseInterestNicLookupEnabled,
+          );
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setOfficerLookupEnabled(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isLandIntelligenceNav]);
+
+  const navItems = useMemo((): NavItem[] => {
+    if (!isLandIntelligenceNav || !officerLookupEnabled) {
+      return items;
+    }
+
+    const additionalItems = [
+      officerLeaseInterestQueueNavItem,
+      officerLeaseInterestLookupNavItem,
+    ].filter(
+      (additionalItem) =>
+        !items.some((item) => item.href === additionalItem.href),
+    );
+
+    return [...items, ...additionalItems];
+  }, [items, isLandIntelligenceNav, officerLookupEnabled]);
+
+  const visibleItems = useMemo(() => {
+    return navItems.filter((item) => {
+      if (
+        !user ||
+        !item.href.startsWith("/workflow-governance")
+      ) {
+        return true;
+      }
+
+      if (!user.institution) {
+        return item.href.includes("/applicant/");
+      }
+
+      if (
+        user.institution === "DS" ||
+        user.institution === "DEVELOPMENT_RESEARCH"
+      ) {
+        return (
+          item.href.endsWith("/cases") ||
+          item.href.endsWith("/ocr-demo") ||
+          (user.institution === "DS" &&
+            item.href.endsWith("/assignments"))
+        );
+      }
+
+      return (
+        item.href.endsWith("/commissioner") &&
+        user.institution === "COMMISSIONER"
+      );
+    });
+  }, [navItems, user]);
 
   return (
     <aside
-      className={`${styles.sidebar} ${compactMobile ? styles.compactMobile : ""}`}
+      className={`${styles.sidebar} ${
+        compactMobile ? styles.compactMobile : ""
+      }`}
       aria-label={label}
     >
       <nav className={styles.nav}>
         {visibleItems.map((item) => {
           const active = isActive(pathname, item.href, basePath);
+
           const className = [
             styles.link,
             active ? styles.active : styles.inactive,
@@ -64,7 +169,7 @@ export function Sidebar({
 
           return (
             <Link
-              key={item.label}
+              key={item.href}
               href={item.href}
               className={className}
               aria-current={active ? "page" : undefined}
