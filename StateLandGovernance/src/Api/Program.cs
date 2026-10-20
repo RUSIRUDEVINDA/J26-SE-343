@@ -17,6 +17,11 @@ using Microsoft.OpenApi.Models;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
+using StateLandGovernance.LandIntelligence.Presentation.Security;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using StateLandGovernance.Api.Security;
+using StateLandGovernance.WorkflowGovernance.Presentation.Security;
 using StateLandGovernance.LandIntelligence.Presentation.DependencyInjection;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
 using StateLandGovernance.Api.Observability;
@@ -25,6 +30,9 @@ using StateLandGovernance.BuildingBlocks.Observability;
 EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
+if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("LocalDevelopmentSignIn:Enabled"))
+    builder.Configuration.AddJsonFile("development-accounts.local.json", optional: false, reloadOnChange: false);
+
 
 var isOcrDemoEnabled = builder.Environment.IsDevelopment()
     && builder.Configuration.GetValue<bool>("WorkflowGovernance:OcrDemo:Enabled", false);
@@ -83,6 +91,7 @@ builder.Services.AddCors(options =>
                 "http://127.0.0.1:3000",
                 "http://localhost:5173",
                 "http://127.0.0.1:5173")
+            .WithExposedHeaders("X-Correlation-ID")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -90,6 +99,27 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
 builder.Services.AddLandIntelligencePresentation();
+builder.Services.AddLandIntelligenceAuthentication(builder.Configuration, builder.Environment);
+builder.Services.AddScoped<StateLandGovernance.WorkflowGovernance.Application.Interfaces.IIntakeAssignmentDirectory, IntakeAssignmentDirectory>();
+builder.Services.AddTransient<IClaimsTransformation, WorkflowAssignmentClaimsTransformation>();
+builder.Services.AddSingleton<DevelopmentAccounts>();
+builder.Services.AddScoped<UploadedCaseResearchScenarios>();
+builder.Services.AddScoped<DevelopmentSpatialInputProvider>();
+builder.Services.AddScoped<IDevelopmentSpatialInputProvider, UploadedCaseDevelopmentSpatial>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<StateLandGovernance.WorkflowGovernance.Application.Interfaces.IScreeningEvidenceProvider, PortalResearchEvidence>();
+builder.Services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Screening.Interfaces.IApprovedScreeningPolicySource, PortalResearchPolicy>();
+builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.Events ??= new JwtBearerEvents();
+    var previous = options.Events.OnTokenValidated;
+    options.Events.OnTokenValidated = async context =>
+    {
+        if (previous != null) await previous(context);
+        if (context.Principal == null || !context.HttpContext.RequestServices.GetRequiredService<DevelopmentAccounts>()
+            .Validate(context.HttpContext, context.Principal)) context.Fail("Local development session is disabled, expired or revoked.");
+    };
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -180,10 +210,37 @@ else
     dbContext.Database.Migrate();
 }
 
-app.UseLandIntelligenceCallerContext();
+app.Use(async (context, next) =>
+{
+    var reference = System.Diagnostics.Activity.Current?.Id ?? context.TraceIdentifier;
+    context.Response.OnStarting(() =>
+    {
+        context.Response.Headers["X-Correlation-ID"] = reference;
+        return Task.CompletedTask;
+    });
+    using var scope = app.Logger.BeginScope(new Dictionary<string, object> { ["ErrorReference"] = reference });
+    await next(context);
+    if (context.Response.StatusCode >= 500)
+        app.Logger.LogError("Request failed with status {Status}; error reference {ErrorReference}", context.Response.StatusCode, reference);
+});
 app.UseLandIntelligenceExceptionHandling();
 
 app.UseRouting();
+app.Use(async (context, next) =>
+{
+    var accounts = context.RequestServices.GetRequiredService<DevelopmentAccounts>();
+    if (accounts.Enabled)
+    {
+        if (context.Request.Path.Equals("/api/v1/land/auth/session", StringComparison.OrdinalIgnoreCase))
+        { context.Response.StatusCode = 404; return; }
+        context.Request.Headers.Remove("X-Actor-Role");
+        context.Request.Headers.Remove("X-Actor-Id");
+    }
+    await next(context);
+});
+app.UseAuthentication();
+app.UseLandIntelligenceCallerContext();
+app.UseAuthorization();
 app.UseMiddleware<PrometheusMetricsMiddleware>();
 
 if (app.Environment.IsDevelopment())
