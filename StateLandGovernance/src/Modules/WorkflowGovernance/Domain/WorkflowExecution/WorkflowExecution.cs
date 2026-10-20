@@ -10,16 +10,17 @@ using StateLandGovernance.WorkflowGovernance.Domain.LeaseCases;
 using StateLandGovernance.WorkflowGovernance.Domain.WorkflowExecution.Events;
 using StateLandGovernance.WorkflowGovernance.Domain.WorkflowPlanning;
 
-public sealed class WorkflowExecution
+public sealed partial class WorkflowExecution
 {
     public WorkflowExecutionId Id { get; }
-    public WorkflowPlanId WorkflowPlanId { get; }
-    public int WorkflowPlanRevision { get; }
+    public WorkflowPlanId WorkflowPlanId { get; private set; }
+    public int WorkflowPlanRevision { get; private set; }
     public LeaseCaseId LeaseCaseId { get; }
-    public WorkflowRuleSetReference RuleSetReference { get; }
+    public WorkflowRuleSetReference RuleSetReference { get; private set; }
     public WorkflowExecutionStatus Status { get; private set; }
     public DateTime StartedAt { get; }
     public int Revision { get; private set; }
+    public WorkflowExecutionDefinition Definition { get; private set; }
 
     private readonly List<WorkflowStageExecution> _stages;
     public IReadOnlyCollection<WorkflowStageExecution> Stages => _stages.AsReadOnly();
@@ -36,6 +37,7 @@ public sealed class WorkflowExecution
         if (!definition.Stages.Any(s => s.IsFinalDecision)) throw new InvalidWorkflowExecutionException("Definition must contain a final decision stage.");
 
         Id = id;
+        Definition = definition;
         WorkflowPlanId = definition.WorkflowPlanId;
         WorkflowPlanRevision = definition.WorkflowPlanRevision;
         LeaseCaseId = definition.LeaseCaseId;
@@ -104,6 +106,9 @@ public sealed class WorkflowExecution
             throw new InvalidWorkflowExecutionException("Stage start time cannot be before execution start time.");
 
         var prerequisites = _stages.Where(s => stage.Definition.Prerequisites.Contains(s.Definition.StageId)).ToList();
+        if (Definition.PrerequisiteGatePolicy != null && prerequisites.Any(p => p.Decision == null ||
+            !Definition.PrerequisiteGatePolicy.Permits(stageId, p.Decision.Outcome)))
+            throw new InvalidWorkflowStageTransitionException("Required prerequisite approval is unavailable.");
         if (prerequisites.Any() && prerequisites.All(p => p.Decision != null))
         {
             var latestDecidedAt = prerequisites.Max(p => p.Decision!.DecidedAt);
@@ -171,6 +176,8 @@ public sealed class WorkflowExecution
             ? ConsensusAssessment.AssessmentId
             : (ConsensusAssessmentId?)null;
         var candidate = new WorkflowStageDecision(decisionId, stage.Definition.StageId, stage.Definition.InstitutionCode, outcome, reason, conditions, decidingOfficerId, decidedAt, candidateAssessmentId);
+        if (_stages.Any(s => s.DecisionHistory.Any(h => h.PreviousDecision.Id == decisionId)))
+            throw new ConflictingWorkflowStageDecisionException("A historical decision ID cannot be reused.");
 
         // 3. Apply duplicate/conflict precedence
         var existingAnywhere = _stages.Select(s => s.Decision).FirstOrDefault(d => d != null && d.Id == decisionId);
@@ -229,10 +236,15 @@ public sealed class WorkflowExecution
             {
                 if (p.Definition.StageId == stage.Definition.StageId)
                 {
-                    // Treat the current stage as completed
+                    if (Definition.PrerequisiteGatePolicy?.Permits(blocked.Definition.StageId, candidate.Outcome) == false)
+                    {
+                        allPrereqsMet = false;
+                        break;
+                    }
                     continue;
                 }
-                if (p.Status != WorkflowStageExecutionStatus.Completed)
+                if (p.Status != WorkflowStageExecutionStatus.Completed || p.Decision == null ||
+                    Definition.PrerequisiteGatePolicy?.Permits(blocked.Definition.StageId, p.Decision.Outcome) == false)
                 {
                     allPrereqsMet = false;
                     break;
