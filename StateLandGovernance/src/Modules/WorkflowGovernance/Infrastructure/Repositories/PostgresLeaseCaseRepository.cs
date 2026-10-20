@@ -31,7 +31,7 @@ public sealed class PostgresLeaseCaseRepository : ILeaseCaseRepository
         }
 
         var entity = await _dbContext.LeaseCases
-            .AsNoTracking()
+            .AsTracking()
             .FirstOrDefaultAsync(x => x.Id == id.Value, cancellationToken);
 
         if (entity is null)
@@ -57,7 +57,7 @@ public sealed class PostgresLeaseCaseRepository : ILeaseCaseRepository
         }
 
         var entity = await _dbContext.LeaseCases
-            .AsNoTracking()
+            .AsTracking()
             .FirstOrDefaultAsync(x => x.ApplicationReference == applicationReference, cancellationToken);
 
         if (entity is null)
@@ -75,6 +75,40 @@ public sealed class PostgresLeaseCaseRepository : ILeaseCaseRepository
         ArgumentNullException.ThrowIfNull(leaseCase);
         _tracker.TrackNew(leaseCase);
         return Task.CompletedTask;
+    }
+
+    public async Task<(System.Collections.Generic.IReadOnlyList<LeaseCase> Items, int TotalCount)> ListAsync(
+        int skip,
+        int take,
+        Guid? ownerActorId = null,
+        CancellationToken cancellationToken = default)
+    {
+        var boundedTake = Math.Clamp(take, 1, 100);
+        var boundedSkip = Math.Max(0, skip);
+
+        var query = _dbContext.LeaseCases.AsTracking();
+
+        if (ownerActorId.HasValue && ownerActorId.Value != Guid.Empty)
+        {
+            query = query.Where(x => x.CreatedByActorId == ownerActorId.Value);
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var entities = await query
+            .OrderByDescending(x => x.CreatedAt)
+            .Skip(boundedSkip)
+            .Take(boundedTake)
+            .ToListAsync(cancellationToken);
+
+        var items = entities.Select(e =>
+        {
+            var domain = LeaseCasePersistenceMapper.ToDomain(e);
+            _tracker.TrackLoaded(domain, domain.Revision);
+            return domain;
+        }).ToList();
+
+        return (items, totalCount);
     }
 }
 
