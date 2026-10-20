@@ -214,8 +214,9 @@ export function describeGovernanceRequestError(error: unknown): string {
     if (error.status === 400) return "The service rejected the submitted evaluation. Check the supplied values and try again.";
     if (error.status === 404) return "The governance evaluation endpoint is not available.";
     if (error.status === 409) return "The evaluation could not be accepted because it conflicts with the current service state.";
-    if (error.status === 401 || error.status === 403) return "This evaluation requires authentication or authorization that is not configured in this frontend.";
-    if (error.status >= 500) return "The governance service is currently unavailable. No result was loaded.";
+    if (error.status === 401) return "This evaluation requires authentication or authorization. Sign in again; your session may have expired.";
+    if (error.status === 403) return "This evaluation requires authentication or authorization. Required case or institution assignment is missing; ask the administrator to review access.";
+    if (error.status >= 500) return "The governance service is currently unavailable. No result was loaded." + (error.detail.match(/Error reference: [A-Za-z0-9.-]+/)?.[0] ? " " + error.detail.match(/Error reference: [A-Za-z0-9.-]+/)![0] : "");
     return error.detail || "The governance evaluation could not be completed.";
   }
   if (error instanceof Error) return error.message;
@@ -713,13 +714,13 @@ export const getReferralHistoryByCase = (caseId: string, limit = 100) => getHist
 
 export async function getWorkflowProjectionJourney(caseId: string): Promise<WorkflowProjectionJourney> {
   const response = await apiGet<unknown>(`${governanceApiBasePath}/workflow-projections/cases/${encodeURIComponent(caseId)}`, undefined, "none");
-  if (!isWorkflowProjectionJourney(response)) throw new GovernanceMalformedResponseError();
+  if (!isWorkflowProjectionJourney(response) || response.caseId!==caseId) throw new GovernanceMalformedResponseError();
   return response;
 }
 
 export async function getPersistedWorkflowAnomalyHistory(caseId: string): Promise<PersistedWorkflowAnomalyAssessment[]> {
   const response = await apiGet<unknown>(`${governanceApiBasePath}/workflow-anomalies/history/cases/${encodeURIComponent(caseId)}?limit=100`, undefined, "none");
-  if (!Array.isArray(response) || !response.every(isPersistedWorkflowAnomalyAssessment)) {
+  if (!Array.isArray(response) || !response.every(isPersistedWorkflowAnomalyAssessment) || response.some(x=>x.caseId!==caseId)) {
     throw new GovernanceMalformedResponseError();
   }
   return response;
@@ -733,7 +734,7 @@ export async function assessPersistedWorkflowProjection(
     caseId: projection.caseId,
     workflowRunId: projection.workflowRunId,
   });
-  if (!isPersistedWorkflowAnomalyAssessment(response)) throw new GovernanceMalformedResponseError();
+  if (!isPersistedWorkflowAnomalyAssessment(response) || response.caseId!==projection.caseId || response.workflowRunId!==projection.workflowRunId || response.workflowProjectionId!==projection.projectionId) throw new GovernanceMalformedResponseError();
   return response;
 }
 

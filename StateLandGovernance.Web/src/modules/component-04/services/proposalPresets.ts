@@ -17,8 +17,7 @@ export const PROPOSAL_PRESETS: Record<ProposalPresetKey, ProposalPresetMeta> = {
     title: "Proposal 1 — Standard Clean Lease (No Escalation)",
     caseId: "PP1-FINAL-CLEAR-001",
     anomalyCaseId: "PP1-ANOMALY-COMMISSIONER-001",
-    summary:
-      "All 7 early screening indicators verified absent (Clear), completed within 45 days (Within Expectation), institutional consensus reached, all conditions satisfied, and 16-stage workflow trace below anomaly threshold (0.5170 <= 0.5744).",
+    summary: "Legacy synthetic proposal input preset. Outcomes, anomaly scores and audit status must be retrieved from actual backend evaluations; none is promised by this selection.",
     auditRecordId: "083d4e8b-6a13-4791-8d65-e05b4f3515ea",
   },
   "proposal-2": {
@@ -27,8 +26,7 @@ export const PROPOSAL_PRESETS: Record<ProposalPresetKey, ProposalPresetMeta> = {
     title: "Proposal 2 — Boundary / Legal Dispute Referred Early",
     caseId: "PP1-FINAL-REFERRAL-001",
     anomalyCaseId: "PP1-FINAL-DELAYED-001",
-    summary:
-      "Early screening detects LegalDispute = VerifiedPresent (ReviewRequired) and triggers Commissioner referral (7a5a187a-b071-5ba5-a519-838fa39b47df, Acknowledged). Workflow remains Ongoing (100 days elapsed) with pending institutional clearance.",
+    summary: "Legacy synthetic boundary-dispute input preset. Supplied concerns require review; referral or assessment status is known only from the backend.",
     auditRecordId: "083d4e8b-6a13-4791-8d65-e05b4f3515ea",
   },
   "proposal-3": {
@@ -37,8 +35,7 @@ export const PROPOSAL_PRESETS: Record<ProposalPresetKey, ProposalPresetMeta> = {
     title: "Proposal 3 — Complex Escalated Lease (Full Component 4 Stack)",
     caseId: "PP1-FINAL-COMBINED-001",
     anomalyCaseId: "PP1-FINAL-COMBINED-001",
-    summary:
-      "ReviewRequired on early screening + Complaint ML v2 flags Unauthorized Occupation (78.3%) + Workflow Anomaly ML v1 flags correction loop (0.6760 > 0.5744) + Timing ExceededExpectation (75 days) + AUDIT-V2 anchored on Besu Block 13176.",
+    summary: "Legacy synthetic concern/complaint input preset. This description supplies no classifier probability, anomaly score, ledger transaction or clearance result.",
     auditRecordId: "083d4e8b-6a13-4791-8d65-e05b4f3515ea",
   },
 };
