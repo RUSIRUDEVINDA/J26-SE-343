@@ -1,0 +1,130 @@
+.filterBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  background: #ffffff;
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.filterOptions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pageIndicator {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.tableContainer {
+  background: #ffffff;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  overflow-x: auto;
+  box-shadow: var(--shadow-soft);
+}
+
+.caseTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.caseTable th {
+  background: #faf6f6;
+  color: #4a4a4a;
+  font-weight: 600;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.caseTable td {
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid #f9f5f5;
+  vertical-align: middle;
+}
+
+.tableRow:hover {
+  background: #fdfafa;
+}
+
+.referenceCell {
+  display: flex;
+  flex-direction: column;
+}
+
+.refCode {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.caseIdSub {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  font-family: monospace;
+}
+
+.purposeText {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.extentText {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.jurisdictionTag {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  background: #f3f4f6;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.screeningPending {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: #b45309;
+  font-weight: 500;
+}
+
+.pendingDot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #f59e0b;
+}
+
+.dateCell {
+  color: var(--color-muted);
+  white-space: nowrap;
+}

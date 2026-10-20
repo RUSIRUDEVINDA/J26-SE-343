@@ -1,0 +1,17 @@
+{
+  "identifier": null,
+  "version": null,
+  "sourceReference": null,
+  "approvedBy": null,
+  "requirements": [
+    {
+      "id": null,
+      "requiredClassificationCode": null,
+      "criticality": null,
+      "applicability": null,
+      "minimumRequiredCount": null,
+      "reasonCode": null,
+      "description": null
+    }
+  ]
+}
