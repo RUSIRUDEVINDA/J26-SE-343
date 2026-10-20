@@ -1,0 +1,12 @@
+.review {padding:1.25rem; border:1px solid #dce3eb; border-radius:12px; margin:1rem 0; background:white;}
+.review h3,.review h4 {margin:.5rem 0 .75rem;}
+.review p {line-height:1.6;color:#374151;}
+.review fieldset {border:1px solid #dce3eb;border-radius:8px;padding:1rem;margin:1rem 0;}
+.review label {display:block;font-weight:600;margin:.8rem 0;font-size:.9rem;}
+.review input:not([type=checkbox]),.review textarea,.review select {display:block;width:100%;max-width:100%;padding:.65rem;border:1px solid #bbc5d2;border-radius:6px;background:white;font:inherit;margin-top:.4rem;}
+.review textarea {min-height:85px;resize:vertical;}
+.review button {padding:.55rem .9rem;margin:.2rem;border-radius:7px;border:1px solid #bac8d9;cursor:pointer;}
+.review button[aria-pressed=true] {background:#173e65;color:white;border-color:#173e65;}
+.review button:disabled {cursor:not-allowed;}
+.review details {padding:.6rem;background:#f7f9fc;overflow-wrap:anywhere;}
+.review summary {cursor:pointer;}
