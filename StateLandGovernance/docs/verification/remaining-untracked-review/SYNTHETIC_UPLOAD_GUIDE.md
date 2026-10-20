@@ -1,0 +1,12 @@
+# Manual synthetic proposal upload - portable guide
+
+Use `output/pdf/synthetic-proposal-12-acre/SYNTHETIC_RESEARCH_12_ACRE_scanned.pdf` for actual OCR testing, or the text-native alternative. Upload one format. Both are 11-page fictional research documents with a synthetic warning on every page; neither proves parcel/complaint clearance. The editable JSON/HTML and expected-field files are comparison aids, not extracted or reviewed facts.
+
+1. Prepare local identities using `docs/configuration/examples/LOCAL_DEVELOPMENT_SETUP.md`. Start the existing API with explicit Development sign-in opt-in and the existing document-intelligence service; launch the normal portal on loopback. Do not edit browser tokens.
+2. Sign in as a fictional applicant with its own stable actor ID. Use applicant intake to create a separate labelled synthetic test case; preserve existing real-case ownership and histories.
+3. An authorized coordinator assigns that uploaded case/document through the normal intake queue. Sign in as its assigned DS reviewer and inspect the actual completed OCR run. Review each of the 17 fields against the actual PDF/pages; use page-backed human evidence only where relevant and authorized. Publish/link only after your deliberate review.
+4. Review supporting-document completeness separately from the 37 proposal-template requirements. Classify, correct findings and explicitly confirm as required. If something is absent or unsupported, request applicant correction and respond through tracking. Do not copy expected answers into the database.
+5. Use the existing authorized Development synthetic designation action for this exact case/document version, then select the research no-conflict or overlap input context and separately consent to synthetic governance/complaint coverage. Scenario UUIDs are not authority grants. Preserve real OCR provenance and the actual reviewed snapshot.
+6. Check prerequisites, run consolidated screening, inspect Regulatory / Conflict / Early Governance / Summary and refresh to retrieve persisted results. Selecting no-conflict inputs is not a clearance promise. Missing policies, facts, assignments or services remain blockers; do not bypass them.
+
+This portable guide deliberately supplies no pre-existing case IDs, local passwords, installed assignments or claim that a new demonstration ran. The older package MANUAL_TEST_GUIDE.md contains installation-specific cases and account assumptions and remains local pending revision.
