@@ -5,6 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.api.endpoints import router
+from app.api.template_endpoints import router as template_router
 from app.core.logging import logger
 from app.models.schemas import ErrorResponse
 
@@ -17,6 +18,7 @@ app = FastAPI(
 )
 
 app.include_router(router)
+app.include_router(template_router)
 
 
 @app.exception_handler(RequestValidationError)
