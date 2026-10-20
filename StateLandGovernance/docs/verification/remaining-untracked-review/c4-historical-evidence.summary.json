@@ -1,0 +1,120 @@
+{
+  "purpose": "Sanitized historical handover index; not a raw response, new demonstration, or proof of clearance/delivery.",
+  "redaction": "Only source filenames, source digests, whitelisted numeric HTTP statuses and fixed outcome labels are retained. Original actor/case/document identifiers, source facts, quotations, session material, timestamps and request bodies are omitted.",
+  "sources": [
+    {
+      "source": "StateLandGovernance/docs/verification/C4_APPLICANT_ACCESS_EVIDENCE.json",
+      "sourceSha256": "df26a951d0defa1aedfac85210f83126f10868f4cd06cb939667beea29aa1a54",
+      "recordedHttpStatusCounts": {},
+      "recordedOutcomeCounts": {},
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    },
+    {
+      "source": "StateLandGovernance/docs/verification/C4_FRONTEND_BOUNDARY_EVIDENCE.json",
+      "sourceSha256": "3020f40a9a2279b0613ca8a1c023d974bcca1b2bdb4430148c0860c7953bcaa4",
+      "recordedHttpStatusCounts": {},
+      "recordedOutcomeCounts": {},
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    },
+    {
+      "source": "StateLandGovernance/docs/verification/C4_INDEPENDENT_SCREENING_INTEGRITY_EVIDENCE.json",
+      "sourceSha256": "aa9d057fecfb43e9c671e95effef92b9f6bf3bd62e592e569401acf411586a5e",
+      "recordedHttpStatusCounts": {
+        "200": 60,
+        "204": 1,
+        "403": 10
+      },
+      "recordedOutcomeCounts": {
+        "Blocked": 1,
+        "Cleared": 1
+      },
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    },
+    {
+      "source": "StateLandGovernance/docs/verification/C4_INDEPENDENT_UI_EVIDENCE.json",
+      "sourceSha256": "49a345567b001d1e4e06cd8a3ba8b96092212a2e5ce5ebe5fe1c168a5266bb45",
+      "recordedHttpStatusCounts": {
+        "200": 37,
+        "400": 4,
+        "404": 2
+      },
+      "recordedOutcomeCounts": {
+        "Clear": 2,
+        "InsufficientInformation": 1,
+        "ReviewRequired": 1
+      },
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    },
+    {
+      "source": "StateLandGovernance/docs/verification/C4_POLISH_BOUNDARY_EVIDENCE.json",
+      "sourceSha256": "ff80c0b3f7def1312a25209bbac784078dede131e5b33c8ea2bcb743b531afa0",
+      "recordedHttpStatusCounts": {},
+      "recordedOutcomeCounts": {},
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    },
+    {
+      "source": "StateLandGovernance/docs/verification/C4_POLISH_FINAL_UI_EVIDENCE.json",
+      "sourceSha256": "a956b69854626c299884668744fb544a1a43567b238e6bd7d0db769717693008",
+      "recordedHttpStatusCounts": {
+        "503": 1
+      },
+      "recordedOutcomeCounts": {},
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    },
+    {
+      "source": "StateLandGovernance/docs/verification/C4_POLISH_PERSISTENCE_EVIDENCE.json",
+      "sourceSha256": "fd2810af18cb2e49747839b2e6bdb82777e3db868eae9e8428c69acce1b0e812",
+      "recordedHttpStatusCounts": {
+        "200": 1
+      },
+      "recordedOutcomeCounts": {},
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    },
+    {
+      "source": "StateLandGovernance/docs/verification/C4_POLISH_RENDER_EVIDENCE.json",
+      "sourceSha256": "1171c62d15f984e0d0c0fccc0010be597e765fb9cb58d2dbabf9442300088592",
+      "recordedHttpStatusCounts": {
+        "404": 1
+      },
+      "recordedOutcomeCounts": {},
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    },
+    {
+      "source": "StateLandGovernance/docs/verification/C4_POLISH_SCREENING_EVIDENCE.json",
+      "sourceSha256": "a34ab7da59b69dbd1042785b478272bee47b0769a77d97d3b975613e7aaa05c3",
+      "recordedHttpStatusCounts": {
+        "200": 92,
+        "204": 2,
+        "403": 11
+      },
+      "recordedOutcomeCounts": {
+        "Blocked": 1,
+        "Clear": 1,
+        "Cleared": 1,
+        "InsufficientInformation": 1,
+        "ReviewRequired": 1
+      },
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    },
+    {
+      "source": "StateLandGovernance/docs/verification/C4_POLISH_UI_EVIDENCE.json",
+      "sourceSha256": "5fed66977c63ca7cbd78b338324abf0c14828564774ebc8ae44341e0e457fb10",
+      "recordedHttpStatusCounts": {
+        "200": 69
+      },
+      "recordedOutcomeCounts": {},
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    },
+    {
+      "source": "StateLandGovernance/docs/verification/guided-c4-run-evidence.json",
+      "sourceSha256": "1d9adf9f5866567d2981461b30c3ea3985a8b3b03a37823a0bd18641053dcfef",
+      "recordedHttpStatusCounts": {
+        "200": 1
+      },
+      "recordedOutcomeCounts": {
+        "Blocked": 1
+      },
+      "interpretation": "Historical recorded fields only; nested repeated fields may describe the same request. No fresh run, actor identity, source quotation or authority is inferred."
+    }
+  ]
+}
