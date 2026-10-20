@@ -1,0 +1,86 @@
+{
+  "label": "SYNTHETIC RESEARCH TEST \u2014 NOT A REAL APPLICATION",
+  "pageCount": 11,
+  "scannedDpi": 200,
+  "scannedImageOnly": true,
+  "coverageCount": 37,
+  "expectedFieldCount": 17,
+  "arithmeticChecksPassed": true,
+  "layout": [
+    {
+      "page": 1,
+      "fontScale": 1,
+      "bodyBottom": 720.23
+    },
+    {
+      "page": 2,
+      "fontScale": 1,
+      "bodyBottom": 622.04
+    },
+    {
+      "page": 3,
+      "fontScale": 1,
+      "bodyBottom": 618.06
+    },
+    {
+      "page": 4,
+      "fontScale": 1,
+      "bodyBottom": 572.93
+    },
+    {
+      "page": 5,
+      "fontScale": 1,
+      "bodyBottom": 723.92
+    },
+    {
+      "page": 6,
+      "fontScale": 1,
+      "bodyBottom": 508.14
+    },
+    {
+      "page": 7,
+      "fontScale": 1,
+      "bodyBottom": 618.33
+    },
+    {
+      "page": 8,
+      "fontScale": 1,
+      "bodyBottom": 751.05
+    },
+    {
+      "page": 9,
+      "fontScale": 1,
+      "bodyBottom": 620.28
+    },
+    {
+      "page": 10,
+      "fontScale": 1,
+      "bodyBottom": 575.1
+    },
+    {
+      "page": 11,
+      "fontScale": 1,
+      "bodyBottom": 575.02
+    }
+  ],
+  "artifacts": {
+    "SYNTHETIC_RESEARCH_12_ACRE_text.pdf": {
+      "bytes": 1286667,
+      "sha256": "5fe1b5e00c29030147f2a28a21ea9f8f1ffacaf127a61aa30cc62bfcab717568"
+    },
+    "SYNTHETIC_RESEARCH_12_ACRE_scanned.pdf": {
+      "bytes": 5236965,
+      "sha256": "c096b6dee867c31ceb21c83e679825977613ca0af9da6c1b70b898ce738a5ddc"
+    }
+  },
+  "activeTemplateBinding": {
+    "id": "STD-PROP-2026-V1",
+    "version": "1.0",
+    "status": "Active",
+    "source": "read-only PostgreSQL configuration inspection",
+    "requirementIdsSha256": "aca0a094eff6dfb138ef061725ca6d54502aa3d955bcce78d212ba54c6b8aa60"
+  },
+  "allPagesVisuallyInspected": true,
+  "liveOcrGeminiExecuted": false,
+  "proposalAnswersWrittenToDatabase": false
+}
