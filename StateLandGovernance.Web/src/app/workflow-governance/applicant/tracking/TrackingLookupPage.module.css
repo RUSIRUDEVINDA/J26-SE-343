@@ -1,0 +1,73 @@
+.lookupCard {
+  background: #ffffff;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  padding: 2.25rem;
+  max-width: 680px;
+  box-shadow: var(--shadow-soft);
+}
+
+.lookupCard h3 {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.lookupHint {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.errorBanner {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
+}
+
+.lookupForm {
+  margin-bottom: 1.75rem;
+}
+
+.inputGroup {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.referenceInput {
+  flex: 1;
+  min-width: 260px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  font-family: monospace;
+  background: #fffdfc;
+  color: var(--color-text);
+}
+
+.noteBox {
+  background: #f9fafb;
+  border-left: 3px solid #6b7280;
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+.noteBox strong {
+  color: #1f2937;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.noteBox p {
+  margin: 0;
+  line-height: 1.4;
+}
