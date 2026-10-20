@@ -1,0 +1,238 @@
+{
+  "authorizationKind": "UserSpecifiedProjectRequirements",
+  "templateId": "STD-PROP-2026-V1",
+  "documentRequirementSetId": "DOC-REQ-AGRI-V1",
+  "version": "1.0",
+  "name": "User-supplied project proposal template (2026-10-16; not independently verified statutory requirements)",
+  "sourceReference": "User workflow request 2026-10-16 and supplied CamScanner 14-10-2026 14.53.pdf; SHA-256 f4edcb8c83f1bbfdd1c9f5fd44f2a674a77112d854ee9b1a857d78a6a86f8d00; source inventory PROPOSAL_SOURCE_INVENTORY.md",
+  "requirements": [
+    {
+      "id": "applicant_name",
+      "name": "Applicant name",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "applicant_address",
+      "name": "Applicant address",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "applicant_residential_gn",
+      "name": "Applicant residential gn",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "applicant_residential_ds",
+      "name": "Applicant residential ds",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "applicant_telephone",
+      "name": "Applicant telephone",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "applicant_nic",
+      "name": "Applicant nic",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "applicant_birth_date_age",
+      "name": "Applicant birth date age",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "applicant_sex",
+      "name": "Applicant sex",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "applicant_marital_status",
+      "name": "Applicant marital status",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "applicant_education",
+      "name": "Applicant education",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "applicant_professional_qualifications",
+      "name": "Applicant professional qualifications",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "project_name",
+      "name": "Project name",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "project_nature",
+      "name": "Project nature",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "project_introduction",
+      "name": "Project introduction",
+      "mandatory": true,
+      "page": 1
+    },
+    {
+      "id": "project_land_location",
+      "name": "Project land location",
+      "mandatory": true,
+      "page": 2
+    },
+    {
+      "id": "existing_business_registration",
+      "name": "Existing business registration or explicit inapplicability explanation",
+      "mandatory": true,
+      "page": 2,
+      "applicability": "Existing business only: registration details or an explicit source-backed explanation that no existing business is applicable."
+    },
+    {
+      "id": "ownership_form",
+      "name": "Ownership form",
+      "mandatory": true,
+      "page": 2
+    },
+    {
+      "id": "initial_buildings",
+      "name": "Initial buildings or explicit inapplicability explanation",
+      "mandatory": true,
+      "page": 2,
+      "applicability": "If buildings are planned, descriptions/areas; otherwise an explicit explanation of no planned construction."
+    },
+    {
+      "id": "initial_site_layout",
+      "name": "Initial site layout",
+      "mandatory": true,
+      "page": 3
+    },
+    {
+      "id": "future_buildings_15_years",
+      "name": "Future buildings 15 years or explicit inapplicability explanation",
+      "mandatory": true,
+      "page": 3,
+      "applicability": "If future buildings are planned, descriptions/areas; otherwise an explicit explanation of no planned construction."
+    },
+    {
+      "id": "future_development_layout",
+      "name": "Future development layout",
+      "mandatory": true,
+      "page": 4
+    },
+    {
+      "id": "access_location_sketch",
+      "name": "Access location sketch",
+      "mandatory": true,
+      "page": 4
+    },
+    {
+      "id": "employment_table",
+      "name": "Employment table",
+      "mandatory": true,
+      "page": 5
+    },
+    {
+      "id": "raw_material_sources",
+      "name": "Raw material sources or explicit inapplicability explanation",
+      "mandatory": true,
+      "page": 5,
+      "applicability": "For projects using raw materials: sources; otherwise an explicit explanation of inapplicability."
+    },
+    {
+      "id": "raw_material_costs",
+      "name": "Raw material costs or explicit inapplicability explanation",
+      "mandatory": true,
+      "page": 5,
+      "applicability": "For applicable raw materials: costs; otherwise an explicit explanation of inapplicability."
+    },
+    {
+      "id": "current_market",
+      "name": "Current market",
+      "mandatory": true,
+      "page": 6
+    },
+    {
+      "id": "future_marketing",
+      "name": "Future marketing or explicit inapplicability explanation",
+      "mandatory": true,
+      "page": 6,
+      "applicability": "Domestic strategy and foreign-market strategy only if applicable; explicitly explain foreign-market inapplicability."
+    },
+    {
+      "id": "project_turnover",
+      "name": "Project turnover",
+      "mandatory": true,
+      "page": 6
+    },
+    {
+      "id": "sales_income_estimates",
+      "name": "Sales income estimates",
+      "mandatory": true,
+      "page": 7
+    },
+    {
+      "id": "monthly_working_capital",
+      "name": "Monthly working capital",
+      "mandatory": true,
+      "page": 7
+    },
+    {
+      "id": "project_capital_cost_and_funding",
+      "name": "Project capital cost and funding",
+      "mandatory": true,
+      "page": 8
+    },
+    {
+      "id": "expected_production",
+      "name": "Expected production",
+      "mandatory": true,
+      "page": 8
+    },
+    {
+      "id": "profit_loss_forecast",
+      "name": "Profit loss forecast",
+      "mandatory": true,
+      "page": 9
+    },
+    {
+      "id": "implementation_schedule",
+      "name": "Implementation schedule",
+      "mandatory": true,
+      "page": 10
+    },
+    {
+      "id": "environmental_impact",
+      "name": "Environmental impact",
+      "mandatory": true,
+      "page": 11
+    },
+    {
+      "id": "sustainability_maintenance",
+      "name": "Sustainability maintenance",
+      "mandatory": true,
+      "page": 11
+    },
+    {
+      "id": "applicant_signature_date_contact",
+      "name": "Applicant signature date contact",
+      "mandatory": true,
+      "page": 11
+    }
+  ]
+}
