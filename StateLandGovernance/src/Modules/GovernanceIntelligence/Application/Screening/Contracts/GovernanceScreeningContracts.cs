@@ -34,7 +34,11 @@ public sealed record GovernanceScreeningCaseInputDto(
     IReadOnlyList<ScreeningComplaintEvidenceDto>? ContemporaneousComplaints = null,
     string? FinancialAssessmentReference = null,
     C1ParcelEvidenceDto? SpatialEvidence = null,
-    IReadOnlyList<ConcurrentApplicationEvidenceDto>? ConcurrentApplications = null
+    IReadOnlyList<ConcurrentApplicationEvidenceDto>? ConcurrentApplications = null,
+    string? FullInputFingerprint = null,
+    string? EffectivePolicyVersion = null,
+    string? EvidenceVersion = null,
+    bool IsDevelopmentSpatialMock = false
 );
 
 public sealed record ScreeningDocumentReferenceDto(
@@ -119,7 +123,10 @@ public sealed record ConsolidatedGovernanceScreeningResultDto(
     RegulatoryComplianceSectionDto RegulatoryCheck,
     ConflictDetectionSectionDto ConflictCheck,
     EarlyGovernanceSectionDto EarlyGovernanceCheck,
-    ScreeningProvenanceMetadataDto Provenance
+    ScreeningProvenanceMetadataDto Provenance,
+    string? FullInputFingerprint = null,
+    string? EffectivePolicyVersion = null,
+    string? EvidenceVersion = null
 );
 
 public sealed record ConsolidatedFindingDto(
