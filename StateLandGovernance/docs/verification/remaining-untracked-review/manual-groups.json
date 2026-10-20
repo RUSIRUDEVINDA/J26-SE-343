@@ -1,0 +1,271 @@
+{
+  "firstNumber": 55,
+  "groups": [
+    {
+      "number": 55,
+      "component": "Shared",
+      "authorship": "Shared: actual contribution authorship must be confirmed; do not infer",
+      "subject": "docs(dev): add sanitized local identity and spatial setup examples",
+      "files": [
+        "StateLandGovernance/docs/configuration/examples/development-accounts.example.json",
+        "StateLandGovernance/docs/configuration/examples/portal-development-spatial.example.json",
+        "StateLandGovernance/docs/configuration/examples/workflow-authority.unbound.example.json",
+        "StateLandGovernance/docs/configuration/examples/LOCAL_DEVELOPMENT_SETUP.md"
+      ],
+      "notes": "",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/docs/configuration/examples/development-accounts.example.json\" \"StateLandGovernance/docs/configuration/examples/portal-development-spatial.example.json\" \"StateLandGovernance/docs/configuration/examples/workflow-authority.unbound.example.json\" \"StateLandGovernance/docs/configuration/examples/LOCAL_DEVELOPMENT_SETUP.md\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"docs(dev): add sanitized local identity and spatial setup examples\""
+      ]
+    },
+    {
+      "number": 56,
+      "component": "Shared",
+      "authorship": "Shared: actual contribution authorship must be confirmed; do not infer",
+      "subject": "chore(integration): preserve explicit project workflow provisioning tools",
+      "files": [
+        "StateLandGovernance/tools/ProjectWorkflowProvisioner/ProjectWorkflowProvisioner.csproj",
+        "StateLandGovernance/tools/ProjectWorkflowProvisioner/Program.cs",
+        "StateLandGovernance/tools/ProjectWorkflowProvisioner/PortalResearchProvisioner.cs"
+      ],
+      "notes": "Depends on committed C3/C4 contracts. Contains deliberate writes to the fixed local Development database when explicitly invoked. Do not run during commit review.",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/tools/ProjectWorkflowProvisioner/ProjectWorkflowProvisioner.csproj\" \"StateLandGovernance/tools/ProjectWorkflowProvisioner/Program.cs\" \"StateLandGovernance/tools/ProjectWorkflowProvisioner/PortalResearchProvisioner.cs\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"chore(integration): preserve explicit project workflow provisioning tools\""
+      ]
+    },
+    {
+      "number": 57,
+      "component": "Shared",
+      "authorship": "Shared: actual contribution authorship must be confirmed; do not infer",
+      "subject": "test(integration): retain isolated workflow persistence proof host",
+      "files": [
+        "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/WorkflowPlanningPersistenceProof.csproj",
+        "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/Program.cs",
+        "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/ConcurrencyPersistenceProof.cs",
+        "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/ExecutionPersistenceProof.cs",
+        "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/FullWorkflowPersistenceProof.cs",
+        "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/GovernedExtensionsPersistenceProof.cs",
+        "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/StabilizationAcceptanceHost.cs",
+        "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/README.md"
+      ],
+      "notes": "All C# files are required by entry-point references. Read modes also run MigrateAsync before retrieval. Historical modes contain explicit C4 readiness/model/transport doubles; stabilization-host uses actual deterministic C4 engines. No runtime execution was performed here.",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/tools/WorkflowPlanningPersistenceProof/WorkflowPlanningPersistenceProof.csproj\" \"StateLandGovernance/tools/WorkflowPlanningPersistenceProof/Program.cs\" \"StateLandGovernance/tools/WorkflowPlanningPersistenceProof/ConcurrencyPersistenceProof.cs\" \"StateLandGovernance/tools/WorkflowPlanningPersistenceProof/ExecutionPersistenceProof.cs\" \"StateLandGovernance/tools/WorkflowPlanningPersistenceProof/FullWorkflowPersistenceProof.cs\" \"StateLandGovernance/tools/WorkflowPlanningPersistenceProof/GovernedExtensionsPersistenceProof.cs\" \"StateLandGovernance/tools/WorkflowPlanningPersistenceProof/StabilizationAcceptanceHost.cs\" \"StateLandGovernance/tools/WorkflowPlanningPersistenceProof/README.md\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"test(integration): retain isolated workflow persistence proof host\""
+      ]
+    },
+    {
+      "number": 58,
+      "component": "Shared",
+      "authorship": "Shared: actual contribution authorship must be confirmed; do not infer",
+      "subject": "test(integration): retain labelled isolated browser and API drivers",
+      "files": [
+        "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/stabilization-browser.py",
+        "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/stabilization-scenario.py"
+      ],
+      "notes": "Depends on 57; requires requests and Playwright plus installed Edge/browser. Bearer ISOLATED-TEST strings are literal fixtures for the separate acceptance handler, not signed production tokens. Browser selectors may be stale after the guided UI redesign; not rerun.",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/tools/WorkflowPlanningPersistenceProof/stabilization-browser.py\" \"StateLandGovernance/tools/WorkflowPlanningPersistenceProof/stabilization-scenario.py\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"test(integration): retain labelled isolated browser and API drivers\""
+      ]
+    },
+    {
+      "number": 59,
+      "component": "C3",
+      "authorship": "User/C3 identity",
+      "subject": "test(c3): add editable synthetic proposal generation sources",
+      "files": [
+        "StateLandGovernance/tools/document-intelligence/create_synthetic_proposal.py",
+        "StateLandGovernance/tools/document-intelligence/SYNTHETIC_PROPOSAL_GENERATOR.md",
+        "output/pdf/synthetic-proposal-12-acre/proposal-source.json"
+      ],
+      "notes": "",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/tools/document-intelligence/create_synthetic_proposal.py\" \"StateLandGovernance/tools/document-intelligence/SYNTHETIC_PROPOSAL_GENERATOR.md\" \"output/pdf/synthetic-proposal-12-acre/proposal-source.json\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"test(c3): add editable synthetic proposal generation sources\""
+      ]
+    },
+    {
+      "number": 60,
+      "component": "C3",
+      "authorship": "User/C3 identity",
+      "subject": "docs(c3): add synthetic proposal comparison and coverage artifacts",
+      "files": [
+        "output/pdf/synthetic-proposal-12-acre/proposal-editable.html",
+        "output/pdf/synthetic-proposal-12-acre/requirement-coverage.csv",
+        "output/pdf/synthetic-proposal-12-acre/requirement-coverage.md",
+        "output/pdf/synthetic-proposal-12-acre/expected-17-fields.json",
+        "output/pdf/synthetic-proposal-12-acre/expected-17-fields.md",
+        "output/pdf/synthetic-proposal-12-acre/artifact-validation.json"
+      ],
+      "notes": "Expected values are comparison fixtures, never OCR/Gemini outputs or automatic review decisions.",
+      "manualCommands": [
+        "git add -- \"output/pdf/synthetic-proposal-12-acre/proposal-editable.html\" \"output/pdf/synthetic-proposal-12-acre/requirement-coverage.csv\" \"output/pdf/synthetic-proposal-12-acre/requirement-coverage.md\" \"output/pdf/synthetic-proposal-12-acre/expected-17-fields.json\" \"output/pdf/synthetic-proposal-12-acre/expected-17-fields.md\" \"output/pdf/synthetic-proposal-12-acre/artifact-validation.json\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"docs(c3): add synthetic proposal comparison and coverage artifacts\""
+      ]
+    },
+    {
+      "number": 61,
+      "component": "C3",
+      "authorship": "User/C3 identity",
+      "subject": "test(c3): include labelled synthetic proposal upload PDFs",
+      "files": [
+        "output/pdf/synthetic-proposal-12-acre/SYNTHETIC_RESEARCH_12_ACRE_scanned.pdf",
+        "output/pdf/synthetic-proposal-12-acre/SYNTHETIC_RESEARCH_12_ACRE_text.pdf"
+      ],
+      "notes": "Optional binary artifacts: both reviewed 11-page PDFs match the generation manifest; scanned PDF is image-only. No ZIP needed.",
+      "manualCommands": [
+        "git add -- \"output/pdf/synthetic-proposal-12-acre/SYNTHETIC_RESEARCH_12_ACRE_scanned.pdf\" \"output/pdf/synthetic-proposal-12-acre/SYNTHETIC_RESEARCH_12_ACRE_text.pdf\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"test(c3): include labelled synthetic proposal upload PDFs\""
+      ]
+    },
+    {
+      "number": 62,
+      "component": "C3",
+      "authorship": "User/C3 identity",
+      "subject": "docs(c3): add portable manual synthetic upload instructions",
+      "files": [
+        "StateLandGovernance/docs/verification/remaining-untracked-review/SYNTHETIC_UPLOAD_GUIDE.md"
+      ],
+      "notes": "",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/docs/verification/remaining-untracked-review/SYNTHETIC_UPLOAD_GUIDE.md\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"docs(c3): add portable manual synthetic upload instructions\""
+      ]
+    },
+    {
+      "number": 63,
+      "component": "C3",
+      "authorship": "User/C3 identity",
+      "subject": "docs(c3): retain unconfigured routing and evidence contract examples",
+      "files": [
+        "StateLandGovernance/docs/configuration/pending-approval/institutional-routing.json",
+        "StateLandGovernance/docs/configuration/pending-approval/governance-evidence.json",
+        "StateLandGovernance/docs/configuration/pending-approval/screening-evidence-context.json",
+        "StateLandGovernance/docs/configuration/pending-approval/spatial-review-evidence.json"
+      ],
+      "notes": "Nulls remain unanswered; no official policy, provider installation or clearance is claimed.",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/docs/configuration/pending-approval/institutional-routing.json\" \"StateLandGovernance/docs/configuration/pending-approval/governance-evidence.json\" \"StateLandGovernance/docs/configuration/pending-approval/screening-evidence-context.json\" \"StateLandGovernance/docs/configuration/pending-approval/spatial-review-evidence.json\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"docs(c3): retain unconfigured routing and evidence contract examples\""
+      ]
+    },
+    {
+      "number": 64,
+      "component": "C4",
+      "authorship": "C4 owner only after contribution confirmation and authorization",
+      "subject": "docs(c4): retain an unconfigured catalogue rule contract example",
+      "files": [
+        "StateLandGovernance/docs/configuration/pending-approval/c4-catalogue-rule.json"
+      ],
+      "notes": "",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/docs/configuration/pending-approval/c4-catalogue-rule.json\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"docs(c4): retain an unconfigured catalogue rule contract example\""
+      ]
+    },
+    {
+      "number": 65,
+      "component": "Shared",
+      "authorship": "Shared: actual contribution authorship must be confirmed; do not infer",
+      "subject": "docs(integration): record the manifest to audit registration dependency",
+      "files": [
+        "StateLandGovernance/docs/verification/owner-proposals/POST_WORKFLOW_INTEGRITY_CONTRACT.md"
+      ],
+      "notes": "Owner proposal only; not a new registration endpoint or ledger receipt.",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/docs/verification/owner-proposals/POST_WORKFLOW_INTEGRITY_CONTRACT.md\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"docs(integration): record the manifest to audit registration dependency\""
+      ]
+    },
+    {
+      "number": 66,
+      "component": "C3",
+      "authorship": "User/C3 identity",
+      "subject": "docs(c3): add sanitized historical handover evidence index",
+      "files": [
+        "StateLandGovernance/docs/verification/remaining-untracked-review/c3-historical-evidence.summary.json"
+      ],
+      "notes": "Source association is C3-oriented, not proof of individual authorship; underlying records may span shared integration.",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/docs/verification/remaining-untracked-review/c3-historical-evidence.summary.json\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"docs(c3): add sanitized historical handover evidence index\""
+      ]
+    },
+    {
+      "number": 67,
+      "component": "C4",
+      "authorship": "C4 owner only after contribution confirmation and authorization",
+      "subject": "docs(c4): add sanitized historical engine evidence index",
+      "files": [
+        "StateLandGovernance/docs/verification/remaining-untracked-review/c4-historical-evidence.summary.json"
+      ],
+      "notes": "",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/docs/verification/remaining-untracked-review/c4-historical-evidence.summary.json\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"docs(c4): add sanitized historical engine evidence index\""
+      ]
+    },
+    {
+      "number": 68,
+      "component": "Shared",
+      "authorship": "Shared: actual contribution authorship must be confirmed; do not infer",
+      "subject": "docs(review): record untracked artifact privacy and dependency review",
+      "files": [
+        "StateLandGovernance/docs/verification/remaining-untracked-review/README.md",
+        "StateLandGovernance/docs/verification/remaining-untracked-review/inventory.json",
+        "StateLandGovernance/docs/verification/remaining-untracked-review/link-audit.json",
+        "StateLandGovernance/docs/verification/remaining-untracked-review/manual-groups.json"
+      ],
+      "notes": "Review documentation belongs to the confirmed reviewer(s), not automatically the C4 owner.",
+      "manualCommands": [
+        "git add -- \"StateLandGovernance/docs/verification/remaining-untracked-review/README.md\" \"StateLandGovernance/docs/verification/remaining-untracked-review/inventory.json\" \"StateLandGovernance/docs/verification/remaining-untracked-review/link-audit.json\" \"StateLandGovernance/docs/verification/remaining-untracked-review/manual-groups.json\"",
+        "git diff --cached --name-status",
+        "git diff --cached --check",
+        "git diff --cached",
+        "git commit -m \"docs(review): record untracked artifact privacy and dependency review\""
+      ]
+    }
+  ],
+  "identityInstruction": "Use only approved Git names/emails and confirmed authorship. No identity changes are performed by this plan; shared authorship is unresolved. Commands do not automatically set another author."
+}

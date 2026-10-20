@@ -1,0 +1,734 @@
+{
+  "scope": "Relative Markdown links in the original untracked Markdown plus tracked documentation under docs/output/pdf; not a comprehensive web or inline-code path checker.",
+  "links": [
+    {
+      "document": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/README.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "target": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "target": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/normal-case-authority.example.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "target": "StateLandGovernance/docs/verification/NORMAL_CASE_REPAIR_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/configuration/pending-approval/README.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/configuration/pending-approval/README.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/configuration/pending-approval/README.md",
+      "target": "StateLandGovernance/docs/verification/PROPOSAL_INTAKE_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/configuration/pending-approval/README.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/normal-case-authority.example.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/configuration/pending-approval/README.md",
+      "target": "StateLandGovernance/docs/verification/DEVELOPMENT_SIGNIN_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/BATCH4B_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/batch4b-http-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/CASE_ASSIGNMENT_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/INTAKE_ASSIGNMENTS.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/CASE_ASSIGNMENT_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/case-assignment-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/CASE_ASSIGNMENT_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/case-assignment-routed-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/CASE_ASSIGNMENT_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/case-assignment-persistence-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/DEVELOPMENT_SIGNIN_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/development-signin-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/DEVELOPMENT_SIGNIN_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/PORTAL_C4_SCREENING_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/DEVELOPMENT_SIGNIN_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/GUIDED_WORKSPACE_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/GUIDED_WORKSPACE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/guided-workspace-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/GUIDED_WORKSPACE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/guided-c4-run-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/GUIDED_WORKSPACE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/guided-fixture-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/GUIDED_WORKSPACE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/guided-roles-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/GUIDED_WORKSPACE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/guided-persistence-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/INTEGRATION_REPAIR_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/PROPOSAL_INTAKE_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/INTEGRATION_REPAIR_ACCEPTANCE.md",
+      "target": "StateLandGovernance/tools/document-intelligence/Start-LocalDocumentIntelligence.ps1",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/INTEGRATION_REPAIR_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/integration-repair-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/INTEGRATION_REPAIR_ACCEPTANCE.md",
+      "target": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/README.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/INTEGRATION_REPAIR_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/owner-proposals/PROTECTED_COMPONENT_REPAIRS.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/INTEGRATION_REPAIR_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/README.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/NORMAL_CASE_REPAIR_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/normal-case-repair-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/NORMAL_CASE_REPAIR_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/normal-case-authority.example.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/NORMAL_HOST_SCREENING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/WORKFLOW_PLANNING_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/NORMAL_HOST_SCREENING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/normal-host-screening-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/NORMAL_HOST_SCREENING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/normal-host-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/PORTAL_C4_SCREENING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/portal-screening-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/PORTAL_C4_SCREENING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_BACKEND_CHANGELOG.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/PROPOSAL_INTAKE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/proposal-intake-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/PROPOSAL_INTAKE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/proposal-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/PROPOSAL_INTAKE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/STABILIZATION_CHANGE_INVENTORY.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/stabilization-change-inventory.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/stabilization-api-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/stabilization-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/owner-proposals/normal-host-authentication.patch",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/SYNTHETIC_PROPOSAL_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/synthetic-proposal-scenario-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/UPLOADED_SYNTHETIC_SCREENING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/uploaded-case-screening-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/UPLOADED_SYNTHETIC_SCREENING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/uploaded-case-screening-persistence-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/UPLOADED_SYNTHETIC_SCREENING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/uploaded-human-district-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/UPLOADED_SYNTHETIC_SCREENING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/uploaded-screening-final-ui-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/UPLOADED_SYNTHETIC_SCREENING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/uploaded-screening-permission-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_BACKEND_CHANGELOG.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/owner-proposals/POST_WORKFLOW_INTEGRITY_CONTRACT.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/workflow-proposal-review-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/workflow-slice-http-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/workflow-extensions-http-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/workflow-extensions-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/workflow-postgres-fixture-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/WORKFLOW_PLANNING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/NORMAL_HOST_SCREENING_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/WORKFLOW_PLANNING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/workflow-planning-http-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/WORKFLOW_PLANNING_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/workflow-planning-browser-evidence.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/manual-commits/20261020/README.md",
+      "target": "StateLandGovernance/docs/verification/manual-commits/20261020/C4_FAILURES.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/owner-proposals/PROTECTED_COMPONENT_REPAIRS.md",
+      "target": "StateLandGovernance/docs/verification/C4_BACKEND_CHANGELOG.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/owner-proposals/PROTECTED_COMPONENT_REPAIRS.md",
+      "target": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/owner-proposals/PROTECTED_COMPONENT_REPAIRS.md",
+      "target": "StateLandGovernance/docs/verification/owner-proposals/normal-host-authentication.patch",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/owner-proposals/PROTECTED_COMPONENT_REPAIRS.md",
+      "target": "StateLandGovernance/docs/verification/owner-proposals/c4-full-input-contract.patch",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/README.md",
+      "target": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/COLOMBO_REAL_PARCEL_IMPORT.md",
+      "target": "StateLandGovernance/docs/COLOMBO_STATE_RESEARCH_300_IMPORT.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COLOMBO_REAL_PARCEL_IMPORT.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_CUSTOMER_RELEASE_PLAN.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_CUSTOMER_RELEASE_PLAN.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_DEMO_VERIFICATION.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_CUSTOMER_RELEASE_PLAN.md",
+      "target": "StateLandGovernance/docs/STATE_LAND_CANDIDATE_SCREENING.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_DEMO_VERIFICATION.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_CUSTOMER_RELEASE_PLAN.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "target": "StateLandGovernance/docs/COLOMBO_STATE_RESEARCH_300_IMPORT.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "target": "StateLandGovernance/docs/knowledge-graph/README.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "target": "StateLandGovernance/docs/ai/README.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_DEMO_VERIFICATION.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "target": "StateLandGovernance/docs/knowledge-graph/README.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_DEMO_VERIFICATION.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_CUSTOMER_RELEASE_PLAN.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "target": "StateLandGovernance/docs/COLOMBO_STATE_RESEARCH_300_IMPORT.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/README.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/README.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_DEMO_VERIFICATION.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/README.md",
+      "target": "StateLandGovernance/docs/COMPONENT_01_CUSTOMER_RELEASE_PLAN.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/README.md",
+      "target": "StateLandGovernance/docs/COLOMBO_STATE_RESEARCH_300_IMPORT.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/README.md",
+      "target": "StateLandGovernance/docs/COLOMBO_REAL_PARCEL_IMPORT.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/README.md",
+      "target": "StateLandGovernance/docs/STATE_LAND_CANDIDATE_SCREENING.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/README.md",
+      "target": "StateLandGovernance/docs/knowledge-graph/README.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/README.md",
+      "target": "StateLandGovernance/docs/ai/README.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/ai/README.md",
+      "target": "StateLandGovernance/src/Modules/LandIntelligence/ML/README.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_BACKEND_CHANGELOG.md",
+      "target": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_BACKEND_CHANGELOG.md",
+      "target": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_BACKEND_CHANGELOG.md",
+      "target": "StateLandGovernance/docs/verification/stabilization-c4-coverage.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_FRONTEND_HANDOVER.md",
+      "target": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_FRONTEND_HANDOVER.md",
+      "target": "StateLandGovernance/docs/verification/C4_FRONTEND_BOUNDARY_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_FRONTEND_HANDOVER.md",
+      "target": "StateLandGovernance/docs/verification/C4_APPLICANT_ACCESS_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_FRONTEND_HANDOVER.md",
+      "target": "StateLandGovernance/docs/verification/C4_INDEPENDENT_UI_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_FRONTEND_HANDOVER.md",
+      "target": "StateLandGovernance/docs/verification/C4_INDEPENDENT_SCREENING_INTEGRITY_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_POLISH_RENDER_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_POLISH_FINAL_UI_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_POLISH_UI_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_POLISH_SCREENING_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_POLISH_FINAL_UI_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_POLISH_PERSISTENCE_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "output/evaluation/c4-pp1-20261020/reproduced-evaluation.json",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "output/evaluation/c4-pp1-20261020/reproduce.py",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "output/evaluation/c4-pp1-20261020/README.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_PP1_UNAPPLIED_BACKEND_PROPOSALS.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_FRONTEND_HANDOVER.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_PP1_WALKTHROUGH.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "output/screenshots/c4-pp1/progressive-conflict.png",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "output/screenshots/c4-pp1/sign-in.png",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "output/screenshots/c4-pp1/historical-drawer.png",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "output/screenshots/c4-pp1/revised-workflow-actual-model.png",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "output/screenshots/c4-pp1/evaluation.png",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_POLISH_ACCEPTANCE.md",
+      "target": "StateLandGovernance/docs/verification/C4_POLISH_BOUNDARY_EVIDENCE.json",
+      "exists": true,
+      "tracked": false
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/C4_PP1_WALKTHROUGH.md",
+      "target": "StateLandGovernance/docs/verification/C4_PP1_UNAPPLIED_BACKEND_PROPOSALS.md",
+      "exists": true,
+      "tracked": true
+    },
+    {
+      "document": "StateLandGovernance/docs/verification/FULFILLMENT_HANDOFF_DOMAIN_PROPOSAL.md",
+      "target": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "exists": true,
+      "tracked": false
+    }
+  ],
+  "existingButUntracked": 84,
+  "missing": 0,
+  "decision": "Keep original acceptance documents local when their linked raw evidence is held. Sanitized summary indices intentionally replace neither original payloads nor exact-identity proof."
+}
