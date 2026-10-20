@@ -76,7 +76,8 @@ public sealed record LeaseInterestRequestSummaryDto(
     DateTimeOffset UpdatedAtUtc,
     DateTimeOffset? SubmittedAtUtc,
     LandUseType RequestedPurpose,
-    int? RequestedDurationYears);
+    int? RequestedDurationYears,
+    string? CadastralNumber = null);
 
 public sealed record LeaseInterestRequestDetailDto(
     Guid Id,

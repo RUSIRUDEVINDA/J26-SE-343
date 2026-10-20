@@ -16,5 +16,5 @@ public sealed record ProjectLeaseReadyDesignationDto(
 
 public sealed record LandParcelMetricsDto(
     int TotalParcelCount,
-    int ProjectLeaseReadyDesignatedCount,
-    int ProjectLeaseReadyEffectiveCount);
+    int ProjectDesignatedParcelsCount,
+    int ProjectDesignatedParcelsEffectiveCount);

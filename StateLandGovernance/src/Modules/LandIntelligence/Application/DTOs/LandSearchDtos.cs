@@ -28,6 +28,8 @@ public sealed record LandSearchRequest
     public LandUseType? CurrentUseType { get; init; }
     /// <summary>Exact match (trimmed, case-insensitive) on source-reported land-use code or English label.</summary>
     public string? SourceReportedLandUse { get; init; }
+    /// <summary>Project research group; Coconut includes original cadastral Coconut and GIS-mapped Coconut parcels.</summary>
+    public string? ResearchLandCoverGroup { get; init; }
     /// <summary>Exact match (trimmed, case-insensitive) on GIS-derived soil group name.</summary>
     public string? DerivedSoilGroup { get; init; }
     public decimal? MinArea { get; init; }

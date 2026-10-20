@@ -53,6 +53,22 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             ],
             "Secure document upload is not enabled. An officer may request documents through official channels after preliminary review.");
 
+    public async Task<LeaseInterestRequestDetailDto?> FindForParcelAsync(
+        Guid landParcelId,
+        CancellationToken cancellationToken)
+    {
+        var ownerId = RequireOwnerId();
+        await EnsureParcelExistsAsync(landParcelId, cancellationToken);
+
+        var candidates = await _dbContext.LeaseInterestRequests
+            .Include(x => x.StatusHistory)
+            .Where(x => x.OwnerId == ownerId && x.LandParcelId == landParcelId)
+            .ToListAsync(cancellationToken);
+
+        var entity = LeaseInterestParcelRequestSelector.PreferForParcelView(candidates);
+        return entity is null ? null : MapDetail(entity);
+    }
+
     public async Task<LeaseInterestRequestDetailDto> GetDraftOrCreateAsync(
         Guid landParcelId,
         CancellationToken cancellationToken)
@@ -276,7 +292,14 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             .OrderByDescending(x => x.UpdatedAtUtc)
             .ToListAsync(cancellationToken);
 
-        return rows.Select(MapSummary).ToList();
+        var result = new List<LeaseInterestRequestSummaryDto>(rows.Count);
+        foreach (var row in rows)
+        {
+            var parcel = await _parcelRepository.GetByIdAsync(row.LandParcelId, cancellationToken);
+            result.Add(MapSummary(row, parcel?.Identifier.CadastralNumber));
+        }
+
+        return result;
     }
 
     public async Task<LeaseInterestRequestDetailDto> GetByIdAsync(
@@ -318,7 +341,9 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
         return entity;
     }
 
-    private LeaseInterestRequestSummaryDto MapSummary(LeaseInterestRequestEntity entity) =>
+    private static LeaseInterestRequestSummaryDto MapSummary(
+        LeaseInterestRequestEntity entity,
+        string? cadastralNumber) =>
         new(
             entity.Id,
             entity.LandParcelId,
@@ -328,7 +353,8 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             entity.UpdatedAtUtc,
             entity.SubmittedAtUtc,
             (LandUseType)entity.RequestedPurpose,
-            entity.RequestedDurationYears);
+            entity.RequestedDurationYears,
+            cadastralNumber);
 
     private void ApplyNicFromDraft(LeaseInterestRequestEntity entity, UpsertLeaseInterestDraftDto draft)
     {

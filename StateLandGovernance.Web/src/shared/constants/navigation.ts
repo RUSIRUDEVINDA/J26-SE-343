@@ -37,11 +37,6 @@ export const component01NavItems: NavItem[] = [
     icon: "▤",
   },
   {
-    label: "Saved parcels",
-    href: `${LAND_INTELLIGENCE_BASE}/shortlist`,
-    icon: "☆",
-  },
-  {
     label: "My requests",
     href: `${LAND_INTELLIGENCE_BASE}/my-requests`,
     icon: "☰",

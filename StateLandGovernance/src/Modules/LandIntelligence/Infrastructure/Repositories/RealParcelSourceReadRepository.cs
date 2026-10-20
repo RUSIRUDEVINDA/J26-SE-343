@@ -98,8 +98,12 @@ public sealed class RealParcelSourceReadRepository : IRealParcelSourceReadReposi
             var rows = await _dbContext.RealParcelSources
                 .AsNoTracking()
                 .Where(source => source.LandUseCode != null)
-                .Select(source => new { source.LandUseCode, source.LandUseEnglishLabel })
-                .Distinct()
+                .GroupBy(source => new { source.LandUseCode, source.LandUseEnglishLabel })
+                .Select(g => new { 
+                    g.Key.LandUseCode, 
+                    g.Key.LandUseEnglishLabel, 
+                    ParcelCount = g.Count() 
+                })
                 .OrderBy(source => source.LandUseCode)
                 .ToListAsync(cancellationToken);
 
@@ -107,7 +111,8 @@ public sealed class RealParcelSourceReadRepository : IRealParcelSourceReadReposi
                 .Select(source => new SourceReportedLandUseOptionDto(
                     source.LandUseCode!,
                     source.LandUseEnglishLabel
-                        ?? ColomboCadastreSourceDomains.FormatUnknownLandUseCode(source.LandUseCode!)))
+                        ?? ColomboCadastreSourceDomains.FormatUnknownLandUseCode(source.LandUseCode!),
+                    source.ParcelCount))
                 .ToList();
         }
         catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UndefinedTable

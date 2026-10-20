@@ -75,7 +75,7 @@ internal static class LandIntelligenceApiResponseMapper
             dto.Evidence.Select(ToEvidenceResponse).ToList());
 
     public static LandParcelMetricsResponse ToResponse(LandParcelMetricsDto dto) =>
-        new(dto.TotalParcelCount, dto.ProjectLeaseReadyDesignatedCount, dto.ProjectLeaseReadyEffectiveCount);
+        new(dto.TotalParcelCount, dto.ProjectDesignatedParcelsCount, dto.ProjectDesignatedParcelsEffectiveCount);
 
     public static LandIntelligenceGisCoverageResponse ToResponse(LandIntelligenceGisCoverageDto dto) =>
         new(

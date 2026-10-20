@@ -7,9 +7,10 @@ import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { LoadingState } from "@/shared/components/LoadingState";
 import {
+  findLeaseInterestForParcel,
   getLeaseInterestDocumentChecklist,
-  getOrCreateLeaseInterestDraft,
   saveLeaseInterestDraft,
+  startLeaseInterestDraft,
   submitLeaseInterest,
 } from "../services/citizenWorkspaceApi";
 import {
@@ -22,6 +23,7 @@ import {
 } from "../utils/leaseInterestEligibility";
 import { proposalWithParcelArea } from "../utils/leaseInterestProposal";
 import {
+  isLeaseInterestDraftStatus,
   leaseInterestApplicantOutcome,
   leaseInterestStatusLabel,
 } from "../utils/leaseInterestStatus";
@@ -71,6 +73,15 @@ function emptyDraft(): UpsertLeaseInterestDraft {
   };
 }
 
+/** Maps stored start-period text to a value accepted by <input type="date">. */
+function toDateInputValue(value: string): string {
+  const trimmed = value.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return trimmed;
+  }
+  return "";
+}
+
 export function LeaseInterestFormView({
   parcelId,
   onReviewStepChange,
@@ -88,39 +99,66 @@ export function LeaseInterestFormView({
   const [checklist, setChecklist] =
     useState<LeaseInterestDocumentChecklist | null>(null);
   const [loading, setLoading] = useState(true);
+  const [starting, setStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<string[]>([]);
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitSuccessOpen, setSubmitSuccessOpen] = useState(false);
   const [spatialConstraints, setSpatialConstraints] = useState<
     Awaited<ReturnType<typeof getParcelConstraints>>
   >([]);
   const idempotencyKeyRef = useRef<string | null>(null);
+  const redirectedSubmittedRef = useRef(false);
 
-  const readOnly = request != null && request.status !== 1;
+  const readOnly = request != null && !isLeaseInterestDraftStatus(request.status);
+
+  const applyExistingRequest = useCallback(
+    (
+      existing: LeaseInterestRequestDetail,
+      parcelRes: LandParcelResponse,
+    ) => {
+      setRequest(existing);
+      setDraft({
+        applicant: existing.applicant,
+        proposal: proposalWithParcelArea(existing.proposal, parcelRes),
+        supporting: existing.supporting,
+        consentToPreliminaryAssessment: existing.consentToPreliminaryAssessment,
+      });
+      setDirty(false);
+    },
+    [],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
+    redirectedSubmittedRef.current = false;
     try {
       const parcelRes = await getParcelById(parcelId);
       const constraintsRes = await getParcelConstraints(parcelId);
-      const [draftRes, checklistRes] = await Promise.all([
-        getOrCreateLeaseInterestDraft(parcelId),
+      const [existing, checklistRes] = await Promise.all([
+        findLeaseInterestForParcel(parcelId),
         getLeaseInterestDocumentChecklist(),
       ]);
       setParcel(parcelRes);
       setSpatialConstraints(constraintsRes);
-      setRequest(draftRes);
-      setDraft({
-        applicant: draftRes.applicant,
-        proposal: proposalWithParcelArea(draftRes.proposal, parcelRes),
-        supporting: draftRes.supporting,
-        consentToPreliminaryAssessment: draftRes.consentToPreliminaryAssessment,
-      });
       setChecklist(checklistRes);
-      setDirty(false);
+
+      if (existing && !isLeaseInterestDraftStatus(existing.status)) {
+        redirectedSubmittedRef.current = true;
+        router.replace(`/land-intelligence/my-requests/${existing.id}`);
+        return;
+      }
+
+      if (existing) {
+        applyExistingRequest(existing, parcelRes);
+      } else {
+        setRequest(null);
+        setDraft(emptyDraft());
+        setDirty(false);
+      }
     } catch (err) {
       if (err instanceof ApiClientError) {
         setError(err.detail || err.title);
@@ -132,7 +170,7 @@ export function LeaseInterestFormView({
     } finally {
       setLoading(false);
     }
-  }, [parcelId]);
+  }, [parcelId, router, applyExistingRequest]);
 
   useEffect(() => {
     void load();
@@ -141,6 +179,47 @@ export function LeaseInterestFormView({
   useEffect(() => {
     onReviewStepChange?.(step === 3);
   }, [step, onReviewStepChange]);
+
+  useEffect(() => {
+    if (!submitSuccessOpen) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSubmitSuccessOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [submitSuccessOpen]);
+
+  async function handleStartRequest() {
+    if (starting || request) {
+      return;
+    }
+    setStarting(true);
+    setError(null);
+    setFieldErrors([]);
+    try {
+      const created = await startLeaseInterestDraft(parcelId);
+      if (!parcel) {
+        const parcelRes = await getParcelById(parcelId);
+        setParcel(parcelRes);
+        applyExistingRequest(created, parcelRes);
+      } else {
+        applyExistingRequest(created, parcel);
+      }
+      setStep(0);
+    } catch (err) {
+      if (err instanceof ApiClientError) {
+        setError(err.detail || err.title);
+      } else {
+        setError("Could not start a lease interest request.");
+      }
+    } finally {
+      setStarting(false);
+    }
+  }
 
   useEffect(() => {
     if (!dirty) {
@@ -201,6 +280,7 @@ export function LeaseInterestFormView({
       setRequest(updated);
       setDirty(false);
       setStep(3);
+      setSubmitSuccessOpen(true);
     } catch (err) {
       if (err instanceof ApiClientError && err.errors?.length) {
         setFieldErrors(err.errors);
@@ -272,12 +352,59 @@ export function LeaseInterestFormView({
     };
   }, [projectLeaseReady]);
 
-  if (loading) {
-    return <LoadingState message="Loading lease interest form…" />;
+  if (loading || redirectedSubmittedRef.current) {
+    return (
+      <LoadingState
+        message={
+          redirectedSubmittedRef.current
+            ? "Opening request status…"
+            : "Loading lease interest form…"
+        }
+      />
+    );
   }
 
   if (error && !parcel) {
     return <ErrorMessage message={error} />;
+  }
+
+  if (!request) {
+    return (
+      <div className={styles.layout}>
+        <section className={styles.panel} aria-label="Start lease interest">
+          <p className={styles.notice} role="note">
+            <strong>{leaseAvailabilityNotice.lead}</strong>{" "}
+            {leaseAvailabilityNotice.body}
+          </p>
+          {eligibilityBlock ? (
+            <p className={styles.notice} role="alert">
+              <strong>Cannot start request.</strong> {eligibilityBlock.message}
+            </p>
+          ) : null}
+          {error ? <ErrorMessage message={error} /> : null}
+          <p className={styles.notice}>
+            Opening this page does not create a request. Start only when you are
+            ready to fill in applicant and proposal details.
+          </p>
+          <div className={styles.actions}>
+            <Button
+              type="button"
+              variant="primary"
+              disabled={starting || Boolean(eligibilityBlock)}
+              onClick={() => void handleStartRequest()}
+            >
+              {starting ? "Starting…" : "Start request"}
+            </Button>
+            <Button href={`/land-intelligence/parcels/${parcelId}`} variant="ghost">
+              Back to parcel
+            </Button>
+            <Button href="/land-intelligence/my-requests" variant="ghost">
+              My requests
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
   }
 
   return (
@@ -294,7 +421,7 @@ export function LeaseInterestFormView({
           </p>
         ) : null}
 
-        {readOnly && request ? (
+        {readOnly ? (
           <>
             <p className={styles.notice} role="status">
               Reference:{" "}
@@ -591,10 +718,10 @@ export function LeaseInterestFormView({
               <label htmlFor="start">Desired start period</label>
               <input
                 id="start"
+                type="date"
                 className={styles.input}
                 disabled={readOnly}
-                placeholder="e.g. 2027-Q2"
-                value={draft.proposal.desiredStartPeriod}
+                value={toDateInputValue(draft.proposal.desiredStartPeriod)}
                 onChange={(e) =>
                   patchDraft({
                     proposal: {
@@ -812,11 +939,17 @@ export function LeaseInterestFormView({
                   <dd>{claimantDisplay}</dd>
                 </>
               ) : null}
-              <dt>Lease availability</dt>
+              <dt>Lease availability (official)</dt>
               <dd>
                 {parcel.availability?.actualLeaseAvailabilityLabel ??
                   "Not verified"}
               </dd>
+              {parcel.availability?.projectLeaseReady ? (
+                <>
+                  <dt>Project designation</dt>
+                  <dd>{parcel.availability.projectLeaseReady.designationLabel}</dd>
+                </>
+              ) : null}
             </dl>
             <details className={styles.sideTechnical}>
               <summary>Technical identifiers</summary>
@@ -836,6 +969,46 @@ export function LeaseInterestFormView({
           </>
         ) : null}
       </aside>
+
+      {submitSuccessOpen && request.acknowledgementReference ? (
+        <div
+          className={styles.modalOverlay}
+          role="presentation"
+          onClick={() => setSubmitSuccessOpen(false)}
+        >
+          <div
+            className={styles.modalDialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="lease-interest-submit-success-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2
+              id="lease-interest-submit-success-title"
+              className={styles.successTitle}
+            >
+              Submitted for preliminary verification
+            </h2>
+            <p className={styles.successBody}>
+              Your acknowledgement reference is{" "}
+              <strong>{request.acknowledgementReference}</strong>. You can track
+              progress from My requests.
+            </p>
+            <div className={styles.modalActions}>
+              <Button href="/land-intelligence/my-requests" variant="primary">
+                View my requests
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setSubmitSuccessOpen(false)}
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

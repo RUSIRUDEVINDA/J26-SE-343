@@ -93,7 +93,7 @@ public sealed class LandParcelsController : ControllerBase
             cancellationToken);
 
         return Ok(options
-            .Select(option => new SourceReportedLandUseOptionResponse(option.Code, option.EnglishLabel))
+            .Select(option => new SourceReportedLandUseOptionResponse(option.Code, option.EnglishLabel, option.ParcelCount))
             .ToList());
     }
 

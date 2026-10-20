@@ -1,7 +1,11 @@
 import { areaUnitLabels } from "./enumMappings";
 import { AreaUnit } from "../types/landIntelligence";
 
-/** Formats the rule-based suitability score (0–100 scale from the API). Not a probability. */
+/**
+ * Formats the recommendation match score (0–100 across assessed search criteria).
+ * Displays "100" only for an exact 100 — never rounds a near-perfect average up.
+ * Not a probability of lease suitability or legal approval.
+ */
 export function formatRuleScore(score: number): string {
   if (Number.isNaN(score)) {
     return "Unavailable";
