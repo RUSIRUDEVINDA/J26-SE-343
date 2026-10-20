@@ -24,6 +24,7 @@ public class VerifiedFactSnapshotTests
     private readonly SpyDocumentAnalysisRepository _analysisRepository;
     private readonly SpyLeaseCaseRepository _leaseCaseRepository;
     private readonly SpyWorkflowGovernanceUnitOfWork _unitOfWork;
+    private readonly StateLandGovernance.WorkflowGovernance.Infrastructure.Repositories.InMemoryGovernedDocumentRepository _documents = new();
     private readonly FakeTimeProvider _timeProvider;
     private readonly DateTime _fixedUtcTime;
 
@@ -50,7 +51,7 @@ public class VerifiedFactSnapshotTests
             _leaseCaseRepository,
             _analysisRepository,
             _unitOfWork,
-            new LinkVerifiedFactSnapshotToCaseCommandValidator());
+            new LinkVerifiedFactSnapshotToCaseCommandValidator(), _documents);
 
         _getSnapshotByIdHandler = new GetVerifiedFactSnapshotByIdQueryHandler(_analysisRepository);
         _getCurrentFactsForCaseHandler = new GetCurrentVerifiedFactsForCaseQueryHandler(
@@ -332,6 +333,14 @@ public class VerifiedFactSnapshotTests
             analysis.Revision));
 
         var leaseCase = CreateCase(Guid.NewGuid());
+
+        var submitter = leaseCase.CreatedByActorId;
+        var submissionAuthority = new VerifiedAuthoritySnapshot(submitter, ["DocumentSubmitter"],
+            new(AuthorityScopeKind.LeaseCase, leaseCase.Id.Value.ToString("D")), _fixedUtcTime.AddHours(-3),
+            _fixedUtcTime.AddHours(-2), _fixedUtcTime.AddHours(1));
+        await _documents.AddAsync(new GovernedDocument(analysis.GovernedDocumentId, leaseCase.Id, "Proposal", analysis.DocumentVersionId,
+            analysis.DocumentChecksum, new("TEST_ONLY/proposal.pdf"), "TEST_ONLY.pdf", "application/pdf", 1,
+            submitter, _fixedUtcTime.AddHours(-1), submissionAuthority));
 
         var linkCommand = new LinkVerifiedFactSnapshotToCaseCommand(
             LeaseCaseId: leaseCase.Id.Value,
