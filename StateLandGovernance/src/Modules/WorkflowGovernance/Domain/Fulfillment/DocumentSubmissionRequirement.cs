@@ -15,6 +15,7 @@ public sealed class DocumentSubmissionRequirement
     public FulfillmentStatus Status { get; private set; }
     public GovernedDocumentId? FulfilledByDocumentId { get; private set; }
     public DateTime? FulfilledAtUtc { get; private set; }
+    public FulfillmentWaiver? Waiver { get; private set; }
 
     public DocumentSubmissionRequirement(
         Guid id,
@@ -23,7 +24,8 @@ public sealed class DocumentSubmissionRequirement
         DateTime dueDateUtc,
         FulfillmentStatus status = FulfillmentStatus.Pending,
         GovernedDocumentId? fulfilledByDocumentId = null,
-        DateTime? fulfilledAtUtc = null)
+        DateTime? fulfilledAtUtc = null,
+        FulfillmentWaiver? waiver = null)
     {
         if (id == Guid.Empty)
         {
@@ -42,6 +44,15 @@ public sealed class DocumentSubmissionRequirement
         Status = status;
         FulfilledByDocumentId = fulfilledByDocumentId;
         FulfilledAtUtc = fulfilledAtUtc;
+        Waiver = waiver;
+    }
+
+    internal void Waive(StateLandGovernance.WorkflowGovernance.Domain.Authority.VerifiedAuthoritySnapshot authority,
+        string reason, string evidenceReference, DateTime at)
+    {
+        var waiver = FulfillmentWaiver.Create(LeaseCaseId, Status, authority, reason, evidenceReference, at);
+        Waiver = waiver;
+        Status = FulfillmentStatus.Waived;
     }
 
     public void FulfillWithDocument(GovernedDocumentId documentId, DateTime fulfilledAt)

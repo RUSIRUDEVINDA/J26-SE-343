@@ -1,3 +1,4 @@
+import { developmentToken } from "../../../lib/developmentSession";
 import { getLandIntelligenceOwnerId } from "./landIntelligenceOwner";
 
 const APPLICANT_TOKEN_KEY = "component01.landIntelligence.applicantAccessToken";
@@ -8,6 +9,7 @@ type SessionProfile = "applicant" | "officer" | "internal";
 function apiBaseUrl(): string {
   const base = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
   if (!base) {
+    if (typeof window !== "undefined" && ["localhost", "127.0.0.1"].includes(window.location.hostname)) return "http://localhost:5264";
     throw new Error("NEXT_PUBLIC_API_BASE_URL is not configured.");
   }
   return base;
@@ -18,7 +20,14 @@ function readToken(storageKey: string): string | null {
     return null;
   }
   const value = window.sessionStorage.getItem(storageKey);
-  return value && value.length > 0 ? value : null;
+  if (!value) return null;
+  try {
+    const payload = JSON.parse(atob(value.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+    if (typeof payload.exp !== "number" || payload.exp * 1000 <= Date.now() + 30000) {
+      window.sessionStorage.removeItem(storageKey); return null;
+    }
+  } catch { window.sessionStorage.removeItem(storageKey); return null; }
+  return value;
 }
 
 function writeToken(storageKey: string, token: string): void {
@@ -52,6 +61,8 @@ async function mintDevelopmentSession(
 }
 
 export async function ensureApplicantAccessToken(): Promise<string | null> {
+  const local = await developmentToken();
+  if (local.enabled) return local.token;
   if (typeof window === "undefined") {
     return null;
   }
@@ -74,6 +85,8 @@ export async function ensureApplicantAccessToken(): Promise<string | null> {
 }
 
 export async function ensureOfficerAccessToken(): Promise<string | null> {
+  const local = await developmentToken();
+  if (local.enabled) return local.token;
   if (typeof window === "undefined") {
     return null;
   }

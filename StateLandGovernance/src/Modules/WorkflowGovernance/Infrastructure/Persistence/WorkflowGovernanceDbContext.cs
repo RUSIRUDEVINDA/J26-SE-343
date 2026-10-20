@@ -18,6 +18,7 @@ public class WorkflowGovernanceDbContext : DbContext
     }
 
     public DbSet<LeaseCaseEntity> LeaseCases => Set<LeaseCaseEntity>();
+    public DbSet<CompletenessDefinitionEntity> CompletenessDefinitions => Set<CompletenessDefinitionEntity>();
     public DbSet<GovernedDocumentEntity> GovernedDocuments => Set<GovernedDocumentEntity>();
     public DbSet<DocumentVersionEntity> DocumentVersions => Set<DocumentVersionEntity>();
     public DbSet<DocumentAnalysisEntity> DocumentAnalyses => Set<DocumentAnalysisEntity>();
@@ -29,9 +30,25 @@ public class WorkflowGovernanceDbContext : DbContext
     public DbSet<WorkflowExecutionEntity> WorkflowExecutions => Set<WorkflowExecutionEntity>();
     public DbSet<InstitutionalRoutingConfigEntity> InstitutionalRoutingConfigs => Set<InstitutionalRoutingConfigEntity>();
 
+    public DbSet<CaseAssignmentEntity> CaseAssignments => Set<CaseAssignmentEntity>();
+    public DbSet<IntakeJurisdictionPolicyEntity> IntakeJurisdictionPolicies => Set<IntakeJurisdictionPolicyEntity>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(WorkflowGovernanceDbContext).Assembly);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        ChangeTracker.DetectChanges();
+        if (ChangeTracker.Entries<IntakeJurisdictionPolicyEntity>().Any(x => x.State is EntityState.Modified or EntityState.Deleted))
+            throw new InvalidOperationException("Jurisdiction policies are append-only. Publish a new version.");
+        if (ChangeTracker.Entries<InstitutionalRoutingConfigEntity>().Any(x => x.State is EntityState.Modified or EntityState.Deleted))
+            throw new InvalidOperationException("Routing definitions are append-only. Publish a new version.");
+        if (ChangeTracker.Entries<CompletenessDefinitionEntity>().Any(x =>
+            x.State is EntityState.Modified or EntityState.Deleted))
+            throw new InvalidOperationException("Completeness definitions are append-only. Publish a new version.");
+        return base.SaveChangesAsync(cancellationToken);
     }
 }

@@ -19,4 +19,7 @@ public sealed record DocumentIntelligenceRequest(
     IReadOnlyList<string> RequestedCapabilities,
     string? LanguageHint = null,
     string? SemanticProvider = null
-);
+)
+{
+    public Guid AnalysisRunId { get; init; } = Guid.NewGuid();
+}

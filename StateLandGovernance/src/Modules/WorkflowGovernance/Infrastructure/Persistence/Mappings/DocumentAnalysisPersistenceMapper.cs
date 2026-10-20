@@ -125,7 +125,8 @@ internal static class DocumentAnalysisPersistenceMapper
                 SnapshotOutcome = s.SnapshotOutcome.ToString(),
                 EntriesJson = PersistenceJsonSerializer.Serialize(s.Entries.Select(e => new VerifiedFactEntryDto
                 {
-                    SourceExtractedFactId = e.SourceExtractedFactId.Value,
+                    SourceExtractedFactId = e.SourceExtractedFactId?.Value,
+                    HumanEvidence = e.HumanEvidence,
                     VerificationId = e.VerificationId.Value,
                     FactCode = e.FactCode.Value,
                     EffectiveValueKind = e.EffectiveValue.Kind.ToString(),
@@ -266,7 +267,7 @@ internal static class DocumentAnalysisPersistenceMapper
 
         // Rehydrate snapshots
         var snapshots = new List<VerifiedFactSnapshot>();
-        foreach (var s in entity.VerifiedFactSnapshots)
+        foreach (var s in entity.VerifiedFactSnapshots.OrderBy(s => s.PublishedAt).ThenBy(s => s.Id))
         {
             snapshots.Add(ToDomainSnapshot(s));
         }
@@ -303,7 +304,8 @@ internal static class DocumentAnalysisPersistenceMapper
         var entries = entryDtos.Select(ed =>
         {
             var entry = AggregateRehydrator.Create<VerifiedFactEntry>();
-            AggregateRehydrator.SetPropertyBackingField(entry, nameof(VerifiedFactEntry.SourceExtractedFactId), new ExtractedFactId(ed.SourceExtractedFactId));
+            AggregateRehydrator.SetPropertyBackingField(entry, nameof(VerifiedFactEntry.SourceExtractedFactId), ed.SourceExtractedFactId.HasValue ? new ExtractedFactId(ed.SourceExtractedFactId.Value) : null);
+            AggregateRehydrator.SetPropertyBackingField(entry, nameof(VerifiedFactEntry.HumanEvidence), ed.HumanEvidence);
             AggregateRehydrator.SetPropertyBackingField(entry, nameof(VerifiedFactEntry.VerificationId), new HumanFactVerificationId(ed.VerificationId));
             AggregateRehydrator.SetPropertyBackingField(entry, nameof(VerifiedFactEntry.FactCode), new FactCode(ed.FactCode));
             AggregateRehydrator.SetPropertyBackingField(entry, nameof(VerifiedFactEntry.EffectiveValue), new AnalysisFactValue(Enum.Parse<AnalysisFactValueKind>(ed.EffectiveValueKind), ed.EffectiveValueCanonical));
@@ -501,7 +503,8 @@ internal static class DocumentAnalysisPersistenceMapper
 
     private sealed class VerifiedFactEntryDto
     {
-        public Guid SourceExtractedFactId { get; set; }
+        public Guid? SourceExtractedFactId { get; set; }
+        public HumanEvidenceFact? HumanEvidence { get; set; }
         public Guid VerificationId { get; set; }
         public string FactCode { get; set; } = string.Empty;
         public string EffectiveValueKind { get; set; } = string.Empty;

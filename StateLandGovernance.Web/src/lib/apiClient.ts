@@ -1,3 +1,4 @@
+import { developmentToken, readDevelopmentSession, clearDevelopmentSession } from "./developmentSession";
 import type { ApiErrorResponse } from "@/shared/types/common";
 import {
   ensureApplicantAccessToken,
@@ -49,9 +50,9 @@ function ensureBaseUrl(): string {
 async function resolveAccessToken(
   authRole: LandIntelligenceApiAuthRole,
 ): Promise<string | null> {
-  if (authRole === "none") {
-    return null;
-  }
+  if (authRole === "none") return typeof window !== "undefined" ? readDevelopmentSession()?.accessToken ?? null : null;
+  const local = await developmentToken();
+  if (local.enabled) return local.token;
   if (authRole === "officer") {
     return await ensureOfficerAccessToken();
   }
@@ -77,23 +78,20 @@ async function mergeHeaders(
   };
 }
 
-async function parseError(response: Response): Promise<ApiClientError> {
-  try {
-    const body = (await response.json()) as ApiErrorResponse;
-
-    return new ApiClientError({
-      status: body.status ?? response.status,
-      title: body.title ?? response.statusText,
-      detail: body.detail ?? "Request failed.",
-      errors: body.errors,
-    });
-  } catch {
-    return new ApiClientError({
-      status: response.status,
-      title: response.statusText,
-      detail: "Request failed.",
-    });
-  }
+export async function parseError(response: Response): Promise<ApiClientError> {
+  if (response.status === 401 && typeof window !== "undefined" && readDevelopmentSession()) clearDevelopmentSession();
+  let body: Record<string, unknown> = {};
+  try { const parsed = await response.json(); body = parsed && typeof parsed === "object" ? parsed : {}; } catch { /* Empty HTTP error responses are valid. */ }
+  const reference = typeof body.traceId === "string" ? body.traceId : response.headers.get("X-Correlation-ID");
+  const fallback = response.status === 401 ? "Sign in to continue."
+    : response.status === 403 ? "Required access or case/institution assignment is missing. Ask the case administrator to verify your access."
+    : response.status >= 500 ? `The service could not complete this request.${reference ? ` Error reference: ${reference}` : " Please contact support."}`
+    : "The request could not be completed. Check the case prerequisites and try again.";
+  return new ApiClientError({ status: response.status,
+    title: typeof body.title === "string" ? body.title : response.statusText,
+    detail: response.status === 401 || response.status === 403 || response.status >= 500 ? fallback
+      : typeof body.detail === "string" ? body.detail : typeof body.error === "string" ? body.error : fallback,
+    errors: Array.isArray(body.errors) ? body.errors : undefined });
 }
 
 export async function apiGet<T>(
@@ -179,6 +177,7 @@ export async function apiPostFormData<T>(
   path: string,
   formData: FormData,
   init?: RequestInit,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
@@ -191,7 +190,7 @@ export async function apiPostFormData<T>(
       headers: await mergeHeaders({
         Accept: "application/json",
         ...init?.headers,
-      }),
+      }, authRole),
       body: formData,
     });
   } catch {
@@ -265,4 +264,30 @@ export async function apiDelete(
   if (!response.ok) {
     throw await parseError(response);
   }
+}
+
+export async function apiDownloadBlob(
+  path: string,
+  authRole: LandIntelligenceApiAuthRole = "officer",
+  init?: RequestInit,
+): Promise<Blob> {
+  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
+  const response = await fetch(url, {
+    ...init,
+    method: "GET",
+    headers: await mergeHeaders(
+      {
+        Accept: "*/*",
+        ...init?.headers,
+      },
+      authRole
+    ),
+  });
+
+  if (!response.ok) {
+    throw await parseError(response);
+  }
+
+  return await response.blob();
 }

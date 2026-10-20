@@ -278,7 +278,7 @@ public sealed class DocumentAnalysisExecutionService : IDocumentAnalysisExecutio
                 RequestedCapabilities: run.RequestedCapabilities.Select(c => c.Value).ToList(),
                 LanguageHint: normalizedLanguage,
                 SemanticProvider: effectiveProvider
-            );
+            ) { AnalysisRunId = analysisRunId };
 
             // Execute external document intelligence:
             // The adapter performs a single source byte read, verifies last-mile SHA-256 over exact bytes,
