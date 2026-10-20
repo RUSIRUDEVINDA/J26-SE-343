@@ -162,7 +162,7 @@ internal static class DocumentCompletenessAssessmentPersistenceMapper
         var reviews = reviewDtos.Select(rv => new ClassificationReview(
             new ClassificationReviewId(rv.Id),
             new ClassifiedDocumentId(rv.ClassifiedDocumentId),
-            null, // original classification is checked in domain method, ctor accepts it or we can pass null
+            classifiedDocs.Single(c => c.Id.Value == rv.ClassifiedDocumentId).OriginalClassificationCode,
             Enum.Parse<ClassificationReviewDecision>(rv.Decision),
             rv.CorrectedClassificationCode is null ? null : new DocumentClassificationCode(rv.CorrectedClassificationCode),
             rv.Reason,

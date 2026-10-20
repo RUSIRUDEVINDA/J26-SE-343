@@ -29,6 +29,40 @@ public class OngoingFulfillmentTests
         return new LeaseCase(leaseCaseId, "APP-123", actorId, actionTime, authority);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Waiver_AuthorizedCurrentCase_PreservesSourceAndDoesNotApprove(bool condition)
+    {
+        var c = CreateLeaseCase(); var now = DateTime.UtcNow;
+        var id = condition ? c.AddApprovalCondition(new("DS"), "Test condition").Id
+            : c.AddDocumentSubmissionRequirement(new("TEST"), now.AddDays(1)).Id;
+        var actor = Guid.NewGuid();
+        var authority = new VerifiedAuthoritySnapshot(actor, new[] { "FulfillmentWaiver" },
+            new(AuthorityScopeKind.LeaseCase, c.Id.Value.ToString("D")), now.AddMinutes(-1), now, now.AddMinutes(1));
+        var revision = c.Revision;
+        Assert.Throws<InvalidFulfillmentException>(() => c.WaiveFulfillment(id, condition, revision + 1, authority, "not applicable", "review:test", now));
+        c.WaiveFulfillment(id, condition, revision, authority, "not applicable", "review:test", now);
+        var waiver = condition ? c.ApprovalConditions.Single().Waiver : c.DocumentSubmissionRequirements.Single().Waiver;
+        Assert.Equal(actor, waiver!.ActorId); Assert.Equal("review:test", waiver.EvidenceReference);
+        Assert.Equal(FulfillmentStatus.Pending, waiver.PreviousStatus);
+        Assert.Equal(revision + 1, c.Revision); Assert.Equal(StateLandGovernance.WorkflowGovernance.Domain.Handoff.LeaseCaseStatus.Draft, c.Status);
+        Assert.Contains(c.DomainEvents, e => e is FulfillmentWaived);
+        Assert.Throws<InvalidFulfillmentException>(() => c.WaiveFulfillment(id, condition, c.Revision, authority, "again", "review:test", now));
+        Assert.Throws<InvalidFulfillmentException>(() => { if (condition) c.FulfillCondition(id, now); else c.FulfillDocumentRequirement(id, new(Guid.NewGuid()), now); });
+    }
+
+    [Fact]
+    public void Waiver_WithoutCapability_DoesNotChangeObligation()
+    {
+        var c = CreateLeaseCase(); var now = DateTime.UtcNow;
+        var requirement = c.AddDocumentSubmissionRequirement(new("TEST"), now.AddDays(1));
+        var authority = new VerifiedAuthoritySnapshot(Guid.NewGuid(), new[] { "LeaseInitiator" },
+            new(AuthorityScopeKind.LeaseCase, c.Id.Value.ToString("D")), now.AddMinutes(-1), now, now.AddMinutes(1));
+        Assert.Throws<MissingVerifiedAuthorityException>(() => c.WaiveFulfillment(requirement.Id, false, c.Revision, authority, "reason", "source", now));
+        Assert.Equal(FulfillmentStatus.Pending, requirement.Status); Assert.Null(requirement.Waiver);
+    }
+
     [Fact]
     public void LeaseCase_Can_Add_And_Fulfill_Approval_Condition()
     {

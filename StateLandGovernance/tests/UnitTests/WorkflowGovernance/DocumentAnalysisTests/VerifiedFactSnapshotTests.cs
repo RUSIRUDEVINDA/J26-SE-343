@@ -62,6 +62,44 @@ public class VerifiedFactSnapshotTests
     }
 
     [Fact]
+    public void HumanEvidence_Publication_PreservesPriorSnapshotAndHasNoExtractionIdentity()
+    {
+        CompleteRunWithNoFindings();
+        var baseId = new VerifiedFactSnapshotId(Guid.NewGuid());
+        _analysis.PublishVerifiedFactSnapshot(baseId, _resultId, _actorId, _utcNow, _authority);
+        var authority = new VerifiedAuthoritySnapshot(_actorId, new[] { "HumanEvidenceReviewer", "FactSnapshotPublisher" },
+            _authority.Scope, _authority.ValidFrom, _authority.VerificationTime, _authority.ValidUntil);
+        var evidence = new HumanEvidenceFact(Guid.NewGuid(), _analysis.GovernedDocumentId, _analysis.DocumentVersionId,
+            _analysis.DocumentChecksum, new("district"), new(AnalysisFactValueKind.Text, "TEST-ONLY district"), 5,
+            "TEST-ONLY source quote", "Reviewed exact page", _actorId, _utcNow.AddMinutes(1), authority);
+        var newId = new VerifiedFactSnapshotId(Guid.NewGuid());
+        _analysis.PublishHumanEvidenceSnapshot(baseId, newId, new[] { evidence }, _analysis.Revision,
+            _actorId, _utcNow.AddMinutes(1), authority);
+        Assert.Equal(2, _analysis.VerifiedFactSnapshots.Count);
+        Assert.Empty(_analysis.VerifiedFactSnapshots.First().Entries);
+        var entry = _analysis.VerifiedFactSnapshots.Last().Entries.Single();
+        Assert.Null(entry.SourceExtractedFactId); Assert.Equal("HumanDocumentEvidence", entry.SourceKind);
+        Assert.Equal(evidence.Id, entry.HumanEvidence!.Id); Assert.Empty(_analysis.Runs.Single().Result!.ExtractedFacts);
+        var restored = StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Mappings.DocumentAnalysisPersistenceMapper.ToDomain(
+            StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence.Mappings.DocumentAnalysisPersistenceMapper.ToPersistence(_analysis));
+        var restoredEntry = restored.VerifiedFactSnapshots.Last().Entries.Single();
+        Assert.Null(restoredEntry.SourceExtractedFactId); Assert.Equal(evidence.Id, restoredEntry.HumanEvidence!.Id);
+        Assert.Equal(evidence.Quote, restoredEntry.HumanEvidence.Quote);
+        Assert.True(_analysis.VerifiedFactSnapshots.Last().IsCanonicallyEquivalentTo(restored.VerifiedFactSnapshots.Last()));
+
+        Assert.Throws<InvalidVerifiedFactSnapshotException>(() => _analysis.PublishHumanEvidenceSnapshot(newId,
+            new(Guid.NewGuid()), new[] { evidence }, _analysis.Revision, _actorId, _utcNow.AddMinutes(2), authority));
+    }
+
+    [Fact]
+    public void HumanEvidence_WithoutDocumentReviewerAuthority_IsRejected()
+    {
+        Assert.Throws<MissingVerifiedAuthorityException>(() => new HumanEvidenceFact(Guid.NewGuid(), _analysis.GovernedDocumentId,
+            _analysis.DocumentVersionId, _analysis.DocumentChecksum, new("district"), new(AnalysisFactValueKind.Text, "test"),
+            1, "quote", "reason", _actorId, _utcNow, _authority));
+    }
+
+    [Fact]
     public void PublishSnapshot_ConfirmedFact_UsesOriginalValue()
     {
         var input = CreateFactInput("C1", new AnalysisFactValue(AnalysisFactValueKind.Text, "Orig"));
@@ -182,8 +220,8 @@ public class VerifiedFactSnapshotTests
         _analysis.PublishVerifiedFactSnapshot(new VerifiedFactSnapshotId(Guid.NewGuid()), _resultId, _actorId, _utcNow, _authority);
 
         var snapshot = _analysis.VerifiedFactSnapshots.Single();
-        Assert.Equal(id2, snapshot.Entries.First().SourceExtractedFactId.Value);
-        Assert.Equal(id1, snapshot.Entries.Last().SourceExtractedFactId.Value);
+        Assert.Equal(id2, snapshot.Entries.First().SourceExtractedFactId?.Value);
+        Assert.Equal(id1, snapshot.Entries.Last().SourceExtractedFactId?.Value);
     }
 
     [Fact]
