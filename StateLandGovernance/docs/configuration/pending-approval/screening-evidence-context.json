@@ -1,0 +1,8 @@
+{
+  "version": null,
+  "governanceJson": null,
+  "spatialReviewJson": null,
+  "missingInputs": ["Authoritative governance/spatial evidence and case-to-parcel association have not been supplied."],
+  "boundCaseId": null,
+  "boundParcelId": null
+}
