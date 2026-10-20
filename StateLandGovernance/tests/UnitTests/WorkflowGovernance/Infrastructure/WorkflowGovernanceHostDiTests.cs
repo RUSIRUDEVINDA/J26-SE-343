@@ -94,6 +94,8 @@ public sealed class WorkflowGovernanceHostDiTests
             && configuration.GetValue<bool>("WorkflowGovernance:OcrDemo:Enabled", false);
 
         // 2. Supply durable repository placeholders that production provides (Batch 4B)
+        services.AddScoped<ICorrectionRepository>(_ => null!);
+        services.AddScoped<ICorrectionSubmissionTransaction>(_ => null!);
         services.AddScoped<ILeaseCaseRepository>(_ => null!);
         services.AddScoped<IWorkflowGovernanceUnitOfWork>(_ => null!);
         services.AddScoped<IGovernedDocumentRepository>(_ => null!);
