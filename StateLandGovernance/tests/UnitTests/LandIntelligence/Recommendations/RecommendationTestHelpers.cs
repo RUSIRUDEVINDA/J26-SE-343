@@ -322,6 +322,14 @@ internal sealed class FakeLandParcelRepository : ILandParcelRepository
             query = query.Where(p => p.Location.District.Equals(request.District, StringComparison.OrdinalIgnoreCase));
         }
 
+        if (!string.IsNullOrWhiteSpace(request.CadastralNumber))
+        {
+            query = query.Where(p =>
+                p.Identifier.CadastralNumber.Equals(
+                    request.CadastralNumber.Trim(),
+                    StringComparison.OrdinalIgnoreCase));
+        }
+
         if (request.CategoryType is not null)
         {
             query = query.Where(p => p.Category.Type == request.CategoryType);

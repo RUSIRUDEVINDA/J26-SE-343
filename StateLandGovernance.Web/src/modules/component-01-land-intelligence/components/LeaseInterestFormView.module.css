@@ -345,6 +345,15 @@
   box-shadow: 0 12px 40px rgba(28, 25, 23, 0.22);
 }
 
+.modalDialog:focus {
+  outline: none;
+}
+
+.modalDialog:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .successTitle {
   margin: 0 0 0.35rem;
   font-size: 1.05rem;

@@ -16,6 +16,7 @@ public static class LandIntelligencePresentationExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<ILandIntelligenceCallerContext, LandIntelligenceCallerContext>();
         services.AddScoped<ILeaseInterestOfficerActorContext, LeaseInterestOfficerActorContext>();
+        services.AddScoped<ILeaseInterestAuthorityActorContext, LeaseInterestAuthorityActorContext>();
 
         services.AddControllers()
             .AddApplicationPart(typeof(AssemblyReference).Assembly);

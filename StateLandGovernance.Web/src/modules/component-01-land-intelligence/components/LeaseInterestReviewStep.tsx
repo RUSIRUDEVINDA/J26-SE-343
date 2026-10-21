@@ -8,6 +8,7 @@ import type {
   UpsertLeaseInterestDraft,
 } from "../types/landIntelligence";
 import { AreaUnit } from "../types/landIntelligence";
+import { isSupportedLandUseType } from "../types/landIntelligence";
 import { landUseTypeLabels } from "../utils/enumMappings";
 import { displayOrUnknown, formatArea } from "../utils/formatters";
 import {
@@ -233,7 +234,9 @@ export function LeaseInterestReviewStep({
         <ReviewRow
           label="Requested purpose"
           value={
-            landUseTypeLabels[draft.proposal.requestedPurpose] ?? "Unknown"
+            isSupportedLandUseType(draft.proposal.requestedPurpose)
+              ? landUseTypeLabels[draft.proposal.requestedPurpose]
+              : "—"
           }
         />
         <ReviewRow

@@ -1,32 +1,67 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { PageHeading } from "@/shared/components/PageLayout";
-import { ParcelCatalog } from "@/modules/component-01-land-intelligence/components/ParcelCatalog";
+import {
+  ParcelCatalog,
+  type ParcelCatalogPageSize,
+} from "@/modules/component-01-land-intelligence/components/ParcelCatalog";
 import { ParcelDetails } from "@/modules/component-01-land-intelligence/components/ParcelDetails";
 import { SaveParcelButton } from "@/modules/component-01-land-intelligence/components/SaveParcelButton";
 import {
+  findParcelsByCadastralNumber,
+  getLandIntelligenceGisCoverage,
   getParcelById,
   getParcelConstraints,
   getParcelRelationships,
   listAllParcels,
+  listCanonicalLandUseOptions,
   listResearchSupplement,
   listSourceReportedLandUseOptions,
 } from "@/modules/component-01-land-intelligence/services/landIntelligenceApi";
 import type {
+  CanonicalLandUseOptionResponse,
+  IndexedDistrictSummaryResponse,
   LandParcelResponse,
   LandRelationshipResponse,
   LandSearchResultResponse,
   ResearchSupplementParcelResponse,
-  SourceReportedLandUseOptionResponse,
   SpatialConstraintResponse,
 } from "@/modules/component-01-land-intelligence/types/landIntelligence";
+import {
+  buildCanonicalLandUseChoices,
+  buildCanonicalLandUseFallbackOptions,
+  CANONICAL_FORM_VALUE_PREFIX,
+  normalizeLandUseFilterValue,
+} from "@/modules/component-01-land-intelligence/utils/canonicalLandUse";
+import { sourceReportedLandUseDisplay } from "@/modules/component-01-land-intelligence/utils/sourceReportedCadastre";
+import filterStyles from "./ParcelIntelligenceFilters.module.css";
+
+type AppliedFilters = {
+  district: string;
+  landUseValue: string;
+  landUseLabel: string;
+};
+
+function landUseLabelFromValue(value: string): string {
+  const normalized = normalizeLandUseFilterValue(value);
+  if (!normalized.startsWith(CANONICAL_FORM_VALUE_PREFIX)) {
+    return "";
+  }
+  return normalized.slice(CANONICAL_FORM_VALUE_PREFIX.length).trim();
+}
 
 export function ParcelIntelligenceView({
   initialParcelId = "",
@@ -36,12 +71,11 @@ export function ParcelIntelligenceView({
   showCatalog?: boolean;
 }) {
   const router = useRouter();
-  const [parcelId, setParcelId] = useState(initialParcelId);
-  const [listLoading, setListLoading] = useState(showCatalog);
-  const [detailLoading, setDetailLoading] = useState(Boolean(initialParcelId.trim()));
+  const [detailLoading, setDetailLoading] = useState(
+    Boolean(initialParcelId.trim()),
+  );
   const [relationshipsLoading, setRelationshipsLoading] = useState(false);
   const [parcels, setParcels] = useState<LandSearchResultResponse[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
   const [parcel, setParcel] = useState<LandParcelResponse | null>(null);
   const [constraints, setConstraints] = useState<SpatialConstraintResponse[]>(
     [],
@@ -49,15 +83,27 @@ export function ParcelIntelligenceView({
   const [relationships, setRelationships] = useState<
     LandRelationshipResponse[] | null
   >(null);
+  const [listLoading, setListLoading] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
-  const [districtFilter, setDistrictFilter] = useState("Colombo");
-  const [sourceLandUseFilter, setSourceLandUseFilter] = useState("");
-  const [sourceLandUseOptions, setSourceLandUseOptions] = useState<
-    SourceReportedLandUseOptionResponse[]
+  const [filtersApplied, setFiltersApplied] = useState(false);
+  const [districtDraft, setDistrictDraft] = useState("");
+  const [landUseDraft, setLandUseDraft] = useState("");
+  const [applied, setApplied] = useState<AppliedFilters | null>(null);
+  const [indexedDistricts, setIndexedDistricts] = useState<
+    IndexedDistrictSummaryResponse[]
   >([]);
-  const [supplement, setSupplement] = useState<ResearchSupplementParcelResponse[]>([]);
-  const [supplementGroupFilter, setSupplementGroupFilter] = useState("");
-  const [supplementError, setSupplementError] = useState<string | null>(null);
+  const [districtsLoading, setDistrictsLoading] = useState(showCatalog);
+  const [districtsError, setDistrictsError] = useState<string | null>(null);
+  const [canonicalOptions, setCanonicalOptions] = useState<
+    CanonicalLandUseOptionResponse[]
+  >([]);
+  const [landUseOptionsLoading, setLandUseOptionsLoading] = useState(false);
+  const [landUseOptionsError, setLandUseOptionsError] = useState<string | null>(
+    null,
+  );
+  const [supplement, setSupplement] = useState<
+    ResearchSupplementParcelResponse[]
+  >([]);
   const [detailError, setDetailError] = useState<string | null>(null);
   const [relationshipsError, setRelationshipsError] = useState<string | null>(
     null,
@@ -65,6 +111,15 @@ export function ParcelIntelligenceView({
   const [selectedId, setSelectedId] = useState<string | null>(
     initialParcelId.trim() || null,
   );
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<ParcelCatalogPageSize>(20);
+  const [cadastralQuery, setCadastralQuery] = useState("");
+  const [cadastralLoading, setCadastralLoading] = useState(false);
+  const [cadastralError, setCadastralError] = useState<string | null>(null);
+  const [cadastralEmpty, setCadastralEmpty] = useState(false);
+  const [cadastralMatches, setCadastralMatches] = useState<
+    LandSearchResultResponse[]
+  >([]);
   const loadedRouteId = useRef<string | null>(null);
 
   const loadRelationships = useCallback(async (id: string) => {
@@ -92,7 +147,7 @@ export function ParcelIntelligenceView({
     async (id: string, navigate = true) => {
       const trimmed = id.trim();
       if (!trimmed) {
-        setDetailError("Enter a parcel UUID.");
+        setDetailError("Enter a cadastral number to find a parcel.");
         return;
       }
       setDetailLoading(true);
@@ -102,7 +157,6 @@ export function ParcelIntelligenceView({
       setRelationships(null);
       setRelationshipsError(null);
       setSelectedId(trimmed);
-      setParcelId(trimmed);
       try {
         const [parcelResult, constraintsResult] = await Promise.all([
           getParcelById(trimmed),
@@ -129,90 +183,24 @@ export function ParcelIntelligenceView({
     [loadRelationships, router],
   );
 
-  const loadCatalog = useCallback(async () => {
-    if (!showCatalog) {
-      return;
-    }
-    setListLoading(true);
-    setListError(null);
-    try {
-      const response = await listAllParcels({
-        district: districtFilter.trim() || undefined,
-        sourceReportedLandUse: sourceLandUseFilter.trim() || undefined,
-      });
-      setParcels(response.results);
-      setTotalCount(response.totalCount);
-    } catch (err) {
-      if (err instanceof ApiClientError) {
-        setListError(err.detail || err.title);
-      } else if (err instanceof Error) {
-        setListError(err.message);
-      } else {
-        setListError("Unable to load the parcel catalog.");
+  const loadCatalog = useCallback(
+    async (filters: AppliedFilters) => {
+      if (!showCatalog) {
+        return;
       }
-    } finally {
-      setListLoading(false);
-    }
-  }, [districtFilter, showCatalog, sourceLandUseFilter]);
-
-  useEffect(() => {
-    if (!showCatalog) {
-      return;
-    }
-    let cancelled = false;
-    listSourceReportedLandUseOptions()
-      .then((options) => {
-        if (!cancelled) {
-          setSourceLandUseOptions(options);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setSourceLandUseOptions([]);
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [showCatalog]);
-
-  useEffect(() => {
-    if (!showCatalog) return;
-    let cancelled = false;
-    listResearchSupplement()
-      .then((rows) => {
-        if (!cancelled) {
-          setSupplement(rows);
-          setSupplementError(null);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setSupplementError("Project GIS categories could not be loaded. The original cadastral land-use filter remains available.");
-      });
-    return () => { cancelled = true; };
-  }, [showCatalog]);
-
-  useEffect(() => {
-    if (!showCatalog) {
-      return;
-    }
-    let cancelled = false;
-    const run = async () => {
+      setListLoading(true);
+      setListError(null);
       try {
+        const landUseLabel = landUseLabelFromValue(filters.landUseValue);
         const response = await listAllParcels({
-          district: districtFilter.trim() || undefined,
-          sourceReportedLandUse: sourceLandUseFilter.trim() || undefined,
+          district: filters.district,
+          researchLandCoverGroup: landUseLabel || undefined,
         });
-        if (cancelled) {
-          return;
-        }
         setParcels(response.results);
-        setTotalCount(response.totalCount);
-        setListError(null);
+        setPage(1);
+        setFiltersApplied(true);
+        setApplied(filters);
       } catch (err) {
-        if (cancelled) {
-          return;
-        }
         if (err instanceof ApiClientError) {
           setListError(err.detail || err.title);
         } else if (err instanceof Error) {
@@ -220,17 +208,147 @@ export function ParcelIntelligenceView({
         } else {
           setListError("Unable to load the parcel catalog.");
         }
+        setParcels([]);
+        setFiltersApplied(false);
       } finally {
-        if (!cancelled) {
-          setListLoading(false);
-        }
+        setListLoading(false);
       }
-    };
-    void run();
+    },
+    [showCatalog],
+  );
+
+  useEffect(() => {
+    if (!showCatalog) {
+      return;
+    }
+    let cancelled = false;
+    setDistrictsLoading(true);
+    setDistrictsError(null);
+    getLandIntelligenceGisCoverage()
+      .then((coverage) => {
+        if (cancelled) {
+          return;
+        }
+        setIndexedDistricts(coverage.indexedDistricts ?? []);
+      })
+      .catch((err) => {
+        if (cancelled) {
+          return;
+        }
+        setIndexedDistricts([]);
+        setDistrictsError(
+          err instanceof ApiClientError
+            ? err.detail || err.title
+            : "Unable to load indexed districts. Try refreshing the page.",
+        );
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setDistrictsLoading(false);
+        }
+      });
     return () => {
       cancelled = true;
     };
-  }, [districtFilter, showCatalog, sourceLandUseFilter]);
+  }, [showCatalog]);
+
+  useEffect(() => {
+    if (!showCatalog) {
+      return;
+    }
+    let cancelled = false;
+    listResearchSupplement()
+      .then((rows) => {
+        if (!cancelled) {
+          setSupplement(rows);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setSupplement([]);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [showCatalog]);
+
+  useEffect(() => {
+    if (!showCatalog) {
+      return;
+    }
+    if (!districtDraft.trim()) {
+      setCanonicalOptions([]);
+      setLandUseOptionsError(null);
+      setLandUseOptionsLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    const district = districtDraft.trim();
+    setLandUseOptionsLoading(true);
+    setLandUseOptionsError(null);
+
+    // Prefer the canonical endpoint (district-scoped). If the running API does not
+    // expose it yet, fall back the same way Find Suitable Land does.
+    void (async () => {
+      try {
+        let options: CanonicalLandUseOptionResponse[] | null = null;
+        try {
+          options = await listCanonicalLandUseOptions(district);
+        } catch {
+          try {
+            options = await listCanonicalLandUseOptions();
+          } catch {
+            options = null;
+          }
+        }
+
+        if (options == null) {
+          const [sourceResult, parcelsResult] = await Promise.allSettled([
+            listSourceReportedLandUseOptions(),
+            listAllParcels({ district }),
+          ]);
+          const sourceOptions =
+            sourceResult.status === "fulfilled" ? sourceResult.value : [];
+          const districtParcelIds =
+            parcelsResult.status === "fulfilled"
+              ? new Set(parcelsResult.value.results.map((row) => row.id))
+              : null;
+          const scopedSupplement =
+            districtParcelIds == null
+              ? supplement
+              : supplement.filter((row) => districtParcelIds.has(row.parcelId));
+          options = buildCanonicalLandUseFallbackOptions(
+            sourceOptions,
+            scopedSupplement,
+          );
+        }
+
+        if (!cancelled) {
+          setCanonicalOptions(options);
+          setLandUseOptionsError(null);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setCanonicalOptions([]);
+          setLandUseOptionsError(
+            err instanceof ApiClientError
+              ? err.detail || err.title
+              : "Unable to load land-use options for this district.",
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLandUseOptionsLoading(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [districtDraft, showCatalog, supplement]);
 
   useEffect(() => {
     const trimmed = initialParcelId.trim();
@@ -241,104 +359,315 @@ export function ParcelIntelligenceView({
     void loadParcelDetails(trimmed, false);
   }, [initialParcelId, loadParcelDetails]);
 
-  const supplementByParcelId = new Map(supplement.map((row) => [row.parcelId, row]));
-  const displayedParcels = supplementGroupFilter
-    ? parcels.filter((item) => supplementByParcelId.get(item.id)?.supplementGroup === supplementGroupFilter)
-    : parcels;
-  const supplementGroups = ["Coconut", "Scrub / low jungle", "Wetland", "Other State parcel"];
+  const landUseChoices = buildCanonicalLandUseChoices(canonicalOptions);
+  const canApply = Boolean(districtDraft.trim()) && !listLoading;
+
+  function handleDistrictChange(next: string) {
+    setDistrictDraft(next);
+    setLandUseDraft("");
+    setFiltersApplied(false);
+    setApplied(null);
+    setParcels([]);
+    setListError(null);
+  }
+
+  function handleClearFilters() {
+    setDistrictDraft("");
+    setLandUseDraft("");
+    setApplied(null);
+    setFiltersApplied(false);
+    setParcels([]);
+    setListError(null);
+    setPage(1);
+    setCadastralQuery("");
+    setCadastralError(null);
+    setCadastralEmpty(false);
+    setCadastralMatches([]);
+  }
+
+  function handleApplyFilters() {
+    if (!districtDraft.trim()) {
+      return;
+    }
+    const landUseValue = normalizeLandUseFilterValue(landUseDraft);
+    void loadCatalog({
+      district: districtDraft.trim(),
+      landUseValue,
+      landUseLabel: landUseLabelFromValue(landUseValue),
+    });
+  }
+
+  async function handleFindParcel(event?: FormEvent) {
+    event?.preventDefault();
+    const trimmed = cadastralQuery.trim();
+    setCadastralError(null);
+    setCadastralEmpty(false);
+    setCadastralMatches([]);
+    if (!trimmed) {
+      setCadastralError("Enter a cadastral number.");
+      return;
+    }
+
+    setCadastralLoading(true);
+    try {
+      const response = await findParcelsByCadastralNumber(trimmed);
+      if (response.totalCount === 0 || response.results.length === 0) {
+        setCadastralEmpty(true);
+        return;
+      }
+      if (response.results.length === 1) {
+        await loadParcelDetails(response.results[0].id);
+        return;
+      }
+      setCadastralMatches(response.results);
+    } catch (err) {
+      if (err instanceof ApiClientError) {
+        setCadastralError(err.detail || err.title);
+      } else if (err instanceof Error) {
+        setCadastralError(err.message);
+      } else {
+        setCadastralError("Unable to search by cadastral number.");
+      }
+    } finally {
+      setCadastralLoading(false);
+    }
+  }
+
+  const catalogTotal = parcels.length;
+  const catalogTotalPages = Math.max(1, Math.ceil(catalogTotal / pageSize));
+  const activePage = Math.min(page, catalogTotalPages);
+  const displayedParcels = parcels.slice(
+    (activePage - 1) * pageSize,
+    activePage * pageSize,
+  );
+  const supplementByParcelId = new Map(
+    supplement.map((row) => [row.parcelId, row]),
+  );
+
+  const activeSummary =
+    applied != null
+      ? [
+          applied.district,
+          applied.landUseLabel || null,
+          `${catalogTotal} matching parcel${catalogTotal === 1 ? "" : "s"}`,
+        ]
+          .filter(Boolean)
+          .join(" · ")
+      : null;
 
   return (
     <>
       <PageHeading
         title="Parcel Intelligence"
-        subtitle="Browse indexed parcels, then open a record for attributes, constraints, and optional graph relationships."
+        subtitle=""
       />
 
       {showCatalog ? (
-        <div className="parcelFormRow" style={{ marginBottom: "1rem" }}>
-          <input
-            className="parcelInput"
-            value={districtFilter}
-            onChange={(e) => setDistrictFilter(e.target.value)}
-            placeholder="District (e.g. Colombo)"
-            aria-label="District filter"
-          />
-          <select
-            className="parcelInput"
-            value={sourceLandUseFilter}
-            onChange={(e) => setSourceLandUseFilter(e.target.value)}
-            aria-label="Source-reported land use filter"
-          >
-            <option value="">All source-reported land uses</option>
-            {sourceLandUseOptions.map((option) => (
-              <option key={option.code} value={option.code}>
-                {option.code} — {option.englishLabel} ({option.parcelCount})
-              </option>
+        <form
+          className={filterStyles.panel}
+          aria-label="Parcel intelligence filters"
+          onSubmit={(event) => void handleFindParcel(event)}
+        >
+          <div className={filterStyles.row}>
+            <div className={filterStyles.field}>
+              <label className={filterStyles.label} htmlFor="pi-district">
+                District
+              </label>
+              <select
+                id="pi-district"
+                className={filterStyles.select}
+                value={districtDraft}
+                disabled={districtsLoading}
+                onChange={(e) => handleDistrictChange(e.target.value)}
+                aria-describedby="pi-district-hint"
+              >
+                <option value="">Select district</option>
+                {indexedDistricts.map((row) => (
+                  <option
+                    key={`${row.province}:${row.district}`}
+                    value={row.district}
+                  >
+                    {row.district}
+                  </option>
+                ))}
+              </select>
+              <p id="pi-district-hint" className={filterStyles.hint}>
+                {districtsLoading
+                  ? "Loading indexed districts…"
+                  : districtsError
+                    ? districtsError
+                    : indexedDistricts.length === 0
+                      ? "No indexed districts are available yet."
+                      : ""}
+              </p>
+            </div>
+
+            <div className={filterStyles.field}>
+              <label className={filterStyles.label} htmlFor="pi-land-use">
+                Land use
+              </label>
+              <select
+                id="pi-land-use"
+                className={filterStyles.select}
+                value={normalizeLandUseFilterValue(landUseDraft)}
+                disabled={!districtDraft.trim() || landUseOptionsLoading}
+                onChange={(e) => setLandUseDraft(e.target.value)}
+                aria-describedby="pi-land-use-hint"
+              >
+                <option value="">All land uses</option>
+                {landUseChoices.map((choice) => (
+                  <option key={choice.value} value={choice.value}>
+                    {choice.label} ({choice.count})
+                  </option>
+                ))}
+              </select>
+              <p id="pi-land-use-hint" className={filterStyles.hint}>
+                {!districtDraft.trim()
+                  ? ""
+                  : landUseOptionsLoading
+                    ? "Loading land-use options…"
+                    : landUseOptionsError
+                      ? landUseOptionsError
+                      : ""}
+              </p>
+            </div>
+
+            <div className={filterStyles.field}>
+              <label className={filterStyles.label} htmlFor="pi-cadastral">
+                Cadastral number
+              </label>
+              <input
+                id="pi-cadastral"
+                className={filterStyles.input}
+                value={cadastralQuery}
+                onChange={(e) => {
+                  setCadastralQuery(e.target.value);
+                  setCadastralEmpty(false);
+                  setCadastralError(null);
+                  setCadastralMatches([]);
+                }}
+                placeholder="Enter cadastral number"
+                autoComplete="off"
+                disabled={cadastralLoading}
+                aria-describedby="pi-cadastral-hint"
+              />
+              <p id="pi-cadastral-hint" className={filterStyles.hint}>
+                {cadastralLoading
+                  ? "Searching…"
+                  : ""}
+              </p>
+            </div>
+
+            <div className={filterStyles.actions}>
+              <Button
+                type="button"
+                variant="primary"
+                disabled={!canApply}
+                onClick={handleApplyFilters}
+              >
+                Apply filters
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleClearFilters}
+              >
+                Clear filters
+              </Button>
+            </div>
+          </div>
+        </form>
+      ) : null}
+
+      {showCatalog && cadastralError ? (
+        <ErrorMessage message={cadastralError} />
+      ) : null}
+      {showCatalog && cadastralEmpty ? (
+        <EmptyState
+          title="No parcel was found with this cadastral number."
+          description="Check the number and try again. Do not use a parcel UUID."
+        />
+      ) : null}
+      {showCatalog && cadastralMatches.length > 1 ? (
+        <div className={filterStyles.matchesList} role="region" aria-label="Matching parcels">
+          <p className={filterStyles.matchesTitle}>
+            {cadastralMatches.length} parcels share this cadastral number. Select
+            one:
+          </p>
+          <ul className={filterStyles.matchesItems}>
+            {cadastralMatches.map((match) => (
+              <li key={match.id}>
+                <button
+                  type="button"
+                  className={filterStyles.matchButton}
+                  onClick={() => void loadParcelDetails(match.id)}
+                >
+                  <span>{match.cadastralNumber}</span>
+                  <span className={filterStyles.matchMeta}>
+                    {match.district}
+                  </span>
+                  <span className={filterStyles.matchMeta}>
+                    {sourceReportedLandUseDisplay(match.cadastralSource) ||
+                      "Source land use not recorded"}
+                  </span>
+                </button>
+              </li>
             ))}
-          </select>
-          <select
-            className="parcelInput"
-            value={supplementGroupFilter}
-            onChange={(e) => setSupplementGroupFilter(e.target.value)}
-            aria-label="Project research group filter"
-            disabled={supplement.length === 0}
-          >
-            <option value="">All project research groups</option>
-            {supplementGroups.map((group) => (
-              <option key={group} value={group}>
-                {group} ({supplement.filter((row) => row.supplementGroup === group).length})
-              </option>
-            ))}
-          </select>
-          <Button type="button" variant="secondary" onClick={() => void loadCatalog()}>
-            Apply filters
-          </Button>
+          </ul>
         </div>
       ) : null}
 
-      {showCatalog && supplementError ? <ErrorMessage message={supplementError} /> : null}
-      {showCatalog && supplement.length > 0 ? (
-        <p style={{ marginBottom: "1rem" }}>
+      {showCatalog && activeSummary ? (
+        <p className={filterStyles.summary} role="status">
+          {activeSummary}
         </p>
       ) : null}
-
-      <div className="parcelFormRow">
-        <input
-          className="parcelInput"
-          value={parcelId}
-          onChange={(e) => setParcelId(e.target.value)}
-          placeholder="Parcel UUID"
-          aria-label="Parcel UUID"
-        />
-        <Button
-          type="button"
-          variant="primary"
-          onClick={() => void loadParcelDetails(parcelId)}
-        >
-          Load Parcel
-        </Button>
-      </div>
 
       {showCatalog && listLoading ? (
         <LoadingState message="Loading available parcels…" />
       ) : null}
       {showCatalog && listError ? <ErrorMessage message={listError} /> : null}
-      {showCatalog && !listLoading && !listError && displayedParcels.length === 0 ? (
+
+      {showCatalog &&
+      !listLoading &&
+      !listError &&
+      !filtersApplied &&
+      !cadastralEmpty &&
+      cadastralMatches.length === 0 &&
+      !parcel &&
+      !detailLoading 
+      }
+
+      {showCatalog &&
+      !listLoading &&
+      !listError &&
+      filtersApplied &&
+      catalogTotal === 0 ? (
         <EmptyState
-          title={supplementGroupFilter ? "No parcels match these filters" : "No parcels indexed"}
-          description={supplementGroupFilter
-            ? "Try a different project research group or source land-use filter."
-            : "The API returned no land parcels. Check that the Colombo research import has been applied."}
+          title="No parcels match these filters"
+          description="Try a different land use, or clear filters and start again."
         />
       ) : null}
-      {showCatalog && !listLoading && !listError && displayedParcels.length > 0 ? (
+
+      {showCatalog &&
+      !listLoading &&
+      !listError &&
+      filtersApplied &&
+      catalogTotal > 0 ? (
         <div className="stack" style={{ marginBottom: "1.25rem" }}>
           <ParcelCatalog
             parcels={displayedParcels}
-            totalCount={supplementGroupFilter ? displayedParcels.length : totalCount}
+            totalCount={catalogTotal}
             selectedId={selectedId}
             onSelect={(id) => void loadParcelDetails(id)}
             supplementByParcelId={supplementByParcelId}
+            currentPage={activePage}
+            pageSize={pageSize}
+            onPageChange={setPage}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setPage(1);
+            }}
           />
         </div>
       ) : null}

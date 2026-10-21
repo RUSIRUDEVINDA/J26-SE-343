@@ -39,4 +39,9 @@ public interface ILeaseInterestRequestService
     Task<LeaseInterestRequestDetailDto> GetByIdAsync(
         Guid requestId,
         CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Permanently removes a draft owned by the current applicant. Submitted requests cannot be deleted.
+    /// </summary>
+    Task DeleteDraftAsync(Guid requestId, CancellationToken cancellationToken);
 }

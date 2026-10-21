@@ -27,11 +27,6 @@ export const component01NavItems: NavItem[] = [
     primary: true,
   },
   {
-    label: "Recommendations",
-    href: `${LAND_INTELLIGENCE_BASE}/recommendations`,
-    icon: "✦",
-  },
-  {
     label: "Parcel Intelligence",
     href: `${LAND_INTELLIGENCE_BASE}/parcels`,
     icon: "▤",
@@ -61,34 +56,11 @@ export const officerLeaseInterestQueueNavItem: NavItem = {
   icon: "⚑",
 };
 
-export const WORKFLOW_GOVERNANCE_BASE = "/workflow-governance";
-
-export const workflowGovernanceNavItems: NavItem[] = [
-  { label: "Intake assignment", href: `${WORKFLOW_GOVERNANCE_BASE}/assignments`, icon: "?" },
-  { label: "My applications", href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/cases`, icon: "?" },
-  { label: "Commissioner rejection reports", href: `${WORKFLOW_GOVERNANCE_BASE}/commissioner`, icon: "▤" },
-  {
-    label: "Case Queue",
-    href: `${WORKFLOW_GOVERNANCE_BASE}/cases`,
-    icon: "▤",
-    primary: true,
-  },
-  {
-    label: "New Case Intake",
-    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/intake`,
-    icon: "✦",
-  },
-  {
-    label: "Track Application",
-    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/tracking`,
-    icon: "☰",
-  },
-  {
-    label: "OCR Intelligence Lab",
-    href: `${WORKFLOW_GOVERNANCE_BASE}/ocr-demo`,
-    icon: "◎",
-  },
-];
+export const authorityLeaseInterestQueueNavItem: NavItem = {
+  label: "Authority review queue (Research demo)",
+  href: `${LAND_INTELLIGENCE_BASE}/authority/lease-interest-queue`,
+  icon: "⚖",
+};
 
 export const moduleLandingLinks = [
   {
@@ -106,8 +78,8 @@ export const moduleLandingLinks = [
   {
     id: "component-03",
     title: "Workflow Governance",
-    href: `${WORKFLOW_GOVERNANCE_BASE}/cases`,
-    available: true,
+    href: "/component-03",
+    available: false,
   },
   {
     id: "component-04",

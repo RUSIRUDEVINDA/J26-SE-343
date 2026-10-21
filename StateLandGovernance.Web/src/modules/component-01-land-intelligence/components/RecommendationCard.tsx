@@ -119,7 +119,7 @@ export function RecommendationCard({
   const orderingLabel = isTied
     ? `Tied · rule score rank ${ruleScoreRank} (${tieCount} parcel${tieCount === 1 ? "" : "s"})`
     : `Rule score rank ${ruleScoreRank}`;
-  const orderingAria = `${orderingLabel}. Display order ${displayOrder} (cadastral sort — not suitability order).`;
+  const orderingAria = `${orderingLabel}. Display order ${displayOrder} (suitability score ranking; cadastral number breaks ties).`;
 
   return (
     <article
@@ -151,7 +151,7 @@ export function RecommendationCard({
           <p className={styles.metaLine}>
             {searchDistrict
               ? `Search district: ${searchDistrict}`
-              : "District: filter not applied"}
+              : "District: all"}
             {" · "}
             Area: {formatParcelAreaHectares(recommendation.parcelAreaHectares)}
             {" · "}
@@ -289,15 +289,25 @@ export function RecommendationCard({
                     </ul>
                   </div>
                 ) : null}
+                {recommendation.actualLeaseAvailabilityLabel ? (
+                  <div className={styles.factorGroup}>
+                    <p className={styles.factorLabel}>
+                      Official lease availability
+                    </p>
+                    <p className={styles.lead}>
+                      {recommendation.actualLeaseAvailabilityLabel}
+                    </p>
+                    <p className={styles.sourceNote}>
+                      Any project designation is a dataset assumption and does
+                      not confirm official lease availability.
+                    </p>
+                  </div>
+                ) : null}
                 {recommendation.projectLeaseReadyLabel ? (
                   <div className={styles.factorGroup}>
                     <p className={styles.factorLabel}>Project designation</p>
                     <p className={styles.lead}>
                       {recommendation.projectLeaseReadyLabel}
-                      {recommendation.isProjectLeaseReadyDesignated &&
-                      !recommendation.isProjectLeaseReadyEffective
-                        ? " (excluded — source-reported Private)"
-                        : ""}
                     </p>
                   </div>
                 ) : null}

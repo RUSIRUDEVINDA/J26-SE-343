@@ -75,15 +75,7 @@ export function OfficerLeaseInterestLookupView() {
 
   return (
     <div className={styles.layout}>
-      <p className={styles.hint}>
-        <Link
-          href="/land-intelligence/officer/lease-interest-queue"
-          className={styles.rowLink}
-        >
-          Open verification queue
-        </Link>
-      </p>
-
+     
       <form
         className={styles.searchForm}
         onSubmit={(event) => {
@@ -102,10 +94,7 @@ export function OfficerLeaseInterestLookupView() {
             spellCheck={false}
             placeholder="9 digits + V/X or 12-digit new NIC"
           />
-          <p className={styles.hint}>
-            Exact match after server normalization. NIC is sent in the request body
-            only — never in the URL.
-          </p>
+
         </div>
         <Button type="submit" variant="primary" disabled={loading || !nicInput.trim()}>
           {loading ? "Searching…" : "Search requests"}

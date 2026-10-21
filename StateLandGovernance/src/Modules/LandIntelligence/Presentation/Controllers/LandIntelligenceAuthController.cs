@@ -64,6 +64,7 @@ public sealed class LandIntelligenceAuthController : ControllerBase
         profile?.Trim().ToLowerInvariant() switch
         {
             "officer" => [LandIntelligenceAuth.Roles.Officer],
+            "authority" => [LandIntelligenceAuth.Roles.Authority],
             "internal" => [LandIntelligenceAuth.Roles.InternalMaintainer],
             _ => [LandIntelligenceAuth.Roles.Applicant],
         };

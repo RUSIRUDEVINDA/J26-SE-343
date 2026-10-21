@@ -21,13 +21,16 @@ public sealed class LandCitizenWorkspaceController : ControllerBase
 {
     private readonly IParcelShortlistService _shortlist;
     private readonly ILeaseInterestRequestService _leaseInterest;
+    private readonly ILeaseInterestValuationService _valuations;
 
     public LandCitizenWorkspaceController(
         IParcelShortlistService shortlist,
-        ILeaseInterestRequestService leaseInterest)
+        ILeaseInterestRequestService leaseInterest,
+        ILeaseInterestValuationService valuations)
     {
         _shortlist = shortlist;
         _leaseInterest = leaseInterest;
+        _valuations = valuations;
     }
 
     [HttpGet("shortlist")]
@@ -88,6 +91,27 @@ public sealed class LandCitizenWorkspaceController : ControllerBase
         return Ok(detail);
     }
 
+    /// <summary>
+    /// Latest officer valuation summary for a request owned by the current applicant.
+    /// Returns 204 when no valuation has been recorded. Does not change request status.
+    /// </summary>
+    [HttpGet("lease-interest/requests/{requestId:guid}/valuation")]
+    [ProducesResponseType(typeof(LeaseInterestApplicantValuationSummaryDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<LeaseInterestApplicantValuationSummaryDto>> GetMyRequestValuationAsync(
+        Guid requestId,
+        CancellationToken cancellationToken)
+    {
+        var summary = await _valuations.GetApplicantLatestSummaryAsync(requestId, cancellationToken);
+        if (summary is null)
+        {
+            return NoContent();
+        }
+
+        return Ok(summary);
+    }
+
     [HttpGet("parcels/{landParcelId:guid}/lease-interest")]
     [ProducesResponseType(typeof(LeaseInterestRequestDetailDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -117,6 +141,17 @@ public sealed class LandCitizenWorkspaceController : ControllerBase
     {
         var detail = await _leaseInterest.GetDraftOrCreateAsync(landParcelId, cancellationToken);
         return Ok(detail);
+    }
+
+    [HttpDelete("lease-interest/requests/{requestId:guid}/draft")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteDraftAsync(
+        Guid requestId,
+        CancellationToken cancellationToken)
+    {
+        await _leaseInterest.DeleteDraftAsync(requestId, cancellationToken);
+        return NoContent();
     }
 
     [HttpPut("lease-interest/requests/{requestId:guid}/draft")]

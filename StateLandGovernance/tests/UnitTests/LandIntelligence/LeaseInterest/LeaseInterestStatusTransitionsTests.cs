@@ -25,4 +25,57 @@ public sealed class LeaseInterestStatusTransitionsTests
             Assert.False(string.IsNullOrWhiteSpace(reason));
         }
     }
+
+    [Theory]
+    [InlineData(
+        LeaseInterestRequestStatus.ReferredToAuthority,
+        LeaseInterestAuthorityDecisionKind.Approved,
+        LeaseInterestRequestStatus.ApprovedInPrinciple,
+        true)]
+    [InlineData(
+        LeaseInterestRequestStatus.ReferredToAuthority,
+        LeaseInterestAuthorityDecisionKind.Rejected,
+        LeaseInterestRequestStatus.Declined,
+        true)]
+    [InlineData(
+        LeaseInterestRequestStatus.PendingVerification,
+        LeaseInterestAuthorityDecisionKind.Approved,
+        LeaseInterestRequestStatus.PendingVerification,
+        false)]
+    public void TryGetAuthorityTransition_OnlyApprovedOrRejectedFromReferred(
+        LeaseInterestRequestStatus current,
+        LeaseInterestAuthorityDecisionKind decision,
+        LeaseInterestRequestStatus expectedNext,
+        bool expectedAllowed)
+    {
+        var allowed = LeaseInterestStatusTransitions.TryGetAuthorityTransition(
+            current,
+            decision,
+            out var next,
+            out var reason);
+        Assert.Equal(expectedAllowed, allowed);
+        Assert.Equal(expectedNext, next);
+        if (!expectedAllowed)
+        {
+            Assert.False(string.IsNullOrWhiteSpace(reason));
+        }
+    }
+
+    [Fact]
+    public void ApplicantOutcomeSummary_Approved_RequiresFormalLeaseProcessing()
+    {
+        var summary = LeaseInterestStatusTransitions.ApplicantOutcomeSummary(
+            LeaseInterestRequestStatus.ApprovedInPrinciple);
+        Assert.Contains("Formal lease processing is still required", summary, StringComparison.Ordinal);
+        Assert.Contains("Approved", summary, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void DecisionLabels_AreApprovedAndRejectedOnly()
+    {
+        Assert.Equal("Approved", LeaseInterestAuthorityDecisionLabels.DecisionLabel(
+            LeaseInterestAuthorityDecisionKind.Approved));
+        Assert.Equal("Rejected", LeaseInterestAuthorityDecisionLabels.DecisionLabel(
+            LeaseInterestAuthorityDecisionKind.Rejected));
+    }
 }

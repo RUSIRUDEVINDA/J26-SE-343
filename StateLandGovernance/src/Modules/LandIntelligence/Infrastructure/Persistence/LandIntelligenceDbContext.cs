@@ -56,6 +56,11 @@ public class LandIntelligenceDbContext : DbContext
 
     public DbSet<LeaseInterestRequestEntity> LeaseInterestRequests => Set<LeaseInterestRequestEntity>();
 
+    public DbSet<LeaseInterestValuationEntity> LeaseInterestValuations => Set<LeaseInterestValuationEntity>();
+
+    public DbSet<LeaseInterestAuthorityDecisionEntity> LeaseInterestAuthorityDecisions =>
+        Set<LeaseInterestAuthorityDecisionEntity>();
+
     public DbSet<LeaseInterestStatusHistoryEntity> LeaseInterestStatusHistory =>
         Set<LeaseInterestStatusHistoryEntity>();
 

@@ -21,9 +21,12 @@ public sealed class LeaseInterestOfficerAccessGate : ILeaseInterestOfficerAccess
 
         IsNicLookupEnabled = pilotOfficerToolsEnabled;
         IsPreliminaryReviewEnabled = pilotOfficerToolsEnabled;
+        IsAuthorityReviewEnabled = pilotOfficerToolsEnabled;
     }
 
     public bool IsNicLookupEnabled { get; }
 
     public bool IsPreliminaryReviewEnabled { get; }
+
+    public bool IsAuthorityReviewEnabled { get; }
 }

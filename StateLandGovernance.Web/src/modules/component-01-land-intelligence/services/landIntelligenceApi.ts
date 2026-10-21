@@ -1,5 +1,6 @@
 import { apiGet, apiPost } from "@/lib/apiClient";
 import type {
+  CanonicalLandUseOptionResponse,
   LandIntelligenceGisCoverageResponse,
   LandParcelMetricsResponse,
   LandParcelResponse,
@@ -46,7 +47,10 @@ export type ListParcelsParams = {
   pageSize?: number;
   district?: string;
   province?: string;
+  cadastralNumber?: string;
   sourceReportedLandUse?: string;
+  /** Canonical land-use label or key; matches cadastral and/or project GIS evidence. */
+  researchLandCoverGroup?: string;
 };
 
 export async function listParcels(
@@ -62,12 +66,30 @@ export async function listParcels(
   if (params.province) {
     search.set("province", params.province);
   }
+  if (params.cadastralNumber) {
+    search.set("cadastralNumber", params.cadastralNumber);
+  }
   if (params.sourceReportedLandUse) {
     search.set("sourceReportedLandUse", params.sourceReportedLandUse);
+  }
+  if (params.researchLandCoverGroup) {
+    search.set("researchLandCoverGroup", params.researchLandCoverGroup);
   }
   return apiGet<LandSearchResultsResponse>(
     `/api/v1/land/parcels?${search.toString()}`,
   );
+}
+
+/** Exact cadastral lookup (trimmed, case-insensitive). Returns 0–N matching parcels. */
+export async function findParcelsByCadastralNumber(
+  cadastralNumber: string,
+): Promise<LandSearchResultsResponse> {
+  const trimmed = cadastralNumber.trim();
+  return listParcels({
+    page: 1,
+    pageSize: 100,
+    cadastralNumber: trimmed,
+  });
 }
 
 export async function listSourceReportedLandUseOptions(): Promise<
@@ -81,6 +103,19 @@ export async function listSourceReportedLandUseOptions(): Promise<
 export async function listResearchSupplement(): Promise<ResearchSupplementParcelResponse[]> {
   return apiGet<ResearchSupplementParcelResponse[]>(
     "/api/v1/land/parcels/research-supplement",
+  );
+}
+
+export async function listCanonicalLandUseOptions(
+  district?: string,
+): Promise<CanonicalLandUseOptionResponse[]> {
+  const search = new URLSearchParams();
+  if (district?.trim()) {
+    search.set("district", district.trim());
+  }
+  const suffix = search.toString() ? `?${search.toString()}` : "";
+  return apiGet<CanonicalLandUseOptionResponse[]>(
+    `/api/v1/land/parcels/canonical-land-use-options${suffix}`,
   );
 }
 

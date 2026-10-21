@@ -95,7 +95,7 @@
 .graphSvg {
   width: 100%;
   height: auto;
-  min-height: 280px;
+  min-height: 360px;
   display: block;
   background:
     radial-gradient(circle at 20% 20%, rgba(15, 76, 58, 0.06), transparent 45%),
@@ -124,15 +124,36 @@
   fill: #2f6b55;
 }
 
-.nodeText {
-  fill: #fff;
-  font-size: 11px;
-  font-weight: 600;
+.nodeLabelFo {
+  overflow: visible;
+  pointer-events: none;
 }
 
-.nodeSubtext {
-  fill: rgba(255, 255, 255, 0.85);
-  font-size: 9px;
+.nodeLabelBox {
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-card-border);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(15, 76, 58, 0.08);
+  text-align: center;
+}
+
+.nodeLabelPrimary {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-text, #1a2e28);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.nodeLabelSecondary {
+  margin: 0.2rem 0 0;
+  font-size: 0.65rem;
+  line-height: 1.3;
+  color: var(--color-muted);
 }
 
 .list {
@@ -193,4 +214,54 @@
 
 .setupList li + li {
   margin-top: 0.35rem;
+}
+
+.matchesList {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.matchesTitle {
+  margin: 0 0 0.55rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.matchesItems {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.matchButton {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 8px;
+  background: #fffcfb;
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.matchButton:hover {
+  border-color: var(--color-primary);
+}
+
+.matchButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.matchMeta {
+  color: var(--color-muted);
 }

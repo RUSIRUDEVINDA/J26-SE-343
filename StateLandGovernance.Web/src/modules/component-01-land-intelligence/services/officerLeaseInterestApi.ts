@@ -11,6 +11,8 @@ import type {
   LeaseInterestOfficerRequestDetail,
 
   LeaseInterestOfficerStatusUpdate,
+  LeaseInterestValuation,
+  RecordLeaseInterestValuation,
 
 } from "../types/landIntelligence";
 
@@ -34,6 +36,27 @@ export async function lookupLeaseInterestByNic(
 
   );
 
+}
+
+export async function listOfficerValuations(requestId: string): Promise<LeaseInterestValuation[]> {
+  return apiGet<LeaseInterestValuation[]>(
+    `/api/v1/land/officer/lease-interest/requests/${requestId}/valuations`,
+    undefined,
+    "officer",
+  );
+}
+
+export async function recordOfficerValuation(
+  requestId: string,
+  input: RecordLeaseInterestValuation,
+  idempotencyKey: string,
+): Promise<LeaseInterestValuation> {
+  return apiPost<LeaseInterestValuation>(
+    `/api/v1/land/officer/lease-interest/requests/${requestId}/valuations`,
+    input,
+    { headers: { "Idempotency-Key": idempotencyKey } },
+    "officer",
+  );
 }
 
 

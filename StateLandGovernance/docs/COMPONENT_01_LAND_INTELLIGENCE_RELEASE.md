@@ -1,6 +1,6 @@
 # Component 1 — Land Intelligence release guide
 
-This document describes the **current** Colombo state research pilot (`land_intel_colombo_state_research`, 300 parcels), web routes, configuration flags, API surface, known limitations, and verification steps. It matches the implemented code as of the research-demo workstream.
+This document describes the **current** Colombo state research pilot (`land_intel_colombo_state_research`, **400 parcels: 300 original + 100 supplementary**), web routes, configuration flags, API surface, known limitations, and verification steps. It matches the implemented code as of the research-demo workstream (Prompts 1–12).
 
 ## Product positioning (read this first)
 
@@ -22,7 +22,7 @@ This document describes the **current** Colombo state research pilot (`land_inte
 
 | Database | Purpose |
 | --- | --- |
-| `land_intel_colombo_state_research` | **300-parcel** isolated research import — **required** for this release narrative |
+| `land_intel_colombo_state_research` | **400-parcel** isolated research import (300 original + 100 supplementary) — **required** for this release narrative |
 | `land_intel_colombo_real_demo` / `land_intel_colombo_real_pilot` | Full cadastre pilots (different importers; not the default J26 demo) |
 | `land_intel_colombo_demo` | `DEMO-*` fixtures only — do not use for research UI |
 
@@ -38,14 +38,25 @@ LAND_INTELLIGENCE_CONNECTION=Host=localhost;Port=5432;Database=land_intel_colomb
 - `AddLeaseInterestApplicantNic`
 - `AddColomboStateResearchProjectLeaseReady`
 - `AddLeaseInterestStatusHistoryAudit`
+- `AddLeaseInterestOfficerValuation` / `AddLeaseInterestPaperWorksheetFields`
+- `AddLeaseInterestAuthorityDecisions` / `BindAuthorityDecisionToReviewedValuation`
+- `AddLeaseInterestValuationIdempotencyKey`
 
 Run via API startup migrate or `dotnet ef database update` against the Land Intelligence context.
 
-**Research import:** see [COLOMBO_STATE_RESEARCH_300_IMPORT.md](./COLOMBO_STATE_RESEARCH_300_IMPORT.md).
+**Research import:** see [COLOMBO_STATE_RESEARCH_300_IMPORT.md](./COLOMBO_STATE_RESEARCH_300_IMPORT.md) and the supplementary 100-parcel import tooling.
+
+### Parcel classification provenance
+
+| Layer | Meaning |
+| --- | --- |
+| **Original cadastral land use** | Source-reported label/code from the cadastre import — unchanged in storage and parcel detail |
+| **GIS project classification** | Research supplement / project land-cover group — separate provenance, never replaces cadastral land use |
+| **Canonical Find Suitable Land filter** | One user-facing list (Coconut, Wetland, Scrub / Low Jungle, …) that may match cadastral labels, GIS groups, or both; counts use **distinct parcel IDs** |
 
 ### Measured GIS state (research DB, typical after import)
 
-- **300** indexed parcels; district/province from parcel location fields (live dashboard).
+- **400** indexed parcels (300 + 100); district/province from parcel location fields (live dashboard).
 - **0** GIS enrichment snapshots unless you import reference layers and run enrichment.
 - **`GET /api/v1/land/parcels/gis-coverage`** reports per-layer **Unavailable** with zero parcel evidence.
 - Missing environmental / GIS evidence is **not assessed** in recommendation scoring and is never treated as a positive match.
@@ -107,12 +118,14 @@ Officer NIC lookup and lease-interest **review** APIs remain gated like the rese
 | `/land-intelligence/shortlist` | Saved parcels |
 | `/land-intelligence/parcels/[id]/lease-interest` | Start request / resume draft / redirect submitted |
 | `/land-intelligence/my-requests` | Drafts vs submitted lists |
-| `/land-intelligence/my-requests/[requestId]` | Status + timeline |
+| `/land-intelligence/my-requests/[requestId]` | Status + timeline + applicant valuation summary + authority decision |
 | `/land-intelligence/officer/lease-interest-queue` | Officer verification queue (demo gate) |
 | `/land-intelligence/officer/lease-interest-lookup` | Officer NIC lookup (demo gate) |
-| `/land-intelligence/officer/lease-interest-review/[requestId]` | Officer status transitions |
+| `/land-intelligence/officer/lease-interest-review/[requestId]` | Officer status transitions + manual valuation worksheet |
+| `/land-intelligence/authority/lease-interest-queue` | Authority queue (Pending / Approved / Rejected) |
+| `/land-intelligence/authority/lease-interest-review/[requestId]` | Authority decision after valuation |
 
-Sidebar shows officer queue and NIC lookup when `GET /api/v1/land/research-demo/config` reports `officerLeaseInterestNicLookupEnabled`.
+Sidebar shows officer/authority tools when `GET /api/v1/land/research-demo/config` reports the matching demo gates.
 
 ## Primary API groups (Component 1)
 
@@ -123,12 +136,13 @@ Base path: `/api/v1/land`.
 | Parcels | `GET /parcels`, `GET /parcels/metrics`, `GET /parcels/gis-coverage`, `GET /parcels/{id}`, `GET /parcels/{id}/constraints`, `GET /parcels/{id}/relationships` |
 | Parcel search (catalog filters) | `POST /search` — **not** the recommendation endpoint |
 | **Recommendations** | **`POST /recommendations`** (body = search criteria). Also `GET /recommendations/{id}`. **There is no `/recommendations/search`.** |
-| Citizen workspace | `GET/PUT/DELETE /me/shortlist…`, `GET /me/parcels/{id}/lease-interest` (200 or **204**), `POST /me/parcels/{id}/lease-interest/draft` (explicit start), `PUT …/draft`, `POST …/submit`, `GET /me/lease-interest/requests` |
-| Officer (demo) | `GET /officer/lease-interest/queue`, `POST …/lookup`, `GET …/requests/{id}`, `POST …/requests/{id}/status` |
+| Citizen workspace | `GET/PUT/DELETE /me/shortlist…`, `GET /me/parcels/{id}/lease-interest` (200 or **204**), `POST /me/parcels/{id}/lease-interest/draft` (explicit start), `PUT …/draft`, `POST …/submit`, `GET /me/lease-interest/requests`, `GET /me/lease-interest/requests/{id}/valuation` (**204** when none) |
+| Officer (demo) | `GET /officer/lease-interest/queue`, `POST …/lookup`, `GET …/requests/{id}`, `POST …/requests/{id}/status`, `GET/POST …/requests/{id}/valuations` (`Idempotency-Key` required on POST) |
+| Authority (demo) | `GET /authority/lease-interest/queue?statusFilter=`, `GET …/requests/{id}`, `POST …/requests/{id}/decisions` |
 | Research demo | `GET /research-demo/config` |
 | Auth | `POST /auth/session` (Development only when allowed) |
 
-Applicant/officer calls use bearer tokens via `LandIntelligenceSessionBootstrap` and `apiClient` auth roles.
+Applicant / officer / authority calls use bearer tokens via research-demo session minting and `apiClient` auth roles. Cached JWTs are checked for expiry; a single renew-and-retry applies on 401. **This is not production identity** — replace with real authentication and RBAC before deployment.
 
 ### Lease interest draft behaviour (implemented)
 
@@ -149,7 +163,8 @@ Applicant/officer calls use bearer tokens via `LandIntelligenceSessionBootstrap`
 | Item | Current |
 | --- | --- |
 | Role | Supplementary evidence only — does not override rules |
-| Held-out RF accuracy | ~**76.5%** — **80% target not achieved** |
+| Held-out RF accuracy | ~**76.5%** on a **synthetic, rule-labelled held-out sample** — **not** validated on real Colombo parcels; **80% target not achieved** |
+| Area input | ML requests always send area in **hectares** (converted from the parcel's stored unit) |
 | Road / water / soil | Excluded from standard model (not invented) |
 | Colombo experimental ML | Separate service/artifacts; default **disabled** |
 
@@ -157,14 +172,25 @@ Details: [ai/README.md](./ai/README.md), `src/Modules/LandIntelligence/ML/README
 
 ## End-to-end flow (happy path)
 
-1. **Dashboard** — confirms ~300 parcels, project lease-ready effective count, GIS **Unavailable**.
-2. **Find Suitable Land** — purpose + location + source filters (no road/water/soil preference controls).
-3. **Recommendations** — match scores; missing GIS not assessed.
+1. **Dashboard** — confirms ~400 parcels, project lease-ready effective count, GIS **Unavailable**.
+2. **Find Suitable Land** — purpose + location + **canonical land-use** filter + target area (no road/water/soil preference controls). URL + session preserve criteria for reload / Edit search.
+3. **Recommendations** — suitability-ranked match scores; project designation vs official availability shown separately; missing GIS not assessed.
 4. **Parcel / map** — cadastre source fields; GIS enrichment section shows not run when snapshots = 0.
 5. **Shortlist** — persist candidates (authenticated).
-6. **Lease interest** — **Start request** → draft → review → submit; blocked for Private claimant / hard restrictions. Opening the form alone does not create a draft.
-7. **My Requests** — Drafts vs Submitted; continue draft or view status.
-8. **Officer** — queue (or NIC lookup) → review → needs info / declined / referred (**simulated** when research demo enabled).
+6. **Lease interest** — **Start request** → partial **Save draft** allowed → submit requires full validation; blocked for Private claimant / hard restrictions.
+7. **My Requests** — Drafts vs Submitted; valuation loading states (none / available / access denied / error+retry); authority Approved/Rejected with reason.
+8. **Officer** — queue / NIC lookup → review → refer to authority → record **Agricultural/Commercial** or **Residential** valuation worksheet (manual figures only). Valuation save keeps status **ReferredToAuthority**; revisions are idempotent.
+9. **Authority** — queue tabs (Pending / Approved / Rejected) → review full latest worksheet + revisions → **Approved** (preliminary; formal lease still required) or **Rejected**.
+
+### Valuation and authority behaviour
+
+| Rule | Behaviour |
+| --- | --- |
+| Valuation form types | Agricultural/Commercial and Residential paper-derived worksheets |
+| Status on valuation save | Remains **ReferredToAuthority** (6) |
+| Revisions | Append-only; client `Idempotency-Key` prevents duplicate revisions on retry |
+| Authority outcomes | **Approved** (7) or **Rejected** (5) only |
+| Official vs project | Project designation ≠ official government verification; official availability stays **Not verified** unless authoritative confirmation exists |
 
 ## UX, mobile, accessibility
 

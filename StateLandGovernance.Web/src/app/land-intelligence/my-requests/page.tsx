@@ -8,9 +8,13 @@ import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { PageHeading } from "@/shared/components/PageLayout";
 import { StatusBadge } from "@/shared/components/StatusBadge";
-import { listMyLeaseInterestRequests } from "@/modules/component-01-land-intelligence/services/citizenWorkspaceApi";
+import {
+  deleteLeaseInterestDraft,
+  listMyLeaseInterestRequests,
+} from "@/modules/component-01-land-intelligence/services/citizenWorkspaceApi";
 import type { LeaseInterestRequestSummary } from "@/modules/component-01-land-intelligence/types/landIntelligence";
 import { leaseInterestPurposeDisplay } from "@/modules/component-01-land-intelligence/utils/leaseInterestPurposeDisplay";
+import { useModalDialogA11y } from "@/modules/component-01-land-intelligence/hooks/useModalDialogA11y";
 import {
   isLeaseInterestDraftStatus,
   leaseInterestStatusBadgeTone,
@@ -33,7 +37,25 @@ function formatShortDate(iso: string | null | undefined): string {
   });
 }
 
-function RequestRow({ item }: { item: LeaseInterestRequestSummary }) {
+function RequestRow({
+  item,
+  onDeleted,
+}: {
+  item: LeaseInterestRequestSummary;
+  onDeleted: (requestId: string) => void;
+}) {
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const { dialogRef: confirmDialogRef } = useModalDialogA11y({
+    open: confirmOpen,
+    onClose: () => {
+      if (!deleting) {
+        setConfirmOpen(false);
+      }
+    },
+    busy: deleting,
+  });
   const isDraft = isLeaseInterestDraftStatus(item.status);
   const purpose = leaseInterestPurposeDisplay(
     item.requestedPurpose,
@@ -44,8 +66,76 @@ function RequestRow({ item }: { item: LeaseInterestRequestSummary }) {
     (isDraft ? `Draft · ${item.id.slice(0, 8)}` : item.id.slice(0, 8));
   const parcelLabel = item.cadastralNumber?.trim() || item.landParcelId.slice(0, 8);
 
+  async function confirmDeleteDraft() {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteLeaseInterestDraft(item.id);
+      setConfirmOpen(false);
+      onDeleted(item.id);
+    } catch (err) {
+      if (err instanceof ApiClientError) {
+        setDeleteError(err.detail || err.title);
+      } else {
+        setDeleteError("Unable to delete this draft.");
+      }
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
     <li className={styles.row}>
+      {confirmOpen ? (
+        <div
+          className={styles.modalOverlay}
+          role="presentation"
+          onClick={() => {
+            if (!deleting) {
+              setConfirmOpen(false);
+            }
+          }}
+        >
+          <div
+            ref={confirmDialogRef}
+            className={styles.modalDialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`delete-draft-title-${item.id}`}
+            aria-describedby={`delete-draft-body-${item.id}`}
+            aria-busy={deleting}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id={`delete-draft-title-${item.id}`} className={styles.modalTitle}>
+              Delete this draft?
+            </h2>
+            <p id={`delete-draft-body-${item.id}`} className={styles.modalBody}>
+              Parcel <strong className={styles.modalParcel}>{parcelLabel}</strong>{" "}
+              ({reference}) will be removed from your drafts. Saved answers cannot be
+              recovered.
+            </p>
+            <div className={styles.modalActions}>
+              <Button
+                type="button"
+                variant="primary"
+                className={styles.dangerFilledButton}
+                disabled={deleting}
+                onClick={() => void confirmDeleteDraft()}
+              >
+                {deleting ? "Deleting…" : "Delete draft"}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={deleting}
+                onClick={() => setConfirmOpen(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <div className={styles.rowMain}>
         <div className={styles.rowPrimary}>
           <p className={styles.parcelId}>
@@ -76,15 +166,29 @@ function RequestRow({ item }: { item: LeaseInterestRequestSummary }) {
             </dd>
           </div>
         </dl>
+        {deleteError ? (
+          <p className={styles.rowDeleteError} role="alert">{deleteError}</p>
+        ) : null}
       </div>
       <div className={styles.rowActions}>
         {isDraft ? (
-          <Button
-            href={`/land-intelligence/parcels/${item.landParcelId}/lease-interest`}
-            variant="primary"
-          >
-            Continue draft
-          </Button>
+          <>
+            <Button
+              href={`/land-intelligence/parcels/${item.landParcelId}/lease-interest`}
+              variant="primary"
+            >
+              Continue draft
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              className={styles.dangerFilledButton}
+              disabled={deleting || confirmOpen}
+              onClick={() => setConfirmOpen(true)}
+            >
+              Delete draft
+            </Button>
+          </>
         ) : (
           <Button
             href={`/land-intelligence/my-requests/${item.id}`}
@@ -102,10 +206,12 @@ function RequestSection({
   title,
   items,
   emptyLabel,
+  onDraftDeleted,
 }: {
   title: string;
   items: LeaseInterestRequestSummary[];
   emptyLabel: string;
+  onDraftDeleted?: (requestId: string) => void;
 }) {
   return (
     <section className={styles.section} aria-labelledby={`${title}-heading`}>
@@ -120,7 +226,11 @@ function RequestSection({
       ) : (
         <ul className={styles.list}>
           {items.map((item) => (
-            <RequestRow key={item.id} item={item} />
+            <RequestRow
+              key={item.id}
+              item={item}
+              onDeleted={(requestId) => onDraftDeleted?.(requestId)}
+            />
           ))}
         </ul>
       )}
@@ -209,6 +319,9 @@ export default function MyRequestsPage() {
             title="Drafts"
             items={drafts}
             emptyLabel="No drafts in progress."
+            onDraftDeleted={(requestId) =>
+              setItems((prev) => prev.filter((row) => row.id !== requestId))
+            }
           />
           <RequestSection
             title="Submitted"

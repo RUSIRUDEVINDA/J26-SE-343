@@ -42,6 +42,44 @@ public static class LeaseInterestStatusTransitions
         return true;
     }
 
+    /// <summary>
+    /// Authority decisions after referral and officer valuation. Valuation saves never use this path.
+    /// Only Approved → ApprovedInPrinciple and Rejected → Declined are allowed.
+    /// </summary>
+    public static bool TryGetAuthorityTransition(
+        LeaseInterestRequestStatus current,
+        LeaseInterestAuthorityDecisionKind decision,
+        out LeaseInterestRequestStatus nextStatus,
+        out string? rejectionReason)
+    {
+        nextStatus = current;
+        rejectionReason = null;
+
+        if (current != LeaseInterestRequestStatus.ReferredToAuthority)
+        {
+            rejectionReason =
+                "Authority decisions can only be recorded while the request is referred to the authority.";
+            return false;
+        }
+
+        nextStatus = decision switch
+        {
+            LeaseInterestAuthorityDecisionKind.Approved =>
+                LeaseInterestRequestStatus.ApprovedInPrinciple,
+            LeaseInterestAuthorityDecisionKind.Rejected =>
+                LeaseInterestRequestStatus.Declined,
+            _ => current,
+        };
+
+        if (nextStatus == current)
+        {
+            rejectionReason = "Select Approved or Rejected.";
+            return false;
+        }
+
+        return true;
+    }
+
     public static string ApplicantOutcomeSummary(LeaseInterestRequestStatus status) =>
         status switch
         {
@@ -52,11 +90,13 @@ public static class LeaseInterestStatusTransitions
             LeaseInterestRequestStatus.PendingVerification =>
                 "Pending officer verification. Your expression of interest is not a reservation or lease approval.",
             LeaseInterestRequestStatus.NeedsInformation =>
-                "Officer needs more information before verification can continue. Follow official channels if contacted.",
+                "More information is required before officer verification can continue.",
             LeaseInterestRequestStatus.Declined =>
-                "Preliminary interest declined after officer review. This is not a court or authority decision.",
+                "Rejected after review. This is not a court decision and does not reserve land.",
             LeaseInterestRequestStatus.ReferredToAuthority =>
-                "Referred for authority follow-up outside this pilot. No lease has been created.",
+                "Referred for authority follow-up. An officer valuation may be recorded; this does not create a lease.",
+            LeaseInterestRequestStatus.ApprovedInPrinciple =>
+                "Approved as a preliminary project decision only. Formal lease processing is still required. This does not create a lease, reserve land, or constitute official government approval.",
             _ => "Status unknown.",
         };
 }

@@ -8,4 +8,9 @@ public enum LeaseInterestRequestStatus
     NeedsInformation = 4,
     Declined = 5,
     ReferredToAuthority = 6,
+    /// <summary>
+    /// Authority approved (preliminary project decision only).
+    /// Not a lease, reservation, or official government lease approval — formal lease processing is still required.
+    /// </summary>
+    ApprovedInPrinciple = 7,
 }

@@ -93,10 +93,18 @@
   font-size: 0.78rem;
 }
 
+.rowActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
 .rowLink {
   color: var(--color-primary);
   font-weight: 600;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .rowLink:hover {
@@ -113,4 +121,53 @@
 .pagerLabel {
   font-size: 0.84rem;
   color: var(--color-muted);
+}
+
+.tabList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.tab {
+  padding: 0.55rem 1rem;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--color-primary);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.tabActive {
+  border-color: var(--color-card-border);
+  background: #fff;
+  color: var(--color-primary);
+  margin-bottom: -1px;
+}
+
+@media (max-width: 640px) {
+  .tab {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.45rem 0.5rem;
+    white-space: nowrap;
+  }
 }

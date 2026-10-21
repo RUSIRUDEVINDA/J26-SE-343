@@ -252,7 +252,8 @@ internal static class LandIntelligenceApiResponseMapper
             dto.DisplayOrder,
             dto.RuleScoreRank,
             dto.RuleScoreTieCount,
-            dto.IsTiedOnRuleScore);
+            dto.IsTiedOnRuleScore,
+            dto.ActualLeaseAvailabilityLabel);
 
     private static CriterionEvaluationResponse ToCriterionEvaluationResponse(CriterionEvaluationDto dto) =>
         new(

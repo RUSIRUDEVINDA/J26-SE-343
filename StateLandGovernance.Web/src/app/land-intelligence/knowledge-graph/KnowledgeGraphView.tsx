@@ -8,13 +8,16 @@ import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { PageHeading } from "@/shared/components/PageLayout";
 import {
+  findParcelsByCadastralNumber,
   getParcelById,
   getParcelRelationships,
 } from "@/modules/component-01-land-intelligence/services/landIntelligenceApi";
 import type {
   LandParcelResponse,
   LandRelationshipResponse,
+  LandSearchResultResponse,
 } from "@/modules/component-01-land-intelligence/types/landIntelligence";
+import { sourceReportedLandUseDisplay } from "@/modules/component-01-land-intelligence/utils/sourceReportedCadastre";
 import { displayOrUnknown } from "@/modules/component-01-land-intelligence/utils/formatters";
 import styles from "./KnowledgeGraph.module.css";
 
@@ -41,8 +44,47 @@ function shortId(value: string): string {
   return `${value.slice(0, 8)}…`;
 }
 
+function formatNodeType(type: string): string {
+  return type
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/_/g, " ")
+    .trim();
+}
+
 function nodeKey(type: string, id: string): string {
   return `${type}:${id}`;
+}
+
+function neighborLabelFromRelationship(
+  rel: LandRelationshipResponse,
+  parcelId: string,
+  nodeType: string,
+  nodeId: string,
+): string | null {
+  const parcelKey = nodeKey("LandParcel", parcelId);
+  const key = nodeKey(nodeType, nodeId);
+  if (key === parcelKey) {
+    return null;
+  }
+  const parcelIsSource =
+    rel.sourceNodeType === "LandParcel" && rel.sourceNodeId === parcelId;
+  const parcelIsTarget =
+    rel.targetNodeType === "LandParcel" && rel.targetNodeId === parcelId;
+  if (!parcelIsSource && !parcelIsTarget) {
+    return null;
+  }
+  const matchesNeighbor =
+    (parcelIsSource &&
+      rel.targetNodeType === nodeType &&
+      rel.targetNodeId === nodeId) ||
+    (parcelIsTarget &&
+      rel.sourceNodeType === nodeType &&
+      rel.sourceNodeId === nodeId);
+  if (!matchesNeighbor) {
+    return null;
+  }
+  const desc = rel.description?.trim();
+  return desc || null;
 }
 
 function buildGraphLayout(
@@ -95,6 +137,18 @@ function buildGraphLayout(
       }
     }
 
+    for (const { type, id } of [
+      { type: rel.sourceNodeType, id: rel.sourceNodeId },
+      { type: rel.targetNodeType, id: rel.targetNodeId },
+    ]) {
+      const key = nodeKey(type, id);
+      const node = nodes.get(key);
+      const humanLabel = neighborLabelFromRelationship(rel, parcelId, type, id);
+      if (node && humanLabel) {
+        node.label = humanLabel;
+      }
+    }
+
     edges.push({
       key: `${rel.relationshipType}-${sourceKey}-${targetKey}-${index}`,
       from: sourceKey,
@@ -104,19 +158,60 @@ function buildGraphLayout(
   });
 
   const uniqueNeighbors = [...new Set(neighborKeys)];
-  const radius = uniqueNeighbors.length <= 4 ? 140 : 170;
-  uniqueNeighbors.forEach((key, index) => {
-    const angle =
-      (Math.PI * 2 * index) / Math.max(uniqueNeighbors.length, 1) - Math.PI / 2;
-    const node = nodes.get(key);
-    if (!node) {
-      return;
+  const center = nodes.get(centerKey);
+  if (center) {
+    center.x = 320;
+    center.y = 210;
+  }
+
+  if (uniqueNeighbors.length === 1) {
+    const node = nodes.get(uniqueNeighbors[0]);
+    if (node) {
+      node.x = 320;
+      node.y = 72;
     }
-    node.x = 320 + radius * Math.cos(angle);
-    node.y = 200 + radius * Math.sin(angle);
-  });
+  } else if (uniqueNeighbors.length === 2) {
+    uniqueNeighbors.forEach((key, index) => {
+      const node = nodes.get(key);
+      if (!node) {
+        return;
+      }
+      node.x = 320;
+      node.y = index === 0 ? 72 : 348;
+    });
+  } else {
+    const radius = uniqueNeighbors.length <= 4 ? 140 : 170;
+    uniqueNeighbors.forEach((key, index) => {
+      const angle =
+        (Math.PI * 2 * index) / Math.max(uniqueNeighbors.length, 1) -
+        Math.PI / 2;
+      const node = nodes.get(key);
+      if (!node) {
+        return;
+      }
+      node.x = 320 + radius * Math.cos(angle);
+      node.y = 210 + radius * Math.sin(angle);
+    });
+  }
 
   return { nodes: [...nodes.values()], edges };
+}
+
+function endpointListLabel(
+  type: string,
+  id: string,
+  parcelId: string,
+  parcelLabel: string,
+  rel: LandRelationshipResponse,
+): string {
+  if (type === "LandParcel" && id === parcelId) {
+    return parcelLabel;
+  }
+  const human = neighborLabelFromRelationship(rel, parcelId, type, id);
+  if (human) {
+    return `${formatNodeType(type)} — ${human}`;
+  }
+  return `${formatNodeType(type)} (${shortId(id)})`;
 }
 
 function RelationshipGraph({
@@ -136,7 +231,7 @@ function RelationshipGraph({
   return (
     <svg
       className={styles.graphSvg}
-      viewBox="0 0 640 400"
+      viewBox="0 0 640 420"
       role="img"
       aria-label={`Relationship graph for parcel ${parcelLabel}. ${relationships.length} relationship${relationships.length === 1 ? "" : "s"} shown.`}
     >
@@ -164,22 +259,33 @@ function RelationshipGraph({
           </g>
         );
       })}
-      {nodes.map((node) => (
+      {nodes.map((node) => {
+        const labelBelow = node.y <= 210;
+        return (
         <g key={node.id} transform={`translate(${node.x}, ${node.y})`}>
           <circle
-            r={node.kind === "parcel" ? 38 : 30}
+            r={node.kind === "parcel" ? 26 : 22}
             className={
               node.kind === "parcel" ? styles.nodeParcel : styles.nodeOther
             }
           />
-          <text className={styles.nodeText} textAnchor="middle" dy="-2">
-            {node.label.length > 14 ? `${node.label.slice(0, 12)}…` : node.label}
-          </text>
-          <text className={styles.nodeSubtext} textAnchor="middle" dy="12">
-            {node.sublabel}
-          </text>
+          <foreignObject
+            x={-92}
+            y={labelBelow ? (node.kind === "parcel" ? 32 : 28) : -78}
+            width={184}
+            height={72}
+            className={styles.nodeLabelFo}
+          >
+            <div className={styles.nodeLabelBox}>
+              <p className={styles.nodeLabelPrimary}>{node.label}</p>
+              <p className={styles.nodeLabelSecondary}>
+                {formatNodeType(node.sublabel)}
+              </p>
+            </div>
+          </foreignObject>
         </g>
-      ))}
+        );
+      })}
     </svg>
   );
 }
@@ -190,10 +296,17 @@ function isServiceUnavailable(err: unknown): boolean {
 
 export function KnowledgeGraphView({
   initialParcelId = "",
+  initialCadastralNumber = "",
 }: {
   initialParcelId?: string;
+  initialCadastralNumber?: string;
 }) {
-  const [parcelId, setParcelId] = useState(initialParcelId);
+  const [cadastralQuery, setCadastralQuery] = useState(
+    initialCadastralNumber.trim(),
+  );
+  const [cadastralMatches, setCadastralMatches] = useState<
+    LandSearchResultResponse[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [relationships, setRelationships] = useState<LandRelationshipResponse[]>(
     [],
@@ -213,15 +326,15 @@ export function KnowledgeGraphView({
     return "Parcel";
   }, [parcel, loadedParcelId]);
 
-  const loadRelationships = useCallback(async (id: string) => {
-    const trimmed = id.trim();
+  const loadRelationshipsForParcel = useCallback(async (parcelRecordId: string) => {
+    const trimmed = parcelRecordId.trim();
     if (!trimmed) {
-      setError("Enter a parcel UUID or open a parcel from the catalog.");
       return;
     }
 
     setLoading(true);
     setError(null);
+    setCadastralMatches([]);
     setRelationships([]);
     setLoadedParcelId(null);
     setParcel(null);
@@ -235,10 +348,19 @@ export function KnowledgeGraphView({
       setLoadedParcelId(relResult.landParcelId);
       setRelationships(relResult.relationships);
       setParcel(parcelResult);
-      setParcelId(relResult.landParcelId);
+      const cadastral = parcelResult?.identifier.cadastralNumber?.trim();
+      if (cadastral) {
+        setCadastralQuery(cadastral);
+      }
       if (typeof window !== "undefined") {
         const url = new URL(window.location.href);
-        url.searchParams.set("parcelId", relResult.landParcelId);
+        url.searchParams.delete("parcelId");
+        if (cadastral) {
+          url.searchParams.set("cadastralNumber", cadastral);
+        } else {
+          url.searchParams.delete("cadastralNumber");
+          url.searchParams.set("parcelId", relResult.landParcelId);
+        }
         window.history.replaceState({}, "", url.toString());
       }
     } catch (err) {
@@ -261,11 +383,64 @@ export function KnowledgeGraphView({
     }
   }, []);
 
+  const searchByCadastral = useCallback(
+    async (cadastralNumber: string) => {
+      const trimmed = cadastralNumber.trim();
+      if (!trimmed) {
+        setError("Enter a cadastral number.");
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      setCadastralMatches([]);
+      setServiceUnavailable(false);
+
+      try {
+        const response = await findParcelsByCadastralNumber(trimmed);
+        if (response.totalCount === 0 || response.results.length === 0) {
+          setRelationships([]);
+          setLoadedParcelId(null);
+          setParcel(null);
+          setError("No parcel was found with this cadastral number.");
+          return;
+        }
+        if (response.results.length === 1) {
+          await loadRelationshipsForParcel(response.results[0].id);
+          return;
+        }
+        setCadastralMatches(response.results);
+      } catch (err) {
+        if (err instanceof ApiClientError) {
+          setError(err.detail || err.title);
+        } else if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Unable to search by cadastral number.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loadRelationshipsForParcel],
+  );
+
   useEffect(() => {
-    if (initialParcelId.trim()) {
-      void loadRelationships(initialParcelId);
+    const cadastral = initialCadastralNumber.trim();
+    const parcelId = initialParcelId.trim();
+    if (cadastral) {
+      void searchByCadastral(cadastral);
+      return;
     }
-  }, [initialParcelId, loadRelationships]);
+    if (parcelId) {
+      void loadRelationshipsForParcel(parcelId);
+    }
+  }, [
+    initialCadastralNumber,
+    initialParcelId,
+    loadRelationshipsForParcel,
+    searchByCadastral,
+  ]);
 
   const relationshipTypes = [
     ...new Set(relationships.map((item) => item.relationshipType)),
@@ -275,33 +450,66 @@ export function KnowledgeGraphView({
     <div className={styles.layout}>
       <PageHeading
         title="Land Knowledge Graph"
-        subtitle="Explore relationships returned by the API for a parcel. Edges are never invented — Neo4j when configured, otherwise the PostGIS baseline if available."
+        subtitle=""
       />
 
-      <div className={styles.toolbar}>
+      <form
+        className={styles.toolbar}
+        onSubmit={(event) => {
+          event.preventDefault();
+          void searchByCadastral(cadastralQuery);
+        }}
+      >
         <label className={styles.field}>
-          <span className={styles.fieldLabel}>Parcel UUID</span>
+          <span className={styles.fieldLabel}>Cadastral number</span>
           <input
             className={styles.input}
-            value={parcelId}
-            onChange={(e) => setParcelId(e.target.value)}
-            placeholder="Paste UUID or open from parcel details"
-            aria-label="Parcel UUID"
+            value={cadastralQuery}
+            onChange={(e) => {
+              setCadastralQuery(e.target.value);
+              setCadastralMatches([]);
+            }}
+            placeholder="Enter cadastral number"
+            autoComplete="off"
+            aria-label="Cadastral number"
           />
         </label>
         <div className={styles.actions}>
-          <Button
-            type="button"
-            variant="primary"
-            onClick={() => void loadRelationships(parcelId)}
-          >
+          <Button type="submit" variant="primary" disabled={loading}>
             Load relationships
           </Button>
           <Button href="/land-intelligence/parcels" variant="ghost">
             Browse parcels
           </Button>
         </div>
-      </div>
+      </form>
+
+      {cadastralMatches.length > 1 ? (
+        <div className={styles.matchesList} role="region" aria-label="Matching parcels">
+          <p className={styles.matchesTitle}>
+            {cadastralMatches.length} parcels share this cadastral number. Select
+            one:
+          </p>
+          <ul className={styles.matchesItems}>
+            {cadastralMatches.map((match) => (
+              <li key={match.id}>
+                <button
+                  type="button"
+                  className={styles.matchButton}
+                  onClick={() => void loadRelationshipsForParcel(match.id)}
+                >
+                  <span>{match.cadastralNumber}</span>
+                  <span className={styles.matchMeta}>{match.district}</span>
+                  <span className={styles.matchMeta}>
+                    {sourceReportedLandUseDisplay(match.cadastralSource) ||
+                      "Source land use not recorded"}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       {loading ? <LoadingState message="Loading relationships…" /> : null}
       {error && !serviceUnavailable ? <ErrorMessage message={error} /> : null}
@@ -410,18 +618,20 @@ export function KnowledgeGraphView({
             </p>
             <ul className={styles.list}>
               {relationships.map((item, index) => {
-                const sourceIsParcel =
-                  item.sourceNodeType === "LandParcel" &&
-                  item.sourceNodeId === loadedParcelId;
-                const targetIsParcel =
-                  item.targetNodeType === "LandParcel" &&
-                  item.targetNodeId === loadedParcelId;
-                const sourceLabel = sourceIsParcel
-                  ? parcelLabel
-                  : `${item.sourceNodeType} (${shortId(item.sourceNodeId)})`;
-                const targetLabel = targetIsParcel
-                  ? parcelLabel
-                  : `${item.targetNodeType} (${shortId(item.targetNodeId)})`;
+                const sourceLabel = endpointListLabel(
+                  item.sourceNodeType,
+                  item.sourceNodeId,
+                  loadedParcelId,
+                  parcelLabel,
+                  item,
+                );
+                const targetLabel = endpointListLabel(
+                  item.targetNodeType,
+                  item.targetNodeId,
+                  loadedParcelId,
+                  parcelLabel,
+                  item,
+                );
 
                 return (
                   <li
@@ -432,7 +642,9 @@ export function KnowledgeGraphView({
                     <p className={styles.itemPath}>
                       {sourceLabel} → {targetLabel}
                     </p>
-                    {item.description ? (
+                    {item.description &&
+                    !sourceLabel.includes(item.description.trim()) &&
+                    !targetLabel.includes(item.description.trim()) ? (
                       <p className={styles.itemMeta}>
                         {displayOrUnknown(item.description)}
                       </p>

@@ -1,6 +1,7 @@
 using StateLandGovernance.LandIntelligence.Application.Configuration;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Application.Mappings;
 using StateLandGovernance.LandIntelligence.Application.ProjectLeaseReady;
 using StateLandGovernance.LandIntelligence.Application.Recommendations;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
@@ -84,6 +85,8 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 var leaseReadyEvaluation = designation is null
                     ? null
                     : ProjectLeaseReadyDesignationEvaluator.Evaluate(designation, source);
+                var actualLeaseAvailabilityLabel = leaseReadyEvaluation?.DisplayLeaseAvailabilityLabel
+                    ?? LandParcelAvailabilityMapper.Build(source, null, false).ActualLeaseAvailabilityLabel;
 
                 recommendations.Add(ToRecommendationResult(
                     draft,
@@ -92,7 +95,8 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                     experimentalEvidence,
                     ranking,
                     screening,
-                    leaseReadyEvaluation));
+                    leaseReadyEvaluation,
+                    actualLeaseAvailabilityLabel));
             }
 
             var unavailable = CollectUnavailableCriteria(request, drafts);
@@ -182,7 +186,8 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         ExperimentalColomboMlEvidenceResult? experimentalEvidence,
         RecommendationRankingAssignment ranking,
         StateLandCandidateScreeningResult screening,
-        ProjectLeaseReadyDesignationEvaluator.Evaluation? projectLeaseReady)
+        ProjectLeaseReadyDesignationEvaluator.Evaluation? projectLeaseReady,
+        string? actualLeaseAvailabilityLabel)
     {
         var evidence = BuildEvidence(
             draft.CriterionResults,
@@ -196,9 +201,8 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         {
             evidence.Add(new RecommendationEvidenceDto(
                 "ProjectLeaseReadyDesignation",
-                projectLeaseReady.IsEffectiveForLeaseFlow
-                    ? $"{projectLeaseReady.DisplayLeaseAvailabilityLabel}. {projectLeaseReady.Designation.DesignationNotice}"
-                    : $"{projectLeaseReady.DisplayLeaseAvailabilityLabel}. {projectLeaseReady.Designation.DesignationNotice}",
+                $"{projectLeaseReady.ProjectDesignationLabel}. {projectLeaseReady.Designation.DesignationNotice} " +
+                $"Official lease availability: {projectLeaseReady.DisplayLeaseAvailabilityLabel}.",
                 "Project lease-ready (dataset assumption)"));
         }
 
@@ -236,14 +240,15 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             screening.ParcelStatusCode,
             screening.SourceProvenanceLabel,
             screening.SourceImportedAtUtc,
-            projectLeaseReady?.DisplayLeaseAvailabilityLabel,
+            projectLeaseReady?.ProjectDesignationLabel,
             projectLeaseReady?.IsDesignatedInProjectDataset ?? false,
             projectLeaseReady?.IsEffectiveForLeaseFlow ?? false,
             draft.Parcel.Area.ToHectares(),
             ranking.DisplayOrder,
             ranking.RuleScoreRank,
             ranking.RuleScoreTieCount,
-            ranking.IsTiedOnRuleScore);
+            ranking.IsTiedOnRuleScore,
+            actualLeaseAvailabilityLabel);
     }
 
     private async Task<(IReadOnlyList<LandParcel> Candidates, RecommendationSearchTransparencyDto Transparency)>
@@ -393,9 +398,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             stages.Add(new RecommendationFilterStageDto(
                 "Project land-cover group",
                 count,
-                group == "Coconut"
-                    ? "Coconut from original cadastral labels or at least 80% mapped project GIS coverage."
-                    : $"Research group '{group}' from original cadastral labels or mapped GIS coverage."));
+                $"Canonical land use '{group}': original cadastral label and/or qualifying project GIS classification (each parcel counted once)."));
         }
 
         // Source-reported Private claimant category is excluded from state-land candidates.
@@ -577,10 +580,13 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                     : 0m;
 
                 evidence.Add(new RecommendationEvidenceDto(
-                    Source: "RandomForestSuitabilityModel",
-                    Description: $"ML model predicts '{mlPrediction.PredictedLabel}' suitability " +
-                                 $"({confidence:P0} confidence). This is supplementary evidence and does " +
-                                 "not override the rule-based hard constraints above.",
+                    Source: mlPrediction.ModelSource,
+                    Description: mlPrediction.PredictedLabel == "Insufficient Evidence"
+                        ? $"Research ML found insufficient evidence ({confidence:P0} model confidence). " +
+                          "No ML suitability label was assigned. The rule score and hard constraints are unchanged."
+                        : $"ML model predicts '{mlPrediction.PredictedLabel}' suitability " +
+                          $"({confidence:P0} model confidence). This is preliminary research evidence, " +
+                          "not lease availability or approval, and it does not change rule-based ranking or hard constraints.",
                     RelatedCriterionName: "MlSuitabilityPrediction"));
             }
 
