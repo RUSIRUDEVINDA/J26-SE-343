@@ -27,3 +27,17 @@ No real OCR, financial scoring request, prediction, RAG, AI generation or submis
 CRIB remains optional in the UI. Bureau subgrades, XX, outstanding balances, monthly payments, default history and lease approval outputs remain distinct. Live missing-credit scoring needs an approved backend policy.
 
 Connect future services through the existing .NET API and financial extraction contract. Replace fixtures with typed API results and add busy, error and permission states when endpoints exist. Do not reinterpret demo percentages as model performance.
+
+
+## Implemented proposal flow (2026-10-14)
+
+The earlier preview description above is historical. The proposal generator now
+calls the Component 2 API for a 14-section Department-aligned document with reviewed
+reference retrieval, missing-field flags, calculated project budgets and an optional
+recalculated user-confirmed financial assessment. AI narrative drafting is optional
+and explicitly configured; no-model drafts are labelled structured. The editor
+retains source evidence and supports text, Word and browser Print / Save PDF export.
+Drafts remain in session memory. The historical-case and prediction screens still
+contain explicitly labelled fictional previews and do not feed actual generation.
+See `StateLandGovernance/docs/component2-proposal-generation.md` for API contracts,
+configuration, provenance and current limitations.
