@@ -16,11 +16,32 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
 using StateLandGovernance.LandIntelligence.Presentation.DependencyInjection;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
-using Microsoft.OpenApi.Models;
 
 EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
+builder.Services.AddSingleton<StateLandGovernance.LeaseFeasibility.Application.Proposals.IProposalReferenceRetriever,
+    StateLandGovernance.LeaseFeasibility.Infrastructure.Proposals.ReviewedProposalReferenceRetriever>();
+builder.Services.AddHttpClient<StateLandGovernance.LeaseFeasibility.Application.Proposals.IProposalNarrativeGenerator,
+    StateLandGovernance.LeaseFeasibility.Infrastructure.Proposals.OpenAiProposalNarrativeGenerator>(client => client.Timeout = TimeSpan.FromSeconds(120));
+builder.Services.AddTransient<StateLandGovernance.LeaseFeasibility.Application.Commands.GenerateLeaseProposalCommandHandler>();
+
+// The document review flow can run locally without the other modules' databases.
+if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("FinancialDocumentsOnly"))
+{
+    builder.Services.AddControllers().ConfigureApplicationPartManager(manager =>
+        manager.FeatureProviders.Add(new StateLandGovernance.Api.Controllers.FinancialControllerFeatureProvider()));
+    builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
+        .WithOrigins("http://localhost:3000", "http://127.0.0.1:3000",
+            "http://localhost:3002", "http://127.0.0.1:3002").AllowAnyHeader().AllowAnyMethod()));
+    var financialApp = builder.Build();
+    financialApp.UseCors();
+    financialApp.MapControllers();
+    financialApp.Run();
+    return;
+}
 
 builder.Services.AddBuildingBlocks();
 
@@ -47,7 +68,9 @@ builder.Services.AddCors(options =>
         policy => policy
             .WithOrigins(
                 "http://localhost:3000",
-                "http://127.0.0.1:3000")
+                "http://127.0.0.1:3000",
+                "http://localhost:3002",
+                "http://127.0.0.1:3002")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -59,26 +82,21 @@ builder.Services.AddLandIntelligencePresentation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(options =>
+    options.SwaggerDoc(LandIntelligenceApiGroups.External, new OpenApiInfo
     {
-        options.SwaggerDoc(LandIntelligenceApiGroups.External, new OpenApiInfo
-        {
-            Title = "State Land Governance — Component 1 External Read API",
-            Version = "v1",
-            Description =
-                "Read-only REST contract for external platform modules: land parcel queries, search, spatial constraints, knowledge graph relationships, and explainable recommendations."
-        });
-
-        options.SwaggerDoc(LandIntelligenceApiGroups.Internal, new OpenApiInfo
-        {
-            Title = "State Land Governance — Component 1 Internal Maintenance API",
-            Version = "v1",
-            Description =
-                "Component 1 parcel persistence endpoints. Not for consumption by external platform modules."
-        });
+        Title = "State Land Governance — Component 1 External Read API",
+        Version = "v1",
+        Description =
+            "Read-only REST contract for external platform modules: land parcel queries, search, spatial constraints, knowledge graph relationships, and explainable recommendations."
     });
-}
+
+    options.SwaggerDoc(LandIntelligenceApiGroups.Internal, new OpenApiInfo
+    {
+        Title = "State Land Governance — Component 1 Internal Maintenance API",
+        Version = "v1",
+        Description =
+            "Component 1 parcel persistence endpoints. Not for consumption by external platform modules."
+    });
 
     options.DocInclusionPredicate((documentName, apiDescription) =>
         string.Equals(apiDescription.GroupName, documentName, StringComparison.Ordinal));
