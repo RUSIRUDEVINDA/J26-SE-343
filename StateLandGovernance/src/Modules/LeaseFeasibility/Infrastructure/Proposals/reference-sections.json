@@ -1,0 +1,288 @@
+[
+  {
+    "id": "coconut-2",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 4,
+    "sectionNumber": 2,
+    "summary": "Describe the cultivation activity, site, land extent, ownership and proposed facilities.",
+    "pdfPages": [
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  {
+    "id": "coconut-3",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 7,
+    "sectionNumber": 3,
+    "summary": "List coconut seedlings, fertilizer and other inputs with sourcing methods.",
+    "pdfPages": [
+      7
+    ]
+  },
+  {
+    "id": "coconut-4",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 8,
+    "sectionNumber": 4,
+    "summary": "Use an itemized input table with units, unit prices, quantities and annual costs.",
+    "pdfPages": [
+      8
+    ]
+  },
+  {
+    "id": "coconut-5",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 9,
+    "sectionNumber": 5,
+    "summary": "Separate domestic marketing from possible export opportunities.",
+    "pdfPages": [
+      8,
+      9
+    ]
+  },
+  {
+    "id": "coconut-6",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 9,
+    "sectionNumber": 6,
+    "summary": "State the delay before harvest, harvest frequency and price assumptions.",
+    "pdfPages": [
+      9
+    ]
+  },
+  {
+    "id": "coconut-7",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 10,
+    "sectionNumber": 7,
+    "summary": "Connect product quantities and unit prices to sales revenue.",
+    "pdfPages": [
+      10
+    ]
+  },
+  {
+    "id": "coconut-8",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 10,
+    "sectionNumber": 8,
+    "summary": "Itemize materials, labour, utilities and other operating requirements.",
+    "pdfPages": [
+      10
+    ]
+  },
+  {
+    "id": "coconut-9",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 11,
+    "sectionNumber": 9,
+    "summary": "Break down land development, buildings, equipment and funding contributions.",
+    "pdfPages": [
+      11
+    ]
+  },
+  {
+    "id": "coconut-10",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 11,
+    "sectionNumber": 10,
+    "summary": "State expected coconut production with a clear annual period.",
+    "pdfPages": [
+      11
+    ]
+  },
+  {
+    "id": "coconut-11",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 12,
+    "sectionNumber": 11,
+    "summary": "Separate production costs, gross profit, operating expenses and net profit.",
+    "pdfPages": [
+      12
+    ]
+  },
+  {
+    "id": "coconut-12",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 13,
+    "sectionNumber": 12,
+    "summary": "Schedule land preparation, planting, irrigation and subsequent maintenance by month.",
+    "pdfPages": [
+      13
+    ]
+  },
+  {
+    "id": "coconut-13",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 14,
+    "sectionNumber": 13,
+    "summary": "Explain environmental impacts and cultivation mitigation measures.",
+    "pdfPages": [
+      14
+    ]
+  },
+  {
+    "id": "coconut-14",
+    "document": "Proposal1.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "coconut",
+    "pdfPage": 14,
+    "sectionNumber": 14,
+    "summary": "Describe ongoing supervision, technical support and maintenance.",
+    "pdfPages": [
+      14,
+      15
+    ]
+  },
+  {
+    "id": "poultry-2",
+    "document": "Leo farm proposal.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "poultry",
+    "pdfPage": 11,
+    "sectionNumber": 2,
+    "summary": "Include a survey plan, administrative location and boundaries; separate project objectives and management roles.",
+    "pdfPages": [
+      9,
+      10,
+      11,
+      12
+    ]
+  },
+  {
+    "id": "poultry-3",
+    "document": "Leo farm proposal.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "poultry",
+    "pdfPage": 15,
+    "sectionNumber": 3,
+    "summary": "Explain where chicks, feed, vaccines and other poultry inputs are sourced.",
+    "pdfPages": [
+      15
+    ]
+  },
+  {
+    "id": "poultry-4",
+    "document": "Leo farm proposal.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "poultry",
+    "pdfPage": 15,
+    "sectionNumber": 4,
+    "summary": "Show input quantities and unit-price calculations; identify the production cycle.",
+    "pdfPages": [
+      15
+    ]
+  },
+  {
+    "id": "poultry-5",
+    "document": "Leo farm proposal.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "poultry",
+    "pdfPage": 4,
+    "sectionNumber": 5,
+    "summary": "Describe live-bird and fresh-chicken sales channels and existing business activities.",
+    "pdfPages": [
+      4
+    ]
+  },
+  {
+    "id": "poultry-6",
+    "document": "Leo farm proposal.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "poultry",
+    "pdfPage": 14,
+    "sectionNumber": 6,
+    "summary": "Show the production flow from day-old chicks to live birds or processed chicken; identify feeding stages and health inputs.",
+    "pdfPages": [
+      14
+    ]
+  },
+  {
+    "id": "poultry-8",
+    "document": "Leo farm proposal.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "poultry",
+    "pdfPage": 15,
+    "sectionNumber": 8,
+    "summary": "Distinguish available business assets from funds required to operate a production cycle.",
+    "pdfPages": [
+      15,
+      16
+    ]
+  },
+  {
+    "id": "poultry-9",
+    "document": "Leo farm proposal.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "poultry",
+    "pdfPage": 17,
+    "sectionNumber": 9,
+    "summary": "Describe total project investment and the applicant funding approach.",
+    "pdfPages": [
+      17
+    ]
+  },
+  {
+    "id": "poultry-10",
+    "document": "Leo farm proposal.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "poultry",
+    "pdfPage": 17,
+    "sectionNumber": 10,
+    "summary": "Express expected bird numbers and output weight with the production-cycle duration.",
+    "pdfPages": [
+      17
+    ]
+  },
+  {
+    "id": "poultry-11",
+    "document": "Leo farm proposal.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "poultry",
+    "pdfPage": 18,
+    "sectionNumber": 11,
+    "summary": "Separate cycle revenue, variable costs and fixed costs before calculating profit.",
+    "pdfPages": [
+      18,
+      19
+    ]
+  },
+  {
+    "id": "poultry-12",
+    "document": "Leo farm proposal.pdf",
+    "role": "example-unverified-outcome",
+    "projectType": "poultry",
+    "pdfPage": 20,
+    "sectionNumber": 12,
+    "summary": "Use a phased timeline for site preparation, construction, production and sales.",
+    "pdfPages": [
+      20
+    ]
+  }
+]
