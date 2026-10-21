@@ -219,6 +219,26 @@ export async function apiGet<T>(
   return JSON.parse(text) as T;
 }
 
+export async function apiDownloadBlob(
+  path: string,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
+  init?: RequestInit,
+): Promise<Blob> {
+  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
+  const response = await authorizedFetch(
+    url,
+    async () => ({
+      ...init,
+      method: "GET",
+      headers: await mergeHeaders(init?.headers, authRole),
+    }),
+    authRole,
+  );
+
+  return await response.blob();
+}
+
 /** GET that maps HTTP 204 / empty body to null. */
 export async function apiGetOrNull<T>(
   path: string,
