@@ -1,0 +1,12 @@
+# Grade-complete specimen-based financial PDF pack
+
+16 folders: A1 A2 A3 B1 B2 B3 C1 C2 C3 D1 D2 D3 E1 E2 E3 XX.
+Each contains bank_statement.pdf (Apr-Sep 2026, six pages), crib_report.pdf (ten pages, supplied specimen section order), and expected.json. manifest.json has all ground truth; grade_matrix.csv is the case index; GRADE_SCENARIO_GUIDE.pdf is the readable overview.
+
+The previous layouts were simplified. This version explicitly follows the specimen's dashboard, subject information, scoring/history/legend, sector summaries, facility column matrix and payments, closed/historical facilities, relations/inquiries/disputes, cheque details, utilities/insurance/explanations, and code/disclaimer pages. The second uploaded PDF is a photographed/two-up report variant; this pack uses the specimen's clean one-page-per-sheet format. Banking layout follows the two uploaded screenshots: address box, compact monospaced rows, salmon rules, dates, debits/credits, Cr balances, B/F and C/F.
+
+CRIB subgrades and lease grades are separate. All 15 bureau subgrades plus XX are explicit assigned fixtures; official subgrade cutoff ranges and PD calibration are not represented. Scores/PD are synthetic. The family legend labels/boundaries follow the specimen. Synthetic reason codes use SYN prefixes. Risk grade is shown in the report; expected lease grade stays outside financial documents. Family-matched scenarios happen to produce lease A, B, C, D, E under the verified fixture inputs; no universal bureau-to-lease mapping is implied.
+
+The project scorer uses debt PLUS requested lease divided by monthly income. Bank average balance is the average daily closing balance of all 183 days in Apr-Sep 2026. Qualifying income comes only from salary. Own-account transfers are excluded. Monthly income consistency 1 is an explicit verified scenario assumption, and E's default-history boolean is a reviewer-confirmed assumption supported by its synthetic negatively closed/written-off facility. Principal is never converted to installment. XX cannot be automatically scored.
+
+Run python3 generate.py with reportlab, pypdf installed to regenerate. Integration OCR/parser success remains untested; the current parser needs labelled/verified evidence and does not reconstruct all table relationships. Use the actual PDF route rather than a mock bypass for integration tests. validation.json records the fixture checks. No original customer information or official logos are embedded.

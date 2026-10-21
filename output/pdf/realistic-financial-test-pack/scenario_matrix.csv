@@ -1,0 +1,13 @@
+scenario_id,scenario,verified_income_assumption_lkr,document_reported_monthly_debt_lkr,requested_monthly_lease_lkr,is_within_limit,requires_manual_review,expected_action
+S01,"Stable salary, low debt",150000,20000,25000,True,False,capacity_pass
+S02,Multiple verified income sources,120000,30000,35000,True,False,capacity_pass
+S03,Variable self-employed income,95000,25000,30000,True,True,manual_review
+S04,Existing debt exceeds capacity,100000,70000,10000,False,False,capacity_exceeded
+S05,Exactly at the 60 percent boundary,100000,45000,15000,True,False,capacity_pass
+S06,One cent above the boundary,100000,45000,15000.01,False,False,capacity_exceeded
+S07,Transfers and reversals are not income,80000,15000,20000,True,False,capacity_pass
+S08,Current arrears and adverse history,180000,35000,25000,True,True,manual_review
+S09,Disputed facility with uncertain liability,140000,25000,30000,,True,manual_review
+S10,Monthly installment missing,130000,,25000,,True,manual_review
+S11,No qualifying income; savings and loan proceeds,0,10000,5000,,True,manual_review
+S12,Applicant identity mismatch,160000,20000,30000,,True,manual_review

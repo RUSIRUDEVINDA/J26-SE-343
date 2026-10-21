@@ -1,0 +1,38 @@
+{
+  "paired_scenarios": 16,
+  "pdf_count": 33,
+  "bureau_subgrades": [
+    "A1",
+    "A2",
+    "A3",
+    "B1",
+    "B2",
+    "B3",
+    "C1",
+    "C2",
+    "C3",
+    "D1",
+    "D2",
+    "D3",
+    "E1",
+    "E2",
+    "E3",
+    "XX"
+  ],
+  "project_grades_covered": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+  ],
+  "crib_pages_each": 10,
+  "bank_pages_each": 6,
+  "all_bank_running_balances_valid": true,
+  "all_monthly_totals_valid": true,
+  "daily_balance_average_verified": true,
+  "xx_has_no_automatic_grade": true,
+  "grade_oracle": "Actual checked-in C# project engine, rebuilt and executed for all 15 scored scenarios",
+  "live_ocr_tested": false,
+  "actual_project_engine_validated": true
+}

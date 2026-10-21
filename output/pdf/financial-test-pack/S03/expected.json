@@ -1,0 +1,535 @@
+{
+  "scenario_id": "S03",
+  "scenario": "Variable self-employed income",
+  "currency": "LKR",
+  "bank_identity": "TEST-ID-S03",
+  "crib_identity": "TEST-ID-S03",
+  "identity_matches": true,
+  "verified_income_assumption_lkr": "95000",
+  "monthly_qualifying_income_assumptions_lkr": [
+    "65000",
+    "125000",
+    "45000",
+    "165000",
+    "75000",
+    "95000"
+  ],
+  "document_reported_monthly_debt_lkr": "25000",
+  "generator_hidden_monthly_debt_lkr": "25000",
+  "requested_monthly_lease_lkr": "30000",
+  "research_rule": "component-2-monthly-payment-capacity-60-v1",
+  "maximum_total_payments_lkr": "57000.00",
+  "available_lease_lkr": "32000.00",
+  "is_within_limit": true,
+  "requires_manual_review": true,
+  "expected_action": "manual_review",
+  "notes": "Net business income assumes only the explicitly identified business costs; require income verification.",
+  "facilities": [
+    {
+      "facility_id": "TEST-FAC-S03-1",
+      "status": "Active",
+      "outstanding_lkr": "360000.0",
+      "monthly_installment_lkr": "15000.0",
+      "arrears_lkr": "0",
+      "days_in_arrears": 0,
+      "disputed": false
+    },
+    {
+      "facility_id": "TEST-FAC-S03-2",
+      "status": "Active",
+      "outstanding_lkr": "240000.0",
+      "monthly_installment_lkr": "10000.0",
+      "arrears_lkr": "0",
+      "days_in_arrears": 0,
+      "disputed": false
+    }
+  ],
+  "bank_months": [
+    {
+      "month": "2026-04",
+      "opening_lkr": "1000000",
+      "credits_lkr": "80000.00",
+      "debits_lkr": "54250.00",
+      "closing_lkr": "1025750.00",
+      "transactions": [
+        {
+          "date": "2026-04-02",
+          "particulars": "CUSTOMER RECEIPTS - TEST A",
+          "debit_lkr": "0.00",
+          "credit_lkr": "48,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1048000.00"
+        },
+        {
+          "date": "2026-04-08",
+          "particulars": "CUSTOMER RECEIPTS - TEST B",
+          "debit_lkr": "0.00",
+          "credit_lkr": "32,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1080000.00"
+        },
+        {
+          "date": "2026-04-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1065000.00"
+        },
+        {
+          "date": "2026-04-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "10,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1055000.00"
+        },
+        {
+          "date": "2026-04-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1048500.00"
+        },
+        {
+          "date": "2026-04-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1044000.00"
+        },
+        {
+          "date": "2026-04-22",
+          "particulars": "BUSINESS SUPPLIES TEST",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "business_expense",
+          "balance_lkr": "1029000.00"
+        },
+        {
+          "date": "2026-04-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "1026000.00"
+        },
+        {
+          "date": "2026-04-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1025750.00"
+        }
+      ]
+    },
+    {
+      "month": "2026-05",
+      "opening_lkr": "1025750.00",
+      "credits_lkr": "140000.00",
+      "debits_lkr": "54250.00",
+      "closing_lkr": "1111500.00",
+      "transactions": [
+        {
+          "date": "2026-05-02",
+          "particulars": "CUSTOMER RECEIPTS - TEST A",
+          "debit_lkr": "0.00",
+          "credit_lkr": "84,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1109750.00"
+        },
+        {
+          "date": "2026-05-08",
+          "particulars": "CUSTOMER RECEIPTS - TEST B",
+          "debit_lkr": "0.00",
+          "credit_lkr": "56,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1165750.00"
+        },
+        {
+          "date": "2026-05-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1150750.00"
+        },
+        {
+          "date": "2026-05-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "10,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1140750.00"
+        },
+        {
+          "date": "2026-05-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1134250.00"
+        },
+        {
+          "date": "2026-05-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1129750.00"
+        },
+        {
+          "date": "2026-05-22",
+          "particulars": "BUSINESS SUPPLIES TEST",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "business_expense",
+          "balance_lkr": "1114750.00"
+        },
+        {
+          "date": "2026-05-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "1111750.00"
+        },
+        {
+          "date": "2026-05-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1111500.00"
+        }
+      ]
+    },
+    {
+      "month": "2026-06",
+      "opening_lkr": "1111500.00",
+      "credits_lkr": "60000.00",
+      "debits_lkr": "54250.00",
+      "closing_lkr": "1117250.00",
+      "transactions": [
+        {
+          "date": "2026-06-02",
+          "particulars": "CUSTOMER RECEIPTS - TEST A",
+          "debit_lkr": "0.00",
+          "credit_lkr": "36,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1147500.00"
+        },
+        {
+          "date": "2026-06-08",
+          "particulars": "CUSTOMER RECEIPTS - TEST B",
+          "debit_lkr": "0.00",
+          "credit_lkr": "24,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1171500.00"
+        },
+        {
+          "date": "2026-06-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1156500.00"
+        },
+        {
+          "date": "2026-06-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "10,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1146500.00"
+        },
+        {
+          "date": "2026-06-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1140000.00"
+        },
+        {
+          "date": "2026-06-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1135500.00"
+        },
+        {
+          "date": "2026-06-22",
+          "particulars": "BUSINESS SUPPLIES TEST",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "business_expense",
+          "balance_lkr": "1120500.00"
+        },
+        {
+          "date": "2026-06-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "1117500.00"
+        },
+        {
+          "date": "2026-06-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1117250.00"
+        }
+      ]
+    },
+    {
+      "month": "2026-07",
+      "opening_lkr": "1117250.00",
+      "credits_lkr": "180000.00",
+      "debits_lkr": "54250.00",
+      "closing_lkr": "1243000.00",
+      "transactions": [
+        {
+          "date": "2026-07-02",
+          "particulars": "CUSTOMER RECEIPTS - TEST A",
+          "debit_lkr": "0.00",
+          "credit_lkr": "108,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1225250.00"
+        },
+        {
+          "date": "2026-07-08",
+          "particulars": "CUSTOMER RECEIPTS - TEST B",
+          "debit_lkr": "0.00",
+          "credit_lkr": "72,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1297250.00"
+        },
+        {
+          "date": "2026-07-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1282250.00"
+        },
+        {
+          "date": "2026-07-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "10,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1272250.00"
+        },
+        {
+          "date": "2026-07-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1265750.00"
+        },
+        {
+          "date": "2026-07-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1261250.00"
+        },
+        {
+          "date": "2026-07-22",
+          "particulars": "BUSINESS SUPPLIES TEST",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "business_expense",
+          "balance_lkr": "1246250.00"
+        },
+        {
+          "date": "2026-07-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "1243250.00"
+        },
+        {
+          "date": "2026-07-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1243000.00"
+        }
+      ]
+    },
+    {
+      "month": "2026-08",
+      "opening_lkr": "1243000.00",
+      "credits_lkr": "90000.00",
+      "debits_lkr": "54250.00",
+      "closing_lkr": "1278750.00",
+      "transactions": [
+        {
+          "date": "2026-08-02",
+          "particulars": "CUSTOMER RECEIPTS - TEST A",
+          "debit_lkr": "0.00",
+          "credit_lkr": "54,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1297000.00"
+        },
+        {
+          "date": "2026-08-08",
+          "particulars": "CUSTOMER RECEIPTS - TEST B",
+          "debit_lkr": "0.00",
+          "credit_lkr": "36,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1333000.00"
+        },
+        {
+          "date": "2026-08-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1318000.00"
+        },
+        {
+          "date": "2026-08-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "10,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1308000.00"
+        },
+        {
+          "date": "2026-08-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1301500.00"
+        },
+        {
+          "date": "2026-08-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1297000.00"
+        },
+        {
+          "date": "2026-08-22",
+          "particulars": "BUSINESS SUPPLIES TEST",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "business_expense",
+          "balance_lkr": "1282000.00"
+        },
+        {
+          "date": "2026-08-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "1279000.00"
+        },
+        {
+          "date": "2026-08-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1278750.00"
+        }
+      ]
+    },
+    {
+      "month": "2026-09",
+      "opening_lkr": "1278750.00",
+      "credits_lkr": "110000.00",
+      "debits_lkr": "54250.00",
+      "closing_lkr": "1334500.00",
+      "transactions": [
+        {
+          "date": "2026-09-02",
+          "particulars": "CUSTOMER RECEIPTS - TEST A",
+          "debit_lkr": "0.00",
+          "credit_lkr": "66,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1344750.00"
+        },
+        {
+          "date": "2026-09-08",
+          "particulars": "CUSTOMER RECEIPTS - TEST B",
+          "debit_lkr": "0.00",
+          "credit_lkr": "44,000.00",
+          "classification": "business_receipts",
+          "balance_lkr": "1388750.00"
+        },
+        {
+          "date": "2026-09-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1373750.00"
+        },
+        {
+          "date": "2026-09-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "10,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1363750.00"
+        },
+        {
+          "date": "2026-09-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1357250.00"
+        },
+        {
+          "date": "2026-09-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1352750.00"
+        },
+        {
+          "date": "2026-09-22",
+          "particulars": "BUSINESS SUPPLIES TEST",
+          "debit_lkr": "15,000.00",
+          "credit_lkr": "0.00",
+          "classification": "business_expense",
+          "balance_lkr": "1337750.00"
+        },
+        {
+          "date": "2026-09-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "1334750.00"
+        },
+        {
+          "date": "2026-09-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1334500.00"
+        }
+      ]
+    }
+  ]
+}

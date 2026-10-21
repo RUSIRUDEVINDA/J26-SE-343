@@ -1,0 +1,42 @@
+{
+  "actual_project_engine_validated": true,
+  "scenarios_scored": 5,
+  "xx_excluded_because_grade_is_unknown": true,
+  "results": [
+    {
+      "bureau_subgrade": "A1",
+      "lease_grade": "A",
+      "score": 100,
+      "action": "FastTrack",
+      "capacity": true
+    },
+    {
+      "bureau_subgrade": "B1",
+      "lease_grade": "B",
+      "score": 80,
+      "action": "Proceed",
+      "capacity": true
+    },
+    {
+      "bureau_subgrade": "C1",
+      "lease_grade": "C",
+      "score": 55,
+      "action": "ManualReview",
+      "capacity": true
+    },
+    {
+      "bureau_subgrade": "D1",
+      "lease_grade": "D",
+      "score": 40,
+      "action": "Escalate",
+      "capacity": true
+    },
+    {
+      "bureau_subgrade": "E1",
+      "lease_grade": "E",
+      "score": 0,
+      "action": "Reject",
+      "capacity": false
+    }
+  ]
+}

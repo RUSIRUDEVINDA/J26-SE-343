@@ -1,0 +1,583 @@
+{
+  "scenario_id": "S11",
+  "scenario": "No qualifying income; savings and loan proceeds",
+  "currency": "LKR",
+  "bank_identity": "TEST-ID-S11",
+  "crib_identity": "TEST-ID-S11",
+  "identity_matches": true,
+  "verified_income_assumption_lkr": "0",
+  "monthly_qualifying_income_assumptions_lkr": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  "document_reported_monthly_debt_lkr": "10000",
+  "generator_hidden_monthly_debt_lkr": "10000",
+  "requested_monthly_lease_lkr": "5000",
+  "research_rule": "component-2-monthly-payment-capacity-60-v1",
+  "maximum_total_payments_lkr": null,
+  "available_lease_lkr": null,
+  "is_within_limit": null,
+  "requires_manual_review": true,
+  "expected_action": "manual_review",
+  "notes": "No qualifying income. Capacity constructor rejects income <= 0; do not return a positive capacity decision.",
+  "facilities": [
+    {
+      "facility_id": "TEST-FAC-S11-1",
+      "status": "Active",
+      "outstanding_lkr": "144000.0",
+      "monthly_installment_lkr": "6000.0",
+      "arrears_lkr": "0",
+      "days_in_arrears": 0,
+      "disputed": false
+    },
+    {
+      "facility_id": "TEST-FAC-S11-2",
+      "status": "Active",
+      "outstanding_lkr": "96000.0",
+      "monthly_installment_lkr": "4000.0",
+      "arrears_lkr": "0",
+      "days_in_arrears": 0,
+      "disputed": false
+    }
+  ],
+  "bank_months": [
+    {
+      "month": "2026-04",
+      "opening_lkr": "1000000",
+      "credits_lkr": "242000.00",
+      "debits_lkr": "26250.00",
+      "closing_lkr": "1215750.00",
+      "transactions": [
+        {
+          "date": "2026-04-10",
+          "particulars": "OWN ACCOUNT TRANSFER IN",
+          "debit_lkr": "0.00",
+          "credit_lkr": "90,000.00",
+          "classification": "internal_transfer",
+          "balance_lkr": "1090000.00"
+        },
+        {
+          "date": "2026-04-11",
+          "particulars": "ECOM TEST PURCHASE",
+          "debit_lkr": "2,000.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1088000.00"
+        },
+        {
+          "date": "2026-04-12",
+          "particulars": "ECOM REVERSAL",
+          "debit_lkr": "0.00",
+          "credit_lkr": "2,000.00",
+          "classification": "reversal",
+          "balance_lkr": "1090000.00"
+        },
+        {
+          "date": "2026-04-13",
+          "particulars": "LOAN DISBURSEMENT TEST",
+          "debit_lkr": "0.00",
+          "credit_lkr": "150,000.00",
+          "classification": "loan_proceeds",
+          "balance_lkr": "1240000.00"
+        },
+        {
+          "date": "2026-04-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "6,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1234000.00"
+        },
+        {
+          "date": "2026-04-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "4,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1230000.00"
+        },
+        {
+          "date": "2026-04-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1223500.00"
+        },
+        {
+          "date": "2026-04-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1219000.00"
+        },
+        {
+          "date": "2026-04-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "1216000.00"
+        },
+        {
+          "date": "2026-04-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1215750.00"
+        }
+      ]
+    },
+    {
+      "month": "2026-05",
+      "opening_lkr": "1215750.00",
+      "credits_lkr": "242000.00",
+      "debits_lkr": "26250.00",
+      "closing_lkr": "1431500.00",
+      "transactions": [
+        {
+          "date": "2026-05-10",
+          "particulars": "OWN ACCOUNT TRANSFER IN",
+          "debit_lkr": "0.00",
+          "credit_lkr": "90,000.00",
+          "classification": "internal_transfer",
+          "balance_lkr": "1305750.00"
+        },
+        {
+          "date": "2026-05-11",
+          "particulars": "ECOM TEST PURCHASE",
+          "debit_lkr": "2,000.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1303750.00"
+        },
+        {
+          "date": "2026-05-12",
+          "particulars": "ECOM REVERSAL",
+          "debit_lkr": "0.00",
+          "credit_lkr": "2,000.00",
+          "classification": "reversal",
+          "balance_lkr": "1305750.00"
+        },
+        {
+          "date": "2026-05-13",
+          "particulars": "LOAN DISBURSEMENT TEST",
+          "debit_lkr": "0.00",
+          "credit_lkr": "150,000.00",
+          "classification": "loan_proceeds",
+          "balance_lkr": "1455750.00"
+        },
+        {
+          "date": "2026-05-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "6,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1449750.00"
+        },
+        {
+          "date": "2026-05-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "4,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1445750.00"
+        },
+        {
+          "date": "2026-05-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1439250.00"
+        },
+        {
+          "date": "2026-05-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1434750.00"
+        },
+        {
+          "date": "2026-05-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "1431750.00"
+        },
+        {
+          "date": "2026-05-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1431500.00"
+        }
+      ]
+    },
+    {
+      "month": "2026-06",
+      "opening_lkr": "1431500.00",
+      "credits_lkr": "242000.00",
+      "debits_lkr": "26250.00",
+      "closing_lkr": "1647250.00",
+      "transactions": [
+        {
+          "date": "2026-06-10",
+          "particulars": "OWN ACCOUNT TRANSFER IN",
+          "debit_lkr": "0.00",
+          "credit_lkr": "90,000.00",
+          "classification": "internal_transfer",
+          "balance_lkr": "1521500.00"
+        },
+        {
+          "date": "2026-06-11",
+          "particulars": "ECOM TEST PURCHASE",
+          "debit_lkr": "2,000.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1519500.00"
+        },
+        {
+          "date": "2026-06-12",
+          "particulars": "ECOM REVERSAL",
+          "debit_lkr": "0.00",
+          "credit_lkr": "2,000.00",
+          "classification": "reversal",
+          "balance_lkr": "1521500.00"
+        },
+        {
+          "date": "2026-06-13",
+          "particulars": "LOAN DISBURSEMENT TEST",
+          "debit_lkr": "0.00",
+          "credit_lkr": "150,000.00",
+          "classification": "loan_proceeds",
+          "balance_lkr": "1671500.00"
+        },
+        {
+          "date": "2026-06-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "6,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1665500.00"
+        },
+        {
+          "date": "2026-06-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "4,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1661500.00"
+        },
+        {
+          "date": "2026-06-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1655000.00"
+        },
+        {
+          "date": "2026-06-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1650500.00"
+        },
+        {
+          "date": "2026-06-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "1647500.00"
+        },
+        {
+          "date": "2026-06-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1647250.00"
+        }
+      ]
+    },
+    {
+      "month": "2026-07",
+      "opening_lkr": "1647250.00",
+      "credits_lkr": "242000.00",
+      "debits_lkr": "26250.00",
+      "closing_lkr": "1863000.00",
+      "transactions": [
+        {
+          "date": "2026-07-10",
+          "particulars": "OWN ACCOUNT TRANSFER IN",
+          "debit_lkr": "0.00",
+          "credit_lkr": "90,000.00",
+          "classification": "internal_transfer",
+          "balance_lkr": "1737250.00"
+        },
+        {
+          "date": "2026-07-11",
+          "particulars": "ECOM TEST PURCHASE",
+          "debit_lkr": "2,000.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1735250.00"
+        },
+        {
+          "date": "2026-07-12",
+          "particulars": "ECOM REVERSAL",
+          "debit_lkr": "0.00",
+          "credit_lkr": "2,000.00",
+          "classification": "reversal",
+          "balance_lkr": "1737250.00"
+        },
+        {
+          "date": "2026-07-13",
+          "particulars": "LOAN DISBURSEMENT TEST",
+          "debit_lkr": "0.00",
+          "credit_lkr": "150,000.00",
+          "classification": "loan_proceeds",
+          "balance_lkr": "1887250.00"
+        },
+        {
+          "date": "2026-07-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "6,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1881250.00"
+        },
+        {
+          "date": "2026-07-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "4,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "1877250.00"
+        },
+        {
+          "date": "2026-07-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1870750.00"
+        },
+        {
+          "date": "2026-07-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1866250.00"
+        },
+        {
+          "date": "2026-07-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "1863250.00"
+        },
+        {
+          "date": "2026-07-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1863000.00"
+        }
+      ]
+    },
+    {
+      "month": "2026-08",
+      "opening_lkr": "1863000.00",
+      "credits_lkr": "242000.00",
+      "debits_lkr": "26250.00",
+      "closing_lkr": "2078750.00",
+      "transactions": [
+        {
+          "date": "2026-08-10",
+          "particulars": "OWN ACCOUNT TRANSFER IN",
+          "debit_lkr": "0.00",
+          "credit_lkr": "90,000.00",
+          "classification": "internal_transfer",
+          "balance_lkr": "1953000.00"
+        },
+        {
+          "date": "2026-08-11",
+          "particulars": "ECOM TEST PURCHASE",
+          "debit_lkr": "2,000.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "1951000.00"
+        },
+        {
+          "date": "2026-08-12",
+          "particulars": "ECOM REVERSAL",
+          "debit_lkr": "0.00",
+          "credit_lkr": "2,000.00",
+          "classification": "reversal",
+          "balance_lkr": "1953000.00"
+        },
+        {
+          "date": "2026-08-13",
+          "particulars": "LOAN DISBURSEMENT TEST",
+          "debit_lkr": "0.00",
+          "credit_lkr": "150,000.00",
+          "classification": "loan_proceeds",
+          "balance_lkr": "2103000.00"
+        },
+        {
+          "date": "2026-08-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "6,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "2097000.00"
+        },
+        {
+          "date": "2026-08-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "4,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "2093000.00"
+        },
+        {
+          "date": "2026-08-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "2086500.00"
+        },
+        {
+          "date": "2026-08-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "2082000.00"
+        },
+        {
+          "date": "2026-08-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "2079000.00"
+        },
+        {
+          "date": "2026-08-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "2078750.00"
+        }
+      ]
+    },
+    {
+      "month": "2026-09",
+      "opening_lkr": "2078750.00",
+      "credits_lkr": "242000.00",
+      "debits_lkr": "26250.00",
+      "closing_lkr": "2294500.00",
+      "transactions": [
+        {
+          "date": "2026-09-10",
+          "particulars": "OWN ACCOUNT TRANSFER IN",
+          "debit_lkr": "0.00",
+          "credit_lkr": "90,000.00",
+          "classification": "internal_transfer",
+          "balance_lkr": "2168750.00"
+        },
+        {
+          "date": "2026-09-11",
+          "particulars": "ECOM TEST PURCHASE",
+          "debit_lkr": "2,000.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "2166750.00"
+        },
+        {
+          "date": "2026-09-12",
+          "particulars": "ECOM REVERSAL",
+          "debit_lkr": "0.00",
+          "credit_lkr": "2,000.00",
+          "classification": "reversal",
+          "balance_lkr": "2168750.00"
+        },
+        {
+          "date": "2026-09-13",
+          "particulars": "LOAN DISBURSEMENT TEST",
+          "debit_lkr": "0.00",
+          "credit_lkr": "150,000.00",
+          "classification": "loan_proceeds",
+          "balance_lkr": "2318750.00"
+        },
+        {
+          "date": "2026-09-15",
+          "particulars": "AUTOPAY - TEST LOAN A",
+          "debit_lkr": "6,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "2312750.00"
+        },
+        {
+          "date": "2026-09-17",
+          "particulars": "AUTOPAY - TEST LOAN B",
+          "debit_lkr": "4,000.00",
+          "credit_lkr": "0.00",
+          "classification": "debt_payment",
+          "balance_lkr": "2308750.00"
+        },
+        {
+          "date": "2026-09-19",
+          "particulars": "GROCERIES TEST SHOP",
+          "debit_lkr": "6,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "2302250.00"
+        },
+        {
+          "date": "2026-09-20",
+          "particulars": "UTILITIES TEST BILL",
+          "debit_lkr": "4,500.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "2297750.00"
+        },
+        {
+          "date": "2026-09-24",
+          "particulars": "CASH WITHDRAWAL",
+          "debit_lkr": "3,000.00",
+          "credit_lkr": "0.00",
+          "classification": "cash_withdrawal",
+          "balance_lkr": "2294750.00"
+        },
+        {
+          "date": "2026-09-26",
+          "particulars": "BANK SERVICE FEE",
+          "debit_lkr": "250.00",
+          "credit_lkr": "0.00",
+          "classification": "expense",
+          "balance_lkr": "2294500.00"
+        }
+      ]
+    }
+  ]
+}

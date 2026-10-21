@@ -1,0 +1,1636 @@
+{
+  "scenario_id": "B3",
+  "bureau_subgrade": "B3",
+  "bureau_score": 583,
+  "bureau_probability_of_default_percent": 11,
+  "bureau_values_are_assigned_synthetic": true,
+  "exact_subgrade_cutoffs_not_claimed": true,
+  "identity": "TEST-ID-B3",
+  "bank_statement_months": [
+    {
+      "month": "2026-04",
+      "opening_lkr": "80000",
+      "closing_lkr": "80000.0",
+      "total_debits_lkr": "150000.0",
+      "total_credits_lkr": "150000",
+      "daily_closing_balances_lkr": [
+        "80000",
+        "80000",
+        "79300",
+        "78600",
+        "77900",
+        "77200",
+        "76500",
+        "75800",
+        "75100",
+        "74400",
+        "73700",
+        "73000",
+        "72300",
+        "71600",
+        "70900",
+        "70200",
+        "69500",
+        "68800",
+        "68100",
+        "67400",
+        "66700",
+        "66000",
+        "64000",
+        "62000",
+        "62000",
+        "62000",
+        "62000",
+        "212000",
+        "167000.0",
+        "80000.0"
+      ],
+      "transactions": [
+        {
+          "date": "2026-04-03",
+          "particulars": "POS TEST GROCERY R04001",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "79300"
+        },
+        {
+          "date": "2026-04-04",
+          "particulars": "ECOM TEST TRANSPORT R04002",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "78600"
+        },
+        {
+          "date": "2026-04-05",
+          "particulars": "POS TEST PHARMACY R04003",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77900"
+        },
+        {
+          "date": "2026-04-06",
+          "particulars": "POS TEST CAFE R04004",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77200"
+        },
+        {
+          "date": "2026-04-07",
+          "particulars": "BILL TEST UTILITY R04005",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "76500"
+        },
+        {
+          "date": "2026-04-08",
+          "particulars": "POS TEST MARKET R04006",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75800"
+        },
+        {
+          "date": "2026-04-09",
+          "particulars": "POS TEST GROCERY R04007",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75100"
+        },
+        {
+          "date": "2026-04-10",
+          "particulars": "ECOM TEST TRANSPORT R04008",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "74400"
+        },
+        {
+          "date": "2026-04-11",
+          "particulars": "POS TEST PHARMACY R04009",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73700"
+        },
+        {
+          "date": "2026-04-12",
+          "particulars": "POS TEST CAFE R04010",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73000"
+        },
+        {
+          "date": "2026-04-13",
+          "particulars": "BILL TEST UTILITY R04011",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "72300"
+        },
+        {
+          "date": "2026-04-14",
+          "particulars": "POS TEST MARKET R04012",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "71600"
+        },
+        {
+          "date": "2026-04-15",
+          "particulars": "POS TEST GROCERY R04013",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70900"
+        },
+        {
+          "date": "2026-04-16",
+          "particulars": "ECOM TEST TRANSPORT R04014",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70200"
+        },
+        {
+          "date": "2026-04-17",
+          "particulars": "POS TEST PHARMACY R04015",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "69500"
+        },
+        {
+          "date": "2026-04-18",
+          "particulars": "POS TEST CAFE R04016",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68800"
+        },
+        {
+          "date": "2026-04-19",
+          "particulars": "BILL TEST UTILITY R04017",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68100"
+        },
+        {
+          "date": "2026-04-20",
+          "particulars": "POS TEST MARKET R04018",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "67400"
+        },
+        {
+          "date": "2026-04-21",
+          "particulars": "POS TEST GROCERY R04019",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66700"
+        },
+        {
+          "date": "2026-04-22",
+          "particulars": "ECOM TEST TRANSPORT R04020",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66000"
+        },
+        {
+          "date": "2026-04-23",
+          "particulars": "POS TEST PHARMACY R04021",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "64000"
+        },
+        {
+          "date": "2026-04-24",
+          "particulars": "POS TEST CAFE R04022",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "62000"
+        },
+        {
+          "date": "2026-04-28",
+          "particulars": "NSC SAL APR TEST EMPLOYER",
+          "debit_lkr": "0",
+          "credit_lkr": "150000",
+          "classification": "qualifying_income",
+          "balance_lkr": "212000"
+        },
+        {
+          "date": "2026-04-29",
+          "particulars": "STO TEST LENDER A",
+          "debit_lkr": "15000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "197000.0"
+        },
+        {
+          "date": "2026-04-29",
+          "particulars": "STO TEST LENDER B",
+          "debit_lkr": "10000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "187000.0"
+        },
+        {
+          "date": "2026-04-29",
+          "particulars": "STO TEST RENT",
+          "debit_lkr": "20000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "167000.0"
+        },
+        {
+          "date": "2026-04-30",
+          "particulars": "IB OWN ACCOUNT TRANSFER",
+          "debit_lkr": "87000",
+          "credit_lkr": "0",
+          "classification": "internal_transfer",
+          "balance_lkr": "80000.0"
+        }
+      ]
+    },
+    {
+      "month": "2026-05",
+      "opening_lkr": "80000.0",
+      "closing_lkr": "80000.0",
+      "total_debits_lkr": "150000.0",
+      "total_credits_lkr": "150000",
+      "daily_closing_balances_lkr": [
+        "80000.0",
+        "80000.0",
+        "79300.0",
+        "78600.0",
+        "77900.0",
+        "77200.0",
+        "76500.0",
+        "75800.0",
+        "75100.0",
+        "74400.0",
+        "73700.0",
+        "73000.0",
+        "72300.0",
+        "71600.0",
+        "70900.0",
+        "70200.0",
+        "69500.0",
+        "68800.0",
+        "68100.0",
+        "67400.0",
+        "66700.0",
+        "66000.0",
+        "64000.0",
+        "62000.0",
+        "62000.0",
+        "62000.0",
+        "62000.0",
+        "212000.0",
+        "167000.0",
+        "80000.0",
+        "80000.0"
+      ],
+      "transactions": [
+        {
+          "date": "2026-05-03",
+          "particulars": "POS TEST GROCERY R05001",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "79300.0"
+        },
+        {
+          "date": "2026-05-04",
+          "particulars": "ECOM TEST TRANSPORT R05002",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "78600.0"
+        },
+        {
+          "date": "2026-05-05",
+          "particulars": "POS TEST PHARMACY R05003",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77900.0"
+        },
+        {
+          "date": "2026-05-06",
+          "particulars": "POS TEST CAFE R05004",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77200.0"
+        },
+        {
+          "date": "2026-05-07",
+          "particulars": "BILL TEST UTILITY R05005",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "76500.0"
+        },
+        {
+          "date": "2026-05-08",
+          "particulars": "POS TEST MARKET R05006",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75800.0"
+        },
+        {
+          "date": "2026-05-09",
+          "particulars": "POS TEST GROCERY R05007",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75100.0"
+        },
+        {
+          "date": "2026-05-10",
+          "particulars": "ECOM TEST TRANSPORT R05008",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "74400.0"
+        },
+        {
+          "date": "2026-05-11",
+          "particulars": "POS TEST PHARMACY R05009",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73700.0"
+        },
+        {
+          "date": "2026-05-12",
+          "particulars": "POS TEST CAFE R05010",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73000.0"
+        },
+        {
+          "date": "2026-05-13",
+          "particulars": "BILL TEST UTILITY R05011",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "72300.0"
+        },
+        {
+          "date": "2026-05-14",
+          "particulars": "POS TEST MARKET R05012",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "71600.0"
+        },
+        {
+          "date": "2026-05-15",
+          "particulars": "POS TEST GROCERY R05013",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70900.0"
+        },
+        {
+          "date": "2026-05-16",
+          "particulars": "ECOM TEST TRANSPORT R05014",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70200.0"
+        },
+        {
+          "date": "2026-05-17",
+          "particulars": "POS TEST PHARMACY R05015",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "69500.0"
+        },
+        {
+          "date": "2026-05-18",
+          "particulars": "POS TEST CAFE R05016",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68800.0"
+        },
+        {
+          "date": "2026-05-19",
+          "particulars": "BILL TEST UTILITY R05017",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68100.0"
+        },
+        {
+          "date": "2026-05-20",
+          "particulars": "POS TEST MARKET R05018",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "67400.0"
+        },
+        {
+          "date": "2026-05-21",
+          "particulars": "POS TEST GROCERY R05019",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66700.0"
+        },
+        {
+          "date": "2026-05-22",
+          "particulars": "ECOM TEST TRANSPORT R05020",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66000.0"
+        },
+        {
+          "date": "2026-05-23",
+          "particulars": "POS TEST PHARMACY R05021",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "64000.0"
+        },
+        {
+          "date": "2026-05-24",
+          "particulars": "POS TEST CAFE R05022",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "62000.0"
+        },
+        {
+          "date": "2026-05-28",
+          "particulars": "NSC SAL MAY TEST EMPLOYER",
+          "debit_lkr": "0",
+          "credit_lkr": "150000",
+          "classification": "qualifying_income",
+          "balance_lkr": "212000.0"
+        },
+        {
+          "date": "2026-05-29",
+          "particulars": "STO TEST LENDER A",
+          "debit_lkr": "15000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "197000.0"
+        },
+        {
+          "date": "2026-05-29",
+          "particulars": "STO TEST LENDER B",
+          "debit_lkr": "10000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "187000.0"
+        },
+        {
+          "date": "2026-05-29",
+          "particulars": "STO TEST RENT",
+          "debit_lkr": "20000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "167000.0"
+        },
+        {
+          "date": "2026-05-30",
+          "particulars": "IB OWN ACCOUNT TRANSFER",
+          "debit_lkr": "87000",
+          "credit_lkr": "0",
+          "classification": "internal_transfer",
+          "balance_lkr": "80000.0"
+        }
+      ]
+    },
+    {
+      "month": "2026-06",
+      "opening_lkr": "80000.0",
+      "closing_lkr": "80000.0",
+      "total_debits_lkr": "150000.0",
+      "total_credits_lkr": "150000",
+      "daily_closing_balances_lkr": [
+        "80000.0",
+        "80000.0",
+        "79300.0",
+        "78600.0",
+        "77900.0",
+        "77200.0",
+        "76500.0",
+        "75800.0",
+        "75100.0",
+        "74400.0",
+        "73700.0",
+        "73000.0",
+        "72300.0",
+        "71600.0",
+        "70900.0",
+        "70200.0",
+        "69500.0",
+        "68800.0",
+        "68100.0",
+        "67400.0",
+        "66700.0",
+        "66000.0",
+        "64000.0",
+        "62000.0",
+        "62000.0",
+        "62000.0",
+        "62000.0",
+        "212000.0",
+        "167000.0",
+        "80000.0"
+      ],
+      "transactions": [
+        {
+          "date": "2026-06-03",
+          "particulars": "POS TEST GROCERY R06001",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "79300.0"
+        },
+        {
+          "date": "2026-06-04",
+          "particulars": "ECOM TEST TRANSPORT R06002",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "78600.0"
+        },
+        {
+          "date": "2026-06-05",
+          "particulars": "POS TEST PHARMACY R06003",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77900.0"
+        },
+        {
+          "date": "2026-06-06",
+          "particulars": "POS TEST CAFE R06004",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77200.0"
+        },
+        {
+          "date": "2026-06-07",
+          "particulars": "BILL TEST UTILITY R06005",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "76500.0"
+        },
+        {
+          "date": "2026-06-08",
+          "particulars": "POS TEST MARKET R06006",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75800.0"
+        },
+        {
+          "date": "2026-06-09",
+          "particulars": "POS TEST GROCERY R06007",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75100.0"
+        },
+        {
+          "date": "2026-06-10",
+          "particulars": "ECOM TEST TRANSPORT R06008",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "74400.0"
+        },
+        {
+          "date": "2026-06-11",
+          "particulars": "POS TEST PHARMACY R06009",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73700.0"
+        },
+        {
+          "date": "2026-06-12",
+          "particulars": "POS TEST CAFE R06010",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73000.0"
+        },
+        {
+          "date": "2026-06-13",
+          "particulars": "BILL TEST UTILITY R06011",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "72300.0"
+        },
+        {
+          "date": "2026-06-14",
+          "particulars": "POS TEST MARKET R06012",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "71600.0"
+        },
+        {
+          "date": "2026-06-15",
+          "particulars": "POS TEST GROCERY R06013",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70900.0"
+        },
+        {
+          "date": "2026-06-16",
+          "particulars": "ECOM TEST TRANSPORT R06014",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70200.0"
+        },
+        {
+          "date": "2026-06-17",
+          "particulars": "POS TEST PHARMACY R06015",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "69500.0"
+        },
+        {
+          "date": "2026-06-18",
+          "particulars": "POS TEST CAFE R06016",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68800.0"
+        },
+        {
+          "date": "2026-06-19",
+          "particulars": "BILL TEST UTILITY R06017",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68100.0"
+        },
+        {
+          "date": "2026-06-20",
+          "particulars": "POS TEST MARKET R06018",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "67400.0"
+        },
+        {
+          "date": "2026-06-21",
+          "particulars": "POS TEST GROCERY R06019",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66700.0"
+        },
+        {
+          "date": "2026-06-22",
+          "particulars": "ECOM TEST TRANSPORT R06020",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66000.0"
+        },
+        {
+          "date": "2026-06-23",
+          "particulars": "POS TEST PHARMACY R06021",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "64000.0"
+        },
+        {
+          "date": "2026-06-24",
+          "particulars": "POS TEST CAFE R06022",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "62000.0"
+        },
+        {
+          "date": "2026-06-28",
+          "particulars": "NSC SAL JUN TEST EMPLOYER",
+          "debit_lkr": "0",
+          "credit_lkr": "150000",
+          "classification": "qualifying_income",
+          "balance_lkr": "212000.0"
+        },
+        {
+          "date": "2026-06-29",
+          "particulars": "STO TEST LENDER A",
+          "debit_lkr": "15000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "197000.0"
+        },
+        {
+          "date": "2026-06-29",
+          "particulars": "STO TEST LENDER B",
+          "debit_lkr": "10000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "187000.0"
+        },
+        {
+          "date": "2026-06-29",
+          "particulars": "STO TEST RENT",
+          "debit_lkr": "20000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "167000.0"
+        },
+        {
+          "date": "2026-06-30",
+          "particulars": "IB OWN ACCOUNT TRANSFER",
+          "debit_lkr": "87000",
+          "credit_lkr": "0",
+          "classification": "internal_transfer",
+          "balance_lkr": "80000.0"
+        }
+      ]
+    },
+    {
+      "month": "2026-07",
+      "opening_lkr": "80000.0",
+      "closing_lkr": "80000.0",
+      "total_debits_lkr": "150000.0",
+      "total_credits_lkr": "150000",
+      "daily_closing_balances_lkr": [
+        "80000.0",
+        "80000.0",
+        "79300.0",
+        "78600.0",
+        "77900.0",
+        "77200.0",
+        "76500.0",
+        "75800.0",
+        "75100.0",
+        "74400.0",
+        "73700.0",
+        "73000.0",
+        "72300.0",
+        "71600.0",
+        "70900.0",
+        "70200.0",
+        "69500.0",
+        "68800.0",
+        "68100.0",
+        "67400.0",
+        "66700.0",
+        "66000.0",
+        "64000.0",
+        "62000.0",
+        "62000.0",
+        "62000.0",
+        "62000.0",
+        "212000.0",
+        "167000.0",
+        "80000.0",
+        "80000.0"
+      ],
+      "transactions": [
+        {
+          "date": "2026-07-03",
+          "particulars": "POS TEST GROCERY R07001",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "79300.0"
+        },
+        {
+          "date": "2026-07-04",
+          "particulars": "ECOM TEST TRANSPORT R07002",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "78600.0"
+        },
+        {
+          "date": "2026-07-05",
+          "particulars": "POS TEST PHARMACY R07003",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77900.0"
+        },
+        {
+          "date": "2026-07-06",
+          "particulars": "POS TEST CAFE R07004",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77200.0"
+        },
+        {
+          "date": "2026-07-07",
+          "particulars": "BILL TEST UTILITY R07005",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "76500.0"
+        },
+        {
+          "date": "2026-07-08",
+          "particulars": "POS TEST MARKET R07006",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75800.0"
+        },
+        {
+          "date": "2026-07-09",
+          "particulars": "POS TEST GROCERY R07007",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75100.0"
+        },
+        {
+          "date": "2026-07-10",
+          "particulars": "ECOM TEST TRANSPORT R07008",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "74400.0"
+        },
+        {
+          "date": "2026-07-11",
+          "particulars": "POS TEST PHARMACY R07009",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73700.0"
+        },
+        {
+          "date": "2026-07-12",
+          "particulars": "POS TEST CAFE R07010",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73000.0"
+        },
+        {
+          "date": "2026-07-13",
+          "particulars": "BILL TEST UTILITY R07011",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "72300.0"
+        },
+        {
+          "date": "2026-07-14",
+          "particulars": "POS TEST MARKET R07012",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "71600.0"
+        },
+        {
+          "date": "2026-07-15",
+          "particulars": "POS TEST GROCERY R07013",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70900.0"
+        },
+        {
+          "date": "2026-07-16",
+          "particulars": "ECOM TEST TRANSPORT R07014",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70200.0"
+        },
+        {
+          "date": "2026-07-17",
+          "particulars": "POS TEST PHARMACY R07015",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "69500.0"
+        },
+        {
+          "date": "2026-07-18",
+          "particulars": "POS TEST CAFE R07016",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68800.0"
+        },
+        {
+          "date": "2026-07-19",
+          "particulars": "BILL TEST UTILITY R07017",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68100.0"
+        },
+        {
+          "date": "2026-07-20",
+          "particulars": "POS TEST MARKET R07018",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "67400.0"
+        },
+        {
+          "date": "2026-07-21",
+          "particulars": "POS TEST GROCERY R07019",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66700.0"
+        },
+        {
+          "date": "2026-07-22",
+          "particulars": "ECOM TEST TRANSPORT R07020",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66000.0"
+        },
+        {
+          "date": "2026-07-23",
+          "particulars": "POS TEST PHARMACY R07021",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "64000.0"
+        },
+        {
+          "date": "2026-07-24",
+          "particulars": "POS TEST CAFE R07022",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "62000.0"
+        },
+        {
+          "date": "2026-07-28",
+          "particulars": "NSC SAL JUL TEST EMPLOYER",
+          "debit_lkr": "0",
+          "credit_lkr": "150000",
+          "classification": "qualifying_income",
+          "balance_lkr": "212000.0"
+        },
+        {
+          "date": "2026-07-29",
+          "particulars": "STO TEST LENDER A",
+          "debit_lkr": "15000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "197000.0"
+        },
+        {
+          "date": "2026-07-29",
+          "particulars": "STO TEST LENDER B",
+          "debit_lkr": "10000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "187000.0"
+        },
+        {
+          "date": "2026-07-29",
+          "particulars": "STO TEST RENT",
+          "debit_lkr": "20000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "167000.0"
+        },
+        {
+          "date": "2026-07-30",
+          "particulars": "IB OWN ACCOUNT TRANSFER",
+          "debit_lkr": "87000",
+          "credit_lkr": "0",
+          "classification": "internal_transfer",
+          "balance_lkr": "80000.0"
+        }
+      ]
+    },
+    {
+      "month": "2026-08",
+      "opening_lkr": "80000.0",
+      "closing_lkr": "80000.0",
+      "total_debits_lkr": "150000.0",
+      "total_credits_lkr": "150000",
+      "daily_closing_balances_lkr": [
+        "80000.0",
+        "80000.0",
+        "79300.0",
+        "78600.0",
+        "77900.0",
+        "77200.0",
+        "76500.0",
+        "75800.0",
+        "75100.0",
+        "74400.0",
+        "73700.0",
+        "73000.0",
+        "72300.0",
+        "71600.0",
+        "70900.0",
+        "70200.0",
+        "69500.0",
+        "68800.0",
+        "68100.0",
+        "67400.0",
+        "66700.0",
+        "66000.0",
+        "64000.0",
+        "62000.0",
+        "62000.0",
+        "62000.0",
+        "62000.0",
+        "212000.0",
+        "167000.0",
+        "80000.0",
+        "80000.0"
+      ],
+      "transactions": [
+        {
+          "date": "2026-08-03",
+          "particulars": "POS TEST GROCERY R08001",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "79300.0"
+        },
+        {
+          "date": "2026-08-04",
+          "particulars": "ECOM TEST TRANSPORT R08002",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "78600.0"
+        },
+        {
+          "date": "2026-08-05",
+          "particulars": "POS TEST PHARMACY R08003",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77900.0"
+        },
+        {
+          "date": "2026-08-06",
+          "particulars": "POS TEST CAFE R08004",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77200.0"
+        },
+        {
+          "date": "2026-08-07",
+          "particulars": "BILL TEST UTILITY R08005",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "76500.0"
+        },
+        {
+          "date": "2026-08-08",
+          "particulars": "POS TEST MARKET R08006",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75800.0"
+        },
+        {
+          "date": "2026-08-09",
+          "particulars": "POS TEST GROCERY R08007",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75100.0"
+        },
+        {
+          "date": "2026-08-10",
+          "particulars": "ECOM TEST TRANSPORT R08008",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "74400.0"
+        },
+        {
+          "date": "2026-08-11",
+          "particulars": "POS TEST PHARMACY R08009",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73700.0"
+        },
+        {
+          "date": "2026-08-12",
+          "particulars": "POS TEST CAFE R08010",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73000.0"
+        },
+        {
+          "date": "2026-08-13",
+          "particulars": "BILL TEST UTILITY R08011",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "72300.0"
+        },
+        {
+          "date": "2026-08-14",
+          "particulars": "POS TEST MARKET R08012",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "71600.0"
+        },
+        {
+          "date": "2026-08-15",
+          "particulars": "POS TEST GROCERY R08013",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70900.0"
+        },
+        {
+          "date": "2026-08-16",
+          "particulars": "ECOM TEST TRANSPORT R08014",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70200.0"
+        },
+        {
+          "date": "2026-08-17",
+          "particulars": "POS TEST PHARMACY R08015",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "69500.0"
+        },
+        {
+          "date": "2026-08-18",
+          "particulars": "POS TEST CAFE R08016",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68800.0"
+        },
+        {
+          "date": "2026-08-19",
+          "particulars": "BILL TEST UTILITY R08017",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68100.0"
+        },
+        {
+          "date": "2026-08-20",
+          "particulars": "POS TEST MARKET R08018",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "67400.0"
+        },
+        {
+          "date": "2026-08-21",
+          "particulars": "POS TEST GROCERY R08019",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66700.0"
+        },
+        {
+          "date": "2026-08-22",
+          "particulars": "ECOM TEST TRANSPORT R08020",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66000.0"
+        },
+        {
+          "date": "2026-08-23",
+          "particulars": "POS TEST PHARMACY R08021",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "64000.0"
+        },
+        {
+          "date": "2026-08-24",
+          "particulars": "POS TEST CAFE R08022",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "62000.0"
+        },
+        {
+          "date": "2026-08-28",
+          "particulars": "NSC SAL AUG TEST EMPLOYER",
+          "debit_lkr": "0",
+          "credit_lkr": "150000",
+          "classification": "qualifying_income",
+          "balance_lkr": "212000.0"
+        },
+        {
+          "date": "2026-08-29",
+          "particulars": "STO TEST LENDER A",
+          "debit_lkr": "15000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "197000.0"
+        },
+        {
+          "date": "2026-08-29",
+          "particulars": "STO TEST LENDER B",
+          "debit_lkr": "10000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "187000.0"
+        },
+        {
+          "date": "2026-08-29",
+          "particulars": "STO TEST RENT",
+          "debit_lkr": "20000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "167000.0"
+        },
+        {
+          "date": "2026-08-30",
+          "particulars": "IB OWN ACCOUNT TRANSFER",
+          "debit_lkr": "87000",
+          "credit_lkr": "0",
+          "classification": "internal_transfer",
+          "balance_lkr": "80000.0"
+        }
+      ]
+    },
+    {
+      "month": "2026-09",
+      "opening_lkr": "80000.0",
+      "closing_lkr": "80000.0",
+      "total_debits_lkr": "150000.0",
+      "total_credits_lkr": "150000",
+      "daily_closing_balances_lkr": [
+        "80000.0",
+        "80000.0",
+        "79300.0",
+        "78600.0",
+        "77900.0",
+        "77200.0",
+        "76500.0",
+        "75800.0",
+        "75100.0",
+        "74400.0",
+        "73700.0",
+        "73000.0",
+        "72300.0",
+        "71600.0",
+        "70900.0",
+        "70200.0",
+        "69500.0",
+        "68800.0",
+        "68100.0",
+        "67400.0",
+        "66700.0",
+        "66000.0",
+        "64000.0",
+        "62000.0",
+        "62000.0",
+        "62000.0",
+        "62000.0",
+        "212000.0",
+        "167000.0",
+        "80000.0"
+      ],
+      "transactions": [
+        {
+          "date": "2026-09-03",
+          "particulars": "POS TEST GROCERY R09001",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "79300.0"
+        },
+        {
+          "date": "2026-09-04",
+          "particulars": "ECOM TEST TRANSPORT R09002",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "78600.0"
+        },
+        {
+          "date": "2026-09-05",
+          "particulars": "POS TEST PHARMACY R09003",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77900.0"
+        },
+        {
+          "date": "2026-09-06",
+          "particulars": "POS TEST CAFE R09004",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "77200.0"
+        },
+        {
+          "date": "2026-09-07",
+          "particulars": "BILL TEST UTILITY R09005",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "76500.0"
+        },
+        {
+          "date": "2026-09-08",
+          "particulars": "POS TEST MARKET R09006",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75800.0"
+        },
+        {
+          "date": "2026-09-09",
+          "particulars": "POS TEST GROCERY R09007",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "75100.0"
+        },
+        {
+          "date": "2026-09-10",
+          "particulars": "ECOM TEST TRANSPORT R09008",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "74400.0"
+        },
+        {
+          "date": "2026-09-11",
+          "particulars": "POS TEST PHARMACY R09009",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73700.0"
+        },
+        {
+          "date": "2026-09-12",
+          "particulars": "POS TEST CAFE R09010",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "73000.0"
+        },
+        {
+          "date": "2026-09-13",
+          "particulars": "BILL TEST UTILITY R09011",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "72300.0"
+        },
+        {
+          "date": "2026-09-14",
+          "particulars": "POS TEST MARKET R09012",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "71600.0"
+        },
+        {
+          "date": "2026-09-15",
+          "particulars": "POS TEST GROCERY R09013",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70900.0"
+        },
+        {
+          "date": "2026-09-16",
+          "particulars": "ECOM TEST TRANSPORT R09014",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "70200.0"
+        },
+        {
+          "date": "2026-09-17",
+          "particulars": "POS TEST PHARMACY R09015",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "69500.0"
+        },
+        {
+          "date": "2026-09-18",
+          "particulars": "POS TEST CAFE R09016",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68800.0"
+        },
+        {
+          "date": "2026-09-19",
+          "particulars": "BILL TEST UTILITY R09017",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "68100.0"
+        },
+        {
+          "date": "2026-09-20",
+          "particulars": "POS TEST MARKET R09018",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "67400.0"
+        },
+        {
+          "date": "2026-09-21",
+          "particulars": "POS TEST GROCERY R09019",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66700.0"
+        },
+        {
+          "date": "2026-09-22",
+          "particulars": "ECOM TEST TRANSPORT R09020",
+          "debit_lkr": "700",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "66000.0"
+        },
+        {
+          "date": "2026-09-23",
+          "particulars": "POS TEST PHARMACY R09021",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "64000.0"
+        },
+        {
+          "date": "2026-09-24",
+          "particulars": "POS TEST CAFE R09022",
+          "debit_lkr": "2000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "62000.0"
+        },
+        {
+          "date": "2026-09-28",
+          "particulars": "NSC SAL SEP TEST EMPLOYER",
+          "debit_lkr": "0",
+          "credit_lkr": "150000",
+          "classification": "qualifying_income",
+          "balance_lkr": "212000.0"
+        },
+        {
+          "date": "2026-09-29",
+          "particulars": "STO TEST LENDER A",
+          "debit_lkr": "15000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "197000.0"
+        },
+        {
+          "date": "2026-09-29",
+          "particulars": "STO TEST LENDER B",
+          "debit_lkr": "10000.0",
+          "credit_lkr": "0",
+          "classification": "debt_payment",
+          "balance_lkr": "187000.0"
+        },
+        {
+          "date": "2026-09-29",
+          "particulars": "STO TEST RENT",
+          "debit_lkr": "20000",
+          "credit_lkr": "0",
+          "classification": "personal_expense",
+          "balance_lkr": "167000.0"
+        },
+        {
+          "date": "2026-09-30",
+          "particulars": "IB OWN ACCOUNT TRANSFER",
+          "debit_lkr": "87000",
+          "credit_lkr": "0",
+          "classification": "internal_transfer",
+          "balance_lkr": "80000.0"
+        }
+      ]
+    }
+  ],
+  "credit_facilities": [
+    {
+      "index": 1,
+      "entity_code": "C2",
+      "facility_id": "TEST-FAC-B3-1",
+      "institution_category": "LCB",
+      "member": "TL001",
+      "branch": "001",
+      "type": "LOAN",
+      "status": "ACTV",
+      "ownership": "OWN",
+      "currency": "LKR",
+      "amount_granted": "540000.0",
+      "current_balance": "360000.0",
+      "arrears": "0.0",
+      "installment": "15000.0",
+      "repayment_type": "MNLY",
+      "ndia": 0
+    },
+    {
+      "index": 2,
+      "entity_code": "C3",
+      "facility_id": "TEST-FAC-B3-2",
+      "institution_category": "LCB",
+      "member": "TL002",
+      "branch": "001",
+      "type": "LEAS",
+      "status": "ACTV",
+      "ownership": "OWN",
+      "currency": "LKR",
+      "amount_granted": "360000.0",
+      "current_balance": "240000.0",
+      "arrears": "0",
+      "installment": "10000.0",
+      "repayment_type": "MNLY",
+      "ndia": 0
+    }
+  ],
+  "closed_facilities": [
+    {
+      "type": "LOAN",
+      "status": "Settled / closed",
+      "granted": "150000.00",
+      "current": "0.00",
+      "writeoff": "0.00",
+      "closed_date": "31-Dec-2025"
+    }
+  ],
+  "scoring_contract": "component-2-financial-feasibility-v1",
+  "verified_input_assumptions": {
+    "ApplicationId": "TEST-APP-B3",
+    "ApplicantId": "TEST-ID-B3",
+    "AverageMonthlyIncomeLkr": "150000",
+    "IncomeConsistencyRatio": "1",
+    "RequestedMonthlyLeasePaymentLkr": "20000",
+    "MonthlyDebtObligationsLkr": "25000",
+    "AverageAccountBalanceLkr": "79475.41",
+    "AverageBalanceMethod": "Average of every daily closing balance, 1 Apr to 30 Sep 2026",
+    "OverdraftCountInEvidenceWindow": 0,
+    "CreditRiskGrade": "B",
+    "HasDefaultHistory": false
+  },
+  "expected_result": {
+    "lease_grade": "B",
+    "total_score": 80,
+    "action": "Proceed",
+    "debt_service_ratio": "0.3",
+    "liquidity_buffer_months": "3.9737705",
+    "breakdown": {
+      "debt_service": 25,
+      "income_consistency": 25,
+      "liquidity": 15,
+      "credit_history": 15,
+      "penalty": 0
+    },
+    "maximum_total_payments_lkr": "90000.00",
+    "available_lease_lkr": "65000.00",
+    "is_within_capacity": true
+  },
+  "notes": "Income consistency and default-history interpretation are explicit reviewer-verified fixture assumptions; PDFs alone do not complete the current OCR mapping."
+}
