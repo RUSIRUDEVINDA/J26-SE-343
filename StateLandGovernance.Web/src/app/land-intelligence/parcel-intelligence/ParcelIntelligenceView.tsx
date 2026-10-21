@@ -83,7 +83,7 @@ export function ParcelIntelligenceView({
   const [relationships, setRelationships] = useState<
     LandRelationshipResponse[] | null
   >(null);
-  const [listLoading, setListLoading] = useState(false);
+  const [listLoading, setListLoading] = useState(showCatalog);
   const [listError, setListError] = useState<string | null>(null);
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [districtDraft, setDistrictDraft] = useState("");
@@ -121,6 +121,7 @@ export function ParcelIntelligenceView({
     LandSearchResultResponse[]
   >([]);
   const loadedRouteId = useRef<string | null>(null);
+  const initialCatalogLoadedRef = useRef(false);
 
   const loadRelationships = useCallback(async (id: string) => {
     setRelationshipsLoading(true);
@@ -218,6 +219,18 @@ export function ParcelIntelligenceView({
   );
 
   useEffect(() => {
+    if (!showCatalog || initialCatalogLoadedRef.current) {
+      return;
+    }
+    initialCatalogLoadedRef.current = true;
+    void loadCatalog({
+      district: "",
+      landUseValue: "",
+      landUseLabel: "",
+    });
+  }, [showCatalog, loadCatalog]);
+
+  useEffect(() => {
     if (!showCatalog) {
       return;
     }
@@ -277,25 +290,21 @@ export function ParcelIntelligenceView({
     if (!showCatalog) {
       return;
     }
-    if (!districtDraft.trim()) {
-      setCanonicalOptions([]);
-      setLandUseOptionsError(null);
-      setLandUseOptionsLoading(false);
-      return;
-    }
 
     let cancelled = false;
     const district = districtDraft.trim();
     setLandUseOptionsLoading(true);
     setLandUseOptionsError(null);
 
-    // Prefer the canonical endpoint (district-scoped). If the running API does not
+    // Prefer the canonical endpoint (district-scoped when set). If the running API does not
     // expose it yet, fall back the same way Find Suitable Land does.
     void (async () => {
       try {
         let options: CanonicalLandUseOptionResponse[] | null = null;
         try {
-          options = await listCanonicalLandUseOptions(district);
+          options = district
+            ? await listCanonicalLandUseOptions(district)
+            : await listCanonicalLandUseOptions();
         } catch {
           try {
             options = await listCanonicalLandUseOptions();
@@ -305,9 +314,10 @@ export function ParcelIntelligenceView({
         }
 
         if (options == null) {
+          const parcelListParams = district ? { district } : {};
           const [sourceResult, parcelsResult] = await Promise.allSettled([
             listSourceReportedLandUseOptions(),
-            listAllParcels({ district }),
+            listAllParcels(parcelListParams),
           ]);
           const sourceOptions =
             sourceResult.status === "fulfilled" ? sourceResult.value : [];
@@ -360,7 +370,7 @@ export function ParcelIntelligenceView({
   }, [initialParcelId, loadParcelDetails]);
 
   const landUseChoices = buildCanonicalLandUseChoices(canonicalOptions);
-  const canApply = Boolean(districtDraft.trim()) && !listLoading;
+  const canApply = !listLoading;
 
   function handleDistrictChange(next: string) {
     setDistrictDraft(next);
@@ -374,21 +384,20 @@ export function ParcelIntelligenceView({
   function handleClearFilters() {
     setDistrictDraft("");
     setLandUseDraft("");
-    setApplied(null);
-    setFiltersApplied(false);
-    setParcels([]);
     setListError(null);
     setPage(1);
     setCadastralQuery("");
     setCadastralError(null);
     setCadastralEmpty(false);
     setCadastralMatches([]);
+    void loadCatalog({
+      district: "",
+      landUseValue: "",
+      landUseLabel: "",
+    });
   }
 
   function handleApplyFilters() {
-    if (!districtDraft.trim()) {
-      return;
-    }
     const landUseValue = normalizeLandUseFilterValue(landUseDraft);
     void loadCatalog({
       district: districtDraft.trim(),
@@ -447,7 +456,7 @@ export function ParcelIntelligenceView({
   const activeSummary =
     applied != null
       ? [
-          applied.district,
+          applied.district.trim() ? applied.district : "All districts",
           applied.landUseLabel || null,
           `${catalogTotal} matching parcel${catalogTotal === 1 ? "" : "s"}`,
         ]
@@ -510,7 +519,7 @@ export function ParcelIntelligenceView({
                 id="pi-land-use"
                 className={filterStyles.select}
                 value={normalizeLandUseFilterValue(landUseDraft)}
-                disabled={!districtDraft.trim() || landUseOptionsLoading}
+                disabled={landUseOptionsLoading}
                 onChange={(e) => setLandUseDraft(e.target.value)}
                 aria-describedby="pi-land-use-hint"
               >
@@ -522,13 +531,11 @@ export function ParcelIntelligenceView({
                 ))}
               </select>
               <p id="pi-land-use-hint" className={filterStyles.hint}>
-                {!districtDraft.trim()
-                  ? ""
-                  : landUseOptionsLoading
-                    ? "Loading land-use options…"
-                    : landUseOptionsError
-                      ? landUseOptionsError
-                      : ""}
+                {landUseOptionsLoading
+                  ? "Loading land-use options…"
+                  : landUseOptionsError
+                    ? landUseOptionsError
+                    : ""}
               </p>
             </div>
 
@@ -627,16 +634,6 @@ export function ParcelIntelligenceView({
         <LoadingState message="Loading available parcels…" />
       ) : null}
       {showCatalog && listError ? <ErrorMessage message={listError} /> : null}
-
-      {showCatalog &&
-      !listLoading &&
-      !listError &&
-      !filtersApplied &&
-      !cadastralEmpty &&
-      cadastralMatches.length === 0 &&
-      !parcel &&
-      !detailLoading 
-      }
 
       {showCatalog &&
       !listLoading &&
