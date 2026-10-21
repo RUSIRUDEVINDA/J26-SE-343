@@ -82,3 +82,21 @@ export async function apiPost<T>(
   }
   return (await response.json()) as T;
 }
+
+export async function apiUpload<T>(path: string, body: FormData): Promise<T> {
+  const response = await fetch(`${ensureBaseUrl()}${path}`, {
+    method: "POST", headers: { Accept: "application/json" }, body,
+  });
+  if (!response.ok) throw await parseError(response);
+  return await response.json() as T;
+}
+
+export async function apiDownload(path: string, body: unknown, filename: string): Promise<void> {
+  const response = await fetch(`${ensureBaseUrl()}${path}`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+  });
+  if (!response.ok) throw await parseError(response);
+  const url = URL.createObjectURL(await response.blob());
+  const anchor = document.createElement("a"); anchor.href = url; anchor.download = filename;
+  document.body.appendChild(anchor); anchor.click(); anchor.remove(); URL.revokeObjectURL(url);
+}
