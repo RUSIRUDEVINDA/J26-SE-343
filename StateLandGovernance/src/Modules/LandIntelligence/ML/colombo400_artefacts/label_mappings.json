@@ -1,0 +1,26 @@
+{
+  "stage_a": {
+    "classes": [
+      "Insufficient Evidence",
+      "Sufficient Evidence"
+    ],
+    "encoding": {
+      "Insufficient Evidence": 0,
+      "Sufficient Evidence": 1
+    },
+    "description": "Binary evidence-sufficiency classifier"
+  },
+  "stage_b": {
+    "classes": [
+      "Moderately Suitable",
+      "Suitable",
+      "Unsuitable"
+    ],
+    "encoding": {
+      "Moderately Suitable": 0,
+      "Suitable": 1,
+      "Unsuitable": 2
+    },
+    "description": "Three-class suitability classifier (Sufficient Evidence rows only)"
+  }
+}

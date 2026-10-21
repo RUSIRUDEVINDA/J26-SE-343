@@ -1,5 +1,10 @@
 # Land Intelligence ML Service
 
+For the **expert-labelled Colombo 400 research model**, see
+[`COLOMBO400_RESEARCH_INFERENCE.md`](./COLOMBO400_RESEARCH_INFERENCE.md). It is a
+separate, opt-in two-stage service on port 8502 and does not replace the standard
+model described below.
+
 Random Forest suitability model for Component 1. This service is **supplementary evidence only** — the .NET rule-based recommendation engine keeps all hard constraints and scoring unchanged.
 
 ## Honest status (standard service)

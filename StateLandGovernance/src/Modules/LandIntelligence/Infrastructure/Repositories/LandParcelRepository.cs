@@ -3,6 +3,7 @@ using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Application.RealParcels;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities;
@@ -35,9 +36,10 @@ public sealed class LandParcelRepository : ILandParcelRepository
         string cadastralNumber,
         CancellationToken cancellationToken = default)
     {
+        var trimmed = cadastralNumber.Trim();
         var entity = await BaseQuery()
             .FirstOrDefaultAsync(
-                parcel => parcel.CadastralNumber == cadastralNumber,
+                parcel => parcel.CadastralNumber.ToLower() == trimmed.ToLower(),
                 cancellationToken);
 
         return entity is null ? null : LandParcelPersistenceMapper.ToDomain(entity);
@@ -118,6 +120,13 @@ public sealed class LandParcelRepository : ILandParcelRepository
         var query = BaseQuery()
             .Where(parcel => !EF.Functions.ILike(parcel.CadastralNumber, "DEMO-%"));
 
+        if (!string.IsNullOrWhiteSpace(request.CadastralNumber))
+        {
+            var cadastral = request.CadastralNumber.Trim();
+            query = query.Where(parcel =>
+                parcel.CadastralNumber.ToLower() == cadastral.ToLower());
+        }
+
         if (!string.IsNullOrWhiteSpace(request.Province))
         {
             var province = request.Province.Trim();
@@ -148,19 +157,24 @@ public sealed class LandParcelRepository : ILandParcelRepository
 
         if (!string.IsNullOrWhiteSpace(request.ResearchLandCoverGroup))
         {
-            var group = request.ResearchLandCoverGroup.Trim();
-            if (group is not ("Coconut" or "Wetland" or "Scrub / low jungle" or "Other State parcel"))
+            // Canonical land use: original cadastral code(s) OR qualifying project GIS group(s).
+            // Accepts canonical labels/keys and legacy GIS group names (e.g. "Scrub / low jungle").
+            var canonical = CanonicalLandUseCatalog.TryResolve(request.ResearchLandCoverGroup);
+            if (canonical is null)
             {
                 query = query.Where(_ => false);
             }
             else
             {
+                var sourceCodes = canonical.SourceLandUseCodes.ToArray();
+                var gisGroups = canonical.GisSupplementGroups.ToArray();
                 var mappedIds = _dbContext.Database.SqlQuery<Guid>(
-                    $"SELECT \"LandParcelId\" AS \"Value\" FROM land_intelligence.research_supplement_land_cover WHERE \"SupplementGroup\" = {group}");
-                var includeOriginalCoconut = group == "Coconut";
+                    $"SELECT \"LandParcelId\" AS \"Value\" FROM land_intelligence.research_supplement_land_cover WHERE \"SupplementGroup\" = ANY({gisGroups})");
                 query = query.Where(parcel => mappedIds.Contains(parcel.Id)
-                    || (includeOriginalCoconut && _dbContext.RealParcelSources.Any(source =>
-                        source.LandParcelId == parcel.Id && source.LandUseCode == "75")));
+                    || _dbContext.RealParcelSources.Any(source =>
+                        source.LandParcelId == parcel.Id
+                        && source.LandUseCode != null
+                        && sourceCodes.Contains(source.LandUseCode)));
             }
         }
 
@@ -234,4 +248,5 @@ public sealed class LandParcelRepository : ILandParcelRepository
             .OrderBy(name => name)
             .ToListAsync(cancellationToken);
     }
+
 }

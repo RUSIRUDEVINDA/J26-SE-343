@@ -1,0 +1,73 @@
+========================================================================
+COLOMBO 400 PARCEL — ML PIPELINE EVALUATION REPORT (v2 corrected)
+Generated: 2026-10-18T18:13:08.628884+00:00 UTC
+========================================================================
+
+DISCLAIMER
+  Predictions are preliminary research decision-support outputs only.
+  They must NOT be described as zoning approval, legal availability,
+  reservation, permit issuance, or lease approval of any kind.
+
+DATASET
+  Total rows          : 1,200
+  Distinct parcels    : 400
+  Purposes per parcel : 3 (Agricultural, Residential, Commercial)
+  Approved labels     : Suitable | Moderately Suitable | Unsuitable | Insufficient Evidence
+
+DATA SPLIT (parcel-grouped, deterministic, seed=42)
+  Train : 279 parcels (837 rows)
+  Val   : 60 parcels (180 rows)
+  Test  : 61 parcels (183 rows) — untouched until § 12
+
+────────────────────────────────────────────────────────────────────────
+EVALUATION A — STAGE A: Evidence Sufficiency (all test rows)
+────────────────────────────────────────────────────────────────────────
+  Model              : GradientBoosting
+  N rows             : 183
+  Accuracy           : 0.9563
+  Balanced accuracy  : 0.9195
+  Macro F1           : 0.8768
+  False sufficiency  : 2  (Stage A says Sufficient but true = Insufficient Evidence)
+
+────────────────────────────────────────────────────────────────────────
+EVALUATION B — STAGE B: Conditional (true Sufficient Evidence filter)
+────────────────────────────────────────────────────────────────────────
+  Model              : RandomForest
+  N rows             : 167
+  Accuracy           : 0.976
+  Balanced accuracy  : 0.963
+  Macro F1           : 0.9745
+  Commercial Suitable: 0  PASS ✓
+  Residential Suitable (advisory): 0
+
+────────────────────────────────────────────────────────────────────────
+EVALUATION C — END-TO-END: Stage A → Stage B chained (all test rows, four classes)
+────────────────────────────────────────────────────────────────────────
+  Stage A model      : GradientBoosting
+  Stage B model      : RandomForest
+  N rows             : 183
+  Accuracy           : 0.9563
+  Balanced accuracy  : 0.9271
+  Macro F1           : 0.9195
+  False sufficiency  : 2
+  Commercial Suitable: 0  PASS ✓
+  Residential Suitable (advisory): 0
+
+────────────────────────────────────────────────────────────────────────
+PURPOSE-CLASS DEPENDENCY NOTE
+────────────────────────────────────────────────────────────────────────
+  'Suitable' labels are exclusive to Agricultural purpose in this dataset.
+  Evaluation metrics for Suitable class reflect Agricultural rows only.
+  Splits are stratified by Agricultural suitability label.
+  If future review cycles produce Residential Suitable labels, Stage B must be retrained.
+
+────────────────────────────────────────────────────────────────────────
+FUTURE INFERENCE POLICY ENFORCEMENT
+────────────────────────────────────────────────────────────────────────
+  A passing test score DOES NOT guarantee future compliance with the Commercial
+  Suitable = 0 policy.  The serving layer MUST independently enforce:
+    IF Intended Purpose == Commercial AND prediction == Suitable:
+        RAISE PolicyViolationError; LOG the event; DO NOT return prediction.
+  This must be treated as a hard runtime check, not a documentation note.
+
+========================================================================
