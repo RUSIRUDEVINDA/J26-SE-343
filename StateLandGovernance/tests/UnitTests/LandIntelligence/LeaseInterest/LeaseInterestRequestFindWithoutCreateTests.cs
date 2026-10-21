@@ -8,6 +8,7 @@ using StateLandGovernance.LandIntelligence.Application.Validators;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
+using StateLandGovernance.LandIntelligence.Domain.Exceptions;
 using StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities;
@@ -129,6 +130,41 @@ public sealed class LeaseInterestRequestFindWithoutCreateTests : IDisposable
         Assert.Equal(entity.Id, found!.Id);
         Assert.Equal(LeaseInterestRequestStatus.PendingVerification, found.Status);
         Assert.Equal(1, await _db.LeaseInterestRequests.CountAsync());
+    }
+
+    [Fact]
+    public async Task DeleteDraft_removes_owned_draft()
+    {
+        var draft = await _service.GetDraftOrCreateAsync(_parcel.Id, CancellationToken.None);
+
+        await _service.DeleteDraftAsync(draft.Id, CancellationToken.None);
+
+        Assert.Equal(0, await _db.LeaseInterestRequests.CountAsync());
+        Assert.Null(await _service.FindForParcelAsync(_parcel.Id, CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task DeleteDraft_rejects_submitted_request()
+    {
+        var now = DateTimeOffset.UtcNow;
+        var entity = new LeaseInterestRequestEntity
+        {
+            Id = Guid.NewGuid(),
+            OwnerId = _ownerId,
+            LandParcelId = _parcel.Id,
+            Status = LeaseInterestRequestStatus.PendingVerification,
+            PayloadJson = "{}",
+            RequestedPurpose = (int)LandUseType.Agricultural,
+            ConsentToPreliminaryAssessment = true,
+            CreatedAtUtc = now,
+            UpdatedAtUtc = now,
+            SubmittedAtUtc = now,
+        };
+        _db.LeaseInterestRequests.Add(entity);
+        await _db.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<LeaseInterestInvalidStateException>(() =>
+            _service.DeleteDraftAsync(entity.Id, CancellationToken.None));
     }
 
     private sealed class StubCaller(Guid ownerId) : ILandIntelligenceCallerContext

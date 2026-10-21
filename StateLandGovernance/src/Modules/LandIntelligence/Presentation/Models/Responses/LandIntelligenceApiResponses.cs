@@ -142,7 +142,8 @@ public sealed record ParcelGisEnrichmentSummaryResponse(
 
 public sealed record ResearchDemoConfigResponse(
     bool Enabled,
-    bool OfficerLeaseInterestNicLookupEnabled);
+    bool OfficerLeaseInterestNicLookupEnabled,
+    bool AuthorityLeaseInterestReviewEnabled = false);
 
 public sealed record SourceReportedLandUseOptionResponse(
     string Code,
@@ -284,7 +285,8 @@ public sealed record LandParcelRecommendationResponse(
     int DisplayOrder = 0,
     int RuleScoreRank = 0,
     int RuleScoreTieCount = 0,
-    bool IsTiedOnRuleScore = false);
+    bool IsTiedOnRuleScore = false,
+    string? ActualLeaseAvailabilityLabel = null);
 
 public sealed record LandRecommendationSearchResultsResponse(
     LandUseType RequiredPurpose,
