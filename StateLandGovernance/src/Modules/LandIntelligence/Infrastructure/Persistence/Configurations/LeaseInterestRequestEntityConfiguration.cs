@@ -21,7 +21,7 @@ internal sealed class LeaseInterestRequestEntityConfiguration
         builder.Property(x => x.PayloadJson).HasColumnType("jsonb").IsRequired();
         builder.Property(x => x.RequestedPurpose).IsRequired();
         builder.Property(x => x.CreatedAtUtc).IsRequired();
-        builder.Property(x => x.UpdatedAtUtc).IsRequired();
+        builder.Property(x => x.UpdatedAtUtc).IsRequired().IsConcurrencyToken();
         builder.Property(x => x.ApplicantNicCiphertext).HasColumnType("text");
         builder.Property(x => x.ApplicantNicLookupDigest).HasMaxLength(64);
 

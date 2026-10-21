@@ -101,7 +101,7 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
                     null,
                     null),
                 new LeaseInterestProposalDto(
-                    LandUseType.Other,
+                    default,
                     string.Empty,
                     null,
                     string.Empty,
@@ -117,7 +117,7 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
                 LandParcelId = landParcelId,
                 Status = LeaseInterestRequestStatus.Draft,
                 PayloadJson = LeaseInterestPayloadSerializer.Serialize(emptyDraft),
-                RequestedPurpose = (int)LandUseType.Other,
+                RequestedPurpose = 0,
                 ConsentToPreliminaryAssessment = false,
                 CreatedAtUtc = now,
                 UpdatedAtUtc = now,
@@ -311,6 +311,20 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
         return MapDetail(entity);
     }
 
+    public async Task DeleteDraftAsync(Guid requestId, CancellationToken cancellationToken)
+    {
+        var ownerId = RequireOwnerId();
+        var entity = await LoadOwnedRequestAsync(requestId, ownerId, cancellationToken);
+        if (entity.Status != LeaseInterestRequestStatus.Draft)
+        {
+            throw new LeaseInterestInvalidStateException(
+                "Only draft requests can be deleted. Submitted requests remain on record for tracking.");
+        }
+
+        _dbContext.LeaseInterestRequests.Remove(entity);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
     private async Task EnsureParcelExistsAsync(Guid landParcelId, CancellationToken cancellationToken)
     {
         if (await _parcelRepository.GetByIdAsync(landParcelId, cancellationToken) is null)
@@ -406,6 +420,22 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
                 x.VisibleToApplicant))
             .ToList();
 
+        var latestAuthority = _dbContext.LeaseInterestAuthorityDecisions
+            .AsNoTracking()
+            .Where(d => d.LeaseInterestRequestId == entity.Id)
+            .OrderByDescending(d => d.RecordedAtUtc)
+            .Select(d => new { d.Decision, d.Reason, d.RecordedAtUtc })
+            .FirstOrDefault();
+
+        LeaseInterestApplicantAuthorityDecisionDto? authoritySummary = latestAuthority is null
+            ? null
+            : new LeaseInterestApplicantAuthorityDecisionDto(
+                latestAuthority.Decision,
+                latestAuthority.Reason,
+                latestAuthority.RecordedAtUtc,
+                LeaseInterestAuthorityDecisionLabels.DecisionLabel(latestAuthority.Decision),
+                LeaseInterestAuthorityDecisionLabels.NextActionHint(latestAuthority.Decision));
+
         return new LeaseInterestRequestDetailDto(
             entity.Id,
             entity.LandParcelId,
@@ -419,7 +449,8 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             draft.Supporting,
             entity.ConsentToPreliminaryAssessment,
             history,
-            _costAssessment.BuildCostSummary(entity.LandParcelId));
+            _costAssessment.BuildCostSummary(entity.LandParcelId),
+            authoritySummary);
     }
 
     private void AppendStatusHistory(

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { getResearchDemoConfig } from "@/modules/component-01-land-intelligence/services/researchDemoApi";
 import {
+  authorityLeaseInterestQueueNavItem,
   component01NavItems,
   LAND_INTELLIGENCE_BASE,
   officerLeaseInterestLookupNavItem,
@@ -40,6 +41,7 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
   const [officerLookupEnabled, setOfficerLookupEnabled] = useState(false);
+  const [authorityReviewEnabled, setAuthorityReviewEnabled] = useState(false);
   const isLandIntelligenceNav = basePath === LAND_INTELLIGENCE_BASE;
 
   useEffect(() => {
@@ -51,11 +53,15 @@ export function Sidebar({
       .then((config) => {
         if (!cancelled) {
           setOfficerLookupEnabled(config.officerLeaseInterestNicLookupEnabled);
+          setAuthorityReviewEnabled(
+            Boolean(config.authorityLeaseInterestReviewEnabled),
+          );
         }
       })
       .catch(() => {
         if (!cancelled) {
           setOfficerLookupEnabled(false);
+          setAuthorityReviewEnabled(false);
         }
       });
     return () => {
@@ -64,21 +70,23 @@ export function Sidebar({
   }, [isLandIntelligenceNav]);
 
   const navItems = useMemo((): NavItem[] => {
-    if (!isLandIntelligenceNav || !officerLookupEnabled) {
+    if (!isLandIntelligenceNav) {
       return items;
     }
-    const alreadyPresent = items.some(
-      (item) => item.href === officerLeaseInterestQueueNavItem.href,
-    );
-    if (alreadyPresent) {
-      return items;
+    const extras: NavItem[] = [];
+    if (officerLookupEnabled) {
+      if (!items.some((item) => item.href === officerLeaseInterestQueueNavItem.href)) {
+        extras.push(officerLeaseInterestQueueNavItem, officerLeaseInterestLookupNavItem);
+      }
     }
-    return [
-      ...items,
-      officerLeaseInterestQueueNavItem,
-      officerLeaseInterestLookupNavItem,
-    ];
-  }, [items, isLandIntelligenceNav, officerLookupEnabled]);
+    if (
+      authorityReviewEnabled &&
+      !items.some((item) => item.href === authorityLeaseInterestQueueNavItem.href)
+    ) {
+      extras.push(authorityLeaseInterestQueueNavItem);
+    }
+    return extras.length ? [...items, ...extras] : items;
+  }, [items, isLandIntelligenceNav, officerLookupEnabled, authorityReviewEnabled]);
 
   return (
     <aside

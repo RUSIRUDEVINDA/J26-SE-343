@@ -8,14 +8,15 @@ Scope: Component 1 (Land Intelligence) only. Do not treat Components 2–4 as co
 
 | Fact | Implication |
 | --- | --- |
-| 300 research parcels have **unknown / not verified** official lease availability | Customers cannot rely on the demo DB for lease decisions |
-| **Project lease-ready** is a dataset designation | Not an official authority decision |
-| **Simulated** lease workflow (ResearchDemo) | Demo labels only — not legal status |
+| 400 research parcels (300 + 100) have **unknown / not verified** official lease availability | Customers cannot rely on the demo DB for lease decisions |
+| **Project lease-ready** is a dataset designation | Not an official authority decision — shown separately from official availability on recommendations |
+| **Simulated** lease workflow (ResearchDemo) including officer valuation + authority Approved/Rejected | Demo labels only — not legal status; Approved still requires formal lease processing |
+| Research-demo JWT minting + client renew-once | Must be replaced by real authentication / RBAC for deployment |
 | No secure document upload | Checklist text only |
-| Officer tools use demo JWT / ResearchDemo gates | Not production identity or RBAC |
+| Officer / authority tools use demo JWT / ResearchDemo gates | Not production identity or RBAC |
 | No payment integration | Authority fee process unknown / unimplemented |
 | GIS enrichment typically **0** snapshots on research DB | Environmental evidence unavailable — not assessed |
-| Standard ML ~76.5% held-out, supplementary | Must not drive availability or approval |
+| Standard ML ~76.5% on **synthetic** held-out samples, supplementary | Must not drive availability or approval; area always converted to hectares |
 | Recommendations are criterion **match** scores | Not legal suitability or lease approval |
 
 **Hard rule (already required in product posture):** keep unknown availability explicitly unknown. Never infer official lease availability from:

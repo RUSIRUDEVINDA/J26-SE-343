@@ -27,11 +27,6 @@ export const component01NavItems: NavItem[] = [
     primary: true,
   },
   {
-    label: "Recommendations",
-    href: `${LAND_INTELLIGENCE_BASE}/recommendations`,
-    icon: "✦",
-  },
-  {
     label: "Parcel Intelligence",
     href: `${LAND_INTELLIGENCE_BASE}/parcels`,
     icon: "▤",
@@ -59,6 +54,12 @@ export const officerLeaseInterestQueueNavItem: NavItem = {
   label: "Officer verification queue (Research demo)",
   href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-queue`,
   icon: "⚑",
+};
+
+export const authorityLeaseInterestQueueNavItem: NavItem = {
+  label: "Authority review queue (Research demo)",
+  href: `${LAND_INTELLIGENCE_BASE}/authority/lease-interest-queue`,
+  icon: "⚖",
 };
 
 export const moduleLandingLinks = [

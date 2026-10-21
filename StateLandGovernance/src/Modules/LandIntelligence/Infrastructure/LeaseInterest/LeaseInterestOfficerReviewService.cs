@@ -178,6 +178,22 @@ public sealed class LeaseInterestOfficerReviewService : ILeaseInterestOfficerRev
             .Select(MapHistoryEntry)
             .ToList();
 
+        var latestAuthority = await _dbContext.LeaseInterestAuthorityDecisions
+            .AsNoTracking()
+            .Where(d => d.LeaseInterestRequestId == entity.Id)
+            .OrderByDescending(d => d.RecordedAtUtc)
+            .Select(d => new { d.Decision, d.Reason, d.RecordedAtUtc })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        LeaseInterestApplicantAuthorityDecisionDto? authoritySummary = latestAuthority is null
+            ? null
+            : new LeaseInterestApplicantAuthorityDecisionDto(
+                latestAuthority.Decision,
+                latestAuthority.Reason,
+                latestAuthority.RecordedAtUtc,
+                LeaseInterestAuthorityDecisionLabels.DecisionLabel(latestAuthority.Decision),
+                LeaseInterestAuthorityDecisionLabels.NextActionHint(latestAuthority.Decision));
+
         return new LeaseInterestOfficerRequestDetailDto(
             entity.Id,
             entity.LandParcelId,
@@ -193,7 +209,8 @@ public sealed class LeaseInterestOfficerReviewService : ILeaseInterestOfficerRev
             history,
             parcel?.Identifier.CadastralNumber,
             parcel?.Location.District,
-            LeaseInterestStatusTransitions.ApplicantOutcomeSummary(entity.Status));
+            LeaseInterestStatusTransitions.ApplicantOutcomeSummary(entity.Status),
+            authoritySummary);
     }
 
     private static LeaseInterestStatusHistoryEntryDto MapHistoryEntry(
