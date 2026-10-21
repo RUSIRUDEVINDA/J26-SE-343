@@ -24,11 +24,13 @@ public sealed record LandSearchRequest
     public string? Province { get; init; }
     public string? District { get; init; }
     public string? DivisionalSecretariat { get; init; }
+    /// <summary>Exact match (trimmed, case-insensitive) on cadastral number. Ordinary users search by this, not UUID.</summary>
+    public string? CadastralNumber { get; init; }
     public LandCategoryType? CategoryType { get; init; }
     public LandUseType? CurrentUseType { get; init; }
     /// <summary>Exact match (trimmed, case-insensitive) on source-reported land-use code or English label.</summary>
     public string? SourceReportedLandUse { get; init; }
-    /// <summary>Project research group; Coconut includes original cadastral Coconut and GIS-mapped Coconut parcels.</summary>
+    /// <summary>Canonical land use / project research group; matches original cadastral label and/or GIS classification.</summary>
     public string? ResearchLandCoverGroup { get; init; }
     /// <summary>Exact match (trimmed, case-insensitive) on GIS-derived soil group name.</summary>
     public string? DerivedSoilGroup { get; init; }

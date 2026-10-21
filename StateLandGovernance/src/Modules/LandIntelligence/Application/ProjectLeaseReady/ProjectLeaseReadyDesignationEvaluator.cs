@@ -13,7 +13,16 @@ public static class ProjectLeaseReadyDesignationEvaluator
         bool IsDesignatedInProjectDataset,
         bool IsEffectiveForLeaseFlow,
         string DisplayLeaseAvailabilityLabel,
-        ProjectLeaseReadyDesignationDto Designation);
+        ProjectLeaseReadyDesignationDto Designation)
+    {
+        /// <summary>
+        /// Project dataset designation label (not official lease availability).
+        /// Source-reported Private parcels show the exclusion label instead of the lease-ready designation.
+        /// </summary>
+        public string ProjectDesignationLabel => IsEffectiveForLeaseFlow
+            ? Designation.DesignationLabel
+            : PrivateExclusionLeaseLabel;
+    }
 
     public static Evaluation Evaluate(
         ProjectLeaseReadyDesignationRecord designation,

@@ -50,6 +50,8 @@ public static class LandIntelligenceInfrastructureExtensions
         services.AddScoped<ILeaseInterestRequestService, LeaseInterestRequestService>();
         services.AddScoped<ILeaseInterestOfficerLookupService, LeaseInterestOfficerLookupService>();
         services.AddScoped<ILeaseInterestOfficerReviewService, LeaseInterestOfficerReviewService>();
+        services.AddScoped<ILeaseInterestValuationService, LeaseInterestValuationService>();
+        services.AddScoped<ILeaseInterestAuthorityReviewService, LeaseInterestAuthorityReviewService>();
         services.AddScoped<ILeaseInterestParcelEligibilityService, LeaseInterestParcelEligibilityService>();
         services.AddScoped<LeaseInterestDraftValidator>(sp =>
             new LeaseInterestDraftValidator(
