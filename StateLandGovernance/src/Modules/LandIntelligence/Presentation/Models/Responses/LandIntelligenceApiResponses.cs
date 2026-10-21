@@ -56,6 +56,101 @@ public sealed record LandUseResponse(
     LandUseType Type,
     string? Description);
 
+/// <summary>
+/// Source-reported cadastral metadata for real imported parcels. Does not include ownership or claimant fields.
+/// </summary>
+public sealed record CadastralSourceMetadataResponse(
+    string SourceProvenanceLabel,
+    string SourceLayer,
+    string SourceFeatureId,
+    string? SourceReportedLandUseCode,
+    string? SourceReportedLandUseEnglishLabel,
+    string? SourceReportedLandUseText,
+    string SourceReportedLandUseDisplay,
+    string? SourceReportedClaimantCategoryCode,
+    string? SourceReportedClaimantCategoryEnglishLabel,
+    string SourceReportedClaimantCategoryDisplay,
+    string? SourceParcelStatusCode,
+    string? GnIndex,
+    string? CoordinateStatus,
+    DateTimeOffset ImportedAtUtc,
+    string? ResearchRecordId = null,
+    double? MapMarkerLatitude = null,
+    double? MapMarkerLongitude = null);
+
+public sealed record ResearchSimulatedLeaseWorkflowResponse(
+    string ResearchRecordId,
+    string ScenarioId,
+    string SimulatedLeaseStatus,
+    bool IsSimulatedLeaseStatus,
+    string? DatasetUsage,
+    string? Notice);
+
+public sealed record ProjectLeaseReadyDesignationResponse(
+    string DatasetKey,
+    string ResearchRecordId,
+    string DesignationLabel,
+    string DesignationNotice,
+    bool IsDesignatedInProjectDataset,
+    bool IsEffectiveForLeaseFlow,
+    bool ExcludedBecauseSourceReportedPrivate);
+
+public sealed record LandParcelAvailabilityResponse(
+    string ActualLeaseAvailabilityLabel,
+    string? ResearchRecordId,
+    ResearchSimulatedLeaseWorkflowResponse? SimulatedWorkflow,
+    ProjectLeaseReadyDesignationResponse? ProjectLeaseReady = null);
+
+public sealed record LandParcelMetricsResponse(
+    int TotalParcelCount,
+    int ProjectDesignatedParcelsCount,
+    int ProjectDesignatedParcelsEffectiveCount);
+
+public sealed record IndexedDistrictSummaryResponse(
+    string Province,
+    string District,
+    int ParcelCount);
+
+public sealed record GisIntelligenceLayerCoverageResponse(
+    string LayerKey,
+    string DisplayName,
+    string CoverageStatus,
+    int ReferenceFeatureCount,
+    int ParcelsWithEvidenceCount,
+    string ProvenanceSummary,
+    string LimitationSummary);
+
+public sealed record LandIntelligenceGisCoverageResponse(
+    int TotalParcelCount,
+    IReadOnlyList<IndexedDistrictSummaryResponse> IndexedDistricts,
+    IReadOnlyList<string> ConfiguredEnrichmentDistricts,
+    int EnrichmentSnapshotCount,
+    int EnrichmentCompleteCount,
+    int EnrichmentPartialCount,
+    int EnrichmentUnavailableCount,
+    string OverallEnrichmentStatus,
+    string OverallEnrichmentNotice,
+    IReadOnlyList<GisIntelligenceLayerCoverageResponse> IntelligenceLayers,
+    DateTimeOffset MeasuredAtUtc);
+
+public sealed record ParcelGisEnrichmentSummaryResponse(
+    string OverallStatus,
+    string? DetectedProvince,
+    string? DetectedDistrict,
+    DateTimeOffset? EnrichedAtUtc,
+    string AssessmentNotice);
+
+public sealed record ResearchDemoConfigResponse(
+    bool Enabled,
+    bool OfficerLeaseInterestNicLookupEnabled);
+
+public sealed record SourceReportedLandUseOptionResponse(
+    string Code,
+    string EnglishLabel,
+    int ParcelCount);
+
+public sealed record DerivedSoilGroupOptionsResponse(IReadOnlyList<string> Options);
+
 public sealed record LandParcelResponse(
     Guid Id,
     ParcelIdentifierResponse Identifier,
@@ -68,7 +163,10 @@ public sealed record LandParcelResponse(
     int SpatialConstraintCount,
     int EnvironmentalRestrictionCount,
     int InfrastructureFeatureCount,
-    int RegulatoryReferenceCount);
+    int RegulatoryReferenceCount,
+    CadastralSourceMetadataResponse? CadastralSource = null,
+    LandParcelAvailabilityResponse? Availability = null,
+    ParcelGisEnrichmentSummaryResponse? GisEnrichment = null);
 
 public sealed record LandSearchResultResponse(
     Guid Id,
@@ -80,7 +178,9 @@ public sealed record LandSearchResultResponse(
     decimal AreaValue,
     AreaUnit AreaUnit,
     double CentroidLatitude,
-    double CentroidLongitude);
+    double CentroidLongitude,
+    CadastralSourceMetadataResponse? CadastralSource = null,
+    LandParcelAvailabilityResponse? Availability = null);
 
 public sealed record LandSearchResultsResponse(
     IReadOnlyList<LandSearchResultResponse> Results,
@@ -131,7 +231,25 @@ public sealed record CriterionEvaluationResponse(
     decimal WeightedScore,
     string Summary,
     AttributeProvenanceResponse? DataProvenance = null,
-    string? AttributePath = null);
+    string? AttributePath = null,
+    bool WasAssessed = true,
+    string? NotAssessedReason = null);
+
+public sealed record RecommendationFilterStageResponse(
+    string Name,
+    int CandidateCount,
+    string Description);
+
+public sealed record RecommendationUnavailableCriterionResponse(
+    string Key,
+    string Reason);
+
+public sealed record RecommendationSearchTransparencyResponse(
+    IReadOnlyList<string> AppliedFilters,
+    int CandidateCountBeforeFilters,
+    int CandidateCountAfterFilters,
+    IReadOnlyList<RecommendationFilterStageResponse> FilterStages,
+    IReadOnlyList<RecommendationUnavailableCriterionResponse> UnavailableCriteria);
 
 public sealed record RestrictionSummaryResponse(
     string RestrictionType,
@@ -151,13 +269,29 @@ public sealed record LandParcelRecommendationResponse(
     IReadOnlyList<RecommendationEvidenceResponse> Evidence,
     string Explanation,
     bool HardConstraintRejected = false,
-    string? HardConstraintReason = null);
+    string? HardConstraintReason = null,
+    string? CandidateStatusLabel = null,
+    string? CandidateStatusReason = null,
+    string? SourceReportedClaimantCategoryCode = null,
+    string? SourceReportedClaimantCategoryDisplay = null,
+    string? SourceParcelStatusCode = null,
+    string? SourceProvenanceLabel = null,
+    DateTimeOffset? SourceImportedAtUtc = null,
+    string? ProjectLeaseReadyLabel = null,
+    bool IsProjectLeaseReadyDesignated = false,
+    bool IsProjectLeaseReadyEffective = false,
+    decimal? ParcelAreaHectares = null,
+    int DisplayOrder = 0,
+    int RuleScoreRank = 0,
+    int RuleScoreTieCount = 0,
+    bool IsTiedOnRuleScore = false);
 
 public sealed record LandRecommendationSearchResultsResponse(
     LandUseType RequiredPurpose,
     IReadOnlyList<LandParcelRecommendationResponse> Recommendations,
     int CandidateCount,
-    DateTimeOffset GeneratedAt);
+    DateTimeOffset GeneratedAt,
+    RecommendationSearchTransparencyResponse? Transparency = null);
 
 public sealed record LandRecommendationResponse(
     Guid Id,

@@ -1,0 +1,56 @@
+{
+  "manifestVersion": "pp1-anomaly-commissioner-manifest-v1",
+  "syntheticSeedVersion": "pp1-anomaly-commissioner-v1",
+  "isSynthetic": true,
+  "provenanceKind": "SyntheticPp1Seed",
+  "purpose": "PP1Demonstration",
+  "scenario": {
+    "caseId": "PP1-ANOMALY-COMMISSIONER-001",
+    "syntheticSeedId": "PP1-ANOMALY-COMMISSIONER-001",
+    "component1ProjectionId": "fbaf9801-690f-51f8-9312-404bd3475216",
+    "component3ProjectionId": "7bdcb5d7-79e0-53ec-933e-df6c898ec3a3",
+    "workflowRunId": "b1694cb5-60a5-5817-b11b-55bead079189",
+    "generatedAtUtc": "2026-10-12T10:00:00Z",
+    "workflowState": "Completed",
+    "traceCompleteness": "CompletedTraceEligibleForAnomalyScoring",
+    "terminalStageCode": "DS_FINAL_NOTIFICATION",
+    "route": {
+      "label": "Synthetic configurable Sri Lankan long-term lease route",
+      "requiredClearances": [
+        "Environmental Clearance",
+        "Survey Clearance"
+      ],
+      "higherApproval": "Completed",
+      "presidentialSecretariatProcessing": "NotApplicable",
+      "registration": "NotApplicable"
+    },
+    "controlledPerturbation": {
+      "type": "CorrectionAndResubmissionDelay",
+      "description": "A documented correction request creates an eighteen-day interval before LCGD technical re-review. The seed contains no score or predetermined model decision."
+    },
+    "events": [
+      { "eventSeq": 1, "activity": "Complete Proposal Received", "institution": "DS", "resource": "DS-Intake-01", "timestamp": "2026-08-03T10:00:00", "status": "Completed" },
+      { "eventSeq": 2, "activity": "DS Scrutiny", "institution": "DS", "resource": "DS-Land-02", "timestamp": "2026-08-06T10:00:00", "status": "Completed" },
+      { "eventSeq": 3, "activity": "DS Field Verification", "institution": "DS", "resource": "DS-Field-03", "timestamp": "2026-08-10T10:00:00", "status": "Completed" },
+      { "eventSeq": 4, "activity": "Environmental Clearance", "institution": "CEA", "resource": "CEA-Review-01", "timestamp": "2026-08-13T10:00:00", "status": "Completed" },
+      { "eventSeq": 5, "activity": "Survey Clearance", "institution": "SURVEY_DEPARTMENT", "resource": "Survey-Review-04", "timestamp": "2026-08-16T10:00:00", "status": "Completed" },
+      { "eventSeq": 6, "activity": "PLC/DLC Review and Recommendation", "institution": "PLC_DLC", "resource": "PLC-DLC-Committee", "timestamp": "2026-08-20T10:00:00", "status": "Completed" },
+      { "eventSeq": 7, "activity": "LCGD Intake", "institution": "LCGD", "resource": "LCGD-Intake-01", "timestamp": "2026-08-23T10:00:00", "status": "Completed" },
+      { "eventSeq": 8, "activity": "LCGD Technical Review", "institution": "LCGD", "resource": "LCGD-Review-07", "timestamp": "2026-08-27T10:00:00", "status": "Completed" },
+      { "eventSeq": 9, "activity": "Correction Requested", "institution": "LCGD", "resource": "LCGD-Review-07", "timestamp": "2026-08-30T10:00:00", "status": "Completed" },
+      { "eventSeq": 10, "activity": "LCGD Technical Review (Re-submission)", "institution": "LCGD", "resource": "LCGD-Review-07", "timestamp": "2026-09-17T10:00:00", "status": "Completed" },
+      { "eventSeq": 11, "activity": "Ministry/Competent Authority Approval", "institution": "MINISTRY_OF_LANDS", "resource": "Ministry-Approval-02", "timestamp": "2026-09-21T10:00:00", "status": "Completed" },
+      { "eventSeq": 12, "activity": "Presidential Secretariat Processing", "institution": "PRESIDENTIAL_SECRETARIAT", "resource": "Route-Control", "timestamp": "2026-09-21T10:00:00", "status": "NotApplicable" },
+      { "eventSeq": 13, "activity": "Lease Instrument Finalization", "institution": "LCGD", "resource": "LCGD-Legal-03", "timestamp": "2026-09-26T10:00:00", "status": "Completed" },
+      { "eventSeq": 14, "activity": "Land Registry Registration", "institution": "LAND_REGISTRY", "resource": "Route-Control", "timestamp": "2026-09-26T10:00:00", "status": "NotApplicable" },
+      { "eventSeq": 15, "activity": "Return to DS", "institution": "DS", "resource": "DS-Dispatch-01", "timestamp": "2026-09-30T10:00:00", "status": "Completed" },
+      { "eventSeq": 16, "activity": "DS Final Notification", "institution": "DS", "resource": "DS-Land-02", "timestamp": "2026-10-02T10:00:00", "status": "Completed" }
+    ],
+    "anomalyExpectation": "EligibleForServerComputationOnly"
+  },
+  "prohibitions": [
+    "No precomputed anomaly score",
+    "No predetermined flagged decision",
+    "No model fitting or threshold change"
+  ]
+}

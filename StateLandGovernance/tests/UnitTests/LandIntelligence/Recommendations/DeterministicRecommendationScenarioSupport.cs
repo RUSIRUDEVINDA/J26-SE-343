@@ -23,23 +23,12 @@ internal static class DeterministicRecommendationScenarioSupport
         new()
         {
             RequiredPurpose = purpose,
-            RequiredAreaHectares = 5m,
-            AreaTolerancePercent = 15m,
+            TargetAreaHectares = 5m,
             RequiredLandCategory = LandCategoryType.StateLand,
             RequiredLandUse = purpose,
             PreferredLocation = new PreferredLocationCriteria
             {
                 Province = "Western"
-            },
-            Accessibility = new AccessibilityCriteria
-            {
-                RequireRoadAccess = true,
-                MaxRoadDistanceMeters = 5000m
-            },
-            Environmental = new EnvironmentalCriteria
-            {
-                MaxAllowedEnvironmentalSeverity = RestrictionSeverity.Medium,
-                RejectProhibitiveEnvironmentalRestrictions = true
             },
             Regulatory = new RegulatoryCriteria
             {
@@ -117,7 +106,7 @@ internal static class DeterministicRecommendationScenarioSupport
         Assert.NotEmpty(result.Explanation);
 
         var totalCriteria = result.MatchingCriteria.Count + result.FailedCriteria.Count;
-        Assert.True(totalCriteria >= 8, $"Expected comprehensive criterion coverage, got {totalCriteria}.");
+        Assert.True(totalCriteria >= 6, $"Expected core criterion coverage, got {totalCriteria}.");
     }
 
     public static void AssertMonotonicRanking(IReadOnlyList<LandParcelRecommendationResult> recommendations)

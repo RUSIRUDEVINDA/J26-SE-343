@@ -1,9 +1,13 @@
 using StateLandGovernance.BuildingBlocks.DependencyInjection;
 using StateLandGovernance.WorkflowGovernance.Application;
 using StateLandGovernance.WorkflowGovernance.Infrastructure;
+using StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations;
 using StateLandGovernance.WorkflowGovernance.Presentation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
@@ -15,7 +19,10 @@ using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
 using StateLandGovernance.LandIntelligence.Presentation.DependencyInjection;
+using StateLandGovernance.LandIntelligence.Presentation.Security;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
+using StateLandGovernance.Api.Observability;
+using StateLandGovernance.BuildingBlocks.Observability;
 
 EnvFileLoader.LoadFromRepositoryRoot();
 
@@ -43,12 +50,39 @@ if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>(
     return;
 }
 
+var isOcrDemoEnabled = builder.Environment.IsDevelopment()
+    && builder.Configuration.GetValue<bool>("WorkflowGovernance:OcrDemo:Enabled", false);
+
 builder.Services.AddBuildingBlocks();
+
+var workflowConn = Environment.GetEnvironmentVariable("WORKFLOW_GOVERNANCE_CONNECTION")
+    ?? Environment.GetEnvironmentVariable("LAND_INTELLIGENCE_CONNECTION");
+
+if (!string.IsNullOrWhiteSpace(workflowConn))
+{
+    builder.Services.AddWorkflowGovernancePostgresPersistence(workflowConn);
+}
 
 builder.Services
     .AddWorkflowGovernanceApplication()
     .AddWorkflowGovernanceInfrastructure(builder.Environment)
-    .AddWorkflowGovernancePresentation();
+    .AddWorkflowGovernancePresentation(builder.Configuration);
+
+if (isOcrDemoEnabled)
+{
+    builder.Services
+        .AddWorkflowGovernanceLocalDocumentStorage(builder.Configuration)
+        .AddWorkflowGovernanceDocumentIntelligence(builder.Configuration);
+}
+
+var governanceConn = Environment.GetEnvironmentVariable("GOVERNANCE_INTELLIGENCE_CONNECTION")
+    ?? builder.Configuration.GetConnectionString("GovernanceIntelligenceConnection")
+    ?? workflowConn;
+
+if (!string.IsNullOrWhiteSpace(governanceConn))
+{
+    builder.Configuration["ConnectionStrings:GovernanceIntelligenceConnection"] = governanceConn;
+}
 
 builder.Services.AddSingleton<IRegulatoryComplianceEngine, RegulatoryComplianceEngine>();
 builder.Services.AddSingleton<IRegulatoryRuleProvider, InMemoryRegulatoryRuleProvider>();
@@ -60,6 +94,18 @@ builder.Services.AddExplainableGovernanceEngine();
 builder.Services.AddGovernanceConsensusEngine();
 builder.Services.AddConditionalGovernanceVerification();
 builder.Services.AddEarlyGovernanceScreening();
+builder.Services.AddLeaseApprovalTimingMonitoring();
+builder.Services.AddGovernanceScreeningOrchestration();
+
+// Disambiguate Component4ScreeningGateway constructor registration for Microsoft DI
+builder.Services.RemoveAll<StateLandGovernance.WorkflowGovernance.Application.Interfaces.IComponent4ScreeningGateway>();
+builder.Services.AddScoped<StateLandGovernance.WorkflowGovernance.Application.Interfaces.IComponent4ScreeningGateway>(sp =>
+    new StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations.Component4ScreeningGateway(
+        sp.GetRequiredService<EvaluateComplianceCommandHandler>(),
+        sp.GetRequiredService<StateLandGovernance.WorkflowGovernance.Application.Interfaces.ILeaseCaseRepository>(),
+        sp.GetRequiredService<StateLandGovernance.WorkflowGovernance.Application.Interfaces.ICommandHandler<StateLandGovernance.WorkflowGovernance.Application.Commands.RecordScreeningResultCommand, StateLandGovernance.WorkflowGovernance.Application.DTOs.ScreeningResultDto>>(),
+        sp.GetService<TimeProvider>(),
+        sp.GetService<Microsoft.Extensions.Logging.ILogger<StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations.Component4ScreeningGateway>>()));
 
 builder.Services.AddCors(options =>
 {
@@ -70,7 +116,9 @@ builder.Services.AddCors(options =>
                 "http://localhost:3000",
                 "http://127.0.0.1:3000",
                 "http://localhost:3002",
-                "http://127.0.0.1:3002")
+                "http://127.0.0.1:3002",
+                "http://localhost:5173",
+                "http://127.0.0.1:5173")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -78,10 +126,27 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddLandIntelligenceInfrastructure(builder.Configuration);
 builder.Services.AddLandIntelligencePresentation();
+builder.Services.AddLandIntelligenceAuthentication(builder.Configuration, builder.Environment);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SwaggerDoc("all", new OpenApiInfo
+    {
+        Title = "State Land Governance — All Platform Services (Unified)",
+        Version = "v1",
+        Description =
+            "Unified interactive API surface capturing all platform services: Land Intelligence (C1), Workflow Governance (C3), and AI Governance Intelligence (C4)."
+    });
+
+    options.SwaggerDoc("governance-intelligence", new OpenApiInfo
+    {
+        Title = "State Land Governance — Component 4 Governance Intelligence API",
+        Version = "v1",
+        Description =
+            "AI-driven regulatory compliance, conflict detection, early governance screening, risk assessment, explanation, and consensus verification."
+    });
+
     options.SwaggerDoc(LandIntelligenceApiGroups.External, new OpenApiInfo
     {
         Title = "State Land Governance — Component 1 External Read API",
@@ -98,8 +163,26 @@ builder.Services.AddSwaggerGen(options =>
             "Component 1 parcel persistence endpoints. Not for consumption by external platform modules."
     });
 
+    if (isOcrDemoEnabled)
+    {
+        options.SwaggerDoc("workflow-governance", new OpenApiInfo
+        {
+            Title = "State Land Governance — Component 3 Workflow Governance API",
+            Version = "v1",
+            Description =
+                "Component 3 workflow governance, document intake, and OCR intelligence demonstration endpoints."
+        });
+    }
+
     options.DocInclusionPredicate((documentName, apiDescription) =>
-        string.Equals(apiDescription.GroupName, documentName, StringComparison.Ordinal));
+    {
+        if (string.Equals(documentName, "all", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return string.Equals(apiDescription.GroupName, documentName, StringComparison.OrdinalIgnoreCase);
+    });
 });
 
 var app = builder.Build();
@@ -110,12 +193,37 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint(
+            "/swagger/all/swagger.json",
+            "All Platform Services (Unified) v1");
+        options.SwaggerEndpoint(
+            "/swagger/governance-intelligence/swagger.json",
+            "Component 4 — Governance Intelligence API v1");
+        options.SwaggerEndpoint(
             $"/swagger/{LandIntelligenceApiGroups.External}/swagger.json",
             "Land Intelligence External Read API v1");
         options.SwaggerEndpoint(
             $"/swagger/{LandIntelligenceApiGroups.Internal}/swagger.json",
             "Land Intelligence Internal API v1");
+
+        if (isOcrDemoEnabled)
+        {
+            options.SwaggerEndpoint(
+                "/swagger/workflow-governance/swagger.json",
+                "Workflow Governance API v1");
+        }
     });
+
+    if (isOcrDemoEnabled)
+    {
+        var docOpt = app.Services.GetService<IOptions<DocumentIntelligenceOptions>>()?.Value;
+        if (docOpt != null)
+        {
+            app.Logger.LogInformation(
+                "[WorkflowGovernance] DocumentIntelligence configured with BaseUrl: {BaseUrl}, RequestTimeoutSeconds: {Timeout}s",
+                docOpt.BaseUrl,
+                docOpt.RequestTimeoutSeconds);
+        }
+    }
 
     try
     {
@@ -138,14 +246,29 @@ else
     dbContext.Database.Migrate();
 }
 
+app.UseLandIntelligenceCallerContext();
 app.UseLandIntelligenceExceptionHandling();
+
+app.UseRouting();
+app.UseMiddleware<PrometheusMetricsMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseCors("DevelopmentFrontend");
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "Healthy",
+    service = "StateLandGovernance.Api",
+    dataMode = "Live"
+}));
+app.MapGet("/metrics", (PrometheusMetricsRegistry metrics) =>
+    Results.Text(metrics.Render(), "text/plain; version=0.0.4; charset=utf-8"));
 
 app.Run();
 

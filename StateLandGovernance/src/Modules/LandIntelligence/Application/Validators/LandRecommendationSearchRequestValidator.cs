@@ -14,19 +14,34 @@ public sealed class LandRecommendationSearchRequestValidator : IRequestValidator
             errors.Add("Max results must be between 1 and 100.");
         }
 
+        if (request.TargetAreaHectares is < 0)
+        {
+            errors.Add("Target area cannot be negative.");
+        }
+
+        if (request.TargetAreaHectares is 0)
+        {
+            errors.Add("Target area must be a positive number when specified.");
+        }
+
         if (request.RequiredAreaHectares is < 0)
         {
             errors.Add("Required area cannot be negative.");
         }
 
-        if (request.AreaTolerancePercent is < 0 or > 100)
+        if (request.RequiredAreaHectares is 0)
         {
-            errors.Add("Area tolerance percent must be between 0 and 100.");
+            errors.Add("Required area must be a positive number when specified.");
         }
 
-        if (request.Accessibility?.MaxRoadDistanceMeters is <= 0)
+        if (request.PreferredAreaHectares is < 0)
         {
-            errors.Add("Maximum road distance must be greater than zero when specified.");
+            errors.Add("Preferred area cannot be negative.");
+        }
+
+        if (request.PreferredAreaHectares is 0)
+        {
+            errors.Add("Preferred area must be a positive number when specified.");
         }
 
         if (request.Regulatory?.MaxRegulatoryReferences is < 0)

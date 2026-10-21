@@ -29,7 +29,7 @@ public sealed class ClassifyComplaintCommandHandlerTests
         Assert.NotEqual(Guid.Empty, assessment.AssessmentId);
         Assert.Equal(caseId, assessment.CaseId);
         Assert.Equal(complaintText, assessment.ComplaintText);
-        Assert.Equal("governance_classifier_v1", assessment.ModelVersion);
+        Assert.Equal("v2", assessment.ModelVersion);
         Assert.Equal(ComplaintClassificationCategories.AdministrativeProceduralIntegrity, assessment.PredictedCategory);
         Assert.Equal(ValidProbabilities(), assessment.ClassProbabilities);
         Assert.Equal("Advisory output only.", assessment.AdvisoryNote);
@@ -179,7 +179,7 @@ public sealed class ClassifyComplaintCommandHandlerTests
 
     private static ComplaintClassificationResult SuccessfulClassification(string caseId) =>
         ComplaintClassificationResult.Success(new ComplaintClassificationPrediction(
-            "governance_classifier_v1",
+            "v2",
             ComplaintClassificationCategories.AdministrativeProceduralIntegrity,
             ValidProbabilities(),
             caseId,
@@ -247,5 +247,11 @@ public sealed class ClassifyComplaintCommandHandlerTests
             Guid assessmentId,
             CancellationToken cancellationToken = default) =>
             Task.FromResult(Assessments.SingleOrDefault(item => item.AssessmentId == assessmentId));
+
+        public Task<IReadOnlyList<ComplaintClassificationAssessment>> GetByCaseIdAsync(
+            string caseId, int limit = IComplaintClassificationAssessmentStore.DefaultHistoryLimit,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<ComplaintClassificationAssessment>>(
+                Assessments.Where(item => item.CaseId == caseId).Take(limit).ToArray());
     }
 }

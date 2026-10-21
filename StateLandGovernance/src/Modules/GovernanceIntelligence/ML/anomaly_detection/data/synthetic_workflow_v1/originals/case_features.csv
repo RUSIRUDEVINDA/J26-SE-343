@@ -1,0 +1,501 @@
+case_id,label,perturbation_type,legal_route,land_purpose,province,applicant_type,land_extent_perches,inter_provincial,required_higher_approval,registration_requirement,event_count,elapsed_days,max_gap_hours,mean_gap_hours,unique_activities,repeated_activity_count,resource_handoffs,institution_switches,distinct_resources
+SL-CASE-0207,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Government Body,182.5,False,True,True,18,121.94,679.99,172.15,18,0,16,9,13
+SL-CASE-0243,reference-normal,none,Agricultural,Agricultural,North Central,Company,57.6,False,False,False,12,26.79,315.11,58.45,12,0,10,5,11
+SL-CASE-0067,reference-normal,none,Commercial,Commercial,North Western,Government Body,61.4,False,False,False,14,66.55,419.37,122.86,14,0,12,6,13
+SL-CASE-0141,reference-normal,none,Institutional,Institutional,North Central,Government Body,111.2,False,True,True,20,127.18,637.08,160.65,20,0,16,10,14
+SL-CASE-0439,controlled-perturbation,repeated_correction_loop,Residential,Residential,North Western,Individual,18.7,True,False,True,18,67.0,319.31,94.59,15,3,11,6,12
+SL-CASE-0235,reference-normal,none,Residential,Residential,Sabaragamuwa,Cooperative,103.2,False,False,False,12,61.4,446.83,133.96,12,0,10,5,10
+SL-CASE-0456,controlled-perturbation,excessive_handoffs,Residential,Residential,Southern,Company,90.4,False,False,True,17,60.17,443.05,90.26,17,0,14,10,13
+SL-CASE-0293,reference-normal,none,Residential,Residential,Central,Company,165.9,False,False,True,14,49.28,408.01,90.99,14,0,11,6,12
+SL-CASE-0471,controlled-perturbation,increased_event_count,Agricultural,Agricultural,Central,Company,6.2,False,False,False,19,33.62,176.94,44.83,16,3,11,7,9
+SL-CASE-0236,reference-normal,none,Institutional,Institutional,Eastern,Government Body,197.1,False,True,True,20,84.89,505.89,107.23,20,0,16,10,15
+SL-CASE-0063,reference-normal,none,Institutional,Institutional,North Western,Cooperative,25.7,False,True,True,20,83.43,292.4,105.39,20,0,18,10,16
+SL-CASE-0269,reference-normal,none,Institutional,Institutional,North Western,Company,196.4,False,True,True,20,89.16,484.61,112.63,20,0,18,10,17
+SL-CASE-0429,controlled-perturbation,repeated_correction_loop,Commercial,Commercial,Western,Company,141.7,False,True,True,20,101.57,482.11,128.3,19,1,15,9,13
+SL-CASE-0453,controlled-perturbation,excessive_handoffs,Agricultural,Agricultural,Northern,Company,160.5,False,False,False,15,72.0,461.46,123.43,15,0,12,8,13
+SL-CASE-0423,controlled-perturbation,repeated_correction_loop,Residential,Residential,North Western,Company,38.6,False,False,False,16,80.14,413.36,128.23,13,3,10,5,11
+SL-CASE-0156,reference-normal,none,Agricultural,Agricultural,Sabaragamuwa,Company,158.6,False,False,False,12,54.51,306.32,118.94,12,0,10,5,11
+SL-CASE-0363,reference-normal,none,Agricultural,Agricultural,North Central,Individual,42.6,False,False,False,12,49.98,429.27,109.04,12,0,9,5,10
+SL-CASE-0372,reference-normal,none,Residential,Residential,Northern,Company,179.9,False,False,True,14,42.55,449.89,78.56,14,0,12,6,13
+SL-CASE-0130,reference-normal,none,Commercial,Commercial,North Central,Government Body,182.4,False,True,True,18,98.76,492.12,139.43,18,0,16,9,14
+SL-CASE-0412,controlled-perturbation,extended_gap,Agricultural,Agricultural,North Central,Individual,71.0,False,False,False,12,182.84,3595.02,398.91,12,0,9,5,10
+SL-CASE-0353,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Individual,183.5,False,True,True,18,116.17,864.79,164.0,18,0,16,9,14
+SL-CASE-0323,reference-normal,none,Residential,Residential,Uva,Company,133.8,False,False,False,12,57.89,239.44,126.31,12,0,11,5,12
+SL-CASE-0397,reference-normal,none,Commercial,Commercial,North Western,Government Body,134.0,False,False,True,16,80.34,376.2,128.54,16,0,13,7,12
+SL-CASE-0170,reference-normal,none,Institutional,Institutional,North Western,Individual,162.6,False,True,True,20,96.5,543.9,121.9,20,0,15,10,15
+SL-CASE-0481,controlled-perturbation,duplicated_sequence,Commercial,Commercial,Central,Cooperative,39.3,False,False,True,22,84.17,424.01,96.2,22,0,20,13,14
+SL-CASE-0399,reference-normal,none,Residential,Residential,Southern,Cooperative,158.8,False,False,True,14,63.62,257.92,117.46,14,0,12,6,13
+SL-CASE-0474,controlled-perturbation,increased_event_count,Residential,Residential,North Central,Company,73.8,False,False,True,19,44.17,265.59,58.9,16,3,14,8,13
+SL-CASE-0238,reference-normal,none,Agricultural,Agricultural,North Western,Cooperative,35.1,True,False,False,12,38.46,199.73,83.91,12,0,10,5,10
+SL-CASE-0030,reference-normal,none,Institutional,Institutional,Western,Government Body,122.1,False,True,True,20,83.71,409.39,105.74,20,0,17,10,15
+SL-CASE-0298,reference-normal,none,Commercial,Commercial,Southern,Cooperative,41.7,False,True,True,18,89.49,528.36,126.34,18,0,15,9,14
+SL-CASE-0076,reference-normal,none,Agricultural,Agricultural,Western,Company,168.0,False,True,True,16,70.81,432.68,113.29,16,0,14,8,14
+SL-CASE-0083,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Cooperative,116.7,False,True,True,20,111.79,780.7,141.21,20,0,17,10,17
+SL-CASE-0185,reference-normal,none,Commercial,Commercial,North Western,Company,147.0,False,False,True,16,85.31,458.04,136.5,16,0,15,7,14
+SL-CASE-0175,reference-normal,none,Commercial,Commercial,Eastern,Company,139.1,False,False,True,16,64.15,376.65,102.65,16,0,14,7,15
+SL-CASE-0159,reference-normal,none,Agricultural,Agricultural,Southern,Government Body,92.4,False,False,True,14,47.24,177.2,87.22,14,0,11,6,11
+SL-CASE-0434,controlled-perturbation,repeated_correction_loop,Agricultural,Agricultural,Eastern,Company,36.3,False,False,False,14,61.83,306.95,114.14,13,1,9,5,10
+SL-CASE-0465,controlled-perturbation,increased_event_count,Residential,Residential,Sabaragamuwa,Cooperative,190.1,False,False,True,24,60.75,298.21,63.4,22,2,13,6,14
+SL-CASE-0065,reference-normal,none,Institutional,Institutional,North Central,Company,117.1,False,True,True,20,116.6,463.51,147.28,20,0,16,10,15
+SL-CASE-0213,reference-normal,none,Institutional,Institutional,North Central,Individual,153.0,False,True,True,20,103.84,443.25,131.17,20,0,15,10,15
+SL-CASE-0461,controlled-perturbation,increased_event_count,Residential,Residential,Southern,Company,89.1,False,True,False,24,83.81,699.82,87.46,22,2,13,9,11
+SL-CASE-0286,reference-normal,none,Institutional,Institutional,North Central,Company,164.6,False,False,True,18,106.57,465.98,150.45,18,0,17,8,16
+SL-CASE-0288,reference-normal,none,Institutional,Institutional,Central,Cooperative,29.8,True,True,True,20,112.92,516.57,142.63,20,0,16,10,15
+SL-CASE-0402,controlled-perturbation,extended_gap,Agricultural,Agricultural,Eastern,Individual,192.3,False,False,False,12,126.24,1812.06,275.44,12,0,10,5,10
+SL-CASE-0390,reference-normal,none,Residential,Residential,Central,Individual,52.0,False,False,False,12,44.88,282.99,97.91,12,0,11,5,10
+SL-CASE-0420,controlled-perturbation,extended_gap,Residential,Residential,North Western,Government Body,18.5,True,False,True,14,155.12,2300.78,286.38,14,0,12,6,12
+SL-CASE-0038,reference-normal,none,Agricultural,Agricultural,Northern,Government Body,28.8,False,False,False,12,40.0,304.35,87.26,12,0,11,5,12
+SL-CASE-0102,reference-normal,none,Residential,Residential,Eastern,Company,150.9,False,False,True,14,49.87,412.63,92.07,14,0,13,6,14
+SL-CASE-0057,reference-normal,none,Institutional,Institutional,North Western,Company,77.3,False,True,True,20,115.62,913.96,146.05,20,0,16,10,14
+SL-CASE-0319,reference-normal,none,Institutional,Institutional,Southern,Individual,65.7,False,False,True,18,96.17,402.98,135.77,18,0,17,8,15
+SL-CASE-0336,reference-normal,none,Agricultural,Agricultural,Western,Individual,190.0,False,False,False,12,59.16,455.75,129.08,12,0,10,5,9
+SL-CASE-0078,reference-normal,none,Institutional,Institutional,North Western,Government Body,80.7,False,True,True,20,108.91,593.01,137.57,20,0,18,10,18
+SL-CASE-0289,reference-normal,none,Residential,Residential,Eastern,Company,43.9,False,False,True,14,63.5,447.11,117.22,14,0,11,6,11
+SL-CASE-0042,reference-normal,none,Agricultural,Agricultural,North Western,Individual,112.2,False,False,True,14,62.2,385.18,114.83,14,0,10,6,11
+SL-CASE-0282,reference-normal,none,Residential,Residential,Northern,Individual,68.8,False,False,False,12,42.52,221.62,92.77,12,0,10,5,10
+SL-CASE-0167,reference-normal,none,Institutional,Institutional,North Western,Cooperative,135.0,False,False,True,18,89.55,467.27,126.43,18,0,15,8,16
+SL-CASE-0088,reference-normal,none,Residential,Residential,Uva,Individual,173.9,False,False,True,14,41.8,215.57,77.18,14,0,13,6,13
+SL-CASE-0117,reference-normal,none,Commercial,Commercial,Eastern,Cooperative,127.2,False,False,True,16,87.12,450.3,139.38,16,0,14,7,14
+SL-CASE-0418,controlled-perturbation,extended_gap,Commercial,Commercial,North Western,Company,164.4,False,False,True,16,151.68,2184.88,242.68,16,0,15,7,16
+SL-CASE-0290,reference-normal,none,Agricultural,Agricultural,Uva,Company,37.8,False,False,True,14,64.32,459.64,118.74,14,0,11,6,12
+SL-CASE-0113,reference-normal,none,Commercial,Commercial,North Western,Company,156.9,False,True,False,16,93.39,504.04,149.42,16,0,14,8,11
+SL-CASE-0330,reference-normal,none,Commercial,Commercial,Northern,Company,168.0,True,False,True,16,82.16,471.8,131.45,16,0,11,7,10
+SL-CASE-0383,reference-normal,none,Agricultural,Agricultural,Southern,Cooperative,162.3,False,False,True,14,79.11,475.95,146.05,14,0,13,6,13
+SL-CASE-0095,reference-normal,none,Institutional,Institutional,North Western,Cooperative,27.2,False,True,True,20,144.86,929.64,182.98,20,0,16,10,15
+SL-CASE-0370,reference-normal,none,Agricultural,Agricultural,Southern,Company,109.1,False,False,True,14,59.21,410.02,109.32,14,0,11,6,11
+SL-CASE-0029,reference-normal,none,Institutional,Institutional,Uva,Individual,180.4,False,True,True,20,94.36,320.82,119.19,20,0,17,10,17
+SL-CASE-0328,reference-normal,none,Agricultural,Agricultural,North Central,Government Body,76.1,False,False,False,12,39.66,180.34,86.53,12,0,10,5,10
+SL-CASE-0489,controlled-perturbation,duplicated_sequence,Institutional,Institutional,Sabaragamuwa,Cooperative,153.9,False,True,True,28,107.71,315.5,95.74,28,0,24,19,14
+SL-CASE-0414,controlled-perturbation,extended_gap,Agricultural,Agricultural,North Western,Individual,131.2,False,False,False,12,159.48,2637.96,347.95,12,0,11,5,9
+SL-CASE-0379,reference-normal,none,Commercial,Commercial,Uva,Cooperative,84.9,False,False,True,16,66.56,459.16,106.49,16,0,15,7,16
+SL-CASE-0392,reference-normal,none,Agricultural,Agricultural,Sabaragamuwa,Company,133.2,False,True,False,14,79.45,341.55,146.68,14,0,12,7,10
+SL-CASE-0085,reference-normal,none,Institutional,Institutional,Uva,Government Body,165.1,False,True,True,20,124.84,442.62,157.7,20,0,17,10,16
+SL-CASE-0059,reference-normal,none,Residential,Residential,Northern,Company,180.7,False,False,True,14,49.96,398.33,92.23,14,0,13,6,14
+SL-CASE-0475,controlled-perturbation,increased_event_count,Institutional,Institutional,Northern,Government Body,194.6,False,False,False,26,78.31,414.69,75.18,24,2,17,11,13
+SL-CASE-0417,controlled-perturbation,extended_gap,Agricultural,Agricultural,Western,Government Body,152.4,False,False,True,14,136.52,1999.37,252.04,14,0,11,6,12
+SL-CASE-0144,reference-normal,none,Agricultural,Agricultural,Sabaragamuwa,Individual,96.4,False,False,False,12,40.94,365.74,89.32,12,0,9,5,9
+SL-CASE-0201,reference-normal,none,Residential,Residential,Northern,Company,60.4,False,False,True,14,74.02,439.26,136.66,14,0,11,6,12
+SL-CASE-0174,reference-normal,none,Commercial,Commercial,Uva,Government Body,176.5,False,True,True,18,117.81,647.77,166.32,18,0,15,9,15
+SL-CASE-0247,reference-normal,none,Institutional,Institutional,Western,Government Body,159.0,False,True,True,20,111.82,432.1,141.25,20,0,16,10,13
+SL-CASE-0324,reference-normal,none,Institutional,Institutional,North Central,Individual,129.4,False,True,True,20,145.06,932.05,183.23,20,0,16,10,16
+SL-CASE-0090,reference-normal,none,Commercial,Commercial,Southern,Cooperative,8.7,False,False,True,16,62.81,477.57,100.5,16,0,14,7,14
+SL-CASE-0147,reference-normal,none,Residential,Residential,Sabaragamuwa,Individual,138.7,False,False,True,14,56.16,374.83,103.68,14,0,12,6,11
+SL-CASE-0245,reference-normal,none,Agricultural,Agricultural,Sabaragamuwa,Individual,102.3,False,True,True,16,91.17,433.89,145.87,16,0,12,8,11
+SL-CASE-0396,reference-normal,none,Agricultural,Agricultural,Eastern,Government Body,36.1,False,True,False,14,62.01,565.23,114.48,14,0,11,7,12
+SL-CASE-0312,reference-normal,none,Commercial,Commercial,Northern,Cooperative,172.0,False,True,True,18,111.49,812.42,157.4,18,0,15,9,15
+SL-CASE-0033,reference-normal,none,Agricultural,Agricultural,North Western,Company,90.8,False,False,False,12,48.54,329.44,105.9,12,0,11,5,11
+SL-CASE-0346,reference-normal,none,Institutional,Institutional,Central,Cooperative,7.3,False,True,True,20,117.84,739.8,148.86,20,0,17,10,15
+SL-CASE-0410,controlled-perturbation,extended_gap,Commercial,Commercial,North Western,Cooperative,26.2,False,True,True,18,201.25,1966.12,284.12,18,0,15,9,15
+SL-CASE-0024,reference-normal,none,Institutional,Institutional,Northern,Cooperative,183.0,False,True,True,20,142.19,884.92,179.61,20,0,19,10,17
+SL-CASE-0019,reference-normal,none,Institutional,Institutional,Eastern,Cooperative,64.5,False,True,True,20,111.7,814.37,141.09,20,0,17,10,16
+SL-CASE-0125,reference-normal,none,Commercial,Commercial,Eastern,Government Body,178.5,False,True,True,18,102.82,652.47,145.16,18,0,16,9,15
+SL-CASE-0205,reference-normal,none,Residential,Residential,Uva,Government Body,71.3,False,False,True,14,67.33,444.5,124.29,14,0,12,6,13
+SL-CASE-0301,reference-normal,none,Institutional,Institutional,Northern,Cooperative,58.6,False,True,True,20,85.33,408.08,107.79,20,0,18,10,16
+SL-CASE-0389,reference-normal,none,Residential,Residential,Eastern,Company,60.3,False,False,True,14,61.27,463.36,113.12,14,0,12,6,12
+SL-CASE-0345,reference-normal,none,Institutional,Institutional,Southern,Cooperative,61.2,False,False,True,18,97.56,405.23,137.73,18,0,17,8,14
+SL-CASE-0387,reference-normal,none,Commercial,Commercial,Western,Cooperative,46.1,False,True,True,18,85.54,346.35,120.77,18,0,16,9,12
+SL-CASE-0209,reference-normal,none,Commercial,Commercial,Northern,Individual,179.1,False,True,True,18,91.97,469.17,129.84,18,0,14,9,13
+SL-CASE-0416,controlled-perturbation,extended_gap,Institutional,Institutional,North Central,Company,32.4,False,True,True,20,192.26,2077.59,242.86,20,0,16,10,16
+SL-CASE-0398,reference-normal,none,Institutional,Institutional,Uva,Company,105.6,False,False,True,18,100.42,455.13,141.77,18,0,16,8,14
+SL-CASE-0381,reference-normal,none,Institutional,Institutional,Uva,Company,185.0,False,True,True,20,129.8,774.93,163.96,20,0,17,10,15
+SL-CASE-0220,reference-normal,none,Residential,Residential,Eastern,Cooperative,128.1,False,False,False,12,66.42,414.69,144.93,12,0,9,5,10
+SL-CASE-0027,reference-normal,none,Agricultural,Agricultural,Northern,Cooperative,91.7,False,False,False,12,62.54,456.75,136.44,12,0,9,5,10
+SL-CASE-0214,reference-normal,none,Institutional,Institutional,North Central,Company,52.3,True,False,True,18,100.16,468.21,141.4,18,0,15,8,14
+SL-CASE-0479,controlled-perturbation,increased_event_count,Commercial,Commercial,Northern,Government Body,164.1,False,True,True,27,105.0,659.44,96.93,25,2,19,13,15
+SL-CASE-0232,reference-normal,none,Agricultural,Agricultural,Northern,Company,70.6,False,False,False,12,26.82,169.85,58.53,12,0,10,5,11
+SL-CASE-0248,reference-normal,none,Institutional,Institutional,North Western,Individual,159.4,False,True,True,20,124.37,559.46,157.09,20,0,18,10,17
+SL-CASE-0426,controlled-perturbation,repeated_correction_loop,Commercial,Commercial,North Western,Individual,23.0,False,True,False,20,60.18,217.38,76.01,17,3,14,8,12
+SL-CASE-0084,reference-normal,none,Agricultural,Agricultural,North Central,Cooperative,116.5,False,True,False,14,61.39,364.06,113.33,14,0,13,7,11
+SL-CASE-0273,reference-normal,none,Institutional,Institutional,Southern,Government Body,13.5,False,True,True,20,87.53,359.26,110.56,20,0,16,10,16
+SL-CASE-0190,reference-normal,none,Agricultural,Agricultural,Eastern,Company,40.7,False,True,False,14,67.36,404.76,124.36,14,0,12,7,12
+SL-CASE-0373,reference-normal,none,Agricultural,Agricultural,Eastern,Government Body,14.9,False,True,False,14,53.6,449.42,98.96,14,0,10,7,10
+SL-CASE-0025,reference-normal,none,Commercial,Commercial,Central,Individual,65.2,False,False,True,16,100.9,465.13,161.45,16,0,13,7,13
+SL-CASE-0266,reference-normal,none,Residential,Residential,Southern,Individual,106.4,False,False,True,14,56.1,472.11,103.56,14,0,12,6,13
+SL-CASE-0419,controlled-perturbation,extended_gap,Institutional,Institutional,North Central,Individual,191.3,False,True,True,20,245.36,3688.35,309.93,20,0,14,10,12
+SL-CASE-0162,reference-normal,none,Agricultural,Agricultural,Eastern,Cooperative,114.1,False,True,True,16,108.04,437.5,172.87,16,0,12,8,12
+SL-CASE-0413,controlled-perturbation,extended_gap,Agricultural,Agricultural,Western,Government Body,110.1,False,True,True,16,262.46,3820.39,419.94,16,0,13,8,13
+SL-CASE-0362,reference-normal,none,Residential,Residential,Eastern,Company,67.3,False,False,True,14,75.17,451.55,138.78,14,0,11,6,12
+SL-CASE-0121,reference-normal,none,Commercial,Commercial,North Western,Individual,53.5,False,False,True,16,84.72,383.58,135.55,16,0,14,7,14
+SL-CASE-0153,reference-normal,none,Commercial,Commercial,Uva,Company,58.9,False,False,True,16,36.23,174.81,57.96,16,0,15,7,16
+SL-CASE-0239,reference-normal,none,Residential,Residential,Western,Company,39.7,False,False,False,12,55.49,393.69,121.08,12,0,9,5,10
+SL-CASE-0073,reference-normal,none,Residential,Residential,Northern,Individual,13.6,False,False,True,14,69.84,376.73,128.93,14,0,9,6,9
+SL-CASE-0451,controlled-perturbation,excessive_handoffs,Residential,Residential,Western,Individual,128.3,False,False,True,17,51.62,213.99,77.42,17,0,15,10,16
+SL-CASE-0400,reference-normal,none,Residential,Residential,Eastern,Company,44.9,False,False,False,12,60.81,391.86,132.68,12,0,9,5,10
+SL-CASE-0138,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Company,42.1,False,True,True,20,100.15,421.58,126.51,20,0,18,10,17
+SL-CASE-0032,reference-normal,none,Institutional,Institutional,Central,Government Body,117.3,False,True,True,20,93.3,364.09,117.85,20,0,16,10,14
+SL-CASE-0467,controlled-perturbation,increased_event_count,Residential,Residential,Eastern,Company,53.3,False,False,False,19,61.02,339.89,81.36,16,3,11,5,12
+SL-CASE-0155,reference-normal,none,Commercial,Commercial,Western,Cooperative,196.1,True,True,True,18,94.14,457.17,132.91,18,0,15,9,14
+SL-CASE-0404,controlled-perturbation,extended_gap,Residential,Residential,Southern,Company,54.5,False,True,True,16,229.92,3100.03,367.87,16,0,14,8,12
+SL-CASE-0446,controlled-perturbation,excessive_handoffs,Institutional,Institutional,Central,Government Body,168.8,False,True,True,23,86.27,403.23,94.12,23,0,20,13,16
+SL-CASE-0081,reference-normal,none,Residential,Residential,Eastern,Individual,67.1,False,True,True,16,70.41,450.04,112.66,16,0,13,8,13
+SL-CASE-0380,reference-normal,none,Commercial,Commercial,Northern,Cooperative,191.6,False,False,True,16,63.36,254.27,101.37,16,0,13,7,13
+SL-CASE-0199,reference-normal,none,Residential,Residential,Northern,Company,129.3,False,False,False,12,50.32,350.01,109.8,12,0,11,5,10
+SL-CASE-0087,reference-normal,none,Institutional,Institutional,North Western,Company,145.7,False,False,True,18,94.83,437.38,133.87,18,0,16,8,14
+SL-CASE-0406,controlled-perturbation,extended_gap,Institutional,Institutional,Northern,Company,69.4,False,True,True,20,254.24,3424.01,321.14,20,0,17,10,14
+SL-CASE-0443,controlled-perturbation,excessive_handoffs,Agricultural,Agricultural,Eastern,Government Body,160.4,False,False,True,17,59.11,327.01,88.66,17,0,15,9,15
+SL-CASE-0196,reference-normal,none,Institutional,Institutional,Central,Government Body,116.0,False,True,True,20,92.29,356.38,116.58,20,0,17,10,15
+SL-CASE-0051,reference-normal,none,Agricultural,Agricultural,Eastern,Company,39.2,False,False,False,12,48.38,256.77,105.56,12,0,10,5,11
+SL-CASE-0093,reference-normal,none,Institutional,Institutional,North Central,Company,27.0,False,True,False,18,98.87,483.59,139.58,18,0,17,9,16
+SL-CASE-0299,reference-normal,none,Institutional,Institutional,North Western,Government Body,26.8,False,True,True,20,94.2,357.75,118.98,20,0,18,10,15
+SL-CASE-0240,reference-normal,none,Agricultural,Agricultural,Southern,Individual,68.0,False,False,True,14,69.16,477.22,127.69,14,0,11,6,11
+SL-CASE-0296,reference-normal,none,Residential,Residential,North Central,Cooperative,155.9,False,False,True,14,64.08,466.47,118.31,14,0,12,6,12
+SL-CASE-0308,reference-normal,none,Commercial,Commercial,Northern,Government Body,134.5,False,True,True,18,98.09,558.95,138.47,18,0,17,9,14
+SL-CASE-0061,reference-normal,none,Commercial,Commercial,North Central,Company,32.1,False,True,True,18,110.17,930.24,155.53,18,0,15,9,14
+SL-CASE-0327,reference-normal,none,Residential,Residential,Northern,Company,135.2,False,False,False,12,58.41,415.03,127.44,12,0,10,5,11
+SL-CASE-0251,reference-normal,none,Residential,Residential,North Central,Individual,127.6,False,True,False,14,84.32,647.05,155.67,14,0,12,7,11
+SL-CASE-0246,reference-normal,none,Residential,Residential,Southern,Individual,61.7,False,False,True,14,67.42,456.53,124.47,14,0,10,6,10
+SL-CASE-0228,reference-normal,none,Agricultural,Agricultural,Northern,Individual,123.4,False,False,False,12,33.2,185.1,72.44,12,0,11,5,12
+SL-CASE-0310,reference-normal,none,Commercial,Commercial,Uva,Individual,67.2,False,True,True,18,99.93,763.77,141.08,18,0,12,9,13
+SL-CASE-0437,controlled-perturbation,repeated_correction_loop,Agricultural,Agricultural,Southern,Company,144.4,False,False,False,16,42.06,379.57,67.3,13,3,11,5,11
+SL-CASE-0115,reference-normal,none,Agricultural,Agricultural,Uva,Individual,92.7,False,False,False,12,71.41,463.18,155.8,12,0,9,5,9
+SL-CASE-0103,reference-normal,none,Agricultural,Agricultural,Eastern,Company,115.3,False,False,False,12,53.68,306.84,117.12,12,0,10,5,10
+SL-CASE-0306,reference-normal,none,Commercial,Commercial,Eastern,Individual,69.4,False,True,True,18,109.86,744.74,155.09,18,0,15,9,13
+SL-CASE-0376,reference-normal,none,Agricultural,Agricultural,North Western,Individual,65.1,False,False,False,12,57.24,390.87,124.89,12,0,8,5,9
+SL-CASE-0433,controlled-perturbation,repeated_correction_loop,Agricultural,Agricultural,Central,Cooperative,162.4,True,False,True,18,66.17,397.84,93.42,15,3,13,6,14
+SL-CASE-0427,controlled-perturbation,repeated_correction_loop,Institutional,Institutional,Northern,Company,185.5,False,True,True,22,122.99,467.95,140.56,21,1,17,10,15
+SL-CASE-0013,reference-normal,none,Institutional,Institutional,Southern,Cooperative,92.8,False,False,True,18,76.25,413.17,107.65,18,0,16,8,16
+SL-CASE-0222,reference-normal,none,Residential,Residential,Central,Government Body,120.7,False,False,True,14,52.68,324.28,97.25,14,0,12,6,13
+SL-CASE-0161,reference-normal,none,Residential,Residential,Northern,Cooperative,149.6,False,False,True,14,68.82,474.7,127.05,14,0,12,6,13
+SL-CASE-0316,reference-normal,none,Institutional,Institutional,Western,Cooperative,174.2,False,True,True,20,123.85,794.87,156.44,20,0,16,10,16
+SL-CASE-0111,reference-normal,none,Agricultural,Agricultural,Sabaragamuwa,Government Body,72.8,False,False,False,12,65.02,455.84,141.86,12,0,9,5,9
+SL-CASE-0257,reference-normal,none,Residential,Residential,Sabaragamuwa,Company,117.7,False,False,True,14,73.57,414.27,135.82,14,0,11,6,12
+SL-CASE-0098,reference-normal,none,Agricultural,Agricultural,Northern,Cooperative,166.8,False,False,False,12,52.3,472.45,114.11,12,0,10,5,9
+SL-CASE-0079,reference-normal,none,Institutional,Institutional,Western,Government Body,184.0,False,True,True,20,101.65,377.11,128.4,20,0,19,10,17
+SL-CASE-0050,reference-normal,none,Residential,Residential,Southern,Cooperative,177.0,False,False,False,12,41.09,160.07,89.65,12,0,11,5,11
+SL-CASE-0010,reference-normal,none,Residential,Residential,Uva,Company,43.9,False,False,False,12,39.7,418.14,86.61,12,0,8,5,8
+SL-CASE-0014,reference-normal,none,Agricultural,Agricultural,North Central,Cooperative,10.7,False,False,False,12,41.4,281.36,90.33,12,0,10,5,11
+SL-CASE-0340,reference-normal,none,Agricultural,Agricultural,Uva,Company,174.3,False,False,True,14,67.68,443.6,124.95,14,0,11,6,12
+SL-CASE-0309,reference-normal,none,Residential,Residential,Uva,Individual,97.8,False,False,True,14,68.82,378.49,127.06,14,0,13,6,12
+SL-CASE-0028,reference-normal,none,Residential,Residential,Eastern,Company,197.6,False,False,True,14,48.26,263.9,89.1,14,0,12,6,13
+SL-CASE-0335,reference-normal,none,Agricultural,Agricultural,Southern,Government Body,191.3,False,False,True,14,54.31,457.3,100.27,14,0,12,6,12
+SL-CASE-0470,controlled-perturbation,increased_event_count,Institutional,Institutional,Central,Company,166.8,False,True,True,30,104.6,415.95,86.56,29,1,17,14,13
+SL-CASE-0447,controlled-perturbation,excessive_handoffs,Institutional,Institutional,North Central,Individual,7.2,False,True,True,23,125.4,889.44,136.8,23,0,21,13,20
+SL-CASE-0302,reference-normal,none,Residential,Residential,Uva,Government Body,21.2,False,False,True,14,69.09,478.1,127.56,14,0,13,6,14
+SL-CASE-0173,reference-normal,none,Institutional,Institutional,Northern,Cooperative,47.5,False,True,True,20,113.25,569.32,143.05,20,0,19,10,18
+SL-CASE-0386,reference-normal,none,Agricultural,Agricultural,Eastern,Individual,31.7,False,False,True,14,51.59,334.72,95.25,14,0,12,6,13
+SL-CASE-0068,reference-normal,none,Institutional,Institutional,North Western,Individual,174.4,False,True,False,18,77.04,400.13,108.76,18,0,15,9,13
+SL-CASE-0463,controlled-perturbation,increased_event_count,Agricultural,Agricultural,Northern,Individual,180.2,False,False,False,20,46.96,237.82,59.32,17,3,10,5,10
+SL-CASE-0075,reference-normal,none,Residential,Residential,Central,Company,129.3,False,False,True,14,56.81,343.53,104.87,14,0,13,6,13
+SL-CASE-0048,reference-normal,none,Commercial,Commercial,North Central,Cooperative,175.2,False,True,True,18,107.89,699.8,152.31,18,0,15,9,14
+SL-CASE-0294,reference-normal,none,Commercial,Commercial,Southern,Government Body,15.4,False,True,True,18,85.99,470.55,121.39,18,0,14,9,14
+SL-CASE-0077,reference-normal,none,Residential,Residential,North Western,Individual,13.3,False,False,True,14,62.11,426.84,114.67,14,0,11,6,11
+SL-CASE-0230,reference-normal,none,Institutional,Institutional,Uva,Company,32.3,False,True,True,20,112.49,456.46,142.09,20,0,19,10,17
+SL-CASE-0339,reference-normal,none,Commercial,Commercial,Northern,Company,144.0,False,False,True,16,55.23,321.42,88.36,16,0,13,7,13
+SL-CASE-0219,reference-normal,none,Residential,Residential,North Western,Company,171.4,False,False,True,14,80.76,387.67,149.1,14,0,13,6,14
+SL-CASE-0046,reference-normal,none,Residential,Residential,Central,Cooperative,31.1,False,False,True,14,51.95,252.04,95.91,14,0,10,6,11
+SL-CASE-0454,controlled-perturbation,excessive_handoffs,Agricultural,Agricultural,Northern,Government Body,90.4,False,False,True,17,72.31,470.43,108.46,17,0,13,9,14
+SL-CASE-0356,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Cooperative,159.4,False,True,True,20,120.73,896.76,152.5,20,0,15,10,14
+SL-CASE-0384,reference-normal,none,Institutional,Institutional,North Central,Government Body,130.3,False,True,True,20,105.81,479.67,133.65,20,0,18,10,16
+SL-CASE-0148,reference-normal,none,Residential,Residential,North Central,Cooperative,69.9,True,False,True,14,64.66,321.71,119.38,14,0,13,6,13
+SL-CASE-0264,reference-normal,none,Agricultural,Agricultural,Eastern,Individual,63.0,False,False,True,14,56.18,450.31,103.72,14,0,12,6,12
+SL-CASE-0100,reference-normal,none,Agricultural,Agricultural,Western,Government Body,105.3,False,False,True,14,62.42,311.06,115.24,14,0,12,6,13
+SL-CASE-0191,reference-normal,none,Residential,Residential,Eastern,Individual,130.6,False,False,True,14,57.27,221.87,105.72,14,0,11,6,12
+SL-CASE-0039,reference-normal,none,Agricultural,Agricultural,Western,Government Body,158.8,False,False,False,12,41.83,242.21,91.26,12,0,8,5,9
+SL-CASE-0466,controlled-perturbation,increased_event_count,Agricultural,Agricultural,North Western,Company,75.3,False,False,False,19,38.67,220.49,51.56,18,1,10,7,10
+SL-CASE-0493,controlled-perturbation,duplicated_sequence,Institutional,Institutional,North Western,Company,63.7,True,True,True,28,113.13,452.16,100.56,28,0,26,21,15
+SL-CASE-0189,reference-normal,none,Institutional,Institutional,Eastern,Cooperative,129.1,False,True,False,18,92.24,417.65,130.22,18,0,16,9,13
+SL-CASE-0187,reference-normal,none,Agricultural,Agricultural,Central,Individual,109.8,False,False,False,12,51.23,306.77,111.78,12,0,9,5,10
+SL-CASE-0151,reference-normal,none,Institutional,Institutional,Western,Company,141.8,False,True,True,20,92.29,396.92,116.57,20,0,16,10,16
+SL-CASE-0277,reference-normal,none,Institutional,Institutional,Eastern,Company,9.8,False,True,False,18,95.7,572.73,135.1,18,0,15,9,14
+SL-CASE-0274,reference-normal,none,Institutional,Institutional,Central,Individual,102.3,True,True,True,20,122.5,798.21,154.74,20,0,18,10,14
+SL-CASE-0140,reference-normal,none,Institutional,Institutional,Southern,Individual,163.5,False,True,True,20,120.29,785.64,151.95,20,0,15,10,15
+SL-CASE-0071,reference-normal,none,Agricultural,Agricultural,Southern,Cooperative,172.9,False,False,False,12,33.03,255.01,72.06,12,0,9,5,9
+SL-CASE-0444,controlled-perturbation,excessive_handoffs,Residential,Residential,Uva,Government Body,144.3,False,True,False,17,75.28,552.35,112.92,17,0,14,11,15
+SL-CASE-0204,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Government Body,6.7,False,False,True,16,96.94,475.11,155.11,16,0,14,7,13
+SL-CASE-0037,reference-normal,none,Agricultural,Agricultural,Western,Cooperative,15.4,False,False,False,12,60.11,442.33,131.15,12,0,10,5,11
+SL-CASE-0344,reference-normal,none,Commercial,Commercial,Central,Individual,6.9,True,False,False,14,68.05,382.48,125.63,14,0,13,6,13
+SL-CASE-0224,reference-normal,none,Commercial,Commercial,North Central,Individual,53.4,True,False,False,14,48.7,439.32,89.92,14,0,12,6,11
+SL-CASE-0080,reference-normal,none,Residential,Residential,Uva,Company,69.6,True,False,True,14,61.74,383.66,113.99,14,0,10,6,8
+SL-CASE-0158,reference-normal,none,Agricultural,Agricultural,Uva,Cooperative,94.3,False,False,True,14,46.77,306.1,86.34,14,0,12,6,13
+SL-CASE-0435,controlled-perturbation,repeated_correction_loop,Agricultural,Agricultural,Southern,Cooperative,114.1,False,False,False,14,44.8,384.29,82.71,13,1,10,5,10
+SL-CASE-0468,controlled-perturbation,increased_event_count,Commercial,Commercial,Western,Cooperative,160.3,False,False,True,24,72.38,415.53,75.52,21,3,14,9,15
+SL-CASE-0160,reference-normal,none,Residential,Residential,North Western,Individual,123.6,False,False,False,12,57.41,468.98,125.25,12,0,10,5,10
+SL-CASE-0016,reference-normal,none,Commercial,Commercial,Central,Company,24.9,False,False,True,16,91.33,402.81,146.13,16,0,15,7,13
+SL-CASE-0374,reference-normal,none,Agricultural,Agricultural,Northern,Individual,198.3,False,True,False,14,85.82,797.2,158.43,14,0,10,7,11
+SL-CASE-0459,controlled-perturbation,excessive_handoffs,Agricultural,Agricultural,North Western,Individual,47.5,False,False,True,17,72.78,406.55,109.17,17,0,15,9,15
+SL-CASE-0142,reference-normal,none,Residential,Residential,Sabaragamuwa,Cooperative,170.3,False,True,False,14,87.73,825.57,161.96,14,0,11,7,11
+SL-CASE-0411,controlled-perturbation,extended_gap,Agricultural,Agricultural,Central,Cooperative,96.7,False,True,False,14,207.86,3274.15,383.74,14,0,11,7,11
+SL-CASE-0303,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Cooperative,73.6,False,False,True,18,81.08,371.9,114.47,18,0,16,8,16
+SL-CASE-0200,reference-normal,none,Commercial,Commercial,Central,Government Body,41.9,False,False,True,16,66.39,315.28,106.22,16,0,13,7,13
+SL-CASE-0265,reference-normal,none,Residential,Residential,Uva,Cooperative,168.6,False,False,False,12,42.68,350.93,93.13,12,0,10,5,11
+SL-CASE-0225,reference-normal,none,Residential,Residential,Eastern,Cooperative,188.3,False,False,False,12,37.73,188.07,82.33,12,0,11,5,11
+SL-CASE-0480,controlled-perturbation,increased_event_count,Agricultural,Agricultural,Sabaragamuwa,Company,189.7,False,False,False,22,51.92,452.62,59.34,19,3,9,7,8
+SL-CASE-0056,reference-normal,none,Commercial,Commercial,North Central,Company,54.7,False,True,True,18,97.99,453.17,138.33,18,0,15,9,15
+SL-CASE-0145,reference-normal,none,Agricultural,Agricultural,Eastern,Government Body,7.8,False,True,False,14,65.93,297.12,121.71,14,0,11,7,12
+SL-CASE-0026,reference-normal,none,Agricultural,Agricultural,North Central,Government Body,26.1,False,True,False,14,92.31,863.75,170.42,14,0,12,7,12
+SL-CASE-0313,reference-normal,none,Commercial,Commercial,Central,Government Body,191.7,False,False,True,16,82.14,364.93,131.43,16,0,14,7,14
+SL-CASE-0482,controlled-perturbation,duplicated_sequence,Agricultural,Agricultural,Northern,Cooperative,101.9,False,False,True,19,37.78,141.33,50.37,19,0,18,13,13
+SL-CASE-0401,controlled-perturbation,extended_gap,Residential,Residential,North Central,Individual,146.1,False,False,False,12,176.92,2679.93,386.0,12,0,8,5,9
+SL-CASE-0490,controlled-perturbation,duplicated_sequence,Agricultural,Agricultural,Central,Cooperative,95.1,False,False,False,16,59.81,378.04,95.7,16,0,15,11,10
+SL-CASE-0278,reference-normal,none,Commercial,Commercial,Eastern,Company,69.1,False,False,True,16,74.55,441.07,119.27,16,0,14,7,14
+SL-CASE-0428,controlled-perturbation,repeated_correction_loop,Residential,Residential,Northern,Cooperative,28.1,False,False,True,17,43.67,220.64,65.5,15,2,12,6,12
+SL-CASE-0177,reference-normal,none,Residential,Residential,Western,Government Body,103.4,False,False,False,12,58.52,448.23,127.69,12,0,10,5,9
+SL-CASE-0182,reference-normal,none,Institutional,Institutional,Eastern,Individual,29.4,True,True,True,20,124.64,942.77,157.44,20,0,16,10,14
+SL-CASE-0415,controlled-perturbation,extended_gap,Institutional,Institutional,Sabaragamuwa,Cooperative,145.1,False,False,True,18,160.7,2266.31,226.87,18,0,15,8,14
+SL-CASE-0006,reference-normal,none,Institutional,Institutional,Uva,Individual,136.3,False,True,True,20,95.55,479.67,120.7,20,0,16,10,17
+SL-CASE-0017,reference-normal,none,Institutional,Institutional,North Central,Government Body,10.6,False,True,True,20,100.7,456.32,127.2,20,0,17,10,14
+SL-CASE-0483,controlled-perturbation,duplicated_sequence,Institutional,Institutional,Northern,Individual,34.6,False,False,True,25,67.01,400.96,67.01,25,0,22,13,13
+SL-CASE-0430,controlled-perturbation,repeated_correction_loop,Residential,Residential,Uva,Company,87.6,True,True,True,19,52.97,423.34,70.63,17,2,13,8,13
+SL-CASE-0262,reference-normal,none,Institutional,Institutional,Central,Government Body,176.0,False,False,True,18,60.12,292.65,84.87,18,0,16,8,15
+SL-CASE-0331,reference-normal,none,Residential,Residential,Western,Government Body,80.0,True,False,True,14,77.91,468.95,143.83,14,0,12,6,12
+SL-CASE-0256,reference-normal,none,Residential,Residential,Western,Company,14.3,True,False,True,14,70.52,419.81,130.18,14,0,13,6,13
+SL-CASE-0119,reference-normal,none,Residential,Residential,Southern,Individual,194.1,True,False,True,14,54.95,479.07,101.45,14,0,11,6,11
+SL-CASE-0116,reference-normal,none,Agricultural,Agricultural,North Central,Cooperative,170.5,True,True,True,16,100.78,906.91,161.25,16,0,15,8,12
+SL-CASE-0092,reference-normal,none,Agricultural,Agricultural,Eastern,Cooperative,14.8,False,False,False,12,35.74,229.76,77.99,12,0,9,5,10
+SL-CASE-0488,controlled-perturbation,duplicated_sequence,Residential,Residential,North Central,Government Body,166.0,False,False,False,16,68.63,340.83,109.81,16,0,15,7,12
+SL-CASE-0186,reference-normal,none,Residential,Residential,Sabaragamuwa,Individual,21.5,False,False,True,14,96.22,469.85,177.64,14,0,12,6,13
+SL-CASE-0009,reference-normal,none,Residential,Residential,Central,Company,111.4,False,False,True,14,86.94,427.17,160.51,14,0,13,6,14
+SL-CASE-0352,reference-normal,none,Residential,Residential,Sabaragamuwa,Individual,15.2,False,False,True,14,55.09,289.2,101.71,14,0,12,6,12
+SL-CASE-0377,reference-normal,none,Residential,Residential,Southern,Government Body,196.8,False,False,False,12,54.38,478.32,118.64,12,0,10,5,10
+SL-CASE-0229,reference-normal,none,Agricultural,Agricultural,Sabaragamuwa,Individual,187.4,False,False,True,14,46.85,429.93,86.49,14,0,13,6,13
+SL-CASE-0349,reference-normal,none,Agricultural,Agricultural,Southern,Government Body,170.3,True,False,False,12,62.42,473.29,136.2,12,0,11,5,12
+SL-CASE-0223,reference-normal,none,Commercial,Commercial,North Central,Cooperative,200.0,False,True,True,18,98.87,603.07,139.58,18,0,12,9,12
+SL-CASE-0455,controlled-perturbation,excessive_handoffs,Institutional,Institutional,North Western,Cooperative,125.9,False,True,True,23,143.55,692.86,156.6,23,0,20,14,20
+SL-CASE-0044,reference-normal,none,Residential,Residential,Western,Individual,13.9,False,False,False,12,38.64,272.78,84.31,12,0,9,5,9
+SL-CASE-0359,reference-normal,none,Institutional,Institutional,Western,Cooperative,153.0,False,True,True,20,99.74,706.5,125.98,20,0,17,10,17
+SL-CASE-0168,reference-normal,none,Agricultural,Agricultural,North Central,Cooperative,94.6,True,False,False,12,51.05,325.0,111.37,12,0,9,5,10
+SL-CASE-0035,reference-normal,none,Residential,Residential,Eastern,Cooperative,130.5,False,False,False,12,55.69,456.14,121.5,12,0,10,5,11
+SL-CASE-0355,reference-normal,none,Commercial,Commercial,Central,Individual,176.7,False,True,True,18,74.9,290.27,105.74,18,0,16,9,15
+SL-CASE-0021,reference-normal,none,Institutional,Institutional,North Central,Individual,41.6,False,False,True,18,104.76,476.47,147.9,18,0,14,8,13
+SL-CASE-0086,reference-normal,none,Residential,Residential,Uva,Company,131.2,False,True,True,16,102.08,524.66,163.33,16,0,10,8,10
+SL-CASE-0364,reference-normal,none,Institutional,Institutional,Eastern,Cooperative,131.8,False,True,True,20,137.26,882.06,173.39,20,0,17,10,14
+SL-CASE-0270,reference-normal,none,Residential,Residential,North Western,Company,138.1,False,False,True,14,62.34,444.56,115.08,14,0,12,6,12
+SL-CASE-0358,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Individual,190.6,False,True,True,18,105.11,454.86,148.39,18,0,15,9,14
+SL-CASE-0203,reference-normal,none,Institutional,Institutional,Southern,Government Body,54.6,False,False,True,18,71.5,390.85,100.94,18,0,15,8,14
+SL-CASE-0066,reference-normal,none,Residential,Residential,Uva,Company,198.0,False,False,False,12,51.58,231.03,112.54,12,0,9,5,10
+SL-CASE-0436,controlled-perturbation,repeated_correction_loop,Institutional,Institutional,Eastern,Cooperative,79.8,False,True,True,22,97.31,451.96,111.21,21,1,17,10,15
+SL-CASE-0342,reference-normal,none,Agricultural,Agricultural,Eastern,Individual,74.2,False,False,False,12,55.38,471.81,120.82,12,0,11,5,10
+SL-CASE-0337,reference-normal,none,Residential,Residential,North Central,Individual,125.6,False,False,True,14,63.9,414.79,117.97,14,0,11,6,12
+SL-CASE-0285,reference-normal,none,Residential,Residential,North Western,Government Body,154.5,False,False,True,14,55.97,311.99,103.34,14,0,11,6,12
+SL-CASE-0099,reference-normal,none,Agricultural,Agricultural,Uva,Government Body,19.2,False,False,False,12,54.14,426.83,118.12,12,0,11,5,11
+SL-CASE-0477,controlled-perturbation,increased_event_count,Residential,Residential,Northern,Government Body,178.6,False,False,False,21,38.0,286.56,45.6,18,3,13,7,12
+SL-CASE-0318,reference-normal,none,Residential,Residential,Southern,Individual,102.0,False,False,False,12,30.63,270.0,66.83,12,0,11,5,12
+SL-CASE-0007,reference-normal,none,Commercial,Commercial,Western,Individual,171.0,True,True,False,16,90.73,903.94,145.17,16,0,14,8,13
+SL-CASE-0365,reference-normal,none,Commercial,Commercial,Southern,Government Body,42.0,False,False,True,16,75.38,423.52,120.61,16,0,15,7,14
+SL-CASE-0283,reference-normal,none,Institutional,Institutional,Southern,Cooperative,60.1,False,False,False,16,70.92,424.32,113.47,16,0,13,7,12
+SL-CASE-0049,reference-normal,none,Commercial,Commercial,Eastern,Individual,61.1,False,True,True,18,78.41,521.06,110.69,18,0,14,9,14
+SL-CASE-0129,reference-normal,none,Residential,Residential,Southern,Company,102.6,False,False,True,14,53.11,341.23,98.05,14,0,12,6,13
+SL-CASE-0008,reference-normal,none,Agricultural,Agricultural,Sabaragamuwa,Individual,135.2,False,False,True,14,46.67,302.66,86.16,14,0,13,6,14
+SL-CASE-0450,controlled-perturbation,excessive_handoffs,Residential,Residential,Central,Company,59.7,False,False,False,15,35.0,164.02,60.0,15,0,14,9,14
+SL-CASE-0244,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Company,66.3,False,True,True,20,116.36,643.72,146.98,20,0,17,10,16
+SL-CASE-0146,reference-normal,none,Institutional,Institutional,North Central,Cooperative,63.8,False,False,True,18,93.87,462.56,132.53,18,0,16,8,14
+SL-CASE-0208,reference-normal,none,Agricultural,Agricultural,North Central,Cooperative,37.1,False,True,True,16,73.7,824.34,117.91,16,0,14,8,15
+SL-CASE-0500,controlled-perturbation,duplicated_sequence,Institutional,Institutional,North Central,Company,48.1,False,True,True,28,95.73,374.57,85.1,28,0,27,17,16
+SL-CASE-0120,reference-normal,none,Residential,Residential,Northern,Cooperative,148.4,False,False,True,14,74.15,383.85,136.89,14,0,11,6,12
+SL-CASE-0114,reference-normal,none,Commercial,Commercial,North Central,Individual,68.5,False,True,True,18,77.04,284.56,108.76,18,0,17,9,16
+SL-CASE-0263,reference-normal,none,Agricultural,Agricultural,Western,Cooperative,73.7,False,True,True,16,98.97,621.51,158.35,16,0,14,8,14
+SL-CASE-0184,reference-normal,none,Residential,Residential,North Central,Cooperative,64.2,False,True,True,16,107.04,713.38,171.27,16,0,12,8,10
+SL-CASE-0227,reference-normal,none,Commercial,Commercial,North Central,Cooperative,40.7,False,False,True,16,84.46,456.04,135.13,16,0,13,7,13
+SL-CASE-0241,reference-normal,none,Residential,Residential,Western,Government Body,75.4,False,False,True,14,46.74,358.29,86.28,14,0,13,6,13
+SL-CASE-0281,reference-normal,none,Commercial,Commercial,Eastern,Government Body,197.8,False,False,True,16,89.08,461.69,142.53,16,0,13,7,13
+SL-CASE-0487,controlled-perturbation,duplicated_sequence,Commercial,Commercial,Sabaragamuwa,Cooperative,136.3,False,True,True,25,84.15,440.35,84.15,25,0,20,16,12
+SL-CASE-0253,reference-normal,none,Commercial,Commercial,Northern,Government Body,27.4,False,True,True,18,119.09,921.16,168.12,18,0,14,9,14
+SL-CASE-0260,reference-normal,none,Residential,Residential,Southern,Cooperative,149.1,False,False,True,14,80.41,468.31,148.45,14,0,12,6,13
+SL-CASE-0034,reference-normal,none,Agricultural,Agricultural,Central,Company,12.6,False,False,False,12,49.8,333.58,108.66,12,0,10,5,10
+SL-CASE-0268,reference-normal,none,Agricultural,Agricultural,North Western,Cooperative,144.5,False,False,False,12,48.35,377.58,105.5,12,0,10,5,11
+SL-CASE-0258,reference-normal,none,Residential,Residential,Southern,Company,183.8,False,False,False,12,42.01,234.2,91.66,12,0,11,5,11
+SL-CASE-0360,reference-normal,none,Residential,Residential,Northern,Cooperative,99.8,True,False,False,12,46.11,392.64,100.6,12,0,9,5,10
+SL-CASE-0157,reference-normal,none,Institutional,Institutional,Eastern,Individual,17.4,False,True,True,20,112.31,492.84,141.87,20,0,18,10,15
+SL-CASE-0104,reference-normal,none,Residential,Residential,Sabaragamuwa,Individual,163.5,False,False,True,14,67.21,358.35,124.08,14,0,11,6,11
+SL-CASE-0391,reference-normal,none,Institutional,Institutional,Northern,Company,68.3,False,True,True,20,104.24,660.14,131.67,20,0,19,10,17
+SL-CASE-0332,reference-normal,none,Commercial,Commercial,Central,Cooperative,42.7,False,False,True,16,77.05,441.97,123.28,16,0,14,7,14
+SL-CASE-0197,reference-normal,none,Commercial,Commercial,North Western,Individual,176.6,False,False,True,16,79.72,450.39,127.55,16,0,15,7,14
+SL-CASE-0055,reference-normal,none,Agricultural,Agricultural,Northern,Government Body,175.9,False,False,False,12,54.17,467.36,118.19,12,0,10,5,10
+SL-CASE-0062,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Company,137.9,False,False,True,16,70.91,330.88,113.46,16,0,15,7,13
+SL-CASE-0371,reference-normal,none,Institutional,Institutional,North Central,Cooperative,178.3,False,True,True,20,103.6,477.59,130.86,20,0,17,10,14
+SL-CASE-0284,reference-normal,none,Institutional,Institutional,North Western,Company,134.2,False,True,True,20,82.85,305.9,104.65,20,0,17,10,15
+SL-CASE-0218,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Company,52.5,False,False,True,18,79.48,421.6,112.21,18,0,15,8,15
+SL-CASE-0011,reference-normal,none,Commercial,Commercial,Eastern,Individual,143.2,True,False,True,16,78.36,434.42,125.38,16,0,15,7,15
+SL-CASE-0101,reference-normal,none,Commercial,Commercial,Eastern,Cooperative,80.7,False,True,True,18,71.86,370.37,101.45,18,0,17,9,15
+SL-CASE-0137,reference-normal,none,Agricultural,Agricultural,Central,Company,59.7,True,False,False,12,52.62,345.6,114.8,12,0,9,5,9
+SL-CASE-0314,reference-normal,none,Residential,Residential,Sabaragamuwa,Company,160.7,False,True,False,14,73.31,643.9,135.34,14,0,12,7,12
+SL-CASE-0375,reference-normal,none,Agricultural,Agricultural,Uva,Cooperative,15.0,False,False,True,14,60.28,271.25,111.29,14,0,12,6,13
+SL-CASE-0367,reference-normal,none,Commercial,Commercial,North Central,Company,110.6,True,True,True,18,94.13,442.44,132.88,18,0,14,9,14
+SL-CASE-0368,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Cooperative,168.5,False,True,True,20,121.29,487.38,153.2,20,0,16,10,16
+SL-CASE-0322,reference-normal,none,Institutional,Institutional,Eastern,Cooperative,180.7,False,False,True,18,72.98,399.03,103.04,18,0,16,8,16
+SL-CASE-0276,reference-normal,none,Agricultural,Agricultural,Eastern,Cooperative,29.8,False,True,False,14,54.55,288.43,100.71,14,0,12,7,11
+SL-CASE-0169,reference-normal,none,Residential,Residential,Western,Company,168.2,False,False,True,14,36.87,211.84,68.08,14,0,12,6,12
+SL-CASE-0122,reference-normal,none,Commercial,Commercial,Central,Company,92.6,False,True,True,18,89.17,377.86,125.89,18,0,17,9,16
+SL-CASE-0058,reference-normal,none,Institutional,Institutional,Uva,Individual,6.3,False,True,True,20,77.9,318.08,98.39,20,0,16,10,15
+SL-CASE-0180,reference-normal,none,Institutional,Institutional,North Central,Government Body,181.2,False,True,True,20,97.14,372.33,122.71,20,0,18,10,16
+SL-CASE-0164,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Government Body,38.6,False,True,True,20,101.38,471.39,128.06,20,0,15,10,14
+SL-CASE-0351,reference-normal,none,Residential,Residential,Sabaragamuwa,Individual,145.9,False,False,False,12,66.28,467.38,144.62,12,0,9,5,10
+SL-CASE-0394,reference-normal,none,Residential,Residential,Northern,Cooperative,62.6,False,False,True,14,83.23,457.0,153.66,14,0,10,6,11
+SL-CASE-0485,controlled-perturbation,duplicated_sequence,Institutional,Institutional,North Central,Government Body,189.4,False,True,True,28,87.02,349.98,77.35,28,0,21,17,14
+SL-CASE-0425,controlled-perturbation,repeated_correction_loop,Commercial,Commercial,North Western,Cooperative,147.2,False,True,True,22,126.08,941.51,144.09,19,3,16,9,15
+SL-CASE-0143,reference-normal,none,Commercial,Commercial,Uva,Cooperative,195.1,False,True,True,18,86.04,397.95,121.47,18,0,15,9,14
+SL-CASE-0382,reference-normal,none,Commercial,Commercial,Uva,Individual,24.4,False,False,True,16,93.48,422.19,149.56,16,0,15,7,15
+SL-CASE-0259,reference-normal,none,Commercial,Commercial,Southern,Cooperative,102.9,False,True,True,18,95.28,449.2,134.51,18,0,15,9,14
+SL-CASE-0329,reference-normal,none,Commercial,Commercial,Western,Cooperative,114.0,True,True,False,16,89.69,718.18,143.51,16,0,15,8,13
+SL-CASE-0089,reference-normal,none,Residential,Residential,Southern,Cooperative,128.5,False,False,True,14,45.54,221.75,84.08,14,0,12,6,12
+SL-CASE-0292,reference-normal,none,Residential,Residential,Western,Government Body,10.6,False,False,False,12,58.7,348.03,128.08,12,0,10,5,10
+SL-CASE-0002,reference-normal,none,Institutional,Institutional,Central,Government Body,170.3,False,False,True,18,88.59,473.26,125.07,18,0,15,8,15
+SL-CASE-0462,controlled-perturbation,increased_event_count,Residential,Residential,Central,Company,37.8,False,False,True,19,67.88,440.57,90.51,17,2,13,6,13
+SL-CASE-0311,reference-normal,none,Agricultural,Agricultural,Uva,Government Body,77.3,False,False,False,12,44.98,371.57,98.14,12,0,9,5,10
+SL-CASE-0134,reference-normal,none,Institutional,Institutional,Northern,Company,119.8,False,True,True,20,132.5,765.55,167.37,20,0,19,10,19
+SL-CASE-0473,controlled-perturbation,increased_event_count,Residential,Residential,North Central,Government Body,65.2,True,False,False,20,48.83,366.23,61.68,19,1,13,7,12
+SL-CASE-0254,reference-normal,none,Agricultural,Agricultural,North Western,Individual,92.6,False,False,True,14,53.47,264.43,98.71,14,0,11,6,10
+SL-CASE-0395,reference-normal,none,Commercial,Commercial,Western,Cooperative,100.6,False,True,True,18,85.36,523.86,120.51,18,0,16,9,13
+SL-CASE-0023,reference-normal,none,Institutional,Institutional,Western,Company,84.9,False,True,True,20,119.44,478.83,150.88,20,0,17,10,16
+SL-CASE-0449,controlled-perturbation,excessive_handoffs,Commercial,Commercial,North Western,Cooperative,169.6,False,False,True,19,86.9,372.38,115.86,19,0,17,10,17
+SL-CASE-0211,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Individual,50.4,False,False,True,16,66.02,361.1,105.64,16,0,15,7,14
+SL-CASE-0295,reference-normal,none,Commercial,Commercial,Uva,Company,96.1,False,False,True,16,72.41,435.76,115.85,16,0,13,7,14
+SL-CASE-0012,reference-normal,none,Institutional,Institutional,Southern,Individual,60.3,False,True,True,20,130.46,890.67,164.79,20,0,17,10,15
+SL-CASE-0109,reference-normal,none,Residential,Residential,Sabaragamuwa,Individual,78.1,False,False,True,14,62.78,365.0,115.91,14,0,13,6,13
+SL-CASE-0163,reference-normal,none,Institutional,Institutional,North Western,Individual,61.5,False,False,True,18,98.4,445.07,138.92,18,0,14,8,14
+SL-CASE-0304,reference-normal,none,Commercial,Commercial,Uva,Individual,190.6,True,False,True,16,107.57,444.15,172.11,16,0,15,7,15
+SL-CASE-0118,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Individual,139.1,False,False,True,18,71.9,305.68,101.5,18,0,16,8,14
+SL-CASE-0297,reference-normal,none,Agricultural,Agricultural,Western,Cooperative,36.1,False,False,True,14,58.91,216.75,108.76,14,0,11,6,11
+SL-CASE-0271,reference-normal,none,Commercial,Commercial,Eastern,Individual,109.2,False,True,True,18,134.02,917.92,189.21,18,0,14,9,13
+SL-CASE-0432,controlled-perturbation,repeated_correction_loop,Residential,Residential,Eastern,Individual,162.5,False,False,False,16,46.87,345.03,75.0,13,3,11,5,10
+SL-CASE-0233,reference-normal,none,Commercial,Commercial,North Western,Government Body,149.6,False,False,True,16,73.83,430.56,118.13,16,0,12,7,12
+SL-CASE-0139,reference-normal,none,Residential,Residential,Northern,Government Body,112.1,False,False,False,12,32.26,231.08,70.4,12,0,10,5,10
+SL-CASE-0347,reference-normal,none,Commercial,Commercial,Southern,Company,47.3,True,True,True,18,90.07,532.03,127.16,18,0,15,9,15
+SL-CASE-0133,reference-normal,none,Residential,Residential,Sabaragamuwa,Cooperative,146.7,False,False,True,14,65.92,417.38,121.7,14,0,11,6,11
+SL-CASE-0457,controlled-perturbation,excessive_handoffs,Agricultural,Agricultural,Western,Company,135.0,False,True,False,17,90.06,859.62,135.09,17,0,16,10,14
+SL-CASE-0135,reference-normal,none,Agricultural,Agricultural,North Western,Cooperative,107.3,False,False,True,14,73.19,446.76,135.11,14,0,10,6,9
+SL-CASE-0053,reference-normal,none,Commercial,Commercial,Uva,Individual,180.3,False,True,True,18,83.64,434.55,118.09,18,0,15,9,13
+SL-CASE-0442,controlled-perturbation,excessive_handoffs,Residential,Residential,Eastern,Cooperative,31.3,False,False,False,15,43.54,180.02,74.63,15,0,14,9,13
+SL-CASE-0422,controlled-perturbation,repeated_correction_loop,Agricultural,Agricultural,Uva,Cooperative,67.6,False,False,False,16,81.39,434.24,130.22,13,3,9,5,10
+SL-CASE-0217,reference-normal,none,Agricultural,Agricultural,Western,Government Body,137.2,False,False,False,12,53.54,436.77,116.8,12,0,10,5,10
+SL-CASE-0107,reference-normal,none,Agricultural,Agricultural,Southern,Cooperative,121.9,False,True,False,14,75.9,419.49,140.12,14,0,13,7,12
+SL-CASE-0215,reference-normal,none,Institutional,Institutional,Eastern,Individual,197.5,False,True,True,20,68.04,366.82,85.94,20,0,17,10,15
+SL-CASE-0438,controlled-perturbation,repeated_correction_loop,Institutional,Institutional,Central,Company,141.5,False,True,True,24,109.3,596.47,114.05,21,3,17,10,16
+SL-CASE-0074,reference-normal,none,Commercial,Commercial,Eastern,Government Body,149.2,False,True,False,16,77.26,424.0,123.61,16,0,14,8,12
+SL-CASE-0378,reference-normal,none,Agricultural,Agricultural,Southern,Individual,101.8,False,False,True,14,49.0,260.29,90.45,14,0,12,6,13
+SL-CASE-0005,reference-normal,none,Commercial,Commercial,Southern,Cooperative,189.6,False,True,True,18,94.31,681.94,133.15,18,0,16,9,14
+SL-CASE-0110,reference-normal,none,Institutional,Institutional,North Western,Individual,36.3,False,True,True,20,120.06,939.54,151.65,20,0,17,10,18
+SL-CASE-0252,reference-normal,none,Commercial,Commercial,Central,Individual,101.4,False,False,True,16,85.33,446.52,136.53,16,0,14,7,14
+SL-CASE-0070,reference-normal,none,Commercial,Commercial,Southern,Cooperative,125.1,False,True,False,16,75.08,535.71,120.13,16,0,13,8,13
+SL-CASE-0001,reference-normal,none,Residential,Residential,Eastern,Company,48.5,False,False,False,12,53.74,343.8,117.26,12,0,10,5,10
+SL-CASE-0280,reference-normal,none,Residential,Residential,North Western,Cooperative,79.0,False,False,True,14,51.59,260.06,95.25,14,0,10,6,10
+SL-CASE-0287,reference-normal,none,Commercial,Commercial,Uva,Government Body,98.0,False,True,True,18,113.06,699.93,159.61,18,0,17,9,14
+SL-CASE-0343,reference-normal,none,Residential,Residential,Western,Government Body,79.2,False,False,True,14,47.95,313.46,88.52,14,0,11,6,12
+SL-CASE-0097,reference-normal,none,Agricultural,Agricultural,North Central,Individual,106.9,True,True,False,14,81.26,898.25,150.02,14,0,13,7,12
+SL-CASE-0020,reference-normal,none,Institutional,Institutional,Uva,Individual,121.6,False,True,True,20,136.11,803.4,171.93,20,0,17,10,14
+SL-CASE-0064,reference-normal,none,Commercial,Commercial,North Central,Company,41.3,False,True,True,18,86.71,638.58,122.42,18,0,16,9,14
+SL-CASE-0192,reference-normal,none,Residential,Residential,Sabaragamuwa,Company,60.6,False,False,True,14,51.44,276.22,94.97,14,0,13,6,14
+SL-CASE-0424,controlled-perturbation,repeated_correction_loop,Agricultural,Agricultural,Northern,Individual,116.4,False,False,False,14,43.6,265.5,80.49,13,1,11,5,12
+SL-CASE-0136,reference-normal,none,Institutional,Institutional,North Central,Individual,70.1,False,True,True,20,147.45,899.34,186.25,20,0,19,10,16
+SL-CASE-0407,controlled-perturbation,extended_gap,Residential,Residential,Southern,Cooperative,71.6,False,False,True,14,122.31,2011.53,225.81,14,0,13,6,14
+SL-CASE-0154,reference-normal,none,Institutional,Institutional,Northern,Cooperative,178.8,True,True,True,20,136.08,844.25,171.89,20,0,16,10,14
+SL-CASE-0326,reference-normal,none,Commercial,Commercial,Eastern,Cooperative,73.4,False,False,True,16,67.43,343.3,107.9,16,0,11,7,11
+SL-CASE-0275,reference-normal,none,Commercial,Commercial,Southern,Individual,59.7,False,True,False,16,80.7,463.23,129.12,16,0,14,8,13
+SL-CASE-0445,controlled-perturbation,excessive_handoffs,Agricultural,Agricultural,Eastern,Government Body,88.4,False,False,False,15,57.6,317.71,98.74,15,0,13,9,14
+SL-CASE-0105,reference-normal,none,Residential,Residential,Northern,Cooperative,50.2,False,False,False,12,62.0,471.15,135.27,12,0,11,5,11
+SL-CASE-0452,controlled-perturbation,excessive_handoffs,Residential,Residential,Central,Individual,117.0,False,False,False,15,49.34,296.05,84.59,15,0,13,8,13
+SL-CASE-0166,reference-normal,none,Institutional,Institutional,Central,Cooperative,60.3,False,True,False,18,75.73,432.01,106.92,18,0,14,9,13
+SL-CASE-0499,controlled-perturbation,duplicated_sequence,Agricultural,Agricultural,Northern,Cooperative,101.8,False,False,True,19,65.75,330.84,87.67,19,0,18,13,13
+SL-CASE-0492,controlled-perturbation,duplicated_sequence,Agricultural,Agricultural,Northern,Cooperative,195.9,False,False,True,19,74.32,424.45,99.09,19,0,17,12,12
+SL-CASE-0320,reference-normal,none,Commercial,Commercial,Southern,Individual,32.9,True,False,True,16,79.47,374.44,127.15,16,0,14,7,15
+SL-CASE-0054,reference-normal,none,Commercial,Commercial,Western,Individual,195.8,False,False,True,16,67.78,451.46,108.45,16,0,14,7,13
+SL-CASE-0018,reference-normal,none,Commercial,Commercial,Eastern,Company,75.4,False,False,True,16,49.42,300.48,79.08,16,0,14,7,12
+SL-CASE-0040,reference-normal,none,Institutional,Institutional,Eastern,Individual,151.9,False,True,True,20,97.34,415.3,122.96,20,0,14,10,13
+SL-CASE-0212,reference-normal,none,Commercial,Commercial,North Central,Government Body,40.8,False,True,True,18,67.83,349.16,95.76,18,0,16,9,15
+SL-CASE-0350,reference-normal,none,Commercial,Commercial,Southern,Government Body,9.9,False,False,True,16,52.92,231.91,84.66,16,0,14,7,14
+SL-CASE-0495,controlled-perturbation,duplicated_sequence,Agricultural,Agricultural,Central,Cooperative,18.0,False,True,False,19,50.15,204.29,66.87,19,0,17,13,11
+SL-CASE-0496,controlled-perturbation,duplicated_sequence,Commercial,Commercial,Northern,Individual,108.3,False,False,True,22,53.58,267.94,61.24,22,0,21,13,13
+SL-CASE-0132,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Cooperative,196.8,True,True,True,18,107.28,615.86,151.45,18,0,15,9,16
+SL-CASE-0131,reference-normal,none,Commercial,Commercial,Western,Government Body,20.5,False,True,True,18,118.99,630.66,167.99,18,0,14,9,13
+SL-CASE-0491,controlled-perturbation,duplicated_sequence,Institutional,Institutional,Eastern,Individual,8.5,False,True,True,28,96.55,285.35,85.82,28,0,27,19,18
+SL-CASE-0043,reference-normal,none,Agricultural,Agricultural,Southern,Company,154.7,False,False,False,12,42.61,230.05,92.98,12,0,8,5,9
+SL-CASE-0267,reference-normal,none,Agricultural,Agricultural,North Central,Cooperative,141.0,False,False,False,12,40.1,231.52,87.5,12,0,9,5,10
+SL-CASE-0091,reference-normal,none,Residential,Residential,Eastern,Individual,158.0,False,False,False,12,54.93,343.01,119.86,12,0,10,5,9
+SL-CASE-0152,reference-normal,none,Residential,Residential,Western,Individual,40.0,False,False,False,12,50.84,302.41,110.93,12,0,11,5,12
+SL-CASE-0128,reference-normal,none,Agricultural,Agricultural,Sabaragamuwa,Cooperative,126.5,False,False,False,12,34.32,305.79,74.88,12,0,8,5,9
+SL-CASE-0494,controlled-perturbation,duplicated_sequence,Residential,Residential,Southern,Individual,5.6,False,False,True,19,61.58,376.21,82.1,19,0,17,10,11
+SL-CASE-0003,reference-normal,none,Residential,Residential,North Western,Cooperative,57.2,False,False,False,12,48.28,290.57,105.35,12,0,8,5,9
+SL-CASE-0210,reference-normal,none,Residential,Residential,North Western,Government Body,38.9,False,False,True,14,50.59,251.81,93.39,14,0,13,6,14
+SL-CASE-0194,reference-normal,none,Residential,Residential,Eastern,Individual,82.1,False,False,True,14,69.68,326.0,128.63,14,0,12,6,12
+SL-CASE-0333,reference-normal,none,Institutional,Institutional,North Central,Cooperative,78.5,False,True,True,20,109.92,884.96,138.85,20,0,16,10,15
+SL-CASE-0393,reference-normal,none,Institutional,Institutional,Western,Cooperative,49.0,False,True,False,18,113.14,921.04,159.72,18,0,13,9,12
+SL-CASE-0216,reference-normal,none,Residential,Residential,North Central,Government Body,186.8,False,False,True,14,68.16,422.12,125.83,14,0,13,6,13
+SL-CASE-0305,reference-normal,none,Residential,Residential,North Central,Cooperative,173.1,True,False,True,14,54.48,374.56,100.58,14,0,12,6,11
+SL-CASE-0460,controlled-perturbation,excessive_handoffs,Commercial,Commercial,Western,Company,177.8,False,True,True,21,89.66,504.36,107.59,21,0,17,12,17
+SL-CASE-0082,reference-normal,none,Agricultural,Agricultural,Central,Cooperative,169.5,False,False,False,12,55.18,248.5,120.38,12,0,10,5,10
+SL-CASE-0015,reference-normal,none,Residential,Residential,North Western,Company,131.8,False,False,False,12,61.3,348.15,133.74,12,0,11,5,11
+SL-CASE-0234,reference-normal,none,Residential,Residential,North Central,Individual,99.2,False,False,False,12,36.84,249.73,80.38,12,0,11,5,12
+SL-CASE-0094,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Cooperative,171.1,False,True,True,18,131.59,867.69,185.77,18,0,14,9,15
+SL-CASE-0249,reference-normal,none,Institutional,Institutional,Eastern,Individual,199.1,False,True,True,20,98.24,465.23,124.09,20,0,16,10,15
+SL-CASE-0242,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Government Body,96.7,False,True,True,18,112.53,640.0,158.86,18,0,15,9,14
+SL-CASE-0440,controlled-perturbation,repeated_correction_loop,Residential,Residential,Eastern,Government Body,87.6,False,False,True,16,62.46,311.04,99.93,15,1,12,6,12
+SL-CASE-0476,controlled-perturbation,increased_event_count,Institutional,Institutional,North Western,Government Body,180.4,False,True,True,25,103.14,466.71,103.14,24,1,17,10,14
+SL-CASE-0069,reference-normal,none,Commercial,Commercial,Western,Cooperative,127.0,False,False,True,16,63.3,341.19,101.28,16,0,14,7,15
+SL-CASE-0338,reference-normal,none,Commercial,Commercial,Uva,Government Body,48.6,False,False,False,14,60.33,391.29,111.38,14,0,11,6,10
+SL-CASE-0022,reference-normal,none,Agricultural,Agricultural,North Central,Government Body,187.2,False,False,True,14,56.02,420.54,103.42,14,0,10,6,9
+SL-CASE-0315,reference-normal,none,Commercial,Commercial,North Western,Cooperative,132.5,False,False,False,14,52.42,379.44,96.78,14,0,12,6,12
+SL-CASE-0348,reference-normal,none,Commercial,Commercial,North Western,Cooperative,17.3,False,True,True,18,114.64,442.68,161.85,18,0,17,9,17
+SL-CASE-0202,reference-normal,none,Institutional,Institutional,Northern,Individual,153.8,False,False,True,18,93.32,465.58,131.75,18,0,14,8,12
+SL-CASE-0458,controlled-perturbation,excessive_handoffs,Residential,Residential,Western,Cooperative,192.9,False,False,False,15,66.14,432.32,113.39,15,0,12,9,11
+SL-CASE-0149,reference-normal,none,Agricultural,Agricultural,North Central,Individual,105.5,False,False,False,12,59.35,450.38,129.48,12,0,11,5,12
+SL-CASE-0486,controlled-perturbation,duplicated_sequence,Commercial,Commercial,Western,Individual,6.0,False,False,True,22,79.34,434.01,90.68,22,0,18,13,12
+SL-CASE-0052,reference-normal,none,Agricultural,Agricultural,Central,Government Body,76.7,False,False,False,12,60.5,422.15,132.0,12,0,10,5,10
+SL-CASE-0060,reference-normal,none,Institutional,Institutional,North Western,Individual,128.7,False,True,True,20,75.77,417.29,95.71,20,0,16,10,15
+SL-CASE-0405,controlled-perturbation,extended_gap,Agricultural,Agricultural,Uva,Individual,123.1,True,False,False,12,178.27,3074.06,388.96,12,0,11,5,10
+SL-CASE-0178,reference-normal,none,Institutional,Institutional,Southern,Government Body,148.7,False,False,True,18,85.71,474.9,121.01,18,0,16,8,15
+SL-CASE-0183,reference-normal,none,Institutional,Institutional,North Western,Individual,57.2,False,False,True,18,117.28,444.31,165.58,18,0,17,8,16
+SL-CASE-0096,reference-normal,none,Commercial,Commercial,Southern,Individual,80.5,False,False,True,16,99.68,428.22,159.48,16,0,13,7,13
+SL-CASE-0472,controlled-perturbation,increased_event_count,Commercial,Commercial,North Western,Cooperative,111.7,False,True,True,26,77.68,328.0,74.57,26,0,15,11,11
+SL-CASE-0250,reference-normal,none,Agricultural,Agricultural,North Western,Company,192.0,False,False,False,12,53.46,307.26,116.64,12,0,10,5,11
+SL-CASE-0300,reference-normal,none,Commercial,Commercial,Southern,Cooperative,89.1,False,False,True,16,91.96,365.67,147.14,16,0,15,7,15
+SL-CASE-0123,reference-normal,none,Commercial,Commercial,Central,Individual,186.4,False,True,False,16,96.93,746.73,155.09,16,0,13,8,13
+SL-CASE-0193,reference-normal,none,Residential,Residential,Eastern,Individual,53.0,False,False,True,14,71.73,479.65,132.42,14,0,11,6,12
+SL-CASE-0421,controlled-perturbation,repeated_correction_loop,Residential,Residential,Sabaragamuwa,Company,162.1,False,False,False,15,63.65,424.67,109.11,13,2,11,5,11
+SL-CASE-0198,reference-normal,none,Residential,Residential,Southern,Individual,184.2,False,False,False,12,42.64,383.09,93.03,12,0,7,5,8
+SL-CASE-0441,controlled-perturbation,excessive_handoffs,Commercial,Commercial,Central,Company,34.7,False,False,True,19,64.64,476.19,86.18,19,0,16,11,16
+SL-CASE-0172,reference-normal,none,Agricultural,Agricultural,Southern,Individual,55.4,False,False,True,14,61.59,432.93,113.7,14,0,12,6,13
+SL-CASE-0334,reference-normal,none,Institutional,Institutional,Northern,Individual,185.2,True,True,True,20,106.73,646.29,134.81,20,0,17,10,16
+SL-CASE-0045,reference-normal,none,Agricultural,Agricultural,North Central,Company,153.3,False,True,True,16,118.3,914.0,189.28,16,0,14,8,13
+SL-CASE-0127,reference-normal,none,Agricultural,Agricultural,Western,Government Body,38.0,False,False,False,12,42.86,361.25,93.52,12,0,11,5,11
+SL-CASE-0341,reference-normal,none,Commercial,Commercial,Southern,Cooperative,28.1,False,True,True,18,123.36,863.91,174.15,18,0,15,9,13
+SL-CASE-0231,reference-normal,none,Residential,Residential,North Central,Company,125.4,False,False,True,14,61.21,343.72,113.0,14,0,11,6,12
+SL-CASE-0150,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Individual,193.7,False,True,True,18,109.43,797.97,154.49,18,0,16,9,15
+SL-CASE-0325,reference-normal,none,Institutional,Institutional,Western,Company,115.6,True,False,True,18,86.19,374.49,121.68,18,0,17,8,17
+SL-CASE-0188,reference-normal,none,Residential,Residential,Uva,Government Body,196.7,False,False,True,14,62.01,360.31,114.48,14,0,13,6,14
+SL-CASE-0047,reference-normal,none,Institutional,Institutional,Southern,Company,69.0,False,True,False,18,65.17,421.68,92.01,18,0,16,9,14
+SL-CASE-0221,reference-normal,none,Commercial,Commercial,Sabaragamuwa,Cooperative,24.0,False,False,False,14,59.29,341.36,109.46,14,0,13,6,13
+SL-CASE-0431,controlled-perturbation,repeated_correction_loop,Institutional,Institutional,Eastern,Cooperative,10.8,False,True,True,24,101.07,444.42,105.46,21,3,16,10,15
+SL-CASE-0385,reference-normal,none,Agricultural,Agricultural,Central,Cooperative,65.1,False,True,False,14,70.46,468.44,130.07,14,0,11,7,10
+SL-CASE-0448,controlled-perturbation,excessive_handoffs,Residential,Residential,Western,Cooperative,183.6,False,True,True,19,85.92,437.45,114.56,19,0,14,11,15
+SL-CASE-0165,reference-normal,none,Residential,Residential,Central,Individual,108.1,False,False,True,14,70.14,412.19,129.48,14,0,13,6,13
+SL-CASE-0279,reference-normal,none,Commercial,Commercial,Southern,Cooperative,8.0,False,True,True,18,140.41,917.93,198.23,18,0,14,9,14
+SL-CASE-0171,reference-normal,none,Commercial,Commercial,Uva,Company,133.9,False,False,True,16,73.76,373.08,118.02,16,0,13,7,12
+SL-CASE-0321,reference-normal,none,Institutional,Institutional,Central,Individual,112.3,False,False,True,18,67.18,379.65,94.84,18,0,13,8,13
+SL-CASE-0004,reference-normal,none,Institutional,Institutional,North Central,Cooperative,108.2,False,False,True,18,90.64,440.16,127.96,18,0,15,8,15
+SL-CASE-0361,reference-normal,none,Residential,Residential,Eastern,Cooperative,113.7,False,True,True,16,68.54,327.08,109.67,16,0,12,8,12
+SL-CASE-0031,reference-normal,none,Commercial,Commercial,Southern,Individual,136.4,False,False,True,16,50.26,328.21,80.42,16,0,14,7,15
+SL-CASE-0317,reference-normal,none,Residential,Residential,North Central,Cooperative,8.1,False,False,False,12,49.53,295.87,108.07,12,0,9,5,10
+SL-CASE-0409,controlled-perturbation,extended_gap,Commercial,Commercial,Uva,Cooperative,127.3,True,True,True,18,194.17,2547.09,274.12,18,0,15,9,15
+SL-CASE-0124,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Government Body,133.2,False,True,False,18,74.13,400.73,104.65,18,0,16,9,13
+SL-CASE-0181,reference-normal,none,Institutional,Institutional,North Central,Individual,95.6,False,False,True,18,72.8,420.16,102.77,18,0,15,8,15
+SL-CASE-0108,reference-normal,none,Residential,Residential,Sabaragamuwa,Individual,23.2,False,False,True,14,62.89,384.04,116.11,14,0,11,6,12
+SL-CASE-0126,reference-normal,none,Residential,Residential,Northern,Cooperative,61.5,False,False,True,14,53.71,243.3,99.15,14,0,12,6,13
+SL-CASE-0291,reference-normal,none,Institutional,Institutional,Eastern,Individual,113.8,False,True,True,20,125.55,478.74,158.59,20,0,14,10,11
+SL-CASE-0484,controlled-perturbation,duplicated_sequence,Agricultural,Agricultural,Sabaragamuwa,Individual,143.7,False,False,False,16,29.88,237.45,47.81,16,0,15,12,10
+SL-CASE-0307,reference-normal,none,Residential,Residential,Eastern,Government Body,145.6,False,False,True,14,62.25,320.4,114.91,14,0,12,6,12
+SL-CASE-0369,reference-normal,none,Institutional,Institutional,North Western,Individual,153.3,False,False,True,18,56.9,322.51,80.33,18,0,15,8,15
+SL-CASE-0261,reference-normal,none,Agricultural,Agricultural,Uva,Cooperative,148.3,False,False,False,12,58.72,377.18,128.11,12,0,10,5,11
+SL-CASE-0179,reference-normal,none,Institutional,Institutional,Central,Government Body,10.1,False,True,True,20,107.99,466.22,136.41,20,0,18,10,14
+SL-CASE-0354,reference-normal,none,Commercial,Commercial,Southern,Government Body,45.2,False,True,True,18,115.55,935.59,163.13,18,0,16,9,15
+SL-CASE-0112,reference-normal,none,Residential,Residential,Uva,Individual,55.3,False,False,True,14,56.27,343.57,103.89,14,0,10,6,11
+SL-CASE-0041,reference-normal,none,Commercial,Commercial,Western,Company,170.5,False,True,True,18,128.48,956.95,181.39,18,0,17,9,16
+SL-CASE-0226,reference-normal,none,Residential,Residential,North Central,Company,78.8,False,False,True,14,49.59,343.41,91.56,14,0,12,6,13
+SL-CASE-0469,controlled-perturbation,increased_event_count,Residential,Residential,Northern,Individual,43.6,False,False,True,22,62.67,416.47,71.63,19,3,14,10,12
+SL-CASE-0072,reference-normal,none,Institutional,Institutional,Central,Government Body,141.2,False,False,True,18,60.44,324.07,85.33,18,0,15,8,13
+SL-CASE-0497,controlled-perturbation,duplicated_sequence,Commercial,Commercial,Eastern,Government Body,174.5,False,False,True,22,80.89,474.04,92.45,22,0,19,12,13
+SL-CASE-0388,reference-normal,none,Residential,Residential,Northern,Individual,166.8,True,False,True,14,50.24,324.74,92.76,14,0,10,6,11
+SL-CASE-0195,reference-normal,none,Residential,Residential,Sabaragamuwa,Individual,179.1,False,False,True,14,87.84,472.61,162.17,14,0,12,6,13
+SL-CASE-0498,controlled-perturbation,duplicated_sequence,Institutional,Institutional,Sabaragamuwa,Government Body,181.4,False,True,True,28,99.16,620.84,88.14,28,0,23,19,14
+SL-CASE-0255,reference-normal,none,Institutional,Institutional,North Central,Government Body,163.6,False,True,True,20,99.16,474.51,125.25,20,0,16,10,14
+SL-CASE-0272,reference-normal,none,Institutional,Institutional,Uva,Government Body,157.4,False,True,False,18,112.31,952.39,158.56,18,0,15,9,13
+SL-CASE-0403,controlled-perturbation,extended_gap,Commercial,Commercial,Sabaragamuwa,Company,19.3,False,True,True,18,192.48,2341.72,271.74,18,0,14,9,12
+SL-CASE-0408,controlled-perturbation,extended_gap,Agricultural,Agricultural,Sabaragamuwa,Government Body,127.1,True,True,False,14,159.52,2422.82,294.5,14,0,11,7,10
+SL-CASE-0357,reference-normal,none,Commercial,Commercial,Northern,Cooperative,20.9,False,True,True,18,112.87,453.68,159.35,18,0,15,9,14
+SL-CASE-0478,controlled-perturbation,increased_event_count,Agricultural,Agricultural,Western,Company,36.6,False,False,False,22,29.02,239.7,33.17,17,5,11,7,11
+SL-CASE-0176,reference-normal,none,Commercial,Commercial,Northern,Government Body,61.2,False,True,False,16,75.0,385.36,120.0,16,0,14,8,15
+SL-CASE-0464,controlled-perturbation,increased_event_count,Commercial,Commercial,Central,Cooperative,99.9,False,True,True,26,84.95,695.44,81.55,24,2,15,9,15
+SL-CASE-0036,reference-normal,none,Commercial,Commercial,Uva,Individual,85.1,False,True,True,18,137.49,717.58,194.1,18,0,14,9,12
+SL-CASE-0206,reference-normal,none,Commercial,Commercial,Western,Cooperative,10.2,False,False,True,16,70.27,475.93,112.43,16,0,14,7,12
+SL-CASE-0106,reference-normal,none,Agricultural,Agricultural,North Western,Cooperative,159.6,False,True,False,14,54.83,325.47,101.23,14,0,12,7,11
+SL-CASE-0237,reference-normal,none,Commercial,Commercial,Central,Company,19.0,False,False,False,14,68.91,450.21,127.21,14,0,12,6,11
+SL-CASE-0366,reference-normal,none,Institutional,Institutional,Sabaragamuwa,Government Body,104.7,False,True,False,18,90.78,899.4,128.17,18,0,15,9,13

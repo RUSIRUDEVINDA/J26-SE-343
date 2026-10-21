@@ -25,6 +25,42 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.ColomboStateResearchProjectLeaseReadyEntity", b =>
+                {
+                    b.Property<string>("ResearchRecordId")
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<string>("DatasetKey")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("DesignationLabel")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("DesignationNotice")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("ImportedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("LandParcelId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ResearchRecordId");
+
+                    b.HasIndex("DatasetKey");
+
+                    b.HasIndex("LandParcelId")
+                        .IsUnique();
+
+                    b.ToTable("colombo_state_research_project_lease_ready", "land_intelligence");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.EnvironmentalRestrictionEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -432,6 +468,116 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         });
                 });
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LeaseInterestRequestEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AcknowledgementReference")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("ApplicantNicCiphertext")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ApplicantNicLookupDigest")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<bool>("ConsentToPreliminaryAssessment")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("LandParcelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PayloadJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<int?>("RequestedDurationYears")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RequestedPurpose")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SubmitIdempotencyKey")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTimeOffset?>("SubmittedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcknowledgementReference")
+                        .IsUnique()
+                        .HasFilter("\"AcknowledgementReference\" IS NOT NULL");
+
+                    b.HasIndex("ApplicantNicLookupDigest");
+
+                    b.HasIndex("LandParcelId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("OwnerId", "SubmitIdempotencyKey")
+                        .IsUnique()
+                        .HasFilter("\"SubmitIdempotencyKey\" IS NOT NULL");
+
+                    b.ToTable("lease_interest_requests", "land_intelligence");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LeaseInterestStatusHistoryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ActorKind")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTimeOffset>("ChangedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("LeaseInterestRequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("VisibleToApplicant")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LeaseInterestRequestId");
+
+                    b.ToTable("lease_interest_status_history", "land_intelligence");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.ParcelDerivedSoilGroupEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -483,6 +629,62 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .IsUnique();
 
                     b.ToTable("parcel_derived_soil_groups", "land_intelligence");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.ParcelShortlistItemEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LandParcelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("SavedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("OwnerId", "LandParcelId")
+                        .IsUnique();
+
+                    b.ToTable("parcel_shortlist_items", "land_intelligence");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.RealParcelSourceEntity", b =>
+                {
+                    b.Property<Guid>("LandParcelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ClaimantCategoryCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ClaimantCategoryEnglishLabel")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("LandUseCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("LandUseDescription")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("LandUseEnglishLabel")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("LandParcelId");
+
+                    b.ToTable("real_parcel_sources", "land_intelligence");
                 });
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.RegulatoryReferenceEntity", b =>
@@ -963,19 +1165,30 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelGisEnrichmentSnapshotEntity", b =>
                 {
                     b.HasOne("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", "LandParcel")
-                        .WithMany()
-                        .HasForeignKey("LandParcelId")
+                        .WithOne("GisEnrichmentSnapshot")
+                        .HasForeignKey("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelGisEnrichmentSnapshotEntity", "LandParcelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("LandParcel");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LeaseInterestStatusHistoryEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LeaseInterestRequestEntity", "Request")
+                        .WithMany("StatusHistory")
+                        .HasForeignKey("LeaseInterestRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
+                });
+
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.ParcelDerivedSoilGroupEntity", b =>
                 {
                     b.HasOne("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", "LandParcel")
-                        .WithMany()
-                        .HasForeignKey("LandParcelId")
+                        .WithOne("DerivedSoilGroup")
+                        .HasForeignKey("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.ParcelDerivedSoilGroupEntity", "LandParcelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1011,7 +1224,11 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandParcelEntity", b =>
                 {
+                    b.Navigation("DerivedSoilGroup");
+
                     b.Navigation("EnvironmentalRestrictions");
+
+                    b.Navigation("GisEnrichmentSnapshot");
 
                     b.Navigation("InfrastructureFeatures");
 
@@ -1023,6 +1240,11 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
             modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LandUseEntity", b =>
                 {
                     b.Navigation("LandParcels");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities.LeaseInterestRequestEntity", b =>
+                {
+                    b.Navigation("StatusHistory");
                 });
 #pragma warning restore 612, 618
         }

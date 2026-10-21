@@ -21,6 +21,10 @@ public sealed class LandIntelligenceDependencyInjectionTests
                 "LAND_INTELLIGENCE_CONNECTION",
                 "Host=localhost;Port=5432;Database=land_intelligence_test;Username=test;Password=test");
         }
+
+        var testNicKey = Convert.ToBase64String(new byte[32]);
+        Environment.SetEnvironmentVariable("LEASE_INTEREST_NIC_ENCRYPTION_KEY", testNicKey);
+        Environment.SetEnvironmentVariable("LEASE_INTEREST_NIC_LOOKUP_KEY", testNicKey);
     }
 
     [Fact]
@@ -53,7 +57,7 @@ public sealed class LandIntelligenceDependencyInjectionTests
         using var provider = services.BuildServiceProvider();
         var evaluators = provider.GetServices<IRecommendationCriterionEvaluator>().ToList();
 
-        Assert.Equal(10, evaluators.Count);
+        Assert.Equal(8, evaluators.Count);
         Assert.Equal(
             evaluators.Count,
             evaluators.Select(e => e.GetType()).Distinct().Count());
@@ -72,8 +76,8 @@ public sealed class LandIntelligenceDependencyInjectionTests
         using var provider = services.BuildServiceProvider();
         var evaluators = provider.GetServices<IRecommendationCriterionEvaluator>().ToList();
 
-        Assert.Equal(20, evaluators.Count);
+        Assert.Equal(16, evaluators.Count);
         Assert.Equal(2, evaluators.Count(e => e.GetType().Name == nameof(PurposeAlignmentCriterionEvaluator)));
-        Assert.Equal(2, evaluators.Count(e => e.GetType().Name == nameof(RequiredAreaCriterionEvaluator)));
+        Assert.Equal(2, evaluators.Count(e => e.GetType().Name == nameof(TargetAreaCriterionEvaluator)));
     }
 }

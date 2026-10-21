@@ -1,3 +1,4 @@
+import { StatusBadge } from "@/shared/components/StatusBadge";
 import type {
   LandParcelResponse,
   LandRelationshipResponse,
@@ -10,6 +11,14 @@ import {
   restrictionSeverityLabels,
 } from "../utils/enumMappings";
 import { displayOrUnavailable, displayOrUnknown, formatArea } from "../utils/formatters";
+import {
+  gisCoverageBadgeTone,
+  gisCoverageStatusLabel,
+} from "../utils/gisCoverageStatus";
+import {
+  sourceReportedClaimantCategoryDisplay,
+  sourceReportedLandUseDisplay,
+} from "../utils/sourceReportedCadastre";
 import styles from "./ParcelDetails.module.css";
 import listStyles from "./Lists.module.css";
 
@@ -21,6 +30,9 @@ function DetailRow({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+const researchDemoUiEnabled =
+  process.env.NEXT_PUBLIC_LAND_INTELLIGENCE_RESEARCH_DEMO === "true";
 
 export function ParcelDetails({
   parcel,
@@ -49,21 +61,116 @@ export function ParcelDetails({
             value={displayOrUnavailable(parcel.identifier.surveyPlanReference)}
           />
           <DetailRow
-            label="Category"
+            label="Domain category"
             value={
-              landCategoryTypeLabels[parcel.category.type] ??
-              displayOrUnavailable(parcel.category.description)
+              parcel.cadastralSource
+                ? "Not classified (cadastre import — domain category unchanged)"
+                : landCategoryTypeLabels[parcel.category.type] ??
+                  displayOrUnavailable(parcel.category.description)
             }
           />
-          <DetailRow
-            label="Current use"
-            value={
-              parcel.currentUse
-                ? landUseTypeLabels[parcel.currentUse.type] ??
-                  displayOrUnavailable(parcel.currentUse.description)
-                : "Unavailable"
-            }
-          />
+          {parcel.cadastralSource ? (
+            <>
+              <DetailRow
+                label="Source-reported land use"
+                value={
+                  sourceReportedLandUseDisplay(parcel.cadastralSource) ||
+                  "Unavailable"
+                }
+              />
+              <DetailRow
+                label="Source-reported claimant category"
+                value={
+                  sourceReportedClaimantCategoryDisplay(parcel.cadastralSource) ||
+                  "Unavailable"
+                }
+              />
+              <DetailRow
+                label="Source parcel id"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.sourceFeatureId,
+                )}
+              />
+              <DetailRow
+                label="Source land-use code"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.sourceReportedLandUseCode,
+                )}
+              />
+              <DetailRow
+                label="Source land-use text"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.sourceReportedLandUseText,
+                )}
+              />
+              <DetailRow
+                label="Source parcel status code"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.sourceParcelStatusCode,
+                )}
+              />
+              <DetailRow
+                label="GN division index"
+                value={displayOrUnavailable(parcel.cadastralSource.gnIndex)}
+              />
+              <DetailRow
+                label="Source provenance"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.sourceProvenanceLabel,
+                )}
+              />
+              <DetailRow
+                label="Research record id"
+                value={displayOrUnavailable(
+                  parcel.cadastralSource.researchRecordId ??
+                    parcel.availability?.researchRecordId,
+                )}
+              />
+              <DetailRow
+                label="Lease availability (official)"
+                value={
+                  parcel.availability?.actualLeaseAvailabilityLabel ??
+                  "Not verified"
+                }
+              />
+              {parcel.availability?.projectLeaseReady ? (
+                <>
+                  <DetailRow
+                    label="Project designation"
+                    value={parcel.availability.projectLeaseReady.designationLabel}
+                  />
+                  <DetailRow
+                    label="Project designation notice"
+                    value={parcel.availability.projectLeaseReady.designationNotice}
+                  />
+                </>
+              ) : null}
+              {researchDemoUiEnabled &&
+              parcel.availability?.simulatedWorkflow ? (
+                <div className={styles.row}>
+                  <span className={styles.label}>Simulated workflow status</span>
+                  <span className={styles.value}>
+                    <StatusBadge tone="warning">
+                      {parcel.availability.simulatedWorkflow.simulatedLeaseStatus}
+                    </StatusBadge>
+                    <span className={styles.simulatedHint}>
+                      Simulated — not legal availability
+                    </span>
+                  </span>
+                </div>
+              ) : null}
+            </>
+          ) : (
+            <DetailRow
+              label="Current use"
+              value={
+                parcel.currentUse
+                  ? landUseTypeLabels[parcel.currentUse.type] ??
+                    displayOrUnavailable(parcel.currentUse.description)
+                  : "Unavailable"
+              }
+            />
+          )}
           <DetailRow
             label="Area"
             value={formatArea(parcel.area.value, parcel.area.unit)}
@@ -131,6 +238,49 @@ export function ParcelDetails({
         </div>
       </div>
 
+      <h3 className={styles.sectionTitle}>GIS enrichment</h3>
+      <div className={styles.card}>
+        {parcel.gisEnrichment ? (
+          <div className={styles.grid}>
+            <div className={styles.row}>
+              <span className={styles.label}>Overall status</span>
+              <span className={styles.value}>
+                <StatusBadge
+                  tone={gisCoverageBadgeTone(parcel.gisEnrichment.overallStatus)}
+                >
+                  {gisCoverageStatusLabel(parcel.gisEnrichment.overallStatus)}
+                </StatusBadge>
+              </span>
+            </div>
+            <DetailRow
+              label="GIS-detected district"
+              value={displayOrUnavailable(
+                parcel.gisEnrichment.detectedDistrict,
+              )}
+            />
+            <DetailRow
+              label="GIS-detected province"
+              value={displayOrUnavailable(
+                parcel.gisEnrichment.detectedProvince,
+              )}
+            />
+            <DetailRow
+              label="Enriched at (UTC)"
+              value={
+                parcel.gisEnrichment.enrichedAtUtc
+                  ? new Date(parcel.gisEnrichment.enrichedAtUtc).toISOString()
+                  : "Unavailable"
+              }
+            />
+            <p className={styles.noteText}>{parcel.gisEnrichment.assessmentNotice}</p>
+          </div>
+        ) : (
+          <p className={styles.noteText}>
+            GIS enrichment summary unavailable from the API.
+          </p>
+        )}
+      </div>
+
       <h3 className={styles.sectionTitle}>Spatial constraints</h3>
       {constraints.length === 0 ? (
         <div className={styles.note} role="note">
@@ -159,8 +309,15 @@ export function ParcelDetails({
 
       <h3 className={styles.sectionTitle}>Knowledge graph relationships</h3>
       <p className={styles.noteText}>
-        Loaded independently from Neo4j. A graph failure does not block parcel
-        facts above. Neo4j is not required for search or recommendations.
+        Loaded independently from the relationships API (Neo4j when configured,
+        otherwise PostGIS baseline). A graph failure does not block parcel facts
+        above. Neo4j is not required for search or recommendations.
+      </p>
+      <p className={styles.noteText}>
+        <a href={`/land-intelligence/knowledge-graph?parcelId=${parcel.id}`}>
+          Open relationship explorer
+        </a>{" "}
+        for {displayOrUnknown(parcel.identifier.cadastralNumber)}
       </p>
       {relationshipsLoading ? (
         <p className={listStyles.empty}>Loading relationships…</p>
@@ -174,29 +331,47 @@ export function ParcelDetails({
       !relationshipsError &&
       relationships &&
       relationships.length === 0 ? (
-        <p className={listStyles.empty}>No relationships returned.</p>
+        <div className={styles.note} role="note">
+          <p className={listStyles.empty}>No relationships returned.</p>
+          <p className={styles.noteText}>
+            Accurate empty result — edges are not invented. Populate Neo4j sync
+            and/or GIS enrichment snapshots, or open the explorer for setup
+            steps.
+          </p>
+        </div>
       ) : null}
       {relationships && relationships.length > 0 ? (
         <ul className={listStyles.list}>
-          {relationships.map((item, index) => (
-            <li
-              key={`${item.relationshipType}-${item.sourceNodeId}-${index}`}
-              className={listStyles.item}
-            >
-              <p className={listStyles.meta}>
-                <strong>{item.relationshipType}</strong>
-              </p>
-              <p>
-                {item.sourceNodeType} ({item.sourceNodeId}) →{" "}
-                {item.targetNodeType} ({item.targetNodeId})
-              </p>
-              {item.description ? (
+          {relationships.map((item, index) => {
+            const sourceLabel =
+              item.sourceNodeType === "LandParcel" &&
+              item.sourceNodeId === parcel.id
+                ? displayOrUnknown(parcel.identifier.cadastralNumber)
+                : `${item.sourceNodeType} (${item.sourceNodeId})`;
+            const targetLabel =
+              item.targetNodeType === "LandParcel" &&
+              item.targetNodeId === parcel.id
+                ? displayOrUnknown(parcel.identifier.cadastralNumber)
+                : `${item.targetNodeType} (${item.targetNodeId})`;
+            return (
+              <li
+                key={`${item.relationshipType}-${item.sourceNodeId}-${index}`}
+                className={listStyles.item}
+              >
                 <p className={listStyles.meta}>
-                  {displayOrUnavailable(item.description)}
+                  <strong>{item.relationshipType}</strong>
                 </p>
-              ) : null}
-            </li>
-          ))}
+                <p>
+                  {sourceLabel} → {targetLabel}
+                </p>
+                {item.description ? (
+                  <p className={listStyles.meta}>
+                    {displayOrUnavailable(item.description)}
+                  </p>
+                ) : null}
+              </li>
+            );
+          })}
         </ul>
       ) : null}
     </div>

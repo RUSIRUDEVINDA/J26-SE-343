@@ -136,6 +136,35 @@ public sealed class PostgresEarlyGovernanceScreeningStore : IEarlyGovernanceScre
         return entity is null ? null : MapReferral(entity);
     }
 
+    public async Task<IReadOnlyList<StoredEarlyGovernanceScreeningDto>> GetAssessmentHistoryByCaseIdAsync(
+        string caseId,
+        int limit = IEarlyGovernanceScreeningStore.DefaultHistoryLimit,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(caseId)) throw new ArgumentException("CaseId cannot be blank.", nameof(caseId));
+        if (limit is < 1 or > IEarlyGovernanceScreeningStore.MaxHistoryLimit)
+            throw new ArgumentOutOfRangeException(nameof(limit), $"Limit must be between 1 and {IEarlyGovernanceScreeningStore.MaxHistoryLimit}.");
+
+        var ids = await _dbContext.EarlyGovernanceScreeningEvaluations
+            .AsNoTracking()
+            .Where(item => item.CaseId == caseId)
+            .OrderByDescending(item => item.CreatedAtUtc)
+            .ThenByDescending(item => item.AssessmentId)
+            .Select(item => item.AssessmentId)
+            .Take(limit)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var results = new List<StoredEarlyGovernanceScreeningDto>(ids.Count);
+        foreach (var id in ids)
+        {
+            var assessment = await GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
+            if (assessment is not null) results.Add(assessment);
+        }
+
+        return results;
+    }
+
     public async Task<IReadOnlyList<StoredEarlyGovernanceReferralDto>> GetReferralHistoryByCaseIdAsync(
         string caseId,
         int limit,

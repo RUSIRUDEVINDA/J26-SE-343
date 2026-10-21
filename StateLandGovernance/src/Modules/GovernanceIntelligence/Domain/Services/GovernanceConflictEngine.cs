@@ -149,10 +149,23 @@ public sealed class GovernanceConflictEngine : IGovernanceConflictEngine
             "RegulatoryConflict" => "CONF_REGULATORY",
             "MandateOverlap" => "CONF_MANDATE",
             "LandUseIncompatibility" => "CONF_LANDUSE",
+            "DuplicateAllocation" => "CONF_DUP_ALLOC",
+            "ConflictingStatuses" => "CONF_STATUS",
+            "OverlappingLeasePeriod" => "CONF_OVERLAP_LEASE",
             _ => "CONF_CONFLICT"
         };
 
         return $"{prefix}_{hexDigest}";
+    }
+
+    private static string GetGeometryDisclaimer(GovernanceDecisionSnapshot a, GovernanceDecisionSnapshot b)
+    {
+        if (string.IsNullOrWhiteSpace(a.ParcelGeometry) || string.IsNullOrWhiteSpace(b.ParcelGeometry))
+        {
+            return " (Note: Reliable parcel geometry is unavailable; conflict identified via cadastral/subject identifier collision. Spatial overlap cannot be claimed without verified parcel geometry.)";
+        }
+
+        return " (Parcel geometry records attached for administrative boundary verification.)";
     }
 
     private static void EvaluatePairwiseConflicts(
@@ -168,6 +181,7 @@ public sealed class GovernanceConflictEngine : IGovernanceConflictEngine
         var rawDecisionIds = new[] { a.DecisionId, b.DecisionId };
         var sortedDecisionIds = rawDecisionIds.OrderBy(Normalize, StringComparer.Ordinal).ToList();
         var sortedInstitutions = new[] { a.InstitutionName, b.InstitutionName }.OrderBy(Normalize, StringComparer.Ordinal).ToList();
+        var geometryDisclaimer = GetGeometryDisclaimer(a, b);
 
         // 1. Contradictory Decisions Check
         if ((typeA == "APPROVAL" && typeB == "REJECTION") || (typeA == "REJECTION" && typeB == "APPROVAL"))
@@ -188,7 +202,7 @@ public sealed class GovernanceConflictEngine : IGovernanceConflictEngine
                     involvedInstitutions: sortedInstitutions,
                     subjectId: subjectId,
                     explanation: $"Contradictory outcomes issued for subject {subjectId}: " +
-                                 $"{firstDec.InstitutionName} issued an {firstDec.DecisionType} and {secondDec.InstitutionName} issued a {secondDec.DecisionType}.",
+                                 $"{firstDec.InstitutionName} issued an {firstDec.DecisionType} and {secondDec.InstitutionName} issued a {secondDec.DecisionType}.{geometryDisclaimer}",
                     evidenceRule: "Contradictory Outcomes Rule (RULE_CONTRADICTION): A single subject cannot simultaneously have both an active Approval and an active Rejection at the same authority level.",
                     recommendedAction: "Refer to Land Use Coordination Committee to resolve the conflicting status.",
                     detectionTimestamp: evaluationTimestamp
@@ -218,7 +232,7 @@ public sealed class GovernanceConflictEngine : IGovernanceConflictEngine
                     involvedDecisionIds: sortedDecisionIds,
                     involvedInstitutions: sortedInstitutions,
                     subjectId: subjectId,
-                    explanation: $"Authority level inconsistency detected on subject {subjectId}: {higher.InstitutionName} ({higher.AuthorityLevel}) issued a restrictive {higher.DecisionType} and {lower.InstitutionName} ({lower.AuthorityLevel}) issued a permissive {lower.DecisionType} during an overlapping period.",
+                    explanation: $"Authority level inconsistency detected on subject {subjectId}: {higher.InstitutionName} ({higher.AuthorityLevel}) issued a restrictive {higher.DecisionType} and {lower.InstitutionName} ({lower.AuthorityLevel}) issued a permissive {lower.DecisionType} during an overlapping period.{geometryDisclaimer}",
                     evidenceRule: "Authority Level Consistency Rule: Permissive decisions at a lower authority level overlap with restrictive decisions at a higher authority level.",
                     recommendedAction: "Refer to the Land Use Coordination Committee for human review of authority precedence and decision reconciliation.",
                     detectionTimestamp: evaluationTimestamp
@@ -245,7 +259,7 @@ public sealed class GovernanceConflictEngine : IGovernanceConflictEngine
                     involvedDecisionIds: sortedDecisionIds,
                     involvedInstitutions: sortedInstitutions,
                     subjectId: subjectId,
-                    explanation: $"Overlapping exclusive mandates detected on subject {subjectId} for mandate scope '{a.MandateKey}': Both {a.InstitutionName} and {b.InstitutionName} issued separate decisions.",
+                    explanation: $"Overlapping exclusive mandates detected on subject {subjectId} for mandate scope '{a.MandateKey}': Both {a.InstitutionName} and {b.InstitutionName} issued separate decisions.{geometryDisclaimer}",
                     evidenceRule: "Exclusive Mandate Rule: Multiple institutions cannot exercise exclusive mandate authorities concurrently for the same subject.",
                     recommendedAction: "Request jurisdictional clarification to resolve exclusive mandate boundary conflict.",
                     detectionTimestamp: evaluationTimestamp
@@ -283,7 +297,7 @@ public sealed class GovernanceConflictEngine : IGovernanceConflictEngine
                         involvedDecisionIds: sortedDecisionIds,
                         involvedInstitutions: sortedInstitutions,
                         subjectId: subjectId,
-                        explanation: $"Regulatory conflict detected for subject {subjectId}: Approval based on '{approval.RegulatoryReference}' is incompatible with restriction based on '{restriction.RegulatoryReference}' issued by {restriction.InstitutionName}.",
+                        explanation: $"Regulatory conflict detected for subject {subjectId}: Approval based on '{approval.RegulatoryReference}' is incompatible with restriction based on '{restriction.RegulatoryReference}' issued by {restriction.InstitutionName}.{geometryDisclaimer}",
                         evidenceRule: "Regulatory Consistency Rule: Explicitly incompatible regulatory references cannot be co-applied with conflicting outcomes on the same land parcel.",
                         recommendedAction: "Submit the file for legal counsel review to reconcile conflicting regulatory references.",
                         detectionTimestamp: evaluationTimestamp
@@ -318,9 +332,95 @@ public sealed class GovernanceConflictEngine : IGovernanceConflictEngine
                     involvedDecisionIds: sortedDecisionIds,
                     involvedInstitutions: sortedInstitutions,
                     subjectId: subjectId,
-                    explanation: $"Land use incompatibility detected on subject {subjectId}: Land use '{sortedLandUses[0]}' is incompatible with land use '{sortedLandUses[1]}'.",
+                    explanation: $"Land use incompatibility detected on subject {subjectId}: Land use '{sortedLandUses[0]}' is incompatible with land use '{sortedLandUses[1]}'.{geometryDisclaimer}",
                     evidenceRule: "Land Use Compatibility Rule: Explicitly incompatible land use codes cannot coexist on the same subject.",
                     recommendedAction: "Refer to zoning or municipal planning board for compatibility reconciliation.",
+                    detectionTimestamp: evaluationTimestamp
+                ));
+            }
+        }
+
+        // 6. Duplicate Allocation / Overlapping Lease Period Check
+        if (typeA == "APPROVAL" && typeB == "APPROVAL")
+        {
+            bool hasApplicants = !string.IsNullOrWhiteSpace(a.ApplicantId) && !string.IsNullOrWhiteSpace(b.ApplicantId);
+            bool differentApplicants = hasApplicants && Normalize(a.ApplicantId) != Normalize(b.ApplicantId);
+            bool sameApplicantDuplicate = hasApplicants && Normalize(a.ApplicantId) == Normalize(b.ApplicantId);
+            bool activeLeaseStatus = Normalize(a.RecordStatus) == "ALLOCATED" || Normalize(b.RecordStatus) == "ALLOCATED" ||
+                                     Normalize(a.RecordStatus) == "ACTIVE_LEASE" || Normalize(b.RecordStatus) == "ACTIVE_LEASE" ||
+                                     Normalize(a.RecordStatus) == "LEASE_ISSUED" || Normalize(b.RecordStatus) == "LEASE_ISSUED" ||
+                                     Normalize(a.RecordStatus) == "DUPLICATE_ALLOCATION" || Normalize(b.RecordStatus) == "DUPLICATE_ALLOCATION";
+            bool isExplicitLeaseAllocation = (Normalize(a.ProposedUse).StartsWith("LEASE") || Normalize(b.ProposedUse).StartsWith("LEASE")) &&
+                                             Normalize(a.InstitutionName) == Normalize(b.InstitutionName);
+
+            if (differentApplicants || sameApplicantDuplicate || activeLeaseStatus || isExplicitLeaseAllocation)
+            {
+                string details;
+                if (Normalize(a.InstitutionName) == Normalize(b.InstitutionName))
+                {
+                    details = $"Multiple active approvals ({a.DecisionId} and {b.DecisionId}) issued by {a.InstitutionName}";
+                }
+                else
+                {
+                    details = $"Overlapping active approvals issued by separate institutions ({a.InstitutionName} [{a.DecisionId}] and {b.InstitutionName} [{b.DecisionId}])";
+                }
+
+                string applicantInfo = string.Empty;
+                if (differentApplicants)
+                {
+                    applicantInfo = $" Conflicting allocation to distinct parties: '{a.ApplicantId}' and '{b.ApplicantId}'.";
+                }
+                else if (sameApplicantDuplicate)
+                {
+                    applicantInfo = $" Duplicate allocation/application identified for the same applicant: '{a.ApplicantId}'.";
+                }
+
+                var explanation = $"Potential duplicate allocation detected on subject {subjectId}: {details} during an overlapping period.{applicantInfo}{geometryDisclaimer}";
+
+                conflicts.Add(new DetectedConflict(
+                    conflictId: GenerateDeterministicConflictId("DuplicateAllocation", subjectId, rawDecisionIds),
+                    conflictType: "DuplicateAllocation",
+                    severity: "Critical",
+                    detectionStatus: "Detected",
+                    involvedDecisionIds: sortedDecisionIds,
+                    involvedInstitutions: sortedInstitutions,
+                    subjectId: subjectId,
+                    explanation: explanation,
+                    evidenceRule: "Allocation Exclusivity Rule (RULE_ALLOCATION_EXCLUSIVITY): A state land parcel cannot have multiple concurrent active approvals or lease allocations during overlapping time periods without administrative reconciliation.",
+                    recommendedAction: "Submit to Land Administration Review Board for administrative review to resolve duplicate allocation.",
+                    detectionTimestamp: evaluationTimestamp
+                ));
+            }
+        }
+
+        // 7. Conflicting Lifecycle / Operational Record Status Check
+        if (!string.IsNullOrWhiteSpace(a.RecordStatus) || !string.IsNullOrWhiteSpace(b.RecordStatus))
+        {
+            string statusA = Normalize(a.RecordStatus);
+            string statusB = Normalize(b.RecordStatus);
+            bool isActiveA = statusA == "ACTIVE" || statusA == "APPROVED" || statusA == "ALLOCATED" || (typeA == "APPROVAL" && string.IsNullOrEmpty(statusA));
+            bool isActiveB = statusB == "ACTIVE" || statusB == "APPROVED" || statusB == "ALLOCATED" || (typeB == "APPROVAL" && string.IsNullOrEmpty(statusB));
+            bool isRestrictedA = statusA == "REVOKED" || statusA == "CANCELLED" || statusA == "TERMINATED" || statusA == "RESTRICTED" || statusA == "SUSPENDED";
+            bool isRestrictedB = statusB == "REVOKED" || statusB == "CANCELLED" || statusB == "TERMINATED" || statusB == "RESTRICTED" || statusB == "SUSPENDED";
+
+            if ((isActiveA && isRestrictedB) || (isActiveB && isRestrictedA))
+            {
+                var active = (isActiveA && !isRestrictedA) ? a : b;
+                var restricted = isRestrictedA ? a : b;
+
+                var explanation = $"Conflicting record status detected on subject {subjectId}: Record '{active.DecisionId}' has active/permissive status while record '{restricted.DecisionId}' has restrictive status '{restricted.RecordStatus}' during an overlapping period.{geometryDisclaimer}";
+
+                conflicts.Add(new DetectedConflict(
+                    conflictId: GenerateDeterministicConflictId("ConflictingStatuses", subjectId, rawDecisionIds),
+                    conflictType: "ConflictingStatuses",
+                    severity: "Critical",
+                    detectionStatus: "Detected",
+                    involvedDecisionIds: sortedDecisionIds,
+                    involvedInstitutions: sortedInstitutions,
+                    subjectId: subjectId,
+                    explanation: explanation,
+                    evidenceRule: "Record Lifecycle Status Rule (RULE_RECORD_LIFECYCLE): An active lease or allocation record cannot coexist with a revoked, cancelled, or terminated record for the same subject during an overlapping period without administrative verification.",
+                    recommendedAction: "Submit to Land Registrar for administrative verification of lease lifecycle status.",
                     detectionTimestamp: evaluationTimestamp
                 ));
             }

@@ -145,16 +145,6 @@ internal sealed class HambantotaPilotValidationService : IHambantotaPilotValidat
             RequiredLandCategory = LandCategoryType.StateLand,
             RequiredLandUse = purpose,
             RequiredAreaHectares = 0.5m,
-            Accessibility = new AccessibilityCriteria
-            {
-                RequireRoadAccess = request.RequireRoadAccess,
-                MaxRoadDistanceMeters = request.MaxRoadDistanceMeters
-            },
-            Environmental = new EnvironmentalCriteria
-            {
-                MaxAllowedEnvironmentalSeverity = RestrictionSeverity.Medium,
-                RejectProhibitiveEnvironmentalRestrictions = true
-            },
             MaxResults = 5
         };
 

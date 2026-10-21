@@ -10,8 +10,19 @@ Components 3–4 remain module placeholders (`lease-feasibility`, `governance-in
 
 - Node.js 20+
 - ASP.NET `StateLandGovernance.Api` running locally (default `http://localhost:5264`)
-- PostgreSQL / PostGIS for Land Intelligence (configure via repository-root `.env` —
-  never point automated checks at a shared production database)
+- PostgreSQL / PostGIS with the **Component 1 research demo** database imported:
+  - **Recommended for J26-SE-343:** `land_intel_colombo_state_research` (300 parcels).
+    See `StateLandGovernance/docs/COLOMBO_STATE_RESEARCH_300_IMPORT.md` and
+    `StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md`.
+  - Full cadastre pilots (`land_intel_colombo_real_demo` / `real_pilot`) are separate;
+    see `StateLandGovernance/docs/COLOMBO_REAL_PARCEL_IMPORT.md`.
+- Do **not** point the normal UI at `land_intel_colombo_demo` (`DEMO-*` fixtures).
+
+Imported parcels show **source-reported land use** from Survey Department/iLAS
+metadata. That data does **not** prove ownership, legal availability, or suitability.
+**Project lease-ready** is a research screening designation only. **Official lease
+availability** remains unknown / not verified unless an authoritative record exists
+(see customer release plan — not implemented for production leasing).
 
 ## Setup
 
@@ -21,14 +32,15 @@ Copy-Item .env.local.example .env.local
 npm install
 ```
 
+Set repository-root `.env` `LAND_INTELLIGENCE_CONNECTION` to the research DB for the
+standard Component 1 demo.
+
 ## Run (PowerShell)
 
 ```powershell
-# Terminal 1 — API (Development). Uses LAND_INTELLIGENCE_CONNECTION from repo-root .env.
+# Terminal 1 — API (LAND_INTELLIGENCE_CONNECTION in repo-root .env)
 cd StateLandGovernance
-$env:ASPNETCORE_ENVIRONMENT = "Development"
-$env:ASPNETCORE_URLS = "http://127.0.0.1:5264"
-dotnet run --project src\Api\StateLandGovernance.Api.csproj --urls http://127.0.0.1:5264
+.\run-api.ps1
 
 # Terminal 2 — frontend
 cd StateLandGovernance.Web
@@ -48,42 +60,58 @@ cd StateLandGovernance.Web
 npm run lint
 npx tsc --noEmit
 npm run build
+npm run test:component-01
 ```
 
-## Environment
+## Environment (Component 1)
 
 | Variable | Description |
 |----------|-------------|
 | `NEXT_PUBLIC_API_BASE_URL` | Base URL for the ASP.NET API (see `.env.local.example`) |
+| `NEXT_PUBLIC_LAND_INTELLIGENCE_RESEARCH_DEMO` | `true` for research-demo banners / simulated labels |
+| `NEXT_PUBLIC_LAND_INTELLIGENCE_DEMO_OWNER_HEADER` | Dev-only owner-header fallback — **never** for production builds |
 
 Experimental Colombo ML remains **disabled** in committed API configuration.
-Do not enable it for normal frontend demos.
+Do not enable it for normal frontend use. Standard ML (port 8500) is optional and
+supplementary; 80% held-out accuracy is **not** claimed.
 
 ## Routes (Component 1)
 
 | Route | Purpose |
 |-------|---------|
 | `/` | Module landing |
-| `/land-intelligence` | Dashboard |
+| `/land-intelligence` | Dashboard (metrics, GIS coverage) |
 | `/land-intelligence/find-suitable-land` | Recommendation search form |
 | `/land-intelligence/recommendations` | Session-stored search results |
 | `/land-intelligence/parcels` | Parcel catalog |
-| `/land-intelligence/parcels/[parcelId]` | Parcel details + constraints + optional relationships |
-| `/land-intelligence/knowledge-graph` | Relationship lookup by parcel id |
+| `/land-intelligence/parcels/[parcelId]` | Parcel details + constraints + KG link |
+| `/land-intelligence/parcels/[parcelId]/map` | Map |
+| `/land-intelligence/parcels/[parcelId]/lease-interest` | Start / resume lease interest (no draft on view alone) |
+| `/land-intelligence/shortlist` | Saved parcels |
+| `/land-intelligence/my-requests` | Drafts vs submitted requests |
+| `/land-intelligence/my-requests/[requestId]` | Request status timeline |
+| `/land-intelligence/knowledge-graph?parcelId=` | Relationship explorer |
+| `/land-intelligence/officer/lease-interest-queue` | Officer queue (demo gate) |
+| `/land-intelligence/officer/lease-interest-lookup` | Officer NIC lookup (demo gate) |
+| `/land-intelligence/officer/lease-interest-review/[requestId]` | Officer review |
 | `/land-intelligence/parcel-intelligence` | Legacy redirect → `/parcels` |
 
-## API mappings
+## API mappings (Component 1)
 
 | UI action | HTTP |
 |-----------|------|
-| Search suitable land | `POST /api/v1/land/recommendations` |
+| Search suitable land | **`POST /api/v1/land/recommendations`** (not `/recommendations/search`) |
+| Parcel catalog search | `POST /api/v1/land/search` |
 | List parcels | `GET /api/v1/land/parcels` |
+| Metrics / GIS coverage | `GET /api/v1/land/parcels/metrics`, `…/gis-coverage` |
 | Parcel facts | `GET /api/v1/land/parcels/{id}` |
 | Constraints | `GET /api/v1/land/parcels/{id}/constraints` |
 | Relationships | `GET /api/v1/land/parcels/{id}/relationships` |
+| Find lease interest for parcel | `GET /api/v1/land/me/parcels/{id}/lease-interest` (204 if none) |
+| Start draft | `POST /api/v1/land/me/parcels/{id}/lease-interest/draft` |
+| Research demo config | `GET /api/v1/land/research-demo/config` |
 
-Form fields that are not on the recommendation DTO (water proximity, soil group,
-free-text extras) are shown disabled and are never submitted.
+Full route list and flags: `StateLandGovernance/docs/COMPONENT_01_LAND_INTELLIGENCE_RELEASE.md`.
 
 ## Production ML
 

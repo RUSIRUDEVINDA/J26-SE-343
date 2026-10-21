@@ -1,0 +1,50 @@
+{
+  "real": {
+    "support": 200,
+    "helped": 7,
+    "hurt": 3,
+    "net_gain": 4,
+    "both_correct": 151,
+    "both_wrong_same_prediction": 39,
+    "both_wrong_different_predictions": 0,
+    "prediction_changes": 10,
+    "per_class_correct_count_changes": {
+      "Administrative / Procedural / Integrity": -1,
+      "Lease Revenue / Payment / Enforcement": 2,
+      "Unauthorized Allocation / Transfer / Use": 2,
+      "Protected / Environmental Lease Misuse": 1
+    }
+  },
+  "synthetic": {
+    "support": 225,
+    "helped": 28,
+    "hurt": 3,
+    "net_gain": 25,
+    "both_correct": 184,
+    "both_wrong_same_prediction": 9,
+    "both_wrong_different_predictions": 1,
+    "prediction_changes": 32,
+    "per_class_correct_count_changes": {
+      "Administrative / Procedural / Integrity": -1,
+      "Lease Revenue / Payment / Enforcement": 11,
+      "Unauthorized Allocation / Transfer / Use": 10,
+      "Protected / Environmental Lease Misuse": 5
+    }
+  },
+  "combined": {
+    "support": 425,
+    "helped": 35,
+    "hurt": 6,
+    "net_gain": 29,
+    "both_correct": 335,
+    "both_wrong_same_prediction": 48,
+    "both_wrong_different_predictions": 1,
+    "prediction_changes": 42,
+    "per_class_correct_count_changes": {
+      "Administrative / Procedural / Integrity": -2,
+      "Lease Revenue / Payment / Enforcement": 13,
+      "Unauthorized Allocation / Transfer / Use": 12,
+      "Protected / Environmental Lease Misuse": 6
+    }
+  }
+}

@@ -85,26 +85,15 @@ public sealed class LandParcelGisRecommendationIntegrationTests : IAsyncLifetime
             RequiredLandCategory = LandCategoryType.StateLand,
             RequiredLandUse = LandUseType.Agricultural,
             RequiredAreaHectares = 0.5m,
-            Accessibility = new AccessibilityCriteria
-            {
-                RequireRoadAccess = true,
-                MaxRoadDistanceMeters = 20000m
-            },
-            Environmental = new EnvironmentalCriteria
-            {
-                MaxAllowedEnvironmentalSeverity = RestrictionSeverity.Medium,
-                RejectProhibitiveEnvironmentalRestrictions = true
-            },
             MaxResults = 1
         });
 
         var recommendation = Assert.Single(response.Recommendations);
         Assert.Equal(parcel.Id, recommendation.ParcelId);
 
-        var accessibility = recommendation.MatchingCriteria
-            .Concat(recommendation.FailedCriteria)
-            .Single(criterion => criterion.Key == "accessibility");
-        Assert.Contains("Nearest mapped road", accessibility.Summary, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(
+            recommendation.MatchingCriteria.Concat(recommendation.FailedCriteria),
+            criterion => criterion.Key is "accessibility" or "water-proximity" or "soil-group" or "environmental");
 
         Assert.Contains(recommendation.Evidence, evidence =>
             evidence.Description.Contains("GIS-derived soil group", StringComparison.OrdinalIgnoreCase));

@@ -1,5 +1,6 @@
 using System;
 using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
+using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 
 namespace StateLandGovernance.GovernanceIntelligence.Domain.Entities;
 
@@ -14,8 +15,14 @@ public sealed class GovernanceAuditRecord
     public string Status { get; }
     public string Details { get; }
     public DateTime Timestamp { get; }
+    public string HashVersion { get; }
 
     private GovernanceAuditRecord(Guid id, EngineType engineType, string actionName, string status, string details, DateTime timestamp)
+        : this(id, engineType, actionName, status, details, timestamp, GovernanceAuditHasher.CurrentFormatVersion)
+    {
+    }
+
+    private GovernanceAuditRecord(Guid id, EngineType engineType, string actionName, string status, string details, DateTime timestamp, string hashVersion)
     {
         Id = id;
         EngineType = engineType;
@@ -23,6 +30,7 @@ public sealed class GovernanceAuditRecord
         Status = status;
         Details = details;
         Timestamp = timestamp;
+        HashVersion = hashVersion;
     }
 
     /// <summary>
@@ -50,5 +58,28 @@ public sealed class GovernanceAuditRecord
             status ?? "Unknown",
             details ?? string.Empty,
             timestamp);
+    }
+
+    /// <summary>
+    /// Rehydrates an immutable audit record using the persisted canonical hash protocol version.
+    /// Rows created before version metadata existed are interpreted as the original AUDIT-V1 protocol.
+    /// </summary>
+    public static GovernanceAuditRecord Rehydrate(
+        Guid id,
+        EngineType engineType,
+        string actionName,
+        string status,
+        string details,
+        DateTime timestamp,
+        string? hashVersion)
+    {
+        return new GovernanceAuditRecord(
+            id,
+            engineType,
+            actionName,
+            status,
+            details,
+            timestamp,
+            string.IsNullOrWhiteSpace(hashVersion) ? GovernanceAuditHasher.AuditV1 : hashVersion);
     }
 }

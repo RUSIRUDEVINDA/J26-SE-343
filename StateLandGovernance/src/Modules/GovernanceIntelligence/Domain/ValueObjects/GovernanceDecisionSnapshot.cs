@@ -26,6 +26,11 @@ public sealed record GovernanceDecisionSnapshot
     public string LandUseCode { get; init; }
     public IReadOnlyList<string> IncompatibleLandUseCodes { get; init; }
 
+    // Land administration entity references
+    public string ApplicantId { get; init; }
+    public string ParcelGeometry { get; init; }
+    public string RecordStatus { get; init; }
+
     public GovernanceDecisionSnapshot(
         string decisionId,
         string subjectId,
@@ -40,7 +45,10 @@ public sealed record GovernanceDecisionSnapshot
         string? mandateKey = null,
         string? mandateMode = null,
         string? landUseCode = null,
-        IReadOnlyList<string>? incompatibleLandUseCodes = null)
+        IReadOnlyList<string>? incompatibleLandUseCodes = null,
+        string? applicantId = null,
+        string? parcelGeometry = null,
+        string? recordStatus = null)
     {
         DecisionId = decisionId;
         SubjectId = subjectId;
@@ -64,5 +72,9 @@ public sealed record GovernanceDecisionSnapshot
         IncompatibleLandUseCodes = incompatibleLandUseCodes != null
             ? incompatibleLandUseCodes.ToList().AsReadOnly()
             : Array.Empty<string>();
+
+        ApplicantId = applicantId ?? string.Empty;
+        ParcelGeometry = parcelGeometry ?? string.Empty;
+        RecordStatus = recordStatus ?? string.Empty;
     }
 }

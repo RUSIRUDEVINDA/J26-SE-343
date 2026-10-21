@@ -206,6 +206,11 @@ public sealed class EarlyGovernanceReferralOrchestrationTests
         public Task<StoredEarlyGovernanceScreeningDto?> GetByIdAsync(Guid assessmentId,
             CancellationToken cancellationToken = default) => Task.FromResult<StoredEarlyGovernanceScreeningDto?>(null);
 
+        public Task<IReadOnlyList<StoredEarlyGovernanceScreeningDto>> GetAssessmentHistoryByCaseIdAsync(
+            string caseId, int limit = IEarlyGovernanceScreeningStore.DefaultHistoryLimit,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<StoredEarlyGovernanceScreeningDto>>([]);
+
         public Task<StoredEarlyGovernanceReferralDto?> GetReferralByIdAsync(Guid referralId,
             CancellationToken cancellationToken = default) => Task.FromResult(CurrentReferral);
 

@@ -1,10 +1,14 @@
 import { apiGet, apiPost } from "@/lib/apiClient";
 import type {
+  LandIntelligenceGisCoverageResponse,
+  LandParcelMetricsResponse,
   LandParcelResponse,
   LandRecommendationSearchRequest,
   LandRecommendationSearchResultsResponse,
   LandRelationshipsResponse,
   LandSearchResultsResponse,
+  ResearchSupplementParcelResponse,
+  SourceReportedLandUseOptionResponse,
   SpatialConstraintResponse,
 } from "../types/landIntelligence";
 
@@ -42,6 +46,7 @@ export type ListParcelsParams = {
   pageSize?: number;
   district?: string;
   province?: string;
+  sourceReportedLandUse?: string;
 };
 
 export async function listParcels(
@@ -57,14 +62,47 @@ export async function listParcels(
   if (params.province) {
     search.set("province", params.province);
   }
+  if (params.sourceReportedLandUse) {
+    search.set("sourceReportedLandUse", params.sourceReportedLandUse);
+  }
   return apiGet<LandSearchResultsResponse>(
     `/api/v1/land/parcels?${search.toString()}`,
   );
 }
 
+export async function listSourceReportedLandUseOptions(): Promise<
+  SourceReportedLandUseOptionResponse[]
+> {
+  return apiGet<SourceReportedLandUseOptionResponse[]>(
+    "/api/v1/land/parcels/source-reported-land-use-options",
+  );
+}
+
+export async function listResearchSupplement(): Promise<ResearchSupplementParcelResponse[]> {
+  return apiGet<ResearchSupplementParcelResponse[]>(
+    "/api/v1/land/parcels/research-supplement",
+  );
+}
+
+export async function listDerivedSoilGroupOptions(
+  district?: string,
+): Promise<string[]> {
+  const search = new URLSearchParams();
+  if (district?.trim()) {
+    search.set("district", district.trim());
+  }
+  const suffix = search.toString() ? `?${search.toString()}` : "";
+  const response = await apiGet<{ options: string[] }>(
+    `/api/v1/land/parcels/derived-soil-group-options${suffix}`,
+  );
+  return response.options ?? [];
+}
+
 /** Loads every parcel page (API page size max 100). */
-export async function listAllParcels(): Promise<LandSearchResultsResponse> {
-  const first = await listParcels({ page: 1, pageSize: 100 });
+export async function listAllParcels(
+  params: Omit<ListParcelsParams, "page" | "pageSize"> = {},
+): Promise<LandSearchResultsResponse> {
+  const first = await listParcels({ ...params, page: 1, pageSize: 100 });
   if (first.totalCount <= first.results.length) {
     return first;
   }
@@ -72,7 +110,7 @@ export async function listAllParcels(): Promise<LandSearchResultsResponse> {
   const combined = [...first.results];
   let page = 2;
   while (combined.length < first.totalCount) {
-    const next = await listParcels({ page, pageSize: 100 });
+    const next = await listParcels({ ...params, page, pageSize: 100 });
     combined.push(...next.results);
     if (next.results.length === 0) {
       break;
@@ -90,4 +128,14 @@ export async function listAllParcels(): Promise<LandSearchResultsResponse> {
 
 export async function listParcelsSummary(): Promise<LandSearchResultsResponse> {
   return listParcels({ page: 1, pageSize: 1 });
+}
+
+export async function getLandParcelMetrics(): Promise<LandParcelMetricsResponse> {
+  return apiGet<LandParcelMetricsResponse>("/api/v1/land/parcels/metrics");
+}
+
+export async function getLandIntelligenceGisCoverage(): Promise<LandIntelligenceGisCoverageResponse> {
+  return apiGet<LandIntelligenceGisCoverageResponse>(
+    "/api/v1/land/parcels/gis-coverage",
+  );
 }

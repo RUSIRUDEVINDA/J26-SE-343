@@ -73,10 +73,39 @@ public sealed class PostgresComplaintClassificationAssessmentStore
             .SingleOrDefaultAsync(item => item.AssessmentId == assessmentId, cancellationToken)
             .ConfigureAwait(false);
 
-        if (entity is null)
+        return entity is null ? null : Map(entity);
+    }
+
+    public async Task<IReadOnlyList<ComplaintClassificationAssessment>> GetByCaseIdAsync(
+        string caseId,
+        int limit = IComplaintClassificationAssessmentStore.DefaultHistoryLimit,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (string.IsNullOrWhiteSpace(caseId))
         {
-            return null;
+            throw new ArgumentException("CaseId cannot be blank.", nameof(caseId));
         }
+
+        if (limit is < 1 or > IComplaintClassificationAssessmentStore.MaxHistoryLimit)
+        {
+            throw new ArgumentOutOfRangeException(nameof(limit));
+        }
+
+        var entities = await _dbContext.ComplaintClassificationAssessments
+            .AsNoTracking()
+            .Where(item => item.CaseId == caseId)
+            .OrderByDescending(item => item.AssessedAtUtc)
+            .ThenByDescending(item => item.AssessmentId)
+            .Take(limit)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        return entities.Select(Map).ToList();
+    }
+
+    private static ComplaintClassificationAssessment Map(ComplaintClassificationAssessmentEntity entity)
+    {
 
         var probabilities = new ReadOnlyDictionary<string, double>(
             new Dictionary<string, double>(StringComparer.Ordinal)

@@ -77,7 +77,10 @@ public sealed class DetectConflictsCommandHandler
                 mandateKey: d.MandateKey,
                 mandateMode: d.MandateMode,
                 landUseCode: d.LandUseCode,
-                incompatibleLandUseCodes: d.IncompatibleLandUseCodes));
+                incompatibleLandUseCodes: d.IncompatibleLandUseCodes,
+                applicantId: d.ApplicantId,
+                parcelGeometry: d.ParcelGeometry,
+                recordStatus: d.RecordStatus));
         }
 
         // 2. Evaluate conflicts using the domain engine with the unified timestamp

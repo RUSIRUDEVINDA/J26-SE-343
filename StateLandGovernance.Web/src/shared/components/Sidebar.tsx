@@ -2,14 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { getResearchDemoConfig } from "@/modules/component-01-land-intelligence/services/researchDemoApi";
 import {
   component01NavItems,
   LAND_INTELLIGENCE_BASE,
+  officerLeaseInterestLookupNavItem,
+  officerLeaseInterestQueueNavItem,
+  type NavItem,
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
 
-function isActive(pathname: string, href: string): boolean {
-  if (href === LAND_INTELLIGENCE_BASE) {
+function isActive(pathname: string, href: string, basePath: string): boolean {
+  if (href === basePath) {
     return pathname === href;
   }
   if (href.endsWith("/parcels")) {
@@ -22,23 +27,86 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Sidebar() {
+export function Sidebar({
+  items = component01NavItems,
+  label = "Land Intelligence navigation",
+  basePath = LAND_INTELLIGENCE_BASE,
+  compactMobile = false,
+}: {
+  items?: NavItem[];
+  label?: string;
+  basePath?: string;
+  compactMobile?: boolean;
+}) {
   const pathname = usePathname();
+  const [officerLookupEnabled, setOfficerLookupEnabled] = useState(false);
+  const isLandIntelligenceNav = basePath === LAND_INTELLIGENCE_BASE;
+
+  useEffect(() => {
+    if (!isLandIntelligenceNav) {
+      return;
+    }
+    let cancelled = false;
+    void getResearchDemoConfig()
+      .then((config) => {
+        if (!cancelled) {
+          setOfficerLookupEnabled(config.officerLeaseInterestNicLookupEnabled);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setOfficerLookupEnabled(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isLandIntelligenceNav]);
+
+  const navItems = useMemo((): NavItem[] => {
+    if (!isLandIntelligenceNav || !officerLookupEnabled) {
+      return items;
+    }
+    const alreadyPresent = items.some(
+      (item) => item.href === officerLeaseInterestQueueNavItem.href,
+    );
+    if (alreadyPresent) {
+      return items;
+    }
+    return [
+      ...items,
+      officerLeaseInterestQueueNavItem,
+      officerLeaseInterestLookupNavItem,
+    ];
+  }, [items, isLandIntelligenceNav, officerLookupEnabled]);
 
   return (
-    <aside className={styles.sidebar} aria-label="Land Intelligence navigation">
+    <aside
+      className={`${styles.sidebar} ${compactMobile ? styles.compactMobile : ""}`}
+      aria-label={label}
+    >
       <nav className={styles.nav}>
-        {component01NavItems.map((item) => {
-          const active = isActive(pathname, item.href);
+        {navItems.map((item) => {
+          const active = isActive(pathname, item.href, basePath);
+          const className = [
+            styles.link,
+            active ? styles.active : styles.inactive,
+            item.primary && !active ? styles.primaryAction : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
+
           return (
             <Link
               key={item.label}
               href={item.href}
-              className={`${styles.link} ${active ? styles.active : styles.inactive}`}
+              className={className}
               aria-current={active ? "page" : undefined}
             >
-              <span aria-hidden="true">{item.icon} </span>
-              {item.label}
+              <span className={styles.icon} aria-hidden="true">
+                {item.icon}
+              </span>
+              <span className={styles.label}>{item.label}</span>
             </Link>
           );
         })}

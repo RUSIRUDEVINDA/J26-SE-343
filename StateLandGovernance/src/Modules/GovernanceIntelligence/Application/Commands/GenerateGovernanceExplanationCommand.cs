@@ -27,15 +27,18 @@ public sealed class GenerateGovernanceExplanationCommandHandler
     private readonly IExplainableGovernanceEngine _explanationEngine;
     private readonly IGovernanceEvaluationStore _evaluationStore;
     private readonly TimeProvider _timeProvider;
+    private readonly IGovernanceExplanationSimplifier? _explanationSimplifier;
 
     public GenerateGovernanceExplanationCommandHandler(
         IExplainableGovernanceEngine explanationEngine,
         IGovernanceEvaluationStore evaluationStore,
-        TimeProvider timeProvider)
+        TimeProvider timeProvider,
+        IGovernanceExplanationSimplifier? explanationSimplifier = null)
     {
         _explanationEngine = explanationEngine ?? throw new ArgumentNullException(nameof(explanationEngine));
         _evaluationStore = evaluationStore ?? throw new ArgumentNullException(nameof(evaluationStore));
         _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+        _explanationSimplifier = explanationSimplifier;
     }
 
     public async Task<GovernanceExplanationResultDto> HandleAsync(GenerateGovernanceExplanationCommand command, CancellationToken cancellationToken = default)
@@ -68,13 +71,43 @@ public sealed class GenerateGovernanceExplanationCommandHandler
         // 2. Synthesize explanation using Domain Engine
         var domainResult = _explanationEngine.SynthesizeExplanation(domainInput, utcTimestamp);
 
+        var simplification = GovernanceExplanationSimplificationResult.NotApplied("NotConfigured");
+        if (_explanationSimplifier is not null)
+        {
+            var simplificationItems = domainResult.Explanations.Select(i =>
+                new GovernanceExplanationSimplificationItem(
+                    i.ItemId,
+                    i.Title,
+                    i.OutcomeStatus,
+                    i.Severity.ToString(),
+                    i.ReasonCode,
+                    i.EvidenceSummaries,
+                    i.RecommendedAction)).ToList();
+
+            try
+            {
+                simplification = await _explanationSimplifier.SimplifyAsync(
+                    new GovernanceExplanationSimplificationRequest(simplificationItems),
+                    cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch
+            {
+                // Explanation enhancement is optional. The deterministic governance result remains authoritative.
+                simplification = GovernanceExplanationSimplificationResult.NotApplied("EnhancementFailure");
+            }
+        }
+
         // 3. Record Audit Metadata (Privacy Safe: NO raw SubjectId, NO PII, NO sensitive payloads)
         int sourceCount = (domainInput.ComplianceEvidence != null ? 1 : 0) +
                           (domainInput.ConflictEvidence != null ? 1 : 0) +
                           (domainInput.RiskEvidence != null ? 1 : 0);
 
         string auditStatus = domainResult.RequiresHumanReview ? "ElevatedGovernanceAttentionRequired" : "ExplanationGenerated";
-        string auditDetails = $"Evaluation completed across {sourceCount} source engines. Generated {domainResult.Explanations.Count} explanation items. Highest severity: {domainResult.OverallSeverity}. Human review required: {domainResult.RequiresHumanReview}.";
+        string auditDetails = $"Evaluation completed across {sourceCount} source engines. Generated {domainResult.Explanations.Count} explanation items. Highest severity: {domainResult.OverallSeverity}. Human review required: {domainResult.RequiresHumanReview}. Plain-language enhancement: {simplification.Status}; Provider: {simplification.Provider}; Model: {simplification.Model}; PromptVersion: {simplification.PromptVersion}; OutputHash: {simplification.OutputHash ?? "None"}.";
 
         var auditRecord = GovernanceAuditRecord.Create(
             EngineType.ExplainableGovernance,
@@ -93,7 +126,9 @@ public sealed class GenerateGovernanceExplanationCommandHandler
             i.Severity.ToString(),
             i.ReasonCode,
             i.Title,
-            i.PlainLanguageExplanation,
+            simplification.PlainLanguageExplanations.TryGetValue(i.ItemId, out var simplifiedText)
+                ? simplifiedText
+                : i.PlainLanguageExplanation,
             i.EvidenceSummaries,
             i.RecommendedAction,
             i.RequiresHumanAttention)).ToList();
@@ -105,7 +140,14 @@ public sealed class GenerateGovernanceExplanationCommandHandler
             domainResult.RequiresHumanReview,
             itemDtos,
             utcTimestamp,
-            domainResult.Disclaimer);
+            domainResult.Disclaimer,
+            new GovernanceExplanationEnhancementDto(
+                simplification.Applied,
+                simplification.Provider,
+                simplification.Model,
+                simplification.PromptVersion,
+                simplification.Status,
+                simplification.OutputHash));
     }
 
     private static GovernanceExplanationInput MapToDomainInput(GovernanceExplanationInputDto dto)

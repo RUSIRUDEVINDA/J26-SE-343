@@ -1,8 +1,17 @@
 namespace StateLandGovernance.WorkflowGovernance.Infrastructure;
 
+using System;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using StateLandGovernance.BuildingBlocks.CQRS;
+using StateLandGovernance.WorkflowGovernance.Application.Commands;
+using StateLandGovernance.WorkflowGovernance.Application.DTOs;
 using StateLandGovernance.WorkflowGovernance.Application.Interfaces;
+using StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Repositories;
 
@@ -33,18 +42,167 @@ public static class DependencyInjection
     {
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IWorkflowInstanceRepository, WorkflowInstanceRepository>();
+        services.TryAddScoped<IComponent4ScreeningGateway>(sp =>
+            new Component4ScreeningGateway(
+                sp,
+                sp.GetRequiredService<ILeaseCaseRepository>(),
+                sp.GetRequiredService<ICommandHandler<RecordScreeningResultCommand, ScreeningResultDto>>(),
+                sp.GetService<TimeProvider>() ?? TimeProvider.System,
+                sp.GetService<ILogger<Component4ScreeningGateway>>()));
 
         if (!allowInMemoryLeasePersistence)
         {
-            throw new InvalidOperationException(
-                "WorkflowGovernance lease-case persistence is not configured for this environment. "
-                + "In-memory ILeaseCaseRepository / IWorkflowGovernanceUnitOfWork registrations are "
-                + "Development and Testing only (process-local, non-durable). "
-                + "Provide durable EF (or equivalent) persistence before hosting in Production.");
+            var hasLeaseCaseRepo = services.Any(d => d.ServiceType == typeof(ILeaseCaseRepository));
+            var hasUnitOfWork = services.Any(d => d.ServiceType == typeof(IWorkflowGovernanceUnitOfWork));
+            if (!hasLeaseCaseRepo || !hasUnitOfWork)
+            {
+                throw new InvalidOperationException(
+                    "WorkflowGovernance lease-case persistence is not configured for this environment. "
+                    + "In-memory ILeaseCaseRepository / IWorkflowGovernanceUnitOfWork registrations are "
+                    + "Development and Testing only (process-local, non-durable). "
+                    + "Provide durable EF (or equivalent) persistence before hosting in Production.");
+            }
+
+            return services;
         }
 
-        services.AddSingleton<ILeaseCaseRepository, InMemoryLeaseCaseRepository>();
-        services.AddScoped<IWorkflowGovernanceUnitOfWork, InMemoryWorkflowGovernanceUnitOfWork>();
+        services.TryAddSingleton<ILeaseCaseRepository, InMemoryLeaseCaseRepository>();
+        services.TryAddSingleton<IGovernedDocumentRepository, InMemoryGovernedDocumentRepository>();
+        services.TryAddSingleton<IDocumentAnalysisRepository, InMemoryDocumentAnalysisRepository>();
+        services.TryAddScoped<IWorkflowGovernanceUnitOfWork, InMemoryWorkflowGovernanceUnitOfWork>();
+
+        // Development/Testing placeholders for downstream ports deferred to Batch 4B
+        services.TryAddScoped<IDocumentCompletenessAssessmentRepository>(_ => null!);
+        services.TryAddScoped<IProposalTemplateProvider>(_ => null!);
+        services.TryAddScoped<IDocumentRequirementProvider>(_ => null!);
+
         return services;
     }
+
+    /// <summary>
+    /// Registers durable PostgreSQL persistence for WorkflowGovernance using EF Core.
+    /// Resolves connection string from parameter, environment variable WORKFLOW_GOVERNANCE_CONNECTION,
+    /// or LAND_INTELLIGENCE_CONNECTION.
+    /// </summary>
+    public static IServiceCollection AddWorkflowGovernancePostgresPersistence(
+        this IServiceCollection services,
+        string? connectionString = null)
+    {
+        var resolvedConnection = connectionString
+            ?? Environment.GetEnvironmentVariable("WORKFLOW_GOVERNANCE_CONNECTION")
+            ?? Environment.GetEnvironmentVariable("LAND_INTELLIGENCE_CONNECTION");
+
+        if (string.IsNullOrWhiteSpace(resolvedConnection))
+        {
+            throw new InvalidOperationException(
+                "Set WORKFLOW_GOVERNANCE_CONNECTION or LAND_INTELLIGENCE_CONNECTION in .env at the repository root.");
+        }
+
+        services.AddDbContext<WorkflowGovernanceDbContext>(options =>
+        {
+            options.UseNpgsql(resolvedConnection, npgsqlOptions =>
+            {
+                npgsqlOptions.MigrationsHistoryTable("__ef_migrations_history", WorkflowGovernanceDbContext.SchemaName);
+            });
+        });
+
+        services.AddScoped<WorkflowGovernanceAggregateTracker>();
+        services.AddScoped<IWorkflowGovernanceUnitOfWork>(sp =>
+            new PostgresWorkflowGovernanceUnitOfWork(
+                sp.GetRequiredService<WorkflowGovernanceDbContext>(),
+                sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
+        services.AddScoped<ILeaseCaseRepository>(sp =>
+            new PostgresLeaseCaseRepository(
+                sp.GetRequiredService<WorkflowGovernanceDbContext>(),
+                sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
+        services.AddScoped<IGovernedDocumentRepository>(sp =>
+            new PostgresGovernedDocumentRepository(
+                sp.GetRequiredService<WorkflowGovernanceDbContext>(),
+                sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
+        services.AddScoped<IDocumentAnalysisRepository>(sp =>
+            new PostgresDocumentAnalysisRepository(
+                sp.GetRequiredService<WorkflowGovernanceDbContext>(),
+                sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
+        services.AddScoped<IDocumentCompletenessAssessmentRepository>(sp =>
+            new PostgresDocumentCompletenessAssessmentRepository(
+                sp.GetRequiredService<WorkflowGovernanceDbContext>(),
+                sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers local filesystem development storage for document content and analysis artifacts.
+    /// Implements IDocumentContentWriter, IDocumentContentReader, IAnalysisArtifactWriter, and IAnalysisArtifactReader.
+    /// </summary>
+    public static IServiceCollection AddWorkflowGovernanceLocalDocumentStorage(
+        this IServiceCollection services,
+        Microsoft.Extensions.Configuration.IConfiguration? configuration = null,
+        Action<Storage.LocalFileStorageOptions>? configureOptions = null)
+    {
+        services.AddOptions<Storage.LocalFileStorageOptions>();
+
+        if (configuration is not null)
+        {
+            services.Configure<Storage.LocalFileStorageOptions>(
+                configuration.GetSection(Storage.LocalFileStorageOptions.SectionName));
+        }
+
+        if (configureOptions is not null)
+        {
+            services.Configure(configureOptions);
+        }
+
+        services.TryAddSingleton<Storage.LocalFileDocumentContentStore>();
+        services.TryAddSingleton<IDocumentContentWriter>(sp => sp.GetRequiredService<Storage.LocalFileDocumentContentStore>());
+        services.TryAddSingleton<IDocumentContentReader>(sp => sp.GetRequiredService<Storage.LocalFileDocumentContentStore>());
+
+        services.TryAddSingleton<Storage.LocalFileAnalysisArtifactStore>();
+        services.TryAddSingleton<Integrations.IAnalysisArtifactWriter>(sp => sp.GetRequiredService<Storage.LocalFileAnalysisArtifactStore>());
+        services.TryAddSingleton<IAnalysisArtifactReader>(sp => sp.GetRequiredService<Storage.LocalFileAnalysisArtifactStore>());
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the external Document Intelligence HTTP client adapter and typed configuration.
+    /// </summary>
+    public static IServiceCollection AddWorkflowGovernanceDocumentIntelligence(
+        this IServiceCollection services,
+        Microsoft.Extensions.Configuration.IConfiguration? configuration = null,
+        Action<Integrations.DocumentIntelligenceOptions>? configureOptions = null)
+    {
+        services.AddOptions<Integrations.DocumentIntelligenceOptions>();
+
+        if (configuration is not null)
+        {
+            services.Configure<Integrations.DocumentIntelligenceOptions>(
+                configuration.GetSection(Integrations.DocumentIntelligenceOptions.SectionName));
+        }
+
+        if (configureOptions is not null)
+        {
+            services.Configure(configureOptions);
+        }
+
+        services.AddHttpClient<IDocumentIntelligenceService, Integrations.FastApiDocumentIntelligenceService>((sp, client) =>
+        {
+            var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<Integrations.DocumentIntelligenceOptions>>().Value;
+            options.Validate();
+            client.BaseAddress = new Uri(options.BaseUrl);
+            client.Timeout = TimeSpan.FromSeconds(options.RequestTimeoutSeconds);
+        });
+
+        services.AddScoped<IDocumentAnalysisExecutionService, Services.DocumentAnalysisExecutionService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Overload for configuring Document Intelligence options via action delegate.
+    /// </summary>
+    public static IServiceCollection AddWorkflowGovernanceDocumentIntelligence(
+        this IServiceCollection services,
+        Action<Integrations.DocumentIntelligenceOptions> configureOptions)
+        => services.AddWorkflowGovernanceDocumentIntelligence(configuration: null, configureOptions: configureOptions);
 }

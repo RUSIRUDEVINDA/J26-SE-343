@@ -259,6 +259,16 @@ internal static class SyntheticRecommendationParcelFactory
         return parcel;
     }
 
+    public static LandParcel CreateParcelWithCompleteGisSpatialCoverage(
+        string cadastralNumber = "SYNTH-GIS-COMPLETE-CLEAR")
+    {
+        var parcel = CreateSuitableParcel(cadastralNumber);
+        parcel.AttachGisDerivedIntelligence(new ParcelGisDerivedIntelligence(
+            GisEnrichmentOverallStatus.Complete,
+            null));
+        return parcel;
+    }
+
     private static LandParcel CreateBaseParcel(
         string cadastralNumber,
         LandCategoryType category,
@@ -322,6 +332,15 @@ internal sealed class FakeLandParcelRepository : ILandParcelRepository
             query = query.Where(p => p.CurrentUse?.Type == request.CurrentUseType);
         }
 
+        if (!string.IsNullOrWhiteSpace(request.DerivedSoilGroup))
+        {
+            query = query.Where(p =>
+                string.Equals(
+                    p.GisDerivedIntelligence?.DerivedSoilGroup?.SoilGroupName,
+                    request.DerivedSoilGroup,
+                    StringComparison.OrdinalIgnoreCase));
+        }
+
         if (request.MinArea.HasValue)
         {
             query = query.Where(p => p.Area.Value >= request.MinArea.Value);
@@ -335,48 +354,36 @@ internal sealed class FakeLandParcelRepository : ILandParcelRepository
         return Task.FromResult<IReadOnlyList<LandParcel>>(query.ToList());
     }
 
-    public Task<int> CountSearchAsync(LandSearchRequest request, CancellationToken cancellationToken = default)
-    {
-        IEnumerable<LandParcel> query = _parcels;
-
-        if (!string.IsNullOrWhiteSpace(request.Province))
-        {
-            query = query.Where(p => p.Location.Province.Equals(request.Province, StringComparison.OrdinalIgnoreCase));
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.District))
-        {
-            query = query.Where(p => p.Location.District.Equals(request.District, StringComparison.OrdinalIgnoreCase));
-        }
-
-        if (request.CategoryType is not null)
-        {
-            query = query.Where(p => p.Category.Type == request.CategoryType);
-        }
-
-        if (request.CurrentUseType is not null)
-        {
-            query = query.Where(p => p.CurrentUse?.Type == request.CurrentUseType);
-        }
-
-        if (request.MinArea.HasValue)
-        {
-            query = query.Where(p => p.Area.Value >= request.MinArea.Value);
-        }
-
-        if (request.MaxArea.HasValue)
-        {
-            query = query.Where(p => p.Area.Value <= request.MaxArea.Value);
-        }
-
-        return Task.FromResult(query.Count());
-    }
+    public Task<int> CountSearchAsync(LandSearchRequest request, CancellationToken cancellationToken = default) =>
+        SearchAsync(request, cancellationToken).ContinueWith(t => t.Result.Count, cancellationToken);
 
     public Task AddAsync(LandParcel parcel, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     public Task UpdateAsync(LandParcel parcel, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task<IReadOnlyList<string>> ListDerivedSoilGroupOptionsAsync(
+        string? district = null,
+        CancellationToken cancellationToken = default)
+    {
+        IEnumerable<LandParcel> query = _parcels;
+        if (!string.IsNullOrWhiteSpace(district))
+        {
+            query = query.Where(p =>
+                p.Location.District.Equals(district, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var names = query
+            .Select(p => p.GisDerivedIntelligence?.DerivedSoilGroup?.SoilGroupName)
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Cast<string>()
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        return Task.FromResult<IReadOnlyList<string>>(names);
+    }
 }
 
 internal sealed class FakeSpatialAnalysisService : ISpatialAnalysisService
@@ -456,6 +463,7 @@ internal sealed class FixedMlSuitabilityClient(MlSuitabilityPrediction predictio
 internal sealed class TrackingMlSuitabilityClient(MlSuitabilityPrediction prediction) : IMlSuitabilityClient
 {
     public bool WasCalled { get; private set; }
+    public int CallCount { get; private set; }
 
     public Task<MlSuitabilityPrediction?> PredictAsync(
         LandParcel parcel,
@@ -463,49 +471,122 @@ internal sealed class TrackingMlSuitabilityClient(MlSuitabilityPrediction predic
         CancellationToken cancellationToken = default)
     {
         WasCalled = true;
+        CallCount++;
         return Task.FromResult<MlSuitabilityPrediction?>(prediction);
     }
 }
 
 internal static class RecommendationEngineTestFactory
 {
-    public static IReadOnlyList<IRecommendationCriterionEvaluator> CreateStandardEvaluators() =>
+    public static IRecommendationParcelContext CreateParcelContext(
+        IReadOnlyDictionary<Guid, CadastralSourceMetadataDto>? sources = null)
+    {
+        var context = new RecommendationParcelContext();
+        if (sources is not null)
+        {
+            context.Load(sources);
+        }
+
+        return context;
+    }
+
+    public static IReadOnlyList<IRecommendationCriterionEvaluator> CreateStandardEvaluators(
+        IRecommendationParcelContext? parcelContext = null) =>
     [
-        new PurposeAlignmentCriterionEvaluator(),
-        new RequiredAreaCriterionEvaluator(),
+        new PurposeAlignmentCriterionEvaluator(parcelContext ?? CreateParcelContext()),
+        new TargetAreaCriterionEvaluator(),
         new LandCategoryCriterionEvaluator(),
         new LandUseCriterionEvaluator(),
         new LocationPreferenceCriterionEvaluator(),
-        new AccessibilityCriterionEvaluator(),
-        new EnvironmentalCriterionEvaluator(),
         new RegulatoryCriterionEvaluator(),
         new SpatialConstraintCriterionEvaluator(),
         new CustomCriteriaEvaluator()
     ];
 
-    public static RuleBasedLandRecommendationEngine Create(params LandParcel[] parcels) =>
-        CreateWithEvaluators(CreateStandardEvaluators(), mlClient: null, parcels);
+    public static RuleBasedLandRecommendationEngine Create(params LandParcel[] parcels)
+    {
+        var context = CreateParcelContext();
+        return CreateWithEvaluators(
+            CreateStandardEvaluators(context),
+            mlClient: null,
+            experimentalEvidence: null,
+            experimentalOptions: null,
+            sources: null,
+            context,
+            projectLeaseReady: null,
+            parcels);
+    }
+
+    public static RuleBasedLandRecommendationEngine CreateWithSources(
+        IReadOnlyDictionary<Guid, CadastralSourceMetadataDto> sources,
+        params LandParcel[] parcels) =>
+        CreateWithSources(sources, projectLeaseReady: null, parcels);
+
+    public static RuleBasedLandRecommendationEngine CreateWithSources(
+        IReadOnlyDictionary<Guid, CadastralSourceMetadataDto> sources,
+        IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>? projectLeaseReady,
+        params LandParcel[] parcels)
+    {
+        var context = CreateParcelContext();
+        return CreateWithEvaluators(
+            CreateStandardEvaluators(context),
+            mlClient: null,
+            experimentalEvidence: null,
+            experimentalOptions: null,
+            sources,
+            context,
+            projectLeaseReady,
+            parcels);
+    }
 
     public static RuleBasedLandRecommendationEngine CreateWithMlClient(
         IMlSuitabilityClient mlClient,
-        params LandParcel[] parcels) =>
-        CreateWithEvaluators(CreateStandardEvaluators(), mlClient, parcels);
+        params LandParcel[] parcels)
+    {
+        var context = CreateParcelContext();
+        return CreateWithEvaluators(
+            CreateStandardEvaluators(context),
+            mlClient,
+            experimentalEvidence: null,
+            experimentalOptions: null,
+            sources: null,
+            context,
+            projectLeaseReady: null,
+            parcels);
+    }
 
     public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
         IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
-        params LandParcel[] parcels) =>
-        CreateWithEvaluators(evaluators, mlClient: null, parcels);
+        params LandParcel[] parcels)
+    {
+        var context = CreateParcelContext();
+        return CreateWithEvaluators(
+            evaluators,
+            mlClient: null,
+            experimentalEvidence: null,
+            experimentalOptions: null,
+            sources: null,
+            context,
+            projectLeaseReady: null,
+            parcels);
+    }
 
     public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
         IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
         IMlSuitabilityClient? mlClient,
-        params LandParcel[] parcels) =>
-        CreateWithEvaluators(
+        params LandParcel[] parcels)
+    {
+        var context = CreateParcelContext();
+        return CreateWithEvaluators(
             evaluators,
             mlClient,
             experimentalEvidence: null,
             experimentalOptions: null,
+            sources: null,
+            context,
+            projectLeaseReady: null,
             parcels);
+    }
 
     public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
         IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
@@ -514,26 +595,121 @@ internal static class RecommendationEngineTestFactory
         ExperimentalColomboMlOptions? experimentalOptions,
         params LandParcel[] parcels)
     {
-        return new RuleBasedLandRecommendationEngine(
+        var context = CreateParcelContext();
+        return CreateWithEvaluators(
+            evaluators,
+            mlClient,
+            experimentalEvidence,
+            experimentalOptions,
+            sources: null,
+            context,
+            projectLeaseReady: null,
+            parcels);
+    }
+
+    public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
+        IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
+        IMlSuitabilityClient? mlClient,
+        IExperimentalColomboMlEvidenceService? experimentalEvidence,
+        ExperimentalColomboMlOptions? experimentalOptions,
+        IReadOnlyDictionary<Guid, CadastralSourceMetadataDto>? sources,
+        IRecommendationParcelContext parcelContext,
+        IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>? projectLeaseReady = null,
+        params LandParcel[] parcels) =>
+        new(
             new FakeLandParcelRepository(parcels),
-            new FakeSpatialAnalysisService(parcels),
             evaluators,
             mlClient ?? new NullMlSuitabilityClient(),
             experimentalEvidence ?? new NoOpExperimentalColomboMlEvidenceService(),
-            Options.Create(experimentalOptions ?? new ExperimentalColomboMlOptions { Enabled = false }));
-    }
+            Options.Create(experimentalOptions ?? new ExperimentalColomboMlOptions { Enabled = false }),
+            new FakeRealParcelSourceReadRepository(sources),
+            parcelContext,
+            new FakeProjectLeaseReadyDesignationReadRepository(projectLeaseReady));
 
     public static RuleBasedLandRecommendationEngine CreateWithExperimental(
         IExperimentalColomboMlEvidenceService experimentalEvidence,
         ExperimentalColomboMlOptions options,
         IMlSuitabilityClient? mlClient = null,
-        params LandParcel[] parcels) =>
-        CreateWithEvaluators(
-            CreateStandardEvaluators(),
+        params LandParcel[] parcels)
+    {
+        var context = CreateParcelContext();
+        return CreateWithEvaluators(
+            CreateStandardEvaluators(context),
             mlClient,
             experimentalEvidence,
             options,
+            sources: null,
+            context,
+            projectLeaseReady: null,
             parcels);
+    }
+}
+
+internal sealed class FakeProjectLeaseReadyDesignationReadRepository : IProjectLeaseReadyDesignationReadRepository
+{
+    private readonly IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord> _byParcel;
+    private readonly int _totalParcelCount;
+
+    public FakeProjectLeaseReadyDesignationReadRepository(
+        IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>? byParcel = null,
+        int totalParcelCount = 0)
+    {
+        _byParcel = byParcel ?? new Dictionary<Guid, ProjectLeaseReadyDesignationRecord>();
+        _totalParcelCount = totalParcelCount > 0 ? totalParcelCount : _byParcel.Count;
+    }
+
+    public Task<ProjectLeaseReadyDesignationRecord?> GetByParcelIdAsync(
+        Guid landParcelId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(_byParcel.TryGetValue(landParcelId, out var record) ? record : null);
+
+    public Task<IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>> GetByParcelIdsAsync(
+        IReadOnlyList<Guid> landParcelIds,
+        CancellationToken cancellationToken = default)
+    {
+        var result = landParcelIds
+            .Where(_byParcel.ContainsKey)
+            .ToDictionary(id => id, id => _byParcel[id]);
+        return Task.FromResult<IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>>(result);
+    }
+
+    public Task<IReadOnlyList<ProjectLeaseReadyDesignationRecord>> ListDesignatedAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<ProjectLeaseReadyDesignationRecord>>(_byParcel.Values.ToList());
+
+    public Task<int> CountDesignatedAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(_byParcel.Count);
+
+    public Task<int> CountTotalParcelsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(_totalParcelCount);
+}
+
+internal sealed class FakeRealParcelSourceReadRepository : IRealParcelSourceReadRepository
+{
+    private readonly IReadOnlyDictionary<Guid, CadastralSourceMetadataDto> _sources;
+
+    public FakeRealParcelSourceReadRepository(
+        IReadOnlyDictionary<Guid, CadastralSourceMetadataDto>? sources = null) =>
+        _sources = sources ?? new Dictionary<Guid, CadastralSourceMetadataDto>();
+
+    public Task<CadastralSourceMetadataDto?> GetByParcelIdAsync(
+        Guid landParcelId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(_sources.TryGetValue(landParcelId, out var source) ? source : null);
+
+    public Task<IReadOnlyDictionary<Guid, CadastralSourceMetadataDto>> GetByParcelIdsAsync(
+        IReadOnlyCollection<Guid> landParcelIds,
+        CancellationToken cancellationToken = default)
+    {
+        var result = landParcelIds
+            .Where(_sources.ContainsKey)
+            .ToDictionary(id => id, id => _sources[id]);
+        return Task.FromResult<IReadOnlyDictionary<Guid, CadastralSourceMetadataDto>>(result);
+    }
+
+    public Task<IReadOnlyList<SourceReportedLandUseOptionDto>> ListSourceReportedLandUseOptionsAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<SourceReportedLandUseOptionDto>>([]);
 }
 
 /// <summary>

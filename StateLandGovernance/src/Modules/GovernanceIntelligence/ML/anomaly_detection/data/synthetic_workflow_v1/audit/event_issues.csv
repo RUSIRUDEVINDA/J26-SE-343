@@ -1,0 +1,79 @@
+case_id,issue,event_seq,detail
+SL-CASE-0421,NON_MONOTONIC_EVENT_TIME,14,Event 14 precedes event 13 by 127.443510943 hours
+SL-CASE-0421,EVENT_AFTER_FINAL_NOTIFICATION,13,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0422,NON_MONOTONIC_EVENT_TIME,15,Event 15 precedes event 14 by 756.562320129 hours
+SL-CASE-0422,EVENT_AFTER_FINAL_NOTIFICATION,11,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0422,EVENT_AFTER_FINAL_NOTIFICATION,12,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0422,EVENT_AFTER_FINAL_NOTIFICATION,13,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0422,EVENT_AFTER_FINAL_NOTIFICATION,14,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0423,NON_MONOTONIC_EVENT_TIME,15,Event 15 precedes event 14 by 551.420591995 hours
+SL-CASE-0423,EVENT_AFTER_FINAL_NOTIFICATION,11,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0423,EVENT_AFTER_FINAL_NOTIFICATION,12,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0423,EVENT_AFTER_FINAL_NOTIFICATION,13,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0423,EVENT_AFTER_FINAL_NOTIFICATION,14,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0424,NON_MONOTONIC_EVENT_TIME,8,Event 8 precedes event 7 by 144.046176017 hours
+SL-CASE-0425,NON_MONOTONIC_EVENT_TIME,11,Event 11 precedes event 10 by 601.625702377 hours
+SL-CASE-0426,NON_MONOTONIC_EVENT_TIME,9,Event 9 precedes event 8 by 643.603552506 hours
+SL-CASE-0427,NON_MONOTONIC_EVENT_TIME,17,Event 17 precedes event 16 by 240.579380627 hours
+SL-CASE-0428,NON_MONOTONIC_EVENT_TIME,9,Event 9 precedes event 8 by 378.285322553 hours
+SL-CASE-0429,NON_MONOTONIC_EVENT_TIME,14,Event 14 precedes event 13 by 47.356864539 hours
+SL-CASE-0430,NON_MONOTONIC_EVENT_TIME,9,Event 9 precedes event 8 by 315.169513308 hours
+SL-CASE-0431,NON_MONOTONIC_EVENT_TIME,16,Event 16 precedes event 15 by 326.877889268 hours
+SL-CASE-0432,NON_MONOTONIC_EVENT_TIME,15,Event 15 precedes event 14 by 254.523042177 hours
+SL-CASE-0432,EVENT_AFTER_FINAL_NOTIFICATION,12,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0432,EVENT_AFTER_FINAL_NOTIFICATION,13,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0432,EVENT_AFTER_FINAL_NOTIFICATION,14,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0433,NON_MONOTONIC_EVENT_TIME,18,Event 18 precedes event 17 by 343.735822622 hours
+SL-CASE-0433,EVENT_AFTER_FINAL_NOTIFICATION,15,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0433,EVENT_AFTER_FINAL_NOTIFICATION,16,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0433,EVENT_AFTER_FINAL_NOTIFICATION,17,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0434,NON_MONOTONIC_EVENT_TIME,7,Event 7 precedes event 6 by 252.425653504 hours
+SL-CASE-0436,NON_MONOTONIC_EVENT_TIME,12,Event 12 precedes event 11 by 257.101983012 hours
+SL-CASE-0437,NON_MONOTONIC_EVENT_TIME,11,Event 11 precedes event 10 by 356.925063150 hours
+SL-CASE-0438,NON_MONOTONIC_EVENT_TIME,9,Event 9 precedes event 8 by 721.646246286 hours
+SL-CASE-0439,NON_MONOTONIC_EVENT_TIME,16,Event 16 precedes event 15 by 452.266073445 hours
+SL-CASE-0440,NON_MONOTONIC_EVENT_TIME,9,Event 9 precedes event 8 by 43.866936368 hours
+SL-CASE-0441,NON_MONOTONIC_EVENT_TIME,9,Event 9 precedes event 8 by 292.095674936 hours
+SL-CASE-0442,NON_MONOTONIC_EVENT_TIME,11,Event 11 precedes event 10 by 215.826181395 hours
+SL-CASE-0443,NON_MONOTONIC_EVENT_TIME,10,Event 10 precedes event 9 by 313.247664311 hours
+SL-CASE-0445,NON_MONOTONIC_EVENT_TIME,7,Event 7 precedes event 6 by 282.206120853 hours
+SL-CASE-0446,NON_MONOTONIC_EVENT_TIME,21,Event 21 precedes event 20 by 290.853685772 hours
+SL-CASE-0446,EVENT_AFTER_FINAL_NOTIFICATION,19,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0446,EVENT_AFTER_FINAL_NOTIFICATION,20,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0447,NON_MONOTONIC_EVENT_TIME,20,Event 20 precedes event 19 by 252.947263464 hours
+SL-CASE-0448,NON_MONOTONIC_EVENT_TIME,19,Event 19 precedes event 18 by 243.826671973 hours
+SL-CASE-0448,EVENT_AFTER_FINAL_NOTIFICATION,16,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0448,EVENT_AFTER_FINAL_NOTIFICATION,17,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0448,EVENT_AFTER_FINAL_NOTIFICATION,18,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0449,NON_MONOTONIC_EVENT_TIME,17,Event 17 precedes event 16 by 211.086197864 hours
+SL-CASE-0450,NON_MONOTONIC_EVENT_TIME,9,Event 9 precedes event 8 by 50.823970172 hours
+SL-CASE-0452,NON_MONOTONIC_EVENT_TIME,8,Event 8 precedes event 7 by 335.068037698 hours
+SL-CASE-0453,NON_MONOTONIC_EVENT_TIME,15,Event 15 precedes event 14 by 346.158664928 hours
+SL-CASE-0453,EVENT_AFTER_FINAL_NOTIFICATION,12,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0453,EVENT_AFTER_FINAL_NOTIFICATION,13,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0453,EVENT_AFTER_FINAL_NOTIFICATION,14,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0454,NON_MONOTONIC_EVENT_TIME,12,Event 12 precedes event 11 by 202.122049789 hours
+SL-CASE-0455,NON_MONOTONIC_EVENT_TIME,15,Event 15 precedes event 14 by 95.285011602 hours
+SL-CASE-0456,NON_MONOTONIC_EVENT_TIME,14,Event 14 precedes event 13 by 202.216027228 hours
+SL-CASE-0456,EVENT_AFTER_FINAL_NOTIFICATION,13,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0457,NON_MONOTONIC_EVENT_TIME,12,Event 12 precedes event 11 by 206.947565692 hours
+SL-CASE-0459,NON_MONOTONIC_EVENT_TIME,17,Event 17 precedes event 16 by 408.460017160 hours
+SL-CASE-0459,EVENT_AFTER_FINAL_NOTIFICATION,14,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0459,EVENT_AFTER_FINAL_NOTIFICATION,15,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0459,EVENT_AFTER_FINAL_NOTIFICATION,16,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0460,NON_MONOTONIC_EVENT_TIME,8,Event 8 precedes event 7 by 129.251382031 hours
+SL-CASE-0481,EVENT_AFTER_FINAL_NOTIFICATION,22,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0482,EVENT_AFTER_FINAL_NOTIFICATION,18,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0482,EVENT_AFTER_FINAL_NOTIFICATION,19,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0483,EVENT_AFTER_FINAL_NOTIFICATION,21,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0483,EVENT_AFTER_FINAL_NOTIFICATION,22,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0483,EVENT_AFTER_FINAL_NOTIFICATION,23,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0483,EVENT_AFTER_FINAL_NOTIFICATION,24,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0483,EVENT_AFTER_FINAL_NOTIFICATION,25,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0486,EVENT_AFTER_FINAL_NOTIFICATION,22,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0488,EVENT_AFTER_FINAL_NOTIFICATION,16,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0492,EVENT_AFTER_FINAL_NOTIFICATION,18,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0492,EVENT_AFTER_FINAL_NOTIFICATION,19,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0494,EVENT_AFTER_FINAL_NOTIFICATION,18,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0494,EVENT_AFTER_FINAL_NOTIFICATION,19,Case requires review: timestamp later than final notification; no timestamp repaired
+SL-CASE-0497,EVENT_AFTER_FINAL_NOTIFICATION,22,Case requires review: timestamp later than final notification; no timestamp repaired

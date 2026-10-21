@@ -8,6 +8,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.DependencyInjection;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.BackgroundServices;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Integrations.EarlyGovernanceReferral;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Repositories;
@@ -24,6 +25,20 @@ public class DependencyInjectionTests
         public string ApplicationName { get; set; } = "TestApplication";
         public string ContentRootPath { get; set; } = AppContext.BaseDirectory;
         public Microsoft.Extensions.FileProviders.IFileProvider ContentRootFileProvider { get; set; } = null!;
+    }
+
+    [Fact]
+    public void AddGovernanceIntelligenceInfrastructure_ShouldRegisterAuditAnchorOutboxProcessor()
+    {
+        var services = new ServiceCollection();
+        var configuration = new ConfigurationBuilder().Build();
+        var environment = new TestHostEnvironment { EnvironmentName = Environments.Development };
+
+        services.AddGovernanceIntelligenceInfrastructure(configuration, environment);
+
+        Assert.Contains(services, descriptor =>
+            descriptor.ServiceType == typeof(IHostedService)
+            && descriptor.ImplementationType == typeof(GovernanceAuditAnchorOutboxProcessor));
     }
 
     [Fact]
