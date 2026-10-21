@@ -433,7 +433,7 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
 
                 // Format proposed relative storage path compliant with Domain AnalysisResultArtifactReference validation:
                 // Must not contain '://', ':', leading '/', or '..'
-                var proposedPageKey = $"analysis-artifacts/{request.DocumentVersionId:D}/pages/{page.PageNumber}.json";
+                var proposedPageKey = $"analysis-artifacts/{request.DocumentVersionId:D}/{request.AnalysisRunId:D}/pages/{page.PageNumber}.json";
 
                 var pageReceipt = await _artifactWriter.WriteAsync(
                     proposedPageKey,
@@ -473,7 +473,7 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
             var fullText = fullTextBuilder.ToString();
             var fullBytes = Encoding.UTF8.GetBytes(fullText);
             var expectedFullHash = Convert.ToHexString(SHA256.HashData(fullBytes)).ToLowerInvariant();
-            var proposedDocKey = $"analysis-artifacts/{request.DocumentVersionId:D}/document-transcript.txt";
+            var proposedDocKey = $"analysis-artifacts/{request.DocumentVersionId:D}/{request.AnalysisRunId:D}/document-transcript.txt";
 
             var docReceipt = await _artifactWriter.WriteAsync(
                 proposedDocKey,
@@ -680,7 +680,7 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
                 var pageBytes = JsonSerializer.SerializeToUtf8Bytes(pageProvenanceDto);
                 var expectedPageHash = Convert.ToHexString(SHA256.HashData(pageBytes)).ToLowerInvariant();
 
-                var proposedPageKey = $"analysis-artifacts/{request.DocumentVersionId:D}/pages/{page.PageNumber}.json";
+                var proposedPageKey = $"analysis-artifacts/{request.DocumentVersionId:D}/{request.AnalysisRunId:D}/pages/{page.PageNumber}.json";
 
                 var pageReceipt = await _artifactWriter.WriteAsync(
                     proposedPageKey,
@@ -722,7 +722,7 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
             var fullText = fullTextBuilder.ToString();
             var fullBytes = Encoding.UTF8.GetBytes(fullText);
             var expectedFullHash = Convert.ToHexString(SHA256.HashData(fullBytes)).ToLowerInvariant();
-            var proposedDocKey = $"analysis-artifacts/{request.DocumentVersionId:D}/document-transcript.txt";
+            var proposedDocKey = $"analysis-artifacts/{request.DocumentVersionId:D}/{request.AnalysisRunId:D}/document-transcript.txt";
 
             var docReceipt = await _artifactWriter.WriteAsync(
                 proposedDocKey,
@@ -755,7 +755,7 @@ public sealed class FastApiDocumentIntelligenceService : IDocumentIntelligenceSe
             // Persist raw semantic JSON response artifact
             var semanticBytes = JsonSerializer.SerializeToUtf8Bytes(analyze);
             var expectedSemanticHash = Convert.ToHexString(SHA256.HashData(semanticBytes)).ToLowerInvariant();
-            var proposedSemanticKey = $"analysis-artifacts/{request.DocumentVersionId:D}/semantic-extraction.json";
+            var proposedSemanticKey = $"analysis-artifacts/{request.DocumentVersionId:D}/{request.AnalysisRunId:D}/semantic-extraction.json";
 
             var semanticReceipt = await _artifactWriter.WriteAsync(
                 proposedSemanticKey,

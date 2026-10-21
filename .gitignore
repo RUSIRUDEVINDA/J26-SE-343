@@ -135,3 +135,6 @@ instruction.md
 backups/component4/*.dump
 /StateLandGovernance/.tmp
 /.tmp
+
+# Ignored intermediate output from local sign-in verification build
+/StateLandGovernance/src/.tmp/

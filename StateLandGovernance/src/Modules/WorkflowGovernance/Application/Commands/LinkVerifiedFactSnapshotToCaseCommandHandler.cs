@@ -18,17 +18,20 @@ public sealed class LinkVerifiedFactSnapshotToCaseCommandHandler : ICommandHandl
     private readonly IDocumentAnalysisRepository _analysisRepository;
     private readonly IWorkflowGovernanceUnitOfWork _unitOfWork;
     private readonly LinkVerifiedFactSnapshotToCaseCommandValidator _validator;
+    private readonly IGovernedDocumentRepository _documents;
 
     public LinkVerifiedFactSnapshotToCaseCommandHandler(
         ILeaseCaseRepository leaseCaseRepository,
         IDocumentAnalysisRepository analysisRepository,
         IWorkflowGovernanceUnitOfWork unitOfWork,
-        LinkVerifiedFactSnapshotToCaseCommandValidator validator)
+        LinkVerifiedFactSnapshotToCaseCommandValidator validator,
+        IGovernedDocumentRepository documents)
     {
         _leaseCaseRepository = leaseCaseRepository ?? throw new ArgumentNullException(nameof(leaseCaseRepository));
         _analysisRepository = analysisRepository ?? throw new ArgumentNullException(nameof(analysisRepository));
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+        _documents = documents ?? throw new ArgumentNullException(nameof(documents));
     }
 
     public async Task<LeaseCaseDto> HandleAsync(
@@ -80,6 +83,12 @@ public sealed class LinkVerifiedFactSnapshotToCaseCommandHandler : ICommandHandl
             throw new LeaseCaseConcurrencyException(command.LeaseCaseId, command.ExpectedLeaseCaseRevision, leaseCase.Revision);
         }
 
+        var document = await _documents.GetByIdAsync(analysis.GovernedDocumentId, cancellationToken);
+        var latestRun = analysis.Runs.OrderByDescending(r => r.RunNumber).FirstOrDefault();
+        if (document?.LeaseCaseId != leaseCase.Id || document.ActiveVersionId != snapshot.DocumentVersionId ||
+            analysis.DocumentVersionId != snapshot.DocumentVersionId || analysis.DocumentChecksum != snapshot.DocumentChecksum ||
+            latestRun?.State != AnalysisRunState.Completed || latestRun.Id != snapshot.AnalysisRunId)
+            throw new InvalidOperationException("Only a current published snapshot from this case's active document version and completed run may be linked.");
         leaseCase.UpdateCurrentVerifiedFactSnapshot(command.SnapshotId);
 
         await _unitOfWork.CommitAsync(cancellationToken);

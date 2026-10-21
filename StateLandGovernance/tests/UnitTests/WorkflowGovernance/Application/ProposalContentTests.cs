@@ -24,6 +24,7 @@ public class ProposalContentTests
     private readonly FakeProposalTemplateProvider _templateProvider;
     private readonly SpyWorkflowGovernanceUnitOfWork _unitOfWork;
     private readonly FakeTimeProvider _timeProvider;
+    private readonly ReviewObservationRecords _reviewRecords = new();
     private readonly DateTime _fixedUtcTime;
 
     private readonly AssessProposalContentCommandHandler _assessHandler;
@@ -58,7 +59,7 @@ public class ProposalContentTests
             _templateProvider,
             _unitOfWork,
             new CorrectProposalContentAssessmentCommandValidator(),
-            _timeProvider);
+            _timeProvider, _reviewRecords);
 
         _getByIdHandler = new GetProposalContentAssessmentQueryHandler(_leaseCaseRepository);
         _getCurrentHandler = new GetCurrentProposalContentAssessmentQueryHandler(_leaseCaseRepository);
@@ -407,6 +408,13 @@ public class ProposalContentTests
         Assert.Equal(assessed.Id, result.SupersedesResultId);
         Assert.Equal("Purpose section identified on page 14 of appendix A", result.CorrectionReason);
         Assert.Equal(2, _unitOfWork.CommitCount); // 1 assess, 1 correct
+        var stored = Assert.Single(_reviewRecords.Saved);
+        Assert.Equal(result.Id, stored.Id);
+        Assert.Equal(caseId, stored.LeaseCaseId);
+        Assert.Equal(actorId, stored.RequestedBy);
+        Assert.Equal("ProposalReviewObservations", stored.Purpose);
+        Assert.Contains("Found in appendix A", stored.PayloadJson);
+
     }
 
     [Fact]

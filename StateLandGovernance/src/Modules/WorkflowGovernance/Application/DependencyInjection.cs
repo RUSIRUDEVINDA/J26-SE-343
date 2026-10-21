@@ -13,12 +13,28 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddWorkflowGovernanceApplication(this IServiceCollection services)
     {
+        services.AddScoped<CorrectionWorkflowService>();
+        services.AddScoped<CaseScreeningService>();
+        services.AddScoped<WorkflowPlanningService>();
+        services.AddScoped<WorkflowExecutionService>();
+        services.AddScoped<CompletenessReviewService>();
+        services.AddScoped<ProjectFulfillmentService>();
+        services.AddScoped<HumanEvidenceFactService>();
+        services.AddScoped<GovernedHandoffService>();
+        services.AddScoped<PostWorkflowGovernanceService>();
+        services.AddScoped<ICaseScreeningReadiness>(sp => sp.GetRequiredService<CaseScreeningService>());
         // 4A.1 Handlers & Validators
         services.AddScoped<ICommandHandler<RegisterLeaseCaseCommand, LeaseCaseDto>, RegisterLeaseCaseCommandHandler>();
         services.AddScoped<RegisterLeaseCaseCommandHandler>();
 
         services.AddScoped<IQueryHandler<GetLeaseCaseByIdQuery, LeaseCaseDto>, GetLeaseCaseByIdQueryHandler>();
         services.AddScoped<GetLeaseCaseByIdQueryHandler>();
+
+        services.AddScoped<IQueryHandler<ListLeaseCasesQuery, PagedLeaseCasesDto>, ListLeaseCasesQueryHandler>();
+        services.AddScoped<ListLeaseCasesQueryHandler>();
+
+        services.AddScoped<IQueryHandler<GetApplicantCaseTrackingQuery, ApplicantCaseTrackingDto?>, GetApplicantCaseTrackingQueryHandler>();
+        services.AddScoped<GetApplicantCaseTrackingQueryHandler>();
 
         services.AddScoped<IRequestValidator<RegisterLeaseCaseCommand>, RegisterLeaseCaseCommandValidator>();
         services.AddScoped<RegisterLeaseCaseCommandValidator>();

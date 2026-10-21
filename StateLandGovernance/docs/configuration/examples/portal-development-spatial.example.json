@@ -1,0 +1,66 @@
+[
+  {
+    "caseId": "de4c0000-0000-4000-8000-000000000021",
+    "parcelId": "de4c0000-0000-4000-8000-000000000032",
+    "version": "DEV-12A-OVERLAP-EXPLICIT-COVERAGE-1",
+    "label": "Development mock 12-acre overlap input scenario; explicit synthetic governance/complaint coverage; not real clearance",
+    "provinces": [
+      "DEVELOPMENT_MOCK_PROVINCE_A"
+    ],
+    "parcel": {
+      "id": "de4c0000-0000-4000-8000-000000000032",
+      "identifier": {
+        "cadastralNumber": "DEVELOPMENT-MOCK-12A-001"
+      },
+      "area": {
+        "value": 12,
+        "unit": 3
+      },
+      "location": {
+        "province": "DEVELOPMENT_MOCK_PROVINCE_A",
+        "district": "DEVELOPMENT_MOCK_DISTRICT",
+        "divisionalSecretariat": "DEVELOPMENT_MOCK_DS",
+        "gramaNiladhariDivision": "DEVELOPMENT_MOCK_GN_001"
+      },
+      "spatial": {
+        "coordinateSystem": "EPSG:4326",
+        "centroidLatitude": 7.0,
+        "centroidLongitude": 80.0,
+        "boundaryPolygon": null
+      }
+    },
+    "spatialReviewJson": "{\"sourceReference\":\"Development mock 12-acre overlap input scenario; explicit synthetic governance/complaint coverage; not real clearance\",\"hasOverlappingParcels\":true,\"adjacentLeases\":[],\"spatialConstraints\":[]}"
+  },
+  {
+    "caseId": "de4c0000-0000-4000-8000-000000000021",
+    "parcelId": "de4c0000-0000-4000-8000-000000000034",
+    "version": "DEV-12A-NO-CONFLICT-EXPLICIT-COVERAGE-1",
+    "label": "Development mock 12-acre no-conflict input scenario; explicit synthetic governance/complaint coverage; not real clearance",
+    "provinces": [
+      "DEVELOPMENT_MOCK_PROVINCE_A"
+    ],
+    "parcel": {
+      "id": "de4c0000-0000-4000-8000-000000000034",
+      "identifier": {
+        "cadastralNumber": "DEVELOPMENT-MOCK-12A-001"
+      },
+      "area": {
+        "value": 12,
+        "unit": 3
+      },
+      "location": {
+        "province": "DEVELOPMENT_MOCK_PROVINCE_A",
+        "district": "DEVELOPMENT_MOCK_DISTRICT",
+        "divisionalSecretariat": "DEVELOPMENT_MOCK_DS",
+        "gramaNiladhariDivision": "DEVELOPMENT_MOCK_GN_001"
+      },
+      "spatial": {
+        "coordinateSystem": "EPSG:4326",
+        "centroidLatitude": 7.0,
+        "centroidLongitude": 80.0,
+        "boundaryPolygon": null
+      }
+    },
+    "spatialReviewJson": "{\"sourceReference\":\"Development mock 12-acre no-conflict input scenario; explicit synthetic governance/complaint coverage; not real clearance\",\"hasOverlappingParcels\":false,\"adjacentLeases\":[],\"spatialConstraints\":[]}"
+  }
+]

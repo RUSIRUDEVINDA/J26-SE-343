@@ -43,6 +43,7 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
     private readonly IEarlyGovernanceScreeningStore? _earlyScreeningStore;
     private readonly IConsolidatedGovernanceScreeningStore _consolidatedStore;
     private readonly TimeProvider _timeProvider;
+    private readonly IApprovedScreeningPolicySource? _approvedPolicy;
 
     public OrchestrateGovernanceScreeningCommandHandler(
         IRegulatoryComplianceEngine complianceEngine,
@@ -53,7 +54,8 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
         IConsolidatedGovernanceScreeningStore consolidatedStore,
         IEarlyGovernanceScreeningStore? earlyScreeningStore = null,
         TimeProvider? timeProvider = null,
-        IComplianceRuleCatalogue? ruleCatalogue = null)
+        IComplianceRuleCatalogue? ruleCatalogue = null,
+        IApprovedScreeningPolicySource? approvedPolicy = null)
     {
         _complianceEngine = complianceEngine ?? throw new ArgumentNullException(nameof(complianceEngine));
         _ruleProvider = ruleProvider ?? throw new ArgumentNullException(nameof(ruleProvider));
@@ -63,6 +65,7 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
         _earlyScreeningStore = earlyScreeningStore;
         _consolidatedStore = consolidatedStore ?? throw new ArgumentNullException(nameof(consolidatedStore));
         _ruleCatalogue = ruleCatalogue;
+        _approvedPolicy = approvedPolicy;
         _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
@@ -74,6 +77,17 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
         var input = command.Input ?? throw new ArgumentException("Input cannot be null.", nameof(command));
 
         ValidateInput(input);
+        ApprovedScreeningPolicy? effectivePolicy = null;
+        if (input.FullInputFingerprint != null || input.EffectivePolicyVersion != null || input.EvidenceVersion != null)
+        {
+            if (input.FullInputFingerprint is not { Length: 64 } || input.FullInputFingerprint.Any(c => !Uri.IsHexDigit(c)) ||
+                string.IsNullOrWhiteSpace(input.EvidenceVersion))
+                throw new ArgumentException("Full input fingerprint and evidence version are required.");
+            effectivePolicy = await ReadEffectivePolicyAsync(cancellationToken)
+                ?? throw new InvalidOperationException("Approved screening policy is not configured.");
+            if (input.EffectivePolicyVersion != effectivePolicy.Version)
+                throw new InvalidOperationException("Effective screening policy version changed; refresh inputs.");
+        }
 
         // 1. Compute deterministic input snapshot hash
         var snapshotSha256 = ComputeSnapshotHash(input);
@@ -99,7 +113,7 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
         var (regulatoryResult, regulatorySection, regulatoryFindings) = await ExecuteRegulatoryComplianceAsync(
             input,
             evaluatedAtUtc.UtcDateTime,
-            cancellationToken);
+            cancellationToken, effectivePolicy);
 
         // 4. Sub-Engine 2: Conflict Detection Check
         var (conflictResult, conflictSection, conflictFindings) = await ExecuteConflictDetectionAsync(
@@ -130,6 +144,12 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
         }
 
         var overallStatus = DetermineOverallStatus(regulatorySection.Status, conflictSection.Status, earlySection.Status, regulatoryResult);
+        if (effectivePolicy != null)
+        {
+            if (consolidatedFindings.Any(f => f.IsBlocking)) overallStatus = "Blocked";
+            else if (regulatoryResult.Status == ComplianceStatus.InsufficientInformation ||
+                regulatoryResult.Findings.Any(f => f.Status == RuleResultStatus.InsufficientInformation)) overallStatus = "InsufficientInformation";
+        }
         var officerRecommendation = GenerateOfficerRecommendation(overallStatus, requiredConditions, earlySection.ReferralRecommended);
 
         var deterministicEvaluationId = ComputeDeterministicEvaluationId(assessmentId, input.CaseId, overallStatus, snapshotSha256);
@@ -151,18 +171,28 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
             ConflictCheck: conflictSection,
             EarlyGovernanceCheck: earlySection,
             Provenance: new ScreeningProvenanceMetadataDto(
-                EngineVersion: "C4-Engine-v2.5",
-                RegulatoryCatalogueSource: _ruleCatalogue != null ? "PostgreSQL Catalogue" : "InMemory Fallback",
-                RuleSetVersion: "1.0.0",
-                IsDevelopmentFixture: input.CaseId.StartsWith("LLA-2025-", StringComparison.OrdinalIgnoreCase),
-                FixtureLabel: input.CaseId.StartsWith("LLA-2025-", StringComparison.OrdinalIgnoreCase) ? "C4 Development Prototype Fixture" : "Production Handoff"
-            )
+                EngineVersion: "C4-Engine-v2.5.1",
+                RegulatoryCatalogueSource: effectivePolicy?.SourceReference ?? "Legacy regulatory provider (not the catalogue)",
+                RuleSetVersion: effectivePolicy?.Version ?? "Legacy-unversioned",
+                IsDevelopmentFixture: input.IsDevelopmentSpatialMock || input.CaseId.StartsWith("LLA-2025-", StringComparison.OrdinalIgnoreCase),
+                FixtureLabel: input.IsDevelopmentSpatialMock ? "Development mock spatial evidence; no real parcel clearance" :
+                    input.CaseId.StartsWith("LLA-2025-", StringComparison.OrdinalIgnoreCase) ? "C4 Development Prototype Fixture" : "Verified input screening; not application approval"
+            ), FullInputFingerprint: input.FullInputFingerprint, EffectivePolicyVersion: input.EffectivePolicyVersion, EvidenceVersion: input.EvidenceVersion
         );
 
         // 7. Persist consolidated screening snapshot
+        if (effectivePolicy != null && (await ReadEffectivePolicyAsync(cancellationToken))?.Version != effectivePolicy.Version)
+            throw new InvalidOperationException("Screening policy changed during execution; result was not persisted as current.");
         await _consolidatedStore.SaveAsync(consolidatedResult, cancellationToken);
 
         return consolidatedResult;
+    }
+
+    public async Task<ApprovedScreeningPolicy?> ReadEffectivePolicyAsync(CancellationToken ct)
+    {
+        var policy = _approvedPolicy == null ? null : await _approvedPolicy.ReadAsync(_timeProvider.GetUtcNow().UtcDateTime, ct);
+        if (policy == null || policy.Rules.Count == 0 || string.IsNullOrWhiteSpace(policy.Version) || string.IsNullOrWhiteSpace(policy.SourceReference)) return null;
+        return policy;
     }
 
     private static void ValidateInput(GovernanceScreeningCaseInputDto input)
@@ -180,16 +210,22 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
         ExecuteRegulatoryComplianceAsync(
             GovernanceScreeningCaseInputDto input,
             DateTime evaluationTimestamp,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken, ApprovedScreeningPolicy? effectivePolicy = null)
     {
-        var rules = (await _ruleProvider.GetActiveRulesAsync(cancellationToken)).ToList();
+        var rules = effectivePolicy == null ? (await _ruleProvider.GetActiveRulesAsync(cancellationToken)).ToList() : new List<RegulatoryRule>();
         var legacyInput = new LeaseEvaluationInput(
             input.LeaseDurationYears,
             input.ProposedUse,
             input.InvestmentAmount,
             input.ZoningArea ?? string.Empty);
 
-        var result = _complianceEngine.Evaluate(legacyInput, rules, evaluationTimestamp);
+        var result = effectivePolicy == null ? _complianceEngine.Evaluate(legacyInput, rules, evaluationTimestamp)
+            : _complianceEngine.EvaluateNpd(new ProposalComplianceInput(input.CaseId,
+                Location: new(input.Province, input.District, input.DivisionalSecretariat, input.SpatialEvidence?.GramaNiladhariDivision, null),
+                LandRequirement: new(RequiresLand: true, ExtentHectares: input.ExtentHectares),
+                Budget: new(SubmittedProjectBudget: input.InvestmentAmount, CostComponents: null),
+                EvidenceReferences: input.DocumentReferences?.Select(d => new EvidenceReferenceInput(d.DocumentType, d.StorageReference, EvidenceStatus.Provided)).ToList()),
+                effectivePolicy.Rules, evaluationTimestamp);
 
         // Persist compliance evaluation with audit record
         var auditRecord = GovernanceAuditRecord.Create(
@@ -212,7 +248,7 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
 
         var section = new RegulatoryComplianceSectionDto(
             Status: result.Status.ToString(),
-            EvaluatedRulesCount: rules.Count,
+            EvaluatedRulesCount: effectivePolicy?.Rules.Count ?? rules.Count,
             ViolationsCount: violations.Count,
             ConditionsCount: conditions.Count,
             Violations: violations,
@@ -220,7 +256,11 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
         );
 
         var findings = new List<ConsolidatedFindingDto>();
-        foreach (var v in result.Violations ?? Array.Empty<Violation>())
+        if (effectivePolicy != null)
+            findings.AddRange(result.Findings.Select(f => new ConsolidatedFindingDto("Regulatory", f.RuleCode, f.Status.ToString(),
+                f.ObservedValueSummary, f.IsBlocking, f.RequiresHumanReview, f.ExpectedRequirement,
+                $"{f.SourceReference?.SourceAuthority}/{f.SourceReference?.SourceDocument}/{f.SourceReference?.SourceSection}")));
+        foreach (var v in effectivePolicy == null ? result.Violations ?? Array.Empty<Violation>() : Array.Empty<Violation>())
         {
             findings.Add(new ConsolidatedFindingDto(
                 Dimension: "Regulatory",
@@ -230,11 +270,11 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
                 IsBlocking: true,
                 RequiresHumanReview: true,
                 EvidenceReference: null,
-                SourceAuthorityOrRule: "State Lands Regulatory Policy"
+                SourceAuthorityOrRule: "Legacy research regulatory provider"
             ));
         }
 
-        foreach (var c in result.Conditions ?? Array.Empty<ComplianceCondition>())
+        foreach (var c in effectivePolicy == null ? result.Conditions ?? Array.Empty<ComplianceCondition>() : Array.Empty<ComplianceCondition>())
         {
             findings.Add(new ConsolidatedFindingDto(
                 Dimension: "Regulatory",
@@ -244,7 +284,7 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
                 IsBlocking: false,
                 RequiresHumanReview: true,
                 EvidenceReference: null,
-                SourceAuthorityOrRule: "State Lands Regulatory Policy"
+                SourceAuthorityOrRule: "Legacy research regulatory provider"
             ));
         }
 
@@ -346,12 +386,17 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
                     : "Medium";
         }
 
+        // The existing explicit parcel-overlap finding belongs in this section too; a clear
+        // decision-context comparison cannot cancel a source-backed overlap flag.
+        var explicitParcelOverlap = input.SpatialEvidence?.HasOverlappingParcels == true;
+        if (explicitParcelOverlap && highestSeverity != "Critical") highestSeverity = "High";
+        var totalConflictCount = conflicts.Count + (explicitParcelOverlap ? 1 : 0);
         // Persist conflict evaluation
         var auditRecord = GovernanceAuditRecord.Create(
             EngineType.GovernanceConflict,
             "InitialGovernanceScreening.Conflict",
-            highestSeverity == "Critical" || highestSeverity == "High" ? "ConflictDetected" : "Clear",
-            $"Conflict check evaluated {snapshots.Count} decision contexts with {conflicts.Count} conflicts.",
+            totalConflictCount > 0 ? "ConflictDetected" : "Clear",
+            $"Conflict check evaluated {snapshots.Count} decision contexts with {conflicts.Count} engine conflicts; explicit parcel overlap: {explicitParcelOverlap}.",
             evaluationTimestamp);
 
         await _evaluationStore.StoreConflictEvaluationAsync(
@@ -362,11 +407,12 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
             cancellationToken);
 
         var conflictSummaries = conflicts.Select(c => $"{c.ConflictType} ({c.Severity}): {c.Explanation}").ToList();
+        if (explicitParcelOverlap) conflictSummaries.Add("Parcel Overlap (High): " + input.SpatialEvidence!.OverlapDetails);
 
         var section = new ConflictDetectionSectionDto(
-            Status: conflicts.Count == 0 ? "Clear" : "ConflictDetected",
+            Status: totalConflictCount == 0 ? "Clear" : "ConflictDetected",
             HighestSeverity: highestSeverity,
-            ConflictsCount: conflicts.Count,
+            ConflictsCount: totalConflictCount,
             DetectedConflictSummaries: conflictSummaries
         );
 
@@ -660,27 +706,9 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
 
     public static string ComputeSnapshotHash(GovernanceScreeningCaseInputDto input)
     {
-        var sb = new StringBuilder();
-        sb.Append(input.CaseId).Append('|')
-          .Append(input.ProposalVersion).Append('|')
-          .Append(input.VerifiedFactSnapshotId).Append('|')
-          .Append(input.ParcelId).Append('|')
-          .Append(input.ApplicantName).Append('|')
-          .Append(input.ProposedUse).Append('|')
-          .Append(input.ExtentHectares.ToString("F4")).Append('|')
-          .Append(input.LeaseDurationYears).Append('|')
-          .Append(input.InvestmentAmount.ToString("F2")).Append('|')
-          .Append(input.District).Append('|')
-          .Append(input.Province).Append('|')
-          .Append(input.VerifiedLegalDisputeFlag).Append('|')
-          .Append(input.UnauthorizedOccupationFlag).Append('|')
-          .Append(input.ObjectionReceivedFlag).Append('|')
-          .Append(input.FamilyOrInheritanceClaimFlag).Append('|')
-          .Append(input.DocumentedPriorActivityFlag).Append('|')
-          .Append(input.ContemporaneousComplaints?.Count ?? 0);
-
-        var bytes = Encoding.UTF8.GetBytes(sb.ToString());
-        return Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+        // Complete received contract, including content (not counts) and separately named provenance versions.
+        var canonical = JsonSerializer.Serialize(input, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(canonical))).ToLowerInvariant();
     }
 
     private static string ComputeDeterministicEvaluationId(Guid assessmentId, string caseId, string status, string snapshotSha256)

@@ -41,6 +41,19 @@ public static class DependencyInjection
         bool allowInMemoryLeasePersistence)
     {
         services.AddSingleton(TimeProvider.System);
+        services.AddOptions<CaseScreeningOptions>();
+        services.TryAddScoped<IScreeningInputRefresh, Services.ScreeningInputRefresh>();
+        services.TryAddScoped<IDevelopmentSpatialInputProvider, DevelopmentSpatialInputProvider>();
+        services.TryAddScoped<IScreeningEvidenceProvider, UnavailableScreeningEvidenceProvider>();
+        services.TryAddScoped<IWorkflowPlanningStore, UnavailableWorkflowPlanningStore>();
+        services.TryAddScoped<IWorkflowExecutionStore, UnavailableWorkflowExecutionStore>();
+        services.TryAddScoped<IGovernedHandoffTransport, UnavailableGovernedHandoffTransport>();
+        services.TryAddScoped<IHumanEvidencePageReader, UnavailableHumanEvidencePageReader>();
+        services.TryAddScoped<IPostWorkflowAssessmentGateway>(sp => new Component4PostWorkflowAssessmentGateway(
+            sp.GetService<StateLandGovernance.GovernanceIntelligence.Application.Commands.AssessWorkflowAnomalyCommandHandler>(),
+            sp.GetService<IHostEnvironment>()));
+        services.AddHttpClient<IConsolidatedCaseScreeningAdapter, ConsolidatedCaseScreeningAdapter>(client =>
+            client.Timeout = TimeSpan.FromSeconds(5));
         services.AddScoped<IWorkflowInstanceRepository, WorkflowInstanceRepository>();
         services.TryAddScoped<IComponent4ScreeningGateway>(sp =>
             new Component4ScreeningGateway(
@@ -71,10 +84,12 @@ public static class DependencyInjection
         services.TryAddSingleton<IDocumentAnalysisRepository, InMemoryDocumentAnalysisRepository>();
         services.TryAddScoped<IWorkflowGovernanceUnitOfWork, InMemoryWorkflowGovernanceUnitOfWork>();
 
-        // Development/Testing placeholders for downstream ports deferred to Batch 4B
-        services.TryAddScoped<IDocumentCompletenessAssessmentRepository>(_ => null!);
-        services.TryAddScoped<IProposalTemplateProvider>(_ => null!);
-        services.TryAddScoped<IDocumentRequirementProvider>(_ => null!);
+        // Completeness configuration requires explicit providers; never silently invent policy.
+        services.TryAddSingleton<IDocumentRequirementProvider, UnconfiguredCompletenessProviders>();
+        services.TryAddSingleton<IProposalTemplateProvider, UnconfiguredCompletenessProviders>();
+        services.TryAddSingleton<ICorrectionRepository, InMemoryCorrectionRepository>();
+        services.TryAddSingleton<ICorrectionSubmissionTransaction, InMemoryCorrectionSubmissionTransaction>();
+        services.TryAddSingleton<IDocumentCompletenessAssessmentRepository, InMemoryDocumentCompletenessAssessmentRepository>();
 
         return services;
     }
@@ -128,6 +143,18 @@ public static class DependencyInjection
                 sp.GetRequiredService<WorkflowGovernanceDbContext>(),
                 sp.GetRequiredService<WorkflowGovernanceAggregateTracker>()));
 
+        // Durable providers for versioned document requirements and proposal templates
+        services.AddScoped<IDocumentRequirementProvider, PostgresDocumentRequirementProvider>();
+        services.AddScoped<IProposalTemplateProvider, PostgresProposalTemplateProvider>();
+        services.AddScoped<ICorrectionRepository, PostgresCorrectionRepository>();
+        services.AddScoped<ICorrectionSubmissionTransaction, PostgresCorrectionSubmissionTransaction>();
+        services.AddScoped<ICaseAssignmentStore, PostgresCaseAssignmentStore>();
+        services.AddScoped<CaseAssignmentService>();
+        services.AddScoped<CompletenessConfigurationWriter>();
+        services.AddScoped<IWorkflowPlanningStore, PostgresWorkflowPlanningStore>();
+        services.AddScoped<PostgresWorkflowPlanningStore>();
+        services.AddScoped<IWorkflowExecutionStore, PostgresWorkflowExecutionStore>();
+
         return services;
     }
 
@@ -178,6 +205,7 @@ public static class DependencyInjection
         {
             services.Configure<Integrations.DocumentIntelligenceOptions>(
                 configuration.GetSection(Integrations.DocumentIntelligenceOptions.SectionName));
+            services.Configure<CaseScreeningOptions>(configuration.GetSection("WorkflowGovernance:Screening"));
         }
 
         if (configureOptions is not null)
@@ -194,6 +222,13 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IDocumentAnalysisExecutionService, Services.DocumentAnalysisExecutionService>();
+        services.AddScoped<IHumanEvidencePageReader, Integrations.HumanEvidencePageReader>();
+        services.AddHttpClient<IProposalTemplateMappingService, Integrations.ProposalTemplateMappingService>((sp, client) =>
+        {
+            var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<Integrations.DocumentIntelligenceOptions>>().Value;
+            client.BaseAddress = new Uri(options.BaseUrl.TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(options.RequestTimeoutSeconds);
+        });
 
         return services;
     }

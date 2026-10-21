@@ -950,6 +950,49 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                     b.ToTable("consensus_evaluations", "governance_intelligence");
                 });
 
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ConsolidatedScreeningEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CaseId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("case_id");
+
+                    b.Property<DateTimeOffset>("EvaluatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("evaluated_at_utc");
+
+                    b.Property<string>("ProposalVersion")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("proposal_version");
+
+                    b.Property<string>("ResultJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("result_json");
+
+                    b.Property<string>("SnapshotSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("snapshot_sha256");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaseId", "EvaluatedAtUtc");
+
+                    b.HasIndex("CaseId", "ProposalVersion", "SnapshotSha256")
+                        .IsUnique();
+
+                    b.ToTable("consolidated_screening_assessments", "governance_intelligence");
+                });
+
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.EarlyGovernanceReferralEntity", b =>
                 {
                     b.Property<Guid>("ReferralId")

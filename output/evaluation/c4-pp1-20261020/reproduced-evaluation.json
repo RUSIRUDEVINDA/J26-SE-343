@@ -1,0 +1,141 @@
+{
+  "generatedAtUtc": "2026-10-20T10:20:35.032132+00:00",
+  "fitPerformed": false,
+  "thresholdTuned": false,
+  "runtime": {
+    "python": "3.11.9",
+    "scikitLearn": "1.7.2",
+    "numpy": "2.4.6"
+  },
+  "complaint": {
+    "title": "Complaint classifier v2",
+    "evaluationType": "Reproduced synthetic prospective held-out scoring",
+    "modelVersion": "v2",
+    "modelSha256": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+    "population": {
+      "size": 69,
+      "families": 23,
+      "trainingRows": 425,
+      "labelSource": "Reviewed prospective family decisions (Approved / Label_Change), Experiment 6 frozen manifest",
+      "split": "Prospective synthetic families excluded from training"
+    },
+    "accuracy": 0.9420289855072463,
+    "macroF1": 0.940976005293003,
+    "weightedF1": 0.9429515401628642,
+    "perClass": {
+      "Administrative / Procedural / Integrity": {
+        "precision": 1.0,
+        "recall": 0.9523809523809523,
+        "f1-score": 0.975609756097561,
+        "support": 21.0
+      },
+      "Lease Revenue / Payment / Enforcement": {
+        "precision": 1.0,
+        "recall": 0.8888888888888888,
+        "f1-score": 0.9411764705882353,
+        "support": 9.0
+      },
+      "Unauthorized Allocation / Transfer / Use": {
+        "precision": 0.85,
+        "recall": 0.9444444444444444,
+        "f1-score": 0.8947368421052632,
+        "support": 18.0
+      },
+      "Protected / Environmental Lease Misuse": {
+        "precision": 0.9523809523809523,
+        "recall": 0.9523809523809523,
+        "f1-score": 0.9523809523809523,
+        "support": 21.0
+      }
+    },
+    "labels": [
+      "Administrative / Procedural / Integrity",
+      "Lease Revenue / Payment / Enforcement",
+      "Unauthorized Allocation / Transfer / Use",
+      "Protected / Environmental Lease Misuse"
+    ],
+    "confusionMatrix": [
+      [
+        20,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        8,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        17,
+        1
+      ],
+      [
+        0,
+        0,
+        1,
+        20
+      ]
+    ],
+    "inputs": {
+      "datasetSha256": "78877d77963d954f7f86eb5174e54f81013d0ad18b15763153c11ccfb0c39eb8",
+      "manifestSha256": "faf64e66e77e978030edd047e5a6c0ef9399553614e90236b1a875b6fde6f551"
+    },
+    "savedHistoricalAccuracy": 0.9420289855072463,
+    "limitations": [
+      "Experiment 6 is a synthetic prospective evaluation, not real-world accuracy.",
+      "No independent departmental validation has been performed.",
+      "Development and prospective synthetic families share a common generator origin.",
+      "Closed-set four-class model with no validated out-of-scope detector.",
+      "Raw logistic-regression probabilities are not demonstrated to be calibrated.",
+      "Output is advisory and does not determine guilt, legal liability, final approval, or administrative action."
+    ]
+  },
+  "anomaly": {
+    "title": "Workflow Isolation Forest",
+    "evaluationType": "Reproduced reserved synthetic test scoring",
+    "modelVersion": "workflow_anomaly_model_v1",
+    "modelSha256": "59ed4a73d56d9f06798c4ebc4684a633afe72841c41ed0b3ba4e7bb658782b46",
+    "population": {
+      "size": 108,
+      "reference": 80,
+      "perturbed": 28,
+      "labelSource": "Generator-designated reference and controlled perturbation labels",
+      "split": "Frozen reserved test split; validation-selected threshold unchanged"
+    },
+    "metrics": {
+      "support": 108,
+      "true_positive": 19,
+      "false_positive": 6,
+      "true_negative": 74,
+      "false_negative": 9,
+      "precision": 0.76,
+      "recall": 0.6785714285714286,
+      "f1": 0.7169811320754718,
+      "undefined_metrics": {}
+    },
+    "rocAuc": 0.9410714285714286,
+    "averagePrecision": 0.8703289462739532,
+    "threshold": 0.5743688923115832,
+    "scoreRange": [
+      0.42310444592048063,
+      0.6792533925191362
+    ],
+    "strictFlagRule": "anomaly_score > threshold",
+    "inputs": {
+      "X_test.csv": "5ab49268a4d07f76279c8684282e98d6823cbd9fd10d157dc43bb8d5dacb26c4",
+      "y_test.csv": "1dde076edb333c1516554d884969a264e93f1a3291919529847bec1230134307",
+      "keys_test.csv": "f07c2b7829aba5f5317dfa6602ab8b5c9089a2342813006eded95a27adb9f928",
+      "split_manifest.csv": "413fa775a5df391653ec6123e008ceb6fbeb671d48dd491d12b3f83f2aa21954"
+    },
+    "limitations": [
+      "Synthetic held-out results, not real-world corruption detection accuracy.",
+      "Reference normality is generator-designated, not independently verified.",
+      "Repeated correction loop has zero test examples; excessive handoffs has two.",
+      "No feature-level causal explanations or missing-justification inference."
+    ]
+  }
+}

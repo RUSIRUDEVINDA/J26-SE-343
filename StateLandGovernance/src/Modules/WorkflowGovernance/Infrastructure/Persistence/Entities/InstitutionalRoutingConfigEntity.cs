@@ -8,6 +8,7 @@ using System;
 /// </summary>
 public sealed class InstitutionalRoutingConfigEntity
 {
+    public string? PolicyJson { get; set; }
     public Guid Id { get; set; }
     public string RuleSetName { get; set; } = string.Empty;
     public string RuleSetVersion { get; set; } = string.Empty;

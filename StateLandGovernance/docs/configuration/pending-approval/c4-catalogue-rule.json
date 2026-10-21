@@ -1,0 +1,22 @@
+{
+  "ruleCode": null,
+  "ruleVersion": null,
+  "category": null,
+  "evaluationType": null,
+  "description": null,
+  "calculationKey": null,
+  "severity": null,
+  "isBlocking": null,
+  "enabled": null,
+  "sourceReference": {
+    "sourceType": null,
+    "sourceAuthority": null,
+    "sourceDocument": null,
+    "sourceSection": null,
+    "sourcePage": null,
+    "sourceVersion": null,
+    "effectiveFrom": null,
+    "effectiveTo": null
+  },
+  "parameters": {}
+}

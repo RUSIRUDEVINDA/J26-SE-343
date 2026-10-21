@@ -1,0 +1,89 @@
+{
+  "LocalDevelopmentSignIn": {
+    "Accounts": [
+      {
+        "Username": "applicant",
+        "DisplayName": "Development test applicant",
+        "DisplayRole": "Development applicant",
+        "ActorId": "REPLACE_WITH_LOCAL_TEST_ACTOR_UUID",
+        "TokenRole": "Applicant",
+        "Institution": null,
+        "CaseId": null,
+        "CaseReference": null,
+        "Home": "/workflow-governance/applicant/cases",
+        "PasswordSalt": "",
+        "PasswordHash": ""
+      },
+      {
+        "Username": "ds",
+        "DisplayName": "Development test ds",
+        "DisplayRole": "Development ds",
+        "ActorId": "REPLACE_WITH_LOCAL_TEST_ACTOR_UUID",
+        "TokenRole": "Officer",
+        "Institution": "DS",
+        "CaseId": null,
+        "CaseReference": null,
+        "Home": "/workflow-governance/cases",
+        "PasswordSalt": "",
+        "PasswordHash": ""
+      },
+      {
+        "Username": "external",
+        "DisplayName": "Development test external",
+        "DisplayRole": "Development external",
+        "ActorId": "REPLACE_WITH_LOCAL_TEST_ACTOR_UUID",
+        "TokenRole": "Officer",
+        "Institution": "DEVELOPMENT_EXTERNAL",
+        "CaseId": null,
+        "CaseReference": null,
+        "Home": "/workflow-governance/my-requests",
+        "PasswordSalt": "",
+        "PasswordHash": ""
+      },
+      {
+        "Username": "provincial",
+        "DisplayName": "Development test provincial",
+        "DisplayRole": "Development provincial",
+        "ActorId": "REPLACE_WITH_LOCAL_TEST_ACTOR_UUID",
+        "TokenRole": "Officer",
+        "Institution": "PROVINCIAL_LC",
+        "CaseId": null,
+        "CaseReference": null,
+        "Home": "/workflow-governance/my-requests",
+        "PasswordSalt": "",
+        "PasswordHash": ""
+      },
+      {
+        "Username": "interprovincial",
+        "DisplayName": "Development test interprovincial",
+        "DisplayRole": "Development interprovincial",
+        "ActorId": "REPLACE_WITH_LOCAL_TEST_ACTOR_UUID",
+        "TokenRole": "Officer",
+        "Institution": "INTER_PROVINCIAL_LC",
+        "CaseId": null,
+        "CaseReference": null,
+        "Home": "/workflow-governance/my-requests",
+        "PasswordSalt": "",
+        "PasswordHash": ""
+      },
+      {
+        "Username": "commissioner",
+        "DisplayName": "Development test commissioner",
+        "DisplayRole": "Development commissioner",
+        "ActorId": "REPLACE_WITH_LOCAL_TEST_ACTOR_UUID",
+        "TokenRole": "Officer",
+        "Institution": "COMMISSIONER",
+        "CaseId": null,
+        "CaseReference": null,
+        "Home": "/workflow-governance/my-requests",
+        "PasswordSalt": "",
+        "PasswordHash": ""
+      }
+    ]
+  },
+  "WorkflowGovernance": {
+    "AuthorityAssignments": [],
+    "IntakeCoordinators": [],
+    "IntakeReviewers": []
+  }
+}

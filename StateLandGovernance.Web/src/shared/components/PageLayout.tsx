@@ -1,3 +1,4 @@
+import { DevelopmentSessionBar } from "./DevelopmentSessionBar";
 import type { ReactNode } from "react";
 import { AppHeader } from "./AppHeader";
 import { Sidebar } from "./Sidebar";
@@ -22,6 +23,7 @@ export function PageLayout({
   return (
     <div className={styles.shell}>
       <AppHeader />
+      <DevelopmentSessionBar />
       <div className={showSidebar ? styles.bodyWithSidebar : styles.body}>
         {showSidebar ? (
           <Sidebar

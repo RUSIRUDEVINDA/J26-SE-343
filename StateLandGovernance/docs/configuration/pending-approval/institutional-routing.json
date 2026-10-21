@@ -1,0 +1,18 @@
+{
+  "identifier": null,
+  "version": null,
+  "sourceReference": null,
+  "approvedByActorId": null,
+  "effectiveFrom": null,
+  "effectiveUntil": null,
+  "applicableFacts": {},
+  "institutions": null,
+  "requiresCommissionerApproval": null,
+  "standardDays": null,
+  "divisionalDays": null,
+  "commissionerDays": null,
+  "standardCapability": null,
+  "divisionalCapability": null,
+  "commissionerCapability": null,
+  "requiredEvidence": null
+}

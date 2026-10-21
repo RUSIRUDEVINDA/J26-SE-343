@@ -19,19 +19,21 @@ public sealed class CorrectProposalContentAssessmentCommandHandler : ICommandHan
     private readonly IWorkflowGovernanceUnitOfWork _unitOfWork;
     private readonly CorrectProposalContentAssessmentCommandValidator _validator;
     private readonly TimeProvider _timeProvider;
+    private readonly ICorrectionRepository _reviewRecords;
 
     public CorrectProposalContentAssessmentCommandHandler(
         ILeaseCaseRepository leaseCaseRepository,
         IProposalTemplateProvider templateProvider,
         IWorkflowGovernanceUnitOfWork unitOfWork,
         CorrectProposalContentAssessmentCommandValidator validator,
-        TimeProvider timeProvider)
+        TimeProvider timeProvider, ICorrectionRepository reviewRecords)
     {
         _leaseCaseRepository = leaseCaseRepository ?? throw new ArgumentNullException(nameof(leaseCaseRepository));
         _templateProvider = templateProvider ?? throw new ArgumentNullException(nameof(templateProvider));
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
         _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+        _reviewRecords = reviewRecords ?? throw new ArgumentNullException(nameof(reviewRecords));
     }
 
     public async Task<ProposalContentAssessmentDto> HandleAsync(
@@ -112,6 +114,15 @@ public sealed class CorrectProposalContentAssessmentCommandHandler : ICommandHan
             command.EvidenceReference,
             template);
 
+        // Store exact officer observations with the new immutable assessment, in the same C3 unit of work.
+        // Domain results retain findings but do not retain the individual evidence observations.
+        await _reviewRecords.SaveAsync(new CorrectionRecord {
+            Id = corrected.Id.Value, LeaseCaseId = command.LeaseCaseId, RequestedBy = command.ActorId,
+            CreatedAtUtc = actionTime, DueDateUtc = actionTime, Purpose = "ProposalReviewObservations",
+            Status = "Recorded", RequiredAction = "ReviewProposal", Revision = 1,
+            Instructions = command.Reason, PayloadJson = System.Text.Json.JsonSerializer.Serialize(command.CorrectedObservations,
+                new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web))
+        }, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);
 
         return ProposalContentMapper.ToDto(corrected);

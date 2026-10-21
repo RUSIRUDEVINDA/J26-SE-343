@@ -89,6 +89,37 @@ public class HandoffCoordinationTests
     }
 
     [Fact]
+    public void GovernedHandoff_PreparationAndFailedDispatch_NeverClaimDelivery()
+    {
+        var (c, plan) = CreateLeaseCaseWithApprovedPlan(); c.RecordCompletedWorkflow(CreateCompletedWorkflow(c.Id, plan));
+        var now = DateTime.UtcNow; var actor = Guid.NewGuid();
+        var authority = new VerifiedAuthoritySnapshot(actor, new[] { "HandoffPreparer", "HandoffDispatcher", "HandoffAcknowledger" },
+            new(AuthorityScopeKind.LeaseCase, c.Id.Value.ToString("D")), now.AddMinutes(-1), now, now.AddMinutes(1));
+        var package = c.PrepareGovernedHandoff(c.Revision, authority, "TEST-ONLY:recipient:v1", "test-key", now, Guid.NewGuid());
+        Assert.Equal(LeaseCaseStatus.ReadyForHandoff, c.Status);
+        c.RecordGovernedHandoffDispatch(package.Id, c.Revision, authority, Guid.NewGuid(), false, "test:transport-unavailable", now);
+        Assert.Throws<InvalidHandoffException>(() => c.AcknowledgeGovernedHandoff(package.Id, package.RecipientContract!, package.IdempotencyKey!,
+            package.FinalWorkflowPlanId, package.VerifiedFactSnapshotId, package.FinalDecisionId!.Value, Guid.NewGuid(), c.Revision, authority, now));
+        Assert.Null(c.HandoffPackage!.DownstreamAcknowledgementId);
+        Assert.Equal(LeaseCaseStatus.ReadyForHandoff, c.Status);
+        var attempt = Guid.NewGuid();
+        c.RecordGovernedHandoffDispatch(package.Id, c.Revision, authority, attempt, true, "test:accepted", now);
+        var revision = c.Revision;
+        c.RecordGovernedHandoffDispatch(package.Id, c.Revision, authority, attempt, true, "test:accepted", now);
+        Assert.Equal(revision, c.Revision);
+        Assert.Throws<InvalidHandoffException>(() => c.AcknowledgeGovernedHandoff(package.Id, "wrong-recipient", package.IdempotencyKey!,
+            package.FinalWorkflowPlanId, package.VerifiedFactSnapshotId, package.FinalDecisionId!.Value, Guid.NewGuid(), c.Revision, authority, now));
+        var acknowledgement = Guid.NewGuid();
+        c.AcknowledgeGovernedHandoff(package.Id, package.RecipientContract!, package.IdempotencyKey!, package.FinalWorkflowPlanId,
+            package.VerifiedFactSnapshotId, package.FinalDecisionId!.Value, acknowledgement, c.Revision, authority, now);
+        Assert.Equal(LeaseCaseStatus.HandedOff, c.Status);
+        Assert.Equal(acknowledgement, c.HandoffPackage!.DownstreamAcknowledgementId);
+        Assert.Equal(2, c.HandoffPackage.DispatchHistory!.Count);
+        Assert.Equal(actor, c.HandoffPackage.AcknowledgedByActorId);
+        Assert.Equal(package.FinalDecisionId, c.CompletedWorkflow!.FinalDecisionId.Value);
+    }
+
+    [Fact]
     public void LeaseCase_Initial_Status_Is_Draft()
     {
         var actorId = Guid.NewGuid();

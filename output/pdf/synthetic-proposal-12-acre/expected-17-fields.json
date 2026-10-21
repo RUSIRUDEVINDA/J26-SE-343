@@ -1,0 +1,19 @@
+{
+  "applicant_name": "Mira Senali Testdeniya",
+  "applicant_type": "Individual",
+  "project_title": "Lantern Field Papaya and Vegetable Project",
+  "project_purpose": "Establish a small irrigated papaya and vegetable farm for the domestic market",
+  "land_location": "DEVELOPMENT_MOCK_FARM_12A, SYNTHETIC TEST ACCESS ROAD R-TEST-01, DEVELOPMENT_MOCK_GN_001",
+  "district": "DEVELOPMENT_MOCK_DISTRICT",
+  "divisional_secretariat_division": "DEVELOPMENT_MOCK_DS",
+  "land_extent": "12",
+  "land_extent_unit": "acres",
+  "requested_lease_period": "15 years",
+  "proposed_land_use": "Agriculture",
+  "investment_amount": "12000000",
+  "investment_currency": "LKR",
+  "expected_employment": "6 full-time positions including owner-manager; 5 hired staff",
+  "project_description": "6 acres papaya, 4 acres seasonal vegetables, 1 acre infrastructure and 1 acre conservation; irrigated domestic-market farm",
+  "supporting_document_references": "Internal annexes: site layout p3; development/access sketches p4; employment/input schedules p5; financial schedules pp7–9; implementation p10; environment/declaration p11. No external certificates attached.",
+  "legal_statutory_basis": "User-project test template STD-PROP-2026-V1 version 1.0 only; no verified statutory citation or official approval claimed."
+}

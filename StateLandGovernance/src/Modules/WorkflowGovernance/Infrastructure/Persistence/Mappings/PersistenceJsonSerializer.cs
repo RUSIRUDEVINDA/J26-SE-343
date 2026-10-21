@@ -31,6 +31,12 @@ internal static class PersistenceJsonSerializer
         options.Converters.Add(new MeasurementUnitConverter());
         options.Converters.Add(new LandExtentConverter());
         options.Converters.Add(new JurisdictionContextConverter());
+        options.Converters.Add(new ProposalTemplateSnapshotJsonConverter());
+        options.Converters.Add(new ProposalContentResultJsonConverter());
+        options.Converters.Add(new WorkflowPlanJsonConverter());
+        options.Converters.Add(new WorkflowStageJsonConverter());
+        options.Converters.Add(new WorkflowExecutionJsonConverterFactory());
+        options.Converters.Add(new HumanEvidenceFactJsonConverter());
 
         return options;
     }

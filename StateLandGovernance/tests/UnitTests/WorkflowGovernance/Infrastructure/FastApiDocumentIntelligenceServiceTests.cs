@@ -223,7 +223,7 @@ public sealed class FastApiDocumentIntelligenceServiceTests
 
         // Verify page artifact has preserved clean and raw text via JSON provenance DTO
         var pageArtifact = Assert.Single(result.Artifacts, a => a.ArtifactKind == "OcrPageTranscript");
-        Assert.Equal($"analysis-artifacts/{request.DocumentVersionId:D}/pages/1.json", pageArtifact.StorageReference);
+        Assert.Equal($"analysis-artifacts/{request.DocumentVersionId:D}/{request.AnalysisRunId:D}/pages/1.json", pageArtifact.StorageReference);
         Assert.Equal("application/json", pageArtifact.ContentType);
         Assert.Equal("SHA-256", pageArtifact.ChecksumAlgorithm);
 
@@ -322,17 +322,25 @@ public sealed class FastApiDocumentIntelligenceServiceTests
 
         var docArtifact = result.Artifacts[0];
         Assert.Equal("OcrDocumentTranscript", docArtifact.ArtifactKind);
-        Assert.Equal($"analysis-artifacts/{request.DocumentVersionId:D}/document-transcript.txt", docArtifact.StorageReference);
+        Assert.Equal($"analysis-artifacts/{request.DocumentVersionId:D}/{request.AnalysisRunId:D}/document-transcript.txt", docArtifact.StorageReference);
 
         var page1Artifact = result.Artifacts[1];
         Assert.Equal("OcrPageTranscript", page1Artifact.ArtifactKind);
-        Assert.Equal($"analysis-artifacts/{request.DocumentVersionId:D}/pages/1.json", page1Artifact.StorageReference);
+        Assert.Equal($"analysis-artifacts/{request.DocumentVersionId:D}/{request.AnalysisRunId:D}/pages/1.json", page1Artifact.StorageReference);
         Assert.False(string.IsNullOrWhiteSpace(page1Artifact.ChecksumValue));
 
         var page2Artifact = result.Artifacts[2];
         Assert.Equal("OcrPageTranscript", page2Artifact.ArtifactKind);
-        Assert.Equal($"analysis-artifacts/{request.DocumentVersionId:D}/pages/2.json", page2Artifact.StorageReference);
+        Assert.Equal($"analysis-artifacts/{request.DocumentVersionId:D}/{request.AnalysisRunId:D}/pages/2.json", page2Artifact.StorageReference);
         Assert.False(string.IsNullOrWhiteSpace(page2Artifact.ChecksumValue));
+
+        // A rerun of the exact same version must preserve every earlier artifact.
+        _contentReader.StreamToReturn = new MemoryStream(sampleBytes);
+        var secondRun = request with { AnalysisRunId = Guid.NewGuid() };
+        var second = await service.AnalyzeDocumentAsync(secondRun);
+        Assert.Empty(result.Artifacts.Select(a => a.StorageReference)
+            .Intersect(second.Artifacts.Select(a => a.StorageReference)));
+        Assert.All(second.Artifacts, a => Assert.Contains(secondRun.AnalysisRunId.ToString("D"), a.StorageReference));
     }
 
     [Fact]

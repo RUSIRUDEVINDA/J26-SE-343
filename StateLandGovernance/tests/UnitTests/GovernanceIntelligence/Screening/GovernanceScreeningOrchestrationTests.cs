@@ -15,6 +15,112 @@ namespace StateLandGovernance.UnitTests.GovernanceIntelligence.Screening;
 
 public class GovernanceScreeningOrchestrationTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task SyntheticTwelveAcreResearchScenario_UsesActualEngines_AndRetainsOverlapGate(bool overlap)
+    {
+        // Ephemeral test input only: never persisted proposal answers, OCR candidates or a live-case result.
+        var original = C4DevelopmentCaseFixtureProvider.GetEcoTourismResortFixture();
+        var input = original with {
+            CaseId = "SYNTHETIC-12A-ENGINE-TEST", ApplicationReference = "SYNTHETIC-12A-2026-001",
+            ProposalVersion = Guid.NewGuid().ToString("D"), VerifiedFactSnapshotId = Guid.NewGuid(),
+            ApplicantName = "Mira Senali Testdeniya", ProposedUse = "Agriculture", ExtentHectares = 4.85622770688m,
+            LeaseDurationYears = 15, InvestmentAmount = 12000000m, InvestmentCurrency = "LKR", ZoningArea = null,
+            Province = "DEVELOPMENT_MOCK_PROVINCE_A", District = "DEVELOPMENT_MOCK_DISTRICT", DivisionalSecretariat = "DEVELOPMENT_MOCK_DS",
+            ParcelId = "de4c0000-0000-4000-8000-000000000034", CadastralNumber = "DEVELOPMENT-MOCK-12A-001",
+            VerifiedLegalDisputeFlag = false, UnauthorizedOccupationFlag = false, ObjectionReceivedFlag = false,
+            FamilyOrInheritanceClaimFlag = false, DocumentedPriorActivityFlag = false,
+            ContemporaneousComplaints = [], ConcurrentApplications = [], FinancialAssessmentReference = null,
+            DocumentReferences = [new("SyntheticResearchProposal", "SYNTHETIC RESEARCH TEST ONLY", "SYNTHETIC_TEST_NOT_A_STORAGE_RECORD", 8, "investment_amount")],
+            SpatialEvidence = original.SpatialEvidence! with {
+                ParcelId = "de4c0000-0000-4000-8000-000000000034", CadastralNumber = "DEVELOPMENT-MOCK-12A-001",
+                ExtentHectares = 4.85622770688m, Province = "DEVELOPMENT_MOCK_PROVINCE_A", District = "DEVELOPMENT_MOCK_DISTRICT",
+                DivisionalSecretariat = "DEVELOPMENT_MOCK_DS", GramaNiladhariDivision = "DEVELOPMENT_MOCK_GN_001",
+                CoordinateSystem = "EPSG:4326", CentroidLatitude = 7.0, CentroidLongitude = 80.0,
+                HasOverlappingParcels = overlap, OverlapDetails = "SYNTHETIC INPUT FIXTURE ONLY", AdjacentLeases = [], SpatialConstraints = [], BoundaryGeoJson = null },
+            FullInputFingerprint = overlap ? new string('b',64) : new string('a',64), EffectivePolicyVersion = "TEST-1",
+            EvidenceVersion = overlap ? "TEST-12A-OVERLAP" : "TEST-12A-NO-CONFLICT", IsDevelopmentSpatialMock = true
+        };
+        var handler = new OrchestrateGovernanceScreeningCommandHandler(_complianceEngine, _ruleProvider, _conflictEngine,
+            _earlyGovernanceEngine, _evalStore, _consolidatedStore, approvedPolicy: new TestPolicy());
+        var result = await handler.HandleAsync(new(input));
+        Assert.Equal(1, result.RegulatoryCheck.EvaluatedRulesCount);
+        Assert.Equal(overlap ? "ConflictDetected" : "Clear", result.ConflictCheck.Status);
+        Assert.Equal(overlap ? "Blocked" : "Cleared", result.OverallStatus);
+        Assert.Equal("Clear", result.EarlyGovernanceCheck.Status);
+        Assert.Equal(input.FullInputFingerprint, result.FullInputFingerprint);
+        Assert.Single(await _consolidatedStore.GetHistoryByCaseIdAsync(input.CaseId));
+    }
+    [Fact]
+    public async Task ExplicitParcelOverlapCannotProduceClearConflictSection()
+    {
+        var fixture=C4DevelopmentCaseFixtureProvider.GetEcoTourismResortFixture();
+        var input=fixture with { SpatialEvidence=fixture.SpatialEvidence! with { HasOverlappingParcels=true, OverlapDetails="EXPLICIT SYNTHETIC TEST OVERLAP", AdjacentLeases=[] },
+            ConcurrentApplications=[], FullInputFingerprint=new string('a',64),EffectivePolicyVersion="TEST-1",EvidenceVersion="TEST-OVERLAP",IsDevelopmentSpatialMock=true };
+        var handler=new OrchestrateGovernanceScreeningCommandHandler(_complianceEngine,_ruleProvider,_conflictEngine,_earlyGovernanceEngine,_evalStore,_consolidatedStore,approvedPolicy:new TestPolicy());
+        var result=await handler.HandleAsync(new(input));
+        Assert.Equal("ConflictDetected",result.ConflictCheck.Status);Assert.Equal("High",result.ConflictCheck.HighestSeverity);
+        Assert.True(result.ConflictCheck.ConflictsCount>=1);Assert.Contains(result.ConflictCheck.DetectedConflictSummaries,s=>s.Contains("TEST OVERLAP"));
+        Assert.Equal("Blocked",result.OverallStatus);Assert.Contains(result.ConsolidatedFindings,f=>f.ItemName=="Parcel Overlap Check"&&f.IsBlocking);
+    }
+    [Theory]
+    [InlineData("complaint")][InlineData("document")][InlineData("spatial")][InlineData("policy")][InlineData("evidence")]
+    public void FullContractHash_RelevantInputChanges_AreDistinct(string change)
+    {
+        var input = C4DevelopmentCaseFixtureProvider.GetEcoTourismResortFixture();
+        var changed = change switch {
+            "complaint" => input with { ContemporaneousComplaints = [input.ContemporaneousComplaints![0] with { Summary = "Changed complaint content with unchanged count" }] },
+            "document" => input with { DocumentReferences = [input.DocumentReferences![0] with { StorageReference = "TEST_ONLY/new-version" }] },
+            "spatial" => input with { SpatialEvidence = input.SpatialEvidence! with { CentroidLatitude = input.SpatialEvidence!.CentroidLatitude + 0.001 } },
+            "policy" => input with { EffectivePolicyVersion = "TEST_POLICY_CHANGED" },
+            _ => input with { EvidenceVersion = "TEST_EVIDENCE_CHANGED" } };
+        Assert.NotEqual(OrchestrateGovernanceScreeningCommandHandler.ComputeSnapshotHash(input), OrchestrateGovernanceScreeningCommandHandler.ComputeSnapshotHash(changed));
+    }
+    private sealed class TestPolicy : StateLandGovernance.GovernanceIntelligence.Application.Screening.Interfaces.IApprovedScreeningPolicySource
+    {
+        public bool ChangeDuringEvaluation; private int _reads;
+        public Task<StateLandGovernance.GovernanceIntelligence.Application.Screening.Interfaces.ApprovedScreeningPolicy?> ReadAsync(DateTime at, CancellationToken ct)
+        {
+            _reads++;
+            var rule = NpdRuleCatalogue.GetDefaultRuleDefinitions().First() with {
+                SourceReference = new(StateLandGovernance.GovernanceIntelligence.Domain.Enums.RuleSourceType.ResearchConfiguration,
+                    "EXPLICIT TEST ONLY", "Synthetic policy fixture", "Test", null, "TEST-1") };
+            return Task.FromResult<StateLandGovernance.GovernanceIntelligence.Application.Screening.Interfaces.ApprovedScreeningPolicy?>(
+                new("EXPLICIT TEST ONLY", ChangeDuringEvaluation && _reads > 1 ? "TEST-2" : "TEST-1", [rule]));
+        }
+    }
+    [Theory]
+    [InlineData(false)][InlineData(true)]
+    public async Task VersionedOrchestration_UsesPinnedCatalogueAndEchoesOrRejectsChangedPolicy(bool change)
+    {
+        var policy = new TestPolicy { ChangeDuringEvaluation = change };
+        var handler = new OrchestrateGovernanceScreeningCommandHandler(_complianceEngine, _ruleProvider, _conflictEngine,
+            _earlyGovernanceEngine, _evalStore, _consolidatedStore, approvedPolicy: policy);
+        var input = C4DevelopmentCaseFixtureProvider.GetEcoTourismResortFixture() with {
+            FullInputFingerprint = new string('a', 64), EffectivePolicyVersion = "TEST-1", EvidenceVersion = "TEST-EVIDENCE-1", IsDevelopmentSpatialMock = true };
+        if (change) {
+            await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(new(input)));
+            Assert.Empty(await _consolidatedStore.GetHistoryByCaseIdAsync(input.CaseId));
+        } else {
+            var result = await handler.HandleAsync(new(input));
+            Assert.Equal(input.ProposalVersion, result.ProposalVersion);
+            Assert.Equal(input.FullInputFingerprint, result.FullInputFingerprint);
+            Assert.Equal(input.EffectivePolicyVersion, result.EffectivePolicyVersion);
+            Assert.Equal(input.EvidenceVersion, result.EvidenceVersion);
+            Assert.Equal(1, result.RegulatoryCheck.EvaluatedRulesCount);
+            Assert.Equal("EXPLICIT TEST ONLY", result.Provenance.RegulatoryCatalogueSource);
+            Assert.True(result.Provenance.IsDevelopmentFixture);
+        }
+    }
+    [Fact]
+    public async Task VersionedOrchestration_UnconfiguredApprovedPolicy_Blocks()
+    {
+        var input = C4DevelopmentCaseFixtureProvider.GetEcoTourismResortFixture() with {
+            FullInputFingerprint = new string('a',64), EffectivePolicyVersion = "UNSUPPORTED", EvidenceVersion = "TEST" };
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _handler.HandleAsync(new(input)));
+        Assert.Empty(await _consolidatedStore.GetHistoryByCaseIdAsync(input.CaseId));
+    }
     private readonly InMemoryRegulatoryRuleProvider _ruleProvider;
     private readonly RegulatoryComplianceEngine _complianceEngine;
     private readonly GovernanceConflictEngine _conflictEngine;

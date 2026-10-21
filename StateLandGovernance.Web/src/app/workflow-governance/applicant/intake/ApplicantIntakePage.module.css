@@ -1,0 +1,228 @@
+.formContainer {
+  background: #ffffff;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  padding: 2rem;
+  max-width: 800px;
+  box-shadow: var(--shadow-soft);
+}
+
+.errorNotice {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 0.85rem 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.intakeForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sectionHeader h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.sectionHeader p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 220px;
+}
+
+.formGroup label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.fieldHint {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.textInput, .selectInput, .textareaInput {
+  border: 1px solid var(--color-input-border);
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.9rem;
+  background: #fffdfc;
+  color: var(--color-text);
+}
+
+.dropZone {
+  border: 2px dashed #d1d5db;
+  border-radius: 16px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: #fafaf9;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropZone:hover {
+  border-color: var(--color-primary);
+  background: #fdfafa;
+}
+
+.dropZoneActive {
+  border-color: var(--color-primary);
+  background: #fbf0f0;
+}
+
+.dropZoneFilled {
+  border-style: solid;
+  border-color: #a7f3d0;
+  background: #f0fdf4;
+  padding: 1.25rem;
+}
+
+.cloudIcon {
+  font-size: 2.5rem;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.dropZonePrompt p {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.dropHint {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.fileSelectedInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+}
+
+.fileIcon {
+  font-size: 2rem;
+}
+
+.fileName {
+  font-size: 0.95rem;
+  color: #065f46;
+}
+
+.fileMeta {
+  font-size: 0.8rem;
+  color: #047857;
+}
+
+.changeFileButton {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid #10b981;
+  color: #065f46;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.changeFileButton:hover {
+  background: #d1fae5;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.successCard {
+  background: #ffffff;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-card);
+  padding: 2.5rem;
+  max-width: 750px;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.successIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: #10b981;
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.successCard h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  color: #065f46;
+}
+
+.successRef {
+  font-size: 1.1rem;
+  color: var(--color-text);
+  margin-bottom: 2rem;
+}
+
+.successDetailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  text-align: left;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.subLabel {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.subVal {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.successActions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}

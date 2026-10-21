@@ -476,6 +476,46 @@ public sealed class DocumentAnalysis
         _domainEvents.Add(evt);
     }
 
+    public void PublishHumanEvidenceSnapshot(VerifiedFactSnapshotId baseSnapshotId, VerifiedFactSnapshotId snapshotId,
+        IReadOnlyCollection<HumanEvidenceFact> observations, int expectedRevision, Guid publishingActorId,
+        DateTime at, VerifiedAuthoritySnapshot authority)
+    {
+        if (Revision != expectedRevision) throw new InvalidVerifiedFactSnapshotException("Analysis revision is stale.");
+        if (authority == null) throw new MissingVerifiedAuthorityException("Snapshot publication authority is required.");
+        var scope = new AuthorityScope(AuthorityScopeKind.GovernedDocument, GovernedDocumentId.Value.ToString("D"));
+        authority.EnsureAuthorizes(publishingActorId, "FactSnapshotPublisher", scope, at);
+        var previous = _verifiedFactSnapshots.SingleOrDefault(s => s.Id == baseSnapshotId)
+            ?? throw new InvalidVerifiedFactSnapshotException("Base snapshot not found.");
+        if (_verifiedFactSnapshots.Any(s => s.Id == snapshotId) || snapshotId.Value == Guid.Empty ||
+            observations == null || observations.Count == 0 || observations.Select(o => o.FactCode.Value).Distinct(StringComparer.Ordinal).Count() != observations.Count)
+            throw new InvalidVerifiedFactSnapshotException("New snapshot ID and unique nonempty human observations are required.");
+        var latest = _runs.OrderByDescending(r => r.RunNumber).First();
+        if (latest.Id != previous.AnalysisRunId || latest.State != AnalysisRunState.Completed ||
+            previous.Id != _verifiedFactSnapshots.OrderByDescending(s => s.PublishedAt).First().Id || at < previous.PublishedAt)
+            throw new StaleAnalysisResultException("Only the latest published snapshot from the current completed run can be enriched.");
+        foreach (var observation in observations)
+        {
+            if (observation.DocumentId != GovernedDocumentId || observation.VersionId != DocumentVersionId ||
+                observation.Checksum.Algorithm != DocumentChecksum.Algorithm || observation.Checksum.Value != DocumentChecksum.Value || observation.RecordedAtUtc > at)
+                throw new InvalidVerifiedFactSnapshotException("Human evidence does not match this document version/checksum or chronology.");
+            if (previous.Entries.Any(e => e.FactCode.Equals(observation.FactCode)))
+                throw new InvalidVerifiedFactSnapshotException("Published supported facts cannot be silently replaced by manual evidence.");
+        }
+        var entries = previous.Entries.Concat(observations.Select(o => new VerifiedFactEntry(o)))
+            .OrderBy(e => e.FactCode.Value, StringComparer.Ordinal).ToArray();
+        var candidate = new VerifiedFactSnapshot(snapshotId, Id, GovernedDocumentId, DocumentVersionId, DocumentChecksum,
+            previous.AnalysisRunId, previous.AnalysisRunResultId, previous.RunNumber, previous.ModelReference,
+            previous.RequestedCapabilities, previous.ResultOutcome, VerifiedFactSnapshotOutcome.VerifiedFacts, entries,
+            previous.SourceFactCount + observations.Count, previous.PublishedFactCount + observations.Count,
+            previous.ConfirmedFactCount + observations.Count, previous.CorrectedFactCount, previous.UnsupportedFactCount,
+            at, publishingActorId, "FactSnapshotPublisher", authority.Scope.Kind, authority.Scope.TargetIdentifier,
+            scope.Kind, scope.TargetIdentifier!, authority.ValidFrom, authority.VerificationTime, authority.ValidUntil);
+        _verifiedFactSnapshots.Add(candidate);
+        Revision = CalculateNextRevision(Revision);
+        _domainEvents.Add(new HumanEvidenceSnapshotPublished(Guid.NewGuid(), at, Id, baseSnapshotId,
+            snapshotId, publishingActorId, observations.Count, Revision));
+    }
+
     public void PublishVerifiedFactSnapshot(
         VerifiedFactSnapshotId snapshotId,
         AnalysisRunResultId analysisRunResultId,
@@ -574,7 +614,7 @@ public sealed class DocumentAnalysis
 
         var orderedEntries = entries
             .OrderBy(e => e.FactCode.Value, StringComparer.Ordinal)
-            .ThenBy(e => e.SourceExtractedFactId.Value)
+            .ThenBy(e => e.SourceExtractedFactId?.Value)
             .ToList();
 
         var candidate = new VerifiedFactSnapshot(

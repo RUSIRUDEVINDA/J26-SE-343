@@ -20,6 +20,7 @@ export function CaseAssessments() {
   const cases = state.status === "success" ? filterAssessments(state.data.cases, query, filter) : [];
   const selected = cases.find(item => item.assessmentId === selectedId);
   return <div className={styles.stack}>
+    <Button href="/component-04/screening">Open C3–C4 screening queue</Button>
     <header className={styles.heading}><h1>Case Assessments</h1><p>{mode === "demo" ? "Inspect explicitly fictional seed snapshots by assessment identity." : "Inspect persisted Component 4 findings by assessment identity."}</p></header>
     {state.status === "loading" && <LoadingState message="Loading assessments…" />}
     {state.status === "unavailable" && <p className={styles.notice} role="status">{state.message}</p>}

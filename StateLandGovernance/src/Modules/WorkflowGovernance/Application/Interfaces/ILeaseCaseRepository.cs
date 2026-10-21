@@ -11,4 +11,12 @@ public interface ILeaseCaseRepository
     Task<LeaseCase?> GetByApplicationReferenceAsync(string applicationReference, CancellationToken cancellationToken = default);
 
     Task AddAsync(LeaseCase leaseCase, CancellationToken cancellationToken = default);
+
+    Task<(System.Collections.Generic.IReadOnlyList<LeaseCase> Items, int TotalCount)> ListAsync(
+        int skip,
+        int take,
+        System.Guid? ownerActorId = null,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<(System.Collections.Generic.IReadOnlyList<LeaseCase> Items, int TotalCount)>(
+            (System.Array.Empty<LeaseCase>(), 0));
 }

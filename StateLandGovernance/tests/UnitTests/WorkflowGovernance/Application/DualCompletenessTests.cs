@@ -64,7 +64,7 @@ public class DualCompletenessTests
             _templateProvider,
             _unitOfWork,
             new CorrectProposalContentAssessmentCommandValidator(),
-            _timeProvider);
+            _timeProvider, new ReviewObservationRecords());
 
         _getLatestDocHandler = new GetLatestDocumentCompletenessAssessmentByCaseIdQueryHandler(_completenessRepository);
         _getCurrentPropHandler = new GetCurrentProposalContentAssessmentQueryHandler(_leaseCaseRepository);

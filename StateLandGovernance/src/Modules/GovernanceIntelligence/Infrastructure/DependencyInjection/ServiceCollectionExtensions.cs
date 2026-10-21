@@ -80,6 +80,7 @@ public static class ServiceCollectionExtensions
             services.AddScoped<IGovernanceAuditCaseHistoryReader, PostgresGovernanceAuditRepository>();
             services.AddScoped<IGovernanceEvaluationStore, PostgresGovernanceEvaluationStore>();
             services.AddScoped<IComplianceRuleCatalogue, PostgresComplianceRuleCatalogue>();
+            services.AddScoped<IConsolidatedGovernanceScreeningStore, PostgresConsolidatedGovernanceScreeningStore>();
             services.AddScoped<IEarlyGovernanceScreeningStore, PostgresEarlyGovernanceScreeningStore>();
             services.AddScoped<IComplaintClassificationAssessmentStore, PostgresComplaintClassificationAssessmentStore>();
             services.AddScoped<IComponent1GovernanceCaseProjectionStore, PostgresComponent1GovernanceCaseProjectionStore>();
@@ -122,6 +123,7 @@ public static class ServiceCollectionExtensions
         }
 
         services.TryAddSingleton<IConsolidatedGovernanceScreeningStore, InMemoryConsolidatedGovernanceScreeningStore>();
+        services.AddScoped<IApprovedScreeningPolicySource>(sp => new ApprovedScreeningPolicySource(sp.GetRequiredService<IComplianceRuleCatalogue>(), configuration));
 
         services.AddTransient<GetAuditReceiptQueryHandler>();
         services.AddTransient<GetAuditHistoryByCaseQueryHandler>();

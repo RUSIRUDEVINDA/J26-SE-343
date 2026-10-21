@@ -12,6 +12,7 @@ public sealed class InstitutionalRoutingConfigEntityConfiguration : IEntityTypeC
         builder.ToTable("institutional_routing_configs", WorkflowGovernanceDbContext.SchemaName);
 
         builder.HasKey(e => e.Id);
+        builder.Property(e => e.PolicyJson).HasColumnName("policy_json").HasColumnType("jsonb");
 
         builder.Property(e => e.Id)
             .HasColumnName("id")
