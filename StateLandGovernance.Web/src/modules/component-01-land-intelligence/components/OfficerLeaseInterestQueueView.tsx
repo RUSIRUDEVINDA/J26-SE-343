@@ -75,19 +75,6 @@ export function OfficerLeaseInterestQueueView() {
 
   return (
     <div className={styles.layout}>
-      <div className={styles.demoLabel} role="status">
-        Research demo — preliminary verification queue only. Not lease approval,
-        reservation, or production RBAC.
-      </div>
-
-      <p className={styles.hint}>
-        <Link
-          href="/land-intelligence/officer/lease-interest-lookup"
-          className={styles.rowLink}
-        >
-          Search by applicant NIC
-        </Link>
-      </p>
 
       {loading && items.length === 0 ? (
         <LoadingState message="Loading verification queue…" />

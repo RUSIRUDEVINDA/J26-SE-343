@@ -136,11 +136,6 @@ export function AuthorityLeaseInterestQueueView() {
 
   return (
     <div className={styles.layout}>
-      <div className={styles.demoLabel} role="status">
-        Research demo — authority review after officer valuation. Decisions are
-        preliminary project outcomes only and do not create a lease or reserve
-        land.
-      </div>
 
       <div
         className={styles.tabList}

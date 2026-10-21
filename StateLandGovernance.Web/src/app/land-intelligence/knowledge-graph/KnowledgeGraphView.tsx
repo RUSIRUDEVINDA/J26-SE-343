@@ -450,7 +450,7 @@ export function KnowledgeGraphView({
     <div className={styles.layout}>
       <PageHeading
         title="Land Knowledge Graph"
-        subtitle="Explore relationships returned by the API for a parcel. Edges are never invented — Neo4j when configured, otherwise the PostGIS baseline if available."
+        subtitle=""
       />
 
       <form

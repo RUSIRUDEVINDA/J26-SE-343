@@ -106,7 +106,7 @@ export function DashboardStats() {
           </div>
         </section>
       </div>
-      <p className={styles.footerNote}>This tool supports preliminary comparison. Parcel labels and project designations do not establish ownership, legal suitability, or lease approval.</p>
+      
     </div>
   );
 }

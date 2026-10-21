@@ -132,13 +132,73 @@
   color: #8a1f1f;
 }
 
-.deleteButton {
-  color: #8a1f1f;
+/* Solid pill like Continue draft / modal confirm; Cancel stays outline (secondary). */
+.dangerFilledButton {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
 }
 
-.deleteButton:hover:not(:disabled) {
+.dangerFilledButton:not(:disabled):hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  filter: brightness(1.08);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(28, 25, 23, 0.45);
+}
+
+.modalDialog {
+  width: min(100%, 26rem);
+  border-radius: 14px;
+  padding: 1.25rem 1.35rem;
+  background: #fff;
+  border: 1px solid #e8c4c4;
+  box-shadow: 0 12px 40px rgba(28, 25, 23, 0.22);
+}
+
+.modalDialog:focus {
+  outline: none;
+}
+
+.modalDialog:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.modalTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
   color: #6b1515;
-  background: #fdeeee;
+}
+
+.modalBody {
+  margin: 0 0 1.1rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.modalParcel {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+}
+
+.modalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .errorBlock {

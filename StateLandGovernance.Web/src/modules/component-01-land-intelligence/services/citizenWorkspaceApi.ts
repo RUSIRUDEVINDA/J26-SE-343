@@ -1,5 +1,6 @@
 import { apiDelete, apiGet, apiGetOrNull, apiPost, apiPut } from "@/lib/apiClient";
 import type {
+  LeaseInterestApplicantValuationSummary,
   LeaseInterestDocumentChecklist,
   LeaseInterestRequestDetail,
   LeaseInterestRequestSummary,
@@ -87,6 +88,24 @@ export async function getLeaseInterestRequest(
 ): Promise<LeaseInterestRequestDetail> {
   return apiGet<LeaseInterestRequestDetail>(
     `/api/v1/land/me/lease-interest/requests/${requestId}`,
+  );
+}
+
+export async function deleteLeaseInterestDraft(requestId: string): Promise<void> {
+  await apiDelete(
+    `/api/v1/land/me/lease-interest/requests/${requestId}/draft`,
+  );
+}
+
+/**
+ * Latest officer valuation for a request owned by the current applicant.
+ * Returns null when none has been recorded (HTTP 204).
+ */
+export async function getMyLeaseInterestValuation(
+  requestId: string,
+): Promise<LeaseInterestApplicantValuationSummary | null> {
+  return apiGetOrNull<LeaseInterestApplicantValuationSummary>(
+    `/api/v1/land/me/lease-interest/requests/${requestId}/valuation`,
   );
 }
 

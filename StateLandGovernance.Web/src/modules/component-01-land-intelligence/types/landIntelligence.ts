@@ -13,6 +13,21 @@ export enum LandUseType {
   Other = 99,
 }
 
+export const supportedLandUseTypes = [
+  LandUseType.Agricultural,
+  LandUseType.Residential,
+  LandUseType.Commercial,
+] as const;
+
+export function isSupportedLandUseType(
+  value: unknown,
+): value is (typeof supportedLandUseTypes)[number] {
+  return (
+    typeof value === "number" &&
+    supportedLandUseTypes.some((purpose) => purpose === value)
+  );
+}
+
 export enum LandCategoryType {
   StateLand = 1,
   CrownLand = 2,
@@ -168,6 +183,7 @@ export interface LandParcelRecommendationResponse {
   sourceParcelStatusCode?: string | null;
   sourceProvenanceLabel?: string | null;
   sourceImportedAtUtc?: string | null;
+  /** Project dataset designation only — never official lease availability. */
   projectLeaseReadyLabel?: string | null;
   isProjectLeaseReadyDesignated?: boolean;
   isProjectLeaseReadyEffective?: boolean;
@@ -176,6 +192,8 @@ export interface LandParcelRecommendationResponse {
   ruleScoreRank?: number;
   ruleScoreTieCount?: number;
   isTiedOnRuleScore?: boolean;
+  /** Official lease availability ("Not verified" / "Unknown") — separate from project designation. */
+  actualLeaseAvailabilityLabel?: string | null;
 }
 
 export interface LandRecommendationSearchResultsResponse {
@@ -280,6 +298,7 @@ export interface ParcelGisEnrichmentSummaryResponse {
 export interface ResearchDemoConfigResponse {
   enabled: boolean;
   officerLeaseInterestNicLookupEnabled: boolean;
+  authorityLeaseInterestReviewEnabled?: boolean;
 }
 
 export interface CadastralSourceMetadataResponse {
@@ -414,6 +433,16 @@ export interface ResearchSupplementParcelResponse {
   availabilityNotice: string;
 }
 
+/** One canonical land-use filter option; counts are distinct parcel ids (never double-counted). */
+export interface CanonicalLandUseOptionResponse {
+  key: string;
+  label: string;
+  parcelCount: number;
+  sourceMatchedParcelCount: number;
+  gisMatchedParcelCount: number;
+  bothSourcesParcelCount: number;
+}
+
 export interface FindSuitableLandFormState {
   requiredPurpose: LandUseType | "";
   targetAreaValue: string;
@@ -446,7 +475,11 @@ export type LeaseInterestRequestStatus =
   | 3
   | 4
   | 5
-  | 6;
+  | 6
+  | 7;
+
+/** Authority outcomes after officer valuation: Approved (1) or Rejected (2). */
+export type LeaseInterestAuthorityDecisionKind = 1 | 2;
 
 export interface LeaseInterestApplicant {
   kind: LeaseInterestApplicantKind;
@@ -507,6 +540,14 @@ export interface LeaseInterestCostSummary {
   lines: LeaseInterestCostLine[];
 }
 
+export interface LeaseInterestApplicantAuthorityDecision {
+  decision: LeaseInterestAuthorityDecisionKind;
+  applicantFacingReason: string;
+  recordedAtUtc: string;
+  decisionLabel: string;
+  nextActionHint?: string | null;
+}
+
 export interface LeaseInterestRequestDetail {
   id: string;
   landParcelId: string;
@@ -521,6 +562,7 @@ export interface LeaseInterestRequestDetail {
   consentToPreliminaryAssessment: boolean;
   statusHistory: LeaseInterestStatusHistoryEntry[];
   costSummary: LeaseInterestCostSummary;
+  latestAuthorityDecision?: LeaseInterestApplicantAuthorityDecision | null;
 }
 
 export interface LeaseInterestRequestSummary {
@@ -620,4 +662,132 @@ export interface LeaseInterestOfficerRequestDetail {
   cadastralNumber?: string | null;
   district?: string | null;
   applicantOutcomeSummary: string;
+  latestAuthorityDecision?: LeaseInterestApplicantAuthorityDecision | null;
+}
+
+export type LeaseInterestValuationFormType = "AgriculturalCommercial" | "Residential";
+
+export interface LeaseWorksheetPeriodLine {
+  period: string;
+  amountLkr?: number | null;
+}
+
+export interface LeaseWorksheetDetails {
+  leaseFileNumber?: string | null;
+  divisionalSecretariat?: string | null;
+  leaseApprovalDate?: string | null;
+  leaseCommencementDate?: string | null;
+  valuationReportDate?: string | null;
+  leaseAgreementDate?: string | null;
+  previousAssessedValueLkr?: number | null;
+  leaseRatePercent?: number | null;
+  annualLeaseAmountLkr?: number | null;
+  firstPeriodAmountLkr?: number | null;
+  secondPeriodAmountLkr?: number | null;
+  secondPeriodAnnualAmountLkr?: number | null;
+  circular2018AmountLkr?: number | null;
+  circular2020SixAdjustmentLkr?: number | null;
+  firstPeriodLines?: LeaseWorksheetPeriodLine[] | null;
+  secondPeriodLines?: LeaseWorksheetPeriodLine[] | null;
+  worksheetNotes?: string | null;
+}
+
+export interface RecordLeaseInterestValuation {
+  formType: LeaseInterestValuationFormType;
+  assessedLandValueLkr: number;
+  assessedAreaHectares?: number | null;
+  inspectionDate?: string | null;
+  valuationDate?: string | null;
+  valuationReference?: string | null;
+  issuingOffice?: string | null;
+  siteCondition?: string | null;
+  cultivationDetails?: string | null;
+  residentialImprovements?: string | null;
+  projectUseDetails?: string | null;
+  otherTypeDetails?: string | null;
+  officerNotes?: string | null;
+  worksheet: LeaseWorksheetDetails;
+}
+
+export interface LeaseInterestValuation extends Omit<RecordLeaseInterestValuation, "worksheet" | "formType"> {
+  formType: LeaseInterestValuationFormType | "Agricultural" | "Project" | "Other";
+  worksheet?: LeaseWorksheetDetails | null;
+  id: string;
+  leaseInterestRequestId: string;
+  landParcelId: string;
+  revision: number;
+  idempotencyKey?: string;
+  recordedByOfficerId: string;
+  recordedAtUtc: string;
+}
+
+/** Applicant-visible latest valuation summary (no officer notes). */
+export interface LeaseInterestApplicantValuationSummary {
+  revision: number;
+  recordedAtUtc: string;
+  formType: LeaseInterestValuationFormType | "Agricultural" | "Project" | "Other" | string;
+  assessedLandValueLkr: number;
+  leaseFileNumber?: string | null;
+  divisionalSecretariat?: string | null;
+}
+
+export interface LeaseInterestAuthorityQueueItem {
+  requestId: string;
+  landParcelId: string;
+  acknowledgementReference?: string | null;
+  submittedAtUtc?: string | null;
+  latestValuationAtUtc?: string | null;
+  latestValuationRevision: number;
+  status: LeaseInterestRequestStatus;
+  cadastralNumber?: string | null;
+  district?: string | null;
+}
+
+export interface LeaseInterestAuthorityQueueResponse {
+  items: LeaseInterestAuthorityQueueItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface LeaseInterestAuthorityDecision {
+  id: string;
+  leaseInterestRequestId: string;
+  decision: LeaseInterestAuthorityDecisionKind;
+  reason: string;
+  reviewedValuationId: string;
+  reviewedValuationRevision: number;
+  recordedByAuthorityId: string;
+  recordedAtUtc: string;
+  resultingStatus: LeaseInterestRequestStatus;
+}
+
+export interface RecordLeaseInterestAuthorityDecision {
+  decision: LeaseInterestAuthorityDecisionKind;
+  reason: string;
+  expectedUpdatedAtUtc: string;
+  reviewedValuationId: string;
+  reviewedValuationRevision: number;
+}
+
+export interface LeaseInterestAuthorityRequestDetail {
+  id: string;
+  landParcelId: string;
+  status: LeaseInterestRequestStatus;
+  acknowledgementReference?: string | null;
+  createdAtUtc: string;
+  updatedAtUtc: string;
+  submittedAtUtc?: string | null;
+  applicant: LeaseInterestApplicant;
+  proposal: LeaseInterestProposal;
+  supporting: LeaseInterestSupportingInfo;
+  consentToPreliminaryAssessment: boolean;
+  statusHistory: LeaseInterestStatusHistoryEntry[];
+  cadastralNumber?: string | null;
+  district?: string | null;
+  applicantOutcomeSummary: string;
+  latestValuation?: LeaseInterestValuation | null;
+  valuations: LeaseInterestValuation[];
+  authorityDecisions: LeaseInterestAuthorityDecision[];
+  canRecordDecision: boolean;
 }

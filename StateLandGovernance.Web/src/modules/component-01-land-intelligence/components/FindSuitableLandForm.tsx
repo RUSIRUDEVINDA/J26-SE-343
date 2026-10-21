@@ -471,8 +471,7 @@ export function FindSuitableLandForm() {
               1. Essential
             </h2>
             <p className={styles.panelSubtitle}>
-              Purpose you need and an optional target area. Required purpose must
-              be selected before search.
+              
             </p>
             <div className={styles.grid}>
               <div className={styles.field}>
@@ -573,8 +572,7 @@ export function FindSuitableLandForm() {
               2. Location &amp; size
             </h2>
             <p className={styles.panelSubtitle}>
-              Narrow the search by administrative location and how many ranked
-              results to return.
+              
             </p>
             <div className={styles.grid}>
               <div className={styles.field}>
@@ -796,7 +794,7 @@ export function FindSuitableLandForm() {
                   <p id="source-land-use-hint" className={styles.hint}>
                     {selectedLandUseChoice
                       ? "Matches the original cadastral land use or the project GIS classification. Both stay visible in parcel details."
-                      : "Choose a land use to narrow results, or leave this as All land uses."}
+                      : ""}
                   </p>
                 )}
                 {fieldErrors.sourceReportedLandUse ? (

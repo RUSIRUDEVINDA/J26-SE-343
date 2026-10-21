@@ -399,7 +399,7 @@ export function RecommendationsView() {
       <>
         <PageHeading
           title="Suitable Land Results"
-          subtitle="Ranked parcels from the Component 1 recommendation engine."
+          subtitle=""
         />
         <EmptyState
           title="No recommendation results yet"

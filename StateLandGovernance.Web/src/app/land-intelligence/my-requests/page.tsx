@@ -14,6 +14,7 @@ import {
 } from "@/modules/component-01-land-intelligence/services/citizenWorkspaceApi";
 import type { LeaseInterestRequestSummary } from "@/modules/component-01-land-intelligence/types/landIntelligence";
 import { leaseInterestPurposeDisplay } from "@/modules/component-01-land-intelligence/utils/leaseInterestPurposeDisplay";
+import { useModalDialogA11y } from "@/modules/component-01-land-intelligence/hooks/useModalDialogA11y";
 import {
   isLeaseInterestDraftStatus,
   leaseInterestStatusBadgeTone,
@@ -43,8 +44,18 @@ function RequestRow({
   item: LeaseInterestRequestSummary;
   onDeleted: (requestId: string) => void;
 }) {
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const { dialogRef: confirmDialogRef } = useModalDialogA11y({
+    open: confirmOpen,
+    onClose: () => {
+      if (!deleting) {
+        setConfirmOpen(false);
+      }
+    },
+    busy: deleting,
+  });
   const isDraft = isLeaseInterestDraftStatus(item.status);
   const purpose = leaseInterestPurposeDisplay(
     item.requestedPurpose,
@@ -55,18 +66,12 @@ function RequestRow({
     (isDraft ? `Draft · ${item.id.slice(0, 8)}` : item.id.slice(0, 8));
   const parcelLabel = item.cadastralNumber?.trim() || item.landParcelId.slice(0, 8);
 
-  async function handleDeleteDraft() {
-    const confirmed = window.confirm(
-      "Delete this draft? Your saved answers will be removed and cannot be recovered.",
-    );
-    if (!confirmed) {
-      return;
-    }
-
+  async function confirmDeleteDraft() {
     setDeleting(true);
     setDeleteError(null);
     try {
       await deleteLeaseInterestDraft(item.id);
+      setConfirmOpen(false);
       onDeleted(item.id);
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -81,6 +86,56 @@ function RequestRow({
 
   return (
     <li className={styles.row}>
+      {confirmOpen ? (
+        <div
+          className={styles.modalOverlay}
+          role="presentation"
+          onClick={() => {
+            if (!deleting) {
+              setConfirmOpen(false);
+            }
+          }}
+        >
+          <div
+            ref={confirmDialogRef}
+            className={styles.modalDialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`delete-draft-title-${item.id}`}
+            aria-describedby={`delete-draft-body-${item.id}`}
+            aria-busy={deleting}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id={`delete-draft-title-${item.id}`} className={styles.modalTitle}>
+              Delete this draft?
+            </h2>
+            <p id={`delete-draft-body-${item.id}`} className={styles.modalBody}>
+              Parcel <strong className={styles.modalParcel}>{parcelLabel}</strong>{" "}
+              ({reference}) will be removed from your drafts. Saved answers cannot be
+              recovered.
+            </p>
+            <div className={styles.modalActions}>
+              <Button
+                type="button"
+                variant="primary"
+                className={styles.dangerFilledButton}
+                disabled={deleting}
+                onClick={() => void confirmDeleteDraft()}
+              >
+                {deleting ? "Deleting…" : "Delete draft"}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={deleting}
+                onClick={() => setConfirmOpen(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <div className={styles.rowMain}>
         <div className={styles.rowPrimary}>
           <p className={styles.parcelId}>
@@ -126,12 +181,12 @@ function RequestRow({
             </Button>
             <Button
               type="button"
-              variant="ghost"
-              className={styles.deleteButton}
-              disabled={deleting}
-              onClick={() => void handleDeleteDraft()}
+              variant="primary"
+              className={styles.dangerFilledButton}
+              disabled={deleting || confirmOpen}
+              onClick={() => setConfirmOpen(true)}
             >
-              {deleting ? "Deleting…" : "Delete draft"}
+              Delete draft
             </Button>
           </>
         ) : (

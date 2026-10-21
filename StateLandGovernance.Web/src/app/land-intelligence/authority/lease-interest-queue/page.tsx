@@ -6,7 +6,7 @@ export default function AuthorityLeaseInterestQueuePage() {
     <>
       <PageHeading
         title="Authority review queue"
-        subtitle="Decide referred lease-interest requests after officer valuation — preliminary project outcomes only."
+        subtitle=""
       />
       <AuthorityLeaseInterestQueueView />
     </>

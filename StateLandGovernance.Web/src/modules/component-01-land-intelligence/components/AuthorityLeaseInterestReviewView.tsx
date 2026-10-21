@@ -313,13 +313,6 @@ export function AuthorityLeaseInterestReviewView({
         </StatusBadge>
       </header>
 
-      <p className={styles.notice}>
-        <strong>Preliminary project decision only.</strong> Recording a decision
-        does not create a lease, reserve land, calculate rent, or claim official
-        government approval. Officer valuation values below were entered
-        manually and are not recalculated here.
-      </p>
-
       {error ? <ErrorMessage message={error} /> : null}
 
       <div className={styles.contentGrid}>

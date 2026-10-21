@@ -459,7 +459,7 @@ export function ParcelIntelligenceView({
     <>
       <PageHeading
         title="Parcel Intelligence"
-        subtitle="Browse indexed parcels by district and land use, then open a record for attributes, constraints, and optional graph relationships."
+        subtitle=""
       />
 
       {showCatalog ? (
@@ -498,7 +498,7 @@ export function ParcelIntelligenceView({
                     ? districtsError
                     : indexedDistricts.length === 0
                       ? "No indexed districts are available yet."
-                      : "Only districts with indexed parcels are listed."}
+                      : ""}
               </p>
             </div>
 
@@ -523,12 +523,12 @@ export function ParcelIntelligenceView({
               </select>
               <p id="pi-land-use-hint" className={filterStyles.hint}>
                 {!districtDraft.trim()
-                  ? "Select a district to load land-use counts."
+                  ? ""
                   : landUseOptionsLoading
                     ? "Loading land-use options…"
                     : landUseOptionsError
                       ? landUseOptionsError
-                      : "Matches cadastral land use or project GIS classification."}
+                      : ""}
               </p>
             </div>
 
@@ -554,7 +554,7 @@ export function ParcelIntelligenceView({
               <p id="pi-cadastral-hint" className={filterStyles.hint}>
                 {cadastralLoading
                   ? "Searching…"
-                  : "Exact match. Press Enter to search."}
+                  : ""}
               </p>
             </div>
 
@@ -635,12 +635,8 @@ export function ParcelIntelligenceView({
       !cadastralEmpty &&
       cadastralMatches.length === 0 &&
       !parcel &&
-      !detailLoading ? (
-        <EmptyState
-          title="Select a district to browse parcels"
-          description="Choose Colombo (or another indexed district when available), optionally refine by land use, then apply filters. You can also find a parcel by cadastral number."
-        />
-      ) : null}
+      !detailLoading 
+      }
 
       {showCatalog &&
       !listLoading &&
