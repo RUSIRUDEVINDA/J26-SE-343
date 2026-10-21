@@ -89,18 +89,6 @@ internal sealed class PurposeAlignmentCriterionEvaluator : IRecommendationCriter
                 $"Parcel current use ({purpose}) aligns with requested purpose.");
         }
 
-        if (IsCompatibleUse(currentUse, purpose))
-        {
-            return CriterionEvaluationFactory.Create(
-                Key,
-                "Purpose Alignment",
-                CriterionCategory.LandUseMatch,
-                isMet: true,
-                score: 70m,
-                DefaultWeight,
-                $"Parcel use ({currentUse}) is compatible with requested purpose ({purpose}).");
-        }
-
         return CriterionEvaluationFactory.Create(
             Key,
             "Purpose Alignment",
@@ -110,15 +98,4 @@ internal sealed class PurposeAlignmentCriterionEvaluator : IRecommendationCriter
             DefaultWeight,
             $"Parcel use ({currentUse}) has limited alignment with requested purpose ({purpose}).");
     }
-
-    private static bool IsCompatibleUse(LandUseType current, LandUseType purpose) => (current, purpose) switch
-    {
-        (LandUseType.MixedUse, _) => true,
-        (_, LandUseType.MixedUse) => true,
-        (LandUseType.Agricultural, LandUseType.Tourism) => true,
-        (LandUseType.Tourism, LandUseType.Agricultural) => true,
-        (LandUseType.Commercial, LandUseType.Industrial) => true,
-        (LandUseType.Industrial, LandUseType.Commercial) => true,
-        _ => false
-    };
 }
