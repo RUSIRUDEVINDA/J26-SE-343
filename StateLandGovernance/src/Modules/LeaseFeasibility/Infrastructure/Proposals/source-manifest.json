@@ -1,0 +1,20 @@
+[
+  {
+    "document": "Proposal1.pdf",
+    "sha256": "7d047f9e2e357a78909594db164af96703682e703ee2075b5a7fcf25b81692c3",
+    "extraction": "Human-reviewed summaries of scanned pages; not verbatim OCR",
+    "approvalOutcome": "Not verified"
+  },
+  {
+    "document": "Leo farm proposal.pdf",
+    "sha256": "2cbbc91d055703bb951872b832a7f6bfb12ec430dd59a1084f8284b4cc8dcb00",
+    "extraction": "Human-reviewed summaries of scanned pages; not verbatim OCR",
+    "approvalOutcome": "Not verified"
+  },
+  {
+    "document": "minimum requirements proposal.pdf",
+    "sha256": "f4edcb8c83f1bbfdd1c9f5fd44f2a674a77112d854ee9b1a857d78a6a86f8d00",
+    "extraction": "Human-reviewed summaries of scanned pages; not verbatim OCR",
+    "approvalOutcome": "Not verified"
+  }
+]

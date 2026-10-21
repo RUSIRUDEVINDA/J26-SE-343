@@ -28,6 +28,28 @@ EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
+builder.Services.AddSingleton<StateLandGovernance.LeaseFeasibility.Application.Proposals.IProposalReferenceRetriever,
+    StateLandGovernance.LeaseFeasibility.Infrastructure.Proposals.ReviewedProposalReferenceRetriever>();
+builder.Services.AddHttpClient<StateLandGovernance.LeaseFeasibility.Application.Proposals.IProposalNarrativeGenerator,
+    StateLandGovernance.LeaseFeasibility.Infrastructure.Proposals.OpenAiProposalNarrativeGenerator>(client => client.Timeout = TimeSpan.FromSeconds(120));
+builder.Services.AddTransient<StateLandGovernance.LeaseFeasibility.Application.Commands.GenerateLeaseProposalCommandHandler>();
+
+// The document review flow can run locally without the other modules' databases.
+if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("FinancialDocumentsOnly"))
+{
+    builder.Services.AddControllers().ConfigureApplicationPartManager(manager =>
+        manager.FeatureProviders.Add(new StateLandGovernance.Api.Controllers.FinancialControllerFeatureProvider()));
+    builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
+        .WithOrigins("http://localhost:3000", "http://127.0.0.1:3000",
+            "http://localhost:3002", "http://127.0.0.1:3002").AllowAnyHeader().AllowAnyMethod()));
+    var financialApp = builder.Build();
+    financialApp.UseCors();
+    financialApp.MapControllers();
+    financialApp.Run();
+    return;
+}
+
 var isOcrDemoEnabled = builder.Environment.IsDevelopment()
     && builder.Configuration.GetValue<bool>("WorkflowGovernance:OcrDemo:Enabled", false);
 
@@ -93,6 +115,8 @@ builder.Services.AddCors(options =>
             .WithOrigins(
                 "http://localhost:3000",
                 "http://127.0.0.1:3000",
+                "http://localhost:3002",
+                "http://127.0.0.1:3002",
                 "http://localhost:5173",
                 "http://127.0.0.1:5173")
             .AllowAnyHeader()

@@ -10,7 +10,7 @@ export function ParcelCatalog({
   selectedId,
   onSelect,
   supplementByParcelId,
-  currentPage,
+  currentPage = 1,
   pageSize,
   onPageChange,
   onCadastralSearch,

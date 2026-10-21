@@ -306,7 +306,7 @@ export function RecommendationsView() {
   }
   const transparency = response.transparency;
   const chips = request && formState ? buildSummaryChips(request, formState) : [];
-  const canClearFilters = hasRestrictiveFilters(formState);
+  const canClearFilters = hasRestrictiveFilters(formState ?? undefined);
   const searchDistrict = request?.preferredLocation?.district?.trim() || null;
 
   function clearRestrictiveFilters() {

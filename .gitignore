@@ -112,6 +112,9 @@ StateLandGovernance/src/Modules/GovernanceIntelligence/ML/models/*.joblib
 ## Generated evaluation results
 StateLandGovernance/src/Modules/GovernanceIntelligence/ML/state_land_governance_confirmed_200.csv
 StateLandGovernance/src/Modules/GovernanceIntelligence/ML/data/state_land_governance_confirmed_200.csv
+
+# Local generated mock reports and proposal artifacts
+/output/
 ## Governance Blockchain Service
 governance-blockchain-service/node_modules/
 governance-blockchain-service/deployment.json
