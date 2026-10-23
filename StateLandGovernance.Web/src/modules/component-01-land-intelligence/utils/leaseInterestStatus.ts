@@ -51,7 +51,7 @@ export function isLeaseInterestDraftStatus(
 export function leaseInterestApplicantOutcome(status: LeaseInterestRequestStatus): string {
   switch (status) {
     case 1:
-      return "Draft — not submitted. This is not a reservation or lease.";
+      return "Draft — not submitted.";
     case 2:
       return "Submitted — awaiting officer queue (preliminary interest only).";
     case 3:
@@ -61,7 +61,7 @@ export function leaseInterestApplicantOutcome(status: LeaseInterestRequestStatus
     case 5:
       return "Rejected after review. This is not a court decision and does not reserve land.";
     case 6:
-      return "Referred for authority follow-up. An officer valuation may be recorded; this does not create a lease.";
+      return "Referred for authority follow-up. An officer valuation may be recorded.";
     case 7:
       return "Approved as a preliminary project decision only. Formal lease processing is still required. This does not create a lease, reserve land, or constitute official government approval.";
     default:
