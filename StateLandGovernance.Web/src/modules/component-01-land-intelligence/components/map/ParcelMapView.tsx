@@ -2,27 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
-import { MapPin } from "lucide-react";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { PageHeading } from "@/shared/components/PageLayout";
-import { StatusBadge } from "@/shared/components/StatusBadge";
 import { getParcelById } from "../../services/landIntelligenceApi";
 import type { LandParcelResponse } from "../../types/landIntelligence";
+import { landUseTypeLabels } from "../../utils/enumMappings";
+import { displayOrUnavailable, formatArea } from "../../utils/formatters";
+import { resolveParcelMapGeometry } from "../../utils/parcelGeometry";
+import { formatGnDivisionPrimaryDisplay } from "../../utils/gnDivisionMappingDisplay";
 import {
-  displayOrUnavailable,
-  formatArea,
-} from "../../utils/formatters";
-import {
-  formatCoordinatePair,
-  resolveParcelMapGeometry,
-} from "../../utils/parcelGeometry";
-import {
-  formatSourceReportedClaimantCategoryLine,
-  formatSourceReportedLandUseLine,
+  sourceReportedLandUseDisplay,
 } from "../../utils/sourceReportedCadastre";
 import styles from "./ParcelMapView.module.css";
 
@@ -34,49 +26,41 @@ const ParcelMap = dynamic(
   },
 );
 
-function describeProvenance(parcel: LandParcelResponse): string[] {
-  const labels: string[] = [];
-  const cadastral = parcel.identifier.cadastralNumber ?? "";
-  const category = parcel.category.description ?? "";
-  const use = parcel.currentUse?.description ?? "";
-  const source = parcel.cadastralSource;
+function customerGnDivisionLabel(parcel: LandParcelResponse): string {
+  const gnMapping = parcel.gnDivisionMapping;
+  if (gnMapping?.reviewStatusDisplay === "Needs administrative review") {
+    return "Needs administrative review";
+  }
+  if (gnMapping) {
+    return formatGnDivisionPrimaryDisplay(gnMapping);
+  }
+  return displayOrUnavailable(parcel.location.gramaNiladhariDivision);
+}
 
-  if (source) {
-    labels.push(`Real cadastre source: ${source.sourceProvenanceLabel}`);
-    labels.push("Source-reported land use — not legal title, ownership, or suitability");
-    const landUseLine = formatSourceReportedLandUseLine(source);
-    if (landUseLine) {
-      labels.push(landUseLine);
-    }
-    const claimantLine = formatSourceReportedClaimantCategoryLine(source);
-    if (claimantLine) {
-      labels.push(claimantLine);
-    }
-    if (source.sourceReportedLandUseText) {
-      labels.push(`Source land-use text: ${source.sourceReportedLandUseText}`);
-    }
-    if (source.gnIndex) {
-      labels.push(`GN index: ${source.gnIndex}`);
-    }
-    return labels;
+function customerLandUseLabel(parcel: LandParcelResponse): string {
+  const fromCadastre = sourceReportedLandUseDisplay(parcel.cadastralSource);
+  if (fromCadastre) {
+    return fromCadastre;
   }
+  if (parcel.currentUse?.type != null) {
+    return (
+      landUseTypeLabels[parcel.currentUse.type] ??
+      displayOrUnavailable(parcel.currentUse.description)
+    );
+  }
+  return "Unavailable";
+}
 
-  if (/DEMO/i.test(cadastral) || /DEMO SYNTHETIC/i.test(category)) {
-    labels.push("Synthetic DEMO fixture (excluded from catalog search — not cadastre data)");
+function customerLocationUnavailableMessage(
+  geometry: ReturnType<typeof resolveParcelMapGeometry>,
+): string {
+  if (geometry.kind === "unavailable") {
+    if (geometry.reason.includes("WGS84")) {
+      return "This parcel’s coordinates cannot be displayed on the web map.";
+    }
+    return "No map location is recorded for this parcel.";
   }
-  if (/SIMULATED/i.test(category) || /research/i.test(category)) {
-    labels.push("Research or simulated attributes present");
-  }
-  if (/SYNTHETIC/i.test(use) || /DEMO SYNTHETIC/i.test(use)) {
-    labels.push("Synthetic land-use label");
-  }
-  if (parcel.spatial.boundaryPolygon == null) {
-    labels.push("Boundary not stored — centroid may be shown");
-  }
-  if (labels.length === 0) {
-    labels.push("Source labels follow API parcel attributes");
-  }
-  return labels;
+  return "Location unavailable.";
 }
 
 type LoadState =
@@ -166,32 +150,36 @@ export function ParcelMapView({ parcelId }: { parcelId: string }) {
     ? `/land-intelligence/parcels/${parcel.id}`
     : `/land-intelligence/parcels/${parcelId}`;
 
+  const cadastral = parcel
+    ? displayOrUnavailable(parcel.identifier.cadastralNumber)
+    : "";
+
   return (
     <>
       <PageHeading
         title="Parcel map"
-        subtitle="Interactive location view for a single land parcel. Map display does not imply approval, ownership verification, or suitability."
+        subtitle="See where this parcel is recorded on the map."
         action={
           <div className={styles.headingActions}>
-            <Button href={recommendationsHref} variant="secondary">
+            <Button
+              href={recommendationsHref}
+              variant="secondary"
+              className={styles.headingAction}
+            >
               Back to recommendations
             </Button>
-            <Button href={intelligenceHref} variant="primary">
-              View Full Parcel Intelligence
-            </Button>
+            {parcel ? (
+              <Button
+                href={intelligenceHref}
+                variant="primary"
+                className={styles.headingAction}
+              >
+                View parcel details
+              </Button>
+            ) : null}
           </div>
         }
       />
-
-      <p className={styles.fallbackNote}>
-        If you opened this page directly and have no saved search,{" "}
-        <Link href="/land-intelligence/find-suitable-land">
-          Find Suitable Land
-        </Link>{" "}
-        or the{" "}
-        <Link href="/land-intelligence/parcels">parcel catalog</Link> are
-        available.
-      </p>
 
       {loadState.status === "loading" ? (
         <LoadingState message="Loading parcel location…" />
@@ -213,156 +201,68 @@ export function ParcelMapView({ parcelId }: { parcelId: string }) {
       ) : null}
 
       {parcel && geometry ? (
-        <div className={styles.layout}>
-          <aside className={styles.facts} aria-label="Parcel map facts">
-            <h2 className={styles.factsTitle}>
-              <MapPin size={18} aria-hidden />
-              Parcel facts
-            </h2>
+        <div className={styles.workspace}>
+          <div className={styles.mapLayout}>
+            <section
+              className={styles.mapPanel}
+              aria-label={`Map for parcel ${cadastral}`}
+            >
+              {geometry.kind === "unavailable" ? (
+                <div className={styles.unavailable} role="status">
+                  <p className={styles.unavailableTitle}>Location unavailable</p>
+                  <p>{customerLocationUnavailableMessage(geometry)}</p>
+                </div>
+              ) : (
+                <ParcelMap parcel={parcel} geometry={geometry} />
+              )}
+            </section>
 
-            <dl className={styles.factList}>
-              <div>
-                <dt>Cadastral / source id</dt>
-                <dd>
-                  {displayOrUnavailable(parcel.identifier.cadastralNumber)}
-                </dd>
+            <aside className={styles.summary} aria-label="Parcel summary">
+              <h2 className={styles.summaryTitle}>Parcel summary</h2>
+              <dl className={styles.summaryList}>
+                <div>
+                  <dt>Cadastral number</dt>
+                  <dd>{cadastral}</dd>
+                </div>
+                <div>
+                  <dt>Province</dt>
+                  <dd>{displayOrUnavailable(parcel.location.province)}</dd>
+                </div>
+                <div>
+                  <dt>District</dt>
+                  <dd>{displayOrUnavailable(parcel.location.district)}</dd>
+                </div>
+                <div>
+                  <dt>Grama Niladhari division</dt>
+                  <dd>{customerGnDivisionLabel(parcel)}</dd>
+                </div>
+                <div>
+                  <dt>Area</dt>
+                  <dd>{formatArea(parcel.area.value, parcel.area.unit)}</dd>
+                </div>
+                <div>
+                  <dt>Source-reported land use</dt>
+                  <dd>{customerLandUseLabel(parcel)}</dd>
+                </div>
+              </dl>
+              <div className={styles.summaryActions}>
+                <Button
+                  href={recommendationsHref}
+                  variant="secondary"
+                  className={styles.summaryAction}
+                >
+                  Back to recommendations
+                </Button>
+                <Button
+                  href={intelligenceHref}
+                  variant="primary"
+                  className={styles.summaryAction}
+                >
+                  View parcel details
+                </Button>
               </div>
-              <div>
-                <dt>Parcel UUID</dt>
-                <dd className={styles.mono}>{parcel.id}</dd>
-              </div>
-              <div>
-                <dt>District</dt>
-                <dd>{displayOrUnavailable(parcel.location.district)}</dd>
-              </div>
-              <div>
-                <dt>Province</dt>
-                <dd>{displayOrUnavailable(parcel.location.province)}</dd>
-              </div>
-              {parcel.cadastralSource ? (
-                <>
-                  <div>
-                    <dt>Source parcel id</dt>
-                    <dd>
-                      {displayOrUnavailable(
-                        parcel.cadastralSource.sourceFeatureId,
-                      )}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Source-reported land use</dt>
-                    <dd>
-                      {formatSourceReportedLandUseLine(parcel.cadastralSource) ||
-                        "Unavailable"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Source-reported claimant category</dt>
-                    <dd>
-                      {formatSourceReportedClaimantCategoryLine(
-                        parcel.cadastralSource,
-                      ) || "Unavailable"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Source land-use code</dt>
-                    <dd>
-                      {displayOrUnavailable(
-                        parcel.cadastralSource.sourceReportedLandUseCode,
-                      )}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Source land-use text</dt>
-                    <dd>
-                      {displayOrUnavailable(
-                        parcel.cadastralSource.sourceReportedLandUseText,
-                      )}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>GN division index</dt>
-                    <dd>
-                      {displayOrUnavailable(parcel.cadastralSource.gnIndex)}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Source provenance</dt>
-                    <dd>
-                      {displayOrUnavailable(
-                        parcel.cadastralSource.sourceProvenanceLabel,
-                      )}
-                    </dd>
-                  </div>
-                </>
-              ) : null}
-              <div>
-                <dt>Computed area</dt>
-                <dd>{formatArea(parcel.area.value, parcel.area.unit)}</dd>
-              </div>
-              <div>
-                <dt>Recorded coordinates</dt>
-                <dd>
-                  {formatCoordinatePair(
-                    parcel.spatial.centroidLatitude,
-                    parcel.spatial.centroidLongitude,
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt>Coordinate system</dt>
-                <dd>
-                  {displayOrUnavailable(parcel.spatial.coordinateSystem)}
-                </dd>
-              </div>
-            </dl>
-
-            <div className={styles.badgeRow}>
-              {parcel.environmentalRestrictionCount > 0 ? (
-                <StatusBadge tone="danger">
-                  Environmental restrictions:{" "}
-                  {parcel.environmentalRestrictionCount}
-                </StatusBadge>
-              ) : null}
-              {parcel.spatialConstraintCount > 0 ? (
-                <StatusBadge tone="danger">
-                  Spatial constraints: {parcel.spatialConstraintCount}
-                </StatusBadge>
-              ) : null}
-            </div>
-
-            <div className={styles.provenance}>
-              <h3 className={styles.provenanceTitle}>Provenance labels</h3>
-              <ul>
-                {describeProvenance(parcel).map((label) => (
-                  <li key={label}>{label}</li>
-                ))}
-              </ul>
-            </div>
-
-            <p className={styles.disclaimer} role="note">
-              This map is for spatial orientation only. It does not confirm
-              legal status, ownership, or recommendation outcomes.
-            </p>
-          </aside>
-
-          <section className={styles.mapColumn}>
-            {geometry.kind === "unavailable" ? (
-              <div className={styles.unavailable} role="status">
-                <p className={styles.unavailableTitle}>Location unavailable</p>
-                <p>{geometry.reason}</p>
-                <p className={styles.unavailableHint}>
-                  Recorded coordinates:{" "}
-                  {formatCoordinatePair(
-                    parcel.spatial.centroidLatitude,
-                    parcel.spatial.centroidLongitude,
-                  )}
-                </p>
-              </div>
-            ) : (
-              <ParcelMap parcel={parcel} geometry={geometry} />
-            )}
-          </section>
+            </aside>
+          </div>
         </div>
       ) : null}
     </>
