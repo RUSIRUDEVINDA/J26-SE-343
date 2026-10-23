@@ -1,0 +1,45 @@
+# Final C4 improvements and responsible-DS evidence verification
+
+2026-10-23 Asia/Colombo. **Implemented, isolated-tested and activated. C4 ready to freeze for PP1.** User clarification: the same responsible DS attaches evidence and verifies it; no extra assignment flow or role.
+
+## Delivered
+
+Anomaly summary now prominently displays rounded score/threshold side by side, actual flagged status and non-probability limitation. All nine original features and units stay visible; exact scores/model version/artifact/input SHA256 remain in technical details. No model/input/feature/threshold/engine change.
+
+Early-screening displays prominent Missing/Unverified/Verified counts and clear evidence definitions, with other states kept distinct. Missing/Unverified do not establish wrongdoing; Verified does not constitute legal approval. Original automated states remain immutable and distinct from manual review.
+
+Existing exact Commissioner login navigates to `/component-04/central-complaints`; other users keep their current fallback path. Navigation is not authority. Complaint dashboard now has responsive two-column list/detail panels, queue buttons, classification/probabilities, DS assignment, existing handling actions and progressive histories. No complaint API, permission, operation or original data was changed. Institutional preview uses the concise illustrative wording; source/limitations remain accessible.
+
+## Manual responsibility and evidence
+
+Scope is an existing **Saved early officer-assessment request whose creator is the currently eligible responsible DS**. Fresh trusted host-directory eligibility is required on reads/writes and rechecked before persistence/after asynchronous reads. No arbitrary case/jurisdiction inference, blanket DS access or new assignment role. Owner-created standalone research is the current supported scope; legacy engine rows lacking owned requests are deliberately not made verifiable. Commissioner uses its existing explicit current C4AssessmentReadAll for read-only evidence/history; no attachment or verification authority. Applicants/other DS/unrelated Officers denied.
+
+Same DS can attach PDF/PNG/JPEG/UTF8text up to5MiB each; metadata, original bytes/hash, concern, request/creator, submission key/hash and server time persisted append-only. No OCR, external reference fetch, rendering or inference. Authenticated downloads are forced application/octet-stream attachments with nosniff/sandbox. These file checks do not prove authenticity or provide malware scanning; officers must treat downloaded evidence as untrusted. Up to100attachments/request and1000decision events/request. Max10attachment IDs and10bounded references per decision. References are descriptive text, not fetched links or verified truth.
+
+Per-concern history: Unverified → Verified/Rejected/MoreInformationRequired, including further deliberate decisions with current revision. Required20–2000character remarks; Verified requires specified attachment(s) or document references. Stores previous/new status, request/concern, immutable actor/serverUTC, remarks/references, prior-event FK, revision and canonical typed-event SHA256. Same-key/content replay retrieves the same event; changed content409. Short repository request lock plus expected revision serializes competing decisions; no external HTTP spans the lock. EF interceptor stamps actor/UTC normalized to PostgreSQLmicroseconds. Original automated screening is never updated or recalculated. The record transparently shows that attachment and verification may be by the same DS; it does not claim independent investigation.
+
+## Reviewed additive migration and deployment
+
+Applied ONLY `20261023093022_AddScreeningEvidenceVerification` using REVIEWED_FORWARD.sql; two new tables `governance_intelligence.screening_evidence_attachments` and `screening_evidence_verifications`. Original schema objects/history not rewritten; Down refuses destructive removal. Exact runtime delta: SELECT/INSERT only on these two tables, four privilege entries. No UPDATE/DELETE/DDL/account/peer/outbox/role rights. REVIEWED_PERMISSIONS.sql records it.
+
+Current database `localhost:5432/state_land_governance_c4`, same OID**34144**, now **40tables/20migrations**. All37original data-table fingerprints and prior grants/metadata, original complaints/classifications/research/audit/outbox/receipt histories match the fresh baseline. C1/C3/accounts fingerprints exact; frozen artifacts exact. Two new ordinary tables remain **empty**: no test evidence/verification or complaint records in research storage. No rename/reconstruction/restore over ordinary data.
+
+Fresh secure read-only full backup: `D:\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\.tmp\c4-evidence-backup-20261023_0940\state_land_governance_c4.dump`; 337062bytes; SHA256 **`8dc27214f4070e072e7522930214c8c8426ce1fa559b085af2986b6ed2d94df3`**; archive readability/listing passed. Restored into NEW isolated Docker `c4_evidence_test_20261023`/57657, original38tables/schema/history match before the new migration. Test-only runtime rights reconstructed there; original archive ACLs retained, no ordinary role setup. Previous backups untouched. New isolated fixture IDs and previous failed proof fixtures exist only in isolated storage. Backup summary is in BACKUP_RESTORE_SUMMARY.json; the full local baseline remains excluded from Git. Isolated provenance is in ISOLATED_HTTP_EVIDENCE.json.
+
+Verified prior API18396 stopped. New reviewed `.tmp/c4-manual-evidence-api` published and started exactly once through `Start-C4ManualEvidenceApprovedApi.ps1`; API**35400/5264healthy**, frontend**16692/3000** and ML**36612/8104** reused. Private candidate, credentials, independent complaint/report permissions and disabled sandboxes/workers unchanged. Actual new process environment verified. No automatic startup migration/write; original runtime fingerprints unchanged after authenticated verification. Isolated Docker stopped successfully, data retained.
+
+API DLL SHA256 **`ce73340bc481cac55c536b91279e936f86c06fca7adb310818af6492e1b6dc95`**. Versioned source/package/launcher manifests retained; historical manifests/package untouched. No incompatible API restart.
+
+## Verification
+
+**308backend,146frontend,7architecture tests pass**, zero skipped. Focused lint0errors; full TypeScript only the3known C1 errors. No whole frontend production-build success is claimed. **38isolated HTTP/storage checks** cover same-DS upload, all decision statuses, server actor/time/hash, download privacy, creator/Commissioner/applicant/anonymous denials, no Commissioner writes, malformed files, mandatory remarks, wrong attachments, idempotency/content conflict, concurrent revision conflict, fresh DS/report revocation, new-host retrieval, canonical hash/typed columns and actual denied runtime UPDATE/DELETE/DDL. Original isolated automated result unchanged. No classifier/anomaly calls.
+
+Isolated request `4bae93f8-1626-4440-bf3b-4c6f37228145`, assessment `d0e488d6-77fb-40f6-a479-7ab3e22fefb9`, attachment `80c1d7b6-9479-4f1a-a959-0758a58d0d30` are **fictional isolated fixtures only**. They are not ordinary report URLs or real case IDs.
+
+**387ordinary authenticated checks**, **36saved reports** retrieved, seven responsible DS evidence workspaces readable, other DS/applicant denied, Commissioner read-only, live independent revocation works and exact grant bytes restored. Existing central queues/actions/owner public-only history verified without complaint mutations. All saved report response hashes retain original owner/result/provenance. No ordinary upload/verification/test complaint or model call. Browser visual/keyboard/responsive remains manual; SSR tests and nine HTTP200section routes are not visual proof.
+
+## Commit and remaining scope
+
+The user-authorized descriptive commit includes the explicitly listed C4 task files/tests/migration/docs only; no push. Existing repository has extensive pre-existing uncommitted work (including prerequisite C4 scaffolding). Those unrelated paths are not permission to stage peer/auth/model/engine changes. The staged task commit is not claimed to capture or independently reproduce that entire pre-existing workspace. The final response supplies the resulting commit hash; no remote push. No secrets/private configs/.tmp/dumps/models/generated logs are staged. Modified tracked C4 wiring/snapshot files necessarily contain their current prior C4 setup as well as the scoped additions; the staged review explicitly identified that boundary.
+
+Manual guide and exact read-only SQL: MANUAL_WALKTHROUGH.md and VERIFY_READ_ONLY.sql. Recovery retains additive tables/history: stop only verified new API, revoke only new-table rights before considering an earlier package, preserve existing permissions and evidence; never destructive Down/ordinary restore. An older package cannot expose new evidence (no handlers) but must remain complaint-handling-compatible and renamed-target-compatible; do not use historical pre-handling/pre-rename packages. No further feature work proposed.

@@ -1,0 +1,32 @@
+"use client";
+import {useEffect,useRef,useState} from "react";
+import {ProgressiveSteps,ProgressiveStep,StatusBadge} from "./ProgressiveSteps";
+import Link from "next/link";
+import {investigationConcerns,investigationError,conservativeEvidenceState,type InvestigationChoice,type InvestigationObservation} from "../services/earlyInvestigation";
+import {officerApi,pendingOfficerKey,clearOfficerKey,type Investigation,type RequestReport} from "../services/officerFlows";
+import {useOfficerSession} from "./OfficerFlowSession";
+import {OfficerAssessmentResult} from "./OfficerAssessmentResult";
+import {EvidenceStatusSummary} from "./EvidenceStatusSummary";
+import {PendingIndicator} from "./PendingIndicator";
+import styles from "./KiwulaAssessmentWorkspace.module.css";
+export function EarlyGovernanceInvestigation({onResult}:{onResult?:(report:RequestReport|null)=>void}){
+ const [values,setValues]=useState<Record<string,InvestigationObservation>>(()=>Object.fromEntries(investigationConcerns.map(([key])=>[key,{choice:"NotYetVerified",remarks:""}])));
+ const {actor,epoch,generation}=useOfficerSession();const [saved,setSaved]=useState<Investigation|null>(null),[report,setReport]=useState<RequestReport|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState("");const flight=useRef(false);
+ const findings=investigationConcerns.map(([concern])=>({concern,...values[concern]}));
+ const unchanged=!!saved&&findings.every(f=>saved.findings.some(v=>v.concern===f.concern&&v.choice===f.choice&&v.remarks===f.remarks.trim()));
+ useEffect(()=>{let active=true;const v=epoch.current;queueMicrotask(()=>{if(!active)return;setSaved(null);setReport(null);setBusy(false);flight.current=false;setError("");setValues(Object.fromEntries(investigationConcerns.map(([key])=>[key,{choice:"NotYetVerified",remarks:""}])));if(actor)void officerApi<Investigation[]>("officer-investigations").then(rows=>{if(active&&v===epoch.current&&rows[0]){setSaved(rows[0]);setValues(Object.fromEntries(rows[0].findings.map(f=>[f.concern,{choice:f.choice,remarks:f.remarks}])));}}).catch(e=>{if(active&&v===epoch.current)setError(e.message);});});return()=>{active=false;};},[actor,epoch,generation]);
+ async function submit(run:boolean){if(flight.current||!actor)return;flight.current=true;setBusy(true);setError("");const v=epoch.current;
+ try{const kind=run?"early":"investigation";const key=pendingOfficerKey(actor,kind,sessionStorage);
+ if(run){if(!saved||!unchanged)throw new Error("Save these findings before screening.");const result=await officerApi<RequestReport>("officer-assessments/early",{investigationId:saved.id,submissionKey:key});if(v!==epoch.current)return;setReport(result);onResult?.(result);if(result.state==="Saved")clearOfficerKey(actor,kind);}
+ else{const snapshot=await officerApi<Investigation>("officer-investigations",{submissionKey:key,proposalId:"kiulakale-demonstration-adaptation-v1",findings,supersedesId:saved?.id??null});if(v!==epoch.current)return;setSaved(snapshot);setReport(null);onResult?.(null);clearOfficerKey(actor,kind);}
+ }catch(e){if(v===epoch.current)setError(e instanceof Error?e.message:"Submission unavailable.");}finally{if(v===epoch.current){flight.current=false;setBusy(false);}}}
+ return <section className={styles.card}><div className={styles.resultHeader}><h2>Early Governance Investigation</h2><StatusBadge status={!saved?"Unsaved draft":unchanged?"Saved":"Modified"}/></div><p>Record observations for all seven concerns. Selections remain independently unverified.</p>{!actor&&<p><Link href="/sign-in">Sign in as the DS officer</Link> to save or screen findings.</p>}
+ <EvidenceStatusSummary states={findings.map(f=>conservativeEvidenceState(f))} label="Current investigation observations"/><details open={!report||undefined}><summary>{report?"Review or edit investigation findings":"Investigation findings"}</summary>
+ <ProgressiveSteps label="Seven investigation concerns">{investigationConcerns.map(([key,label])=>{const value=values[key],validation=investigationError(value);return <ProgressiveStep key={key} status={conservativeEvidenceState(value)} expandable={false} title={<label className={styles.findingTitle}><span>{label}</span><select aria-label={`${label}: investigation finding`} id={key+"-choice"} value={value.choice} onChange={e=>{setReport(null);onResult?.(null);setValues(v=>({...v,[key]:{...value,choice:e.target.value as InvestigationChoice}}));}}><option value="IssueFound">Issue Found</option><option value="NoIssueFound">No Issue Found</option><option value="NotYetVerified">Not Yet Verified</option></select></label>}>
+ <details open={value.choice==="IssueFound"||undefined}><summary>{value.remarks.trim()?"View or edit remarks":"Add description / remarks"}{value.choice==="IssueFound"?" (required)":" (optional)"}</summary><label htmlFor={key+"-remarks"}>Description / remarks<textarea id={key+"-remarks"} maxLength={2000} rows={2} value={value.remarks} aria-invalid={!!validation} aria-describedby={validation?key+"-error":undefined} onChange={e=>{setReport(null);onResult?.(null);setValues(v=>({...v,[key]:{...value,remarks:e.target.value}}));}}/></label>{validation&&<p id={key+"-error"} role="alert">{validation}</p>}</details>
+ </ProgressiveStep>;})}</ProgressiveSteps></details>
+ <p role="status" className={styles.secondary}>{saved?(unchanged?"Saved snapshot. Screening will use these findings.":"Modified findings. Save a new snapshot before screening."):"Unsaved draft. Save before screening."}</p>
+ <div className={styles.toolbar}><button className={!unchanged?styles.primary:undefined} disabled={!actor||busy||unchanged||findings.some(f=>!!investigationError(f))} onClick={()=>void submit(false)}>Save Investigation Findings</button><button className={unchanged&&report?.state!=="Saved"?styles.primary:undefined} disabled={!saved||!unchanged||busy||report?.state==="Unknown"||report?.state==="Pending"} onClick={()=>void submit(true)}>Run Early Governance Screening</button><Link href="/component-04/assessments/history">History / Reports</Link></div>
+ {busy&&<PendingIndicator>Saving or screening the investigation?</PendingIndicator>}{error&&<p role="alert">{error}</p>}{report&&<OfficerAssessmentResult report={report}/>}
+ <details><summary>How evidence states are used</summary><p>Issue Found and No Issue Found both remain Unverified. Not Yet Verified without remarks is Missing; with remarks it remains Unverified. Saved corrections preserve previous snapshots. No selection establishes verified presence, absence or clearance.</p></details></section>;
+}
