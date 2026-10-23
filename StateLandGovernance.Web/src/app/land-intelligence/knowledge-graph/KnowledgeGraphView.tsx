@@ -435,6 +435,51 @@ export function KnowledgeGraphView({
         </div>
       </form>
 
+      {!initialParcelId &&
+      !initialCadastralNumber &&
+      !loading &&
+      !error &&
+      !serviceUnavailable &&
+      !loadedParcelId &&
+      cadastralMatches.length === 0 ? (
+        <section className={styles.startPanel} aria-labelledby="kg-start-title">
+          <div className={styles.startIntro}>
+            <p className={styles.panelEyebrow}>GET STARTED</p>
+            <h2 id="kg-start-title" className={styles.startTitle}>
+              See how a parcel connects to other records
+            </h2>
+            <p className={styles.startDescription}>
+              Enter a cadastral number above to explore its recorded connections.
+              If you do not have a number, choose a parcel from the catalog.
+            </p>
+            <Button href="/land-intelligence/parcels" variant="secondary">
+              Choose a parcel
+            </Button>
+          </div>
+          <div className={styles.startGuide}>
+            <h3>Connections you may see</h3>
+            <div className={styles.startGuideItem}>
+              <span className={styles.startGuideNumber}>01</span>
+              <div>
+                <strong>Land category</strong>
+                <p>How the parcel is classified in the available records.</p>
+              </div>
+            </div>
+            <div className={styles.startGuideItem}>
+              <span className={styles.startGuideNumber}>02</span>
+              <div>
+                <strong>Administrative area</strong>
+                <p>Where the parcel is recorded as being located.</p>
+              </div>
+            </div>
+            <p className={styles.startNote}>
+              Connections describe available data. They do not confirm ownership
+              or lease approval.
+            </p>
+          </div>
+        </section>
+      ) : null}
+
       {cadastralMatches.length > 1 ? (
         <div className={styles.matchesList} role="region" aria-label="Matching parcels">
           <p className={styles.matchesTitle}>

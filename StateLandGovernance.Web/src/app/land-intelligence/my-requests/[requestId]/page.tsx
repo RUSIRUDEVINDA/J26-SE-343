@@ -23,6 +23,7 @@ import {
   leaseInterestApplicantOutcome,
   leaseInterestStatusBadgeTone,
   leaseInterestStatusLabel,
+  formatApplicantTimelineNote,
 } from "@/modules/component-01-land-intelligence/utils/leaseInterestStatus";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import {
@@ -101,6 +102,9 @@ export default function MyRequestDetailPage() {
   const purpose = detail
     ? leaseInterestPurposeDisplay(detail.proposal.requestedPurpose, detail.status)
     : null;
+  const applicantOutcome = detail
+    ? leaseInterestApplicantOutcome(detail.status)
+    : "";
 
   return (
     <>
@@ -130,9 +134,9 @@ export default function MyRequestDetailPage() {
                 {leaseInterestStatusLabel(detail.status)}
               </StatusBadge>
             </div>
-            <p className={styles.requestOutcome}>
-              {leaseInterestApplicantOutcome(detail.status)}
-            </p>
+            {applicantOutcome.trim() ? (
+              <p className={styles.requestOutcome}>{applicantOutcome}</p>
+            ) : null}
             <dl className={styles.requestFacts}>
               <div>
                 <dt>Current status</dt>
@@ -159,56 +163,83 @@ export default function MyRequestDetailPage() {
             </dl>
           </section>
 
-          <ApplicantOfficerEvaluation
-            state={valuationState}
-            onRetry={() => setValuationAttempt((n) => n + 1)}
-          />
+          <div className={styles.requestColumns}>
+            <div className={styles.requestMainColumn}>
+              <ApplicantOfficerEvaluation
+                state={valuationState}
+                onRetry={() => setValuationAttempt((n) => n + 1)}
+              />
 
-          {detail.latestAuthorityDecision ? (
-            <ApplicantAuthorityDecision
-              decision={detail.latestAuthorityDecision}
-              statusCode={detail.status}
-            />
-          ) : null}
+              {detail.latestAuthorityDecision ? (
+                <ApplicantAuthorityDecision
+                  decision={detail.latestAuthorityDecision}
+                />
+              ) : null}
 
-          <section
-            className={styles.timelinePanel}
-            aria-labelledby="request-timeline-heading"
-          >
-            <p className={styles.requestEyebrow}>History</p>
-            <h2 id="request-timeline-heading" className={styles.detailSectionTitle}>
-              Activity timeline
-            </h2>
-            <ol className={styles.detailTimeline}>
-              {detail.statusHistory.map((entry, index) => (
-                <li key={`${entry.changedAtUtc}-${index}`}>
-                  <span className={styles.timelineMarker} aria-hidden="true" />
-                  <div className={styles.timelineEntry}>
-                    <div className={styles.timelineEntryTop}>
-                      <strong>{leaseInterestStatusLabel(entry.status)}</strong>
-                      <time dateTime={entry.changedAtUtc}>
-                        {formatApplicantDateTime(entry.changedAtUtc)}
-                      </time>
-                    </div>
-                    {entry.note ? <p>{entry.note}</p> : null}
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </section>
+              <div className={styles.detailActions}>
+                {isLeaseInterestDraftStatus(detail.status) ? (
+                  <Button
+                    href={`/land-intelligence/parcels/${detail.landParcelId}/lease-interest`}
+                    variant="primary"
+                  >
+                    Continue draft
+                  </Button>
+                ) : null}
+                <Button href="/land-intelligence/my-requests" variant="ghost">
+                  Back to list
+                </Button>
+              </div>
+            </div>
 
-          <div className={styles.detailActions}>
-            {isLeaseInterestDraftStatus(detail.status) ? (
-              <Button
-                href={`/land-intelligence/parcels/${detail.landParcelId}/lease-interest`}
-                variant="primary"
+            <aside className={styles.requestAside}>
+              <section
+                className={styles.timelinePanel}
+                aria-labelledby="request-timeline-heading"
               >
-                Continue draft
-              </Button>
-            ) : null}
-            <Button href="/land-intelligence/my-requests" variant="ghost">
-              Back to list
-            </Button>
+                <p className={styles.requestEyebrow}>History</p>
+                <h2
+                  id="request-timeline-heading"
+                  className={styles.detailSectionTitle}
+                >
+                  Activity timeline
+                </h2>
+                <ol className={styles.detailTimeline}>
+                  {detail.statusHistory.map((entry, index) => (
+                    <li key={`${entry.changedAtUtc}-${index}`}>
+                      <span
+                        className={styles.timelineMarker}
+                        aria-hidden="true"
+                      />
+                      <div className={styles.timelineEntry}>
+                        <div className={styles.timelineEntryTop}>
+                          <strong>
+                            {leaseInterestStatusLabel(entry.status)}
+                          </strong>
+                          <time dateTime={entry.changedAtUtc}>
+                            {formatApplicantDateTime(entry.changedAtUtc)}
+                          </time>
+                        </div>
+                        {(() => {
+                          const timelineNote = formatApplicantTimelineNote(
+                            entry.status,
+                            entry.note,
+                          );
+                          if (!timelineNote) {
+                            return null;
+                          }
+                          return (
+                            <p>
+                              <strong>{timelineNote.label}:</strong>{" "}
+                              {timelineNote.body}
+                            </p>
+                          );
+                        })()}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            </aside>
           </div>
         </div>
       ) : null}
