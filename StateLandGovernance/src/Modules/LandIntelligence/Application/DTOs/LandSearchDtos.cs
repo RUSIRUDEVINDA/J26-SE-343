@@ -17,13 +17,16 @@ public sealed record LandParcelDto(
     int RegulatoryReferenceCount,
     CadastralSourceMetadataDto? CadastralSource = null,
     LandParcelAvailabilityDto? Availability = null,
-    ParcelGisEnrichmentSummaryDto? GisEnrichment = null);
+    ParcelGisEnrichmentSummaryDto? GisEnrichment = null,
+    ParcelGnDivisionMappingDto? GnDivisionMapping = null);
 
 public sealed record LandSearchRequest
 {
     public string? Province { get; init; }
     public string? District { get; init; }
     public string? DivisionalSecretariat { get; init; }
+    /// <summary>Exact match on GN division name (parcel location and/or Colombo GN mapping workbook).</summary>
+    public string? GramaNiladhariDivision { get; init; }
     /// <summary>Exact match (trimmed, case-insensitive) on cadastral number. Ordinary users search by this, not UUID.</summary>
     public string? CadastralNumber { get; init; }
     public LandCategoryType? CategoryType { get; init; }

@@ -135,7 +135,7 @@ public sealed record LeaseInterestOfficerLookupItemDto(
     string? District,
     LandUseType RequestedPurpose,
     int? RequestedDurationYears,
-    string MaskedNationalIdentityCardNumber);
+    string NationalIdentityCardNumber);
 
 public sealed record LeaseInterestOfficerLookupResponseDto(
     IReadOnlyList<LeaseInterestOfficerLookupItemDto> Items,

@@ -16,6 +16,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
+using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
@@ -397,6 +398,7 @@ if (app.Environment.IsDevelopment())
         )
         {
             dbContext.Database.Migrate();
+            await EnsureColomboGnDivisionMappingImportedAsync(scope.ServiceProvider);
         }
     }
     catch (Exception ex)
@@ -414,6 +416,7 @@ else
         .GetRequiredService<LandIntelligenceDbContext>();
 
     dbContext.Database.Migrate();
+    await EnsureColomboGnDivisionMappingImportedAsync(scope.ServiceProvider);
 }
 
 app.Use(async (context, next) =>
@@ -513,5 +516,23 @@ app.MapGet(
 );
 
 app.Run();
+
+static async Task EnsureColomboGnDivisionMappingImportedAsync(IServiceProvider services)
+{
+    try
+    {
+        var importer = services.GetService<IParcelGnDivisionMappingImportService>();
+        if (importer is null)
+        {
+            return;
+        }
+
+        await importer.EnsureImportedAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[LandIntelligence] GN division mapping import skipped: {ex.Message}");
+    }
+}
 
 public partial class Program;

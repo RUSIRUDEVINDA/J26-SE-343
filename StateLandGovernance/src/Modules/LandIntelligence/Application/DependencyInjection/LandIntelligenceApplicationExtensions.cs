@@ -22,6 +22,7 @@ public static class LandIntelligenceApplicationExtensions
         services.AddScoped<LandParcelAvailabilityComposer>();
         services.AddScoped<ListSourceReportedLandUseOptionsQueryHandler>();
         services.AddScoped<ListDerivedSoilGroupOptionsQueryHandler>();
+        services.AddScoped<ListGramaNiladhariDivisionOptionsQueryHandler>();
         services.AddScoped<GetSpatialConstraintsByParcelIdQueryHandler>();
         services.AddScoped<GetLandRelationshipsQueryHandler>();
         services.AddScoped<SearchLandRecommendationsQueryHandler>();
