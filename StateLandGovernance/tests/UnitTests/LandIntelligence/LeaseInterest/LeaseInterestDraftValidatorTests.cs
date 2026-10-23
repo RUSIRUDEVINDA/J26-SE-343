@@ -326,7 +326,7 @@ public sealed class LeaseInterestDraftValidatorTests
     }
 
     [Fact]
-    public void Validate_SubmitOrganizationRequiresOrganizationDetailsAndRepresentativeNic()
+    public void Validate_SubmitOrganizationRequiresOrganizationDetailsAndBrn()
     {
         var valid = ValidDraft();
         var draft = valid with
@@ -335,14 +335,34 @@ public sealed class LeaseInterestDraftValidatorTests
             {
                 Kind = LeaseInterestApplicantKindDto.Organization,
                 NationalIdentityCardNumber = null,
+                OrganizationName = "Ceylonova Global",
+                OrganizationRegistrationNumber = "B11223",
             },
         };
 
         var errors = CreateValidator().Validate(draft, forSubmit: true);
 
-        Assert.Contains(errors, e => e.Contains("Organization name is required"));
-        Assert.Contains(errors, e => e.Contains("Organization registration number is required"));
-        Assert.Contains(errors, e => e.Contains("Representative National Identity Card"));
+        Assert.DoesNotContain(errors, e => e.Contains("Representative National Identity Card"));
+    }
+
+    [Fact]
+    public void Validate_SubmitOrganizationRejectsInvalidBrn()
+    {
+        var valid = ValidDraft();
+        var draft = valid with
+        {
+            Applicant = valid.Applicant with
+            {
+                Kind = LeaseInterestApplicantKindDto.Organization,
+                NationalIdentityCardNumber = null,
+                OrganizationName = "Ceylonova Global",
+                OrganizationRegistrationNumber = "!!",
+            },
+        };
+
+        var errors = CreateValidator().Validate(draft, forSubmit: true);
+
+        Assert.Contains(errors, e => e.Contains("business registration number"));
     }
 
     [Fact]
@@ -356,6 +376,20 @@ public sealed class LeaseInterestDraftValidatorTests
         var errors = CreateValidator().Validate(draft, forSubmit: true);
 
         Assert.Contains(errors, e => e.Contains("Requested duration must be between"));
+    }
+
+    [Fact]
+    public void Validate_SubmitRejectsPastDesiredStartPeriod()
+    {
+        var valid = ValidDraft();
+        var draft = valid with
+        {
+            Proposal = valid.Proposal with { DesiredStartPeriod = "2000-01-01" },
+        };
+
+        var errors = CreateValidator().Validate(draft, forSubmit: true);
+
+        Assert.Contains(errors, e => e.Contains("Desired start period cannot be in the past"));
     }
 
     [Fact]

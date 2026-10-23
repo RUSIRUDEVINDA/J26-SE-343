@@ -35,7 +35,7 @@ internal static class LandIntelligenceApiResponseMapper
             response.PageSize,
             response.TotalCount);
 
-    public static ApprovedPreliminaryParcelListResponse ToApprovedPreliminaryParcelListResponse(
+    public static Models.Responses.ApprovedPreliminaryParcelListResponse ToApprovedPreliminaryParcelListResponse(
         Application.DTOs.ApprovedPreliminaryParcelListResponse response) =>
         new(
             response.Results

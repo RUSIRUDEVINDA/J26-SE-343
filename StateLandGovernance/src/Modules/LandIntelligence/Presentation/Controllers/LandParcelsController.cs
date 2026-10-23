@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Queries;
+using LandSearchRequest = StateLandGovernance.LandIntelligence.Application.DTOs.LandSearchRequest;
 using StateLandGovernance.LandIntelligence.Presentation.Mappings;
 using StateLandGovernance.LandIntelligence.Presentation.Models;
 using StateLandGovernance.LandIntelligence.Presentation.Models.Responses;
