@@ -398,6 +398,15 @@ if (app.Environment.IsDevelopment())
         )
         {
             dbContext.Database.Migrate();
+            await LandIntelligenceSchemaRepair.ApplyAsync(dbContext);
+            var nicProtector = scope.ServiceProvider
+                .GetService<StateLandGovernance.LandIntelligence.Application.Interfaces.INicPersonalDataProtector>();
+            if (nicProtector != null)
+            {
+                await StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest.LeaseInterestBrnLookupBackfill.ApplyAsync(
+                    dbContext,
+                    nicProtector);
+            }
             await EnsureColomboGnDivisionMappingImportedAsync(scope.ServiceProvider);
         }
     }
@@ -406,6 +415,30 @@ if (app.Environment.IsDevelopment())
         Console.WriteLine(
             $"[Development] LandIntelligence migration skipped: {ex.Message}"
         );
+
+        try
+        {
+            using var repairScope = app.Services.CreateScope();
+            var repairDb = repairScope.ServiceProvider.GetService<LandIntelligenceDbContext>();
+            if (repairDb != null && repairDb.Database.CanConnect())
+            {
+                await LandIntelligenceSchemaRepair.ApplyAsync(repairDb);
+                var repairNicProtector = repairScope.ServiceProvider
+                    .GetService<StateLandGovernance.LandIntelligence.Application.Interfaces.INicPersonalDataProtector>();
+                if (repairNicProtector != null)
+                {
+                    await StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest.LeaseInterestBrnLookupBackfill.ApplyAsync(
+                        repairDb,
+                        repairNicProtector);
+                }
+            }
+        }
+        catch (Exception repairEx)
+        {
+            Console.WriteLine(
+                $"[Development] LandIntelligence schema repair failed: {repairEx.Message}"
+            );
+        }
     }
 }
 else
@@ -416,6 +449,12 @@ else
         .GetRequiredService<LandIntelligenceDbContext>();
 
     dbContext.Database.Migrate();
+    await LandIntelligenceSchemaRepair.ApplyAsync(dbContext);
+    var nicProtector = scope.ServiceProvider
+        .GetRequiredService<StateLandGovernance.LandIntelligence.Application.Interfaces.INicPersonalDataProtector>();
+    await StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest.LeaseInterestBrnLookupBackfill.ApplyAsync(
+        dbContext,
+        nicProtector);
     await EnsureColomboGnDivisionMappingImportedAsync(scope.ServiceProvider);
 }
 

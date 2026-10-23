@@ -17,6 +17,21 @@ export type ParsedRecommendationSearch = {
   fingerprint: string;
 };
 
+export const DEFAULT_FIND_SUITABLE_MAX_RESULTS = "10";
+
+/** Previous UI default; session snapshots still store this until migrated. */
+const LEGACY_FIND_SUITABLE_MAX_RESULTS = "30";
+
+export function normalizeStoredFindSuitableMaxResults(
+  raw: string | undefined | null,
+): string {
+  const trimmed = optionalTrim(raw);
+  if (!trimmed || trimmed === LEGACY_FIND_SUITABLE_MAX_RESULTS) {
+    return DEFAULT_FIND_SUITABLE_MAX_RESULTS;
+  }
+  return trimmed;
+}
+
 const EMPTY_FORM: FindSuitableLandFormState = {
   requiredPurpose: "",
   targetAreaValue: "",
@@ -25,7 +40,7 @@ const EMPTY_FORM: FindSuitableLandFormState = {
   preferredDistrict: "",
   preferredGramaNiladhariDivision: "",
   sourceReportedLandUse: "",
-  maxResults: "30",
+  maxResults: DEFAULT_FIND_SUITABLE_MAX_RESULTS,
 };
 
 function optionalTrim(value: string | null | undefined): string {
@@ -105,7 +120,7 @@ export function parseRecommendationSearchParams(
         : null,
     sourceReportedLandUse: landCover ? null : landUse || null,
     researchLandCoverGroup: landCover || null,
-    maxResults: maxResults ?? 30,
+    maxResults: maxResults ?? 10,
   };
 
   const formState: FindSuitableLandFormState = {
@@ -118,7 +133,7 @@ export function parseRecommendationSearchParams(
     preferredDistrict: district,
     preferredGramaNiladhariDivision: gnDivision,
     sourceReportedLandUse,
-    maxResults: maxResultsRaw || "30",
+    maxResults: maxResultsRaw || "10",
   };
 
   return {
@@ -247,7 +262,7 @@ export function buildRequestFromFormState(
     researchLandCoverGroup: form.sourceReportedLandUse.startsWith("cover:")
       ? form.sourceReportedLandUse.slice(6)
       : null,
-    maxResults: Number.isFinite(parsedMaxResults) ? parsedMaxResults : 30,
+    maxResults: Number.isFinite(parsedMaxResults) ? parsedMaxResults : 10,
   };
 }
 

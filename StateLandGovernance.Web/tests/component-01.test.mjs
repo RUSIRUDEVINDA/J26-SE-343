@@ -100,6 +100,12 @@ const {
   "../src/modules/component-01-land-intelligence/utils/applicantValuationLoad.ts",
 );
 const {
+  APPLICANT_NOT_RECORDED,
+  buildApplicantEvaluationBlocks,
+} = loadCommonJs(
+  "../src/modules/component-01-land-intelligence/utils/applicantValuationDisplay.ts",
+);
+const {
   getJwtExpiryMs,
   isJwtExpired,
   clearLandIntelligenceRoleToken,
@@ -291,20 +297,8 @@ test("authority agricultural worksheet shows circular fields and Not entered for
   const approval = dates.fields.find((field) => field.label === "Lease approval date");
   assert.equal(approval.value, NOT_ENTERED);
 
-  const observations = sections.find((section) => section.id === "observations");
-  assert.ok(
-    observations.fields.some((field) => field.label === "Cultivation details"),
-  );
-  assert.equal(
-    observations.fields.some((field) => field.label === "Residential improvements"),
-    false,
-  );
-
-  const notes = sections.find((section) => section.id === "notes");
-  assert.equal(
-    notes.notes.find((note) => note.label === "Worksheet notes").value,
-    NOT_ENTERED,
-  );
+  assert.equal(sections.some((section) => section.id === "observations"), false);
+  assert.equal(sections.some((section) => section.id === "notes"), false);
 });
 
 test("authority residential worksheet shows residential figures only", () => {
@@ -538,6 +532,51 @@ test("applicant valuation: retry after temporary failure yields 'available'", as
 test("applicant valuation: error messages do not leak officer-only terms", () => {
   const text = `${VALUATION_ACCESS_DENIED_MESSAGE} ${VALUATION_LOAD_ERROR_MESSAGE}`;
   assert.doesNotMatch(text, /officer id|officerNotes|recordedByOfficerId/i);
+});
+
+test("applicant valuation display: builds overview, observations, and breakdown blocks", () => {
+  const blocks = buildApplicantEvaluationBlocks({
+    revision: 2,
+    recordedAtUtc: "2026-10-17T15:28:46.944Z",
+    formType: "AgriculturalCommercial",
+    assessedLandValueLkr: 1250000,
+    assessedAreaHectares: 0.5,
+    inspectionDate: "2026-10-10",
+    valuationDate: "2026-10-12",
+    valuationReference: "VAL-2026-01",
+    issuingOffice: "Colombo DS",
+    siteCondition: "Level plot",
+    cultivationDetails: "Mixed crops",
+    worksheet: {
+      annualLeaseAmountLkr: 50000,
+      firstPeriodLines: [{ period: "Year 1", amountLkr: 25000 }],
+    },
+  });
+  assert.equal(blocks.length, 3);
+  assert.equal(blocks[0].title, "Assessment overview");
+  assert.equal(
+    blocks[0].fields.find((f) => f.id === "revision")?.value,
+    "2",
+  );
+  assert.ok(
+    blocks[1].fields.some((f) => f.id === "cultivation" && f.value.includes("Mixed")),
+  );
+  assert.ok(
+    blocks[2].tables?.[0]?.rows.some((r) => r.period === "Year 1"),
+  );
+  const sparseBlocks = buildApplicantEvaluationBlocks({
+    ...applicantSummary,
+    siteCondition: null,
+    cultivationDetails: null,
+    projectUseDetails: null,
+    otherTypeDetails: null,
+  });
+  assert.equal(sparseBlocks.length, 1);
+  assert.equal(sparseBlocks[0].id, "overview");
+  assert.equal(
+    sparseBlocks[0].fields.some((f) => f.value === APPLICANT_NOT_RECORDED),
+    false,
+  );
 });
 
 // ---------------------------------------------------------------------------
