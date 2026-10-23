@@ -119,9 +119,29 @@
 .rowActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.5rem;
   flex-shrink: 0;
   align-items: center;
+}
+
+.rowActions .rowAction,
+.rowActions .deleteAction {
+  min-height: 2.5rem;
+  padding: 0.52rem 0.85rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.rowActions .deleteAction {
+  background: #fff;
+  border-color: var(--color-card-border);
+  color: #8a1f1f;
+}
+
+.rowActions .deleteAction:not(:disabled):hover {
+  background: #fff3f1;
+  border-color: #d9aaa5;
+  color: #8a1f1f;
 }
 
 .rowDeleteError {
@@ -132,7 +152,7 @@
   color: #8a1f1f;
 }
 
-/* Solid pill like Continue draft / modal confirm; Cancel stays outline (secondary). */
+/* Destructive confirmation remains prominent inside the modal only. */
 .dangerFilledButton {
   background: var(--color-primary);
   border-color: var(--color-primary);
@@ -258,6 +278,10 @@
 .sectionTitle {
   margin: 1rem 0 0.5rem;
   font-size: 1rem;
+}
+
+.sectionHeader .sectionTitle {
+  margin: 0;
 }
 
 .timeline {
@@ -405,6 +429,6 @@
   }
 
   .rowActions > * {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
   }
 }

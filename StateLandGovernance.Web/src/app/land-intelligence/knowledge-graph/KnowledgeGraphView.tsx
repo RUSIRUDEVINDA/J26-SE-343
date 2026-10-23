@@ -18,7 +18,6 @@ import type {
   LandSearchResultResponse,
 } from "@/modules/component-01-land-intelligence/types/landIntelligence";
 import { sourceReportedLandUseDisplay } from "@/modules/component-01-land-intelligence/utils/sourceReportedCadastre";
-import { displayOrUnknown } from "@/modules/component-01-land-intelligence/utils/formatters";
 import styles from "./KnowledgeGraph.module.css";
 
 type GraphNode = {
@@ -34,7 +33,6 @@ type GraphEdge = {
   key: string;
   from: string;
   to: string;
-  type: string;
 };
 
 function shortId(value: string): string {
@@ -45,10 +43,11 @@ function shortId(value: string): string {
 }
 
 function formatNodeType(type: string): string {
-  return type
+  const words = type
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .replace(/_/g, " ")
     .trim();
+  return words.charAt(0).toUpperCase() + words.slice(1).toLowerCase();
 }
 
 function nodeKey(type: string, id: string): string {
@@ -153,7 +152,6 @@ function buildGraphLayout(
       key: `${rel.relationshipType}-${sourceKey}-${targetKey}-${index}`,
       from: sourceKey,
       to: targetKey,
-      type: rel.relationshipType,
     });
   });
 
@@ -161,14 +159,14 @@ function buildGraphLayout(
   const center = nodes.get(centerKey);
   if (center) {
     center.x = 320;
-    center.y = 210;
+    center.y = uniqueNeighbors.length <= 2 ? 108 : 210;
   }
 
   if (uniqueNeighbors.length === 1) {
     const node = nodes.get(uniqueNeighbors[0]);
     if (node) {
-      node.x = 320;
-      node.y = 72;
+      node.x = 520;
+      node.y = 108;
     }
   } else if (uniqueNeighbors.length === 2) {
     uniqueNeighbors.forEach((key, index) => {
@@ -176,8 +174,8 @@ function buildGraphLayout(
       if (!node) {
         return;
       }
-      node.x = 320;
-      node.y = index === 0 ? 72 : 348;
+      node.x = index === 0 ? 120 : 520;
+      node.y = 108;
     });
   } else {
     const radius = uniqueNeighbors.length <= 4 ? 140 : 170;
@@ -197,23 +195,6 @@ function buildGraphLayout(
   return { nodes: [...nodes.values()], edges };
 }
 
-function endpointListLabel(
-  type: string,
-  id: string,
-  parcelId: string,
-  parcelLabel: string,
-  rel: LandRelationshipResponse,
-): string {
-  if (type === "LandParcel" && id === parcelId) {
-    return parcelLabel;
-  }
-  const human = neighborLabelFromRelationship(rel, parcelId, type, id);
-  if (human) {
-    return `${formatNodeType(type)} — ${human}`;
-  }
-  return `${formatNodeType(type)} (${shortId(id)})`;
-}
-
 function RelationshipGraph({
   parcelId,
   parcelLabel,
@@ -227,66 +208,40 @@ function RelationshipGraph({
     () => buildGraphLayout(parcelId, parcelLabel, relationships),
     [parcelId, parcelLabel, relationships],
   );
+  const centerKey = nodeKey("LandParcel", parcelId);
 
   return (
-    <svg
-      className={styles.graphSvg}
-      viewBox="0 0 640 420"
-      role="img"
-      aria-label={`Relationship graph for parcel ${parcelLabel}. ${relationships.length} relationship${relationships.length === 1 ? "" : "s"} shown.`}
-    >
-      <title>{`Knowledge graph for ${parcelLabel}`}</title>
-      {edges.map((edge) => {
-        const from = nodes.find((n) => n.id === edge.from);
-        const to = nodes.find((n) => n.id === edge.to);
-        if (!from || !to) {
-          return null;
-        }
-        const mx = (from.x + to.x) / 2;
-        const my = (from.y + to.y) / 2;
-        return (
-          <g key={edge.key}>
-            <line
-              className={styles.edge}
-              x1={from.x}
-              y1={from.y}
-              x2={to.x}
-              y2={to.y}
-            />
-            <text className={styles.edgeLabel} x={mx} y={my - 6} textAnchor="middle">
-              {edge.type}
-            </text>
-          </g>
-        );
-      })}
-      {nodes.map((node) => {
-        const labelBelow = node.y <= 210;
-        return (
-        <g key={node.id} transform={`translate(${node.x}, ${node.y})`}>
-          <circle
-            r={node.kind === "parcel" ? 26 : 22}
-            className={
-              node.kind === "parcel" ? styles.nodeParcel : styles.nodeOther
-            }
-          />
-          <foreignObject
-            x={-92}
-            y={labelBelow ? (node.kind === "parcel" ? 32 : 28) : -78}
-            width={184}
-            height={72}
-            className={styles.nodeLabelFo}
-          >
-            <div className={styles.nodeLabelBox}>
-              <p className={styles.nodeLabelPrimary}>{node.label}</p>
-              <p className={styles.nodeLabelSecondary}>
-                {formatNodeType(node.sublabel)}
-              </p>
-            </div>
-          </foreignObject>
-        </g>
-        );
-      })}
-    </svg>
+    <div className={styles.relationshipCanvas}>
+      <div className={styles.parcelHub}>
+        <span className={styles.hubEyebrow}>LAND PARCEL</span>
+        <strong>{parcelLabel}</strong>
+        <span>Starting record</span>
+      </div>
+      <div className={styles.branchStem} aria-hidden="true" />
+      <ul className={styles.relationshipBranches} aria-label={`Connections for parcel ${parcelLabel}`}>
+        {edges.map((edge, index) => {
+          const relatedKey = edge.from === centerKey ? edge.to : edge.from;
+          const relatedNode = nodes.find((node) => node.id === relatedKey);
+          const relationship = relationships[index];
+          return (
+            <li key={edge.key} className={styles.branchCard}>
+              <span className={styles.branchType}>
+                {formatNodeType(relationship.relationshipType)}
+              </span>
+              <strong>{relatedNode?.label ?? shortId(relatedKey)}</strong>
+              <span className={styles.branchKind}>
+                {relatedNode ? formatNodeType(relatedNode.sublabel) : "Connected record"}
+              </span>
+              <details className={styles.branchTechnical}>
+                <summary>Record identifiers</summary>
+                <span>From: {formatNodeType(relationship.sourceNodeType)} {relationship.sourceNodeId}</span>
+                <span>To: {formatNodeType(relationship.targetNodeType)} {relationship.targetNodeId}</span>
+              </details>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 
@@ -442,15 +397,11 @@ export function KnowledgeGraphView({
     searchByCadastral,
   ]);
 
-  const relationshipTypes = [
-    ...new Set(relationships.map((item) => item.relationshipType)),
-  ];
-
   return (
     <div className={styles.layout}>
       <PageHeading
         title="Land Knowledge Graph"
-        subtitle=""
+        subtitle="Explore the recorded connections for a cadastral parcel."
       />
 
       <form
@@ -581,78 +532,32 @@ export function KnowledgeGraphView({
       {relationships.length > 0 && loadedParcelId ? (
         <div className={styles.explorer}>
           <section className={styles.panel} aria-labelledby="kg-visual-title">
-            <h2 id="kg-visual-title" className={styles.panelTitle}>
-              Visual explorer
-            </h2>
+            <div className={styles.panelHeader}>
+              <div>
+                <p className={styles.panelEyebrow}>PARCEL NETWORK</p>
+                <h2 id="kg-visual-title" className={styles.panelTitle}>
+                  Parcel connections
+                </h2>
+              </div>
+              <span className={styles.connectionCount}>
+                {relationships.length} connection{relationships.length === 1 ? "" : "s"}
+              </span>
+            </div>
             <p className={styles.parcelSummary}>
               Parcel <strong>{parcelLabel}</strong>
               {parcel?.location.district
                 ? ` · ${parcel.location.district}`
                 : null}
-              {" · "}
-              {relationships.length} relationship
-              {relationships.length === 1 ? "" : "s"} from API
             </p>
-            {relationshipTypes.length > 0 ? (
-              <div className={styles.chipRow} aria-label="Relationship types">
-                {relationshipTypes.map((type) => (
-                  <span key={type} className={styles.chip}>
-                    {type}
-                  </span>
-                ))}
-              </div>
-            ) : null}
             <RelationshipGraph
               parcelId={loadedParcelId}
               parcelLabel={parcelLabel}
               relationships={relationships}
             />
-          </section>
-
-          <section className={styles.panel} aria-labelledby="kg-list-title">
-            <h2 id="kg-list-title" className={styles.panelTitle}>
-              Relationship list
-            </h2>
-            <p className={styles.srOnly}>
-              Accessible text equivalent of the visual graph.
+            <p className={styles.graphNote}>
+              These connections describe available records. They do not confirm
+              ownership or lease approval.
             </p>
-            <ul className={styles.list}>
-              {relationships.map((item, index) => {
-                const sourceLabel = endpointListLabel(
-                  item.sourceNodeType,
-                  item.sourceNodeId,
-                  loadedParcelId,
-                  parcelLabel,
-                  item,
-                );
-                const targetLabel = endpointListLabel(
-                  item.targetNodeType,
-                  item.targetNodeId,
-                  loadedParcelId,
-                  parcelLabel,
-                  item,
-                );
-
-                return (
-                  <li
-                    key={`${item.relationshipType}-${item.sourceNodeId}-${item.targetNodeId}-${index}`}
-                    className={styles.item}
-                  >
-                    <p className={styles.itemType}>{item.relationshipType}</p>
-                    <p className={styles.itemPath}>
-                      {sourceLabel} → {targetLabel}
-                    </p>
-                    {item.description &&
-                    !sourceLabel.includes(item.description.trim()) &&
-                    !targetLabel.includes(item.description.trim()) ? (
-                      <p className={styles.itemMeta}>
-                        {displayOrUnknown(item.description)}
-                      </p>
-                    ) : null}
-                  </li>
-                );
-              })}
-            </ul>
             <div className={styles.actions} style={{ marginTop: "0.85rem" }}>
               <Button
                 href={`/land-intelligence/parcels/${loadedParcelId}`}

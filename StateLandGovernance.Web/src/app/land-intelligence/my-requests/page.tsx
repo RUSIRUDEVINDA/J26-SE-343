@@ -176,13 +176,14 @@ function RequestRow({
             <Button
               href={`/land-intelligence/parcels/${item.landParcelId}/lease-interest`}
               variant="primary"
+              className={styles.rowAction}
             >
               Continue draft
             </Button>
             <Button
               type="button"
-              variant="primary"
-              className={styles.dangerFilledButton}
+              variant="ghost"
+              className={styles.deleteAction}
               disabled={deleting || confirmOpen}
               onClick={() => setConfirmOpen(true)}
             >
@@ -193,6 +194,7 @@ function RequestRow({
           <Button
             href={`/land-intelligence/my-requests/${item.id}`}
             variant="primary"
+            className={styles.rowAction}
           >
             View status
           </Button>
