@@ -145,6 +145,19 @@ public sealed class LandParcelRepository : ILandParcelRepository
             query = query.Where(parcel => EF.Functions.ILike(parcel.DivisionalSecretariat, division));
         }
 
+        if (!string.IsNullOrWhiteSpace(request.GramaNiladhariDivision))
+        {
+            var gnDivision = request.GramaNiladhariDivision.Trim();
+            query = query.Where(parcel =>
+                (parcel.GramaNiladhariDivision != null
+                 && EF.Functions.ILike(parcel.GramaNiladhariDivision, gnDivision))
+                || _dbContext.ParcelGnDivisionMappings.Any(mapping =>
+                    (mapping.LandParcelId == parcel.Id
+                     || mapping.CadastralNumber == parcel.CadastralNumber)
+                    && mapping.SourceCodeGnName != null
+                    && EF.Functions.ILike(mapping.SourceCodeGnName, gnDivision)));
+        }
+
         if (!string.IsNullOrWhiteSpace(request.SourceReportedLandUse))
         {
             var filter = request.SourceReportedLandUse.Trim().ToLower();

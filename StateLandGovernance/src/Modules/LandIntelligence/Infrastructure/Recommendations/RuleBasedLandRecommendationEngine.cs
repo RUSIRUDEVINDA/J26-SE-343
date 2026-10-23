@@ -496,6 +496,9 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             DivisionalSecretariat = string.IsNullOrWhiteSpace(request.PreferredLocation?.DivisionalSecretariat)
                 ? null
                 : request.PreferredLocation.DivisionalSecretariat.Trim(),
+            GramaNiladhariDivision = string.IsNullOrWhiteSpace(request.PreferredLocation?.GramaNiladhariDivision)
+                ? null
+                : request.PreferredLocation.GramaNiladhariDivision.Trim(),
             // Legacy category filter only when explicitly requested (synthetic/domain-managed).
             CategoryType = request.RequiredLandCategory,
             CurrentUseType = request.RequiredLandUse,
