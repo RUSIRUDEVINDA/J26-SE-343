@@ -446,6 +446,26 @@ export interface LandSearchResultsResponse {
   totalCount: number;
 }
 
+export interface ApprovedPreliminaryParcelSummaryResponse {
+  landParcelId: string;
+  cadastralNumber: string;
+  province: string;
+  district: string;
+  areaValue: number;
+  areaUnit: AreaUnit;
+  sourceReportedLandUse: string | null;
+  approvedAtUtc: string;
+  leaseInterestRequestId: string;
+  requestReference: string | null;
+}
+
+export interface ApprovedPreliminaryParcelListResponse {
+  results: ApprovedPreliminaryParcelSummaryResponse[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+}
+
 /** Project research overlay; never replaces the original cadastral land-use label. */
 export interface ResearchSupplementParcelResponse {
   parcelId: string;

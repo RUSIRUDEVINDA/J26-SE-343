@@ -9,6 +9,7 @@ import type {
   LandRecommendationSearchResultsResponse,
   LandRelationshipsResponse,
   LandSearchResultsResponse,
+  ApprovedPreliminaryParcelListResponse,
   ResearchSupplementParcelResponse,
   SourceReportedLandUseOptionResponse,
   SpatialConstraintResponse,
@@ -53,6 +54,19 @@ export type ListParcelsParams = {
   /** Canonical land-use label or key; matches cadastral and/or project GIS evidence. */
   researchLandCoverGroup?: string;
 };
+
+export async function listApprovedPreliminaryParcels(params: {
+  page?: number;
+  pageSize?: number;
+} = {}): Promise<ApprovedPreliminaryParcelListResponse> {
+  const search = new URLSearchParams({
+    page: String(params.page ?? 1),
+    pageSize: String(params.pageSize ?? 20),
+  });
+  return apiGet<ApprovedPreliminaryParcelListResponse>(
+    `/api/v1/land/parcels/approved-preliminary?${search.toString()}`,
+  );
+}
 
 export async function listParcels(
   params: ListParcelsParams = {},

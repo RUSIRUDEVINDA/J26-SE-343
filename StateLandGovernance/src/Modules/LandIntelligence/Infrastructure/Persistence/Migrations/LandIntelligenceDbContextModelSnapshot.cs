@@ -610,6 +610,10 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
+                    b.Property<string>("ApplicantBrnLookupDigest")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<bool>("ConsentToPreliminaryAssessment")
                         .HasColumnType("boolean");
 
@@ -653,6 +657,8 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                         .HasFilter("\"AcknowledgementReference\" IS NOT NULL");
 
                     b.HasIndex("ApplicantNicLookupDigest");
+
+                    b.HasIndex("ApplicantBrnLookupDigest");
 
                     b.HasIndex("LandParcelId");
 
