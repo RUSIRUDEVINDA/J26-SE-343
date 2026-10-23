@@ -88,7 +88,7 @@ public static class LeaseInterestStatusTransitions
             LeaseInterestRequestStatus.Submitted =>
                 "Submitted — awaiting officer queue (preliminary interest only).",
             LeaseInterestRequestStatus.PendingVerification =>
-                "Pending officer verification. Your expression of interest is not a reservation or lease approval.",
+                "Pending officer verification.",
             LeaseInterestRequestStatus.NeedsInformation =>
                 "More information is required before officer verification can continue.",
             LeaseInterestRequestStatus.Declined =>

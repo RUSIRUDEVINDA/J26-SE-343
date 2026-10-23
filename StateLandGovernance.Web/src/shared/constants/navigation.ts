@@ -45,19 +45,19 @@ export const component01NavItems: NavItem[] = [
 
 /** Shown only when the API research-demo officer NIC lookup gate is active. */
 export const officerLeaseInterestLookupNavItem: NavItem = {
-  label: "Officer applicant lookup (Research demo)",
+  label: "Officer applicant lookup",
   href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-lookup`,
   icon: "⚑",
 };
 
 export const officerLeaseInterestQueueNavItem: NavItem = {
-  label: "Officer verification queue (Research demo)",
+  label: "Officer verification queue",
   href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-queue`,
   icon: "⚑",
 };
 
 export const authorityLeaseInterestQueueNavItem: NavItem = {
-  label: "Authority review queue (Research demo)",
+  label: "Authority review queue",
   href: `${LAND_INTELLIGENCE_BASE}/authority/lease-interest-queue`,
   icon: "⚖",
 };
