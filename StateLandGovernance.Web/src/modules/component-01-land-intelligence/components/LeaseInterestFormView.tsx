@@ -47,7 +47,6 @@ import {
 } from "../utils/sourceReportedCadastre";
 import { useModalDialogA11y } from "../hooks/useModalDialogA11y";
 import { LeaseInterestReviewStep } from "./LeaseInterestReviewStep";
-import { maskNic } from "../utils/nic";
 import styles from "./LeaseInterestFormView.module.css";
 
 const STEPS = ["Applicant", "Proposal", "Documents", "Review"] as const;
@@ -331,29 +330,6 @@ export function LeaseInterestFormView({
     [draft, eligibilityBlock],
   );
 
-  const projectLeaseReady = parcel?.availability?.projectLeaseReady;
-  const leaseAvailabilityNotice = useMemo(() => {
-    if (projectLeaseReady?.isEffectiveForLeaseFlow) {
-      return {
-        lead: "Lease-ready — project dataset assumption.",
-        body:
-          "This parcel is treated as lease-ready for the J26-SE-343 research dataset only. Expressing interest still requires officer verification and does not reserve land or create a lease. Simulated workflow status, if shown, is separate from this designation.",
-      };
-    }
-    if (projectLeaseReady?.excludedBecauseSourceReportedPrivate) {
-      return {
-        lead: "Not lease-ready for this project.",
-        body:
-          "Source-reported Private claimant category excludes this parcel from the project lease-ready assumption. Lease interest cannot be submitted here; hard restrictions and official verification still apply.",
-      };
-    }
-    return {
-      lead: "Availability not verified.",
-      body:
-        "Expressing lease interest records your request for preliminary assessment. It does not reserve land, create a lease, or establish payment obligations. Your requests are tied to your signed-in applicant session; NIC is collected for officer verification only and is not used for login.",
-    };
-  }, [projectLeaseReady]);
-
   if (loading || redirectedSubmittedRef.current) {
     return (
       <LoadingState
@@ -372,23 +348,41 @@ export function LeaseInterestFormView({
 
   if (!request) {
     return (
-      <div className={styles.layout}>
-        <section className={styles.panel} aria-label="Start lease interest">
-          <p className={styles.notice} role="note">
-            <strong>{leaseAvailabilityNotice.lead}</strong>{" "}
-            {leaseAvailabilityNotice.body}
-          </p>
+      <div className={styles.startLayout}>
+        <section className={`${styles.panel} ${styles.startPanel}`} aria-labelledby="start-request-heading">
+          <div className={styles.startHeader}>
+            <span className={styles.startEyebrow}>Preliminary interest request</span>
+            <h2 id="start-request-heading" className={styles.startTitle}>
+              Before you begin
+            </h2>
+            <p className={styles.startLead}>
+              You will provide applicant details, describe your proposed use, and
+              review everything before submission.
+            </p>
+          </div>
+          <ol className={styles.startSteps} aria-label="Request steps">
+            {[
+              ["Applicant", "Your identity and contact details"],
+              ["Proposal", "Purpose, activities, and requested period"],
+              ["Documents", "Supporting information checklist"],
+              ["Review", "Check and submit your request"],
+            ].map(([title, description], index) => (
+              <li className={styles.startStep} key={title}>
+                <span className={styles.startStepNumber} aria-hidden="true">{index + 1}</span>
+                <span>
+                  <strong>{title}</strong>
+                  <span className={styles.startStepDescription}>{description}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
           {eligibilityBlock ? (
-            <p className={styles.notice} role="alert">
+            <p className={styles.startBlock} role="alert">
               <strong>Cannot start request.</strong> {eligibilityBlock.message}
             </p>
           ) : null}
           {error ? <ErrorMessage message={error} /> : null}
-          <p className={styles.notice}>
-            Opening this page does not create a request. Start only when you are
-            ready to fill in applicant and proposal details.
-          </p>
-          <div className={styles.actions}>
+          <div className={styles.startActions}>
             <Button
               type="button"
               variant="primary"
@@ -397,14 +391,27 @@ export function LeaseInterestFormView({
             >
               {starting ? "Starting…" : "Start request"}
             </Button>
-            <Button href={`/land-intelligence/parcels/${parcelId}`} variant="ghost">
-              Back to parcel
-            </Button>
-            <Button href="/land-intelligence/my-requests" variant="ghost">
-              My requests
-            </Button>
           </div>
         </section>
+        <aside className={styles.startAside} aria-label="Selected parcel">
+          <div className={styles.startParcelCard}>
+            <span className={styles.startEyebrow}>Selected parcel</span>
+            <h3 className={styles.startParcelNumber}>
+              {displayOrUnknown(parcel?.identifier.cadastralNumber)}
+            </h3>
+            <dl className={styles.startParcelFacts}>
+              <div><dt>District</dt><dd>{displayOrUnknown(parcel?.location.district)}</dd></div>
+              <div><dt>Area</dt><dd>{parcel ? formatArea(parcel.area.value, parcel.area.unit) : "Unavailable"}</dd></div>
+              <div><dt>Recorded land use</dt><dd>{landUseDisplay}</dd></div>
+              {claimantDisplay ? (
+                <div><dt>Reported claimant</dt><dd>{claimantDisplay}</dd></div>
+              ) : null}
+            </dl>
+            <Button href={`/land-intelligence/parcels/${parcelId}`} variant="ghost">
+              View parcel details
+            </Button>
+          </div>
+        </aside>
       </div>
     );
   }
@@ -412,11 +419,6 @@ export function LeaseInterestFormView({
   return (
     <div className={styles.layout}>
       <section className={styles.panel} aria-label="Lease interest form">
-        <p className={styles.notice} role="note">
-          <strong>{leaseAvailabilityNotice.lead}</strong>{" "}
-          {leaseAvailabilityNotice.body}
-        </p>
-
         {eligibilityBlock && !readOnly ? (
           <p className={styles.notice} role="alert">
             <strong>Submission blocked.</strong> {eligibilityBlock.message}
@@ -530,11 +532,7 @@ export function LeaseInterestFormView({
                 {...fieldErrorA11y}
                   className={styles.input}
                   disabled={readOnly}
-                  value={
-                    readOnly
-                      ? maskNic(draft.applicant.nationalIdentityCardNumber)
-                      : (draft.applicant.nationalIdentityCardNumber ?? "")
-                  }
+                  value={draft.applicant.nationalIdentityCardNumber ?? ""}
                   autoComplete="off"
                   spellCheck={false}
                   onChange={(e) =>
@@ -546,11 +544,6 @@ export function LeaseInterestFormView({
                     })
                   }
                 />
-                <p className={styles.fieldHint}>
-                  Collected to help officers match your interest request during
-                  preliminary verification. It is not used as your login identity
-                  and does not prove ownership of the parcel.
-                </p>
               </div>
             ) : null}
             {draft.applicant.kind === 2 ? (
@@ -601,12 +594,7 @@ export function LeaseInterestFormView({
                     className={styles.input}
                     disabled={readOnly}
                     value={
-                      readOnly
-                        ? maskNic(
-                            draft.applicant.representativeNationalIdentityCardNumber,
-                          )
-                        : (draft.applicant.representativeNationalIdentityCardNumber ??
-                          "")
+                      draft.applicant.representativeNationalIdentityCardNumber ?? ""
                     }
                     autoComplete="off"
                     spellCheck={false}
@@ -620,10 +608,7 @@ export function LeaseInterestFormView({
                       })
                     }
                   />
-                  <p className={styles.fieldHint}>
-                    NIC of the authorized representative named above (full name).
-                    Organization registration number stays separate.
-                  </p>
+
                 </div>
               </>
             ) : null}
@@ -772,10 +757,7 @@ export function LeaseInterestFormView({
                 }
                 aria-readonly="true"
               />
-              <p className={styles.fieldHint}>
-                Taken from the parcel record; you cannot request a different area
-                here.
-              </p>
+
             </div>
             <div className={`${styles.field} ${styles.full}`}>
               <label htmlFor="activities">Planned activities</label>
@@ -962,11 +944,6 @@ export function LeaseInterestFormView({
                   <dd>{claimantDisplay}</dd>
                 </>
               ) : null}
-              <dt>Lease availability (official)</dt>
-              <dd>
-                {parcel.availability?.actualLeaseAvailabilityLabel ??
-                  "Not verified"}
-              </dd>
               {parcel.availability?.projectLeaseReady ? (
                 <>
                   <dt>Project designation</dt>
@@ -974,13 +951,6 @@ export function LeaseInterestFormView({
                 </>
               ) : null}
             </dl>
-            <details className={styles.sideTechnical}>
-              <summary>Technical identifiers</summary>
-              <dl className={styles.sideDl}>
-                <dt>Parcel record id</dt>
-                <dd className={styles.monoValue}>{parcel.id}</dd>
-              </dl>
-            </details>
             <div className={styles.sideActions}>
               <Button
                 href={`/land-intelligence/parcels/${parcelId}/map`}

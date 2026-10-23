@@ -103,12 +103,40 @@ export function OfficerLeaseInterestLookupView() {
 
       {error ? <ErrorMessage message={error} /> : null}
 
-      {searched && !error ? (
+      {!searched && !error && !loading ? (
+        <section className={styles.queueEmptyState} aria-labelledby="lookup-start-title">
+          <div className={styles.queueEmptyIcon} aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="28" height="28">
+              <circle cx="10.8" cy="10.8" r="6.5" />
+              <path d="m16 16 5 5" />
+            </svg>
+          </div>
+          <p className={styles.queueEmptyEyebrow}>OFFICER LOOKUP</p>
+          <h2 id="lookup-start-title">Find a lease-interest request</h2>
+        </section>
+      ) : null}
+
+      {searched && !error && !loading && totalCount === 0 ? (
+        <section className={styles.queueEmptyState} aria-labelledby="lookup-empty-title">
+          <div className={styles.queueEmptyIcon} aria-hidden="true">—</div>
+          <p className={styles.queueEmptyEyebrow}>SEARCH COMPLETE</p>
+          <h2 id="lookup-empty-title">No matching requests found</h2>
+          <p className={styles.queueEmptyDescription}>
+            No submitted lease-interest requests matched this NIC. Check the number
+            and search again, or open the verification queue.
+          </p>
+          <div className={styles.queueEmptyActions}>
+            <Button href="/land-intelligence/officer/lease-interest-queue" variant="secondary">
+              View verification queue
+            </Button>
+          </div>
+        </section>
+      ) : null}
+
+      {searched && !error && totalCount > 0 ? (
         <div className={styles.results}>
           <p className={styles.resultSummary}>
-            {totalCount === 0
-              ? "No submitted lease-interest requests matched this NIC."
-              : `${totalCount} request${totalCount === 1 ? "" : "s"} matched (page ${page} of ${totalPages}).`}
+            {`${totalCount} request${totalCount === 1 ? "" : "s"} matched (page ${page} of ${totalPages}).`}
           </p>
 
           {items.length > 0 ? (
@@ -139,20 +167,22 @@ export function OfficerLeaseInterestLookupView() {
                         {landUseTypeLabels[row.requestedPurpose] ?? "Unknown"}
                       </td>
                       <td>{row.requestedDurationYears ?? "—"}</td>
-                      <td>{row.maskedNationalIdentityCardNumber}</td>
+                      <td>{row.nationalIdentityCardNumber}</td>
                       <td>
-                        <Link
-                          href={`/land-intelligence/officer/lease-interest-review/${row.requestId}`}
-                          className={styles.rowLink}
-                        >
-                          Review
-                        </Link>
-                        <Link
-                          href={`/land-intelligence/parcels/${row.landParcelId}`}
-                          className={styles.rowLink}
-                        >
-                          Parcel
-                        </Link>
+                        <div className={styles.rowActions}>
+                          <Link
+                            href={`/land-intelligence/officer/lease-interest-review/${row.requestId}`}
+                            className={styles.rowLink}
+                          >
+                            Review
+                          </Link>
+                          <Link
+                            href={`/land-intelligence/parcels/${row.landParcelId}`}
+                            className={styles.rowLink}
+                          >
+                            Parcel
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   ))}

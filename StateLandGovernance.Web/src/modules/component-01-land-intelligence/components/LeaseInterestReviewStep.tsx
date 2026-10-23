@@ -17,7 +17,6 @@ import {
   formatCostLineStatus,
   groupCostLines,
 } from "../utils/leaseInterestReview";
-import { maskNic } from "../utils/nic";
 import {
   sourceReportedClaimantCategoryDisplay,
   sourceReportedLandUseDisplay,
@@ -147,12 +146,6 @@ export function LeaseInterestReviewStep({
               value={claimant}
             />
           ) : null}
-          <ReviewRow
-            label="Lease availability (official)"
-            value={
-              parcel.availability?.actualLeaseAvailabilityLabel ?? "Not verified"
-            }
-          />
           {parcel.availability?.projectLeaseReady ? (
             <>
               <ReviewRow
@@ -191,7 +184,7 @@ export function LeaseInterestReviewStep({
         {draft.applicant.kind === 1 ? (
           <ReviewRow
             label="NIC"
-            value={maskNic(draft.applicant.nationalIdentityCardNumber)}
+            value={displayOptionalText(draft.applicant.nationalIdentityCardNumber)}
           />
         ) : null}
         {draft.applicant.kind === 2 ? (
@@ -209,7 +202,7 @@ export function LeaseInterestReviewStep({
             />
             <ReviewRow
               label="Representative NIC"
-              value={maskNic(
+              value={displayOptionalText(
                 draft.applicant.representativeNationalIdentityCardNumber,
               )}
             />

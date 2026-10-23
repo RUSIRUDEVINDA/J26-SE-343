@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { officerLeaseInterestQueueNavItem } from "@/shared/constants/navigation";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
@@ -38,6 +40,8 @@ import {
 import styles from "./OfficerLeaseInterestReviewView.module.css";
 
 const REVIEW_STATUSES: LeaseInterestRequestStatus[] = [4, 5, 6];
+const OFFICER_QUEUE_HREF = officerLeaseInterestQueueNavItem.href;
+const OFFICER_DECISION_NAVIGATE_STATUSES: LeaseInterestRequestStatus[] = [5, 6];
 const formatDate = (value: string) => new Date(value).toLocaleString("en-LK", { dateStyle: "medium", timeStyle: "short" });
 type ValuationForm = {
   formType: LeaseInterestValuationFormType;
@@ -93,6 +97,7 @@ const fromValuation = (value: LeaseInterestValuation): ValuationForm => {
 };
 
 export function OfficerLeaseInterestReviewView({ requestId }: { requestId: string }) {
+  const router = useRouter();
   const [detail, setDetail] = useState<LeaseInterestOfficerRequestDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -107,6 +112,9 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
   const [readOnlyRevisionId, setReadOnlyRevisionId] = useState<string | null>(null);
   const [valuationSuccessOpen, setValuationSuccessOpen] = useState(false);
   const [valuationSuccessRevision, setValuationSuccessRevision] = useState<number | null>(null);
+  const [decisionSuccessOpen, setDecisionSuccessOpen] = useState(false);
+  const [decisionSuccessStatus, setDecisionSuccessStatus] =
+    useState<LeaseInterestRequestStatus | null>(null);
   const valuationSaveAttemptRef = useRef<ValuationSaveAttemptState>({
     idempotencyKey: null,
     inFlight: false,
@@ -375,6 +383,19 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
     },
   });
 
+  const { dialogRef: decisionSuccessDialogRef } = useModalDialogA11y({
+    open: decisionSuccessOpen,
+    onClose: () => {
+      closeDecisionSuccessPopup();
+    },
+  });
+
+  function closeDecisionSuccessPopup() {
+    setDecisionSuccessOpen(false);
+    setDecisionSuccessStatus(null);
+    router.push(OFFICER_QUEUE_HREF);
+  }
+
   async function handleStatusUpdate() {
     if (!detail || saving || !note.trim()) return;
     setSaving(true);
@@ -386,7 +407,13 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
       });
       setDetail(updated);
       setNote("");
-      setSuccess(`Decision recorded: ${leaseInterestStatusLabel(updated.status)}.`);
+      if (OFFICER_DECISION_NAVIGATE_STATUSES.includes(updated.status)) {
+        setSuccess(null);
+        setDecisionSuccessStatus(updated.status);
+        setDecisionSuccessOpen(true);
+      } else {
+        setSuccess(`Decision recorded: ${leaseInterestStatusLabel(updated.status)}.`);
+      }
     } catch (err) {
       setError(err instanceof ApiClientError ? err.errors?.join(" ") || err.detail || err.title : "Status update failed.");
     } finally {
@@ -408,6 +435,49 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
 
   return (
     <div className={styles.page}>
+      {decisionSuccessOpen && decisionSuccessStatus != null ? (
+        <div
+          className={styles.modalOverlay}
+          role="presentation"
+          onClick={() => {
+            closeDecisionSuccessPopup();
+          }}
+        >
+          <div
+            ref={decisionSuccessDialogRef}
+            className={styles.modalDialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="officer-decision-success-title"
+            aria-describedby="officer-decision-success-body"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="officer-decision-success-title" className={styles.modalTitle}>
+              Decision recorded
+            </h2>
+            <p id="officer-decision-success-body" className={styles.modalBody}>
+              This request is now{" "}
+              <strong>{leaseInterestStatusLabel(decisionSuccessStatus)}</strong>.
+              {" "}
+              {leaseInterestApplicantOutcome(decisionSuccessStatus)}
+              {" "}
+              You will return to the verification queue.
+            </p>
+            <div className={styles.modalActions}>
+              <Button
+                type="button"
+                variant="primary"
+                onClick={() => {
+                  closeDecisionSuccessPopup();
+                }}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {valuationSuccessOpen && valuationSuccessRevision != null ? (
         <div
           className={styles.modalOverlay}
