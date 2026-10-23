@@ -14,6 +14,7 @@ using StateLandGovernance.LandIntelligence.Infrastructure.Recommendations.Depend
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Enrichment;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Import;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.GisReferenceData.Validation;
+using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.RealParcels;
 using StateLandGovernance.LandIntelligence.Infrastructure.PilotValidation;
 using StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest;
 using StateLandGovernance.LandIntelligence.Infrastructure.GisCoverage;
@@ -61,6 +62,8 @@ public static class LandIntelligenceInfrastructureExtensions
 
         services.AddScoped<ILandParcelRepository, LandParcelRepository>();
         services.AddScoped<IRealParcelSourceReadRepository, RealParcelSourceReadRepository>();
+        services.AddScoped<IParcelGnDivisionMappingReadRepository, ParcelGnDivisionMappingReadRepository>();
+        services.AddScoped<IParcelGnDivisionMappingImportService, Colombo400GnDivisionMappingImportService>();
         services.AddScoped<IResearchSimulatedLeaseReadRepository, ResearchSimulatedLeaseReadRepository>();
         services.AddScoped<IProjectLeaseReadyDesignationReadRepository, ProjectLeaseReadyDesignationReadRepository>();
         services.AddSingleton<IResearchDemoMode, ResearchDemoMode>();

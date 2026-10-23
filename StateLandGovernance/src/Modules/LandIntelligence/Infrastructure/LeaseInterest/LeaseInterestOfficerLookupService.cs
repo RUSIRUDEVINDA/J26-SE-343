@@ -59,8 +59,8 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
         foreach (var row in rows)
         {
             var parcel = await _parcelRepository.GetByIdAsync(row.LandParcelId, cancellationToken);
-            var masked = _nicProtector.Mask(
-                _nicProtector.Decrypt(row.ApplicantNicCiphertext) ?? normalized);
+            var nationalIdentityCardNumber =
+                _nicProtector.Decrypt(row.ApplicantNicCiphertext) ?? normalized;
 
             items.Add(
                 new LeaseInterestOfficerLookupItemDto(
@@ -73,7 +73,7 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
                     parcel?.Location.District,
                     (LandUseType)row.RequestedPurpose,
                     row.RequestedDurationYears,
-                    masked));
+                    nationalIdentityCardNumber));
         }
 
         return new LeaseInterestOfficerLookupResponseDto(items, total, page, pageSize);

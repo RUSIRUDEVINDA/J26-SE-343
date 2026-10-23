@@ -67,6 +67,9 @@ public class LandIntelligenceDbContext : DbContext
     public DbSet<ColomboStateResearchProjectLeaseReadyEntity> ColomboStateResearchProjectLeaseReady =>
         Set<ColomboStateResearchProjectLeaseReadyEntity>();
 
+    public DbSet<ParcelGnDivisionMappingEntity> ParcelGnDivisionMappings =>
+        Set<ParcelGnDivisionMappingEntity>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
