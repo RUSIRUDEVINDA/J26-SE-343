@@ -514,7 +514,7 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
           </div>
         </div>
       ) : null}
-      <Link href="/land-intelligence/officer/lease-interest-lookup" className={styles.backLink}>← Back to NIC lookup</Link>
+      <Link href="/land-intelligence/officer/lease-interest-lookup" className={styles.backLink}>← Back to applicant lookup</Link>
       <header className={styles.caseHeader}>
         <div>
           <p className={styles.eyebrow}>Lease interest request</p>
@@ -523,7 +523,7 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
         </div>
         <StatusBadge tone={leaseInterestStatusBadgeTone(detail.status)}>{leaseInterestStatusLabel(detail.status)}</StatusBadge>
       </header>
-      <p className={styles.notice}><strong>Preliminary review only.</strong> This decision does not reserve land or approve a lease. The applicant can see the note you record below.</p>
+     
       {error ? <ErrorMessage id="officer-review-error" message={error} /> : null}
       {success ? <p className={styles.success} role="status">{success}</p> : null}
       <div className={styles.contentGrid}>

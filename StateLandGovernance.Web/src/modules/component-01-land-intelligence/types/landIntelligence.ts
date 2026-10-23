@@ -623,7 +623,8 @@ export interface LeaseInterestDocumentChecklist {
 }
 
 export interface LeaseInterestOfficerLookupRequest {
-  nationalIdentityCardNumber: string;
+  nationalIdentityCardNumber?: string;
+  businessRegistrationNumber?: string;
   page?: number;
   pageSize?: number;
 }
@@ -638,7 +639,9 @@ export interface LeaseInterestOfficerLookupItem {
   district?: string | null;
   requestedPurpose: LandUseType;
   requestedDurationYears?: number | null;
-  nationalIdentityCardNumber: string;
+  applicantKind: LeaseInterestApplicantKind;
+  nationalIdentityCardNumber?: string | null;
+  businessRegistrationNumber?: string | null;
 }
 
 export interface LeaseInterestOfficerLookupResponse {
@@ -746,14 +749,45 @@ export interface LeaseInterestValuation extends Omit<RecordLeaseInterestValuatio
   recordedAtUtc: string;
 }
 
-/** Applicant-visible latest valuation summary (no officer notes). */
+/** Applicant-visible worksheet amounts (no worksheet or officer notes). */
+export interface LeaseInterestApplicantWorksheetSummary {
+  leaseFileNumber?: string | null;
+  divisionalSecretariat?: string | null;
+  leaseApprovalDate?: string | null;
+  leaseCommencementDate?: string | null;
+  valuationReportDate?: string | null;
+  leaseAgreementDate?: string | null;
+  previousAssessedValueLkr?: number | null;
+  leaseRatePercent?: number | null;
+  annualLeaseAmountLkr?: number | null;
+  firstPeriodAmountLkr?: number | null;
+  secondPeriodAmountLkr?: number | null;
+  secondPeriodAnnualAmountLkr?: number | null;
+  circular2018AmountLkr?: number | null;
+  circular2020SixAdjustmentLkr?: number | null;
+  firstPeriodLines?: LeaseWorksheetPeriodLine[] | null;
+  secondPeriodLines?: LeaseWorksheetPeriodLine[] | null;
+}
+
+/** Applicant-visible latest valuation summary (latest revision only; no officer notes). */
 export interface LeaseInterestApplicantValuationSummary {
   revision: number;
   recordedAtUtc: string;
   formType: LeaseInterestValuationFormType | "Agricultural" | "Project" | "Other" | string;
   assessedLandValueLkr: number;
+  assessedAreaHectares?: number | null;
+  inspectionDate?: string | null;
+  valuationDate?: string | null;
+  valuationReference?: string | null;
+  issuingOffice?: string | null;
+  siteCondition?: string | null;
+  cultivationDetails?: string | null;
+  residentialImprovements?: string | null;
+  projectUseDetails?: string | null;
+  otherTypeDetails?: string | null;
   leaseFileNumber?: string | null;
   divisionalSecretariat?: string | null;
+  worksheet?: LeaseInterestApplicantWorksheetSummary | null;
 }
 
 export interface LeaseInterestAuthorityQueueItem {

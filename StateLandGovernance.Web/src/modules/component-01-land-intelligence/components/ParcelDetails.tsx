@@ -1,13 +1,18 @@
 import Link from "next/link";
-import type {
-  LandParcelResponse,
-  LandRelationshipResponse,
+import {
+  LandCategoryType,
+  type LandParcelResponse,
+  type LandRelationshipResponse,
 } from "../types/landIntelligence";
-import { landCategoryTypeLabels, landUseTypeLabels } from "../utils/enumMappings";
+import {
+  landCategoryTypeLabels,
+  landUseTypeLabels,
+} from "../utils/enumMappings";
 import { displayOrUnavailable, displayOrUnknown, formatArea } from "../utils/formatters";
 import {
   sourceReportedClaimantCategoryDisplay,
   sourceReportedLandUseDisplay,
+  sourceReportedLandUseEnglishDisplay,
 } from "../utils/sourceReportedCadastre";
 import {
   formatGnDivisionAssignment,
@@ -30,6 +35,35 @@ function readableType(value: string): string {
     .replace(/_/g, " ")
     .trim();
   return words.charAt(0).toUpperCase() + words.slice(1).toLowerCase();
+}
+
+function landCategoryConnectionLabel(raw: string): string {
+  const enumValue = LandCategoryType[raw as keyof typeof LandCategoryType];
+  if (typeof enumValue === "number") {
+    return landCategoryTypeLabels[enumValue as LandCategoryType] ?? raw;
+  }
+  return readableType(raw);
+}
+
+/** Graph "Has category" uses governance enum on the parcel row, not cadastre land-use codes. */
+function parcelConnectionDescription(
+  item: LandRelationshipResponse,
+  parcel: LandParcelResponse,
+): string {
+  const raw = item.description?.trim() ?? "";
+  if (item.relationshipType === "HAS_CATEGORY") {
+    const categoryLabel = landCategoryConnectionLabel(raw);
+    if (raw === "Other" && parcel.cadastralSource) {
+      const cadastreLandUse = sourceReportedLandUseEnglishDisplay(
+        parcel.cadastralSource,
+      );
+      if (cadastreLandUse) {
+        return `cadastre land use: ${cadastreLandUse}`;
+      }
+    }
+    return categoryLabel;
+  }
+  return raw || "No descriptive label recorded";
 }
 
 export function ParcelDetails({
@@ -148,9 +182,13 @@ export function ParcelDetails({
             <>
               <DetailRow label="Source parcel ID" value={displayOrUnavailable(parcel.cadastralSource.sourceFeatureId)} />
               <DetailRow label="Source land-use code" value={displayOrUnavailable(parcel.cadastralSource.sourceReportedLandUseCode)} />
-              <DetailRow label="Original source land-use text" value={displayOrUnavailable(parcel.cadastralSource.sourceReportedLandUseText)} />
+              <DetailRow
+                label="Original source land-use text"
+                value={displayOrUnavailable(
+                  sourceReportedLandUseEnglishDisplay(parcel.cadastralSource),
+                )}
+              />
               <DetailRow label="Source parcel status code" value={displayOrUnavailable(parcel.cadastralSource.sourceParcelStatusCode)} />
-              <DetailRow label="Source provenance" value={displayOrUnavailable(parcel.cadastralSource.sourceProvenanceLabel)} />
               <DetailRow label="Research record ID" value={displayOrUnavailable(parcel.cadastralSource.researchRecordId ?? parcel.availability?.researchRecordId)} />
               <DetailRow label="Cadastral source GN index" value={displayOrUnavailable(parcel.cadastralSource.gnIndex)} />
             </>
@@ -189,7 +227,7 @@ export function ParcelDetails({
               return (
                 <li key={`${item.relationshipType}-${item.sourceNodeId}-${item.targetNodeId}-${index}`} className={styles.connectionCard}>
                   <span className={styles.connectionType}>{readableType(item.relationshipType)}</span>
-                  <strong>{item.description?.trim() || "No descriptive label recorded"}</strong>
+                  <strong>{parcelConnectionDescription(item, parcel)}</strong>
                   <span className={styles.connectionKind}>{readableType(relatedType)}</span>
                 </li>
               );
