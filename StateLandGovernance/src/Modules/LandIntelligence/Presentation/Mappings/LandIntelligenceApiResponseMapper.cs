@@ -25,7 +25,8 @@ internal static class LandIntelligenceApiResponseMapper
             dto.RegulatoryReferenceCount,
             ToCadastralSourceResponse(dto.CadastralSource),
             ToAvailabilityResponse(dto.Availability),
-            ToGisEnrichmentSummaryResponse(dto.GisEnrichment));
+            ToGisEnrichmentSummaryResponse(dto.GisEnrichment),
+            ToGnDivisionMappingResponse(dto.GnDivisionMapping));
 
     public static LandSearchResultsResponse ToResponse(LandSearchResponse response) =>
         new(
@@ -129,6 +130,34 @@ internal static class LandIntelligenceApiResponseMapper
             dto.CentroidLongitude,
             ToCadastralSourceResponse(dto.CadastralSource),
             ToAvailabilityResponse(dto.Availability));
+
+    private static ParcelGnDivisionMappingResponse? ToGnDivisionMappingResponse(ParcelGnDivisionMappingDto? dto) =>
+        dto is null
+            ? null
+            : new ParcelGnDivisionMappingResponse(
+                dto.Status.ToString(),
+                dto.WorkbookStatusLabel,
+                dto.ReviewStatusDisplay,
+                dto.ProvenanceLabel,
+                dto.SourceGnIndex,
+                ToGnDivisionAssignmentResponse(dto.PrimaryAssignment),
+                ToGnDivisionAssignmentResponse(dto.SourceFromAdministrativeCode),
+                ToGnDivisionAssignmentResponse(dto.GnAtMapMarker),
+                dto.CodeDistrict,
+                dto.MapMarkerLatitude,
+                dto.MapMarkerLongitude,
+                dto.DatasetKey,
+                dto.CadastralNumber,
+                dto.ImportedAtUtc);
+
+    private static GnDivisionAdministrativeAssignmentResponse? ToGnDivisionAssignmentResponse(
+        GnDivisionAdministrativeAssignmentDto? dto) =>
+        dto is null
+            ? null
+            : new GnDivisionAdministrativeAssignmentResponse(
+                dto.GnName,
+                dto.GnNumber,
+                dto.DivisionalSecretariat);
 
     private static CadastralSourceMetadataResponse? ToCadastralSourceResponse(CadastralSourceMetadataDto? dto) =>
         dto is null

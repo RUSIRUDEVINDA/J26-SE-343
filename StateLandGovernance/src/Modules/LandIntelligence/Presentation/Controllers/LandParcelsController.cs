@@ -25,6 +25,7 @@ public sealed class LandParcelsController : ControllerBase
     private readonly ListDerivedSoilGroupOptionsQueryHandler _derivedSoilGroupOptionsHandler;
     private readonly GetLandParcelMetricsQueryHandler _metricsHandler;
     private readonly GetLandIntelligenceGisCoverageQueryHandler _gisCoverageHandler;
+    private readonly ListGramaNiladhariDivisionOptionsQueryHandler _gramaNiladhariDivisionOptionsHandler;
 
     public LandParcelsController(
         SearchLandParcelsQueryHandler searchHandler,
@@ -34,7 +35,8 @@ public sealed class LandParcelsController : ControllerBase
         ListSourceReportedLandUseOptionsQueryHandler sourceLandUseOptionsHandler,
         ListDerivedSoilGroupOptionsQueryHandler derivedSoilGroupOptionsHandler,
         GetLandParcelMetricsQueryHandler metricsHandler,
-        GetLandIntelligenceGisCoverageQueryHandler gisCoverageHandler)
+        GetLandIntelligenceGisCoverageQueryHandler gisCoverageHandler,
+        ListGramaNiladhariDivisionOptionsQueryHandler gramaNiladhariDivisionOptionsHandler)
     {
         _searchHandler = searchHandler;
         _getByIdHandler = getByIdHandler;
@@ -44,6 +46,7 @@ public sealed class LandParcelsController : ControllerBase
         _derivedSoilGroupOptionsHandler = derivedSoilGroupOptionsHandler;
         _metricsHandler = metricsHandler;
         _gisCoverageHandler = gisCoverageHandler;
+        _gramaNiladhariDivisionOptionsHandler = gramaNiladhariDivisionOptionsHandler;
     }
 
     [HttpGet("metrics")]
@@ -111,6 +114,21 @@ public sealed class LandParcelsController : ControllerBase
             new ListDerivedSoilGroupOptionsQuery(district),
             cancellationToken);
         return Ok(new DerivedSoilGroupOptionsResponse(options));
+    }
+
+    /// <summary>
+    /// Lists distinct Grama Niladhari division names that have at least one imported land parcel (optional district filter).
+    /// </summary>
+    [HttpGet("grama-niladhari-division-options")]
+    [ProducesResponseType(typeof(GramaNiladhariDivisionOptionsResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<GramaNiladhariDivisionOptionsResponse>> ListGramaNiladhariDivisionOptionsAsync(
+        [FromQuery] string? district = null,
+        CancellationToken cancellationToken = default)
+    {
+        var options = await _gramaNiladhariDivisionOptionsHandler.HandleAsync(
+            new ListGramaNiladhariDivisionOptionsQuery(district),
+            cancellationToken);
+        return Ok(new GramaNiladhariDivisionOptionsResponse(options));
     }
 
     /// <summary>
