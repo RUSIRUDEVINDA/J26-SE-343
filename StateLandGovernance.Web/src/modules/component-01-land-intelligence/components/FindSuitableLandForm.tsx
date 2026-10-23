@@ -35,6 +35,8 @@ import { landUseTypeLabels, landUseTypeOptions } from "../utils/enumMappings";
 import {
   buildRecommendationSearchParams,
   buildRequestFromFormState,
+  DEFAULT_FIND_SUITABLE_MAX_RESULTS,
+  normalizeStoredFindSuitableMaxResults,
 } from "../utils/recommendationSearchState";
 import {
   convertTargetAreaToHectares,
@@ -53,7 +55,7 @@ const initialState: FindSuitableLandFormState = {
   preferredDistrict: "Colombo",
   preferredGramaNiladhariDivision: "",
   sourceReportedLandUse: "",
-  maxResults: "30",
+  maxResults: DEFAULT_FIND_SUITABLE_MAX_RESULTS,
 };
 
 type FormSnapshot = {
@@ -108,9 +110,7 @@ function parseStoredForm(raw: string | null): FindSuitableLandFormState {
       sourceReportedLandUse: normalizeLandUseFilterValue(
         parsed.sourceReportedLandUse ?? "",
       ),
-      maxResults: parsed.sourceReportedLandUse === "75" && parsed.maxResults === "10"
-        ? "30"
-        : parsed.maxResults ?? "30",
+      maxResults: normalizeStoredFindSuitableMaxResults(parsed.maxResults),
     };
   } catch {
     return initialState;
@@ -219,6 +219,23 @@ export function FindSuitableLandForm() {
   const persist = useCallback((next: FindSuitableLandFormState) => {
     setDraft(next);
     writeFormStore(next);
+  }, []);
+
+  useEffect(() => {
+    const raw = sessionStorage.getItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY);
+    if (!raw) {
+      return;
+    }
+    try {
+      const asStored = JSON.parse(raw) as Partial<FindSuitableLandFormState>;
+      const migrated = parseStoredForm(raw);
+      if (asStored.maxResults !== migrated.maxResults) {
+        setDraft(null);
+        writeFormStore(migrated);
+      }
+    } catch {
+      // ignore invalid session payload
+    }
   }, []);
 
   function updateField<K extends keyof FindSuitableLandFormState>(
@@ -600,12 +617,46 @@ export function FindSuitableLandForm() {
 
           <section className={styles.panel} aria-labelledby="location-heading">
             <h2 id="location-heading" className={styles.panelTitle}>
-              2. Location &amp; size
+              2. Location 
             </h2>
             <p className={styles.panelSubtitle}>
               
             </p>
             <div className={styles.grid}>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="preferredProvince">
+                  Preferred province
+                  <span className={styles.optionalTag}>Optional</span>
+                </label>
+                {gisCoverage && gisCoverage.indexedDistricts.length > 0 ? (
+                  <select
+                    id="preferredProvince"
+                    className={styles.select}
+                    value={form.preferredProvince}
+                    onChange={(e) =>
+                      updateField("preferredProvince", e.target.value)
+                    }
+                  >
+                    <option value="">All indexed provinces</option>
+                    {[...new Set(gisCoverage.indexedDistricts.map(d => d.province))].map((province) => (
+                      <option key={province} value={province}>
+                        {province}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    id="preferredProvince"
+                    className={styles.input}
+                    value={form.preferredProvince}
+                    onChange={(e) =>
+                      updateField("preferredProvince", e.target.value)
+                    }
+                    placeholder="e.g. Western"
+                  />
+                )}
+              </div>
+
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="preferredDistrict">
                   Preferred district
@@ -652,40 +703,6 @@ export function FindSuitableLandForm() {
               </div>
 
               <div className={styles.field}>
-                <label className={styles.label} htmlFor="preferredProvince">
-                  Preferred province
-                  <span className={styles.optionalTag}>Optional</span>
-                </label>
-                {gisCoverage && gisCoverage.indexedDistricts.length > 0 ? (
-                  <select
-                    id="preferredProvince"
-                    className={styles.select}
-                    value={form.preferredProvince}
-                    onChange={(e) =>
-                      updateField("preferredProvince", e.target.value)
-                    }
-                  >
-                    <option value="">All indexed provinces</option>
-                    {[...new Set(gisCoverage.indexedDistricts.map(d => d.province))].map((province) => (
-                      <option key={province} value={province}>
-                        {province}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    id="preferredProvince"
-                    className={styles.input}
-                    value={form.preferredProvince}
-                    onChange={(e) =>
-                      updateField("preferredProvince", e.target.value)
-                    }
-                    placeholder="e.g. Western"
-                  />
-                )}
-              </div>
-
-              <div className={styles.field}>
                 <label
                   className={styles.label}
                   htmlFor="preferredGramaNiladhariDivision"
@@ -704,7 +721,6 @@ export function FindSuitableLandForm() {
                     )
                   }
                   disabled={gnOptionsLoading}
-                  aria-describedby="gn-division-hint"
                 >
                   <option value="">
                     {gnOptionsLoading
@@ -717,11 +733,6 @@ export function FindSuitableLandForm() {
                     </option>
                   ))}
                 </select>
-                <p id="gn-division-hint" className={styles.hint}>
-                  {gnDivisionOptions.length === 0 && !gnOptionsLoading
-                    ? "Only GN divisions with imported parcel records are listed. Restart the API if this stays empty."
-                    : "Listed divisions have at least one imported parcel in this dataset."}
-                </p>
               </div>
 
               <div className={styles.field}>
@@ -887,10 +898,7 @@ export function FindSuitableLandForm() {
                 </li>
               ))}
             </ul>
-            <p className={styles.sideNote}>
-              Partial coverage means some parcels may lack that layer. Missing
-              evidence is never treated as a positive match.
-            </p>
+
           </>
         ) : (
           <p className={styles.sideNote}>

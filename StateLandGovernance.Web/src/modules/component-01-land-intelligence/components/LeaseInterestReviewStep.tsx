@@ -94,6 +94,7 @@ export function LeaseInterestReviewStep({
   onEditDocuments,
   onViewParcel,
   consentChecked,
+  consentError,
   onConsentChange,
 }: {
   parcel: LandParcelResponse;
@@ -107,6 +108,7 @@ export function LeaseInterestReviewStep({
   onEditDocuments: () => void;
   onViewParcel: () => void;
   consentChecked: boolean;
+  consentError?: string;
   onConsentChange: (checked: boolean) => void;
 }) {
   const landUse =
@@ -146,18 +148,6 @@ export function LeaseInterestReviewStep({
               value={claimant}
             />
           ) : null}
-          {parcel.availability?.projectLeaseReady ? (
-            <>
-              <ReviewRow
-                label="Project designation"
-                value={parcel.availability.projectLeaseReady.designationLabel}
-              />
-              <ReviewRow
-                label="Project designation notice"
-                value={parcel.availability.projectLeaseReady.designationNotice}
-              />
-            </>
-          ) : null}
         </dl>
         <div className={styles.reviewCardFooter}>
           <Button
@@ -194,14 +184,14 @@ export function LeaseInterestReviewStep({
               value={displayOptionalText(draft.applicant.organizationName)}
             />
             <ReviewRow
-              label="Registration number"
+              label="Business registration number (BRN)"
               value={displayOptionalText(
                 draft.applicant.organizationRegistrationNumber,
               )}
               mono
             />
             <ReviewRow
-              label="Representative NIC"
+              label="Representative NIC (optional)"
               value={displayOptionalText(
                 draft.applicant.representativeNationalIdentityCardNumber,
               )}
@@ -352,6 +342,8 @@ export function LeaseInterestReviewStep({
               type="checkbox"
               className={styles.consentCheckbox}
               checked={consentChecked}
+              aria-invalid={consentError ? true : undefined}
+              aria-describedby={consentError ? "consent-error" : undefined}
               onChange={(e) => onConsentChange(e.target.checked)}
             />
             <span>
@@ -359,6 +351,11 @@ export function LeaseInterestReviewStep({
               understand this does not reserve land or create a lease.
             </span>
           </label>
+          {consentError ? (
+            <p id="consent-error" className={styles.fieldError} role="alert">
+              {consentError}
+            </p>
+          ) : null}
         </section>
       ) : null}
     </div>

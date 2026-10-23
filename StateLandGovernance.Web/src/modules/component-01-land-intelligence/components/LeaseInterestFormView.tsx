@@ -40,7 +40,15 @@ import {
 } from "../types/landIntelligence";
 import { landUseTypeLabels, landUseTypeOptions } from "../utils/enumMappings";
 import { displayOrUnknown, formatArea } from "../utils/formatters";
-import { isLeaseInterestDraftReadyForSubmit } from "../utils/leaseInterestReview";
+import { localDateInputValue } from "../utils/leaseInterestReview";
+import {
+  type LeaseInterestFormFieldId,
+  firstLeaseInterestStepWithError,
+  mapLeaseInterestApiErrorsToFields,
+  validateLeaseInterestApplicantStep,
+  validateLeaseInterestDraftForSubmit,
+  validateLeaseInterestProposalStep,
+} from "../utils/leaseInterestFormValidation";
 import {
   sourceReportedClaimantCategoryDisplay,
   sourceReportedLandUseDisplay,
@@ -87,6 +95,37 @@ function toDateInputValue(value: string): string {
   return "";
 }
 
+function LeaseFieldError({
+  fieldId,
+  message,
+}: {
+  fieldId: string;
+  message?: string;
+}) {
+  if (!message) {
+    return null;
+  }
+  return (
+    <p id={`${fieldId}-error`} className={styles.fieldError} role="alert">
+      {message}
+    </p>
+  );
+}
+
+function fieldA11y(fieldId: string, message?: string) {
+  return message
+    ? ({ "aria-invalid": true, "aria-describedby": `${fieldId}-error` } as const)
+    : {};
+}
+
+function controlClass(
+  base: string,
+  invalidClass: string,
+  hasError: boolean,
+): string {
+  return hasError ? `${base} ${invalidClass}` : base;
+}
+
 export function LeaseInterestFormView({
   parcelId,
   onReviewStepChange,
@@ -106,8 +145,12 @@ export function LeaseInterestFormView({
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<string[]>([]);
+  const [fieldErrorsById, setFieldErrorsById] = useState<
+    Partial<Record<LeaseInterestFormFieldId, string>>
+  >({});
+  const [apiFieldErrors, setApiFieldErrors] = useState<string[]>([]);
   const [dirty, setDirty] = useState(false);
+  const [saveNotice, setSaveNotice] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccessOpen, setSubmitSuccessOpen] = useState(false);
@@ -118,10 +161,30 @@ export function LeaseInterestFormView({
   const redirectedSubmittedRef = useRef(false);
 
   const readOnly = request != null && !isLeaseInterestDraftStatus(request.status);
-  const fieldErrorA11y =
-    fieldErrors.length > 0
-      ? ({ "aria-invalid": true, "aria-describedby": "lease-interest-field-errors" } as const)
-      : {};
+
+  const clearFieldError = (field: LeaseInterestFormFieldId) => {
+    setFieldErrorsById((prev) => {
+      if (!prev[field]) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  };
+
+  const applyApiFieldErrors = (messages: string[]) => {
+    const { byField, unmapped } = mapLeaseInterestApiErrorsToFields(
+      messages,
+      draft.applicant.kind,
+    );
+    setFieldErrorsById(byField);
+    setApiFieldErrors(unmapped);
+    const firstStep = firstLeaseInterestStepWithError(byField);
+    if (firstStep != null) {
+      setStep(firstStep);
+    }
+  };
 
   const applyExistingRequest = useCallback(
     (
@@ -161,12 +224,24 @@ export function LeaseInterestFormView({
         return;
       }
 
+      const eligibilityRestriction = leaseInterestEligibilityBlock(
+        parcelRes,
+        constraintsRes,
+      );
+      const parcelAreaRestriction =
+        leaseInterestMissingParcelAreaBlock(parcelRes);
+      const loadEligibilityBlock =
+        eligibilityRestriction ?? parcelAreaRestriction;
+
       if (existing) {
         applyExistingRequest(existing, parcelRes);
-      } else {
+      } else if (loadEligibilityBlock) {
         setRequest(null);
         setDraft(emptyDraft());
         setDirty(false);
+      } else {
+        const created = await startLeaseInterestDraft(parcelId);
+        applyExistingRequest(created, parcelRes);
       }
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -200,7 +275,8 @@ export function LeaseInterestFormView({
     }
     setStarting(true);
     setError(null);
-    setFieldErrors([]);
+    setFieldErrorsById({});
+    setApiFieldErrors([]);
     try {
       const created = await startLeaseInterestDraft(parcelId);
       if (!parcel) {
@@ -235,23 +311,92 @@ export function LeaseInterestFormView({
   }, [dirty]);
 
   const patchDraft = (patch: Partial<UpsertLeaseInterestDraft>) => {
+    setSaveNotice(null);
     setDraft((prev) => ({ ...prev, ...patch }));
     setDirty(true);
   };
 
+  const draftPayloadForSave = (): UpsertLeaseInterestDraft => {
+    if (!parcel) {
+      return draft;
+    }
+    return {
+      ...draft,
+      proposal: proposalWithParcelArea(draft.proposal, parcel),
+    };
+  };
+
+  const syncDraftFromDetail = (detail: LeaseInterestRequestDetail) => {
+    if (!parcel) {
+      setDraft({
+        applicant: detail.applicant,
+        proposal: detail.proposal,
+        supporting: detail.supporting,
+        consentToPreliminaryAssessment: detail.consentToPreliminaryAssessment,
+      });
+      return;
+    }
+    setDraft({
+      applicant: detail.applicant,
+      proposal: proposalWithParcelArea(detail.proposal, parcel),
+      supporting: detail.supporting,
+      consentToPreliminaryAssessment: detail.consentToPreliminaryAssessment,
+    });
+  };
+
+  function handleContinue() {
+    let stepErrors: Partial<Record<LeaseInterestFormFieldId, string>> = {};
+    if (step === 0) {
+      stepErrors = validateLeaseInterestApplicantStep(draft);
+    } else if (step === 1) {
+      stepErrors = validateLeaseInterestProposalStep(draft);
+    }
+    if (Object.keys(stepErrors).length > 0) {
+      setFieldErrorsById(stepErrors);
+      setApiFieldErrors([]);
+      return;
+    }
+    setFieldErrorsById({});
+    setApiFieldErrors([]);
+    setStep(step + 1);
+  }
+
   async function handleSaveDraft() {
-    if (!request || readOnly || saving) {
+    if (readOnly || saving) {
       return;
     }
     setSaving(true);
-    setFieldErrors([]);
+    setError(null);
+    setSaveNotice(null);
+    setFieldErrorsById({});
+    setApiFieldErrors([]);
     try {
-      const updated = await saveLeaseInterestDraft(request.id, draft);
+      let activeRequest = request;
+      if (!activeRequest) {
+        if (!parcel || eligibilityBlock) {
+          setError(
+            eligibilityBlock?.message ??
+              "This parcel cannot be used for a lease interest request yet.",
+          );
+          return;
+        }
+        activeRequest = await startLeaseInterestDraft(parcelId);
+        setRequest(activeRequest);
+      }
+
+      const updated = await saveLeaseInterestDraft(
+        activeRequest.id,
+        draftPayloadForSave(),
+      );
       setRequest(updated);
+      syncDraftFromDetail(updated);
       setDirty(false);
+      setSaveNotice(
+        "Draft saved. Resume anytime from My requests → Drafts.",
+      );
     } catch (err) {
       if (err instanceof ApiClientError && err.errors?.length) {
-        setFieldErrors(err.errors);
+        applyApiFieldErrors(err.errors);
       } else if (err instanceof ApiClientError) {
         setError(err.detail || err.title);
       } else {
@@ -266,16 +411,27 @@ export function LeaseInterestFormView({
     if (!request || readOnly || submitting) {
       return;
     }
+    const clientErrors = validateLeaseInterestDraftForSubmit(draft);
+    if (Object.keys(clientErrors).length > 0) {
+      setFieldErrorsById(clientErrors);
+      setApiFieldErrors([]);
+      const firstStep = firstLeaseInterestStepWithError(clientErrors);
+      if (firstStep != null) {
+        setStep(firstStep);
+      }
+      return;
+    }
     if (!idempotencyKeyRef.current) {
       idempotencyKeyRef.current = crypto.randomUUID();
     }
     setSubmitting(true);
-    setFieldErrors([]);
+    setFieldErrorsById({});
+    setApiFieldErrors([]);
     setError(null);
     try {
       const updated = await submitLeaseInterest(
         request.id,
-        draft,
+        draftPayloadForSave(),
         idempotencyKeyRef.current,
       );
       setRequest(updated);
@@ -284,7 +440,7 @@ export function LeaseInterestFormView({
       setSubmitSuccessOpen(true);
     } catch (err) {
       if (err instanceof ApiClientError && err.errors?.length) {
-        setFieldErrors(err.errors);
+        applyApiFieldErrors(err.errors);
       } else if (err instanceof ApiClientError) {
         setError(err.detail || err.title);
       } else {
@@ -323,12 +479,6 @@ export function LeaseInterestFormView({
     }
     return leaseInterestMissingParcelAreaBlock(parcel);
   }, [parcel, spatialConstraints]);
-
-  const canSubmit = useMemo(
-    () =>
-      isLeaseInterestDraftReadyForSubmit(draft) && eligibilityBlock === null,
-    [draft, eligibilityBlock],
-  );
 
   if (loading || redirectedSubmittedRef.current) {
     return (
@@ -477,9 +627,14 @@ export function LeaseInterestFormView({
         </nav>
 
         {error ? <ErrorMessage message={error} /> : null}
-        {fieldErrors.length > 0 ? (
-          <ul id="lease-interest-field-errors" className={styles.error} role="alert">
-            {fieldErrors.map((item) => (
+        {saveNotice ? (
+          <p className={styles.saveNotice} role="status">
+            {saveNotice}
+          </p>
+        ) : null}
+        {apiFieldErrors.length > 0 ? (
+          <ul className={styles.error} role="alert">
+            {apiFieldErrors.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
@@ -494,14 +649,22 @@ export function LeaseInterestFormView({
                 className={styles.select}
                 disabled={readOnly}
                 value={draft.applicant.kind}
-                onChange={(e) =>
+                onChange={(e) => {
+                  setFieldErrorsById((prev) => {
+                    const next = { ...prev };
+                    delete next["applicant-nic"];
+                    delete next["org-name"];
+                    delete next["org-reg"];
+                    delete next["rep-nic"];
+                    return next;
+                  });
                   patchDraft({
                     applicant: {
                       ...draft.applicant,
                       kind: Number(e.target.value) as 1 | 2,
                     },
-                  })
-                }
+                  });
+                }}
               >
                 <option value={1}>Individual</option>
                 <option value={2}>Organization</option>
@@ -511,15 +674,24 @@ export function LeaseInterestFormView({
               <label htmlFor="legal-name">Full name</label>
               <input
                 id="legal-name"
-                {...fieldErrorA11y}
-                className={styles.input}
+                {...fieldA11y("legal-name", fieldErrorsById["legal-name"])}
+                className={controlClass(
+                  styles.input,
+                  styles.inputInvalid,
+                  Boolean(fieldErrorsById["legal-name"]),
+                )}
                 disabled={readOnly}
                 value={draft.applicant.legalName}
-                onChange={(e) =>
+                onChange={(e) => {
+                  clearFieldError("legal-name");
                   patchDraft({
                     applicant: { ...draft.applicant, legalName: e.target.value },
-                  })
-                }
+                  });
+                }}
+              />
+              <LeaseFieldError
+                fieldId="legal-name"
+                message={fieldErrorsById["legal-name"]}
               />
             </div>
             {draft.applicant.kind === 1 ? (
@@ -529,20 +701,29 @@ export function LeaseInterestFormView({
                 </label>
                 <input
                   id="applicant-nic"
-                {...fieldErrorA11y}
-                  className={styles.input}
+                  {...fieldA11y("applicant-nic", fieldErrorsById["applicant-nic"])}
+                  className={controlClass(
+                    styles.input,
+                    styles.inputInvalid,
+                    Boolean(fieldErrorsById["applicant-nic"]),
+                  )}
                   disabled={readOnly}
                   value={draft.applicant.nationalIdentityCardNumber ?? ""}
                   autoComplete="off"
                   spellCheck={false}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    clearFieldError("applicant-nic");
                     patchDraft({
                       applicant: {
                         ...draft.applicant,
                         nationalIdentityCardNumber: e.target.value,
                       },
-                    })
-                  }
+                    });
+                  }}
+                />
+                <LeaseFieldError
+                  fieldId="applicant-nic"
+                  message={fieldErrorsById["applicant-nic"]}
                 />
               </div>
             ) : null}
@@ -552,63 +733,89 @@ export function LeaseInterestFormView({
                   <label htmlFor="org-name">Organization name</label>
                   <input
                     id="org-name"
-                {...fieldErrorA11y}
-                    className={styles.input}
+                    {...fieldA11y("org-name", fieldErrorsById["org-name"])}
+                    className={controlClass(
+                      styles.input,
+                      styles.inputInvalid,
+                      Boolean(fieldErrorsById["org-name"]),
+                    )}
                     disabled={readOnly}
                     value={draft.applicant.organizationName ?? ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      clearFieldError("org-name");
                       patchDraft({
                         applicant: {
                           ...draft.applicant,
                           organizationName: e.target.value,
                         },
-                      })
-                    }
+                      });
+                    }}
+                  />
+                  <LeaseFieldError
+                    fieldId="org-name"
+                    message={fieldErrorsById["org-name"]}
                   />
                 </div>
                 <div className={styles.field}>
-                  <label htmlFor="org-reg">Registration number</label>
+                  <label htmlFor="org-reg">Business registration number (BRN)</label>
                   <input
                     id="org-reg"
-                {...fieldErrorA11y}
-                    className={styles.input}
+                    {...fieldA11y("org-reg", fieldErrorsById["org-reg"])}
+                    className={controlClass(
+                      styles.input,
+                      styles.inputInvalid,
+                      Boolean(fieldErrorsById["org-reg"]),
+                    )}
                     disabled={readOnly}
                     value={draft.applicant.organizationRegistrationNumber ?? ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      clearFieldError("org-reg");
                       patchDraft({
                         applicant: {
                           ...draft.applicant,
                           organizationRegistrationNumber: e.target.value,
                         },
-                      })
-                    }
+                      });
+                    }}
+                  />
+                  <LeaseFieldError
+                    fieldId="org-reg"
+                    message={fieldErrorsById["org-reg"]}
                   />
                 </div>
                 <div className={`${styles.field} ${styles.full}`}>
                   <label htmlFor="rep-nic">
-                    Representative NIC (signatory)
+                    Representative NIC (optional)
                   </label>
                   <input
                     id="rep-nic"
-                {...fieldErrorA11y}
-                    className={styles.input}
+                    {...fieldA11y("rep-nic", fieldErrorsById["rep-nic"])}
+                    className={controlClass(
+                      styles.input,
+                      styles.inputInvalid,
+                      Boolean(fieldErrorsById["rep-nic"]),
+                    )}
                     disabled={readOnly}
                     value={
                       draft.applicant.representativeNationalIdentityCardNumber ?? ""
                     }
                     autoComplete="off"
                     spellCheck={false}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      clearFieldError("rep-nic");
                       patchDraft({
                         applicant: {
                           ...draft.applicant,
                           representativeNationalIdentityCardNumber:
                             e.target.value,
                         },
-                      })
-                    }
+                      });
+                    }}
                   />
-
+                  <LeaseFieldError
+                    fieldId="rep-nic"
+                    message={fieldErrorsById["rep-nic"]}
+                  />
                 </div>
               </>
             ) : null}
@@ -616,49 +823,70 @@ export function LeaseInterestFormView({
               <label htmlFor="phone">Contact phone</label>
               <input
                 id="phone"
-                {...fieldErrorA11y}
-                className={styles.input}
+                {...fieldA11y("phone", fieldErrorsById.phone)}
+                className={controlClass(
+                  styles.input,
+                  styles.inputInvalid,
+                  Boolean(fieldErrorsById.phone),
+                )}
                 disabled={readOnly}
                 value={draft.applicant.contactPhone}
-                onChange={(e) =>
+                onChange={(e) => {
+                  clearFieldError("phone");
                   patchDraft({
                     applicant: { ...draft.applicant, contactPhone: e.target.value },
-                  })
-                }
+                  });
+                }}
               />
+              <LeaseFieldError fieldId="phone" message={fieldErrorsById.phone} />
             </div>
             <div className={styles.field}>
               <label htmlFor="email">Email</label>
               <input
                 id="email"
-                {...fieldErrorA11y}
+                {...fieldA11y("email", fieldErrorsById.email)}
                 type="email"
-                className={styles.input}
+                className={controlClass(
+                  styles.input,
+                  styles.inputInvalid,
+                  Boolean(fieldErrorsById.email),
+                )}
                 disabled={readOnly}
                 value={draft.applicant.contactEmail}
-                onChange={(e) =>
+                onChange={(e) => {
+                  clearFieldError("email");
                   patchDraft({
                     applicant: { ...draft.applicant, contactEmail: e.target.value },
-                  })
-                }
+                  });
+                }}
               />
+              <LeaseFieldError fieldId="email" message={fieldErrorsById.email} />
             </div>
             <div className={`${styles.field} ${styles.full}`}>
               <label htmlFor="address">Postal address</label>
               <textarea
                 id="address"
-                {...fieldErrorA11y}
-                className={styles.textarea}
+                {...fieldA11y("address", fieldErrorsById.address)}
+                className={controlClass(
+                  styles.textarea,
+                  styles.textareaInvalid,
+                  Boolean(fieldErrorsById.address),
+                )}
                 disabled={readOnly}
                 value={draft.applicant.postalAddress}
-                onChange={(e) =>
+                onChange={(e) => {
+                  clearFieldError("address");
                   patchDraft({
                     applicant: {
                       ...draft.applicant,
                       postalAddress: e.target.value,
                     },
-                  })
-                }
+                  });
+                }}
+              />
+              <LeaseFieldError
+                fieldId="address"
+                message={fieldErrorsById.address}
               />
             </div>
           </div>
@@ -670,15 +898,20 @@ export function LeaseInterestFormView({
               <label htmlFor="purpose">Requested purpose</label>
               <select
                 id="purpose"
-                {...fieldErrorA11y}
-                className={styles.select}
+                {...fieldA11y("purpose", fieldErrorsById.purpose)}
+                className={controlClass(
+                  styles.select,
+                  styles.selectInvalid,
+                  Boolean(fieldErrorsById.purpose),
+                )}
                 disabled={readOnly}
                 value={
                   isSupportedLandUseType(draft.proposal.requestedPurpose)
                     ? draft.proposal.requestedPurpose
                     : ""
                 }
-                onChange={(e) =>
+                onChange={(e) => {
+                  clearFieldError("purpose");
                   patchDraft({
                     proposal: {
                       ...draft.proposal,
@@ -687,8 +920,8 @@ export function LeaseInterestFormView({
                           ? (0 as LandUseType)
                           : (Number(e.target.value) as LandUseType),
                     },
-                  })
-                }
+                  });
+                }}
               >
                 <option value="">Select purpose</option>
                 {landUseTypeOptions.map((option) => (
@@ -697,46 +930,66 @@ export function LeaseInterestFormView({
                   </option>
                 ))}
               </select>
+              <LeaseFieldError
+                fieldId="purpose"
+                message={fieldErrorsById.purpose}
+              />
             </div>
             <div className={styles.field}>
               <label htmlFor="duration">Requested duration (years)</label>
               <input
                 id="duration"
-                {...fieldErrorA11y}
+                {...fieldA11y("duration", fieldErrorsById.duration)}
                 type="number"
                 min={1}
                 max={30}
-                className={styles.input}
+                className={controlClass(
+                  styles.input,
+                  styles.inputInvalid,
+                  Boolean(fieldErrorsById.duration),
+                )}
                 disabled={readOnly}
                 value={draft.proposal.requestedDurationYears}
-                onChange={(e) =>
+                onChange={(e) => {
+                  clearFieldError("duration");
                   patchDraft({
                     proposal: {
                       ...draft.proposal,
                       requestedDurationYears: Number(e.target.value),
                     },
-                  })
-                }
+                  });
+                }}
+              />
+              <LeaseFieldError
+                fieldId="duration"
+                message={fieldErrorsById.duration}
               />
             </div>
             <div className={styles.field}>
               <label htmlFor="start">Desired start period</label>
               <input
                 id="start"
-                {...fieldErrorA11y}
+                {...fieldA11y("start", fieldErrorsById.start)}
                 type="date"
-                className={styles.input}
+                min={localDateInputValue()}
+                className={controlClass(
+                  styles.input,
+                  styles.inputInvalid,
+                  Boolean(fieldErrorsById.start),
+                )}
                 disabled={readOnly}
                 value={toDateInputValue(draft.proposal.desiredStartPeriod)}
-                onChange={(e) =>
+                onChange={(e) => {
+                  clearFieldError("start");
                   patchDraft({
                     proposal: {
                       ...draft.proposal,
                       desiredStartPeriod: e.target.value,
                     },
-                  })
-                }
+                  });
+                }}
               />
+              <LeaseFieldError fieldId="start" message={fieldErrorsById.start} />
             </div>
             <div className={styles.field}>
               <label htmlFor="area">Requested area (ha)</label>
@@ -757,63 +1010,102 @@ export function LeaseInterestFormView({
                 }
                 aria-readonly="true"
               />
-
+              <LeaseFieldError fieldId="area" message={fieldErrorsById.area} />
             </div>
             <div className={`${styles.field} ${styles.full}`}>
               <label htmlFor="activities">Planned activities</label>
               <textarea
                 id="activities"
-                {...fieldErrorA11y}
-                className={styles.textarea}
+                {...fieldA11y("activities", fieldErrorsById.activities)}
+                className={controlClass(
+                  styles.textarea,
+                  styles.textareaInvalid,
+                  Boolean(fieldErrorsById.activities),
+                )}
                 disabled={readOnly}
                 value={draft.proposal.plannedActivitiesDescription}
-                onChange={(e) =>
+                onChange={(e) => {
+                  clearFieldError("activities");
                   patchDraft({
                     proposal: {
                       ...draft.proposal,
                       plannedActivitiesDescription: e.target.value,
                     },
-                  })
-                }
+                  });
+                }}
+              />
+              <LeaseFieldError
+                fieldId="activities"
+                message={fieldErrorsById.activities}
               />
             </div>
             <div className={`${styles.field} ${styles.full}`}>
               <label htmlFor="summary">Project summary</label>
               <textarea
                 id="summary"
-                {...fieldErrorA11y}
-                className={styles.textarea}
+                {...fieldA11y("summary", fieldErrorsById.summary)}
+                className={controlClass(
+                  styles.textarea,
+                  styles.textareaInvalid,
+                  Boolean(fieldErrorsById.summary),
+                )}
                 disabled={readOnly}
                 value={draft.proposal.projectSummary}
-                onChange={(e) =>
+                onChange={(e) => {
+                  clearFieldError("summary");
                   patchDraft({
                     proposal: {
                       ...draft.proposal,
                       projectSummary: e.target.value,
                     },
-                  })
-                }
+                  });
+                }}
+              />
+              <LeaseFieldError
+                fieldId="summary"
+                message={fieldErrorsById.summary}
               />
             </div>
           </div>
         ) : null}
 
         {step === 2 ? (
-          <div>
-            <p style={{ fontSize: "0.85rem", color: "var(--color-muted)" }}>
-              {checklist?.storageNote}
-            </p>
-            <ul className={styles.metaList}>
-              {checklist?.items.map((item) => (
-                <li key={item.code}>
-                  <strong>{item.label}</strong> — {item.note}
-                </li>
-              ))}
-            </ul>
-            <div className={`${styles.field} ${styles.full}`} style={{ marginTop: "1rem" }}>
-              <label htmlFor="notes">Supporting notes</label>
+          <div className={styles.documentsStep}>
+            <div className={styles.documentsHeading}>
+              <span className={styles.documentsEyebrow}>Document guidance</span>
+              <h2>What you may need</h2>
+              <p>Review the supporting documents an officer may ask for during verification.</p>
+            </div>
+            {checklist?.items.length ? (
+              <section aria-labelledby="document-guidance-heading">
+                <h3 id="document-guidance-heading" className={styles.documentsSectionTitle}>
+                  Supporting document guidance
+                </h3>
+                <ul className={styles.documentsGrid}>
+                  {checklist.items.map((item, index) => (
+                    <li key={item.code} className={styles.documentItem}>
+                      <span className={styles.documentNumber} aria-hidden="true">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <div>
+                        <h4 className={styles.documentLabel}>{item.label}</h4>
+                        <p className={styles.documentNote}>{item.note}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+            <div className={`${styles.field} ${styles.documentsNotes}`}>
+              <label htmlFor="notes">
+                Supporting notes <span className={styles.optionalLabel}>Optional</span>
+              </label>
+              <p id="notes-hint" className={styles.fieldHint}>
+                Add any context that may help the officer review your request.
+              </p>
               <textarea
                 id="notes"
+                aria-describedby="notes-hint"
                 className={styles.textarea}
                 disabled={readOnly}
                 value={draft.supporting.supportingNotes}
@@ -842,9 +1134,11 @@ export function LeaseInterestFormView({
               router.push(`/land-intelligence/parcels/${parcelId}`)
             }
             consentChecked={draft.consentToPreliminaryAssessment}
-            onConsentChange={(checked) =>
-              patchDraft({ consentToPreliminaryAssessment: checked })
-            }
+            consentError={fieldErrorsById.consent}
+            onConsentChange={(checked) => {
+              clearFieldError("consent");
+              patchDraft({ consentToPreliminaryAssessment: checked });
+            }}
           />
         ) : null}
 
@@ -875,8 +1169,8 @@ export function LeaseInterestFormView({
                   type="button"
                   variant="primary"
                   onClick={() => void handleSubmit()}
-                  disabled={submitting || !canSubmit}
-                  aria-disabled={submitting || !canSubmit}
+                  disabled={submitting || eligibilityBlock !== null}
+                  aria-disabled={submitting || eligibilityBlock !== null}
                 >
                   {submitting
                     ? "Submitting…"
@@ -898,7 +1192,7 @@ export function LeaseInterestFormView({
                   <Button
                     type="button"
                     variant="primary"
-                    onClick={() => setStep(step + 1)}
+                    onClick={handleContinue}
                   >
                     Continue
                   </Button>

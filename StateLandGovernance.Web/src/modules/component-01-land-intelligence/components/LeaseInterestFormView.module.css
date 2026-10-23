@@ -181,6 +181,17 @@
   line-height: 1.45;
 }
 
+.saveNotice {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: #eef6f1;
+  border: 1px solid #b8d4c4;
+  color: #1a3d2e;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
 .stepTrail {
   margin-bottom: 1.1rem;
 }
@@ -259,6 +270,20 @@
   line-height: 1.4;
 }
 
+.fieldError {
+  margin: 0.35rem 0 0;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: #8a1f1f;
+}
+
+.inputInvalid,
+.selectInvalid,
+.textareaInvalid {
+  border-color: #c44;
+  box-shadow: 0 0 0 1px rgb(196 68 68 / 22%);
+}
+
 .input,
 .select,
 .textarea {
@@ -277,6 +302,103 @@
 .textarea {
   min-height: 88px;
   resize: vertical;
+}
+
+.documentsStep {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.documentsHeading h2 {
+  margin: 0.2rem 0 0.3rem;
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.documentsHeading p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.documentsEyebrow {
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.documentsSectionTitle {
+  margin: 0 0 0.65rem;
+  font-size: 0.91rem;
+  color: var(--color-primary);
+}
+
+.documentsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.documentItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.documentNumber {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 1.7rem;
+  height: 1.7rem;
+  border-radius: 8px;
+  background: var(--color-nav-inactive);
+  color: var(--color-primary);
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.documentLabel {
+  margin: 0 0 0.22rem;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.documentNote {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.documentsNotes {
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-card-border);
+}
+
+.documentsNotes .fieldHint {
+  margin: 0 0 0.55rem;
+}
+
+.documentsNotes .textarea {
+  min-height: 105px;
+}
+
+.optionalLabel {
+  margin-left: 0.25rem;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .actions {
@@ -627,6 +749,10 @@
 }
 
 @media (max-width: 560px) {
+  .documentsGrid {
+    grid-template-columns: 1fr;
+  }
+
   .startSteps {
     grid-template-columns: 1fr;
   }
