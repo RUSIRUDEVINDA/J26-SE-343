@@ -39,7 +39,8 @@ import {
 } from "../utils/officerValuationSave";
 import styles from "./OfficerLeaseInterestReviewView.module.css";
 
-const REVIEW_STATUSES: LeaseInterestRequestStatus[] = [4, 5, 6];
+const REVIEW_STATUSES: LeaseInterestRequestStatus[] = [5, 6];
+const DEFAULT_OFFICER_OUTCOME: LeaseInterestRequestStatus = 6;
 const OFFICER_QUEUE_HREF = officerLeaseInterestQueueNavItem.href;
 const OFFICER_DECISION_NAVIGATE_STATUSES: LeaseInterestRequestStatus[] = [5, 6];
 const formatDate = (value: string) => new Date(value).toLocaleString("en-LK", { dateStyle: "medium", timeStyle: "short" });
@@ -103,7 +104,9 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [note, setNote] = useState("");
-  const [newStatus, setNewStatus] = useState<LeaseInterestRequestStatus>(4);
+  const [newStatus, setNewStatus] = useState<LeaseInterestRequestStatus>(
+    DEFAULT_OFFICER_OUTCOME,
+  );
   const [saving, setSaving] = useState(false);
   const [valuations, setValuations] = useState<LeaseInterestValuation[]>([]);
   const [valuationForm, setValuationForm] = useState<ValuationForm>(emptyValuation);
@@ -356,7 +359,7 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
                 formType: typeForPurpose(result.proposal.requestedPurpose),
               },
         );
-        setNewStatus(4);
+        setNewStatus(DEFAULT_OFFICER_OUTCOME);
       } catch (err) {
         if (!cancelled) {
           setError(
@@ -432,6 +435,7 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
     : {};
   const canReview = detail.status === 3 || detail.status === 4;
   const outcomeOptions = detail.status === 4 ? [...REVIEW_STATUSES, 3 as const] : REVIEW_STATUSES;
+  const applicantOutcomeLine = leaseInterestApplicantOutcome(detail.status);
 
   return (
     <div className={styles.page}>
@@ -519,8 +523,8 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
         <div>
           <p className={styles.eyebrow}>Lease interest request</p>
           <h2 className={styles.reference}>{detail.acknowledgementReference ?? "Lease interest request"}</h2>
-          {detail.applicantOutcomeSummary.trim() ? (
-            <p className={styles.headerText}>{detail.applicantOutcomeSummary}</p>
+          {applicantOutcomeLine.trim() ? (
+            <p className={styles.headerText}>{applicantOutcomeLine}</p>
           ) : null}
         </div>
         <StatusBadge tone={leaseInterestStatusBadgeTone(detail.status)}>{leaseInterestStatusLabel(detail.status)}</StatusBadge>

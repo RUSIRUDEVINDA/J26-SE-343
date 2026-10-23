@@ -88,7 +88,7 @@ export function leaseInterestApplicantOutcome(status: LeaseInterestRequestStatus
     case 2:
       return "Submitted — awaiting officer queue (preliminary interest only).";
     case 3:
-      return "Pending officer verification. Your expression of interest is not a reservation or lease approval.";
+      return "Pending officer verification.";
     case 4:
       return "More information is required before officer verification can continue.";
     case 5:
