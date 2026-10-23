@@ -24,6 +24,7 @@ using StateLandGovernance.LandIntelligence.Presentation.Security;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
 using StateLandGovernance.WorkflowGovernance.Application;
 using StateLandGovernance.WorkflowGovernance.Infrastructure;
+using StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations;
 using StateLandGovernance.WorkflowGovernance.Presentation;
 using StateLandGovernance.WorkflowGovernance.Presentation.Security;
@@ -31,6 +32,15 @@ using StateLandGovernance.WorkflowGovernance.Presentation.Security;
 EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("GovernanceCaseReviewer", policy => policy
+        .RequireAuthenticatedUser()
+        .RequireRole("Officer", "ComplianceOfficer", "LandOfficer")
+        .RequireClaim("authority_case_id")
+        .RequireClaim("capability", "CaseWorkspaceReviewer"));
+});
 
 if (
     builder.Environment.IsDevelopment()
@@ -384,26 +394,34 @@ if (app.Environment.IsDevelopment())
         }
     }
 
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        using var scope = app.Services.CreateScope();
-
-        var dbContext = scope.ServiceProvider
-            .GetService<LandIntelligenceDbContext>();
-
-        if (
-            dbContext != null
-            && dbContext.Database.CanConnect()
-        )
+        try
         {
-            dbContext.Database.Migrate();
+            var dbContext = scope.ServiceProvider.GetService<LandIntelligenceDbContext>();
+            if (dbContext != null && dbContext.Database.CanConnect())
+            {
+                dbContext.Database.Migrate();
+            }
         }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine(
-            $"[Development] LandIntelligence migration skipped: {ex.Message}"
-        );
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Development] LandIntelligence migration skipped: {ex.Message}");
+        }
+
+        try
+        {
+            var workflowDb = scope.ServiceProvider.GetService<WorkflowGovernanceDbContext>();
+            if (workflowDb != null && workflowDb.Database.CanConnect())
+            {
+                workflowDb.Database.Migrate();
+                Console.WriteLine("[WorkflowGovernance] PostgreSQL persistence connected and migrations verified.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[WorkflowGovernance] PostgreSQL migration error: {ex.Message}");
+        }
     }
 }
 else

@@ -225,17 +225,19 @@ public sealed class WorkflowExecutionService(ILeaseCaseRepository cases, IWorkfl
             throw new InvalidOperationException("Choose Approved, ApprovedWithConditions or Rejected.");
         if (string.IsNullOrWhiteSpace(request.Reason))
             throw new InvalidOperationException("An explicit institutional decision reason is required; document references are not a reason.");
-        if (request.Documents.Count == 0) throw new InvalidOperationException("A decision document is required; submission is not acceptance.");
-        var refs = new List<string>();
-        foreach (var binding in request.Documents)
+        // Documents are optional supporting evidence; the institutional decision is the reviewer's explicit choice.
+        var normalizedDocuments = request.Documents ?? Array.Empty<DecisionDocumentBinding>();
+        foreach (var binding in normalizedDocuments)
         {
             var doc = await documents.GetByIdAsync(new(binding.DocumentId), ct);
             if (doc == null || doc.LeaseCaseId.Value != caseId || doc.LogicalCategory != DocumentCategory(e.Id.Value, stageId) || doc.ActiveVersionId.Value != binding.VersionId ||
                 !doc.Versions.Any(v => v.Id.Value == binding.VersionId && v.SubmittedByActorId == actor.Authority.ActorId))
                 throw new InvalidOperationException("Decision evidence must be an exact version submitted for this institution's stage.");
-            refs.Add($"document:{binding.DocumentId:D}/version:{binding.VersionId:D}");
         }
-        var reason = request.Reason + " Evidence: " + string.Join("; ", refs);
+        // Preserve the reviewer's reason as entered; append evidence references only when evidence was supplied.
+        var reason = normalizedDocuments.Count > 0
+            ? request.Reason + " Evidence: " + string.Join("; ", normalizedDocuments.Select(b => $"document:{b.DocumentId:D}/version:{b.VersionId:D}"))
+            : request.Reason;
         if (request.PriorDecisionId is { } prior)
             e.ReviseStageDecision(new(stageId), request.ExpectedExecutionRevision, new(prior), new(Guid.NewGuid()), outcome,
                 reason, request.Conditions, actor.Authority.ActorId, InstitutionAuthority(actor), request.RevisionReason ?? "", Now);
