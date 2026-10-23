@@ -5,6 +5,7 @@ import { InstitutionPostWorkflowWorkspace } from "./InstitutionPostWorkflowWorks
 import { ProjectFulfillmentWorkspace } from "./ProjectFulfillmentWorkspace";
 import { apiDownloadBlob, apiGet, apiPost, apiPostFormData } from "@/lib/apiClient";
 import { workflowAuthRole, workflowDevelopmentHeaders } from "../services/workflowDevelopmentHeaders";
+import { isInstitutionalDecisionSubmittable } from "../services/institutionalDecision";
 import { Button } from "@/shared/components/Button";
 
 type Decision = { id: string; outcome: string; reason?: string; conditions: string[]; actorId: string; at: string };
@@ -94,14 +95,22 @@ export function InstitutionalRequestWorkspace({ caseId, stageId }: { caseId: str
       {documents.length === 0 && <p>No scoped evidence files have been supplied.</p>}
       {documents.flatMap(d => d.versions.map(v => <Button key={v.versionId} onClick={() => void download(d.documentId, v.versionId, v.originalFileName)}>Read {v.originalFileName} ({v.versionId.slice(0, 8)})</Button>))}
       <Button disabled={busy || !state.canStart} onClick={() => void submit("start")}>Start authorized review</Button>
-      <label>Decision document <input type="file" onChange={e => setFile(e.target.files?.[0])} /></label>
-      <Button disabled={busy || !file} onClick={() => void submit("upload")}>Upload decision evidence</Button>
-      {evidence && <p>Submitted document {evidence.documentId}, version {evidence.versionId}. Upload is not approval.</p>}
+      <label>Supporting evidence (optional) <input type="file" onChange={e => setFile(e.target.files?.[0])} /></label>
+      <Button disabled={busy || !file} onClick={() => void submit("upload")}>Upload supporting evidence</Button>
+      {evidence && <p>Supporting document {evidence.documentId}, version {evidence.versionId} attached. Upload is not approval.</p>}
       <label>Decision <select value={outcome} onChange={e => setOutcome(e.target.value)}><option>Approved</option><option>ApprovedWithConditions</option><option>Rejected</option></select></label>
       <label>Reasons and suggestions <textarea maxLength={250} value={reason} onChange={e => setReason(e.target.value)} /></label>
       <label>Conditions, one per line <textarea value={conditions} onChange={e => setConditions(e.target.value)} /></label>
       {state.ownDecision && <label>Reason for authorized revision <textarea value={revisionReason} onChange={e => setRevisionReason(e.target.value)} /></label>}
-      <Button disabled={busy || !evidence || !reason.trim() || (state.ownDecision ? !revisionReason.trim() : state.status !== "InProgress")}
+      <Button disabled={!isInstitutionalDecisionSubmittable({
+          busy,
+          outcome,
+          reason,
+          conditions,
+          stageStatus: state.status,
+          hasOwnDecision: Boolean(state.ownDecision),
+          revisionReason
+        })}
         onClick={() => void submit("decision")}>{state.ownDecision ? "Submit authorized decision revision" : "Record explicit decision"}</Button>
       <ProjectFulfillmentWorkspace caseId={caseId} assignedOnly institutionAccess institutionCode={state.institution} institutionDecisionId={state.ownDecision?.id} /><InstitutionPostWorkflowWorkspace caseId={caseId} institution={state.institution} evidence={evidence} />
       {state.institution === "DS" && <fieldset><legend>Governed department addition</legend>
