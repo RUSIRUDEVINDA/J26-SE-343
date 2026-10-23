@@ -63,6 +63,62 @@
   font-size: 0.88rem;
 }
 
+.queueEmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.65rem;
+  width: min(100%, 720px);
+  margin: 1.5rem auto 0;
+  padding: clamp(2rem, 5vw, 3.5rem);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(65 32 27 / 5%);
+}
+
+.queueEmptyIcon {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: 0.35rem;
+  border-radius: 50%;
+  background: var(--color-nav-inactive);
+  color: var(--color-primary);
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.queueEmptyEyebrow {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.queueEmptyState h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+}
+
+.queueEmptyDescription {
+  max-width: 29rem;
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.55;
+}
+
+.queueEmptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
 .tableWrap {
   overflow-x: auto;
   border: 1px solid var(--color-card-border);

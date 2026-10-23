@@ -7,6 +7,21 @@ export function sourceReportedLandUseDisplay(
   return source?.sourceReportedLandUseDisplay?.trim() ?? "";
 }
 
+/** English land-use label from cadastre codes (not raw Sinhala source text). */
+export function sourceReportedLandUseEnglishDisplay(
+  source?: CadastralSourceMetadataResponse | null,
+): string {
+  const englishLabel = source?.sourceReportedLandUseEnglishLabel?.trim();
+  if (englishLabel) {
+    return englishLabel;
+  }
+  const display = sourceReportedLandUseDisplay(source);
+  if (display) {
+    return display;
+  }
+  return source?.sourceReportedLandUseText?.trim() ?? "";
+}
+
 /** Raw display value from cadastre import (no label prefix). */
 export function sourceReportedClaimantCategoryDisplay(
   source?: CadastralSourceMetadataResponse | null,

@@ -17,15 +17,30 @@ export type ParsedRecommendationSearch = {
   fingerprint: string;
 };
 
+export const DEFAULT_FIND_SUITABLE_MAX_RESULTS = "10";
+
+/** Previous UI default; session snapshots still store this until migrated. */
+const LEGACY_FIND_SUITABLE_MAX_RESULTS = "30";
+
+export function normalizeStoredFindSuitableMaxResults(
+  raw: string | undefined | null,
+): string {
+  const trimmed = optionalTrim(raw);
+  if (!trimmed || trimmed === LEGACY_FIND_SUITABLE_MAX_RESULTS) {
+    return DEFAULT_FIND_SUITABLE_MAX_RESULTS;
+  }
+  return trimmed;
+}
+
 const EMPTY_FORM: FindSuitableLandFormState = {
   requiredPurpose: "",
   targetAreaValue: "",
   targetAreaUnit: "hectares",
   preferredProvince: "",
   preferredDistrict: "",
-  preferredDivisionalSecretariat: "",
+  preferredGramaNiladhariDivision: "",
   sourceReportedLandUse: "",
-  maxResults: "30",
+  maxResults: DEFAULT_FIND_SUITABLE_MAX_RESULTS,
 };
 
 function optionalTrim(value: string | null | undefined): string {
@@ -48,9 +63,19 @@ function parsePurpose(raw: string | null): LandUseType | null {
   return isSupportedLandUseType(value) ? value : null;
 }
 
+function parseGramaNiladhariFromUrl(
+  searchParams: URLSearchParams | { get(name: string): string | null },
+): string {
+  const gn = optionalTrim(searchParams.get("gn"));
+  if (gn) {
+    return gn;
+  }
+  return optionalTrim(searchParams.get("ds"));
+}
+
 /**
  * Canonical URL → request + formState parser for recommendation results.
- * Preserves purpose, target area (+ unit), location (including DS), land-use filters, max results.
+ * Preserves purpose, target area (+ unit), location (including GN division), land-use filters, max results.
  */
 export function parseRecommendationSearchParams(
   searchParams: URLSearchParams | { get(name: string): string | null },
@@ -71,7 +96,7 @@ export function parseRecommendationSearchParams(
 
   const province = optionalTrim(searchParams.get("province"));
   const district = optionalTrim(searchParams.get("district"));
-  const ds = optionalTrim(searchParams.get("ds"));
+  const gnDivision = parseGramaNiladhariFromUrl(searchParams);
 
   const landUse = optionalTrim(searchParams.get("landUse"));
   const landCover = optionalTrim(searchParams.get("landCover"));
@@ -86,16 +111,16 @@ export function parseRecommendationSearchParams(
     requiredPurpose: purpose,
     targetAreaHectares,
     preferredLocation:
-      province || district || ds
+      province || district || gnDivision
         ? {
             province: province || null,
             district: district || null,
-            divisionalSecretariat: ds || null,
+            gramaNiladhariDivision: gnDivision || null,
           }
         : null,
     sourceReportedLandUse: landCover ? null : landUse || null,
     researchLandCoverGroup: landCover || null,
-    maxResults: maxResults ?? 30,
+    maxResults: maxResults ?? 10,
   };
 
   const formState: FindSuitableLandFormState = {
@@ -106,9 +131,9 @@ export function parseRecommendationSearchParams(
     targetAreaUnit: areaValue ? areaUnit : areaHaFromParam != null ? "hectares" : areaUnit,
     preferredProvince: province,
     preferredDistrict: district,
-    preferredDivisionalSecretariat: ds,
+    preferredGramaNiladhariDivision: gnDivision,
     sourceReportedLandUse,
-    maxResults: maxResultsRaw || "30",
+    maxResults: maxResultsRaw || "10",
   };
 
   return {
@@ -144,13 +169,13 @@ export function buildRecommendationSearchParams(
     formState.preferredDistrict.trim() ||
     request.preferredLocation?.district?.trim() ||
     "";
-  const ds =
-    formState.preferredDivisionalSecretariat.trim() ||
-    request.preferredLocation?.divisionalSecretariat?.trim() ||
+  const gn =
+    formState.preferredGramaNiladhariDivision.trim() ||
+    request.preferredLocation?.gramaNiladhariDivision?.trim() ||
     "";
   if (province) params.set("province", province);
   if (district) params.set("district", district);
-  if (ds) params.set("ds", ds);
+  if (gn) params.set("gn", gn);
 
   if (request.researchLandCoverGroup) {
     params.set("landCover", request.researchLandCoverGroup);
@@ -184,7 +209,7 @@ export function recommendationSearchFingerprint(
     `au=${formState?.targetAreaUnit ?? ""}`,
     `pr=${loc?.province?.trim() ?? ""}`,
     `d=${loc?.district?.trim() ?? ""}`,
-    `ds=${loc?.divisionalSecretariat?.trim() ?? ""}`,
+    `gn=${loc?.gramaNiladhariDivision?.trim() ?? ""}`,
     `lu=${request.sourceReportedLandUse?.trim() ?? ""}`,
     `lc=${request.researchLandCoverGroup?.trim() ?? ""}`,
     `m=${request.maxResults ?? ""}`,
@@ -218,17 +243,17 @@ export function buildRequestFromFormState(
   const parsedMaxResults = Number.parseInt(form.maxResults.trim(), 10);
   const province = form.preferredProvince.trim();
   const district = form.preferredDistrict.trim();
-  const ds = form.preferredDivisionalSecretariat.trim();
+  const gn = form.preferredGramaNiladhariDivision.trim();
 
   return {
     requiredPurpose: form.requiredPurpose,
     targetAreaHectares: parsedTargetArea ?? null,
     preferredLocation:
-      province || district || ds
+      province || district || gn
         ? {
             province: province || null,
             district: district || null,
-            divisionalSecretariat: ds || null,
+            gramaNiladhariDivision: gn || null,
           }
         : null,
     sourceReportedLandUse: form.sourceReportedLandUse.startsWith("cover:")
@@ -237,7 +262,7 @@ export function buildRequestFromFormState(
     researchLandCoverGroup: form.sourceReportedLandUse.startsWith("cover:")
       ? form.sourceReportedLandUse.slice(6)
       : null,
-    maxResults: Number.isFinite(parsedMaxResults) ? parsedMaxResults : 30,
+    maxResults: Number.isFinite(parsedMaxResults) ? parsedMaxResults : 10,
   };
 }
 

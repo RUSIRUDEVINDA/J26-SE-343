@@ -221,17 +221,9 @@ export function AuthorityLeaseInterestReviewView({
               Confirm authority decision
             </h2>
             <p id="authority-confirm-body" className={styles.modalBody}>
-              Record <strong>{decisionLabel(decision)}</strong> against valuation
-              revision{" "}
-              <strong>{detail.latestValuation?.revision ?? "—"}</strong>? This
-              updates the request status to{" "}
+              This updates the request status to{" "}
               <strong>{decision === 1 ? "Approved" : "Rejected"}</strong> and is
-              visible to the applicant. It does not create a lease or reserve
-              land
-              {decision === 1
-                ? ", and formal lease processing is still required"
-                : ""}
-              .
+              visible to the applicant.
             </p>
             <div className={styles.modalActions}>
               <Button
@@ -306,7 +298,9 @@ export function AuthorityLeaseInterestReviewView({
           <h2 className={styles.reference}>
             {detail.acknowledgementReference ?? "Lease interest request"}
           </h2>
-          <p className={styles.headerText}>{detail.applicantOutcomeSummary}</p>
+          {detail.applicantOutcomeSummary.trim() ? (
+            <p className={styles.headerText}>{detail.applicantOutcomeSummary}</p>
+          ) : null}
         </div>
         <StatusBadge tone={leaseInterestStatusBadgeTone(detail.status)}>
           {leaseInterestStatusLabel(detail.status)}
@@ -347,21 +341,31 @@ export function AuthorityLeaseInterestReviewView({
                 <dt>Postal address</dt>
                 <dd>{detail.applicant.postalAddress}</dd>
               </div>
-              <div>
-                <dt>NIC (masked)</dt>
-                <dd>{detail.applicant.nationalIdentityCardNumber ?? "Not entered"}</dd>
-              </div>
-              {detail.applicant.organizationName ? (
+              {detail.applicant.kind === 2 ? (
+                <>
+                  <div>
+                    <dt>Organisation</dt>
+                    <dd>{detail.applicant.organizationName ?? "Not entered"}</dd>
+                  </div>
+                  <div>
+                    <dt>BRN</dt>
+                    <dd>
+                      {detail.applicant.organizationRegistrationNumber ?? "Not entered"}
+                    </dd>
+                  </div>
+                  {detail.applicant.representativeNationalIdentityCardNumber ? (
+                    <div>
+                      <dt>Representative NIC</dt>
+                      <dd>{detail.applicant.representativeNationalIdentityCardNumber}</dd>
+                    </div>
+                  ) : null}
+                </>
+              ) : (
                 <div>
-                  <dt>Organisation</dt>
-                  <dd>
-                    {detail.applicant.organizationName}
-                    {detail.applicant.organizationRegistrationNumber
-                      ? ` · ${detail.applicant.organizationRegistrationNumber}`
-                      : ""}
-                  </dd>
+                  <dt>NIC (masked)</dt>
+                  <dd>{detail.applicant.nationalIdentityCardNumber ?? "Not entered"}</dd>
                 </div>
-              ) : null}
+              )}
               <div>
                 <dt>Cadastre / district</dt>
                 <dd>
@@ -426,8 +430,7 @@ export function AuthorityLeaseInterestReviewView({
             <p className={styles.fieldHelp}>
               Review every manually entered field before deciding. Values are
               shown exactly as recorded by the officer. The system does not
-              calculate lease rates or totals. Optional empty fields show{" "}
-              <em>Not entered</em>.
+              calculate lease rates or totals.
             </p>
 
             {detail.valuations.length > 0 ? (
@@ -599,12 +602,7 @@ export function AuthorityLeaseInterestReviewView({
                   officer notes that should remain hidden.
                 </p>
               </div>
-              {decision === 1 ? (
-                <p className={styles.notice}>
-                  Approved is a preliminary project decision only. Formal lease
-                  processing is still required.
-                </p>
-              ) : null}
+              
               <Button
                 type="submit"
                 variant="primary"

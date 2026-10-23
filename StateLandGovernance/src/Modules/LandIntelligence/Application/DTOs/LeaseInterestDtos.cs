@@ -121,7 +121,8 @@ public sealed record LeaseInterestDocumentChecklistDto(
     string StorageNote);
 
 public sealed record LeaseInterestOfficerLookupRequestDto(
-    string NationalIdentityCardNumber,
+    string? NationalIdentityCardNumber,
+    string? BusinessRegistrationNumber,
     int Page = 1,
     int PageSize = 20);
 
@@ -135,7 +136,9 @@ public sealed record LeaseInterestOfficerLookupItemDto(
     string? District,
     LandUseType RequestedPurpose,
     int? RequestedDurationYears,
-    string MaskedNationalIdentityCardNumber);
+    LeaseInterestApplicantKindDto ApplicantKind,
+    string? NationalIdentityCardNumber,
+    string? BusinessRegistrationNumber);
 
 public sealed record LeaseInterestOfficerLookupResponseDto(
     IReadOnlyList<LeaseInterestOfficerLookupItemDto> Items,

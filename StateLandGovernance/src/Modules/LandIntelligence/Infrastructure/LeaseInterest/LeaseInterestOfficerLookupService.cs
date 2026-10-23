@@ -29,24 +29,87 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
         LeaseInterestOfficerLookupRequestDto request,
         CancellationToken cancellationToken)
     {
-        if (!SriLankanNic.TryValidate(
-                request.NationalIdentityCardNumber,
-                out var normalized,
-                out var validationError))
+        var nicProvided = !string.IsNullOrWhiteSpace(request.NationalIdentityCardNumber);
+        var brnProvided = !string.IsNullOrWhiteSpace(request.BusinessRegistrationNumber);
+        if (nicProvided == brnProvided)
         {
-            throw new ValidationException([validationError!]);
+            throw new ValidationException(
+                [
+                    nicProvided
+                        ? "Provide either a NIC or a business registration number (BRN), not both."
+                        : "Enter a NIC or business registration number (BRN) to search.",
+                ]);
         }
 
         var page = request.Page < 1 ? 1 : request.Page;
         var pageSize = request.PageSize < 1 ? 20 : Math.Min(request.PageSize, MaxPageSize);
-        var digest = _nicProtector.ComputeLookupDigest(normalized);
 
+        if (nicProvided)
+        {
+            return await LookupByNicDigestAsync(
+                request.NationalIdentityCardNumber!,
+                page,
+                pageSize,
+                cancellationToken);
+        }
+
+        return await LookupByBrnDigestAsync(
+            request.BusinessRegistrationNumber!,
+            page,
+            pageSize,
+            cancellationToken);
+    }
+
+    private async Task<LeaseInterestOfficerLookupResponseDto> LookupByNicDigestAsync(
+        string rawNic,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        if (!SriLankanNic.TryValidate(rawNic, out var normalized, out var validationError))
+        {
+            throw new ValidationException([validationError!]);
+        }
+
+        var digest = _nicProtector.ComputeLookupDigest(normalized);
         var query = _dbContext.LeaseInterestRequests
             .AsNoTracking()
             .Where(x =>
                 x.ApplicantNicLookupDigest == digest
                 && x.Status != LeaseInterestRequestStatus.Draft);
 
+        return await MaterializeLookupPageAsync(query, page, pageSize, normalized, null, cancellationToken);
+    }
+
+    private async Task<LeaseInterestOfficerLookupResponseDto> LookupByBrnDigestAsync(
+        string rawBrn,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        if (!LeaseInterestBusinessRegistration.TryValidate(rawBrn, out var normalized, out var validationError))
+        {
+            throw new ValidationException([validationError!]);
+        }
+
+        var digest = _nicProtector.ComputeLookupDigest(normalized);
+        var query = _dbContext.LeaseInterestRequests
+            .AsNoTracking()
+            .Where(x =>
+                x.ApplicantBrnLookupDigest == digest
+                && x.Status != LeaseInterestRequestStatus.Draft);
+
+        return await MaterializeLookupPageAsync(query, page, pageSize, null, normalized, cancellationToken);
+    }
+
+    private async Task<LeaseInterestOfficerLookupResponseDto> MaterializeLookupPageAsync(
+        IQueryable<Infrastructure.Persistence.Entities.LeaseInterestRequestEntity> query,
+        int page,
+        int pageSize,
+        string? normalizedNic,
+        string? normalizedBrn,
+        CancellationToken cancellationToken)
+    {
         var total = await query.CountAsync(cancellationToken);
 
         var rows = await query
@@ -59,8 +122,17 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
         foreach (var row in rows)
         {
             var parcel = await _parcelRepository.GetByIdAsync(row.LandParcelId, cancellationToken);
-            var masked = _nicProtector.Mask(
-                _nicProtector.Decrypt(row.ApplicantNicCiphertext) ?? normalized);
+            var draft = LeaseInterestPayloadSerializer.Deserialize(row.PayloadJson);
+            var applicant = draft.Applicant;
+            var nic =
+                applicant.Kind == LeaseInterestApplicantKindDto.Individual
+                    ? _nicProtector.Decrypt(row.ApplicantNicCiphertext) ?? normalizedNic
+                    : _nicProtector.Decrypt(row.ApplicantNicCiphertext);
+            var brn = LeaseInterestBusinessRegistration.TryNormalize(
+                applicant.OrganizationRegistrationNumber,
+                out var normalizedFromPayload)
+                ? normalizedFromPayload
+                : normalizedBrn;
 
             items.Add(
                 new LeaseInterestOfficerLookupItemDto(
@@ -73,7 +145,9 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
                     parcel?.Location.District,
                     (LandUseType)row.RequestedPurpose,
                     row.RequestedDurationYears,
-                    masked));
+                    applicant.Kind,
+                    nic,
+                    brn));
         }
 
         return new LeaseInterestOfficerLookupResponseDto(items, total, page, pageSize);

@@ -36,6 +36,7 @@ public sealed record PreferredLocationCriteria
     public string? Province { get; init; }
     public string? District { get; init; }
     public string? DivisionalSecretariat { get; init; }
+    public string? GramaNiladhariDivision { get; init; }
 }
 
 public sealed record RegulatoryCriteria

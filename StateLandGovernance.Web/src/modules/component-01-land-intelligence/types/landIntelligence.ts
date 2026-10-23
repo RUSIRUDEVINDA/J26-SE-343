@@ -87,6 +87,7 @@ export interface PreferredLocationCriteria {
   province?: string | null;
   district?: string | null;
   divisionalSecretariat?: string | null;
+  gramaNiladhariDivision?: string | null;
 }
 
 export interface LandRecommendationSearchRequest {
@@ -301,6 +302,29 @@ export interface ResearchDemoConfigResponse {
   authorityLeaseInterestReviewEnabled?: boolean;
 }
 
+export interface GnDivisionAdministrativeAssignmentResponse {
+  gnName: string;
+  gnNumber?: string | null;
+  divisionalSecretariat?: string | null;
+}
+
+export interface ParcelGnDivisionMappingResponse {
+  status: string;
+  workbookStatusLabel: string;
+  reviewStatusDisplay: string;
+  provenanceLabel: string;
+  sourceGnIndex: string;
+  primaryAssignment?: GnDivisionAdministrativeAssignmentResponse | null;
+  sourceFromAdministrativeCode?: GnDivisionAdministrativeAssignmentResponse | null;
+  gnAtMapMarker?: GnDivisionAdministrativeAssignmentResponse | null;
+  codeDistrict?: string | null;
+  mapMarkerLatitude?: number | null;
+  mapMarkerLongitude?: number | null;
+  datasetKey: string;
+  cadastralNumber: string;
+  importedAtUtc: string;
+}
+
 export interface CadastralSourceMetadataResponse {
   sourceProvenanceLabel: string;
   sourceLayer: string;
@@ -376,6 +400,7 @@ export interface LandParcelResponse {
   cadastralSource?: CadastralSourceMetadataResponse | null;
   availability?: LandParcelAvailabilityResponse | null;
   gisEnrichment?: ParcelGisEnrichmentSummaryResponse | null;
+  gnDivisionMapping?: ParcelGnDivisionMappingResponse | null;
 }
 
 export interface SpatialConstraintResponse {
@@ -421,6 +446,26 @@ export interface LandSearchResultsResponse {
   totalCount: number;
 }
 
+export interface ApprovedPreliminaryParcelSummaryResponse {
+  landParcelId: string;
+  cadastralNumber: string;
+  province: string;
+  district: string;
+  areaValue: number;
+  areaUnit: AreaUnit;
+  sourceReportedLandUse: string | null;
+  approvedAtUtc: string;
+  leaseInterestRequestId: string;
+  requestReference: string | null;
+}
+
+export interface ApprovedPreliminaryParcelListResponse {
+  results: ApprovedPreliminaryParcelSummaryResponse[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+}
+
 /** Project research overlay; never replaces the original cadastral land-use label. */
 export interface ResearchSupplementParcelResponse {
   parcelId: string;
@@ -449,7 +494,7 @@ export interface FindSuitableLandFormState {
   targetAreaUnit: TargetAreaInputUnit;
   preferredProvince: string;
   preferredDistrict: string;
-  preferredDivisionalSecretariat: string;
+  preferredGramaNiladhariDivision: string;
   sourceReportedLandUse: string;
   maxResults: string;
 }
@@ -598,7 +643,8 @@ export interface LeaseInterestDocumentChecklist {
 }
 
 export interface LeaseInterestOfficerLookupRequest {
-  nationalIdentityCardNumber: string;
+  nationalIdentityCardNumber?: string;
+  businessRegistrationNumber?: string;
   page?: number;
   pageSize?: number;
 }
@@ -613,7 +659,9 @@ export interface LeaseInterestOfficerLookupItem {
   district?: string | null;
   requestedPurpose: LandUseType;
   requestedDurationYears?: number | null;
-  maskedNationalIdentityCardNumber: string;
+  applicantKind: LeaseInterestApplicantKind;
+  nationalIdentityCardNumber?: string | null;
+  businessRegistrationNumber?: string | null;
 }
 
 export interface LeaseInterestOfficerLookupResponse {
@@ -721,14 +769,45 @@ export interface LeaseInterestValuation extends Omit<RecordLeaseInterestValuatio
   recordedAtUtc: string;
 }
 
-/** Applicant-visible latest valuation summary (no officer notes). */
+/** Applicant-visible worksheet amounts (no worksheet or officer notes). */
+export interface LeaseInterestApplicantWorksheetSummary {
+  leaseFileNumber?: string | null;
+  divisionalSecretariat?: string | null;
+  leaseApprovalDate?: string | null;
+  leaseCommencementDate?: string | null;
+  valuationReportDate?: string | null;
+  leaseAgreementDate?: string | null;
+  previousAssessedValueLkr?: number | null;
+  leaseRatePercent?: number | null;
+  annualLeaseAmountLkr?: number | null;
+  firstPeriodAmountLkr?: number | null;
+  secondPeriodAmountLkr?: number | null;
+  secondPeriodAnnualAmountLkr?: number | null;
+  circular2018AmountLkr?: number | null;
+  circular2020SixAdjustmentLkr?: number | null;
+  firstPeriodLines?: LeaseWorksheetPeriodLine[] | null;
+  secondPeriodLines?: LeaseWorksheetPeriodLine[] | null;
+}
+
+/** Applicant-visible latest valuation summary (latest revision only; no officer notes). */
 export interface LeaseInterestApplicantValuationSummary {
   revision: number;
   recordedAtUtc: string;
   formType: LeaseInterestValuationFormType | "Agricultural" | "Project" | "Other" | string;
   assessedLandValueLkr: number;
+  assessedAreaHectares?: number | null;
+  inspectionDate?: string | null;
+  valuationDate?: string | null;
+  valuationReference?: string | null;
+  issuingOffice?: string | null;
+  siteCondition?: string | null;
+  cultivationDetails?: string | null;
+  residentialImprovements?: string | null;
+  projectUseDetails?: string | null;
+  otherTypeDetails?: string | null;
   leaseFileNumber?: string | null;
   divisionalSecretariat?: string | null;
+  worksheet?: LeaseInterestApplicantWorksheetSummary | null;
 }
 
 export interface LeaseInterestAuthorityQueueItem {

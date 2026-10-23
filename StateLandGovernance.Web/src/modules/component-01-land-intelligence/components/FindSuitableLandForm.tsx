@@ -8,6 +8,7 @@ import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import {
   getLandIntelligenceGisCoverage,
   listCanonicalLandUseOptions,
+  listGramaNiladhariDivisionOptions,
   listSourceReportedLandUseOptions,
   listResearchSupplement,
   searchRecommendations,
@@ -34,6 +35,8 @@ import { landUseTypeLabels, landUseTypeOptions } from "../utils/enumMappings";
 import {
   buildRecommendationSearchParams,
   buildRequestFromFormState,
+  DEFAULT_FIND_SUITABLE_MAX_RESULTS,
+  normalizeStoredFindSuitableMaxResults,
 } from "../utils/recommendationSearchState";
 import {
   convertTargetAreaToHectares,
@@ -50,9 +53,9 @@ const initialState: FindSuitableLandFormState = {
   targetAreaUnit: "hectares",
   preferredProvince: "",
   preferredDistrict: "Colombo",
-  preferredDivisionalSecretariat: "",
+  preferredGramaNiladhariDivision: "",
   sourceReportedLandUse: "",
-  maxResults: "30",
+  maxResults: DEFAULT_FIND_SUITABLE_MAX_RESULTS,
 };
 
 type FormSnapshot = {
@@ -99,14 +102,15 @@ function parseStoredForm(raw: string | null): FindSuitableLandFormState {
       targetAreaUnit: parseTargetAreaInputUnit(parsed.targetAreaUnit),
       preferredProvince: parsed.preferredProvince ?? "",
       preferredDistrict: parsed.preferredDistrict ?? "Colombo",
-      preferredDivisionalSecretariat:
-        parsed.preferredDivisionalSecretariat ?? "",
+      preferredGramaNiladhariDivision:
+        parsed.preferredGramaNiladhariDivision ??
+        (parsed as { preferredDivisionalSecretariat?: string })
+          .preferredDivisionalSecretariat ??
+        "",
       sourceReportedLandUse: normalizeLandUseFilterValue(
         parsed.sourceReportedLandUse ?? "",
       ),
-      maxResults: parsed.sourceReportedLandUse === "75" && parsed.maxResults === "10"
-        ? "30"
-        : parsed.maxResults ?? "30",
+      maxResults: normalizeStoredFindSuitableMaxResults(parsed.maxResults),
     };
   } catch {
     return initialState;
@@ -205,6 +209,8 @@ export function FindSuitableLandForm() {
   >([]);
   const [sourceLandUseChecked, setSourceLandUseChecked] = useState(false);
   const [gisCoverage, setGisCoverage] = useState<LandIntelligenceGisCoverageResponse | null>(null);
+  const [gnDivisionOptions, setGnDivisionOptions] = useState<string[]>([]);
+  const [gnOptionsLoading, setGnOptionsLoading] = useState(false);
   const [landUseOpen, setLandUseOpen] = useState(false);
   const [landUseMenuAbove, setLandUseMenuAbove] = useState(false);
   const landUseDropdownRef = useRef<HTMLDivElement>(null);
@@ -213,6 +219,23 @@ export function FindSuitableLandForm() {
   const persist = useCallback((next: FindSuitableLandFormState) => {
     setDraft(next);
     writeFormStore(next);
+  }, []);
+
+  useEffect(() => {
+    const raw = sessionStorage.getItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY);
+    if (!raw) {
+      return;
+    }
+    try {
+      const asStored = JSON.parse(raw) as Partial<FindSuitableLandFormState>;
+      const migrated = parseStoredForm(raw);
+      if (asStored.maxResults !== migrated.maxResults) {
+        setDraft(null);
+        writeFormStore(migrated);
+      }
+    } catch {
+      // ignore invalid session payload
+    }
   }, []);
 
   function updateField<K extends keyof FindSuitableLandFormState>(
@@ -254,6 +277,31 @@ export function FindSuitableLandForm() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const district = form.preferredDistrict.trim();
+    setGnOptionsLoading(true);
+    void listGramaNiladhariDivisionOptions(district || undefined)
+      .then((options) => {
+        if (!cancelled) {
+          setGnDivisionOptions(options);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setGnDivisionOptions([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setGnOptionsLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [form.preferredDistrict]);
 
   // One canonical list; counts are distinct parcel ids supplied by the API.
   const landUseChoices = buildCanonicalLandUseChoices(canonicalLandUseOptions);
@@ -569,53 +617,12 @@ export function FindSuitableLandForm() {
 
           <section className={styles.panel} aria-labelledby="location-heading">
             <h2 id="location-heading" className={styles.panelTitle}>
-              2. Location &amp; size
+              2. Location 
             </h2>
             <p className={styles.panelSubtitle}>
               
             </p>
             <div className={styles.grid}>
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor="preferredDistrict">
-                  Preferred district
-                  <span className={styles.optionalTag}>Optional</span>
-                </label>
-                {availableDistricts.length > 0 ? (
-                  <select
-                    id="preferredDistrict"
-                    className={styles.select}
-                    value={form.preferredDistrict}
-                    onChange={(e) =>
-                      updateField("preferredDistrict", e.target.value)
-                    }
-                    aria-describedby="district-hint"
-                  >
-                    <option value="">All indexed districts</option>
-                    {availableDistricts.map((district) => (
-                      <option key={district} value={district}>
-                        {district}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    id="preferredDistrict"
-                    className={styles.input}
-                    value={form.preferredDistrict}
-                    onChange={(e) =>
-                      updateField("preferredDistrict", e.target.value)
-                    }
-                    placeholder="e.g. Colombo (leave blank for all)"
-                    aria-describedby="district-hint"
-                  />
-                )}
-                <p id="district-hint" className={styles.hint}>
-                  {availableDistricts.length > 0
-                    ? ""
-                    : "Loading indexed districts..."}
-                </p>
-              </div>
-
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="preferredProvince">
                   Preferred province
@@ -651,27 +658,81 @@ export function FindSuitableLandForm() {
               </div>
 
               <div className={styles.field}>
-                <label
-                  className={styles.label}
-                  htmlFor="preferredDivisionalSecretariat"
-                >
-                  Divisional secretariat
+                <label className={styles.label} htmlFor="preferredDistrict">
+                  Preferred district
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
-                <input
-                  id="preferredDivisionalSecretariat"
-                  className={styles.input}
-                  value={form.preferredDivisionalSecretariat}
+                {availableDistricts.length > 0 ? (
+                  <select
+                    id="preferredDistrict"
+                    className={styles.select}
+                    value={form.preferredDistrict}
+                    onChange={(e) =>
+                      persist({
+                        ...form,
+                        preferredDistrict: e.target.value,
+                        preferredGramaNiladhariDivision: "",
+                      })
+                    }
+                    aria-describedby="district-hint"
+                  >
+                    <option value="">All indexed districts</option>
+                    {availableDistricts.map((district) => (
+                      <option key={district} value={district}>
+                        {district}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    id="preferredDistrict"
+                    className={styles.input}
+                    value={form.preferredDistrict}
+                    onChange={(e) =>
+                      updateField("preferredDistrict", e.target.value)
+                    }
+                    placeholder="e.g. Colombo (leave blank for all)"
+                    aria-describedby="district-hint"
+                  />
+                )}
+                <p id="district-hint" className={styles.hint}>
+                  {availableDistricts.length > 0
+                    ? ""
+                    : "Loading indexed districts..."}
+                </p>
+              </div>
+
+              <div className={styles.field}>
+                <label
+                  className={styles.label}
+                  htmlFor="preferredGramaNiladhariDivision"
+                >
+                  Grama Niladhari division
+                  <span className={styles.optionalTag}>Optional</span>
+                </label>
+                <select
+                  id="preferredGramaNiladhariDivision"
+                  className={styles.select}
+                  value={form.preferredGramaNiladhariDivision}
                   onChange={(e) =>
                     updateField(
-                      "preferredDivisionalSecretariat",
+                      "preferredGramaNiladhariDivision",
                       e.target.value,
                     )
                   }
-                  placeholder="Optional"
-                  disabled
-                  aria-disabled="true"
-                />
+                  disabled={gnOptionsLoading}
+                >
+                  <option value="">
+                    {gnOptionsLoading
+                      ? "Loading divisions…"
+                      : "Any GN division"}
+                  </option>
+                  {gnDivisionOptions.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className={styles.field}>
@@ -837,10 +898,7 @@ export function FindSuitableLandForm() {
                 </li>
               ))}
             </ul>
-            <p className={styles.sideNote}>
-              Partial coverage means some parcels may lack that layer. Missing
-              evidence is never treated as a positive match.
-            </p>
+
           </>
         ) : (
           <p className={styles.sideNote}>

@@ -1,4 +1,5 @@
 import { apiGet, apiPost } from "@/lib/apiClient";
+import { COLOMBO_GRAMA_NILADHARI_DIVISIONS } from "../data/colomboGramaNiladhariDivisions";
 import type {
   CanonicalLandUseOptionResponse,
   LandIntelligenceGisCoverageResponse,
@@ -8,6 +9,7 @@ import type {
   LandRecommendationSearchResultsResponse,
   LandRelationshipsResponse,
   LandSearchResultsResponse,
+  ApprovedPreliminaryParcelListResponse,
   ResearchSupplementParcelResponse,
   SourceReportedLandUseOptionResponse,
   SpatialConstraintResponse,
@@ -52,6 +54,19 @@ export type ListParcelsParams = {
   /** Canonical land-use label or key; matches cadastral and/or project GIS evidence. */
   researchLandCoverGroup?: string;
 };
+
+export async function listApprovedPreliminaryParcels(params: {
+  page?: number;
+  pageSize?: number;
+} = {}): Promise<ApprovedPreliminaryParcelListResponse> {
+  const search = new URLSearchParams({
+    page: String(params.page ?? 1),
+    pageSize: String(params.pageSize ?? 20),
+  });
+  return apiGet<ApprovedPreliminaryParcelListResponse>(
+    `/api/v1/land/parcels/approved-preliminary?${search.toString()}`,
+  );
+}
 
 export async function listParcels(
   params: ListParcelsParams = {},
@@ -117,6 +132,35 @@ export async function listCanonicalLandUseOptions(
   return apiGet<CanonicalLandUseOptionResponse[]>(
     `/api/v1/land/parcels/canonical-land-use-options${suffix}`,
   );
+}
+
+function colomboWorkbookGnDivisionOptions(district?: string): string[] {
+  const trimmed = district?.trim();
+  if (trimmed && trimmed.toLowerCase() !== "colombo") {
+    return [];
+  }
+  return [...COLOMBO_GRAMA_NILADHARI_DIVISIONS];
+}
+
+export async function listGramaNiladhariDivisionOptions(
+  district?: string,
+): Promise<string[]> {
+  const search = new URLSearchParams();
+  if (district?.trim()) {
+    search.set("district", district.trim());
+  }
+  const suffix = search.toString() ? `?${search.toString()}` : "";
+  try {
+    const response = await apiGet<{ options: string[] }>(
+      `/api/v1/land/parcels/grama-niladhari-division-options${suffix}`,
+    );
+    if (response.options && response.options.length > 0) {
+      return response.options;
+    }
+  } catch {
+    // API may be unavailable until the host is rebuilt/restarted.
+  }
+  return colomboWorkbookGnDivisionOptions(district);
 }
 
 export async function listDerivedSoilGroupOptions(

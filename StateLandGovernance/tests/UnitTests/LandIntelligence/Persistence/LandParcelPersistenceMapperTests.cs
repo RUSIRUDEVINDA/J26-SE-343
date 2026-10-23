@@ -60,7 +60,8 @@ public sealed class LandParcelPersistenceMapperTests
 
         Assert.True(evaluation.IsMet);
         Assert.Equal(52m, evaluation.Score);
-        Assert.Contains("Area match score", evaluation.Summary, StringComparison.Ordinal);
+        Assert.Contains("parcel area", evaluation.Summary, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("unrounded for scoring", evaluation.Summary, StringComparison.OrdinalIgnoreCase);
     }
 
     private static LandParcelEntity CreateParcelEntity(decimal areaValue, AreaUnit areaUnit)

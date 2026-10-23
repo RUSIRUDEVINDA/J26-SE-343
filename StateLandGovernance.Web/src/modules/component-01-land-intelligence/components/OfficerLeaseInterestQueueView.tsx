@@ -81,12 +81,32 @@ export function OfficerLeaseInterestQueueView() {
       ) : null}
       {error ? <ErrorMessage message={error} /> : null}
 
-      {!error && (items.length > 0 || (!loading && totalCount === 0)) ? (
+      {!error && !loading && totalCount === 0 ? (
+        <section className={styles.queueEmptyState} aria-labelledby="queue-empty-title">
+          <div className={styles.queueEmptyIcon} aria-hidden="true">
+            ✓
+          </div>
+          <p className={styles.queueEmptyEyebrow}>OFFICER VERIFICATION</p>
+          <h2 id="queue-empty-title">No requests to review right now</h2>
+          <p className={styles.queueEmptyDescription}>
+            New lease-interest requests awaiting officer verification will appear here.
+            You can check again or look up an existing request by NIC.
+          </p>
+          <div className={styles.queueEmptyActions}>
+            <Button type="button" onClick={() => void loadPage(1)}>
+              Refresh queue
+            </Button>
+            <Button href="/land-intelligence/officer/lease-interest-lookup" variant="secondary">
+              Look up by NIC
+            </Button>
+          </div>
+        </section>
+      ) : null}
+
+      {!error && items.length > 0 ? (
         <div className={styles.results}>
           <p className={styles.resultSummary}>
-            {totalCount === 0
-              ? "No requests are in the officer verification queue."
-              : `${totalCount} request${totalCount === 1 ? "" : "s"} in queue (page ${page} of ${totalPages}).`}
+            {`${totalCount} request${totalCount === 1 ? "" : "s"} in queue (page ${page} of ${totalPages}).`}
           </p>
 
           {items.length > 0 ? (

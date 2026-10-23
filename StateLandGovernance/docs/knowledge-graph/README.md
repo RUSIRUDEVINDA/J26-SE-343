@@ -29,6 +29,29 @@ The Land Intelligence knowledge graph is **optional**. Search, recommendations, 
 4. **Sync GIS-derived edges** — enrichment pipeline calls `LandParcelGisKnowledgeGraphSyncService` for near-road / near-water / soil / conservation edges. Skips quietly when Neo4j is unset.
 5. **Research demo note** — the Colombo 300-parcel import has **no** GIS enrichment snapshots by default, so road/water/soil graph edges stay empty even when Neo4j is up. Admin/category baseline edges may still appear via PostGIS fallback when Neo4j is configured but down.
 
+### Backfill Neo4j from PostgreSQL (Colombo import / real parcels)
+
+GIS and research **imports write only to PostgreSQL**. To replace old synthetic Neo4j nodes with parcels from your current `LAND_INTELLIGENCE_CONNECTION` database:
+
+```powershell
+cd StateLandGovernance
+
+# Preview how many parcels would sync
+dotnet run --project tools/KnowledgeGraphBackfill -- --dry-run
+
+# Wipe the local graph, then sync all parcels (core category / admin / use edges)
+dotnet run --project tools/KnowledgeGraphBackfill -- --clear-graph
+
+# Optional: limit or filter while testing
+dotnet run --project tools/KnowledgeGraphBackfill -- --clear-graph --limit 10
+dotnet run --project tools/KnowledgeGraphBackfill -- --district Colombo
+
+# Optional: also push GIS-derived edges when enrichment snapshots exist
+dotnet run --project tools/KnowledgeGraphBackfill -- --clear-graph --include-gis
+```
+
+Requires repository-root `.env` with `LAND_INTELLIGENCE_CONNECTION` and `NEO4J_*`. After a successful run, Neo4j Browser should show one `LandParcel` node per row in Postgres (cadastrals such as `52123409…` for the Colombo research DB).
+
 ## Verify
 
 ```http

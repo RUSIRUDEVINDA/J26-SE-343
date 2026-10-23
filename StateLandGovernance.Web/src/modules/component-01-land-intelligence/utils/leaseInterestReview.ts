@@ -80,6 +80,23 @@ export function isPlausibleContactEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/.test(value.trim());
 }
 
+/** ISO date (YYYY-MM-DD) for date inputs (min/max) in the user's local calendar. */
+export function localDateInputValue(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+/** True when value is an ISO date on or after today (local calendar). */
+export function isDesiredStartPeriodOnOrAfterToday(value: string): boolean {
+  const trimmed = value.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return false;
+  }
+  return trimmed >= localDateInputValue();
+}
+
 /** Mirrors the backend submit-time phone check: 7–15 digits, optional leading +, spaces, dashes, brackets. */
 export function isPlausibleContactPhone(value: string): boolean {
   const trimmed = value.trim();
@@ -119,9 +136,6 @@ export function isLeaseInterestDraftReadyForSubmit(
     if (!draft.applicant.organizationRegistrationNumber?.trim()) {
       return false;
     }
-    if (!draft.applicant.representativeNationalIdentityCardNumber?.trim()) {
-      return false;
-    }
   } else if (!draft.applicant.nationalIdentityCardNumber?.trim()) {
     return false;
   }
@@ -132,6 +146,9 @@ export function isLeaseInterestDraftReadyForSubmit(
     return false;
   }
   if (!draft.proposal.desiredStartPeriod.trim()) {
+    return false;
+  }
+  if (!isDesiredStartPeriodOnOrAfterToday(draft.proposal.desiredStartPeriod)) {
     return false;
   }
   if (!draft.proposal.projectSummary.trim()) {

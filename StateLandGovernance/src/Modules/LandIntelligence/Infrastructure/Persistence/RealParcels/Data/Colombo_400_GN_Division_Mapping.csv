@@ -1,0 +1,401 @@
+Dataset,Cadastral number,Source GN index,Name from source code,Source GN no.,Source DS,Code district,GN at map marker,GN no. at marker,DS at marker,Mapping status,Marker latitude,Marker longitude
+Original 300,520001020057,1112125,Homagama South,486F,Homagama,Colombo,Homagama South,486F,Homagama,Source code and map marker agree,6.852495499,79.995578972
+Original 300,520001110133,1112120,Homagama West,486B,Homagama,Colombo,Homagama West,486B,Homagama,Source code and map marker agree,6.847205196,80.000582438
+Original 300,520001310063,1112195,Galavilawatta South,486G,Homagama,Colombo,Galavilawatta South,486G,Homagama,Source code and map marker agree,6.839784131,79.994607881
+Original 300,520001470204,1112190,Katuwana,486E,Homagama,Colombo,Katuwana,486E,Homagama,Source code and map marker agree,6.834677859,80.002805252
+Original 300,520006200566,1112275,Pitipana North,484,Homagama,Colombo,Pitipana North,484,Homagama,Source code and map marker agree,6.820906465,80.030218677
+Original 300,520011010059,1112045,Habarakada North,481,Homagama,Colombo,Habarakada North,481,Homagama,Source code and map marker agree,6.890905043,80.01805581
+Original 300,520011040125,1112045,Habarakada North,481,Homagama,Colombo,Mullegama South,481A,Homagama,Source code and map marker differ - review,6.878541411,80.015689171
+Original 300,520015110226,1112015,Atigala West,446A,Homagama,Colombo,Atigala West,446A,Homagama,Source code and map marker agree,6.895780546,80.054349883
+Original 300,520020100085,1112225,Siddamulla South,591B,Homagama,Colombo,Siddamulla South,591B,Homagama,Source code and map marker agree,6.816095916,79.959299132
+Original 300,520022190039,1112315,Siyambalagoda North,592,Homagama,Colombo,Kudamaduwa,591A,Homagama,Source code and map marker differ - review,6.803319901,79.963713535
+Original 300,520025170097,1112170,Ovitigama,448A,Homagama,Colombo,Ovitigama,448A,Homagama,Source code and map marker agree,6.834023049,80.049296627
+Original 300,520031140000100002,1112080,Panaluwa,447B,Homagama,Colombo,Panaluwa,447B,Homagama,Source code and map marker agree,6.874467877,80.06594372
+Original 300,520031150200,1112080,Panaluwa,447B,Homagama,Colombo,Panaluwa,447B,Homagama,Source code and map marker agree,6.884363508,80.065772679
+Original 300,520038060302,1112405,weniwelkola,601,Homagama,Colombo,Weniwelkola,601,Homagama,Source code and map marker agree,6.768997428,79.989356661
+Original 300,520041130000100103,1112360,Kithulavila,603B,Homagama,Colombo,Kithulavila,603B,Homagama,Source code and map marker agree,6.789742809,80.016651629
+Original 300,520044030000100001,1112005,Jalthara,449,Homagama,Colombo,Jalthara,449,Homagama,Source code and map marker agree,6.900800063,80.045365289
+Original 300,520047010000100003,1112300,Diyagama West,589A,Homagama,Colombo,Diyagama West,589A,Homagama,Source code and map marker agree,6.80801641,79.996097651
+Original 300,520203070311,1133130,Indibedda West,559,Moratuwa,Colombo,Indibedda East,559A,Moratuwa,Source code and map marker differ - review,6.780554693,79.904366877
+Original 300,520207060161,1133060,Uyana South,552A,Moratuwa,Colombo,Uyana South,552A,Moratuwa,Source code and map marker agree,6.78412377,79.876046694
+Original 300,520214050026,1133125,Moratuwella South,553,Moratuwa,Colombo,Moratuwella South,553,Moratuwa,Source code and map marker agree,6.769919506,79.886763602
+Original 300,520217100276,1133210,Egoda Uyana South,556B,Moratuwa,Colombo,Egoda Uyana South,556B,Moratuwa,Source code and map marker agree,6.724242928,79.899942502
+Original 300,520217130175,1133210,Egoda Uyana South,556B,Moratuwa,Colombo,Egoda Uyana South,556B,Moratuwa,Source code and map marker agree,6.720558441,79.900568819
+Original 300,520217140044,1133210,Egoda Uyana South,556B,Moratuwa,Colombo,Egoda Uyana South,556B,Moratuwa,Source code and map marker agree,6.71937724,79.90179373
+Original 300,520408030000100001,1103040,Bloemendhal,,Colombo,Colombo,Bloemendhal,Bloemendhal,Colombo,Source code and map marker agree,6.94956329,79.867791142
+Original 300,520427010000200002,1103135,Hunupitiya,,Colombo,Colombo,Hunupitiya,Hunupitiya,Colombo,Source code and map marker agree,6.922842492,79.857849786
+Original 300,520432020000100001,1103160,Maligakanda,,Colombo,Colombo,Maligakanda,Maligakanda,Colombo,Source code and map marker agree,6.928519934,79.868988047
+Original 300,520617120000100056,1127080,Kirulapone,,Thimbirigasyaya,Colombo,Kirulapone,Kirulapone,Thimbirigasyaya,Source code and map marker agree,6.887362492,79.876211427
+Original 300,520618080000100001,1127050,Gothamipura,,Thimbirigasyaya,Colombo,Gothamipura,Gothamipura,Thimbirigasyaya,Source code and map marker agree,6.902031923,79.883955831
+Original 300,520803090133,1130010,Vilawala,537,Dehiwala,Colombo,Vilawala,537,Dehiwala,Source code and map marker agree,6.868031659,79.874817965
+Original 300,521001090160,1131065,Kandawala,543 A,Ratmalana,Colombo,Kandawala,543A,Ratmalana,Source code and map marker agree,6.820250625,79.889365311
+Original 300,521003090267,1131050,Vihara,546 B,Ratmalana,Colombo,Vihara,546B,Ratmalana,Source code and map marker agree,6.814492833,79.870322379
+Original 300,521005050109,1131025,Katukurunduwatta,545A,Ratmalana,Colombo,Katukurunduwatta,545A,Ratmalana,Source code and map marker agree,6.835111446,79.875437858
+Original 300,521204010208,1136295,Madapatha,567,Kesbewa,Colombo,Madapatha,567,Kesbewa,Source code and map marker agree,6.758887441,79.927859163
+Original 300,521207080592,1136310,Dampe,566,Kesbewa,Colombo,Dampe,566,Kesbewa,Source code and map marker agree,6.760194723,79.925214956
+Original 300,521209020183,1136255,Kesbewa North,572,Kesbewa,Colombo,Mavittara South,586,Kesbewa,Source code and map marker differ - review,6.800529272,79.936982154
+Original 300,521211020127,1136155,Bokundara,575,Kesbewa,Colombo,Bokundara,575,Kesbewa,Source code and map marker agree,6.822089502,79.9156772
+Original 300,521213130000100077,1136005,Pepiliyana West,535,Kesbewa,Colombo,Pepiliyana West,535,Kesbewa,Source code and map marker agree,6.853090792,79.886557322
+Original 300,521218010000100003,1136045,Egodawatta,533C,Kesbewa,Colombo,Egodawatta,533C,Kesbewa,Source code and map marker agree,6.850799907,79.905466585
+Original 300,521229090052,1136120,Mahalwarawa,581E,Kesbewa,Colombo,Mahalwarawa,581E,Kesbewa,Source code and map marker agree,6.833417913,79.964754927
+Original 300,521230070016,1136115,Rathmaldeniya,581C,Kesbewa,Colombo,Rathmaldeniya,581C,Kesbewa,Source code and map marker agree,6.844143134,79.952330811
+Original 300,521250010630,1136175,Wewala East,562,Kesbewa,Colombo,Wewala East,562,Kesbewa,Source code and map marker agree,6.805728337,79.912432954
+Original 300,521252070186,1136230,Kolamunna,563/73A,Kesbewa,Colombo,Kolamunna,573,Kesbewa,Source code and map marker agree,6.789038221,79.921815099
+Original 300,521253090000100003,1136275,Honnanthara South,585A,Kesbewa,Colombo,Honnanthara South,585A,Kesbewa,Source code and map marker agree,6.790279698,79.947106996
+Original 300,521266030000100001,1136350,Jamburaliya,597,Kesbewa,Colombo,Jamburaliya,597,Kesbewa,Source code and map marker agree,6.762226258,79.947029782
+Original 300,521406010000100006,1121080,Thalapathpitiya,525,Maharagama,Colombo,Thalapathpitiya,525,Maharagama,Source code and map marker agree,6.868302477,79.929550706
+Original 300,521409040000100004,1121030,Kalalgoda,493,Maharagama,Colombo,Kalalgoda,493,Maharagama,Source code and map marker agree,6.867597198,79.943611399
+Original 300,521419090000100161,1121070,Polwatta,529,Maharagama,Colombo,Polwatta,529,Maharagama,Source code and map marker agree,6.855366385,79.939742544
+Original 300,521601040128,1124090,Gangodavila North,526,Sri Jayawardanapura Kotte,Colombo,Gangodavila North,526,Sri Jayawardanapura Kotte,Source code and map marker agree,6.865524908,79.894312791
+Original 300,521612010000100079,1124045,Ethulkotte,521,Sri Jayawardanapura Kotte,Colombo,Ethulkotte,521,Sri Jayawardanapura Kotte,Source code and map marker agree,6.903205835,79.905610572
+Original 300,521615100168,1124060,Pitakotte West,522,Sri Jayawardanapura Kotte,Colombo,Pitakotte West,522,Sri Jayawardanapura Kotte,Source code and map marker agree,6.886324771,79.89951911
+Original 300,521616060000100130,1124050,Pitakotte East,522A,Sri Jayawardanapura Kotte,Colombo,Pitakotte East,522A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.88696559,79.914329127
+Original 300,521620110063,1124100,Gangodavila East,526C,Sri Jayawardanapura Kotte,Colombo,Gangodavila East,526C,Sri Jayawardanapura Kotte,Source code and map marker agree,6.861316344,79.911079099
+Original 300,521817040000100018,1106140,Kotikawatta West,505C,Kolonnawa,Colombo,Kotikawatta West,505C,Kolonnawa,Source code and map marker agree,6.927137661,79.920926322
+Original 300,521831030000100001,1106005,Wadulla,509D,Kolonnawa,Colombo,Wadulla,509D,Kolonnawa,Source code and map marker agree,6.948957373,79.881262127
+Original 300,521837020000100003,1106110,Kolonnawa,512,Kolonnawa,Colombo,Kolonnawa,512,Kolonnawa,Source code and map marker agree,6.933982365,79.89223867
+Original 300,521846030000100001,1106200,Gothatuwa,513,Kolonnawa,Colombo,Gothatuwa,513,Kolonnawa,Source code and map marker agree,6.924872521,79.908438046
+Original 300,522011040000100001,1109010,Raggahawatta,474A,Kaduwela,Colombo,Raggahawatta,474A,Kaduwela,Source code and map marker agree,6.929502332,79.966975885
+Original 300,522024030000100001,1109265,Pahalawela,479A,Kaduwela,Colombo,Pahalawela,479A,Kaduwela,Source code and map marker agree,6.888444697,79.922445394
+Original 300,522028150000200002,1109185,Batapotha,479E,Kaduwela,Colombo,Batapotha,479E,Kaduwela,Source code and map marker agree,6.904415159,79.932112491
+Original 300,522036020000100001,1109080,Koratota,488,Kaduwela,Colombo,Korathota,488,Kaduwela,Source code and map marker agree,6.914975054,80.000904377
+Original 300,522041010000100001,1109205,Athurugiriya,490,Kaduwela,Colombo,Athurugiriya,490,Kaduwela,Source code and map marker agree,6.878227763,79.990290178
+Original 300,522206030000200003,1115105,Pahala Kosgama west,427B,Seethawaka,Colombo,Pahala Kosgama West     ,427B,Seethawaka,Source code and map marker agree,6.939755002,80.134141221
+Original 300,522208020000100003,1115115,Ihala Kosgama South,428B,Seethawaka,Colombo,Ihala Kosgama South,428B,Seethawaka,Source code and map marker agree,6.935970764,80.147180975
+Original 300,522234010000100002,1115005,Bollathawa,433,Seethawaka,Colombo,Bollathawa,433,Seethawaka,Source code and map marker agree,6.959222063,80.119909763
+Original 300,522242010000200001,1115265,Diddeniya North,439,Seethawaka,Colombo,Diddeniya North,439,Seethawaka,Source code and map marker agree,6.894470172,80.098777138
+Original 300,522248010000100001,1115250,Welikanna,442,Seethawaka,Colombo,Welikanna,442,Seethawaka,Source code and map marker agree,6.893541772,80.139238262
+Original 300,522248010000200008,1115250,Welikanna,442,Seethawaka,Colombo,Welikanna,442,Seethawaka,Source code and map marker agree,6.88742993,80.142738161
+Original 300,522250020000100004,1115300,Elamalawala,442B,Seethawaka,Colombo,Elamalawala,442B,Seethawaka,Source code and map marker agree,6.879466941,80.1403387
+Original 300,522410030000100002,1118115,Weragala,455,Padukka,Colombo,Pahala Bope,459A,Padukka,Source code and map marker differ - review,6.836698914,80.119598515
+Original 300,522415020000100003,1118050,Waga West,457A,Padukka,Colombo,Waga West,457A,Padukka,Source code and map marker agree,6.864656336,80.138629281
+Original 300,522418010000200007,1118225,Udagama,458,Padukka,Colombo,Udagama,458,Padukka,Source code and map marker agree,6.825634088,80.165294762
+Original 300,522419030000100006,1118025,Thummodara,458A,Padukka,Colombo,Thummodara,458A,Padukka,Source code and map marker agree,6.858109759,80.174199524
+Original 300,522436040000100002,1118150,Madulawa South,463A,Padukka,Colombo,Horagala East,464,Padukka,Source code and map marker differ - review,6.817603908,80.067278779
+Original 300,530244010000100003,1310005,Menerigama,625A,Ingiriya,Kalutara,Mahingala,455A,Padukka,Source code outside Colombo - review,6.8134936,80.130373307
+Original 300,520001320004,1112190,Katuwana,486E,Homagama,Colombo,Katuwana,486E,Homagama,Source code and map marker agree,6.839761413,79.999424458
+Original 300,520001320005,1112190,Katuwana,486E,Homagama,Colombo,Katuwana,486E,Homagama,Source code and map marker agree,6.840865878,79.999755827
+Original 300,520001320008,1112190,Katuwana,486E,Homagama,Colombo,Katuwana,486E,Homagama,Source code and map marker agree,6.840609447,80.000479645
+Original 300,520006180329,1112275,Pitipana North,484,Homagama,Colombo,Pitipana North,484,Homagama,Source code and map marker agree,6.826537187,80.037476615
+Original 300,520006220002,1112275,Pitipana North,484,Homagama,Colombo,Pitipana North,484,Homagama,Source code and map marker agree,6.824155289,80.042187779
+Original 300,520006220009,1112275,Pitipana North,484,Homagama,Colombo,Pitipana North,484,Homagama,Source code and map marker agree,6.824799005,80.038455828
+Original 300,520006220194,1112275,Pitipana North,484,Homagama,Colombo,Pitipana North,484,Homagama,Source code and map marker agree,6.821839111,80.040402942
+Original 300,520006220198,1112275,Pitipana North,484,Homagama,Colombo,Pitipana North,484,Homagama,Source code and map marker agree,6.819329945,80.04288357
+Original 300,520006220200,1112275,Pitipana North,484,Homagama,Colombo,Pitipana North,484,Homagama,Source code and map marker agree,6.819641493,80.042019857
+Original 300,520006220203,1112275,Pitipana North,484,Homagama,Colombo,Dampe,464A,Padukka,Source code and map marker differ - review,6.817365015,80.043337078
+Original 300,520006220206,1112275,Pitipana North,484,Homagama,Colombo,Dampe,464A,Padukka,Source code and map marker differ - review,6.816747911,80.045765901
+Original 300,520015070031,1112020,Atigala East,446,Homagama,Colombo,Atigala East,446,Homagama,Source code and map marker agree,6.894647817,80.062857553
+Original 300,520015070104,1112020,Atigala East,446,Homagama,Colombo,Atigala East,446,Homagama,Source code and map marker agree,6.891696172,80.066149801
+Original 300,520015130061,1112015,Atigala West,446A,Homagama,Colombo,Atigala West,446A,Homagama,Source code and map marker agree,6.889915209,80.050166767
+Original 300,520015130062,1112015,Atigala West,446A,Homagama,Colombo,Atigala West,446A,Homagama,Source code and map marker agree,6.889623746,80.049992284
+Original 300,521003170142,1131055,Ratmalana West,546,Ratmalana,Colombo,Rathmalana West,546,Ratmalana,Source code and map marker agree,6.807395282,79.872447926
+Original 300,521003170167,1131055,Ratmalana West,546,Ratmalana,Colombo,Rathmalana West,546,Ratmalana,Source code and map marker agree,6.807258784,79.872008462
+Original 300,521616060000100129,1124050,Pitakotte East,522A,Sri Jayawardanapura Kotte,Colombo,Pitakotte East,522A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.886907235,79.914024217
+Original 300,521616060000100131,1124050,Pitakotte East,522A,Sri Jayawardanapura Kotte,Colombo,Pitakotte East,522A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.886639182,79.914296538
+Original 300,522025010000100002,1109250,Asiri Uyana,479B,Kaduwela,Colombo,Asiri Uyana,479B,Kaduwela,Source code and map marker agree,6.896556011,79.926119894
+Original 300,522208020000100005,1115115,Ihala Kosgama South,428B,Seethawaka,Colombo,Ihala Kosgama South,428B,Seethawaka,Source code and map marker agree,6.935771293,80.147664046
+Original 300,522208020000100013,1115115,Ihala Kosgama South,428B,Seethawaka,Colombo,Ihala Kosgama South,428B,Seethawaka,Source code and map marker agree,6.935088286,80.147714497
+Original 300,522208020000100018,1115115,Ihala Kosgama South,428B,Seethawaka,Colombo,Ihala Kosgama South,428B,Seethawaka,Source code and map marker agree,6.935045775,80.145096431
+Original 300,522208020000100022,1115115,Ihala Kosgama South,428B,Seethawaka,Colombo,Ihala Kosgama South,428B,Seethawaka,Source code and map marker agree,6.932299404,80.145909168
+Original 300,522208020000100026,1115115,Ihala Kosgama South,428B,Seethawaka,Colombo,Ihala Kosgama South,428B,Seethawaka,Source code and map marker agree,6.932571588,80.14631524
+Original 300,522208020000100028,1115115,Ihala Kosgama South,428B,Seethawaka,Colombo,Aluth Ambalama,428A,Seethawaka,Source code and map marker differ - review,6.930814866,80.147356477
+Original 300,522234010000100005,1115005,Bollathawa,433,Seethawaka,Colombo,Bollathawa,433,Seethawaka,Source code and map marker agree,6.958728709,80.119868725
+Original 300,522234010000100007,1115005,Bollathawa,433,Seethawaka,Colombo,Bollathawa,433,Seethawaka,Source code and map marker agree,6.958466949,80.1187755
+Original 300,522234010000100008,1115005,Bollathawa,433,Seethawaka,Colombo,Bollathawa,433,Seethawaka,Source code and map marker agree,6.958382736,80.118156318
+Original 300,522248010000200002,1115250,Welikanna,442,Seethawaka,Colombo,Welikanna,442,Seethawaka,Source code and map marker agree,6.888216391,80.142939148
+Original 300,522248010000200004,1115250,Welikanna,442,Seethawaka,Colombo,Welikanna,442,Seethawaka,Source code and map marker agree,6.88827962,80.142713346
+Original 300,522248010000200005,1115250,Welikanna,442,Seethawaka,Colombo,Welikanna,442,Seethawaka,Source code and map marker agree,6.887878321,80.14246532
+Original 300,522248010000200006,1115250,Welikanna,442,Seethawaka,Colombo,Welikanna,442,Seethawaka,Source code and map marker agree,6.88749472,80.142352481
+Original 300,522248010000200012,1115250,Welikanna,442,Seethawaka,Colombo,Welikanna,442,Seethawaka,Source code and map marker agree,6.891857343,80.138213524
+Original 300,522248010000200014,1115250,Welikanna,442,Seethawaka,Colombo,Welikanna,442,Seethawaka,Source code and map marker agree,6.891824285,80.13789615
+Original 300,522250020000100001,1115300,Elamalawala,442B,Seethawaka,Colombo,Elamalawala,442B,Seethawaka,Source code and map marker agree,6.880119068,80.139653554
+Original 300,522250020000100008,1115300,Elamalawala,442B,Seethawaka,Colombo,Elamalawala,442B,Seethawaka,Source code and map marker agree,6.879243774,80.140511811
+Original 300,522250020000100013,1115300,Elamalawala,442B,Seethawaka,Colombo,Elamalawala,442B,Seethawaka,Source code and map marker agree,6.878919192,80.140588497
+Original 300,522250020000100014,1115300,Elamalawala,442B,Seethawaka,Colombo,Elamalawala,442B,Seethawaka,Source code and map marker agree,6.878853042,80.140716265
+Original 300,522250020000100016,1115300,Elamalawala,442B,Seethawaka,Colombo,Elamalawala,442B,Seethawaka,Source code and map marker agree,6.889645286,80.137825524
+Original 300,522251010000200005,1115305,Ilukovita,442C,Seethawaka,Colombo,Ilukovita,442C,Seethawaka,Source code and map marker agree,6.895773618,80.166178319
+Original 300,522251010000200007,1115305,Ilukovita,442C,Seethawaka,Colombo,Ilukovita,442C,Seethawaka,Source code and map marker agree,6.895942452,80.165652302
+Original 300,522251010000200009,1115305,Ilukovita,442C,Seethawaka,Colombo,Ilukovita,442C,Seethawaka,Source code and map marker agree,6.895822179,80.165770685
+Original 300,522251010000200010,1115305,Ilukovita,442C,Seethawaka,Colombo,Ilukovita,442C,Seethawaka,Source code and map marker agree,6.8956312,80.165823563
+Original 300,522251010000200021,1115305,Ilukovita,442C,Seethawaka,Colombo,Ilukovita,442C,Seethawaka,Source code and map marker agree,6.89567937,80.167406383
+Original 300,522251010000200029,1115305,Ilukovita,442C,Seethawaka,Colombo,Ilukovita,442C,Seethawaka,Source code and map marker agree,6.895067019,80.168677887
+Original 300,522254030000100001,1115235,Digana,442F,Seethawaka,Colombo,Digana,442F,Seethawaka,Source code and map marker agree,6.902228215,80.187385206
+Original 300,522258050000100001,1115205,Hanwella Town,443B,Seethawaka,Colombo,Hanwella Town,443B,Seethawaka,Source code and map marker agree,6.902458599,80.082991055
+Original 300,620481010047,9103060,Kalatuwawa West,139,Eheliyagoda,Ratnapura,Pagngnagula,442A,Seethawaka,Source code outside Colombo - review,6.882809561,80.183004851
+Original 300,620483030009,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.90499348,80.199242223
+Original 300,620483030012,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.905287588,80.198706025
+Original 300,620483030016,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.904971814,80.19847142
+Original 300,620483030018,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.905104333,80.198151204
+Original 300,620483030020,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.905189046,80.198034092
+Original 300,620483030025,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.905286254,80.197035996
+Original 300,620483030027,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.905599124,80.196614272
+Original 300,620483030028,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.905481376,80.196461701
+Original 300,620483030032,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.905414588,80.195648775
+Original 300,620483030040,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.904870412,80.197259706
+Original 300,620483030045,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.904494048,80.1980083
+Original 300,620483030050,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.904594538,80.198287358
+Original 300,620483030087,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.903979011,80.197938453
+Original 300,620483030090,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.904030516,80.197512212
+Original 300,620483030096,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.904517428,80.197255127
+Original 300,620483030098,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.904578679,80.197498482
+Original 300,620483030099,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.904562294,80.196746377
+Original 300,620483030102,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.904226332,80.19644617
+Original 300,620483030107,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.904766168,80.195385145
+Original 300,520008320113,1112240,Mattegoda East,587C,Homagama,Colombo,Mattegoda East,587C,Homagama,Source code and map marker agree,6.812209042,79.978501967
+Original 300,520010040118,1112200,Niyandagala,499A,Homagama,Colombo,Niyandagala,499A,Homagama,Source code and map marker agree,6.831306618,79.98407243
+Original 300,520010040119,1112200,Niyandagala,499A,Homagama,Colombo,Niyandagala,499A,Homagama,Source code and map marker agree,6.831210223,79.984114554
+Original 300,520014090347,1112245,Brahmanagama,500,Homagama,Colombo,Brahmanagama,500,Homagama,Source code and map marker agree,6.816253634,79.986034734
+Original 300,520015030201,1112020,Atigala East,446,Homagama,Colombo,Atigala East,446,Homagama,Source code and map marker agree,6.895562065,80.062864132
+Original 300,520015110122,1112015,Atigala West,446A,Homagama,Colombo,Atigala West,446A,Homagama,Source code and map marker agree,6.897817304,80.056884046
+Original 300,520021570039,1112105,Panagoda East,482A,Homagama,Colombo,Panagoda East,482A,Homagama,Source code and map marker agree,6.847943376,80.011350471
+Original 300,520022070090,1112315,Siyambalagoda North,592,Homagama,Colombo,Siyambalagoda North,592,Homagama,Source code and map marker agree,6.797377086,79.973214427
+Original 300,520022190034,1112315,Siyambalagoda North,592,Homagama,Colombo,Siyambalagoda North,592,Homagama,Source code and map marker agree,6.803784795,79.965485529
+Original 300,520024010187,1112335,Rilawala,593A,Homagama,Colombo,Rilawala,593A,Homagama,Source code and map marker agree,6.786990449,79.980021821
+Original 300,520028050079,1112085,Watareka North,448B,Homagama,Colombo,Watareka North,448B,Homagama,Source code and map marker agree,6.85864055,80.076529783
+Original 300,520028300083,1112165,Watareka South,448,Homagama,Colombo,Watareka South,448,Homagama,Source code and map marker agree,6.843149509,80.061927424
+Original 300,520030010151,1112385,Wethara,593,Homagama,Colombo,Wethara,593,Homagama,Source code and map marker agree,6.786172734,79.972656904
+Original 300,520039090000100257,1112295,Diyagama East,589,Homagama,Colombo,Diyagama East,589,Homagama,Source code and map marker agree,6.811711894,80.00536124
+Original 300,520039090000100260,1112295,Diyagama East,589,Homagama,Colombo,Diyagama East,589,Homagama,Source code and map marker agree,6.810282695,80.004028504
+Original 300,520040070000100072,1112345,Kiriwattuduwa South,603A,Homagama,Colombo,Kiriwattuduwa South,603A,Homagama,Source code and map marker agree,6.793896642,80.011973258
+Original 300,520047010000100004,1112300,Diyagama West,589A,Homagama,Colombo,Diyagama West,589A,Homagama,Source code and map marker agree,6.807871993,79.996098027
+Original 300,520201170124,1133110,Rawathawatta West,557A,Moratuwa,Colombo,Rawathawatta West,557A,Moratuwa,Source code and map marker agree,6.785484666,79.881829894
+Original 300,520203040346,1133130,Indibedda West,559,Moratuwa,Colombo,Indibedda West,559,Moratuwa,Source code and map marker agree,6.777222221,79.897593912
+Original 300,520203040390,1133130,Indibedda West,559,Moratuwa,Colombo,Indibedda West,559,Moratuwa,Source code and map marker agree,6.775795284,79.899492881
+Original 300,520203070277,1133130,Indibedda West,559,Moratuwa,Colombo,Indibedda West,559,Moratuwa,Source code and map marker agree,6.7810419,79.903855099
+Original 300,520207010001,1133065,Uyana North,552B,Moratuwa,Colombo,Uyana North,552B,Moratuwa,Source code and map marker agree,6.794297727,79.873448708
+Original 300,520207010002,1133065,Uyana North,552B,Moratuwa,Colombo,Uyana North,552B,Moratuwa,Source code and map marker agree,6.794013146,79.873285628
+Original 300,520207130002,1133065,Uyana North,552B,Moratuwa,Colombo,Uyana North,552B,Moratuwa,Source code and map marker agree,6.794297178,79.873212769
+Original 300,520210100003,1133045,Lakshapathiya North,550A,Moratuwa,Colombo,Lakshapathiya North,550A,Moratuwa,Source code and map marker agree,6.802778379,79.887299353
+Original 300,520212020461,1133005,Angulana North,547,Moratuwa,Colombo,Angulana North,547,Moratuwa,Source code and map marker agree,6.80241898,79.873234539
+Original 300,520216030005,1133195,Katukurunda South,555A,Moratuwa,Colombo,Katukurunda North,555,Moratuwa,Source code and map marker differ - review,6.746159139,79.89427464
+Original 300,520216030066,1133195,Katukurunda South,555A,Moratuwa,Colombo,Katukurunda North,555,Moratuwa,Source code and map marker differ - review,6.745303244,79.890807041
+Original 300,520217110334,1133210,Egoda Uyana South,556B,Moratuwa,Colombo,Egoda Uyana South,556B,Moratuwa,Source code and map marker agree,6.723309138,79.899107949
+Original 300,520217120126,1133210,Egoda Uyana South,556B,Moratuwa,Colombo,Egoda Uyana South,556B,Moratuwa,Source code and map marker agree,6.722334402,79.899653384
+Original 300,520217120139,1133210,Egoda Uyana South,556B,Moratuwa,Colombo,Egoda Uyana South,556B,Moratuwa,Source code and map marker agree,6.7221458,79.90003785
+Original 300,520617100000100163,1127080,Kirulapone,,Thimbirigasyaya,Colombo,Kirulapone,Kirulapone,Thimbirigasyaya,Source code and map marker agree,6.878835343,79.882775293
+Original 300,520618080000200001,1127050,Gothamipura,,Thimbirigasyaya,Colombo,Gothamipura,Gothamipura,Thimbirigasyaya,Source code and map marker agree,6.901261778,79.882635719
+Original 300,520618080000200002,1127050,Gothamipura,,Thimbirigasyaya,Colombo,Gothamipura,Gothamipura,Thimbirigasyaya,Source code and map marker agree,6.901090633,79.88274533
+Original 300,520801140209,1130020,Kohuwala,537B,Dehiwala,Colombo,Kohuwala,537B,Dehiwala,Source code and map marker agree,6.864357458,79.88928898
+Original 300,520803090060,1130010,Vilawala,537,Dehiwala,Colombo,Vilawala,537,Dehiwala,Source code and map marker agree,6.868385029,79.871374644
+Original 300,520807040000100115,1130035,Galwala,538A,Dehiwala,Colombo,Galwala,538A,Dehiwala,Source code and map marker agree,6.861600362,79.866583065
+Original 300,520809020000100166,1130045,Dehiwala East,540,Dehiwala,Colombo,Dehiwala East,540,Dehiwala,Source code and map marker agree,6.856895008,79.869105451
+Original 300,520811010120,1130060,Malwatta,539/42A,Dehiwala,Colombo,Malwatta,539/42A,Dehiwala,Source code and map marker agree,6.8552759,79.868566004
+Original 300,521002070171,1131035,Attidiya South,543B,Ratmalana,Colombo,Attidiya South,543B,Ratmalana,Source code and map marker agree,6.832605515,79.884598091
+Original 300,521002090026,1131035,Attidiya South,543B,Ratmalana,Colombo,Attidiya South,543B,Ratmalana,Source code and map marker agree,6.827552836,79.887762969
+Original 300,521003010045,1131045,Wedikanda,546A,Ratmalana,Colombo,Wedikanda,546A,Ratmalana,Source code and map marker agree,6.830176671,79.864558381
+Original 300,521003100354,1131060,Ratmalana East,546 C,Ratmalana,Colombo,Rathmalana East,546C,Ratmalana,Source code and map marker agree,6.817023277,79.874541222
+Original 300,521003150159,1131060,Ratmalana East,546 C,Ratmalana,Colombo,Rathmalana East,546C,Ratmalana,Source code and map marker agree,6.809747718,79.881636605
+Original 300,521005020051,1131025,Katukurunduwatta,545A,Ratmalana,Colombo,Katukurunduwatta,545A,Ratmalana,Source code and map marker agree,6.830974446,79.87789023
+Original 300,521010050078,1131030,Attidiya North,543,Ratmalana,Colombo,Attidiya North,543,Ratmalana,Source code and map marker agree,6.843474466,79.885591087
+Original 300,521203170074,1136165,Thumbovila North,576A,Kesbewa,Colombo,Thumbovila North,576A,Kesbewa,Source code and map marker agree,6.809032597,79.904282145
+Original 300,521203170075,1136165,Thumbovila North,576A,Kesbewa,Colombo,Thumbovila North,576A,Kesbewa,Source code and map marker agree,6.808495322,79.905780896
+Original 300,521211040064,,,,,,Bokundara,575,Kesbewa,Missing source GN code - review,6.817826205,79.923038818
+Original 300,521214060000100006,1136015,Divulpitiya East,535D,Kesbewa,Colombo,Divulpitiya East,535D,Kesbewa,Source code and map marker agree,6.851779808,79.897167812
+Original 300,521230040143,1136115,Rathmaldeniya,581C,Kesbewa,Colombo,Rathmaldeniya,581C,Kesbewa,Source code and map marker agree,6.838069936,79.94699512
+Original 300,521251060162,1136170,Wewala West,562B,Kesbewa,Colombo,Wewala West,562B,Kesbewa,Source code and map marker agree,6.798324106,79.90499217
+Original 300,521406010000100005,1121080,Thalapathpitiya,525,Maharagama,Colombo,Thalapathpitiya,525,Maharagama,Source code and map marker agree,6.868896194,79.929421126
+Original 300,521426010000100001,1121195,Wijerama,526C,Maharagama,Colombo,Wijerama,526C,Maharagama,Source code and map marker agree,6.851856028,79.910116342
+Original 300,521426010000100013,1121195,Wijerama,526C,Maharagama,Colombo,Wijerama,526C,Maharagama,Source code and map marker agree,6.850789351,79.910738229
+Original 300,521613010000100011,1124040,Ethulkotte West,521A,Sri Jayawardanapura Kotte,Colombo,Ethulkotte West,521A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.904118277,79.902562167
+Original 300,521615010000100038,1124060,Pitakotte West,522,Sri Jayawardanapura Kotte,Colombo,Pitakotte West,522,Sri Jayawardanapura Kotte,Source code and map marker agree,6.891738596,79.899026733
+Original 300,521615030000100018,1124060,Pitakotte West,522,Sri Jayawardanapura Kotte,Colombo,Pitakotte West,522,Sri Jayawardanapura Kotte,Source code and map marker agree,6.888131855,79.896919037
+Original 300,521616020000100032,1124050,Pitakotte East,522A,Sri Jayawardanapura Kotte,Colombo,Pitakotte East,522A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.887447283,79.906136719
+Original 300,521616060000100003,1124050,Pitakotte East,522A,Sri Jayawardanapura Kotte,Colombo,Pitakotte East,522A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.888960191,79.916541699
+Original 300,521616060000100004,1124050,Pitakotte East,522A,Sri Jayawardanapura Kotte,Colombo,Pitakotte East,522A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.889294617,79.916381287
+Original 300,521619060000100073,1124095,Gangodavila South,526A,Sri Jayawardanapura Kotte,Colombo,Gangodavila South B,526B,Maharagama,Source code and map marker differ - review,6.8623428,79.901209003
+Original 300,521619150002,1124095,Gangodavila South,526A,Sri Jayawardanapura Kotte,Colombo,Gangodavila South,526A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.862305658,79.910092475
+Original 300,522024030000200020,1109265,Pahalawela,479A,Kaduwela,Colombo,Pahalawela,479A,Kaduwela,Source code and map marker agree,6.888347349,79.924524191
+Original 300,522024060000100018,1109265,Pahalawela,479A,Kaduwela,Colombo,Pahalawela,479A,Kaduwela,Source code and map marker agree,6.884814713,79.92748922
+Original 300,522221030000100005,1115150,Puwakpitiya South,431C,Seethawaka,Colombo,Puwakpitiya South,431C,Seethawaka,Source code and map marker agree,6.937449816,80.19640574
+Original 300,522221030000100010,1115150,Puwakpitiya South,431C,Seethawaka,Colombo,Puwakpitiya South,431C,Seethawaka,Source code and map marker agree,6.93739621,80.196027649
+Original 300,522225040000100001,1115050,Avissawella,432,Seethawaka,Colombo,Avissawella,432,Seethawaka,Source code and map marker agree,6.953915005,80.208921013
+Original 300,522251010000200019,1115305,Ilukovita,442C,Seethawaka,Colombo,Ilukovita,442C,Seethawaka,Source code and map marker agree,6.895562195,80.166895672
+Original 300,522251010000200025,1115305,Ilukovita,442C,Seethawaka,Colombo,Ilukovita,442C,Seethawaka,Source code and map marker agree,6.894860474,80.167770827
+Original 300,522402040000100002,1118080,Galagedara North,452A,Padukka,Colombo,Galagedara North,452A,Padukka,Source code and map marker agree,6.853932493,80.086133599
+Original 300,522410030000100001,1118115,Weragala,455,Padukka,Colombo,Angampitiya,454A,Padukka,Source code and map marker differ - review,6.836974684,80.119497866
+Original 300,522418010000200002,1118225,Udagama,458,Padukka,Colombo,Udagama,458,Padukka,Source code and map marker agree,6.826041558,80.164495763
+Original 300,522418010000200004,1118225,Udagama,458,Padukka,Colombo,Udagama,458,Padukka,Source code and map marker agree,6.825955503,80.164512795
+Original 300,520015070114,1112020,Atigala East,446,Homagama,Colombo,Atigala East,446,Homagama,Source code and map marker agree,6.891989088,80.064171054
+Original 300,520021460158,1112100,Panagoda West,482,Homagama,Colombo,Panagoda West,482,Homagama,Source code and map marker agree,6.860132287,80.020898754
+Original 300,520021460159,1112100,Panagoda West,482,Homagama,Colombo,Panagoda West,482,Homagama,Source code and map marker agree,6.858786419,80.020858056
+Original 300,520028010001,1112085,Watareka North,448B,Homagama,Colombo,Panaluwa,447B,Homagama,Source code and map marker differ - review,6.866525347,80.077382376
+Original 300,521003170035,1131055,Ratmalana West,546,Ratmalana,Colombo,Rathmalana West,546,Ratmalana,Source code and map marker agree,6.808796344,79.870994096
+Original 300,521234090000100004,1136095,Niwanthidiya,580A,Kesbewa,Colombo,Niwanthidiya,580A,Kesbewa,Source code and map marker agree,6.824273276,79.919275259
+Original 300,521234090000100012,1136095,Niwanthidiya,580A,Kesbewa,Colombo,Niwanthidiya,580A,Kesbewa,Source code and map marker agree,6.823138507,79.917910017
+Original 300,520001190701,1112135,Homagama Town,486A,Homagama,Colombo,Homagama Town,486A,Homagama,Source code and map marker agree,6.845307693,80.008303555
+Original 300,520001190703,1112135,Homagama Town,486A,Homagama,Colombo,Homagama Town,486A,Homagama,Source code and map marker agree,6.845324899,80.007994196
+Original 300,520001190704,1112135,Homagama Town,486A,Homagama,Colombo,Homagama Town,486A,Homagama,Source code and map marker agree,6.845343094,80.008108042
+Original 300,520001190711,1112135,Homagama Town,486A,Homagama,Colombo,Homagama Town,486A,Homagama,Source code and map marker agree,6.845279743,80.007560996
+Original 300,520001310032,1112195,Galavilawatta South,486G,Homagama,Colombo,Galavilawatta South,486G,Homagama,Source code and map marker agree,6.840316254,79.996896155
+Original 300,520001310036,1112195,Galavilawatta South,486G,Homagama,Colombo,Galavilawatta South,486G,Homagama,Source code and map marker agree,6.840294857,79.99676602
+Original 300,520001310038,1112195,Galavilawatta South,486G,Homagama,Colombo,Galavilawatta South,486G,Homagama,Source code and map marker agree,6.840192341,79.996406105
+Original 300,520001310044,1112195,Galavilawatta South,486G,Homagama,Colombo,Galavilawatta South,486G,Homagama,Source code and map marker agree,6.840053782,79.995735903
+Original 300,520001420181,1112190,Katuwana,486E,Homagama,Colombo,Katuwana,486E,Homagama,Source code and map marker agree,6.837558044,80.000582666
+Original 300,520001420190,1112190,Katuwana,486E,Homagama,Colombo,Katuwana,486E,Homagama,Source code and map marker agree,6.837093386,80.000922043
+Original 300,520001420193,1112190,Katuwana,486E,Homagama,Colombo,Katuwana,486E,Homagama,Source code and map marker agree,6.836792387,80.001108715
+Original 300,520001420196,1112190,Katuwana,486E,Homagama,Colombo,Katuwana,486E,Homagama,Source code and map marker agree,6.83657351,80.001243789
+Original 300,520009120083,1112205,Hiripitiya,499G,Homagama,Colombo,Hiripitiya,499,Homagama,Source code and map marker agree,6.835147048,79.98225621
+Original 300,520010040120,1112200,Niyandagala,499A,Homagama,Colombo,Niyandagala,499A,Homagama,Source code and map marker agree,6.830897962,79.984279394
+Original 300,520011080002,1112060,Habarakada South,481B,Homagama,Colombo,Habarakada South,481B,Homagama,Source code and map marker agree,6.874041012,80.017280588
+Original 300,520011080211,1112060,Habarakada South,481B,Homagama,Colombo,Habarakada South,481B,Homagama,Source code and map marker agree,6.873511827,80.01551864
+Original 300,520011090026,1112060,Habarakada South,481B,Homagama,Colombo,Habarakada South,481B,Homagama,Source code and map marker agree,6.873821487,80.017762135
+Original 300,520011090028,1112060,Habarakada South,481B,Homagama,Colombo,Habarakada South,481B,Homagama,Source code and map marker agree,6.873668638,80.017631621
+Original 300,520013010013,1112050,Mullegama North,481D,Homagama,Colombo,Mullegama North,481D,Homagama,Source code and map marker agree,6.892369552,80.017623861
+Original 300,520013070048,1112055,Mullegama South,481A,Homagama,Colombo,Mullegama South,481A,Homagama,Source code and map marker agree,6.882982584,80.009266658
+Original 300,520013070049,1112055,Mullegama South,481A,Homagama,Colombo,Mullegama South,481A,Homagama,Source code and map marker agree,6.88276664,80.008911263
+Original 300,520014070162,1112245,Brahmanagama,500,Homagama,Colombo,Brahmanagama,500,Homagama,Source code and map marker agree,6.818437429,79.985591081
+Original 300,520014070163,1112245,Brahmanagama,500,Homagama,Colombo,Brahmanagama,500,Homagama,Source code and map marker agree,6.817396797,79.985507067
+Original 300,520014090117,1112245,Brahmanagama,500,Homagama,Colombo,Brahmanagama,500,Homagama,Source code and map marker agree,6.825270342,79.985991873
+Original 300,520014090150,1112245,Brahmanagama,500,Homagama,Colombo,Brahmanagama,500,Homagama,Source code and map marker agree,6.824426485,79.986154313
+Original 300,520014090367,1112245,Brahmanagama,500,Homagama,Colombo,Brahmanagama,500,Homagama,Source code and map marker agree,6.819965408,79.986541462
+Original 300,520015070089,1112020,Atigala East,446,Homagama,Colombo,Atigala East,446,Homagama,Source code and map marker agree,6.893289686,80.06232106
+Original 300,520017050154,1112095,Godagama North,483,Homagama,Colombo,Godagama North,483,Homagama,Source code and map marker agree,6.852754249,80.033410616
+Original 300,520017050155,1112095,Godagama North,483,Homagama,Colombo,Godagama North,483,Homagama,Source code and map marker agree,6.853491495,80.033122816
+Original 300,520017050164,1112095,Godagama North,483,Homagama,Colombo,Godagama North,483,Homagama,Source code and map marker agree,6.853093492,80.033044646
+Original 300,520026020267,1112090,Meegoda South,447A,Homagama,Colombo,Meegoda South,447A,Homagama,Source code and map marker agree,6.859292983,80.049061545
+Original 300,520026020272,1112090,Meegoda South,447A,Homagama,Colombo,Meegoda North,447,Homagama,Source code and map marker differ - review,6.859691956,80.048669934
+Original 300,520028060002,1112085,Watareka North,448B,Homagama,Colombo,Watareka North,448B,Homagama,Source code and map marker agree,6.856662228,80.078238109
+Original 300,520028170199,1112085,Watareka North,448B,Homagama,Colombo,Watareka North,448B,Homagama,Source code and map marker agree,6.855319537,80.061828822
+Original 300,520028170200,1112085,Watareka North,448B,Homagama,Colombo,Watareka North,448B,Homagama,Source code and map marker agree,6.854945493,80.061783526
+Original 300,520037140000600023,1112365,Kahathuduwa North,602,Homagama,Colombo,Kahathuduwa North,602,Homagama,Source code and map marker agree,6.785213965,79.989371654
+Original 300,520037140000600038,1112365,Kahathuduwa North,602,Homagama,Colombo,Kahathuduwa North,602,Homagama,Source code and map marker agree,6.784865741,79.991096138
+Original 300,520037260311,1112370,Kahathuduwa East,602C,Homagama,Colombo,Kahathuduwa East,602C,Homagama,Source code and map marker agree,6.778066466,80.001554364
+Original 300,520037290000100009,1112370,Kahathuduwa East,602C,Homagama,Colombo,Kahathuduwa East,602C,Homagama,Source code and map marker agree,6.784250108,79.991793119
+Original 300,520038010120,1112405,weniwelkola,601,Homagama,Colombo,Weniwelkola,601,Homagama,Source code and map marker agree,6.774132787,79.981572185
+Original 300,520038120097,1112405,weniwelkola,601,Homagama,Colombo,Weniwelkola,601,Homagama,Source code and map marker agree,6.771524473,79.981031978
+Original 300,520038120103,1112405,weniwelkola,601,Homagama,Colombo,Weniwelkola,601,Homagama,Source code and map marker agree,6.771504645,79.980915655
+Original 300,520038120111,1112405,weniwelkola,601,Homagama,Colombo,Weniwelkola,601,Homagama,Source code and map marker agree,6.771020354,79.980966206
+Original 300,521202130003,1136220,Mampe West,574,Kesbewa,Colombo,Mampe West,574,Kesbewa,Source code and map marker agree,6.804175558,79.928002011
+Original 300,521202150315,1136220,Mampe West,574,Kesbewa,Colombo,Mampe West,574,Kesbewa,Source code and map marker agree,6.802710134,79.924433218
+Original 300,521202150324,1136220,Mampe West,574,Kesbewa,Colombo,Mampe West,574,Kesbewa,Source code and map marker agree,6.800969974,79.924620268
+Original 300,521202150336,1136220,Mampe West,574,Kesbewa,Colombo,Mampe West,574,Kesbewa,Source code and map marker agree,6.801829871,79.925758179
+Original 300,521203010004,1136165,Thumbovila North,576A,Kesbewa,Colombo,Thumbovila North,576A,Kesbewa,Source code and map marker agree,6.81698132,79.91564858
+Original 300,521203150145,1136165,Thumbovila North,576A,Kesbewa,Colombo,Thumbovila North,576A,Kesbewa,Source code and map marker agree,6.815929939,79.909248995
+Original 300,521203150146,1136165,Thumbovila North,576A,Kesbewa,Colombo,Thumbovila North,576A,Kesbewa,Source code and map marker agree,6.815844569,79.908919119
+Original 300,521212020132,1136010,Pepiliyana East,535C,Kesbewa,Colombo,Pepiliyana East,535C,Kesbewa,Source code and map marker agree,6.859456782,79.892402012
+Original 300,521218030000100002,1136045,Egodawatta,533C,Kesbewa,Colombo,Egodawatta,533C,Kesbewa,Source code and map marker agree,6.850383522,79.910143131
+Original 300,521218030000100007,1136045,Egodawatta,533C,Kesbewa,Colombo,Egodawatta,533C,Kesbewa,Source code and map marker agree,6.84979206,79.910562487
+Original 300,521218030000100011,1136045,Egodawatta,533C,Kesbewa,Colombo,Egodawatta,533C,Kesbewa,Source code and map marker agree,6.849517752,79.910454472
+Original 300,521229030000100001,1136120,Mahalwarawa,581E,Kesbewa,Colombo,Mahalwarawa,581E,Kesbewa,Source code and map marker agree,6.83997684,79.959347529
+Original 300,521229030000100005,1136120,Mahalwarawa,581E,Kesbewa,Colombo,Kottawa Town,496B,Maharagama,Source code and map marker differ - review,6.839005939,79.962752209
+Original 300,521229030000100015,1136120,Mahalwarawa,581E,Kesbewa,Colombo,Mahalwarawa,581E,Kesbewa,Source code and map marker agree,6.839080706,79.958727485
+Original 300,521229030000100021,1136120,Mahalwarawa,581E,Kesbewa,Colombo,Mahalwarawa,581E,Kesbewa,Source code and map marker agree,6.838204339,79.957979385
+Original 300,521234090000100002,1136095,Niwanthidiya,580A,Kesbewa,Colombo,Niwanthidiya,580A,Kesbewa,Source code and map marker agree,6.82501926,79.920289786
+Original 300,521234090000100008,1136095,Niwanthidiya,580A,Kesbewa,Colombo,Niwanthidiya,580A,Kesbewa,Source code and map marker agree,6.823712874,79.919117966
+Original 300,521234090000100009,1136095,Niwanthidiya,580A,Kesbewa,Colombo,Niwanthidiya,580A,Kesbewa,Source code and map marker agree,6.823356985,79.918949187
+Original 300,521239040000100001,1136090,Katuwawala South,578A,Kesbewa,Colombo,Neelammahara,579,Kesbewa,Source code and map marker differ - review,6.825973535,79.920614953
+Original 300,521239040000100002,1136090,Katuwawala South,578A,Kesbewa,Colombo,Katuwawala South,578A,Kesbewa,Source code and map marker agree,6.825857266,79.920000371
+Original 300,521239040000100006,1136090,Katuwawala South,578A,Kesbewa,Colombo,Katuwawala South,578A,Kesbewa,Source code and map marker agree,6.825756707,79.919377074
+Original 300,521239040000100014,1136090,Katuwawala South,578A,Kesbewa,Colombo,Katuwawala South,578A,Kesbewa,Source code and map marker agree,6.82544615,79.919949911
+Original 300,521409040000100020,1121030,Kalalgoda,493,Maharagama,Colombo,Kalalgoda,493,Maharagama,Source code and map marker agree,6.866653512,79.942589033
+Original 300,521409040000100021,1121030,Kalalgoda,493,Maharagama,Colombo,Kalalgoda,493,Maharagama,Source code and map marker agree,6.866488343,79.942421968
+Original 300,521409040000100024,1121030,Kalalgoda,493,Maharagama,Colombo,Kalalgoda,493,Maharagama,Source code and map marker agree,6.865918574,79.942637185
+Original 300,521409040000100028,1121030,Kalalgoda,493,Maharagama,Colombo,Kalalgoda,493,Maharagama,Source code and map marker agree,6.865629883,79.942267003
+Original 300,521426010000100008,1121195,Wijerama,526C,Maharagama,Colombo,Wijerama,526C,Maharagama,Source code and map marker agree,6.851492615,79.910866376
+Original 300,620483030044,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.90447688,80.19789837
+Original 300,620483030088,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.903938952,80.197860597
+Original 300,620483030091,9103010,Hewainna,139B,Eheliyagoda,Ratnapura,Digana,442F,Seethawaka,Source code outside Colombo - review,6.903777964,80.19766861
+Original 300,520023110136,1112320,Kudamaduwa,591A,Homagama,Colombo,Kudamaduwa,591A,Homagama,Source code and map marker agree,6.800884997,79.963636286
+Original 300,520023110140,1112320,Kudamaduwa,591A,Homagama,Colombo,Kudamaduwa,591A,Homagama,Source code and map marker agree,6.798303961,79.963907677
+Original 300,520026010097,1112090,Meegoda South,447A,Homagama,Colombo,Meegoda South,447A,Homagama,Source code and map marker agree,6.853545816,80.047500607
+Original 300,520028050004,1112085,Watareka North,448B,Homagama,Colombo,Watareka North,448B,Homagama,Source code and map marker agree,6.861598153,80.075317509
+Supplement 100,521010090125,1131030,Attidiya North,543,Ratmalana,Colombo,Attidiya North,543,Ratmalana,Source code and map marker agree,6.833233027,79.891320525
+Supplement 100,521615010000100001,1124060,Pitakotte West,522,Sri Jayawardanapura Kotte,Colombo,Pitakotte West,522,Sri Jayawardanapura Kotte,Source code and map marker agree,6.893699733,79.898449281
+Supplement 100,521607010000100002,1124075,Pagoda,519A,Sri Jayawardanapura Kotte,Colombo,Pagoda,519A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.88679268,79.894628847
+Supplement 100,521616050000100292,1124050,Pitakotte East,522A,Sri Jayawardanapura Kotte,Colombo,Pitakotte East,522A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.885008865,79.912416062
+Supplement 100,521010090123,1131030,Attidiya North,543,Ratmalana,Colombo,Attidiya North,543,Ratmalana,Source code and map marker agree,6.831715216,79.890291671
+Supplement 100,521010090127,1131030,Attidiya North,543,Ratmalana,Colombo,Attidiya North,543,Ratmalana,Source code and map marker agree,6.83060186,79.893120781
+Supplement 100,521010020001,1131030,Attidiya North,543,Ratmalana,Colombo,Attidiya North,543,Ratmalana,Source code and map marker agree,6.835238147,79.88276072
+Supplement 100,520208040009,1133030,Thelawala North,549B,Moratuwa,Colombo,Thelawala North,549B,Moratuwa,Source code and map marker agree,6.808991708,79.895745979
+Supplement 100,520022190012,1112315,Siyambalagoda North,592,Homagama,Colombo,Siyambalagoda North,592,Homagama,Source code and map marker agree,6.804387195,79.966065535
+Supplement 100,521607020000100026,1124075,Pagoda,519A,Sri Jayawardanapura Kotte,Colombo,Pagoda,519A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.884283727,79.893096926
+Supplement 100,521010090002,1131030,Attidiya North,543,Ratmalana,Colombo,Attidiya North,543,Ratmalana,Source code and map marker agree,6.835793318,79.892226347
+Supplement 100,521607020000100024,1124075,Pagoda,519A,Sri Jayawardanapura Kotte,Colombo,Pagoda,519A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.885163837,79.893690344
+Supplement 100,521235040000200004,1136075,Katuwawala North,578,Kesbewa,Colombo,Katuwawala North,578,Kesbewa,Source code and map marker agree,6.833481015,79.909040078
+Supplement 100,521267020000100001,1136365,Kahapola,598,Kesbewa,Colombo,Kahapola,598,Kesbewa,Source code and map marker agree,6.753841923,79.92190993
+Supplement 100,521615010000100003,1124060,Pitakotte West,522,Sri Jayawardanapura Kotte,Colombo,Pitakotte West,522,Sri Jayawardanapura Kotte,Source code and map marker agree,6.893359858,79.899244343
+Supplement 100,520015070033,1112020,Atigala East,446,Homagama,Colombo,Atigala East,446,Homagama,Source code and map marker agree,6.894203457,80.062630258
+Supplement 100,520022190042,1112315,Siyambalagoda North,592,Homagama,Colombo,Siyambalagoda North,592,Homagama,Source code and map marker agree,6.803135568,79.964334682
+Supplement 100,521266030000100002,1136350,Jamburaliya,597,Kesbewa,Colombo,Jamburaliya,597,Kesbewa,Source code and map marker agree,6.762365454,79.947467805
+Supplement 100,521607020000100021,1124075,Pagoda,519A,Sri Jayawardanapura Kotte,Colombo,Pagoda,519A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.885278958,79.893920003
+Supplement 100,521003170015,1131055,Ratmalana West,546,Ratmalana,Colombo,Rathmalana West,546,Ratmalana,Source code and map marker agree,6.808996076,79.870978026
+Supplement 100,522466030000100004,1118205,Yatawathura,468,Padukka,Colombo,Yatawathura,468,Padukka,Source code and map marker agree,6.786017464,80.122672022
+Supplement 100,521251030058,1136170,Wewala West,562B,Kesbewa,Colombo,Wewala West,562B,Kesbewa,Source code and map marker agree,6.806037424,79.906227483
+Supplement 100,521235040000200001,1136075,Katuwawala North,578,Kesbewa,Colombo,Katuwawala North,578,Kesbewa,Source code and map marker agree,6.833564631,79.909330872
+Supplement 100,521251030050,1136170,Wewala West,562B,Kesbewa,Colombo,Wewala West,562B,Kesbewa,Source code and map marker agree,6.80574206,79.90590876
+Supplement 100,521005070064,1131025,Katukurunduwatta,545A,Ratmalana,Colombo,Katukurunduwatta,545A,Ratmalana,Source code and map marker agree,6.837040692,79.879976389
+Supplement 100,521002090002,1131035,Attidiya South,543B,Ratmalana,Colombo,Attidiya South,543B,Ratmalana,Source code and map marker agree,6.830012414,79.889468226
+Supplement 100,521607010000100106,1124075,Pagoda,519A,Sri Jayawardanapura Kotte,Colombo,Pagoda,519A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.885121653,79.894918082
+Supplement 100,521235040000200002,1136075,Katuwawala North,578,Kesbewa,Colombo,Katuwawala North,578,Kesbewa,Source code and map marker agree,6.833339537,79.909411491
+Supplement 100,521212020134,1136010,Pepiliyana East,535C,Kesbewa,Colombo,Pepiliyana East,535C,Kesbewa,Source code and map marker agree,6.858235622,79.89301906
+Supplement 100,521607020000100106,1124075,Pagoda,519A,Sri Jayawardanapura Kotte,Colombo,Pagoda,519A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.883254759,79.892760899
+Supplement 100,522251010000200013,1115305,Ilukovita,442C,Seethawaka,Colombo,Ilukovita,442C,Seethawaka,Source code and map marker agree,6.895411158,80.166407454
+Supplement 100,521212020133,1136010,Pepiliyana East,535C,Kesbewa,Colombo,Pepiliyana East,535C,Kesbewa,Source code and map marker agree,6.858490346,79.892577894
+Supplement 100,522251010000200031,1115305,Ilukovita,442C,Seethawaka,Colombo,Ilukovita,442C,Seethawaka,Source code and map marker agree,6.894814534,80.168104775
+Supplement 100,521207080466,1136310,Dampe,566,Kesbewa,Colombo,Dampe,566,Kesbewa,Source code and map marker agree,6.762141077,79.921757605
+Supplement 100,521207080468,1136310,Dampe,566,Kesbewa,Colombo,Dampe,566,Kesbewa,Source code and map marker agree,6.762189083,79.920841116
+Supplement 100,522024030000200028,1109265,Pahalawela,479A,Kaduwela,Colombo,Pahalawela,479A,Kaduwela,Source code and map marker agree,6.888261911,79.922105737
+Supplement 100,521010100013,1131030,Attidiya North,543,Ratmalana,Colombo,Attidiya North,543,Ratmalana,Source code and map marker agree,6.835837986,79.891686306
+Supplement 100,522208020000200002,1115115,Ihala Kosgama South,428B,Seethawaka,Colombo,Ihala Kosgama South,428B,Seethawaka,Source code and map marker agree,6.933883786,80.146487807
+Supplement 100,522208020000200003,1115115,Ihala Kosgama South,428B,Seethawaka,Colombo,Ihala Kosgama South,428B,Seethawaka,Source code and map marker agree,6.933657567,80.146384113
+Supplement 100,520028010120,1112085,Watareka North,448B,Homagama,Colombo,Watareka North,448B,Homagama,Source code and map marker agree,6.861271693,80.074446378
+Supplement 100,520006010137,1112145,Pitipana Town,484B,Homagama,Colombo,Pitipana Town,484B,Homagama,Source code and map marker agree,6.844427101,80.019194144
+Supplement 100,521239040000100012,1136090,Katuwawala South,578A,Kesbewa,Colombo,Katuwawala South,578A,Kesbewa,Source code and map marker agree,6.825075642,79.919039636
+Supplement 100,521267020000100002,1136365,Kahapola,598,Kesbewa,Colombo,Kahapola,598,Kesbewa,Source code and map marker agree,6.753894746,79.922005092
+Supplement 100,521207040226,1136310,Dampe,566,Kesbewa,Colombo,Dampe,566,Kesbewa,Source code and map marker agree,6.763193575,79.918394674
+Supplement 100,521204010207,1136295,Madapatha,567,Kesbewa,Colombo,Madapatha,567,Kesbewa,Source code and map marker agree,6.758846706,79.927033731
+Supplement 100,520028030176,1112085,Watareka North,448B,Homagama,Colombo,Panaluwa,447B,Homagama,Source code and map marker differ - review,6.855845594,80.062973048
+Supplement 100,521203170076,1136165,Thumbovila North,576A,Kesbewa,Colombo,Thumbovila North,576A,Kesbewa,Source code and map marker agree,6.808459887,79.906063147
+Supplement 100,521207080469,1136310,Dampe,566,Kesbewa,Colombo,Dampe,566,Kesbewa,Source code and map marker agree,6.760891216,79.921581871
+Supplement 100,520015100000100002,1112015,Atigala West,446A,Homagama,Colombo,Atigala West,446A,Homagama,Source code and map marker agree,6.904157336,80.057659808
+Supplement 100,521204010210,1136295,Madapatha,567,Kesbewa,Colombo,Madapatha,567,Kesbewa,Source code and map marker agree,6.759682734,79.928771284
+Supplement 100,521615010000100054,1124060,Pitakotte West,522,Sri Jayawardanapura Kotte,Colombo,Pitakotte West,522,Sri Jayawardanapura Kotte,Source code and map marker agree,6.89177734,79.898832855
+Supplement 100,520037100244,1112375,Kahathuduwa South,602A,Homagama,Colombo,Kahathuduwa South,602A,Homagama,Source code and map marker agree,6.779861281,79.995041324
+Supplement 100,520041130000100100,1112360,Kithulavila,603B,Homagama,Colombo,Kithulavila,603B,Homagama,Source code and map marker agree,6.790092271,80.016553647
+Supplement 100,520015110228,1112015,Atigala West,446A,Homagama,Colombo,Atigala West,446A,Homagama,Source code and map marker agree,6.895480258,80.053932105
+Supplement 100,520004040038,1112255,Magammana West,590A,Homagama,Colombo,Magammana West,590A,Homagama,Source code and map marker agree,6.822423835,79.994875543
+Supplement 100,520031150274,1112080,Panaluwa,447B,Homagama,Colombo,Panaluwa,447B,Homagama,Source code and map marker agree,6.879005067,80.063900749
+Supplement 100,520041130000100107,1112360,Kithulavila,603B,Homagama,Colombo,Kithulavila,603B,Homagama,Source code and map marker agree,6.789202627,80.016914196
+Supplement 100,520207050088,1133060,Uyana South,552A,Moratuwa,Colombo,Uyana South,552A,Moratuwa,Source code and map marker agree,6.786528929,79.879165251
+Supplement 100,521204010209,1136295,Madapatha,567,Kesbewa,Colombo,Madapatha,567,Kesbewa,Source code and map marker agree,6.759199594,79.928464399
+Supplement 100,520026020264,1112090,Meegoda South,447A,Homagama,Colombo,Meegoda South,447A,Homagama,Source code and map marker agree,6.858940164,80.049388727
+Supplement 100,521615010000100056,1124060,Pitakotte West,522,Sri Jayawardanapura Kotte,Colombo,Pitakotte West,522,Sri Jayawardanapura Kotte,Source code and map marker agree,6.891880897,79.89872283
+Supplement 100,520207050085,1133060,Uyana South,552A,Moratuwa,Colombo,Uyana South,552A,Moratuwa,Source code and map marker agree,6.786917469,79.878961999
+Supplement 100,522208020000100019,1115115,Ihala Kosgama South,428B,Seethawaka,Colombo,Ihala Kosgama South,428B,Seethawaka,Source code and map marker agree,6.93497876,80.145208516
+Supplement 100,520815160000100278,1130075,Kawdana East,539/42B,Dehiwala,Colombo,Kawdana East,539/42B,Dehiwala,Source code and map marker agree,6.845552288,79.885067003
+Supplement 100,520207050120,1133060,Uyana South,552A,Moratuwa,Colombo,Uyana South,552A,Moratuwa,Source code and map marker agree,6.786408563,79.879341642
+Supplement 100,521204010206,1136295,Madapatha,567,Kesbewa,Colombo,Madapatha,567,Kesbewa,Source code and map marker agree,6.759267162,79.92670204
+Supplement 100,520047010000100002,1112300,Diyagama West,589A,Homagama,Colombo,Diyagama West,589A,Homagama,Source code and map marker agree,6.80825287,79.996120067
+Supplement 100,521615010000100057,1124060,Pitakotte West,522,Sri Jayawardanapura Kotte,Colombo,Pitakotte West,522,Sri Jayawardanapura Kotte,Source code and map marker agree,6.891821319,79.898584513
+Supplement 100,520021230155,1112035,Nawalamulla,482D,Homagama,Colombo,Nawalamulla,482D,Homagama,Source code and map marker agree,6.87193575,80.048488073
+Supplement 100,521203150144,1136165,Thumbovila North,576A,Kesbewa,Colombo,Thumbovila North,576A,Kesbewa,Source code and map marker agree,6.816162956,79.909375747
+Supplement 100,520207050320,1133060,Uyana South,552A,Moratuwa,Colombo,Uyana South,552A,Moratuwa,Source code and map marker agree,6.787195286,79.878856726
+Supplement 100,520041130000100090,1112360,Kithulavila,603B,Homagama,Colombo,Kithulavila,603B,Homagama,Source code and map marker agree,6.790606724,80.016273881
+Supplement 100,520041130000100093,1112360,Kithulavila,603B,Homagama,Colombo,Kithulavila,603B,Homagama,Source code and map marker agree,6.790435138,80.016423068
+Supplement 100,521615010000100058,1124060,Pitakotte West,522,Sri Jayawardanapura Kotte,Colombo,Pitakotte West,522,Sri Jayawardanapura Kotte,Source code and map marker agree,6.891836023,79.898492379
+Supplement 100,520028030175,1112085,Watareka North,448B,Homagama,Colombo,Panaluwa,447B,Homagama,Source code and map marker differ - review,6.856047817,80.063909223
+Supplement 100,521607020000100022,1124075,Pagoda,519A,Sri Jayawardanapura Kotte,Colombo,Pagoda,519A,Sri Jayawardanapura Kotte,Source code and map marker agree,6.885165798,79.894031292
+Supplement 100,521615010000100053,1124060,Pitakotte West,522,Sri Jayawardanapura Kotte,Colombo,Pitakotte West,522,Sri Jayawardanapura Kotte,Source code and map marker agree,6.891733479,79.898955801
+Supplement 100,521010050054,1131030,Attidiya North,543,Ratmalana,Colombo,Attidiya North,543,Ratmalana,Source code and map marker agree,6.843505871,79.886080376
+Supplement 100,520003030182,1112260,Magammana East,590,Homagama,Colombo,Magammana East,590,Homagama,Source code and map marker agree,6.820288097,79.998640623
+Supplement 100,520018160191,1112305,Kirigampamunuwa,588,Homagama,Colombo,Kirigampamunuwa,588,Homagama,Source code and map marker agree,6.794539396,79.983057788
+Supplement 100,520038040184,1112405,weniwelkola,601,Homagama,Colombo,Weniwelkola,601,Homagama,Source code and map marker agree,6.771361703,79.996447955
+Supplement 100,520801140213,1130020,Kohuwala,537B,Dehiwala,Colombo,Kohuwala,537B,Dehiwala,Source code and map marker agree,6.864766386,79.889307104
+Supplement 100,520038070180,1112405,weniwelkola,601,Homagama,Colombo,Weniwelkola,601,Homagama,Source code and map marker agree,6.766434882,79.990318831
+Supplement 100,520015070097,1112020,Atigala East,446,Homagama,Colombo,Atigala East,446,Homagama,Source code and map marker agree,6.892027348,80.065795222
+Supplement 100,520217110283,1133210,Egoda Uyana South,556B,Moratuwa,Colombo,Egoda Uyana South,556B,Moratuwa,Source code and map marker agree,6.722902229,79.902444744
+Supplement 100,521003150150,1131060,Ratmalana East,546 C,Ratmalana,Colombo,Rathmalana East,546C,Ratmalana,Source code and map marker agree,6.80993534,79.882406583
+Supplement 100,521003210035,1131045,Wedikanda,546A,Ratmalana,Colombo,Wedikanda,546A,Ratmalana,Source code and map marker agree,6.827643354,79.867515666
+Supplement 100,521210030037,1136260,Kesbewa East,572B,Kesbewa,Colombo,Kesbewa East,572B,Kesbewa,Source code and map marker agree,6.794682639,79.940999598
+Supplement 100,520807030000100039,1130035,Galwala,538A,Dehiwala,Colombo,Galwala,538A,Dehiwala,Source code and map marker agree,6.861494851,79.864375997
+Supplement 100,520811080090,1130060,Malwatta,539/42A,Dehiwala,Colombo,Malwatta,539/42A,Dehiwala,Source code and map marker agree,6.850805683,79.873353644
+Supplement 100,521620100039,1124100,Gangodavila East,526C,Sri Jayawardanapura Kotte,Colombo,Gangodavila East,526C,Sri Jayawardanapura Kotte,Source code and map marker agree,6.862223091,79.911755423
+Supplement 100,521003110165,1131055,Ratmalana West,546,Ratmalana,Colombo,Rathmalana West,546,Ratmalana,Source code and map marker agree,6.810232898,79.869696976
+Supplement 100,520037290000100007,1112370,Kahathuduwa East,602C,Homagama,Colombo,Kahathuduwa East,602C,Homagama,Source code and map marker agree,6.784102616,79.992136874
+Supplement 100,520037140000600009,1112365,Kahathuduwa North,602,Homagama,Colombo,Kahathuduwa North,602,Homagama,Source code and map marker agree,6.785293143,79.989964724
+Supplement 100,521426010000100003,1121195,Wijerama,526C,Maharagama,Colombo,Wijerama,526C,Maharagama,Source code and map marker agree,6.851723361,79.910545332
+Supplement 100,520037290000100006,1112370,Kahathuduwa East,602C,Homagama,Colombo,Kahathuduwa East,602C,Homagama,Source code and map marker agree,6.783841064,79.992223781
+Supplement 100,521214060000100003,1136015,Divulpitiya East,535D,Kesbewa,Colombo,Divulpitiya East,535D,Kesbewa,Source code and map marker agree,6.851805713,79.896905907
+Supplement 100,521214060000100012,1136015,Divulpitiya East,535D,Kesbewa,Colombo,Divulpitiya East,535D,Kesbewa,Source code and map marker agree,6.851517204,79.89677254
+Supplement 100,521003150202,1131060,Ratmalana East,546 C,Ratmalana,Colombo,Rathmalana East,546C,Ratmalana,Source code and map marker agree,6.807875664,79.877538144
+Supplement 100,521251070199,1136170,Wewala West,562B,Kesbewa,Colombo,Wewala West,562B,Kesbewa,Source code and map marker agree,6.795029045,79.906094836

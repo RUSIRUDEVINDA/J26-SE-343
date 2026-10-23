@@ -62,12 +62,11 @@ public sealed class LeaseInterestStatusTransitionsTests
     }
 
     [Fact]
-    public void ApplicantOutcomeSummary_Approved_RequiresFormalLeaseProcessing()
+    public void ApplicantOutcomeSummary_Approved_IsEmpty()
     {
         var summary = LeaseInterestStatusTransitions.ApplicantOutcomeSummary(
             LeaseInterestRequestStatus.ApprovedInPrinciple);
-        Assert.Contains("Formal lease processing is still required", summary, StringComparison.Ordinal);
-        Assert.Contains("Approved", summary, StringComparison.Ordinal);
+        Assert.Equal(string.Empty, summary);
     }
 
     [Fact]

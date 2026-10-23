@@ -6,6 +6,7 @@ import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { lookupLeaseInterestByNic } from "../services/officerLeaseInterestApi";
+import { buildOfficerLeaseInterestLookupRequest } from "../utils/leaseInterestOfficerLookup";
 import type { LeaseInterestOfficerLookupItem } from "../types/landIntelligence";
 import { landUseTypeLabels } from "../utils/enumMappings";
 import { leaseInterestStatusLabel } from "../utils/leaseInterestStatus";
@@ -25,7 +26,7 @@ function formatDate(iso: string | null | undefined): string {
 }
 
 export function OfficerLeaseInterestLookupView() {
-  const [nicInput, setNicInput] = useState("");
+  const [identifierInput, setIdentifierInput] = useState("");
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<LeaseInterestOfficerLookupItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -37,11 +38,9 @@ export function OfficerLeaseInterestLookupView() {
     setLoading(true);
     setError(null);
     try {
-      const response = await lookupLeaseInterestByNic({
-        nationalIdentityCardNumber: nicInput.trim(),
-        page: targetPage,
-        pageSize: PAGE_SIZE,
-      });
+      const response = await lookupLeaseInterestByNic(
+        buildOfficerLeaseInterestLookupRequest(identifierInput, targetPage, PAGE_SIZE),
+      );
       setItems(response.items);
       setTotalCount(response.totalCount);
       setPage(response.page);
@@ -84,31 +83,61 @@ export function OfficerLeaseInterestLookupView() {
         }}
       >
         <div className={styles.field}>
-          <label htmlFor="officer-nic">National Identity Card (NIC) number</label>
+          <label htmlFor="officer-lookup-id">
+            NIC or business registration number (BRN)
+          </label>
           <input
-            id="officer-nic"
+            id="officer-lookup-id"
             className={styles.input}
-            value={nicInput}
-            onChange={(e) => setNicInput(e.target.value)}
+            value={identifierInput}
+            onChange={(e) => setIdentifierInput(e.target.value)}
             autoComplete="off"
             spellCheck={false}
-            placeholder="9 digits + V/X or 12-digit new NIC"
+            placeholder="NIC (9 digits + V/X) or BRN (e.g. B11223)"
           />
 
         </div>
-        <Button type="submit" variant="primary" disabled={loading || !nicInput.trim()}>
+        <Button type="submit" variant="primary" disabled={loading || !identifierInput.trim()}>
           {loading ? "Searching…" : "Search requests"}
         </Button>
       </form>
 
       {error ? <ErrorMessage message={error} /> : null}
 
-      {searched && !error ? (
+      {!searched && !error && !loading ? (
+        <section className={styles.queueEmptyState} aria-labelledby="lookup-start-title">
+          <div className={styles.queueEmptyIcon} aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="28" height="28">
+              <circle cx="10.8" cy="10.8" r="6.5" />
+              <path d="m16 16 5 5" />
+            </svg>
+          </div>
+          <p className={styles.queueEmptyEyebrow}>OFFICER LOOKUP</p>
+          <h2 id="lookup-start-title">Find a lease-interest request</h2>
+        </section>
+      ) : null}
+
+      {searched && !error && !loading && totalCount === 0 ? (
+        <section className={styles.queueEmptyState} aria-labelledby="lookup-empty-title">
+          <div className={styles.queueEmptyIcon} aria-hidden="true">—</div>
+          <p className={styles.queueEmptyEyebrow}>SEARCH COMPLETE</p>
+          <h2 id="lookup-empty-title">No matching requests found</h2>
+          <p className={styles.queueEmptyDescription}>
+            No submitted lease-interest requests matched this identifier. Check the
+            NIC or BRN and search again, or open the verification queue.
+          </p>
+          <div className={styles.queueEmptyActions}>
+            <Button href="/land-intelligence/officer/lease-interest-queue" variant="secondary">
+              View verification queue
+            </Button>
+          </div>
+        </section>
+      ) : null}
+
+      {searched && !error && totalCount > 0 ? (
         <div className={styles.results}>
           <p className={styles.resultSummary}>
-            {totalCount === 0
-              ? "No submitted lease-interest requests matched this NIC."
-              : `${totalCount} request${totalCount === 1 ? "" : "s"} matched (page ${page} of ${totalPages}).`}
+            {`${totalCount} request${totalCount === 1 ? "" : "s"} matched (page ${page} of ${totalPages}).`}
           </p>
 
           {items.length > 0 ? (
@@ -123,7 +152,7 @@ export function OfficerLeaseInterestLookupView() {
                     <th>District</th>
                     <th>Purpose</th>
                     <th>Duration (yrs)</th>
-                    <th>NIC</th>
+                    <th>Identifier</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -139,20 +168,26 @@ export function OfficerLeaseInterestLookupView() {
                         {landUseTypeLabels[row.requestedPurpose] ?? "Unknown"}
                       </td>
                       <td>{row.requestedDurationYears ?? "—"}</td>
-                      <td>{row.maskedNationalIdentityCardNumber}</td>
                       <td>
-                        <Link
-                          href={`/land-intelligence/officer/lease-interest-review/${row.requestId}`}
-                          className={styles.rowLink}
-                        >
-                          Review
-                        </Link>
-                        <Link
-                          href={`/land-intelligence/parcels/${row.landParcelId}`}
-                          className={styles.rowLink}
-                        >
-                          Parcel
-                        </Link>
+                        {row.applicantKind === 2
+                          ? row.businessRegistrationNumber ?? "—"
+                          : row.nationalIdentityCardNumber ?? "—"}
+                      </td>
+                      <td>
+                        <div className={styles.rowActions}>
+                          <Link
+                            href={`/land-intelligence/officer/lease-interest-review/${row.requestId}`}
+                            className={styles.rowLink}
+                          >
+                            Review
+                          </Link>
+                          <Link
+                            href={`/land-intelligence/parcels/${row.landParcelId}`}
+                            className={styles.rowLink}
+                          >
+                            Parcel
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -84,7 +84,7 @@ public static class LeaseInterestStatusTransitions
         status switch
         {
             LeaseInterestRequestStatus.Draft =>
-                "Draft — not submitted. This is not a reservation or lease.",
+                "Draft — not submitted.",
             LeaseInterestRequestStatus.Submitted =>
                 "Submitted — awaiting officer queue (preliminary interest only).",
             LeaseInterestRequestStatus.PendingVerification =>
@@ -94,9 +94,8 @@ public static class LeaseInterestStatusTransitions
             LeaseInterestRequestStatus.Declined =>
                 "Rejected after review. This is not a court decision and does not reserve land.",
             LeaseInterestRequestStatus.ReferredToAuthority =>
-                "Referred for authority follow-up. An officer valuation may be recorded; this does not create a lease.",
-            LeaseInterestRequestStatus.ApprovedInPrinciple =>
-                "Approved as a preliminary project decision only. Formal lease processing is still required. This does not create a lease, reserve land, or constitute official government approval.",
+                "Referred for authority follow-up. An officer valuation may be recorded.",
+            LeaseInterestRequestStatus.ApprovedInPrinciple => string.Empty,
             _ => "Status unknown.",
         };
 }

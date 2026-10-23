@@ -171,61 +171,6 @@ export function buildValuationWorksheetSections(
     );
   }
 
-  const observationFields: WorksheetField[] = [
-    {
-      label: "Assessed area (hectares)",
-      value:
-        valuation.assessedAreaHectares == null
-          ? NOT_ENTERED
-          : String(valuation.assessedAreaHectares),
-    },
-    {
-      label: "Inspection date",
-      value: displayDate(valuation.inspectionDate),
-    },
-    {
-      label: "Valuation date",
-      value: displayDate(valuation.valuationDate),
-    },
-    {
-      label: "Valuation reference",
-      value: displayOptionalText(valuation.valuationReference),
-    },
-    {
-      label: "Issuing office",
-      value: displayOptionalText(valuation.issuingOffice),
-    },
-    {
-      label: "Site condition",
-      value: displayOptionalText(valuation.siteCondition),
-    },
-  ];
-
-  if (agricultural) {
-    observationFields.push({
-      label: "Cultivation details",
-      value: displayOptionalText(valuation.cultivationDetails),
-    });
-  }
-
-  if (residential) {
-    observationFields.push({
-      label: "Residential improvements",
-      value: displayOptionalText(valuation.residentialImprovements),
-    });
-  }
-
-  observationFields.push(
-    {
-      label: "Project use details",
-      value: displayOptionalText(valuation.projectUseDetails),
-    },
-    {
-      label: "Other type details",
-      value: displayOptionalText(valuation.otherTypeDetails),
-    },
-  );
-
   return [
     {
       id: "recording",
@@ -298,25 +243,6 @@ export function buildValuationWorksheetSections(
         {
           title: "Second lease period entries",
           rows: periodRows(worksheet?.secondPeriodLines),
-        },
-      ],
-    },
-    {
-      id: "observations",
-      title: "Optional observations",
-      fields: observationFields,
-    },
-    {
-      id: "notes",
-      title: "Notes",
-      notes: [
-        {
-          label: "Worksheet notes",
-          value: displayOptionalText(worksheet?.worksheetNotes),
-        },
-        {
-          label: "Officer notes (internal)",
-          value: displayOptionalText(valuation.officerNotes),
         },
       ],
     },

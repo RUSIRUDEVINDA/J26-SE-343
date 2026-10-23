@@ -110,7 +110,56 @@ public sealed class LeaseInterestValuationDto
 }
 
 /// <summary>
-/// Applicant-visible summary of the latest officer valuation. Excludes officer notes and internal worksheet detail.
+/// Officer-recorded worksheet amounts shown to applicants. Excludes worksheet notes and any derived totals.
+/// </summary>
+public sealed class LeaseInterestApplicantWorksheetSummaryDto
+{
+    public string? LeaseFileNumber { get; init; }
+    public string? DivisionalSecretariat { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDateOnlyConverter))]
+    public DateOnly? LeaseApprovalDate { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDateOnlyConverter))]
+    public DateOnly? LeaseCommencementDate { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDateOnlyConverter))]
+    public DateOnly? ValuationReportDate { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDateOnlyConverter))]
+    public DateOnly? LeaseAgreementDate { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDecimalConverter))]
+    public decimal? PreviousAssessedValueLkr { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDecimalConverter))]
+    public decimal? LeaseRatePercent { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDecimalConverter))]
+    public decimal? AnnualLeaseAmountLkr { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDecimalConverter))]
+    public decimal? FirstPeriodAmountLkr { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDecimalConverter))]
+    public decimal? SecondPeriodAmountLkr { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDecimalConverter))]
+    public decimal? SecondPeriodAnnualAmountLkr { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDecimalConverter))]
+    public decimal? Circular2018AmountLkr { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDecimalConverter))]
+    public decimal? Circular2020SixAdjustmentLkr { get; init; }
+
+    public IReadOnlyList<LeaseWorksheetPeriodLineDto>? FirstPeriodLines { get; init; }
+    public IReadOnlyList<LeaseWorksheetPeriodLineDto>? SecondPeriodLines { get; init; }
+}
+
+/// <summary>
+/// Applicant-visible summary of the latest officer valuation revision only.
+/// Excludes officer notes, worksheet notes, officer identifiers, and internal decision fields.
 /// Does not change request status; recording a valuation is not a lease approval.
 /// </summary>
 public sealed class LeaseInterestApplicantValuationSummaryDto
@@ -119,6 +168,29 @@ public sealed class LeaseInterestApplicantValuationSummaryDto
     public DateTimeOffset RecordedAtUtc { get; init; }
     public string FormType { get; init; } = string.Empty;
     public decimal AssessedLandValueLkr { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDecimalConverter))]
+    public decimal? AssessedAreaHectares { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDateOnlyConverter))]
+    public DateOnly? InspectionDate { get; init; }
+
+    [JsonConverter(typeof(FlexibleNullableDateOnlyConverter))]
+    public DateOnly? ValuationDate { get; init; }
+
+    public string? ValuationReference { get; init; }
+    public string? IssuingOffice { get; init; }
+    public string? SiteCondition { get; init; }
+    public string? CultivationDetails { get; init; }
+    public string? ResidentialImprovements { get; init; }
+    public string? ProjectUseDetails { get; init; }
+    public string? OtherTypeDetails { get; init; }
+
+    /// <summary>Convenience mirror of <see cref="Worksheet"/> file number when recorded.</summary>
     public string? LeaseFileNumber { get; init; }
+
+    /// <summary>Convenience mirror of <see cref="Worksheet"/> division when recorded.</summary>
     public string? DivisionalSecretariat { get; init; }
+
+    public LeaseInterestApplicantWorksheetSummaryDto? Worksheet { get; init; }
 }

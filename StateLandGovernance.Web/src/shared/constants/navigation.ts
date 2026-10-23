@@ -45,7 +45,7 @@ export const component01NavItems: NavItem[] = [
 
 /** Shown only when the API research-demo officer NIC lookup gate is active. */
 export const officerLeaseInterestLookupNavItem: NavItem = {
-  label: "Officer NIC lookup (Research demo)",
+  label: "Officer applicant lookup (Research demo)",
   href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-lookup`,
   icon: "⚑",
 };
@@ -61,6 +61,33 @@ export const authorityLeaseInterestQueueNavItem: NavItem = {
   href: `${LAND_INTELLIGENCE_BASE}/authority/lease-interest-queue`,
   icon: "⚖",
 };
+
+export const WORKFLOW_GOVERNANCE_BASE = "/workflow-governance";
+
+export const workflowGovernanceNavItems: NavItem[] = [
+  { label: "Module home", href: "/component-03", icon: "▦" },
+  {
+    label: "Case queue",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/cases`,
+    icon: "☰",
+    primary: true,
+  },
+  {
+    label: "Proposal intake",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/intake`,
+    icon: "✎",
+  },
+  {
+    label: "Track application",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/tracking`,
+    icon: "◎",
+  },
+  {
+    label: "My applications",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/cases`,
+    icon: "☷",
+  },
+];
 
 export const moduleLandingLinks = [
   {

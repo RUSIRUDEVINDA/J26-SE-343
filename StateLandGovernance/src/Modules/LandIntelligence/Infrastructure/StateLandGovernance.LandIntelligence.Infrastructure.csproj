@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\Application\StateLandGovernance.LandIntelligence.Application.csproj" />
@@ -17,6 +17,12 @@
     <InternalsVisibleTo Include="StateLandGovernance.UnitTests.LandIntelligence" />
     <InternalsVisibleTo Include="StateLandGovernance.IntegrationTests" />
     <InternalsVisibleTo Include="ColomboExperimentalGisVerify" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Persistence\RealParcels\Data\Colombo_400_GN_Division_Mapping.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

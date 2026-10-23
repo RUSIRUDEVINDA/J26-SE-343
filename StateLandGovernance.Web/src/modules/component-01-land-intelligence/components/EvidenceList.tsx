@@ -1,5 +1,13 @@
-import type { RecommendationEvidenceResponse } from "../types/landIntelligence";
+import type {
+  LandParcelRecommendationResponse,
+  RecommendationEvidenceResponse,
+} from "../types/landIntelligence";
 import { displayOrUnknown } from "../utils/formatters";
+import {
+  customerEvidenceDescriptionLines,
+  customerEvidenceTitle,
+  customerVisibleEvidence,
+} from "../utils/recommendationCardCustomer";
 import styles from "./Lists.module.css";
 
 const ML_CRITERION_NAMES = new Set([
@@ -23,9 +31,43 @@ function isMlEvidence(item: RecommendationEvidenceResponse): boolean {
 
 export function EvidenceList({
   evidence,
+  recommendation,
+  variant = "technical",
 }: {
   evidence: RecommendationEvidenceResponse[];
+  recommendation?: LandParcelRecommendationResponse;
+  variant?: "technical" | "customer";
 }) {
+  if (variant === "customer" && recommendation) {
+    const items = customerVisibleEvidence(recommendation);
+    return (
+      <div className={styles.evidenceWrap}>
+        {items.length === 0 ? (
+          <p className={styles.empty}>
+            No additional supporting records beyond the criteria and restrictions
+            shown for this parcel.
+          </p>
+        ) : (
+          <ul className={styles.list} aria-label="Supporting evidence">
+            {items.map((item, index) => (
+              <li
+                key={`${item.source}-${item.relatedCriterionName ?? ""}-${index}`}
+                className={styles.item}
+              >
+                <p className={styles.meta}>
+                  <strong>{customerEvidenceTitle(item)}</strong>
+                </p>
+                {customerEvidenceDescriptionLines(item).map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
+
   const standard = evidence.filter((item) => !isMlEvidence(item));
   const mlEvidence = evidence.filter((item) => isMlEvidence(item));
 

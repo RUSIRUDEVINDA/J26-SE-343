@@ -13,7 +13,6 @@ import type {
 import { restrictionSeverityLabels } from "../utils/enumMappings";
 import {
   displayOrUnknown,
-  explanationToBullets,
   extractSourceReportedLandUseFromCriteria,
   formatParcelAreaHectares,
   formatCriterionScore,
@@ -21,6 +20,12 @@ import {
   recommendationResultStatus,
   suitabilityBadgeLabel,
 } from "../utils/formatters";
+import {
+  buildCustomerMatchReasons,
+  customerCriterionSummaryLines,
+  customerRecommendationIntro,
+  customerVisibleCriteria,
+} from "../utils/recommendationCardCustomer";
 import { EvidenceList } from "./EvidenceList";
 import styles from "./RecommendationCard.module.css";
 
@@ -106,11 +111,12 @@ export function RecommendationCard({
     ...recommendation.matchingCriteria.map((c) => c.summary),
     ...recommendation.failedCriteria.map((c) => c.summary),
   ]);
-  const bullets = explanationToBullets(recommendation.explanation);
-  const allCriteria = [
+  const recommendationIntro = customerRecommendationIntro(recommendation);
+  const matchReasons = buildCustomerMatchReasons(recommendation);
+  const visibleCriteria = customerVisibleCriteria([
     ...recommendation.matchingCriteria,
     ...recommendation.failedCriteria,
-  ];
+  ]);
   const hasRestrictions = recommendation.restrictions.length > 0;
   const displayOrder = recommendation.displayOrder ?? recommendation.rank;
   const ruleScoreRank = recommendation.ruleScoreRank ?? recommendation.rank;
@@ -230,7 +236,7 @@ export function RecommendationCard({
           <div className={styles.tabs} role="tablist" aria-label="Result details">
             {(
               [
-                ["why", isTied ? "Why this score" : "Why this result"],
+                ["why", "Why recommended"],
                 ["criteria", "Criteria"],
                 ["restrictions", `Restrictions${hasRestrictions ? ` (${recommendation.restrictions.length})` : ""}`],
                 ["evidence", "Evidence"],
@@ -251,111 +257,29 @@ export function RecommendationCard({
 
           <div className={styles.panel} role="tabpanel">
             {tab === "why" ? (
-              <>
-                {recommendation.candidateStatusReason ? (
-                  <div className={styles.factorGroup}>
-                    <p className={styles.factorLabel}>Candidate screening</p>
-                    <p className={styles.lead}>
-                      {recommendation.candidateStatusLabel
-                        ? `${recommendation.candidateStatusLabel}. `
-                        : ""}
-                      {recommendation.candidateStatusReason}
-                    </p>
-                    <ul className={styles.factorList}>
-                      {recommendation.sourceProvenanceLabel ? (
-                        <li>
-                          Provenance: {recommendation.sourceProvenanceLabel}
-                        </li>
-                      ) : null}
-                      {recommendation.sourceParcelStatusCode ? (
-                        <li>
-                          Source parcel status code (not lease availability):{" "}
-                          {recommendation.sourceParcelStatusCode}
-                        </li>
-                      ) : (
-                        <li>
-                          Source parcel status: not provided — availability not
-                          verified
-                        </li>
-                      )}
-                      {recommendation.sourceImportedAtUtc ? (
-                        <li>
-                          Source imported:{" "}
-                          {new Date(
-                            recommendation.sourceImportedAtUtc,
-                          ).toLocaleString()}
-                        </li>
-                      ) : null}
-                    </ul>
-                  </div>
-                ) : null}
-                {recommendation.actualLeaseAvailabilityLabel ? (
-                  <div className={styles.factorGroup}>
-                    <p className={styles.factorLabel}>
-                      Official lease availability
-                    </p>
-                    <p className={styles.lead}>
-                      {recommendation.actualLeaseAvailabilityLabel}
-                    </p>
-                    <p className={styles.sourceNote}>
-                      Any project designation is a dataset assumption and does
-                      not confirm official lease availability.
-                    </p>
-                  </div>
-                ) : null}
-                {recommendation.projectLeaseReadyLabel ? (
-                  <div className={styles.factorGroup}>
-                    <p className={styles.factorLabel}>Project designation</p>
-                    <p className={styles.lead}>
-                      {recommendation.projectLeaseReadyLabel}
-                    </p>
-                  </div>
-                ) : null}
-                {recommendation.sourceReportedClaimantCategoryDisplay ? (
-                  <div className={styles.factorGroup}>
-                    <p className={styles.factorLabel}>Source-reported claimant category</p>
-                    <p className={styles.lead}>
-                      {recommendation.sourceReportedClaimantCategoryDisplay}
-                      {recommendation.sourceReportedClaimantCategoryCode
-                        ? ` (code ${recommendation.sourceReportedClaimantCategoryCode})`
-                        : ""}
-                    </p>
-                    <p className={styles.sourceNote}>
-                      This is preliminary screening only — not a legal ownership determination.
-                    </p>
-                  </div>
-                ) : null}
-                <p className={styles.lead}>{bullets.lead}</p>
-                {bullets.positives.length > 0 ? (
-                  <div className={styles.factorGroup}>
-                    <p className={styles.factorLabel}>Positive factors</p>
-                    <ul className={styles.factorList}>
-                      {bullets.positives.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-                {bullets.concerns.length > 0 ? (
-                  <div className={styles.factorGroup}>
-                    <p className={styles.factorLabel}>Concerns / failed criteria</p>
-                    <ul className={styles.factorList}>
-                      {bullets.concerns.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-                <p className={styles.sourceNote}>
-                  Decision-support screening only. Source-reported claimant category and
-                  land use do not prove ownership, lease availability, or legal
-                  suitability. Official confirmation is required.
-                </p>
-              </>
+              <section aria-labelledby={`${panelId}-why-recommended`}>
+                <h4 id={`${panelId}-why-recommended`} className={styles.whyHeading}>
+                  Why this parcel was recommended
+                </h4>
+                <p className={styles.lead}>{recommendationIntro}</p>
+                {matchReasons.length > 0 ? (
+                  <ul className={styles.factorList}>
+                    {matchReasons.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className={styles.empty}>
+                    No short reasons were available from the criteria assessed in
+                    this search.
+                  </p>
+                )}
+
+              </section>
             ) : null}
 
             {tab === "criteria" ? (
-              allCriteria.length === 0 ? (
+              visibleCriteria.length === 0 ? (
                 <p className={styles.empty}>No criteria returned by the API.</p>
               ) : (
                 <div style={{ overflowX: "auto" }}>
@@ -365,12 +289,10 @@ export function RecommendationCard({
                         <th scope="col">Criterion</th>
                         <th scope="col">Status</th>
                         <th scope="col">Score</th>
-                        <th scope="col">Weight</th>
-                        <th scope="col">Source</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {allCriteria.map((criterion) => {
+                      {visibleCriteria.map((criterion) => {
                         const statusInfo = criterionStatusLabel(criterion);
                         return (
                           <tr key={`${criterion.key}-${criterion.name}`}>
@@ -379,11 +301,15 @@ export function RecommendationCard({
                                 {criterion.name}
                               </span>
                               <span className={styles.criteriaSummary}>
-                                {displayOrUnknown(
-                                  criterion.wasAssessed === false
-                                    ? criterion.notAssessedReason ||
-                                        criterion.summary
-                                    : criterion.summary,
+                                {customerCriterionSummaryLines(criterion).map(
+                                  (line) => (
+                                    <span
+                                      key={line}
+                                      className={styles.criteriaSummaryLine}
+                                    >
+                                      {line}
+                                    </span>
+                                  ),
                                 )}
                               </span>
                             </td>
@@ -396,18 +322,6 @@ export function RecommendationCard({
                               {criterion.wasAssessed === false
                                 ? "—"
                                 : formatCriterionScore(criterion.score)}
-                            </td>
-                            <td>
-                              {criterion.wasAssessed === false
-                                ? "—"
-                                : criterion.weight}
-                            </td>
-                            <td>
-                              {criterion.dataProvenance?.sourceName
-                                ? displayOrUnknown(
-                                    criterion.dataProvenance.sourceName,
-                                  )
-                                : "Rule-based criterion"}
                             </td>
                           </tr>
                         );
@@ -446,9 +360,6 @@ export function RecommendationCard({
                           {restrictionSeverityLabels[item.severity] ??
                             "Unknown"}
                         </StatusBadge>
-                        <span className={styles.sourceNote}>
-                          Source: {displayOrUnknown(item.source)}
-                        </span>
                       </div>
                       <p className={styles.restrictionDesc}>
                         {displayOrUnknown(item.description)}
@@ -460,7 +371,11 @@ export function RecommendationCard({
             ) : null}
 
             {tab === "evidence" ? (
-              <EvidenceList evidence={recommendation.evidence} />
+              <EvidenceList
+                evidence={recommendation.evidence}
+                recommendation={recommendation}
+                variant="customer"
+              />
             ) : null}
           </div>
         </div>

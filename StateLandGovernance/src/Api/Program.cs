@@ -16,6 +16,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
+using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
@@ -432,6 +433,13 @@ else
         .GetRequiredService<LandIntelligenceDbContext>();
 
     dbContext.Database.Migrate();
+    await LandIntelligenceSchemaRepair.ApplyAsync(dbContext);
+    var nicProtector = scope.ServiceProvider
+        .GetRequiredService<StateLandGovernance.LandIntelligence.Application.Interfaces.INicPersonalDataProtector>();
+    await StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest.LeaseInterestBrnLookupBackfill.ApplyAsync(
+        dbContext,
+        nicProtector);
+    await EnsureColomboGnDivisionMappingImportedAsync(scope.ServiceProvider);
 }
 
 app.Use(async (context, next) =>

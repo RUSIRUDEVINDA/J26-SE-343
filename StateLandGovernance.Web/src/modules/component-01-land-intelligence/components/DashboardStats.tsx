@@ -61,12 +61,10 @@ export function DashboardStats() {
         <article className={styles.metricCard}>
           <p className={styles.metricLabel}>Indexed parcels</p>
           <p className={styles.metricValue} aria-live="polite">{parcelTotal ?? (failed.parcels ? "Unavailable" : "…")}</p>
-          <p className={styles.metricNote}>Records available to browse and compare</p>
         </article>
         <article className={styles.metricCard}>
           <p className={styles.metricLabel}>Project-designated parcels</p>
           <p className={styles.metricValue} aria-live="polite">{projectDesignatedEffective ?? (failed.designated ? "Unavailable" : "…")}</p>
-          <p className={styles.metricNote}>Project dataset assumption; official lease availability is unverified</p>
         </article>
       </section>
 
@@ -76,7 +74,7 @@ export function DashboardStats() {
             <div><p className={styles.sectionKicker}>Explore the dataset</p><h2 id="land-use-heading">Land use at a glance</h2></div>
             <Link href="/land-intelligence/parcels" className={styles.panelLink}>View parcels →</Link>
           </div>
-          <p className={styles.panelIntro}>Top source-reported land-use categories in the indexed parcel data. These labels do not confirm lease availability.</p>
+
           {leadingUses.length > 0 ? (
             <div className={styles.bars}>
               {leadingUses.map((item) => (

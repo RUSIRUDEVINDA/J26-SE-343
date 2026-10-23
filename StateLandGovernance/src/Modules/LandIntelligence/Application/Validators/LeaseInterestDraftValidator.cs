@@ -1,5 +1,6 @@
 using System.Net.Mail;
 using StateLandGovernance.LandIntelligence.Application.Configuration;
+using StateLandGovernance.LandIntelligence.Application.LeaseInterest;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.LeaseInterest;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
@@ -76,6 +77,16 @@ public sealed class LeaseInterestDraftValidator
         }
 
         ValidateNic(errors, applicant, isOrganization, forSubmit);
+        if (isOrganization && forSubmit)
+        {
+            if (!LeaseInterestBusinessRegistration.TryValidate(
+                    applicant.OrganizationRegistrationNumber,
+                    out _,
+                    out var brnError))
+            {
+                errors.Add(brnError!);
+            }
+        }
         ValidateProposal(errors, proposal, forSubmit);
 
         ValidateText(
@@ -123,6 +134,7 @@ public sealed class LeaseInterestDraftValidator
             "Desired start period",
             MaxDesiredStartPeriodLength,
             forSubmit);
+        ValidateDesiredStartPeriodNotInPast(errors, proposal.DesiredStartPeriod, forSubmit);
         ValidateText(
             errors,
             proposal.ProjectSummary,
@@ -175,12 +187,11 @@ public sealed class LeaseInterestDraftValidator
             {
                 errors.Add(nicError!);
             }
+
+            return;
         }
-        else if (!nicEntered)
-        {
-            errors.Add("Representative National Identity Card (NIC) number is required.");
-        }
-        else if (!SriLankanNic.TryValidate(nicRaw, out _, out var repNicError))
+
+        if (nicEntered && !SriLankanNic.TryValidate(nicRaw, out _, out var repNicError))
         {
             errors.Add(repNicError!);
         }
@@ -233,6 +244,27 @@ public sealed class LeaseInterestDraftValidator
         if (!IsPlausiblePhone(trimmed))
         {
             errors.Add("Contact phone must be a valid phone number (7–15 digits; optional +, spaces, dashes or brackets).");
+        }
+    }
+
+    private static void ValidateDesiredStartPeriodNotInPast(
+        List<string> errors,
+        string? desiredStartPeriod,
+        bool forSubmit)
+    {
+        if (!forSubmit || string.IsNullOrWhiteSpace(desiredStartPeriod))
+        {
+            return;
+        }
+
+        if (!DateOnly.TryParse(desiredStartPeriod.Trim(), out var startDate))
+        {
+            return;
+        }
+
+        if (startDate < DateOnly.FromDateTime(DateTime.UtcNow))
+        {
+            errors.Add("Desired start period cannot be in the past.");
         }
     }
 
