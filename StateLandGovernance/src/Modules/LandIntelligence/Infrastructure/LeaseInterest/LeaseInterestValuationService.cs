@@ -265,8 +265,48 @@ public sealed class LeaseInterestValuationService : ILeaseInterestValuationServi
             RecordedAtUtc = latest.RecordedAtUtc,
             FormType = latest.FormType,
             AssessedLandValueLkr = latest.AssessedLandValueLkr,
+            AssessedAreaHectares = latest.AssessedAreaHectares,
+            InspectionDate = latest.InspectionDate,
+            ValuationDate = latest.ValuationDate,
+            ValuationReference = latest.ValuationReference,
+            IssuingOffice = latest.IssuingOffice,
+            SiteCondition = latest.SiteCondition,
+            CultivationDetails = latest.CultivationDetails,
+            ResidentialImprovements = latest.ResidentialImprovements,
+            ProjectUseDetails = latest.ProjectUseDetails,
+            OtherTypeDetails = latest.OtherTypeDetails,
             LeaseFileNumber = worksheet?.LeaseFileNumber,
             DivisionalSecretariat = worksheet?.DivisionalSecretariat,
+            Worksheet = MapApplicantWorksheet(worksheet),
+        };
+    }
+
+    private static LeaseInterestApplicantWorksheetSummaryDto? MapApplicantWorksheet(
+        LeaseWorksheetDetailsDto? worksheet)
+    {
+        if (worksheet is null)
+        {
+            return null;
+        }
+
+        return new LeaseInterestApplicantWorksheetSummaryDto
+        {
+            LeaseFileNumber = worksheet.LeaseFileNumber,
+            DivisionalSecretariat = worksheet.DivisionalSecretariat,
+            LeaseApprovalDate = worksheet.LeaseApprovalDate,
+            LeaseCommencementDate = worksheet.LeaseCommencementDate,
+            ValuationReportDate = worksheet.ValuationReportDate,
+            LeaseAgreementDate = worksheet.LeaseAgreementDate,
+            PreviousAssessedValueLkr = worksheet.PreviousAssessedValueLkr,
+            LeaseRatePercent = worksheet.LeaseRatePercent,
+            AnnualLeaseAmountLkr = worksheet.AnnualLeaseAmountLkr,
+            FirstPeriodAmountLkr = worksheet.FirstPeriodAmountLkr,
+            SecondPeriodAmountLkr = worksheet.SecondPeriodAmountLkr,
+            SecondPeriodAnnualAmountLkr = worksheet.SecondPeriodAnnualAmountLkr,
+            Circular2018AmountLkr = worksheet.Circular2018AmountLkr,
+            Circular2020SixAdjustmentLkr = worksheet.Circular2020SixAdjustmentLkr,
+            FirstPeriodLines = worksheet.FirstPeriodLines,
+            SecondPeriodLines = worksheet.SecondPeriodLines,
         };
     }
 
