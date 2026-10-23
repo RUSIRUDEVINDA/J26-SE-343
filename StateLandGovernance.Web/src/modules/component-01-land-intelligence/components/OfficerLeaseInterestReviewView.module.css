@@ -42,7 +42,24 @@
 textarea.input { resize: vertical; line-height: 1.5; }
 .input:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 .fieldHelp { margin: .45rem 0 0; color: var(--color-muted); font-size: .78rem; line-height: 1.45; }
-.submitButton { width: 100%; justify-content: center; }
+.submitButton {
+  width: 100%;
+  justify-content: center;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.submitButton:not(:disabled):hover {
+  filter: brightness(1.08);
+}
+
+.submitButton:disabled {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  opacity: 0.55;
+}
 .closedMessage { margin: 0; color: var(--color-muted); font-size: .88rem; line-height: 1.5; }
 .valuationForm { display: grid; gap: .4rem; margin-top: 1.1rem; }
 .valuationGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1rem; }
