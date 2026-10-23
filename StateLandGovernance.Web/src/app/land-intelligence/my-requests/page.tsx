@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { EmptyState } from "@/shared/components/EmptyState";
@@ -22,6 +28,16 @@ import {
 } from "@/modules/component-01-land-intelligence/utils/leaseInterestStatus";
 import styles from "./MyRequests.module.css";
 
+const PAGE_SIZE = 10;
+const MY_REQUESTS_PANEL_ID = "my-requests-panel";
+
+type MyRequestsTab = "submitted" | "drafts";
+
+const MY_REQUESTS_TABS: { value: MyRequestsTab; label: string }[] = [
+  { value: "submitted", label: "Submitted" },
+  { value: "drafts", label: "Drafts" },
+];
+
 function formatShortDate(iso: string | null | undefined): string {
   if (!iso) {
     return "—";
@@ -37,12 +53,42 @@ function formatShortDate(iso: string | null | undefined): string {
   });
 }
 
+function sortSubmitted(
+  rows: LeaseInterestRequestSummary[],
+): LeaseInterestRequestSummary[] {
+  return [...rows].sort((a, b) => {
+    const ta = new Date(a.submittedAtUtc ?? a.updatedAtUtc).getTime();
+    const tb = new Date(b.submittedAtUtc ?? b.updatedAtUtc).getTime();
+    return tb - ta;
+  });
+}
+
+function sortDrafts(
+  rows: LeaseInterestRequestSummary[],
+): LeaseInterestRequestSummary[] {
+  return [...rows].sort((a, b) => {
+    const ta = new Date(a.updatedAtUtc).getTime();
+    const tb = new Date(b.updatedAtUtc).getTime();
+    return tb - ta;
+  });
+}
+
+function clampPage(page: number, itemCount: number): number {
+  const totalPages = Math.max(1, Math.ceil(itemCount / PAGE_SIZE));
+  return Math.min(Math.max(1, page), totalPages);
+}
+
+function paginate<T>(rows: T[], page: number): T[] {
+  const start = (page - 1) * PAGE_SIZE;
+  return rows.slice(start, start + PAGE_SIZE);
+}
+
 function RequestRow({
   item,
   onDeleted,
 }: {
   item: LeaseInterestRequestSummary;
-  onDeleted: (requestId: string) => void;
+  onDeleted?: (requestId: string) => void;
 }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -72,7 +118,7 @@ function RequestRow({
     try {
       await deleteLeaseInterestDraft(item.id);
       setConfirmOpen(false);
-      onDeleted(item.id);
+      onDeleted?.(item.id);
     } catch (err) {
       if (err instanceof ApiClientError) {
         setDeleteError(err.detail || err.title);
@@ -204,46 +250,19 @@ function RequestRow({
   );
 }
 
-function RequestSection({
-  title,
-  items,
-  emptyLabel,
-  onDraftDeleted,
-}: {
-  title: string;
-  items: LeaseInterestRequestSummary[];
-  emptyLabel: string;
-  onDraftDeleted?: (requestId: string) => void;
-}) {
-  return (
-    <section className={styles.section} aria-labelledby={`${title}-heading`}>
-      <div className={styles.sectionHeader}>
-        <h2 id={`${title}-heading`} className={styles.sectionTitle}>
-          {title}
-        </h2>
-        <span className={styles.count}>{items.length}</span>
-      </div>
-      {items.length === 0 ? (
-        <p className={styles.sectionEmpty}>{emptyLabel}</p>
-      ) : (
-        <ul className={styles.list}>
-          {items.map((item) => (
-            <RequestRow
-              key={item.id}
-              item={item}
-              onDeleted={(requestId) => onDraftDeleted?.(requestId)}
-            />
-          ))}
-        </ul>
-      )}
-    </section>
-  );
-}
-
 export default function MyRequestsPage() {
   const [items, setItems] = useState<LeaseInterestRequestSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<MyRequestsTab>("submitted");
+  const [pageByTab, setPageByTab] = useState<Record<MyRequestsTab, number>>({
+    submitted: 1,
+    drafts: 1,
+  });
+  const tabRefs = useRef<Record<MyRequestsTab, HTMLButtonElement | null>>({
+    submitted: null,
+    drafts: null,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -282,8 +301,77 @@ export default function MyRequestsPage() {
         submittedRows.push(item);
       }
     }
-    return { drafts: draftRows, submitted: submittedRows };
+    return {
+      drafts: sortDrafts(draftRows),
+      submitted: sortSubmitted(submittedRows),
+    };
   }, [items]);
+
+  const tabLists: Record<MyRequestsTab, LeaseInterestRequestSummary[]> = {
+    submitted,
+    drafts,
+  };
+
+  const activeList = tabLists[activeTab];
+  const activePage = pageByTab[activeTab];
+  const totalPages = Math.max(1, Math.ceil(activeList.length / PAGE_SIZE));
+  const pageItems = paginate(activeList, activePage);
+
+  function selectTab(next: MyRequestsTab) {
+    if (next === activeTab) {
+      return;
+    }
+    setActiveTab(next);
+  }
+
+  function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
+    const index = MY_REQUESTS_TABS.findIndex(
+      (option) => option.value === activeTab,
+    );
+    let nextIndex = index;
+    if (event.key === "ArrowRight") {
+      nextIndex = (index + 1) % MY_REQUESTS_TABS.length;
+    } else if (event.key === "ArrowLeft") {
+      nextIndex =
+        (index - 1 + MY_REQUESTS_TABS.length) % MY_REQUESTS_TABS.length;
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = MY_REQUESTS_TABS.length - 1;
+    } else {
+      return;
+    }
+    event.preventDefault();
+    const next = MY_REQUESTS_TABS[nextIndex].value;
+    selectTab(next);
+    tabRefs.current[next]?.focus();
+  }
+
+  function setActiveTabPage(nextPage: number) {
+    setPageByTab((prev) => ({
+      ...prev,
+      [activeTab]: clampPage(nextPage, activeList.length),
+    }));
+  }
+
+  function handleDraftDeleted(requestId: string) {
+    setItems((prev) => {
+      const next = prev.filter((row) => row.id !== requestId);
+      const nextDraftCount = next.filter((row) =>
+        isLeaseInterestDraftStatus(row.status),
+      ).length;
+      setPageByTab((pages) => ({
+        ...pages,
+        drafts: clampPage(pages.drafts, nextDraftCount),
+      }));
+      return next;
+    });
+  }
+
+  const emptyTabMessage =
+    activeTab === "submitted"
+      ? "No submitted requests yet. Complete and submit a draft to see it here."
+      : "No drafts in progress. Start a request from a parcel to save a draft.";
 
   return (
     <>
@@ -316,20 +404,84 @@ export default function MyRequestsPage() {
         />
       ) : null}
       {!loading && !error && items.length > 0 ? (
-        <div className={styles.sections}>
-          <RequestSection
-            title="Drafts"
-            items={drafts}
-            emptyLabel="No drafts in progress."
-            onDraftDeleted={(requestId) =>
-              setItems((prev) => prev.filter((row) => row.id !== requestId))
-            }
-          />
-          <RequestSection
-            title="Submitted"
-            items={submitted}
-            emptyLabel="No submitted requests yet."
-          />
+        <div className={styles.workspace}>
+          <div
+            className={styles.tabList}
+            role="tablist"
+            aria-label="Request categories"
+          >
+            {MY_REQUESTS_TABS.map((tab) => {
+              const selected = tab.value === activeTab;
+              const count = tabLists[tab.value].length;
+              return (
+                <button
+                  key={tab.value}
+                  ref={(node) => {
+                    tabRefs.current[tab.value] = node;
+                  }}
+                  type="button"
+                  role="tab"
+                  id={`my-requests-tab-${tab.value}`}
+                  aria-selected={selected}
+                  aria-controls={MY_REQUESTS_PANEL_ID}
+                  tabIndex={selected ? 0 : -1}
+                  className={`${styles.tab} ${selected ? styles.tabActive : ""}`}
+                  onClick={() => selectTab(tab.value)}
+                  onKeyDown={onTabKeyDown}
+                >
+                  {tab.label} ({count})
+                </button>
+              );
+            })}
+          </div>
+
+          <div
+            id={MY_REQUESTS_PANEL_ID}
+            role="tabpanel"
+            aria-labelledby={`my-requests-tab-${activeTab}`}
+            className={styles.tabPanel}
+          >
+            {activeList.length === 0 ? (
+              <p className={styles.sectionEmpty}>{emptyTabMessage}</p>
+            ) : (
+              <>
+                <ul className={styles.list}>
+                  {pageItems.map((item) => (
+                    <RequestRow
+                      key={item.id}
+                      item={item}
+                      onDeleted={
+                        activeTab === "drafts" ? handleDraftDeleted : undefined
+                      }
+                    />
+                  ))}
+                </ul>
+                {activeList.length > PAGE_SIZE ? (
+                  <div className={styles.pager}>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      disabled={activePage <= 1}
+                      onClick={() => setActiveTabPage(activePage - 1)}
+                    >
+                      Previous
+                    </Button>
+                    <span className={styles.pagerLabel}>
+                      Page {activePage} of {totalPages}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      disabled={activePage >= totalPages}
+                      onClick={() => setActiveTabPage(activePage + 1)}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                ) : null}
+              </>
+            )}
+          </div>
         </div>
       ) : null}
     </>

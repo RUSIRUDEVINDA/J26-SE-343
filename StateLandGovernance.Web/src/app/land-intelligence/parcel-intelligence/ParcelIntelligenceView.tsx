@@ -671,9 +671,6 @@ export function ParcelIntelligenceView({
             >
               Express preliminary interest
             </Button>
-            <Button href="/land-intelligence/shortlist" variant="secondary">
-              Open shortlist
-            </Button>
           </div>
           <ParcelDetails
             parcel={parcel}
