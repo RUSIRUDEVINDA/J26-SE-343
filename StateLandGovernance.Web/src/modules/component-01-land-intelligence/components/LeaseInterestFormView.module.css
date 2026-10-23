@@ -5,6 +5,11 @@
   align-items: start;
 }
 
+.layout > .panel,
+.layout > .sideSummary {
+  min-width: 0;
+}
+
 .startLayout {
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(270px, 0.8fr);
@@ -429,28 +434,59 @@
   border-radius: 14px;
   padding: 1rem 1.1rem;
   background: #fff;
+  min-width: 0;
 }
 
 .reviewCardHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.75rem 1rem;
+  flex-wrap: nowrap;
   margin-bottom: 0.65rem;
 }
 
 .reviewCardTitle {
   margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--color-primary);
 }
 
-.editButton {
-  flex-shrink: 0;
-  font-size: 0.78rem !important;
-  padding: 0.25rem 0.5rem !important;
-  min-height: auto !important;
+.reviewCardAction,
+.reviewCardFooterAction,
+.sideParcelAction {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+  white-space: nowrap;
+  padding: 0.48rem 1.05rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 650 !important;
+  line-height: 1.25 !important;
+  min-height: 2.4rem !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: var(--color-primary) !important;
+  border: 1px solid #e4b4b0 !important;
+  box-shadow: 0 2px 6px rgb(133 9 6 / 7%);
+}
+
+.reviewCardAction:not(:disabled):hover,
+.reviewCardFooterAction:hover,
+.sideParcelAction:hover {
+  background: var(--color-nav-inactive) !important;
+  border-color: #d9aaa5 !important;
+  color: var(--color-primary) !important;
+  filter: none !important;
+}
+
+.reviewCardAction:focus-visible,
+.reviewCardFooterAction:focus-visible,
+.sideParcelAction:focus-visible {
+  box-shadow: var(--focus-ring) !important;
 }
 
 .reviewDl {
@@ -474,9 +510,18 @@
 }
 
 .reviewCardFooter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-top: 0.85rem;
   padding-top: 0.75rem;
   border-top: 1px solid var(--color-card-border);
+}
+
+.reviewCardFooter a,
+.reviewCardFooter button {
+  width: auto;
+  max-width: 100%;
 }
 
 .monoValue,
@@ -692,7 +737,16 @@
 }
 
 .sideActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-top: 0.85rem;
+}
+
+.sideActions a,
+.sideActions button {
+  width: auto;
+  max-width: 100%;
 }
 
 .metaList {

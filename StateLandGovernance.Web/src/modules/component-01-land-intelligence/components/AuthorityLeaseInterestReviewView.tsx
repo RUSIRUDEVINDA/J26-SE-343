@@ -298,7 +298,9 @@ export function AuthorityLeaseInterestReviewView({
           <h2 className={styles.reference}>
             {detail.acknowledgementReference ?? "Lease interest request"}
           </h2>
-          <p className={styles.headerText}>{detail.applicantOutcomeSummary}</p>
+          {detail.applicantOutcomeSummary.trim() ? (
+            <p className={styles.headerText}>{detail.applicantOutcomeSummary}</p>
+          ) : null}
         </div>
         <StatusBadge tone={leaseInterestStatusBadgeTone(detail.status)}>
           {leaseInterestStatusLabel(detail.status)}

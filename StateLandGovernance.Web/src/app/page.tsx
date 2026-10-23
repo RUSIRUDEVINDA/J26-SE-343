@@ -18,10 +18,10 @@ export default function HomePage() {
                 {module.id === "component-02"
                   ? "Open the financial assessment and proposal design preview."
                   : module.id === "component-03"
-                  ? "Case intake, OCR fact extraction, human verification and workflow tracking."
-                  : module.id === "component-04"
-                  ? "Governance intelligence, conflict checks, and screening oversight."
-                  : "Open module dashboard and spatial recommendation tools."}
+                    ? "Case intake, OCR fact extraction, human verification and workflow tracking."
+                    : module.id === "component-04"
+                      ? "Governance intelligence, conflict checks, and screening oversight."
+                      : "Open module dashboard and spatial recommendation tools."}
               </p>
             </Link>
           ) : (

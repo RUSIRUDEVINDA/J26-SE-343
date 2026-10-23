@@ -557,7 +557,11 @@ export function LeaseInterestFormView({
                 <div><dt>Reported claimant</dt><dd>{claimantDisplay}</dd></div>
               ) : null}
             </dl>
-            <Button href={`/land-intelligence/parcels/${parcelId}`} variant="ghost">
+            <Button
+              href={`/land-intelligence/parcels/${parcelId}`}
+              variant="ghost"
+              className={styles.sideParcelAction}
+            >
               View parcel details
             </Button>
           </div>
@@ -583,9 +587,11 @@ export function LeaseInterestFormView({
               Status:{" "}
               <strong>{leaseInterestStatusLabel(request.status)}</strong>
             </p>
-            <p className={styles.notice} role="note">
-              {leaseInterestApplicantOutcome(request.status)}
-            </p>
+            {leaseInterestApplicantOutcome(request.status).trim() ? (
+              <p className={styles.notice} role="note">
+                {leaseInterestApplicantOutcome(request.status)}
+              </p>
+            ) : null}
             {request.statusHistory.length > 0 ? (
               <div className={styles.reviewCard}>
                 <h3 className={styles.reviewCardTitle}>Status timeline</h3>
@@ -1124,7 +1130,6 @@ export function LeaseInterestFormView({
             parcel={parcel}
             parcelId={parcelId}
             draft={draft}
-            request={request}
             checklist={checklist}
             readOnly={readOnly}
             onEditApplicant={() => setStep(0)}
@@ -1248,7 +1253,8 @@ export function LeaseInterestFormView({
             <div className={styles.sideActions}>
               <Button
                 href={`/land-intelligence/parcels/${parcelId}/map`}
-                variant="secondary"
+                variant="ghost"
+                className={styles.sideParcelAction}
               >
                 View boundary on map
               </Button>

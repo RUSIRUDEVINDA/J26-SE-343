@@ -4,19 +4,13 @@ import { Button } from "@/shared/components/Button";
 import type {
   LandParcelResponse,
   LeaseInterestDocumentChecklist,
-  LeaseInterestRequestDetail,
   UpsertLeaseInterestDraft,
 } from "../types/landIntelligence";
 import { AreaUnit } from "../types/landIntelligence";
 import { isSupportedLandUseType } from "../types/landIntelligence";
 import { landUseTypeLabels } from "../utils/enumMappings";
 import { displayOrUnknown, formatArea } from "../utils/formatters";
-import {
-  displayOptionalText,
-  formatCostLineAmount,
-  formatCostLineStatus,
-  groupCostLines,
-} from "../utils/leaseInterestReview";
+import { displayOptionalText } from "../utils/leaseInterestReview";
 import {
   sourceReportedClaimantCategoryDisplay,
   sourceReportedLandUseDisplay,
@@ -53,7 +47,7 @@ function ReviewCard({
           <Button
             type="button"
             variant="ghost"
-            className={styles.editButton}
+            className={styles.reviewCardAction}
             onClick={onEdit}
           >
             {editLabel}
@@ -86,7 +80,6 @@ export function LeaseInterestReviewStep({
   parcel,
   parcelId,
   draft,
-  request,
   checklist,
   readOnly,
   onEditApplicant,
@@ -100,7 +93,6 @@ export function LeaseInterestReviewStep({
   parcel: LandParcelResponse;
   parcelId: string;
   draft: UpsertLeaseInterestDraft;
-  request: LeaseInterestRequestDetail;
   checklist: LeaseInterestDocumentChecklist | null;
   readOnly: boolean;
   onEditApplicant: () => void;
@@ -117,7 +109,6 @@ export function LeaseInterestReviewStep({
       ? landUseTypeLabels[parcel.currentUse.type]
       : "Unavailable");
   const claimant = sourceReportedClaimantCategoryDisplay(parcel.cadastralSource);
-  const costGroups = groupCostLines(request.costSummary.lines);
 
   return (
     <div className={styles.reviewStack}>
@@ -152,7 +143,8 @@ export function LeaseInterestReviewStep({
         <div className={styles.reviewCardFooter}>
           <Button
             href={`/land-intelligence/parcels/${parcelId}/map`}
-            variant="secondary"
+            variant="ghost"
+            className={styles.reviewCardFooterAction}
           >
             View boundary on map
           </Button>
@@ -284,50 +276,6 @@ export function LeaseInterestReviewStep({
         ))}
         </dl>
       </ReviewCard>
-
-      <section
-        className={styles.costStatusPanel}
-        aria-labelledby="cost-status-heading"
-      >
-        <h3 id="cost-status-heading" className={styles.costStatusTitle}>
-          Costs pending authority assessment
-        </h3>
-        <p className={styles.costStatusLead}>
-          No rent, tax, deposit, or payment amount has been assessed. This is not
-          an invoice or payment obligation.
-        </p>
-        {request.costSummary.disclaimer ? (
-          <p className={styles.costDisclaimer}>{request.costSummary.disclaimer}</p>
-        ) : null}
-        <details className={styles.costBreakdown}>
-          <summary className={styles.costBreakdownSummary}>
-            View cost breakdown
-          </summary>
-          <div className={styles.costBreakdownBody}>
-            {costGroups.map((group) => (
-              <div key={group.title} className={styles.costGroup}>
-                <h4 className={styles.costGroupTitle}>{group.title}</h4>
-                <ul className={styles.costLineList}>
-                  {group.lines.map((line) => {
-                    const amount = formatCostLineAmount(
-                      line,
-                      request.costSummary,
-                    );
-                    return (
-                      <li key={line.code} className={styles.costLineItem}>
-                        <span className={styles.costLineLabel}>{line.label}</span>
-                        <span className={styles.costLineStatus}>
-                          {amount ?? formatCostLineStatus(line.status)}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </details>
-      </section>
 
       {!readOnly ? (
         <section
