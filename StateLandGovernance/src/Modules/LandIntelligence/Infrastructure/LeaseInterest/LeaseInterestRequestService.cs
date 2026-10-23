@@ -159,7 +159,7 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
 
         var now = _timeProvider.GetUtcNow();
         entity.PayloadJson = LeaseInterestPayloadSerializer.Serialize(draft);
-        ApplyNicFromDraft(entity, draft);
+        ApplyApplicantIdentityFromDraft(entity, draft);
         entity.RequestedPurpose = (int)draft.Proposal.RequestedPurpose;
         entity.RequestedDurationYears = draft.Proposal.RequestedDurationYears;
         entity.ConsentToPreliminaryAssessment = draft.ConsentToPreliminaryAssessment;
@@ -214,7 +214,7 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
 
         var now = _timeProvider.GetUtcNow();
         entity.PayloadJson = LeaseInterestPayloadSerializer.Serialize(draft);
-        ApplyNicFromDraft(entity, draft);
+        ApplyApplicantIdentityFromDraft(entity, draft);
         entity.RequestedPurpose = (int)draft.Proposal.RequestedPurpose;
         entity.RequestedDurationYears = draft.Proposal.RequestedDurationYears;
         entity.ConsentToPreliminaryAssessment = draft.ConsentToPreliminaryAssessment;
@@ -228,7 +228,7 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             entity.Id,
             LeaseInterestRequestStatus.Submitted,
             now,
-            "Submitted by applicant. Preliminary expression of interest only — not a reservation or lease.",
+            "Submitted by applicant. Preliminary expression of interest only.",
             LeaseInterestStatusActorKind.Applicant,
             ownerId,
             true);
@@ -370,11 +370,48 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             entity.RequestedDurationYears,
             cadastralNumber);
 
+    private void ApplyApplicantIdentityFromDraft(
+        LeaseInterestRequestEntity entity,
+        UpsertLeaseInterestDraftDto draft)
+    {
+        var applicant = draft.Applicant;
+        if (applicant.Kind == LeaseInterestApplicantKindDto.Organization)
+        {
+            entity.ApplicantNicLookupDigest = null;
+            if (LeaseInterestBusinessRegistration.TryNormalize(
+                    applicant.OrganizationRegistrationNumber,
+                    out var normalizedBrn))
+            {
+                entity.ApplicantBrnLookupDigest = _nicProtector.ComputeLookupDigest(normalizedBrn);
+            }
+            else
+            {
+                entity.ApplicantBrnLookupDigest = null;
+            }
+
+            var repNicRaw = applicant.RepresentativeNationalIdentityCardNumber;
+            if (string.IsNullOrWhiteSpace(repNicRaw)
+                || !SriLankanNic.TryNormalize(repNicRaw, out var normalizedRepNic))
+            {
+                entity.ApplicantNicCiphertext = null;
+                return;
+            }
+
+            entity.ApplicantNicCiphertext = _nicProtector.Encrypt(normalizedRepNic);
+            return;
+        }
+
+        entity.ApplicantBrnLookupDigest = null;
+        ApplyNicFromDraft(entity, draft);
+    }
+
     private void ApplyNicFromDraft(LeaseInterestRequestEntity entity, UpsertLeaseInterestDraftDto draft)
     {
         var raw = LeaseInterestApplicantNic.SelectRawNic(draft.Applicant);
         if (string.IsNullOrWhiteSpace(raw))
         {
+            entity.ApplicantNicCiphertext = null;
+            entity.ApplicantNicLookupDigest = null;
             return;
         }
 

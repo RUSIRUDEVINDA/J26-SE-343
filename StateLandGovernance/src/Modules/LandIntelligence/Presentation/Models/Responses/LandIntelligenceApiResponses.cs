@@ -213,6 +213,24 @@ public sealed record LandSearchResultsResponse(
     int PageSize,
     int TotalCount);
 
+public sealed record ApprovedPreliminaryParcelSummaryResponse(
+    Guid LandParcelId,
+    string CadastralNumber,
+    string Province,
+    string District,
+    decimal AreaValue,
+    AreaUnit AreaUnit,
+    string? SourceReportedLandUse,
+    DateTimeOffset ApprovedAtUtc,
+    Guid LeaseInterestRequestId,
+    string? RequestReference);
+
+public sealed record ApprovedPreliminaryParcelListResponse(
+    IReadOnlyList<ApprovedPreliminaryParcelSummaryResponse> Results,
+    int Page,
+    int PageSize,
+    int TotalCount);
+
 public sealed record SpatialConstraintResponse(
     Guid Id,
     Guid LandParcelId,

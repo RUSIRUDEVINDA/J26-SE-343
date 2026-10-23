@@ -35,6 +35,26 @@ internal static class LandIntelligenceApiResponseMapper
             response.PageSize,
             response.TotalCount);
 
+    public static ApprovedPreliminaryParcelListResponse ToApprovedPreliminaryParcelListResponse(
+        Application.DTOs.ApprovedPreliminaryParcelListResponse response) =>
+        new(
+            response.Results
+                .Select(item => new ApprovedPreliminaryParcelSummaryResponse(
+                    item.LandParcelId,
+                    item.CadastralNumber,
+                    item.Province,
+                    item.District,
+                    item.AreaValue,
+                    item.AreaUnit,
+                    item.SourceReportedLandUse,
+                    item.ApprovedAtUtc,
+                    item.LeaseInterestRequestId,
+                    item.RequestReference))
+                .ToList(),
+            response.Page,
+            response.PageSize,
+            response.TotalCount);
+
     public static SpatialConstraintResponse ToResponse(SpatialConstraintDto dto) =>
         new(dto.Id, dto.LandParcelId, dto.Type, dto.Description, dto.Severity);
 

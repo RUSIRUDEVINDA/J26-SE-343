@@ -27,6 +27,7 @@ public static class LandIntelligenceApplicationExtensions
         services.AddScoped<GetLandRelationshipsQueryHandler>();
         services.AddScoped<SearchLandRecommendationsQueryHandler>();
         services.AddScoped<GetLandRecommendationByIdQueryHandler>();
+        services.AddScoped<ListApprovedPreliminaryParcelsQueryHandler>();
 
         services.AddScoped<CreateLandParcelCommandValidator>();
         services.AddScoped<UpdateLandParcelCommandValidator>();

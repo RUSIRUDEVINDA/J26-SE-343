@@ -26,6 +26,7 @@ public sealed class LandParcelsController : ControllerBase
     private readonly GetLandParcelMetricsQueryHandler _metricsHandler;
     private readonly GetLandIntelligenceGisCoverageQueryHandler _gisCoverageHandler;
     private readonly ListGramaNiladhariDivisionOptionsQueryHandler _gramaNiladhariDivisionOptionsHandler;
+    private readonly ListApprovedPreliminaryParcelsQueryHandler _approvedPreliminaryParcelsHandler;
 
     public LandParcelsController(
         SearchLandParcelsQueryHandler searchHandler,
@@ -36,7 +37,8 @@ public sealed class LandParcelsController : ControllerBase
         ListDerivedSoilGroupOptionsQueryHandler derivedSoilGroupOptionsHandler,
         GetLandParcelMetricsQueryHandler metricsHandler,
         GetLandIntelligenceGisCoverageQueryHandler gisCoverageHandler,
-        ListGramaNiladhariDivisionOptionsQueryHandler gramaNiladhariDivisionOptionsHandler)
+        ListGramaNiladhariDivisionOptionsQueryHandler gramaNiladhariDivisionOptionsHandler,
+        ListApprovedPreliminaryParcelsQueryHandler approvedPreliminaryParcelsHandler)
     {
         _searchHandler = searchHandler;
         _getByIdHandler = getByIdHandler;
@@ -47,6 +49,7 @@ public sealed class LandParcelsController : ControllerBase
         _metricsHandler = metricsHandler;
         _gisCoverageHandler = gisCoverageHandler;
         _gramaNiladhariDivisionOptionsHandler = gramaNiladhariDivisionOptionsHandler;
+        _approvedPreliminaryParcelsHandler = approvedPreliminaryParcelsHandler;
     }
 
     [HttpGet("metrics")]
@@ -129,6 +132,23 @@ public sealed class LandParcelsController : ControllerBase
             new ListGramaNiladhariDivisionOptionsQuery(district),
             cancellationToken);
         return Ok(new GramaNiladhariDivisionOptionsResponse(options));
+    }
+
+    /// <summary>
+    /// Lists parcels with a current authority-approved preliminary lease interest request (ApprovedInPrinciple).
+    /// Not an executed lease or land reservation.
+    /// </summary>
+    [HttpGet("approved-preliminary")]
+    [ProducesResponseType(typeof(ApprovedPreliminaryParcelListResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApprovedPreliminaryParcelListResponse>> ListApprovedPreliminaryParcelsAsync(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await _approvedPreliminaryParcelsHandler.HandleAsync(
+            new ListApprovedPreliminaryParcelsQuery(page, pageSize),
+            cancellationToken);
+        return Ok(LandIntelligenceApiResponseMapper.ToApprovedPreliminaryParcelListResponse(response));
     }
 
     /// <summary>
