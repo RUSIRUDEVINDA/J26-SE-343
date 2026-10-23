@@ -383,20 +383,20 @@ test("officer valuation save blocks double-click and preserves fields after fail
   assert.equal(nextAttempt.idempotencyKey, "attempt-key-2");
 });
 
-test("recommendation URL parser preserves district, DS, area unit and land-use filters", () => {
+test("recommendation URL parser preserves district, GN division, area unit and land-use filters", () => {
   const params = new URLSearchParams(
-    "purpose=1&area=2.5&areaValue=2.5&areaUnit=hectares&district=Colombo&province=Western&ds=Colombo&landCover=Coconut&maxResults=30",
+    "purpose=1&area=2.5&areaValue=2.5&areaUnit=hectares&district=Colombo&province=Western&gn=Homagama South&landCover=Coconut&maxResults=30",
   );
   const parsed = parseRecommendationSearchParams(params);
   assert.ok(parsed);
   assert.equal(parsed.request.requiredPurpose, 1);
   assert.equal(parsed.request.preferredLocation.district, "Colombo");
   assert.equal(parsed.request.preferredLocation.province, "Western");
-  assert.equal(parsed.request.preferredLocation.divisionalSecretariat, "Colombo");
+  assert.equal(parsed.request.preferredLocation.gramaNiladhariDivision, "Homagama South");
   assert.equal(parsed.request.researchLandCoverGroup, "Coconut");
   assert.equal(parsed.request.sourceReportedLandUse, null);
   assert.equal(parsed.formState.preferredDistrict, "Colombo");
-  assert.equal(parsed.formState.preferredDivisionalSecretariat, "Colombo");
+  assert.equal(parsed.formState.preferredGramaNiladhariDivision, "Homagama South");
   assert.equal(parsed.formState.sourceReportedLandUse, "cover:Coconut");
   assert.equal(parsed.formState.targetAreaUnit, "hectares");
 });
@@ -408,14 +408,14 @@ test("recommendation URL round-trip restores Edit search form values", () => {
     targetAreaUnit: "perches",
     preferredProvince: "Western",
     preferredDistrict: "Colombo",
-    preferredDivisionalSecretariat: "Thimbirigasyaya",
+    preferredGramaNiladhariDivision: "Homagama South",
     sourceReportedLandUse: "75",
     maxResults: "20",
   };
   const request = buildRequestFromFormState(form);
   assert.ok(request);
   const built = buildRecommendationSearchParams(request, form);
-  assert.equal(built.get("ds"), "Thimbirigasyaya");
+  assert.equal(built.get("gn"), "Homagama South");
   assert.equal(built.get("district"), "Colombo");
   assert.equal(built.get("areaUnit"), "perches");
   assert.equal(built.get("areaValue"), "100");
@@ -423,11 +423,11 @@ test("recommendation URL round-trip restores Edit search form values", () => {
 
   const reparsed = parseRecommendationSearchParams(built);
   assert.ok(reparsed);
-  assert.equal(reparsed.formState.preferredDivisionalSecretariat, "Thimbirigasyaya");
+  assert.equal(reparsed.formState.preferredGramaNiladhariDivision, "Homagama South");
   assert.equal(reparsed.formState.targetAreaValue, "100");
   assert.equal(reparsed.formState.targetAreaUnit, "perches");
   assert.equal(reparsed.formState.sourceReportedLandUse, "75");
-  assert.equal(reparsed.request.preferredLocation.divisionalSecretariat, "Thimbirigasyaya");
+  assert.equal(reparsed.request.preferredLocation.gramaNiladhariDivision, "Homagama South");
 });
 
 test("recommendation session fingerprint skips duplicate fetch when URL matches", () => {
@@ -437,7 +437,7 @@ test("recommendation session fingerprint skips duplicate fetch when URL matches"
     targetAreaUnit: "hectares",
     preferredProvince: "",
     preferredDistrict: "Colombo",
-    preferredDivisionalSecretariat: "",
+    preferredGramaNiladhariDivision: "",
     sourceReportedLandUse: "",
     maxResults: "30",
   };
@@ -456,12 +456,12 @@ test("optional recommendation URL params remain undefined when absent", () => {
     new URLSearchParams("purpose=2&district=Colombo"),
   );
   assert.ok(parsed);
-  assert.equal(parsed.request.preferredLocation.divisionalSecretariat, null);
+  assert.equal(parsed.request.preferredLocation.gramaNiladhariDivision, null);
   assert.equal(parsed.request.preferredLocation.province, null);
   assert.equal(parsed.request.targetAreaHectares, null);
   assert.equal(parsed.request.sourceReportedLandUse, null);
   assert.equal(parsed.request.researchLandCoverGroup, null);
-  assert.equal(parsed.formState.preferredDivisionalSecretariat, "");
+  assert.equal(parsed.formState.preferredGramaNiladhariDivision, "");
 });
 
 // ---------------------------------------------------------------------------
@@ -800,7 +800,7 @@ test("canonical filter values reuse landCover URL semantics without breaking the
     targetAreaUnit: "hectares",
     preferredProvince: "",
     preferredDistrict: "Colombo",
-    preferredDivisionalSecretariat: "",
+    preferredGramaNiladhariDivision: "",
     sourceReportedLandUse: "cover:Scrub / Low Jungle",
     maxResults: "30",
   };

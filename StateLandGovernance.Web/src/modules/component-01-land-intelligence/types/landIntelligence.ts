@@ -87,6 +87,7 @@ export interface PreferredLocationCriteria {
   province?: string | null;
   district?: string | null;
   divisionalSecretariat?: string | null;
+  gramaNiladhariDivision?: string | null;
 }
 
 export interface LandRecommendationSearchRequest {
@@ -301,6 +302,29 @@ export interface ResearchDemoConfigResponse {
   authorityLeaseInterestReviewEnabled?: boolean;
 }
 
+export interface GnDivisionAdministrativeAssignmentResponse {
+  gnName: string;
+  gnNumber?: string | null;
+  divisionalSecretariat?: string | null;
+}
+
+export interface ParcelGnDivisionMappingResponse {
+  status: string;
+  workbookStatusLabel: string;
+  reviewStatusDisplay: string;
+  provenanceLabel: string;
+  sourceGnIndex: string;
+  primaryAssignment?: GnDivisionAdministrativeAssignmentResponse | null;
+  sourceFromAdministrativeCode?: GnDivisionAdministrativeAssignmentResponse | null;
+  gnAtMapMarker?: GnDivisionAdministrativeAssignmentResponse | null;
+  codeDistrict?: string | null;
+  mapMarkerLatitude?: number | null;
+  mapMarkerLongitude?: number | null;
+  datasetKey: string;
+  cadastralNumber: string;
+  importedAtUtc: string;
+}
+
 export interface CadastralSourceMetadataResponse {
   sourceProvenanceLabel: string;
   sourceLayer: string;
@@ -376,6 +400,7 @@ export interface LandParcelResponse {
   cadastralSource?: CadastralSourceMetadataResponse | null;
   availability?: LandParcelAvailabilityResponse | null;
   gisEnrichment?: ParcelGisEnrichmentSummaryResponse | null;
+  gnDivisionMapping?: ParcelGnDivisionMappingResponse | null;
 }
 
 export interface SpatialConstraintResponse {
@@ -449,7 +474,7 @@ export interface FindSuitableLandFormState {
   targetAreaUnit: TargetAreaInputUnit;
   preferredProvince: string;
   preferredDistrict: string;
-  preferredDivisionalSecretariat: string;
+  preferredGramaNiladhariDivision: string;
   sourceReportedLandUse: string;
   maxResults: string;
 }
@@ -613,7 +638,7 @@ export interface LeaseInterestOfficerLookupItem {
   district?: string | null;
   requestedPurpose: LandUseType;
   requestedDurationYears?: number | null;
-  maskedNationalIdentityCardNumber: string;
+  nationalIdentityCardNumber: string;
 }
 
 export interface LeaseInterestOfficerLookupResponse {
