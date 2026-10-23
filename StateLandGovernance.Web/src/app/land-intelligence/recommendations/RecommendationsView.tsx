@@ -125,12 +125,13 @@ export function buildSummaryChips(
   if (targetArea != null) {
     const entered = formState?.targetAreaValue?.trim();
     const unit = formState?.targetAreaUnit;
+    const scoredHa = Number(targetArea).toFixed(3);
     if (entered && unit) {
       chips.push({
-        label: `Target area: ${entered} ${targetAreaUnitShortLabel(unit)} (${targetArea} ha scored)`,
+        label: `Target area: ${entered} ${targetAreaUnitShortLabel(unit)} (${scoredHa} ha scored)`,
       });
     } else {
-      chips.push({ label: `Target area: ${targetArea} ha` });
+      chips.push({ label: `Target area: ${scoredHa} ha` });
     }
   }
   if (request.sourceReportedLandUse) {
@@ -254,7 +255,7 @@ export function RecommendationsView() {
             preferredDistrict: "",
             preferredGramaNiladhariDivision: "",
             sourceReportedLandUse: "",
-            maxResults: String(payload.request.maxResults ?? 30),
+            maxResults: String(payload.request.maxResults ?? 10),
           },
           response: payload.response,
           fingerprint,
@@ -469,46 +470,30 @@ export function RecommendationsView() {
             </span>
           ))}
         </div>
-        {transparency && transparency.filterStages.length > 0 ? (
-          <p className={styles.pipeline}>
-            {transparency.filterStages
-              .map((stage) => `${stage.candidateCount} after ${stage.name}`)
-              .join(" → ")}
-          </p>
-        ) : null}
       </section>
 
       {response.recommendations.length === 0 ? (
         <EmptyState
-          title="No suitable parcels returned"
-          description="No parcels matched the active filters. Adjust the search and try again. Missing GIS coverage is not treated as a positive match."
+          title="No matching parcels"
+          description="No parcels in the current dataset matched your search criteria. Broaden the location, target area, or land-use filters and try again. Missing GIS coverage is not treated as a match."
           action={
-            <div>
-              <ul className={styles.emptyFilters} aria-label="Active filters">
-                {chips.map((chip) => (
-                  <li key={chip.label} className={styles.chip}>
-                    {chip.label}
-                  </li>
-                ))}
-              </ul>
-              <div className={styles.emptyActions}>
+            <div className={styles.emptyActions}>
+              <Button
+                type="button"
+                variant="primary"
+                onClick={goToEditSearch}
+              >
+                Edit search
+              </Button>
+              {canClearFilters ? (
                 <Button
                   type="button"
-                  variant="primary"
-                  onClick={goToEditSearch}
+                  variant="secondary"
+                  onClick={clearRestrictiveFilters}
                 >
-                  Edit search
+                  Clear restrictive filters
                 </Button>
-                {canClearFilters ? (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={clearRestrictiveFilters}
-                  >
-                    Clear restrictive filters
-                  </Button>
-                ) : null}
-              </div>
+              ) : null}
             </div>
           }
         />
