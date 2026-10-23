@@ -25,6 +25,7 @@ using StateLandGovernance.LandIntelligence.Presentation.Security;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
 using StateLandGovernance.WorkflowGovernance.Application;
 using StateLandGovernance.WorkflowGovernance.Infrastructure;
+using StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations;
 using StateLandGovernance.WorkflowGovernance.Presentation;
 using StateLandGovernance.WorkflowGovernance.Presentation.Security;
@@ -32,6 +33,15 @@ using StateLandGovernance.WorkflowGovernance.Presentation.Security;
 EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("GovernanceCaseReviewer", policy => policy
+        .RequireAuthenticatedUser()
+        .RequireRole("Officer", "ComplianceOfficer", "LandOfficer")
+        .RequireClaim("authority_case_id")
+        .RequireClaim("capability", "CaseWorkspaceReviewer"));
+});
 
 if (
     builder.Environment.IsDevelopment()
@@ -385,59 +395,33 @@ if (app.Environment.IsDevelopment())
         }
     }
 
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        using var scope = app.Services.CreateScope();
-
-        var dbContext = scope.ServiceProvider
-            .GetService<LandIntelligenceDbContext>();
-
-        if (
-            dbContext != null
-            && dbContext.Database.CanConnect()
-        )
+        try
         {
-            dbContext.Database.Migrate();
-            await LandIntelligenceSchemaRepair.ApplyAsync(dbContext);
-            var nicProtector = scope.ServiceProvider
-                .GetService<StateLandGovernance.LandIntelligence.Application.Interfaces.INicPersonalDataProtector>();
-            if (nicProtector != null)
+            var dbContext = scope.ServiceProvider.GetService<LandIntelligenceDbContext>();
+            if (dbContext != null && dbContext.Database.CanConnect())
             {
-                await StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest.LeaseInterestBrnLookupBackfill.ApplyAsync(
-                    dbContext,
-                    nicProtector);
+                dbContext.Database.Migrate();
             }
-            await EnsureColomboGnDivisionMappingImportedAsync(scope.ServiceProvider);
         }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine(
-            $"[Development] LandIntelligence migration skipped: {ex.Message}"
-        );
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Development] LandIntelligence migration skipped: {ex.Message}");
+        }
 
         try
         {
-            using var repairScope = app.Services.CreateScope();
-            var repairDb = repairScope.ServiceProvider.GetService<LandIntelligenceDbContext>();
-            if (repairDb != null && repairDb.Database.CanConnect())
+            var workflowDb = scope.ServiceProvider.GetService<WorkflowGovernanceDbContext>();
+            if (workflowDb != null && workflowDb.Database.CanConnect())
             {
-                await LandIntelligenceSchemaRepair.ApplyAsync(repairDb);
-                var repairNicProtector = repairScope.ServiceProvider
-                    .GetService<StateLandGovernance.LandIntelligence.Application.Interfaces.INicPersonalDataProtector>();
-                if (repairNicProtector != null)
-                {
-                    await StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest.LeaseInterestBrnLookupBackfill.ApplyAsync(
-                        repairDb,
-                        repairNicProtector);
-                }
+                workflowDb.Database.Migrate();
+                Console.WriteLine("[WorkflowGovernance] PostgreSQL persistence connected and migrations verified.");
             }
         }
-        catch (Exception repairEx)
+        catch (Exception ex)
         {
-            Console.WriteLine(
-                $"[Development] LandIntelligence schema repair failed: {repairEx.Message}"
-            );
+            Console.WriteLine($"[WorkflowGovernance] PostgreSQL migration error: {ex.Message}");
         }
     }
 }
@@ -555,23 +539,5 @@ app.MapGet(
 );
 
 app.Run();
-
-static async Task EnsureColomboGnDivisionMappingImportedAsync(IServiceProvider services)
-{
-    try
-    {
-        var importer = services.GetService<IParcelGnDivisionMappingImportService>();
-        if (importer is null)
-        {
-            return;
-        }
-
-        await importer.EnsureImportedAsync();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"[LandIntelligence] GN division mapping import skipped: {ex.Message}");
-    }
-}
 
 public partial class Program;

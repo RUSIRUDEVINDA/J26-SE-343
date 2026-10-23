@@ -17,7 +17,7 @@ public sealed record ExecutionPlanHistoryDto(Guid PreviousPlanId, Guid Replaceme
 public sealed record StartExecutionRequest(Guid PlanId, int ExpectedPlanRevision, int ExpectedCaseRevision);
 public sealed record StageActionRequest(int ExpectedExecutionRevision);
 public sealed record StageDecisionRequest(int ExpectedExecutionRevision, string Outcome, string Reason,
-    IReadOnlyList<string> Conditions, IReadOnlyList<DecisionDocumentBinding> Documents,
+    IReadOnlyList<string> Conditions, IReadOnlyList<DecisionDocumentBinding>? Documents = null,
     Guid? PriorDecisionId = null, string? RevisionReason = null);
 public sealed record DecisionDocumentBinding(Guid DocumentId, Guid VersionId);
 public sealed record AddDepartmentRequest(int ExpectedExecutionRevision, int ExpectedCaseRevision,
