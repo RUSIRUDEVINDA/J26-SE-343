@@ -62,6 +62,33 @@ export const authorityLeaseInterestQueueNavItem: NavItem = {
   icon: "⚖",
 };
 
+export const WORKFLOW_GOVERNANCE_BASE = "/workflow-governance";
+
+export const workflowGovernanceNavItems: NavItem[] = [
+  { label: "Module home", href: "/component-03", icon: "▦" },
+  {
+    label: "Case queue",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/cases`,
+    icon: "☰",
+    primary: true,
+  },
+  {
+    label: "Proposal intake",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/intake`,
+    icon: "✎",
+  },
+  {
+    label: "Track application",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/tracking`,
+    icon: "◎",
+  },
+  {
+    label: "My applications",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/cases`,
+    icon: "☷",
+  },
+];
+
 export const moduleLandingLinks = [
   {
     id: "component-01",
