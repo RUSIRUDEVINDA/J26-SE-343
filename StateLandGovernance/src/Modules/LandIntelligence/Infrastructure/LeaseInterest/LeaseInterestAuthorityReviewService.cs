@@ -348,10 +348,8 @@ public sealed class LeaseInterestAuthorityReviewService : ILeaseInterestAuthorit
         string reason) =>
         decision switch
         {
-            LeaseInterestAuthorityDecisionKind.Approved =>
-                $"Approved (preliminary only — formal lease processing is still required): {reason}",
-            LeaseInterestAuthorityDecisionKind.Rejected =>
-                $"Rejected: {reason}",
+            LeaseInterestAuthorityDecisionKind.Approved => reason,
+            LeaseInterestAuthorityDecisionKind.Rejected => reason,
             _ => reason,
         };
 

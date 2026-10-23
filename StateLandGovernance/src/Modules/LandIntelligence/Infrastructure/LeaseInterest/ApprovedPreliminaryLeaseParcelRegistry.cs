@@ -112,10 +112,15 @@ public sealed class ApprovedPreliminaryLeaseParcelRegistry : IApprovedPreliminar
             }
 
             sources.TryGetValue(parcel.Id, out var source);
-            var landUse = source?.LandUseEnglishLabel?.Trim();
+            var landUse = source?.SourceReportedLandUseEnglishLabel?.Trim();
             if (string.IsNullOrWhiteSpace(landUse))
             {
-                landUse = source?.LandUseCode?.Trim();
+                landUse = source?.SourceReportedLandUseCode?.Trim();
+            }
+            if (string.IsNullOrWhiteSpace(landUse)
+                && !string.IsNullOrWhiteSpace(source?.SourceReportedLandUseDisplay))
+            {
+                landUse = source.SourceReportedLandUseDisplay.Trim();
             }
 
             results.Add(new ApprovedPreliminaryParcelSummaryDto(

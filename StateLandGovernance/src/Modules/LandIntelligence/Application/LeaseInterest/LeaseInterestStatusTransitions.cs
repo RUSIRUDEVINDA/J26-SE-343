@@ -95,8 +95,7 @@ public static class LeaseInterestStatusTransitions
                 "Rejected after review. This is not a court decision and does not reserve land.",
             LeaseInterestRequestStatus.ReferredToAuthority =>
                 "Referred for authority follow-up. An officer valuation may be recorded.",
-            LeaseInterestRequestStatus.ApprovedInPrinciple =>
-                "Approved as a preliminary project decision only. Formal lease processing is still required. This does not create a lease, reserve land, or constitute official government approval.",
+            LeaseInterestRequestStatus.ApprovedInPrinciple => string.Empty,
             _ => "Status unknown.",
         };
 }
