@@ -1,4 +1,5 @@
 import { apiGet, apiPost } from "@/lib/apiClient";
+import { COLOMBO_GRAMA_NILADHARI_DIVISIONS } from "../data/colomboGramaNiladhariDivisions";
 import type {
   CanonicalLandUseOptionResponse,
   LandIntelligenceGisCoverageResponse,
@@ -117,6 +118,35 @@ export async function listCanonicalLandUseOptions(
   return apiGet<CanonicalLandUseOptionResponse[]>(
     `/api/v1/land/parcels/canonical-land-use-options${suffix}`,
   );
+}
+
+function colomboWorkbookGnDivisionOptions(district?: string): string[] {
+  const trimmed = district?.trim();
+  if (trimmed && trimmed.toLowerCase() !== "colombo") {
+    return [];
+  }
+  return [...COLOMBO_GRAMA_NILADHARI_DIVISIONS];
+}
+
+export async function listGramaNiladhariDivisionOptions(
+  district?: string,
+): Promise<string[]> {
+  const search = new URLSearchParams();
+  if (district?.trim()) {
+    search.set("district", district.trim());
+  }
+  const suffix = search.toString() ? `?${search.toString()}` : "";
+  try {
+    const response = await apiGet<{ options: string[] }>(
+      `/api/v1/land/parcels/grama-niladhari-division-options${suffix}`,
+    );
+    if (response.options && response.options.length > 0) {
+      return response.options;
+    }
+  } catch {
+    // API may be unavailable until the host is rebuilt/restarted.
+  }
+  return colomboWorkbookGnDivisionOptions(district);
 }
 
 export async function listDerivedSoilGroupOptions(
