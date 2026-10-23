@@ -18,6 +18,7 @@ import { StatusBadge } from "@/shared/components/StatusBadge";
 import { useModalDialogA11y } from "../hooks/useModalDialogA11y";
 import { landUseTypeLabels } from "../utils/enumMappings";
 import {
+  leaseInterestApplicantOutcome,
   leaseInterestStatusBadgeTone,
   leaseInterestStatusLabel,
 } from "../utils/leaseInterestStatus";
@@ -298,8 +299,10 @@ export function AuthorityLeaseInterestReviewView({
           <h2 className={styles.reference}>
             {detail.acknowledgementReference ?? "Lease interest request"}
           </h2>
-          {detail.applicantOutcomeSummary.trim() ? (
-            <p className={styles.headerText}>{detail.applicantOutcomeSummary}</p>
+          {leaseInterestApplicantOutcome(detail.status).trim() ? (
+            <p className={styles.headerText}>
+              {leaseInterestApplicantOutcome(detail.status)}
+            </p>
           ) : null}
         </div>
         <StatusBadge tone={leaseInterestStatusBadgeTone(detail.status)}>

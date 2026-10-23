@@ -11,7 +11,7 @@ export default async function OfficerLeaseInterestReviewPage({
     <>
       <PageHeading
         title="Review lease interest"
-        subtitle="Preliminary verification only — not lease approval or land reservation."
+        subtitle="Preliminary verification only."
       />
       <OfficerLeaseInterestReviewView requestId={requestId} />
     </>

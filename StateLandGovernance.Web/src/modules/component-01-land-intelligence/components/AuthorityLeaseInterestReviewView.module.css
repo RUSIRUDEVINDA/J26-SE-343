@@ -31,7 +31,24 @@
 .input { box-sizing: border-box; display: block; width: 100%; min-height: 44px; padding: .7rem .8rem; border: 1px solid #cfc8c6; border-radius: 10px; background: #fff; color: inherit; font: inherit; font-size: .9rem; }
 textarea.input { resize: vertical; line-height: 1.5; }
 .input:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
-.submitButton { width: 100%; justify-content: center; }
+.submitButton {
+  width: 100%;
+  justify-content: center;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.submitButton:not(:disabled):hover {
+  filter: brightness(1.08);
+}
+
+.submitButton:disabled {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  opacity: 0.55;
+}
 .closedMessage { margin: 0; color: var(--color-muted); font-size: .88rem; line-height: 1.5; }
 .decisionHistory { margin: 0; padding-left: 1.2rem; font-size: .85rem; }
 .decisionHistory li { margin-top: .4rem; }
