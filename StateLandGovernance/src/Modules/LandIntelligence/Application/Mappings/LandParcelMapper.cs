@@ -11,7 +11,8 @@ public static class LandParcelMapper
         LandParcel parcel,
         CadastralSourceMetadataDto? cadastralSource = null,
         LandParcelAvailabilityDto? availability = null,
-        ParcelGisEnrichmentSummaryDto? gisEnrichment = null) =>
+        ParcelGisEnrichmentSummaryDto? gisEnrichment = null,
+        ParcelGnDivisionMappingDto? gnDivisionMapping = null) =>
         new(
             parcel.Id,
             ToIdentifierDto(parcel.Identifier),
@@ -27,7 +28,8 @@ public static class LandParcelMapper
             parcel.RegulatoryReferences.Count,
             cadastralSource,
             availability,
-            gisEnrichment);
+            gisEnrichment,
+            gnDivisionMapping);
 
     public static LandSearchResultDto ToSearchResultDto(
         LandParcel parcel,
