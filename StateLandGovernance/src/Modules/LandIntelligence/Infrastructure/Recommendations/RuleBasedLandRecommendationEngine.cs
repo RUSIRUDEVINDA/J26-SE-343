@@ -22,6 +22,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
     private readonly IRealParcelSourceReadRepository _realParcelSourceReadRepository;
     private readonly IRecommendationParcelContext _parcelContext;
     private readonly IProjectLeaseReadyDesignationReadRepository _projectLeaseReady;
+    private readonly IApprovedPreliminaryLeaseParcelRegistry _approvedPreliminaryRegistry;
 
     public RuleBasedLandRecommendationEngine(
         ILandParcelRepository landParcelRepository,
@@ -31,7 +32,8 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         Microsoft.Extensions.Options.IOptions<ExperimentalColomboMlOptions> experimentalOptions,
         IRealParcelSourceReadRepository realParcelSourceReadRepository,
         IRecommendationParcelContext parcelContext,
-        IProjectLeaseReadyDesignationReadRepository projectLeaseReady)
+        IProjectLeaseReadyDesignationReadRepository projectLeaseReady,
+        IApprovedPreliminaryLeaseParcelRegistry approvedPreliminaryRegistry)
     {
         _landParcelRepository = landParcelRepository;
         _evaluators = evaluators.OrderBy(e => e.Order).ToList();
@@ -41,6 +43,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
         _realParcelSourceReadRepository = realParcelSourceReadRepository;
         _parcelContext = parcelContext;
         _projectLeaseReady = projectLeaseReady;
+        _approvedPreliminaryRegistry = approvedPreliminaryRegistry;
     }
 
     public async Task<LandRecommendationSearchResponse> RecommendAsync(
@@ -315,6 +318,12 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
             appliedFilters.Add($"province={request.PreferredLocation.Province.Trim()}");
         }
 
+        var gnDivision = request.PreferredLocation?.GramaNiladhariDivision?.Trim();
+        if (!string.IsNullOrWhiteSpace(gnDivision))
+        {
+            appliedFilters.Add($"gramaNiladhariDivision={gnDivision}");
+        }
+
         if (!string.IsNullOrWhiteSpace(request.SourceReportedLandUse))
         {
             appliedFilters.Add($"sourceReportedLandUse={request.SourceReportedLandUse.Trim()}");
@@ -366,6 +375,22 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 "District",
                 count,
                 $"Case-insensitive district match '{district}'. Unsupported districts are not remapped."));
+        }
+
+        if (!string.IsNullOrWhiteSpace(gnDivision))
+        {
+            var count = await _landParcelRepository.CountSearchAsync(new LandSearchRequest
+            {
+                Province = provinceFilter,
+                District = district,
+                GramaNiladhariDivision = gnDivision,
+                Page = 1,
+                PageSize = 1
+            }, cancellationToken);
+            stages.Add(new RecommendationFilterStageDto(
+                "Grama Niladhari division",
+                count,
+                $"Case-insensitive GN division match '{gnDivision}' (parcel field or imported GN mapping)."));
         }
 
         if (sourceLandUseFilter is not null)
@@ -431,6 +456,23 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 ? "Excluded source-reported Private claimant parcels from state-land candidates (0 excluded). Remaining parcels still require official availability verification."
                 : $"Excluded {excludedPrivate} source-reported Private parcel(s) from state-land candidates ({beforeClaimant} → {candidates.Count}). Remaining parcels still require official availability verification."));
 
+        var approvedParcelIds = await _approvedPreliminaryRegistry.GetApprovedParcelIdsAsync(cancellationToken);
+        if (approvedParcelIds.Count > 0)
+        {
+            var beforeApproved = candidates.Count;
+            candidates = candidates
+                .Where(parcel => !approvedParcelIds.Contains(parcel.Id))
+                .ToList();
+            var excludedApproved = beforeApproved - candidates.Count;
+            appliedFilters.Add("approvedPreliminaryRequest!=current");
+            stages.Add(new RecommendationFilterStageDto(
+                "Approved preliminary interest",
+                candidates.Count,
+                excludedApproved == 0
+                    ? "Excluded parcels with a current authority-approved preliminary lease interest request (0 excluded). An approved preliminary request is not an executed lease, reserved land, or verified official lease availability."
+                    : $"Excluded {excludedApproved} parcel(s) with a current authority-approved preliminary lease interest request ({beforeApproved} → {candidates.Count}). An approved preliminary request is not an executed lease, reserved land, or verified official lease availability."));
+        }
+
         return (candidates, new RecommendationSearchTransparencyDto(
             appliedFilters,
             beforeClaimant,
@@ -452,6 +494,7 @@ public sealed class RuleBasedLandRecommendationEngine : ILandRecommendationEngin
                 Province = template.Province,
                 District = template.District,
                 DivisionalSecretariat = template.DivisionalSecretariat,
+                GramaNiladhariDivision = template.GramaNiladhariDivision,
                 CategoryType = template.CategoryType,
                 CurrentUseType = template.CurrentUseType,
                 SourceReportedLandUse = template.SourceReportedLandUse,

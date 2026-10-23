@@ -23,8 +23,7 @@ internal sealed class TargetAreaCriterionEvaluator : IRecommendationCriterionEva
         var isMet = score > 0m;
 
         var summary =
-            $"Target area {FormatHa(target)}; parcel area {FormatHa(actual)} (unrounded for scoring). " +
-            $"Area match score {FormatScore(score)} (100 × (1 − |actual − target| / target), floored at 0).";
+            $"Target area {FormatHa(target)}; parcel area {FormatHa(actual)}.";
 
         return CriterionEvaluationFactory.Create(
             Key,
@@ -38,8 +37,6 @@ internal sealed class TargetAreaCriterionEvaluator : IRecommendationCriterionEva
     }
 
     private static string FormatHa(decimal hectares) =>
-        hectares.ToString("0.####################", System.Globalization.CultureInfo.InvariantCulture) + " ha";
+        hectares.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) + " ha";
 
-    private static string FormatScore(decimal score) =>
-        score.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
 }

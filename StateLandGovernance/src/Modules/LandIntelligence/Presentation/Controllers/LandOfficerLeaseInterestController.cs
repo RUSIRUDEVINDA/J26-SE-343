@@ -126,7 +126,7 @@ public sealed class LandOfficerLeaseInterestController : ControllerBase
                 new ApiErrorResponse(
                     StatusCodes.Status400BadRequest,
                     "Validation failed",
-                    "The NIC lookup request could not be processed.",
+                    "The lookup request could not be processed.",
                     ex.Errors.ToList()));
         }
     }

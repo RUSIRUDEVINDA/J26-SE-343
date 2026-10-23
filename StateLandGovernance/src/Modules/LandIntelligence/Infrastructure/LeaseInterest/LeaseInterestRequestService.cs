@@ -236,7 +236,7 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             entity.Id,
             LeaseInterestRequestStatus.PendingVerification,
             now,
-            "Queued for officer verification. Official lease availability is unchanged.",
+            "Queued for officer verification.",
             LeaseInterestStatusActorKind.System,
             null,
             true);
