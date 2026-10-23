@@ -15,6 +15,10 @@ import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { PageHeading } from "@/shared/components/PageLayout";
 import {
+  ApprovedParcelsCatalog,
+  type ApprovedParcelsPageSize,
+} from "@/modules/component-01-land-intelligence/components/ApprovedParcelsCatalog";
+import {
   ParcelCatalog,
   type ParcelCatalogPageSize,
 } from "@/modules/component-01-land-intelligence/components/ParcelCatalog";
@@ -22,6 +26,7 @@ import { ParcelDetails } from "@/modules/component-01-land-intelligence/componen
 import { SaveParcelButton } from "@/modules/component-01-land-intelligence/components/SaveParcelButton";
 import {
   findParcelsByCadastralNumber,
+  listApprovedPreliminaryParcels,
   getLandIntelligenceGisCoverage,
   getParcelById,
   getParcelRelationships,
@@ -31,6 +36,7 @@ import {
   listSourceReportedLandUseOptions,
 } from "@/modules/component-01-land-intelligence/services/landIntelligenceApi";
 import type {
+  ApprovedPreliminaryParcelSummaryResponse,
   CanonicalLandUseOptionResponse,
   IndexedDistrictSummaryResponse,
   LandParcelResponse,
@@ -52,6 +58,16 @@ type AppliedFilters = {
   landUseValue: string;
   landUseLabel: string;
 };
+
+type ParcelIntelligenceTab = "indexed" | "approved";
+
+const PARCEL_INTELLIGENCE_TABS: {
+  value: ParcelIntelligenceTab;
+  label: string;
+}[] = [
+  { value: "indexed", label: "Indexed parcels" },
+  { value: "approved", label: "Approved parcels" },
+];
 
 function landUseLabelFromValue(value: string): string {
   const normalized = normalizeLandUseFilterValue(value);
@@ -117,6 +133,18 @@ export function ParcelIntelligenceView({
   >([]);
   const loadedRouteId = useRef<string | null>(null);
   const initialCatalogLoadedRef = useRef(false);
+  const [workspaceTab, setWorkspaceTab] =
+    useState<ParcelIntelligenceTab>("indexed");
+  const [approvedParcels, setApprovedParcels] = useState<
+    ApprovedPreliminaryParcelSummaryResponse[]
+  >([]);
+  const [approvedTotal, setApprovedTotal] = useState(0);
+  const [approvedPage, setApprovedPage] = useState(1);
+  const [approvedPageSize, setApprovedPageSize] =
+    useState<ApprovedParcelsPageSize>(20);
+  const [approvedLoading, setApprovedLoading] = useState(false);
+  const [approvedError, setApprovedError] = useState<string | null>(null);
+  const [approvedLoaded, setApprovedLoaded] = useState(false);
 
   const loadRelationships = useCallback(async (id: string) => {
     setRelationshipsLoading(true);
@@ -207,6 +235,51 @@ export function ParcelIntelligenceView({
     },
     [showCatalog],
   );
+
+  const loadApprovedParcels = useCallback(
+    async (page: number, size: ApprovedParcelsPageSize) => {
+      if (!showCatalog) {
+        return;
+      }
+      setApprovedLoading(true);
+      setApprovedError(null);
+      try {
+        const response = await listApprovedPreliminaryParcels({
+          page,
+          pageSize: size,
+        });
+        setApprovedParcels(response.results);
+        setApprovedTotal(response.totalCount);
+        setApprovedLoaded(true);
+      } catch (err) {
+        if (err instanceof ApiClientError) {
+          setApprovedError(err.detail || err.title);
+        } else if (err instanceof Error) {
+          setApprovedError(err.message);
+        } else {
+          setApprovedError("Unable to load approved parcels.");
+        }
+        setApprovedParcels([]);
+        setApprovedTotal(0);
+      } finally {
+        setApprovedLoading(false);
+      }
+    },
+    [showCatalog],
+  );
+
+  useEffect(() => {
+    if (!showCatalog || workspaceTab !== "approved") {
+      return;
+    }
+    void loadApprovedParcels(approvedPage, approvedPageSize);
+  }, [
+    showCatalog,
+    workspaceTab,
+    approvedPage,
+    approvedPageSize,
+    loadApprovedParcels,
+  ]);
 
   useEffect(() => {
     if (!showCatalog || initialCatalogLoadedRef.current) {
@@ -458,6 +531,80 @@ export function ParcelIntelligenceView({
       />
 
       {showCatalog ? (
+        <div
+          className={filterStyles.tabList}
+          role="tablist"
+          aria-label="Parcel intelligence views"
+        >
+          {PARCEL_INTELLIGENCE_TABS.map((tab) => {
+            const selected = workspaceTab === tab.value;
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                role="tab"
+                id={`pi-tab-${tab.value}`}
+                aria-selected={selected}
+                aria-controls={`pi-panel-${tab.value}`}
+                className={
+                  selected
+                    ? `${filterStyles.tab} ${filterStyles.tabActive}`
+                    : filterStyles.tab
+                }
+                onClick={() => setWorkspaceTab(tab.value)}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {showCatalog && workspaceTab === "approved" ? (
+        <div
+          id="pi-panel-approved"
+          role="tabpanel"
+          aria-labelledby="pi-tab-approved"
+        >
+          <p className={filterStyles.approvedNotice} role="note">
+            These parcels have a current authority-approved preliminary lease
+            interest request (Approved in principle). This is not an executed
+            lease, reserved land, or verified official lease availability.
+            Parcels remain viewable here and in the catalog; they are excluded
+            only from Find Suitable Land search candidates.
+          </p>
+          {approvedLoading ? (
+            <LoadingState message="Loading approved parcels…" />
+          ) : null}
+          {approvedError ? <ErrorMessage message={approvedError} /> : null}
+          {!approvedLoading &&
+          !approvedError &&
+          approvedLoaded &&
+          approvedTotal === 0 ? (
+            <EmptyState
+              title="No approved preliminary requests yet"
+              description="When an authority approves a preliminary lease interest request, the parcel will appear here. Approval does not mean a lease has been executed or land reserved."
+            />
+          ) : null}
+          {!approvedLoading &&
+          !approvedError &&
+          approvedTotal > 0 ? (
+            <ApprovedParcelsCatalog
+              parcels={approvedParcels}
+              totalCount={approvedTotal}
+              currentPage={approvedPage}
+              pageSize={approvedPageSize}
+              onPageChange={setApprovedPage}
+              onPageSizeChange={(size) => {
+                setApprovedPageSize(size);
+                setApprovedPage(1);
+              }}
+            />
+          ) : null}
+        </div>
+      ) : null}
+
+      {showCatalog && workspaceTab === "indexed" ? (
         <form
           className={filterStyles.panel}
           aria-label="Parcel intelligence filters"
@@ -572,16 +719,16 @@ export function ParcelIntelligenceView({
         </form>
       ) : null}
 
-      {showCatalog && cadastralError ? (
+      {showCatalog && workspaceTab === "indexed" && cadastralError ? (
         <ErrorMessage message={cadastralError} />
       ) : null}
-      {showCatalog && cadastralEmpty ? (
+      {showCatalog && workspaceTab === "indexed" && cadastralEmpty ? (
         <EmptyState
           title="No parcel was found with this cadastral number."
           description="Check the number and try again. Do not use a parcel UUID."
         />
       ) : null}
-      {showCatalog && cadastralMatches.length > 1 ? (
+      {showCatalog && workspaceTab === "indexed" && cadastralMatches.length > 1 ? (
         <div className={filterStyles.matchesList} role="region" aria-label="Matching parcels">
           <p className={filterStyles.matchesTitle}>
             {cadastralMatches.length} parcels share this cadastral number. Select
@@ -610,18 +757,21 @@ export function ParcelIntelligenceView({
         </div>
       ) : null}
 
-      {showCatalog && activeSummary ? (
+      {showCatalog && workspaceTab === "indexed" && activeSummary ? (
         <p className={filterStyles.summary} role="status">
           {activeSummary}
         </p>
       ) : null}
 
-      {showCatalog && listLoading ? (
+      {showCatalog && workspaceTab === "indexed" && listLoading ? (
         <LoadingState message="Loading available parcels…" />
       ) : null}
-      {showCatalog && listError ? <ErrorMessage message={listError} /> : null}
+      {showCatalog && workspaceTab === "indexed" && listError ? (
+        <ErrorMessage message={listError} />
+      ) : null}
 
       {showCatalog &&
+      workspaceTab === "indexed" &&
       !listLoading &&
       !listError &&
       filtersApplied &&
@@ -633,6 +783,7 @@ export function ParcelIntelligenceView({
       ) : null}
 
       {showCatalog &&
+      workspaceTab === "indexed" &&
       !listLoading &&
       !listError &&
       filtersApplied &&

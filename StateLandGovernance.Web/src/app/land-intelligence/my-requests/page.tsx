@@ -28,7 +28,8 @@ import {
 } from "@/modules/component-01-land-intelligence/utils/leaseInterestStatus";
 import styles from "./MyRequests.module.css";
 
-const PAGE_SIZE = 10;
+const MY_REQUESTS_PAGE_SIZES = [10, 20, 30] as const;
+type MyRequestsPageSize = (typeof MY_REQUESTS_PAGE_SIZES)[number];
 const MY_REQUESTS_PANEL_ID = "my-requests-panel";
 
 type MyRequestsTab = "submitted" | "drafts";
@@ -73,14 +74,39 @@ function sortDrafts(
   });
 }
 
-function clampPage(page: number, itemCount: number): number {
-  const totalPages = Math.max(1, Math.ceil(itemCount / PAGE_SIZE));
+function normalizeCadastralQuery(query: string): string {
+  return query.trim().replace(/\s+/g, "").toLowerCase();
+}
+
+function matchesCadastralSearch(
+  item: LeaseInterestRequestSummary,
+  query: string,
+): boolean {
+  const normalized = normalizeCadastralQuery(query);
+  if (!normalized) {
+    return true;
+  }
+  const cadastral = (item.cadastralNumber ?? "")
+    .replace(/\s+/g, "")
+    .toLowerCase();
+  if (cadastral.includes(normalized)) {
+    return true;
+  }
+  return item.landParcelId.replace(/-/g, "").toLowerCase().includes(normalized);
+}
+
+function clampPage(
+  page: number,
+  itemCount: number,
+  pageSize: number,
+): number {
+  const totalPages = Math.max(1, Math.ceil(itemCount / pageSize));
   return Math.min(Math.max(1, page), totalPages);
 }
 
-function paginate<T>(rows: T[], page: number): T[] {
-  const start = (page - 1) * PAGE_SIZE;
-  return rows.slice(start, start + PAGE_SIZE);
+function paginate<T>(rows: T[], page: number, pageSize: number): T[] {
+  const start = (page - 1) * pageSize;
+  return rows.slice(start, start + pageSize);
 }
 
 function RequestRow({
@@ -259,6 +285,8 @@ export default function MyRequestsPage() {
     submitted: 1,
     drafts: 1,
   });
+  const [pageSize, setPageSize] = useState<MyRequestsPageSize>(10);
+  const [cadastralQuery, setCadastralQuery] = useState("");
   const tabRefs = useRef<Record<MyRequestsTab, HTMLButtonElement | null>>({
     submitted: null,
     drafts: null,
@@ -313,9 +341,20 @@ export default function MyRequestsPage() {
   };
 
   const activeList = tabLists[activeTab];
-  const activePage = pageByTab[activeTab];
-  const totalPages = Math.max(1, Math.ceil(activeList.length / PAGE_SIZE));
-  const pageItems = paginate(activeList, activePage);
+  const filteredList = useMemo(
+    () => activeList.filter((item) => matchesCadastralSearch(item, cadastralQuery)),
+    [activeList, cadastralQuery],
+  );
+  const activePage = clampPage(
+    pageByTab[activeTab],
+    filteredList.length,
+    pageSize,
+  );
+  const totalPages = Math.max(1, Math.ceil(filteredList.length / pageSize));
+  const pageItems = paginate(filteredList, activePage, pageSize);
+  const rangeStart =
+    filteredList.length === 0 ? 0 : (activePage - 1) * pageSize + 1;
+  const rangeEnd = Math.min(activePage * pageSize, filteredList.length);
 
   function selectTab(next: MyRequestsTab) {
     if (next === activeTab) {
@@ -350,19 +389,31 @@ export default function MyRequestsPage() {
   function setActiveTabPage(nextPage: number) {
     setPageByTab((prev) => ({
       ...prev,
-      [activeTab]: clampPage(nextPage, activeList.length),
+      [activeTab]: clampPage(nextPage, filteredList.length, pageSize),
     }));
+  }
+
+  function handleCadastralQueryChange(value: string) {
+    setCadastralQuery(value);
+    setPageByTab({ submitted: 1, drafts: 1 });
+  }
+
+  function handlePageSizeChange(value: MyRequestsPageSize) {
+    setPageSize(value);
+    setPageByTab({ submitted: 1, drafts: 1 });
   }
 
   function handleDraftDeleted(requestId: string) {
     setItems((prev) => {
       const next = prev.filter((row) => row.id !== requestId);
-      const nextDraftCount = next.filter((row) =>
-        isLeaseInterestDraftStatus(row.status),
+      const nextDraftCount = next.filter(
+        (row) =>
+          isLeaseInterestDraftStatus(row.status) &&
+          matchesCadastralSearch(row, cadastralQuery),
       ).length;
       setPageByTab((pages) => ({
         ...pages,
-        drafts: clampPage(pages.drafts, nextDraftCount),
+        drafts: clampPage(pages.drafts, nextDraftCount, pageSize),
       }));
       return next;
     });
@@ -372,6 +423,9 @@ export default function MyRequestsPage() {
     activeTab === "submitted"
       ? "No submitted requests yet. Complete and submit a draft to see it here."
       : "No drafts in progress. Start a request from a parcel to save a draft.";
+  const emptySearchMessage = normalizeCadastralQuery(cadastralQuery)
+    ? "No requests match this cadastral number in the current tab."
+    : emptyTabMessage;
 
   return (
     <>
@@ -441,8 +495,47 @@ export default function MyRequestsPage() {
             aria-labelledby={`my-requests-tab-${activeTab}`}
             className={styles.tabPanel}
           >
+            <div className={styles.listToolbar}>
+              <div className={styles.searchField}>
+                <label className={styles.searchLabel} htmlFor="my-requests-cadastral">
+                  Search by cadastral number
+                </label>
+                <input
+                  id="my-requests-cadastral"
+                  type="search"
+                  className={styles.searchInput}
+                  value={cadastralQuery}
+                  onChange={(e) => handleCadastralQueryChange(e.target.value)}
+                  placeholder="Enter cadastral number"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+              </div>
+              <div className={styles.pageSizeControl}>
+                <label htmlFor="my-requests-page-size">Rows per page</label>
+                <select
+                  id="my-requests-page-size"
+                  className={styles.pageSizeSelect}
+                  value={pageSize}
+                  onChange={(e) =>
+                    handlePageSizeChange(
+                      Number(e.target.value) as MyRequestsPageSize,
+                    )
+                  }
+                >
+                  {MY_REQUESTS_PAGE_SIZES.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             {activeList.length === 0 ? (
               <p className={styles.sectionEmpty}>{emptyTabMessage}</p>
+            ) : filteredList.length === 0 ? (
+              <p className={styles.sectionEmpty}>{emptySearchMessage}</p>
             ) : (
               <>
                 <ul className={styles.list}>
@@ -456,29 +549,39 @@ export default function MyRequestsPage() {
                     />
                   ))}
                 </ul>
-                {activeList.length > PAGE_SIZE ? (
-                  <div className={styles.pager}>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      disabled={activePage <= 1}
-                      onClick={() => setActiveTabPage(activePage - 1)}
-                    >
-                      Previous
-                    </Button>
-                    <span className={styles.pagerLabel}>
-                      Page {activePage} of {totalPages}
-                    </span>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      disabled={activePage >= totalPages}
-                      onClick={() => setActiveTabPage(activePage + 1)}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                ) : null}
+                <div className={styles.listFooter}>
+                  <p className={styles.listSummary} role="status">
+                    Showing {rangeStart}–{rangeEnd} of {filteredList.length}{" "}
+                    {activeTab === "drafts" ? "draft" : "submitted"}{" "}
+                    request{filteredList.length === 1 ? "" : "s"}
+                    {normalizeCadastralQuery(cadastralQuery)
+                      ? ` matching “${cadastralQuery.trim()}”`
+                      : null}
+                  </p>
+                  {totalPages > 1 ? (
+                    <div className={styles.pager}>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        disabled={activePage <= 1}
+                        onClick={() => setActiveTabPage(activePage - 1)}
+                      >
+                        Previous
+                      </Button>
+                      <span className={styles.pagerLabel}>
+                        Page {activePage} of {totalPages}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        disabled={activePage >= totalPages}
+                        onClick={() => setActiveTabPage(activePage + 1)}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
               </>
             )}
           </div>

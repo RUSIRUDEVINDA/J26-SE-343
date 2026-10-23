@@ -47,12 +47,89 @@
   min-width: 0;
 }
 
+.listToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.85rem 1.25rem;
+  margin-bottom: 0.85rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.searchField {
+  flex: 1 1 14rem;
+  min-width: min(100%, 14rem);
+}
+
+.searchLabel {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--color-muted);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--color-input-border);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.86rem;
+}
+
+.searchInput:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.pageSizeControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.84rem;
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+.pageSizeSelect {
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.84rem;
+}
+
+.listFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-card-border);
+}
+
+.listSummary {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+}
+
 .pager {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.65rem;
-  margin-top: 0.85rem;
+  margin-left: auto;
 }
 
 .pagerLabel {
@@ -188,8 +265,10 @@
 
 .rowActions .rowAction,
 .rowActions .deleteAction {
-  min-height: 2.5rem;
-  padding: 0.52rem 0.85rem;
+  min-height: 0;
+  padding: 0.4rem 0.75rem !important;
+  font-size: 0.8rem !important;
+  line-height: 1.75 !important;
   border-radius: 999px;
   white-space: nowrap;
 }
@@ -306,7 +385,14 @@
 .requestDetail {
   display: grid;
   gap: 1rem;
-  max-width: 920px;
+  width: 100%;
+  min-width: 0;
+}
+
+.requestMainColumn {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
 }
 
 .requestOverview,
@@ -472,9 +558,13 @@
   border-top: 3px solid #416c5e;
 }
 
-.authorityReason {
-  margin: 0 0 0.85rem;
-  font-size: 0.9rem;
+.evaluationFieldFullRow {
+  grid-column: 1 / -1;
+}
+
+.evaluationFieldFullRow dd {
+  font-weight: 500;
+  color: var(--color-text);
   line-height: 1.5;
 }
 
@@ -761,26 +851,6 @@
   margin: 0;
   font-weight: 650;
   overflow-wrap: anywhere;
-}
-
-.nextAction {
-  margin: 0.85rem 0 0;
-  padding: 0.75rem 0.9rem;
-  border-radius: 10px;
-  background: #fff5e6;
-  font-size: 0.84rem;
-  line-height: 1.45;
-}
-
-.formalLeaseNote {
-  margin: 0.75rem 0 0;
-  padding: 0.75rem 0.9rem;
-  border-radius: 10px;
-  background: #eaf7ef;
-  color: #176339;
-  font-size: 0.84rem;
-  line-height: 1.45;
-  font-weight: 600;
 }
 
 .technicalDetails {

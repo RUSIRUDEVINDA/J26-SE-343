@@ -129,12 +129,10 @@ export function ApplicantOfficerEvaluation({
 
 export function ApplicantAuthorityDecision({
   decision,
-  statusCode,
 }: {
   decision: NonNullable<
     import("@/modules/component-01-land-intelligence/types/landIntelligence").LeaseInterestRequestDetail["latestAuthorityDecision"]
   >;
-  statusCode: number;
 }) {
   return (
     <section
@@ -156,10 +154,13 @@ export function ApplicantAuthorityDecision({
         This outcome is recorded by the leasing authority after officer review.
         It is not the same as the officer evaluation figures above.
       </p>
-      <p className={styles.authorityReason}>
-        {decision.applicantFacingReason}
-      </p>
       <dl className={styles.evaluationFieldGrid}>
+        {decision.applicantFacingReason.trim() ? (
+          <div className={styles.evaluationFieldFullRow}>
+            <dt>Reason for applicant</dt>
+            <dd>{decision.applicantFacingReason}</dd>
+          </div>
+        ) : null}
         <div>
           <dt>Decision recorded</dt>
           <dd>
@@ -170,18 +171,6 @@ export function ApplicantAuthorityDecision({
           </dd>
         </div>
       </dl>
-      {decision.nextActionHint ? (
-        <p className={styles.nextAction} role="status">
-          {decision.nextActionHint}
-        </p>
-      ) : null}
-      {decision.decision === 1 || statusCode === 7 ? (
-        <p className={styles.formalLeaseNote} role="note">
-          A preliminary approval does not create a lease, reserve land, or
-          replace formal government approval. Lease processing is still
-          required.
-        </p>
-      ) : null}
     </section>
   );
 }
