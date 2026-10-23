@@ -36,6 +36,7 @@ public sealed class TargetAreaCriterionEvaluatorTests
 
         Assert.True(evaluation.WasAssessed);
         Assert.Equal(expectedScore, evaluation.Score);
-        Assert.Contains("Area match score", evaluation.Summary, StringComparison.Ordinal);
+        Assert.Contains("parcel area", evaluation.Summary, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("unrounded for scoring", evaluation.Summary, StringComparison.OrdinalIgnoreCase);
     }
 }
