@@ -24,8 +24,8 @@ public sealed class ApprovedPreliminaryParcelRecommendationTests
         });
 
         Assert.Equal(1, response.CandidateCount);
-        Assert.DoesNotContain(response.Recommendations, r => r.LandParcelId == approved.Id);
-        Assert.Contains(response.Recommendations, r => r.LandParcelId == eligible.Id);
+        Assert.DoesNotContain(response.Recommendations, r => r.CadastralNumber == "APPROVED-001");
+        Assert.Contains(response.Recommendations, r => r.CadastralNumber == "ELIGIBLE-001");
         Assert.Contains(
             response.Transparency!.FilterStages,
             stage => stage.Name == "Approved preliminary interest");
