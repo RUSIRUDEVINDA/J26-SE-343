@@ -8,6 +8,7 @@ import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import {
   getLandIntelligenceGisCoverage,
   listCanonicalLandUseOptions,
+  listGramaNiladhariDivisionOptions,
   listSourceReportedLandUseOptions,
   listResearchSupplement,
   searchRecommendations,
@@ -50,7 +51,7 @@ const initialState: FindSuitableLandFormState = {
   targetAreaUnit: "hectares",
   preferredProvince: "",
   preferredDistrict: "Colombo",
-  preferredDivisionalSecretariat: "",
+  preferredGramaNiladhariDivision: "",
   sourceReportedLandUse: "",
   maxResults: "30",
 };
@@ -99,8 +100,11 @@ function parseStoredForm(raw: string | null): FindSuitableLandFormState {
       targetAreaUnit: parseTargetAreaInputUnit(parsed.targetAreaUnit),
       preferredProvince: parsed.preferredProvince ?? "",
       preferredDistrict: parsed.preferredDistrict ?? "Colombo",
-      preferredDivisionalSecretariat:
-        parsed.preferredDivisionalSecretariat ?? "",
+      preferredGramaNiladhariDivision:
+        parsed.preferredGramaNiladhariDivision ??
+        (parsed as { preferredDivisionalSecretariat?: string })
+          .preferredDivisionalSecretariat ??
+        "",
       sourceReportedLandUse: normalizeLandUseFilterValue(
         parsed.sourceReportedLandUse ?? "",
       ),
@@ -205,6 +209,8 @@ export function FindSuitableLandForm() {
   >([]);
   const [sourceLandUseChecked, setSourceLandUseChecked] = useState(false);
   const [gisCoverage, setGisCoverage] = useState<LandIntelligenceGisCoverageResponse | null>(null);
+  const [gnDivisionOptions, setGnDivisionOptions] = useState<string[]>([]);
+  const [gnOptionsLoading, setGnOptionsLoading] = useState(false);
   const [landUseOpen, setLandUseOpen] = useState(false);
   const [landUseMenuAbove, setLandUseMenuAbove] = useState(false);
   const landUseDropdownRef = useRef<HTMLDivElement>(null);
@@ -254,6 +260,31 @@ export function FindSuitableLandForm() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const district = form.preferredDistrict.trim();
+    setGnOptionsLoading(true);
+    void listGramaNiladhariDivisionOptions(district || undefined)
+      .then((options) => {
+        if (!cancelled) {
+          setGnDivisionOptions(options);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setGnDivisionOptions([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setGnOptionsLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [form.preferredDistrict]);
 
   // One canonical list; counts are distinct parcel ids supplied by the API.
   const landUseChoices = buildCanonicalLandUseChoices(canonicalLandUseOptions);
@@ -586,7 +617,11 @@ export function FindSuitableLandForm() {
                     className={styles.select}
                     value={form.preferredDistrict}
                     onChange={(e) =>
-                      updateField("preferredDistrict", e.target.value)
+                      persist({
+                        ...form,
+                        preferredDistrict: e.target.value,
+                        preferredGramaNiladhariDivision: "",
+                      })
                     }
                     aria-describedby="district-hint"
                   >
@@ -653,25 +688,40 @@ export function FindSuitableLandForm() {
               <div className={styles.field}>
                 <label
                   className={styles.label}
-                  htmlFor="preferredDivisionalSecretariat"
+                  htmlFor="preferredGramaNiladhariDivision"
                 >
-                  Divisional secretariat
+                  Grama Niladhari division
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
-                <input
-                  id="preferredDivisionalSecretariat"
-                  className={styles.input}
-                  value={form.preferredDivisionalSecretariat}
+                <select
+                  id="preferredGramaNiladhariDivision"
+                  className={styles.select}
+                  value={form.preferredGramaNiladhariDivision}
                   onChange={(e) =>
                     updateField(
-                      "preferredDivisionalSecretariat",
+                      "preferredGramaNiladhariDivision",
                       e.target.value,
                     )
                   }
-                  placeholder="Optional"
-                  disabled
-                  aria-disabled="true"
-                />
+                  disabled={gnOptionsLoading}
+                  aria-describedby="gn-division-hint"
+                >
+                  <option value="">
+                    {gnOptionsLoading
+                      ? "Loading divisions…"
+                      : "Any GN division"}
+                  </option>
+                  {gnDivisionOptions.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+                <p id="gn-division-hint" className={styles.hint}>
+                  {gnDivisionOptions.length === 0 && !gnOptionsLoading
+                    ? "Only GN divisions with imported parcel records are listed. Restart the API if this stays empty."
+                    : "Listed divisions have at least one imported parcel in this dataset."}
+                </p>
               </div>
 
               <div className={styles.field}>

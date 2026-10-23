@@ -113,9 +113,9 @@ export function buildSummaryChips(
   if (request.preferredLocation?.province) {
     chips.push({ label: `Province: ${request.preferredLocation.province}` });
   }
-  if (request.preferredLocation?.divisionalSecretariat) {
+  if (request.preferredLocation?.gramaNiladhariDivision) {
     chips.push({
-      label: `Divisional Secretariat: ${request.preferredLocation.divisionalSecretariat}`,
+      label: `Grama Niladhari division: ${request.preferredLocation.gramaNiladhariDivision}`,
     });
   }
   const targetArea =
@@ -252,7 +252,7 @@ export function RecommendationsView() {
             targetAreaUnit: "hectares",
             preferredProvince: "",
             preferredDistrict: "",
-            preferredDivisionalSecretariat: "",
+            preferredGramaNiladhariDivision: "",
             sourceReportedLandUse: "",
             maxResults: String(payload.request.maxResults ?? 30),
           },

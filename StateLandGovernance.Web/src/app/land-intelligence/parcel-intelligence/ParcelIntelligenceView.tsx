@@ -24,7 +24,6 @@ import {
   findParcelsByCadastralNumber,
   getLandIntelligenceGisCoverage,
   getParcelById,
-  getParcelConstraints,
   getParcelRelationships,
   listAllParcels,
   listCanonicalLandUseOptions,
@@ -38,7 +37,6 @@ import type {
   LandRelationshipResponse,
   LandSearchResultResponse,
   ResearchSupplementParcelResponse,
-  SpatialConstraintResponse,
 } from "@/modules/component-01-land-intelligence/types/landIntelligence";
 import {
   buildCanonicalLandUseChoices,
@@ -77,9 +75,6 @@ export function ParcelIntelligenceView({
   const [relationshipsLoading, setRelationshipsLoading] = useState(false);
   const [parcels, setParcels] = useState<LandSearchResultResponse[]>([]);
   const [parcel, setParcel] = useState<LandParcelResponse | null>(null);
-  const [constraints, setConstraints] = useState<SpatialConstraintResponse[]>(
-    [],
-  );
   const [relationships, setRelationships] = useState<
     LandRelationshipResponse[] | null
   >(null);
@@ -154,17 +149,12 @@ export function ParcelIntelligenceView({
       setDetailLoading(true);
       setDetailError(null);
       setParcel(null);
-      setConstraints([]);
       setRelationships(null);
       setRelationshipsError(null);
       setSelectedId(trimmed);
       try {
-        const [parcelResult, constraintsResult] = await Promise.all([
-          getParcelById(trimmed),
-          getParcelConstraints(trimmed),
-        ]);
+        const parcelResult = await getParcelById(trimmed);
         setParcel(parcelResult);
-        setConstraints(constraintsResult);
         if (navigate) {
           router.push(`/land-intelligence/parcels/${trimmed}`);
         }
@@ -449,10 +439,6 @@ export function ParcelIntelligenceView({
     (activePage - 1) * pageSize,
     activePage * pageSize,
   );
-  const supplementByParcelId = new Map(
-    supplement.map((row) => [row.parcelId, row]),
-  );
-
   const activeSummary =
     applied != null
       ? [
@@ -657,7 +643,6 @@ export function ParcelIntelligenceView({
             totalCount={catalogTotal}
             selectedId={selectedId}
             onSelect={(id) => void loadParcelDetails(id)}
-            supplementByParcelId={supplementByParcelId}
             currentPage={activePage}
             pageSize={pageSize}
             onPageChange={setPage}
@@ -692,7 +677,6 @@ export function ParcelIntelligenceView({
           </div>
           <ParcelDetails
             parcel={parcel}
-            constraints={constraints}
             relationships={relationships}
             relationshipsError={relationshipsError}
             relationshipsLoading={relationshipsLoading}
