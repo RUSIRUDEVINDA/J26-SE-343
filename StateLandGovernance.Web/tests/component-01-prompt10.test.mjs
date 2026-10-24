@@ -35,9 +35,13 @@ const {
   isClosedLeaseInterestStatus,
   isValuationFormEditable,
   officerValuationPanelMode,
+  partitionValuationsByLatest,
   selectReadOnlyValuation,
   unavailableValuationMessage,
 } = loadCommonJs(`${utils}/officerClosedCase.ts`);
+const { valuationFormTypeForRequestedPurpose } = loadCommonJs(
+  `${utils}/leaseInterestValuationFormType.ts`,
+);
 
 test("authority queue defaults to All and exposes all tabs", () => {
   assert.equal(DEFAULT_AUTHORITY_QUEUE_FILTER, "All");
@@ -122,11 +126,12 @@ test("focus is restored only to attached, focusable triggers", () => {
 
 test("officer valuation form is editable only while referred to authority", () => {
   assert.equal(isValuationFormEditable(6), true);
-  for (const status of [1, 2, 3, 4, 5, 7]) {
+  for (const status of [1, 2, 3, 4, 5, 7, 8]) {
     assert.equal(isValuationFormEditable(status), false);
   }
   assert.equal(officerValuationPanelMode(6, 0), "editable");
-  assert.equal(officerValuationPanelMode(6, 2), "editable");
+  assert.equal(officerValuationPanelMode(6, 1), "readonly");
+  assert.equal(officerValuationPanelMode(6, 2), "readonly");
   assert.equal(officerValuationPanelMode(7, 2), "readonly");
   assert.equal(officerValuationPanelMode(5, 1), "readonly");
   assert.equal(officerValuationPanelMode(5, 0), "unavailable");
@@ -136,9 +141,27 @@ test("officer valuation form is editable only while referred to authority", () =
 test("closed statuses and unavailable messages", () => {
   assert.equal(isClosedLeaseInterestStatus(5), true);
   assert.equal(isClosedLeaseInterestStatus(7), true);
+  assert.equal(isClosedLeaseInterestStatus(8), true);
   assert.equal(isClosedLeaseInterestStatus(6), false);
   assert.match(unavailableValuationMessage(5), /closed/);
   assert.match(unavailableValuationMessage(3), /referred to the authority/);
+});
+
+test("partitionValuationsByLatest treats the first row as current", () => {
+  const rows = [
+    { id: "c", revision: 3 },
+    { id: "b", revision: 2 },
+    { id: "a", revision: 1 },
+  ];
+  const split = partitionValuationsByLatest(rows);
+  assert.equal(split.current?.id, "c");
+  assert.deepEqual(split.historical.map((row) => row.id), ["b", "a"]);
+});
+
+test("valuation form type follows requested purpose", () => {
+  assert.equal(valuationFormTypeForRequestedPurpose(1), "AgriculturalCommercial");
+  assert.equal(valuationFormTypeForRequestedPurpose(2), "AgriculturalCommercial");
+  assert.equal(valuationFormTypeForRequestedPurpose(4), "Residential");
 });
 
 test("selectReadOnlyValuation picks the chosen revision or the latest", () => {

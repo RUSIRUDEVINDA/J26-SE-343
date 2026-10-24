@@ -56,6 +56,12 @@ export const officerLeaseInterestQueueNavItem: NavItem = {
   icon: "⚑",
 };
 
+export const officerLeaseInterestValuationQueueNavItem: NavItem = {
+  label: "Officer valuation queue",
+  href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-valuation-queue`,
+  icon: "⚑",
+};
+
 export const authorityLeaseInterestQueueNavItem: NavItem = {
   label: "Authority review queue",
   href: `${LAND_INTELLIGENCE_BASE}/authority/lease-interest-queue`,

@@ -46,7 +46,7 @@ export function markValuationSaveFailed(
   return { idempotencyKey: state.idempotencyKey, inFlight: false };
 }
 
-/** After a successful database save, clear the key so the next revision gets a new attempt. */
+/** After a successful database save, clear the key (no further submissions are allowed). */
 export function markValuationSaveSucceeded(): ValuationSaveAttemptState {
   return { idempotencyKey: null, inFlight: false };
 }
