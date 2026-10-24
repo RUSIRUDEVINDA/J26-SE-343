@@ -7,7 +7,7 @@ export function looksLikeSriLankanNic(value: string): boolean {
 export function buildOfficerLeaseInterestLookupRequest(
   identifier: string,
   page = 1,
-  pageSize = 20,
+  pageSize = 10,
 ): {
   nationalIdentityCardNumber?: string;
   businessRegistrationNumber?: string;
@@ -15,6 +15,9 @@ export function buildOfficerLeaseInterestLookupRequest(
   pageSize: number;
 } {
   const trimmed = identifier.trim();
+  if (!trimmed) {
+    return { page, pageSize };
+  }
   if (looksLikeSriLankanNic(trimmed)) {
     return {
       nationalIdentityCardNumber: trimmed,

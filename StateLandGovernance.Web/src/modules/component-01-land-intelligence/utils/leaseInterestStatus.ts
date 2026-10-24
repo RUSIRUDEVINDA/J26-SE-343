@@ -15,7 +15,11 @@ export function leaseInterestStatusLabel(status: LeaseInterestRequestStatus): st
     case 6:
       return "Referred to authority";
     case 7:
-      return "Approved";
+      return "Approved in principle";
+    case 8:
+      return "Closed — other request approved";
+    case 9:
+      return "Awaiting valuation";
     default:
       return "Unknown";
   }
@@ -32,11 +36,14 @@ export function leaseInterestStatusBadgeTone(
       return "primary";
     case 4:
     case 6:
+    case 9:
       return "warning";
     case 5:
       return "danger";
     case 7:
       return "success";
+    case 8:
+      return "neutral";
     default:
       return "neutral";
   }
@@ -68,6 +75,10 @@ export function formatApplicantTimelineNote(
     return { label: "Officer Notes", body: body || trimmed };
   }
 
+  if (status === 8) {
+    return { label: "Outcome", body: trimmed };
+  }
+
   return { label: "Note", body: trimmed };
 }
 
@@ -88,15 +99,19 @@ export function leaseInterestApplicantOutcome(status: LeaseInterestRequestStatus
     case 2:
       return "Submitted — awaiting officer queue (preliminary interest only).";
     case 3:
-      return "Pending officer verification.";
+      return "";
     case 4:
       return "More information is required before officer verification can continue.";
     case 5:
-      return "Rejected after review. This is not a court decision and does not reserve land.";
+      return "Rejected after review.";
     case 6:
-      return "Referred for authority follow-up. An officer valuation may be recorded.";
+      return "Referred for authority follow-up after officer valuation (preliminary only).";
+    case 9:
+      return "Preliminary verification is complete. A valuation officer will record the land worksheet next.";
     case 7:
       return "";
+    case 8:
+      return "Closed — another preliminary request for this parcel was approved in principle. This is not a rejection of your proposal on its merits.";
     default:
       return "Status unknown.";
   }
