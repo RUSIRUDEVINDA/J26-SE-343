@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
@@ -23,6 +23,9 @@ import {
   leaseInterestStatusLabel,
 } from "../utils/leaseInterestStatus";
 import { AuthorityValuationWorksheet } from "./AuthorityValuationWorksheet";
+import { HistoricalValuationRecords } from "./HistoricalValuationRecords";
+import { LeaseInterestApplicantDetailFields } from "./LeaseInterestApplicantDetailFields";
+import { partitionValuationsByLatest } from "../utils/officerClosedCase";
 import styles from "./AuthorityLeaseInterestReviewView.module.css";
 
 const formatDate = (value: string) =>
@@ -55,15 +58,12 @@ export function AuthorityLeaseInterestReviewView({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
   const [successLabel, setSuccessLabel] = useState<string | null>(null);
-  const [selectedRevisionId, setSelectedRevisionId] = useState<string | null>(null);
-
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const result = await getAuthorityLeaseInterestRequest(requestId);
       setDetail(result);
-      setSelectedRevisionId(result.latestValuation?.id ?? result.valuations[0]?.id ?? null);
     } catch (err) {
       setError(
         err instanceof ApiClientError
@@ -87,9 +87,6 @@ export function AuthorityLeaseInterestReviewView({
           return;
         }
         setDetail(result);
-        setSelectedRevisionId(
-          result.latestValuation?.id ?? result.valuations[0]?.id ?? null,
-        );
       } catch (err) {
         if (cancelled) {
           return;
@@ -119,17 +116,6 @@ export function AuthorityLeaseInterestReviewView({
     open: successOpen,
     onClose: () => setSuccessOpen(false),
   });
-
-  const selectedValuation = useMemo(() => {
-    if (!detail?.valuations.length) {
-      return null;
-    }
-    return (
-      detail.valuations.find((item) => item.id === selectedRevisionId) ??
-      detail.latestValuation ??
-      detail.valuations[0]
-    );
-  }, [detail, selectedRevisionId]);
 
   function openConfirm() {
     setFormError(null);
@@ -163,9 +149,6 @@ export function AuthorityLeaseInterestReviewView({
         reviewedValuationRevision: detail.latestValuation.revision,
       });
       setDetail(updated);
-      setSelectedRevisionId(
-        updated.latestValuation?.id ?? updated.valuations[0]?.id ?? null,
-      );
       setReason("");
       setConfirmOpen(false);
       setSuccessLabel(decisionLabel(decision));
@@ -199,6 +182,10 @@ export function AuthorityLeaseInterestReviewView({
   const purposeLabel =
     landUseTypeLabels[detail.proposal.requestedPurpose] ??
     String(detail.proposal.requestedPurpose);
+  const { historical: historicalValuations } = partitionValuationsByLatest(
+    detail.valuations,
+  );
+  const valuationForReview = detail.latestValuation ?? detail.valuations[0] ?? null;
 
   return (
     <div className={styles.page}>
@@ -328,47 +315,7 @@ export function AuthorityLeaseInterestReviewView({
               </Link>
             </div>
             <dl className={styles.detailsGrid}>
-              <div>
-                <dt>Applicant</dt>
-                <dd>{detail.applicant.legalName}</dd>
-              </div>
-              <div>
-                <dt>Contact</dt>
-                <dd>
-                  {detail.applicant.contactEmail}
-                  <br />
-                  {detail.applicant.contactPhone}
-                </dd>
-              </div>
-              <div>
-                <dt>Postal address</dt>
-                <dd>{detail.applicant.postalAddress}</dd>
-              </div>
-              {detail.applicant.kind === 2 ? (
-                <>
-                  <div>
-                    <dt>Organisation</dt>
-                    <dd>{detail.applicant.organizationName ?? "Not entered"}</dd>
-                  </div>
-                  <div>
-                    <dt>BRN</dt>
-                    <dd>
-                      {detail.applicant.organizationRegistrationNumber ?? "Not entered"}
-                    </dd>
-                  </div>
-                  {detail.applicant.representativeNationalIdentityCardNumber ? (
-                    <div>
-                      <dt>Representative NIC</dt>
-                      <dd>{detail.applicant.representativeNationalIdentityCardNumber}</dd>
-                    </div>
-                  ) : null}
-                </>
-              ) : (
-                <div>
-                  <dt>NIC (masked)</dt>
-                  <dd>{detail.applicant.nationalIdentityCardNumber ?? "Not entered"}</dd>
-                </div>
-              )}
+              <LeaseInterestApplicantDetailFields applicant={detail.applicant} />
               <div>
                 <dt>Cadastre / district</dt>
                 <dd>
@@ -436,60 +383,13 @@ export function AuthorityLeaseInterestReviewView({
               calculate lease rates or totals.
             </p>
 
-            {detail.valuations.length > 0 ? (
+            {valuationForReview ? (
               <>
-                <div className={styles.revisionControls}>
-                  <div className={styles.field}>
-                    <label htmlFor="valuation-revision">
-                      Valuation revision to inspect
-                    </label>
-                    <select
-                      id="valuation-revision"
-                      className={styles.input}
-                      value={selectedValuation?.id ?? ""}
-                      onChange={(event) =>
-                        setSelectedRevisionId(event.target.value || null)
-                      }
-                    >
-                      {detail.valuations.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          Revision {item.revision}
-                          {detail.latestValuation?.id === item.id
-                            ? " (latest)"
-                            : ""}{" "}
-                          · {formatDate(item.recordedAtUtc)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                {selectedValuation ? (
-                  <AuthorityValuationWorksheet valuation={selectedValuation} />
-                ) : null}
-                {detail.valuations.length > 1 ? (
-                  <details className={styles.fieldHelp}>
-                    <summary>
-                      Revision list ({detail.valuations.length})
-                    </summary>
-                    <ol className={styles.decisionHistory}>
-                      {detail.valuations.map((item) => (
-                        <li key={item.id}>
-                          <button
-                            type="button"
-                            className={styles.textLink}
-                            onClick={() => setSelectedRevisionId(item.id)}
-                          >
-                            Revision {item.revision}
-                          </button>
-                          {` · ${formatDate(item.recordedAtUtc)} · LKR ${item.assessedLandValueLkr.toLocaleString("en-LK")}`}
-                          {detail.latestValuation?.id === item.id
-                            ? " · latest"
-                            : ""}
-                        </li>
-                      ))}
-                    </ol>
-                  </details>
-                ) : null}
+                <AuthorityValuationWorksheet valuation={valuationForReview} />
+                <HistoricalValuationRecords
+                  valuations={historicalValuations}
+                  formatRecordedAt={formatDate}
+                />
               </>
             ) : (
               <p className={styles.closedMessage}>
@@ -558,9 +458,8 @@ export function AuthorityLeaseInterestReviewView({
               }}
             >
               <p className={styles.fieldHelp}>
-                Decision applies to latest valuation revision{" "}
-                <strong>{detail.latestValuation.revision}</strong> only. Use the
-                revision selector above to inspect earlier worksheets.
+                Your decision applies to the officer valuation worksheet shown
+                on this page.
               </p>
               <div className={styles.field}>
                 <label htmlFor="authority-decision">Decision *</label>

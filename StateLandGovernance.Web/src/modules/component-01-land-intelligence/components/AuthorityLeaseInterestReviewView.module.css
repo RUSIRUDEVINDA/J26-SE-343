@@ -18,8 +18,8 @@
 .sectionHeading h3, .decisionCard h3 { margin: 0; font-size: 1.12rem; }
 .detailsGrid { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.15rem 1.5rem; }
 .detailsGrid div { min-width: 0; }
-.detailsGrid dt { margin-bottom: .3rem; color: var(--color-muted); font-size: .78rem; }
-.detailsGrid dd { margin: 0; font-size: .94rem; font-weight: 650; overflow-wrap: anywhere; }
+.detailsGrid dt { margin-bottom: .3rem; color: var(--color-muted); font-size: .78rem; font-weight: 650; }
+.detailsGrid dd { margin: 0; font-size: .94rem; font-weight: 400; overflow-wrap: anywhere; }
 .manualTag { display: inline-block; margin: .35rem 0 .6rem; padding: .2rem .5rem; border-radius: 8px; background: #eef3f8; color: #1f4b75; font-size: .72rem; font-weight: 700; }
 .fieldHelp { margin: .45rem 0 .75rem; color: var(--color-muted); font-size: .78rem; line-height: 1.45; }
 .timeline { margin: 0; padding-left: 1.2rem; }
@@ -90,9 +90,9 @@ textarea.input { resize: vertical; line-height: 1.5; }
   box-shadow: 0 12px 40px rgba(28, 25, 23, 0.22);
 }
 .modalDialogSuccess { background: #e8f5e9; border-color: #a5d6a7; }
-.modalTitle { margin: 0 0 0.35rem; font-size: 1.05rem; }
+.modalTitle { margin: 0 0 0.35rem; font-size: 1.05rem; text-align: center; }
 .modalBody { margin: 0 0 1rem; font-size: 0.88rem; line-height: 1.45; }
-.modalActions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.modalActions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; }
 @media (max-width: 1000px) { .contentGrid { grid-template-columns: minmax(0, 1fr); } .decisionCard { position: static; } }
 @media (max-width: 640px) {
   .caseHeader { flex-direction: column; }

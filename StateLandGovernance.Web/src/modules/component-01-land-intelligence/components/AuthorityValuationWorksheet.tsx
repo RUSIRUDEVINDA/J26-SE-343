@@ -8,10 +8,16 @@ import styles from "./AuthorityLeaseInterestReviewView.module.css";
 
 export function AuthorityValuationWorksheet({
   valuation,
+  headerMode = "current",
 }: {
   valuation: LeaseInterestValuation;
+  headerMode?: "current" | "historical";
 }) {
   const sections = buildValuationWorksheetSections(valuation);
+  const title =
+    headerMode === "historical"
+      ? `Historical record · Revision ${valuation.revision} · ${valuationFormTypeLabel(valuation.formType)}`
+      : valuationFormTypeLabel(valuation.formType);
 
   return (
     <div
@@ -20,10 +26,7 @@ export function AuthorityValuationWorksheet({
       data-form-type={valuation.formType}
     >
       <div className={styles.worksheetHeader}>
-        <h4 className={styles.worksheetTitle}>
-          Revision {valuation.revision} ·{" "}
-          {valuationFormTypeLabel(valuation.formType)}
-        </h4>
+        <h4 className={styles.worksheetTitle}>{title}</h4>
         <span className={styles.manualTag}>
           Officer-entered values (manual — not calculated)
         </span>
