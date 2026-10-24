@@ -142,4 +142,18 @@ public sealed class ApprovedPreliminaryLeaseParcelRegistry : IApprovedPreliminar
             safePageSize,
             totalCount);
     }
+
+    public async Task<IReadOnlyList<Guid>> ListParcelIdsWithConflictingApprovalsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var rows = await _dbContext.LeaseInterestRequests
+            .AsNoTracking()
+            .Where(request => request.Status == LeaseInterestRequestStatus.ApprovedInPrinciple)
+            .GroupBy(request => request.LandParcelId)
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key)
+            .ToListAsync(cancellationToken);
+
+        return rows;
+    }
 }

@@ -8,7 +8,7 @@ public static class ColomboStateResearchProjectLeaseReady
 {
     public const string DatasetKey = "colombo-state-research-300";
 
-    public const string DesignationLabel = "Lease-ready — project dataset assumption";
+    public const string DesignationLabel = "Lease-ready";
 
     public const string DesignationNotice =
         "This parcel is marked lease-ready for the J26-SE-343 project dataset only. " +
