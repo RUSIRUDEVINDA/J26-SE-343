@@ -141,7 +141,6 @@ function worksheetField(
 }
 
 const OVERVIEW_ALWAYS_VISIBLE = new Set([
-  "revision",
   "recorded",
   "formType",
   "assessedValue",
@@ -162,7 +161,7 @@ function visibleEvaluationFields(
   );
 }
 
-/** Read-only sections for the latest officer valuation revision (stored values only). */
+/** Read-only sections for the current officer valuation (stored values only). */
 export function buildApplicantEvaluationBlocks(
   summary: LeaseInterestApplicantValuationSummary,
 ): ApplicantEvaluationBlock[] {
@@ -172,7 +171,6 @@ export function buildApplicantEvaluationBlocks(
   const agricultural = isAgriculturalForm(summary.formType);
 
   const overviewFields: ApplicantEvaluationField[] = [
-    worksheetField("revision", "Latest revision", String(summary.revision)),
     worksheetField(
       "recorded",
       "Recorded on system",
@@ -359,7 +357,7 @@ export function buildApplicantEvaluationBlocks(
       id: "overview",
       title: "Assessment overview",
       intro:
-        "Figures below are taken from the latest officer valuation revision. They are not calculated by this portal.",
+        "Figures below are taken from the officer valuation on record.",
       fields: visibleEvaluationFields(overviewFields, OVERVIEW_ALWAYS_VISIBLE),
     },
   ];

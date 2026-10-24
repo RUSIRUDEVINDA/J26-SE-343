@@ -12,6 +12,9 @@ import { getLandIntelligenceOwnerId } from "./landIntelligenceOwner";
 
 const APPLICANT_TOKEN_KEY = "component01.landIntelligence.applicantAccessToken";
 const OFFICER_TOKEN_KEY = "component01.landIntelligence.officerAccessToken";
+/** Fixed demo officer subject — mint JWT via POST /api/v1/land/auth/session. */
+const DEMO_OFFICER_SUBJECT_ID = "a1111111-1111-4111-8111-111111111111";
+
 const AUTHORITY_TOKEN_KEY = "component01.landIntelligence.authorityAccessToken";
 
 export type LandIntelligenceSessionRole =
@@ -155,9 +158,13 @@ async function mintDevelopmentSession(
 async function mintForRole(
   role: Exclude<LandIntelligenceSessionRole, "none">,
 ): Promise<string> {
-  return role === "applicant"
-    ? await mintDevelopmentSession("applicant", getLandIntelligenceOwnerId())
-    : await mintDevelopmentSession(role);
+  if (role === "applicant") {
+    return await mintDevelopmentSession("applicant", getLandIntelligenceOwnerId());
+  }
+  if (role === "officer") {
+    return await mintDevelopmentSession("officer", DEMO_OFFICER_SUBJECT_ID);
+  }
+  return await mintDevelopmentSession(role);
 }
 
 /**

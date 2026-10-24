@@ -81,6 +81,17 @@ export async function listOfficerLeaseInterestQueue(
 
 }
 
+export async function listOfficerLeaseInterestValuationQueue(
+  page = 1,
+  pageSize = 20,
+): Promise<LeaseInterestOfficerQueueResponse> {
+  return apiGet<LeaseInterestOfficerQueueResponse>(
+    `/api/v1/land/officer/lease-interest/valuation-queue?page=${page}&pageSize=${pageSize}`,
+    undefined,
+    "officer",
+  );
+}
+
 
 
 export async function getOfficerLeaseInterestRequest(

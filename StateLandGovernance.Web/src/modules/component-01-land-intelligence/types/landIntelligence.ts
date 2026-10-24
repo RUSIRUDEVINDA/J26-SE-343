@@ -505,6 +505,10 @@ export const RECOMMENDATIONS_SESSION_KEY =
 export const FIND_SUITABLE_LAND_FORM_SESSION_KEY =
   "component01.landIntelligence.findSuitableLandForm";
 
+/** Set with form session payload when navigating from recommendations “Edit search”. */
+export const FIND_SUITABLE_LAND_RESTORE_ONCE_KEY =
+  "component01.landIntelligence.restoreFindSuitableLandFormOnce";
+
 export interface RecommendationsSessionPayload {
   request: LandRecommendationSearchRequest;
   response: LandRecommendationSearchResultsResponse;
@@ -521,7 +525,9 @@ export type LeaseInterestRequestStatus =
   | 4
   | 5
   | 6
-  | 7;
+  | 7
+  | 8
+  | 9;
 
 /** Authority outcomes after officer valuation: Approved (1) or Rejected (2). */
 export type LeaseInterestAuthorityDecisionKind = 1 | 2;
@@ -662,6 +668,7 @@ export interface LeaseInterestOfficerLookupItem {
   applicantKind: LeaseInterestApplicantKind;
   nationalIdentityCardNumber?: string | null;
   businessRegistrationNumber?: string | null;
+  hasOfficerValuation?: boolean;
 }
 
 export interface LeaseInterestOfficerLookupResponse {
@@ -679,6 +686,10 @@ export interface LeaseInterestOfficerQueueItem {
   status: LeaseInterestRequestStatus;
   cadastralNumber?: string | null;
   district?: string | null;
+  applicantKind: LeaseInterestApplicantKind;
+  nationalIdentityCardNumber?: string | null;
+  businessRegistrationNumber?: string | null;
+  hasOfficerValuation?: boolean;
 }
 
 export interface LeaseInterestOfficerQueueResponse {
@@ -711,6 +722,11 @@ export interface LeaseInterestOfficerRequestDetail {
   district?: string | null;
   applicantOutcomeSummary: string;
   latestAuthorityDecision?: LeaseInterestApplicantAuthorityDecision | null;
+  verificationCompletedByOfficerId?: string | null;
+  currentOfficerActorId?: string | null;
+  canRecordVerificationDecision?: boolean;
+  canRecordValuation?: boolean;
+  hasOfficerValuation?: boolean;
 }
 
 export type LeaseInterestValuationFormType = "AgriculturalCommercial" | "Residential";
@@ -820,6 +836,9 @@ export interface LeaseInterestAuthorityQueueItem {
   status: LeaseInterestRequestStatus;
   cadastralNumber?: string | null;
   district?: string | null;
+  applicantKind: LeaseInterestApplicantKind;
+  nationalIdentityCardNumber?: string | null;
+  businessRegistrationNumber?: string | null;
 }
 
 export interface LeaseInterestAuthorityQueueResponse {
