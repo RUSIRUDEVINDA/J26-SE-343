@@ -13,7 +13,7 @@ export default async function OfficerLeaseInterestReviewPage({
         title="Review lease interest"
         subtitle="Preliminary verification only."
       />
-      <OfficerLeaseInterestReviewView requestId={requestId} />
+      <OfficerLeaseInterestReviewView requestId={requestId} workflowMode="verification" />
     </>
   );
 }
