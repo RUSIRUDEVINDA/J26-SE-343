@@ -1,0 +1,615 @@
+{
+  "experiment": 5,
+  "development_evaluation_only": true,
+  "discovery": {
+    "candidate_origin_counts": {
+      "New synthetic scenario": 300,
+      "Existing baseline": 200,
+      "New source-derived candidate": 30
+    },
+    "synthetic_families": 100,
+    "approved_families": 75,
+    "approved_records": 225,
+    "unreviewed_families": 25,
+    "unreviewed_records": 75,
+    "source_derived_excluded": 30,
+    "baseline_matches_original": true,
+    "selected_duplicate_ids": 0,
+    "selected_duplicate_exact_texts": 0,
+    "experiment4_arm_a_recomputed": {
+      "accuracy": 0.77,
+      "macro_f1": 0.7684573371018257
+    },
+    "experiment4_arm_b_recomputed": {
+      "accuracy": 0.76,
+      "macro_f1": 0.7601479600064505
+    },
+    "synthetic_family_class_counts": {
+      "Administrative / Procedural / Integrity": 16,
+      "Lease Revenue / Payment / Enforcement": 22,
+      "Unauthorized Allocation / Transfer / Use": 19,
+      "Protected / Environmental Lease Misuse": 18
+    },
+    "synthetic_fold_class_counts": {
+      "1": {
+        "Administrative / Procedural / Integrity": 4,
+        "Lease Revenue / Payment / Enforcement": 4,
+        "Unauthorized Allocation / Transfer / Use": 4,
+        "Protected / Environmental Lease Misuse": 3
+      },
+      "2": {
+        "Administrative / Procedural / Integrity": 3,
+        "Lease Revenue / Payment / Enforcement": 5,
+        "Unauthorized Allocation / Transfer / Use": 4,
+        "Protected / Environmental Lease Misuse": 3
+      },
+      "3": {
+        "Administrative / Procedural / Integrity": 3,
+        "Lease Revenue / Payment / Enforcement": 5,
+        "Unauthorized Allocation / Transfer / Use": 3,
+        "Protected / Environmental Lease Misuse": 4
+      },
+      "4": {
+        "Administrative / Procedural / Integrity": 3,
+        "Lease Revenue / Payment / Enforcement": 4,
+        "Unauthorized Allocation / Transfer / Use": 4,
+        "Protected / Environmental Lease Misuse": 4
+      },
+      "5": {
+        "Administrative / Procedural / Integrity": 3,
+        "Lease Revenue / Payment / Enforcement": 4,
+        "Unauthorized Allocation / Transfer / Use": 4,
+        "Protected / Environmental Lease Misuse": 4
+      }
+    }
+  },
+  "arm_a_reproduction": {
+    "status": "PASS",
+    "records": 200,
+    "prediction_mismatches": 0,
+    "max_abs_probability_difference": 4.997501367798307e-05,
+    "tolerance": 0.0001
+  },
+  "arms": {
+    "arm_a": {
+      "real": {
+        "support": 200,
+        "correct": 154,
+        "incorrect": 46,
+        "accuracy": 0.77,
+        "balanced_accuracy": 0.77,
+        "macro_precision": 0.7708333333333334,
+        "macro_recall": 0.77,
+        "macro_f1": 0.7684573371018257,
+        "weighted_f1": 0.7684573371018257,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true
+      },
+      "synthetic": {
+        "support": 225,
+        "correct": 187,
+        "incorrect": 38,
+        "accuracy": 0.8311111111111111,
+        "balanced_accuracy": 0.8383561492114123,
+        "macro_precision": 0.8347225569932449,
+        "macro_recall": 0.8383561492114123,
+        "macro_f1": 0.8313497648591988,
+        "weighted_f1": 0.8307373758664325,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true,
+        "family_metrics": {
+          "family_support": 75,
+          "family_majority_accuracy": 0.92,
+          "family_majority_macro_f1": 0.9228139344418413,
+          "families_all_three_variants_correct": 47,
+          "correct_variants_distribution": {
+            "0": 0,
+            "1": 10,
+            "2": 18,
+            "3": 47
+          }
+        }
+      },
+      "combined": {
+        "support": 425,
+        "correct": 341,
+        "incorrect": 84,
+        "accuracy": 0.8023529411764706,
+        "balanced_accuracy": 0.8034968533262236,
+        "macro_precision": 0.8014252499180596,
+        "macro_recall": 0.8034968533262236,
+        "macro_f1": 0.8013312097688681,
+        "weighted_f1": 0.8013814328477431,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true
+      }
+    },
+    "arm_b": {
+      "real": {
+        "support": 200,
+        "correct": 158,
+        "incorrect": 42,
+        "accuracy": 0.79,
+        "balanced_accuracy": 0.79,
+        "macro_precision": 0.7928959627329192,
+        "macro_recall": 0.7899999999999999,
+        "macro_f1": 0.7883211990702762,
+        "weighted_f1": 0.7883211990702762,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true
+      },
+      "synthetic": {
+        "support": 225,
+        "correct": 212,
+        "incorrect": 13,
+        "accuracy": 0.9422222222222222,
+        "balanced_accuracy": 0.9418222798157008,
+        "macro_precision": 0.9452876594471253,
+        "macro_recall": 0.9418222798157008,
+        "macro_f1": 0.9432114009363584,
+        "weighted_f1": 0.9423665517655331,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true,
+        "family_metrics": {
+          "family_support": 75,
+          "family_majority_accuracy": 0.9733333333333334,
+          "family_majority_macro_f1": 0.9728664148018986,
+          "families_all_three_variants_correct": 64,
+          "correct_variants_distribution": {
+            "0": 0,
+            "1": 2,
+            "2": 9,
+            "3": 64
+          }
+        }
+      },
+      "combined": {
+        "support": 425,
+        "correct": 370,
+        "incorrect": 55,
+        "accuracy": 0.8705882352941177,
+        "balanced_accuracy": 0.8688725139898543,
+        "macro_precision": 0.8734569154586639,
+        "macro_recall": 0.8688725139898543,
+        "macro_f1": 0.8698185558541208,
+        "weighted_f1": 0.8701669396269445,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true
+      }
+    },
+    "arm_c": {
+      "real": {
+        "support": 200,
+        "correct": 152,
+        "incorrect": 48,
+        "accuracy": 0.76,
+        "balanced_accuracy": 0.76,
+        "macro_precision": 0.7638805306775854,
+        "macro_recall": 0.76,
+        "macro_f1": 0.7595719766622108,
+        "weighted_f1": 0.7595719766622109,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true
+      },
+      "synthetic": {
+        "support": 225,
+        "correct": 220,
+        "incorrect": 5,
+        "accuracy": 0.9777777777777777,
+        "balanced_accuracy": 0.9792663476874003,
+        "macro_precision": 0.9782967032967034,
+        "macro_recall": 0.9792663476874003,
+        "macro_f1": 0.978667407712196,
+        "weighted_f1": 0.9777093668564316,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true,
+        "family_metrics": {
+          "family_support": 75,
+          "family_majority_accuracy": 1.0,
+          "family_majority_macro_f1": 1.0,
+          "families_all_three_variants_correct": 70,
+          "correct_variants_distribution": {
+            "0": 0,
+            "1": 0,
+            "2": 5,
+            "3": 70
+          }
+        }
+      },
+      "combined": {
+        "support": 425,
+        "correct": 372,
+        "incorrect": 53,
+        "accuracy": 0.8752941176470588,
+        "balanced_accuracy": 0.8738738616247709,
+        "macro_precision": 0.8770407652231539,
+        "macro_recall": 0.8738738616247709,
+        "macro_f1": 0.8748146983328933,
+        "weighted_f1": 0.8752621513783899,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true
+      }
+    },
+    "arm_d": {
+      "real": {
+        "support": 200,
+        "correct": 155,
+        "incorrect": 45,
+        "accuracy": 0.775,
+        "balanced_accuracy": 0.7749999999999999,
+        "macro_precision": 0.7777777777777778,
+        "macro_recall": 0.7749999999999999,
+        "macro_f1": 0.7739271451623497,
+        "weighted_f1": 0.7739271451623497,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true
+      },
+      "synthetic": {
+        "support": 225,
+        "correct": 213,
+        "incorrect": 12,
+        "accuracy": 0.9466666666666667,
+        "balanced_accuracy": 0.9480966462874357,
+        "macro_precision": 0.9472651732503949,
+        "macro_recall": 0.9480966462874357,
+        "macro_f1": 0.9468693458957576,
+        "weighted_f1": 0.9462941544725334,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true,
+        "family_metrics": {
+          "family_support": 75,
+          "family_majority_accuracy": 0.9733333333333334,
+          "family_majority_macro_f1": 0.9742713950180291,
+          "families_all_three_variants_correct": 65,
+          "correct_variants_distribution": {
+            "0": 0,
+            "1": 2,
+            "2": 8,
+            "3": 65
+          }
+        }
+      },
+      "combined": {
+        "support": 425,
+        "correct": 368,
+        "incorrect": 57,
+        "accuracy": 0.8658823529411764,
+        "balanced_accuracy": 0.8647767409723005,
+        "macro_precision": 0.8673580586080586,
+        "macro_recall": 0.8647767409723005,
+        "macro_f1": 0.8650082209057756,
+        "weighted_f1": 0.86543009509491,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true
+      }
+    },
+    "arm_e": {
+      "real": {
+        "support": 200,
+        "correct": 160,
+        "incorrect": 40,
+        "accuracy": 0.8,
+        "balanced_accuracy": 0.7999999999999999,
+        "macro_precision": 0.8018577962917586,
+        "macro_recall": 0.7999999999999999,
+        "macro_f1": 0.7989041990793784,
+        "weighted_f1": 0.7989041990793786,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true
+      },
+      "synthetic": {
+        "support": 225,
+        "correct": 217,
+        "incorrect": 8,
+        "accuracy": 0.9644444444444444,
+        "balanced_accuracy": 0.964220051391104,
+        "macro_precision": 0.9675065932805871,
+        "macro_recall": 0.964220051391104,
+        "macro_f1": 0.9656992968466117,
+        "weighted_f1": 0.9645488867718147,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true,
+        "family_metrics": {
+          "family_support": 75,
+          "family_majority_accuracy": 0.9866666666666667,
+          "family_majority_macro_f1": 0.9877757901013715,
+          "families_all_three_variants_correct": 68,
+          "correct_variants_distribution": {
+            "0": 0,
+            "1": 1,
+            "2": 6,
+            "3": 68
+          }
+        }
+      },
+      "combined": {
+        "support": 425,
+        "correct": 377,
+        "incorrect": 48,
+        "accuracy": 0.8870588235294118,
+        "balanced_accuracy": 0.8852617561067909,
+        "macro_precision": 0.8891037939333393,
+        "macro_recall": 0.8852617561067908,
+        "macro_f1": 0.8863466633621631,
+        "weighted_f1": 0.8868137378289329,
+        "all_class_metrics_defined": true,
+        "no_zero_recall_class": true
+      }
+    }
+  },
+  "paired_comparisons": {
+    "arm_b": {
+      "real": {
+        "support": 200,
+        "helped": 7,
+        "hurt": 3,
+        "net_gain": 4,
+        "both_correct": 151,
+        "both_wrong_same_prediction": 39,
+        "both_wrong_different_predictions": 0,
+        "prediction_changes": 10,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": -1,
+          "Lease Revenue / Payment / Enforcement": 2,
+          "Unauthorized Allocation / Transfer / Use": 2,
+          "Protected / Environmental Lease Misuse": 1
+        }
+      },
+      "synthetic": {
+        "support": 225,
+        "helped": 28,
+        "hurt": 3,
+        "net_gain": 25,
+        "both_correct": 184,
+        "both_wrong_same_prediction": 9,
+        "both_wrong_different_predictions": 1,
+        "prediction_changes": 32,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": -1,
+          "Lease Revenue / Payment / Enforcement": 11,
+          "Unauthorized Allocation / Transfer / Use": 10,
+          "Protected / Environmental Lease Misuse": 5
+        }
+      },
+      "combined": {
+        "support": 425,
+        "helped": 35,
+        "hurt": 6,
+        "net_gain": 29,
+        "both_correct": 335,
+        "both_wrong_same_prediction": 48,
+        "both_wrong_different_predictions": 1,
+        "prediction_changes": 42,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": -2,
+          "Lease Revenue / Payment / Enforcement": 13,
+          "Unauthorized Allocation / Transfer / Use": 12,
+          "Protected / Environmental Lease Misuse": 6
+        }
+      }
+    },
+    "arm_c": {
+      "real": {
+        "support": 200,
+        "helped": 8,
+        "hurt": 10,
+        "net_gain": -2,
+        "both_correct": 144,
+        "both_wrong_same_prediction": 35,
+        "both_wrong_different_predictions": 3,
+        "prediction_changes": 21,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": -3,
+          "Lease Revenue / Payment / Enforcement": 0,
+          "Unauthorized Allocation / Transfer / Use": 3,
+          "Protected / Environmental Lease Misuse": -2
+        }
+      },
+      "synthetic": {
+        "support": 225,
+        "helped": 35,
+        "hurt": 2,
+        "net_gain": 33,
+        "both_correct": 185,
+        "both_wrong_same_prediction": 2,
+        "both_wrong_different_predictions": 1,
+        "prediction_changes": 38,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": 2,
+          "Lease Revenue / Payment / Enforcement": 12,
+          "Unauthorized Allocation / Transfer / Use": 12,
+          "Protected / Environmental Lease Misuse": 7
+        }
+      },
+      "combined": {
+        "support": 425,
+        "helped": 43,
+        "hurt": 12,
+        "net_gain": 31,
+        "both_correct": 329,
+        "both_wrong_same_prediction": 37,
+        "both_wrong_different_predictions": 4,
+        "prediction_changes": 59,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": -1,
+          "Lease Revenue / Payment / Enforcement": 12,
+          "Unauthorized Allocation / Transfer / Use": 15,
+          "Protected / Environmental Lease Misuse": 5
+        }
+      }
+    },
+    "arm_d": {
+      "real": {
+        "support": 200,
+        "helped": 6,
+        "hurt": 5,
+        "net_gain": 1,
+        "both_correct": 149,
+        "both_wrong_same_prediction": 39,
+        "both_wrong_different_predictions": 1,
+        "prediction_changes": 12,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": -2,
+          "Lease Revenue / Payment / Enforcement": 0,
+          "Unauthorized Allocation / Transfer / Use": 3,
+          "Protected / Environmental Lease Misuse": 0
+        }
+      },
+      "synthetic": {
+        "support": 225,
+        "helped": 27,
+        "hurt": 1,
+        "net_gain": 26,
+        "both_correct": 186,
+        "both_wrong_same_prediction": 9,
+        "both_wrong_different_predictions": 2,
+        "prediction_changes": 30,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": 1,
+          "Lease Revenue / Payment / Enforcement": 11,
+          "Unauthorized Allocation / Transfer / Use": 8,
+          "Protected / Environmental Lease Misuse": 6
+        }
+      },
+      "combined": {
+        "support": 425,
+        "helped": 33,
+        "hurt": 6,
+        "net_gain": 27,
+        "both_correct": 335,
+        "both_wrong_same_prediction": 48,
+        "both_wrong_different_predictions": 3,
+        "prediction_changes": 42,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": -1,
+          "Lease Revenue / Payment / Enforcement": 11,
+          "Unauthorized Allocation / Transfer / Use": 11,
+          "Protected / Environmental Lease Misuse": 6
+        }
+      }
+    },
+    "arm_e": {
+      "real": {
+        "support": 200,
+        "helped": 12,
+        "hurt": 6,
+        "net_gain": 6,
+        "both_correct": 148,
+        "both_wrong_same_prediction": 34,
+        "both_wrong_different_predictions": 0,
+        "prediction_changes": 18,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": -3,
+          "Lease Revenue / Payment / Enforcement": 0,
+          "Unauthorized Allocation / Transfer / Use": 8,
+          "Protected / Environmental Lease Misuse": 1
+        }
+      },
+      "synthetic": {
+        "support": 225,
+        "helped": 34,
+        "hurt": 4,
+        "net_gain": 30,
+        "both_correct": 183,
+        "both_wrong_same_prediction": 3,
+        "both_wrong_different_predictions": 1,
+        "prediction_changes": 39,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": 0,
+          "Lease Revenue / Payment / Enforcement": 12,
+          "Unauthorized Allocation / Transfer / Use": 12,
+          "Protected / Environmental Lease Misuse": 6
+        }
+      },
+      "combined": {
+        "support": 425,
+        "helped": 46,
+        "hurt": 10,
+        "net_gain": 36,
+        "both_correct": 331,
+        "both_wrong_same_prediction": 37,
+        "both_wrong_different_predictions": 1,
+        "prediction_changes": 57,
+        "per_class_correct_count_changes": {
+          "Administrative / Procedural / Integrity": -3,
+          "Lease Revenue / Payment / Enforcement": 12,
+          "Unauthorized Allocation / Transfer / Use": 20,
+          "Protected / Environmental Lease Misuse": 7
+        }
+      }
+    }
+  },
+  "selection": {
+    "arm_a_real_accuracy_reference": 0.77,
+    "arm_evaluations": {
+      "arm_b": {
+        "checks": {
+          "combined_accuracy_gt_0_80": true,
+          "combined_macro_f1_gt_0_80": true,
+          "synthetic_accuracy_gt_0_80": true,
+          "real_accuracy_decrease_le_0_01": true,
+          "all_class_metrics_defined": true,
+          "no_zero_recall_class": true,
+          "valid_probabilities": true
+        },
+        "passed_all": true
+      },
+      "arm_c": {
+        "checks": {
+          "combined_accuracy_gt_0_80": true,
+          "combined_macro_f1_gt_0_80": true,
+          "synthetic_accuracy_gt_0_80": true,
+          "real_accuracy_decrease_le_0_01": true,
+          "all_class_metrics_defined": true,
+          "no_zero_recall_class": true,
+          "valid_probabilities": true
+        },
+        "passed_all": true
+      },
+      "arm_d": {
+        "checks": {
+          "combined_accuracy_gt_0_80": true,
+          "combined_macro_f1_gt_0_80": true,
+          "synthetic_accuracy_gt_0_80": true,
+          "real_accuracy_decrease_le_0_01": true,
+          "all_class_metrics_defined": true,
+          "no_zero_recall_class": true,
+          "valid_probabilities": true
+        },
+        "passed_all": true
+      },
+      "arm_e": {
+        "checks": {
+          "combined_accuracy_gt_0_80": true,
+          "combined_macro_f1_gt_0_80": true,
+          "synthetic_accuracy_gt_0_80": true,
+          "real_accuracy_decrease_le_0_01": true,
+          "all_class_metrics_defined": true,
+          "no_zero_recall_class": true,
+          "valid_probabilities": true
+        },
+        "passed_all": true
+      }
+    },
+    "passing_arms": [
+      "arm_b",
+      "arm_c",
+      "arm_d",
+      "arm_e"
+    ],
+    "selected_candidate": "arm_e",
+    "result": "CANDIDATE_IDENTIFIED",
+    "deployment_authorized": false
+  },
+  "leakage_checks": {
+    "real_combined_groups_contained": true,
+    "synthetic_families_contained": true,
+    "train_evaluation_overlap": false,
+    "identical_oof_populations_across_arms": true
+  },
+  "hash_preservation": {
+    "status": "PASS",
+    "protected_file_count": 101
+  },
+  "model_promoted": false
+}

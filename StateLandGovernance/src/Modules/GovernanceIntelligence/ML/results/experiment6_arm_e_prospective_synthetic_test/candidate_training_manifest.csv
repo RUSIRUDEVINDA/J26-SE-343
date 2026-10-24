@@ -1,0 +1,426 @@
+Research_ID,population_origin,Synthetic_Family_ID,Synthetic_Variant,Training_Label,sample_weight
+STATE-LEASE-001,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+STATE-LEASE-002,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-003,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-004,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-005,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+STATE-LEASE-006,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-007,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-008,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-009,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+STATE-LEASE-010,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+STATE-LEASE-011,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+STATE-LEASE-012,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-013,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-014,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-015,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-016,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-017,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-018,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-019,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-020,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-021,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-022,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+STATE-LEASE-023,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-024,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+STATE-LEASE-025,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-026,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+STATE-LEASE-027,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-028,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-029,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+STATE-LEASE-030,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-031,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-032,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-033,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+STATE-LEASE-034,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-035,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-036,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-037,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-038,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-039,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-040,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+STATE-LEASE-041,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-042,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-043,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-044,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-045,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-046,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-047,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-048,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-049,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-050,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-051,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-052,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-053,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-054,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-055,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-056,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-057,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-058,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-059,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-060,real_baseline,,,Administrative / Procedural / Integrity,1.0
+STATE-LEASE-061,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+STATE-LEASE-062,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-063,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-064,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-065,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-066,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-067,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-068,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-069,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-070,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-071,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-072,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-073,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-074,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-075,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-076,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-077,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-078,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-079,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-080,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-081,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-082,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-083,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-084,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-085,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-086,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-087,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-088,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-089,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-090,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-091,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-092,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-093,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-094,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-095,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-096,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-097,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-098,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-099,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-100,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-101,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-102,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-103,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-104,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-105,real_baseline,,,Administrative / Procedural / Integrity,1.0
+WEB-106,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-107,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-108,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-109,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-110,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-111,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-112,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-113,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-114,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-115,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-116,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-117,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-118,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-119,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-120,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-121,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-122,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-123,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-124,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-125,real_baseline,,,Lease Revenue / Payment / Enforcement,1.0
+WEB-126,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-127,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-128,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-129,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-130,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-131,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-132,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-133,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-134,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-135,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-136,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-137,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-138,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-139,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-140,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-141,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-142,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-143,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-144,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-145,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-146,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-147,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-148,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-149,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-150,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-151,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-152,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-153,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-154,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-155,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-156,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-157,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-158,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-159,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-160,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-161,real_baseline,,,Unauthorized Allocation / Transfer / Use,1.0
+WEB-162,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-163,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-164,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-165,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-166,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-167,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-168,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-169,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-170,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-171,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-172,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-173,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-174,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-175,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-176,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-177,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-178,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-179,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-180,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-181,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-182,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-183,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-184,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-185,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-186,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-187,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-188,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-189,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-190,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-191,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-192,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-193,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-194,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-195,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-196,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-197,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-198,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-199,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+WEB-200,real_baseline,,,Protected / Environmental Lease Misuse,1.0
+SYN-0001,development_synthetic,SYN-FAM-001,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0002,development_synthetic,SYN-FAM-001,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0003,development_synthetic,SYN-FAM-001,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0004,development_synthetic,SYN-FAM-002,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0005,development_synthetic,SYN-FAM-002,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0006,development_synthetic,SYN-FAM-002,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0007,development_synthetic,SYN-FAM-003,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0008,development_synthetic,SYN-FAM-003,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0009,development_synthetic,SYN-FAM-003,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0010,development_synthetic,SYN-FAM-004,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0011,development_synthetic,SYN-FAM-004,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0012,development_synthetic,SYN-FAM-004,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0016,development_synthetic,SYN-FAM-006,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0017,development_synthetic,SYN-FAM-006,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0018,development_synthetic,SYN-FAM-006,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0019,development_synthetic,SYN-FAM-007,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0020,development_synthetic,SYN-FAM-007,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0021,development_synthetic,SYN-FAM-007,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0025,development_synthetic,SYN-FAM-009,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0026,development_synthetic,SYN-FAM-009,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0027,development_synthetic,SYN-FAM-009,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0031,development_synthetic,SYN-FAM-011,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0032,development_synthetic,SYN-FAM-011,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0033,development_synthetic,SYN-FAM-011,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0037,development_synthetic,SYN-FAM-013,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0038,development_synthetic,SYN-FAM-013,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0039,development_synthetic,SYN-FAM-013,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0046,development_synthetic,SYN-FAM-016,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0047,development_synthetic,SYN-FAM-016,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0048,development_synthetic,SYN-FAM-016,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0049,development_synthetic,SYN-FAM-017,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0050,development_synthetic,SYN-FAM-017,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0051,development_synthetic,SYN-FAM-017,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0052,development_synthetic,SYN-FAM-018,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0053,development_synthetic,SYN-FAM-018,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0054,development_synthetic,SYN-FAM-018,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0055,development_synthetic,SYN-FAM-019,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0056,development_synthetic,SYN-FAM-019,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0057,development_synthetic,SYN-FAM-019,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0061,development_synthetic,SYN-FAM-021,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0062,development_synthetic,SYN-FAM-021,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0063,development_synthetic,SYN-FAM-021,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0067,development_synthetic,SYN-FAM-023,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0068,development_synthetic,SYN-FAM-023,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0069,development_synthetic,SYN-FAM-023,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0073,development_synthetic,SYN-FAM-025,1.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0074,development_synthetic,SYN-FAM-025,2.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0075,development_synthetic,SYN-FAM-025,3.0,Administrative / Procedural / Integrity,0.3333333333333333
+SYN-0076,development_synthetic,SYN-FAM-026,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0077,development_synthetic,SYN-FAM-026,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0078,development_synthetic,SYN-FAM-026,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0079,development_synthetic,SYN-FAM-027,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0080,development_synthetic,SYN-FAM-027,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0081,development_synthetic,SYN-FAM-027,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0082,development_synthetic,SYN-FAM-028,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0083,development_synthetic,SYN-FAM-028,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0084,development_synthetic,SYN-FAM-028,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0088,development_synthetic,SYN-FAM-030,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0089,development_synthetic,SYN-FAM-030,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0090,development_synthetic,SYN-FAM-030,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0091,development_synthetic,SYN-FAM-031,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0092,development_synthetic,SYN-FAM-031,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0093,development_synthetic,SYN-FAM-031,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0094,development_synthetic,SYN-FAM-032,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0095,development_synthetic,SYN-FAM-032,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0096,development_synthetic,SYN-FAM-032,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0097,development_synthetic,SYN-FAM-033,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0098,development_synthetic,SYN-FAM-033,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0099,development_synthetic,SYN-FAM-033,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0100,development_synthetic,SYN-FAM-034,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0101,development_synthetic,SYN-FAM-034,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0102,development_synthetic,SYN-FAM-034,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0106,development_synthetic,SYN-FAM-036,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0107,development_synthetic,SYN-FAM-036,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0108,development_synthetic,SYN-FAM-036,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0109,development_synthetic,SYN-FAM-037,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0110,development_synthetic,SYN-FAM-037,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0111,development_synthetic,SYN-FAM-037,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0112,development_synthetic,SYN-FAM-038,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0113,development_synthetic,SYN-FAM-038,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0114,development_synthetic,SYN-FAM-038,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0115,development_synthetic,SYN-FAM-039,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0116,development_synthetic,SYN-FAM-039,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0117,development_synthetic,SYN-FAM-039,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0118,development_synthetic,SYN-FAM-040,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0119,development_synthetic,SYN-FAM-040,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0120,development_synthetic,SYN-FAM-040,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0121,development_synthetic,SYN-FAM-041,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0122,development_synthetic,SYN-FAM-041,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0123,development_synthetic,SYN-FAM-041,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0124,development_synthetic,SYN-FAM-042,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0125,development_synthetic,SYN-FAM-042,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0126,development_synthetic,SYN-FAM-042,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0127,development_synthetic,SYN-FAM-043,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0128,development_synthetic,SYN-FAM-043,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0129,development_synthetic,SYN-FAM-043,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0130,development_synthetic,SYN-FAM-044,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0131,development_synthetic,SYN-FAM-044,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0132,development_synthetic,SYN-FAM-044,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0133,development_synthetic,SYN-FAM-045,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0134,development_synthetic,SYN-FAM-045,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0135,development_synthetic,SYN-FAM-045,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0136,development_synthetic,SYN-FAM-046,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0137,development_synthetic,SYN-FAM-046,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0138,development_synthetic,SYN-FAM-046,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0139,development_synthetic,SYN-FAM-047,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0140,development_synthetic,SYN-FAM-047,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0141,development_synthetic,SYN-FAM-047,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0145,development_synthetic,SYN-FAM-049,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0146,development_synthetic,SYN-FAM-049,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0147,development_synthetic,SYN-FAM-049,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0148,development_synthetic,SYN-FAM-050,1.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0149,development_synthetic,SYN-FAM-050,2.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0150,development_synthetic,SYN-FAM-050,3.0,Lease Revenue / Payment / Enforcement,0.3333333333333333
+SYN-0151,development_synthetic,SYN-FAM-051,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0152,development_synthetic,SYN-FAM-051,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0153,development_synthetic,SYN-FAM-051,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0157,development_synthetic,SYN-FAM-053,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0158,development_synthetic,SYN-FAM-053,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0159,development_synthetic,SYN-FAM-053,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0160,development_synthetic,SYN-FAM-054,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0161,development_synthetic,SYN-FAM-054,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0162,development_synthetic,SYN-FAM-054,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0166,development_synthetic,SYN-FAM-056,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0167,development_synthetic,SYN-FAM-056,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0168,development_synthetic,SYN-FAM-056,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0169,development_synthetic,SYN-FAM-057,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0170,development_synthetic,SYN-FAM-057,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0171,development_synthetic,SYN-FAM-057,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0172,development_synthetic,SYN-FAM-058,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0173,development_synthetic,SYN-FAM-058,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0174,development_synthetic,SYN-FAM-058,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0175,development_synthetic,SYN-FAM-059,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0176,development_synthetic,SYN-FAM-059,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0177,development_synthetic,SYN-FAM-059,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0178,development_synthetic,SYN-FAM-060,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0179,development_synthetic,SYN-FAM-060,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0180,development_synthetic,SYN-FAM-060,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0181,development_synthetic,SYN-FAM-061,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0182,development_synthetic,SYN-FAM-061,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0183,development_synthetic,SYN-FAM-061,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0184,development_synthetic,SYN-FAM-062,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0185,development_synthetic,SYN-FAM-062,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0186,development_synthetic,SYN-FAM-062,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0190,development_synthetic,SYN-FAM-064,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0191,development_synthetic,SYN-FAM-064,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0192,development_synthetic,SYN-FAM-064,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0193,development_synthetic,SYN-FAM-065,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0194,development_synthetic,SYN-FAM-065,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0195,development_synthetic,SYN-FAM-065,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0196,development_synthetic,SYN-FAM-066,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0197,development_synthetic,SYN-FAM-066,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0198,development_synthetic,SYN-FAM-066,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0199,development_synthetic,SYN-FAM-067,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0200,development_synthetic,SYN-FAM-067,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0201,development_synthetic,SYN-FAM-067,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0202,development_synthetic,SYN-FAM-068,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0203,development_synthetic,SYN-FAM-068,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0204,development_synthetic,SYN-FAM-068,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0208,development_synthetic,SYN-FAM-070,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0209,development_synthetic,SYN-FAM-070,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0210,development_synthetic,SYN-FAM-070,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0211,development_synthetic,SYN-FAM-071,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0212,development_synthetic,SYN-FAM-071,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0213,development_synthetic,SYN-FAM-071,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0217,development_synthetic,SYN-FAM-073,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0218,development_synthetic,SYN-FAM-073,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0219,development_synthetic,SYN-FAM-073,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0220,development_synthetic,SYN-FAM-074,1.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0221,development_synthetic,SYN-FAM-074,2.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0222,development_synthetic,SYN-FAM-074,3.0,Unauthorized Allocation / Transfer / Use,0.3333333333333333
+SYN-0226,development_synthetic,SYN-FAM-076,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0227,development_synthetic,SYN-FAM-076,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0228,development_synthetic,SYN-FAM-076,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0229,development_synthetic,SYN-FAM-077,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0230,development_synthetic,SYN-FAM-077,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0231,development_synthetic,SYN-FAM-077,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0232,development_synthetic,SYN-FAM-078,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0233,development_synthetic,SYN-FAM-078,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0234,development_synthetic,SYN-FAM-078,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0235,development_synthetic,SYN-FAM-079,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0236,development_synthetic,SYN-FAM-079,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0237,development_synthetic,SYN-FAM-079,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0238,development_synthetic,SYN-FAM-080,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0239,development_synthetic,SYN-FAM-080,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0240,development_synthetic,SYN-FAM-080,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0247,development_synthetic,SYN-FAM-083,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0248,development_synthetic,SYN-FAM-083,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0249,development_synthetic,SYN-FAM-083,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0253,development_synthetic,SYN-FAM-085,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0254,development_synthetic,SYN-FAM-085,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0255,development_synthetic,SYN-FAM-085,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0262,development_synthetic,SYN-FAM-088,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0263,development_synthetic,SYN-FAM-088,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0264,development_synthetic,SYN-FAM-088,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0265,development_synthetic,SYN-FAM-089,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0266,development_synthetic,SYN-FAM-089,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0267,development_synthetic,SYN-FAM-089,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0268,development_synthetic,SYN-FAM-090,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0269,development_synthetic,SYN-FAM-090,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0270,development_synthetic,SYN-FAM-090,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0271,development_synthetic,SYN-FAM-091,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0272,development_synthetic,SYN-FAM-091,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0273,development_synthetic,SYN-FAM-091,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0274,development_synthetic,SYN-FAM-092,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0275,development_synthetic,SYN-FAM-092,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0276,development_synthetic,SYN-FAM-092,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0280,development_synthetic,SYN-FAM-094,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0281,development_synthetic,SYN-FAM-094,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0282,development_synthetic,SYN-FAM-094,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0283,development_synthetic,SYN-FAM-095,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0284,development_synthetic,SYN-FAM-095,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0285,development_synthetic,SYN-FAM-095,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0286,development_synthetic,SYN-FAM-096,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0287,development_synthetic,SYN-FAM-096,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0288,development_synthetic,SYN-FAM-096,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0292,development_synthetic,SYN-FAM-098,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0293,development_synthetic,SYN-FAM-098,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0294,development_synthetic,SYN-FAM-098,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0295,development_synthetic,SYN-FAM-099,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0296,development_synthetic,SYN-FAM-099,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0297,development_synthetic,SYN-FAM-099,3.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0298,development_synthetic,SYN-FAM-100,1.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0299,development_synthetic,SYN-FAM-100,2.0,Protected / Environmental Lease Misuse,0.3333333333333333
+SYN-0300,development_synthetic,SYN-FAM-100,3.0,Protected / Environmental Lease Misuse,0.3333333333333333

@@ -10,6 +10,14 @@ public sealed class WorkflowStageExecution
     public DateTime? StartedAt { get; internal set; }
     public Guid? ActingOfficerId { get; internal set; }
     public WorkflowStageDecision? Decision { get; internal set; }
+    private readonly System.Collections.Generic.List<WorkflowStageDecisionRevision> _decisionHistory = new();
+    public System.Collections.Generic.IReadOnlyCollection<WorkflowStageDecisionRevision> DecisionHistory => _decisionHistory.AsReadOnly();
+
+    internal void ReplaceDecision(WorkflowStageDecision replacement, string reason, int executionRevision)
+    {
+        _decisionHistory.Add(new WorkflowStageDecisionRevision(Decision!, replacement, reason, executionRevision));
+        Decision = replacement;
+    }
 
     internal WorkflowStageExecution(WorkflowStageDefinition definition, WorkflowStageExecutionStatus initialStatus)
     {

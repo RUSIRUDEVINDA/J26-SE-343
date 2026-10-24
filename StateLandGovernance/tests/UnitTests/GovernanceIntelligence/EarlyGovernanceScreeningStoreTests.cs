@@ -36,25 +36,20 @@ public class EarlyGovernanceScreeningStoreTests
         string caseId = "CASE-2026-001",
         string inputVersion = "v1.0")
     {
-        var engine = new EarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(engine);
-
-        var command = new ScreenEarlyGovernanceCommand(
-            CaseId: caseId,
-            InputVersion: inputVersion,
-            Indicators: new List<EarlyGovernanceIndicatorDto>
-            {
-                new("LegalDispute", "VerifiedPresent", "DOC-DISPUTE-01", SampleUtcTime),
-                new("UnauthorizedOccupation", "Unavailable"),
-                new("UnauthorizedConstruction", "VerifiedAbsent", "DOC-SURVEY-01", SampleUtcTime),
-                new("FamilyOrInheritanceClaim", "Unverified"),
-                new("MultipleClaimants", "NotApplicable", "DOC-NA-01", SampleUtcTime),
-                new("UnresolvedObjection", "Missing"),
-                new("PreviousIllegalLandActivity", "VerifiedAbsent", "DOC-POLICE-01", SampleUtcTime)
-            }
-        );
-
-        return handler.HandleAsync(command).GetAwaiter().GetResult();
+        return new EarlyGovernanceScreeningResultDto(
+            caseId,
+            inputVersion,
+            "ReviewRequired",
+            true,
+            [
+                new("LegalDispute", "VerifiedPresent", true, false, "EG_LEGAL_DISPUTE_VERIFIED_PRESENT", "Officer review is required.", "DOC-DISPUTE-01", SampleUtcTime),
+                new("UnauthorizedOccupation", "Unavailable", false, true, "EG_UNAUTHORIZED_OCCUPATION_UNAVAILABLE", "Evidence is unavailable.", null, null),
+                new("UnauthorizedConstruction", "VerifiedAbsent", false, false, "EG_UNAUTHORIZED_CONSTRUCTION_VERIFIED_ABSENT", "No concern recorded.", "DOC-SURVEY-01", SampleUtcTime),
+                new("FamilyOrInheritanceClaim", "Unverified", false, true, "EG_FAMILY_OR_INHERITANCE_CLAIM_UNVERIFIED", "Evidence is unverified.", null, null),
+                new("MultipleClaimants", "NotApplicable", false, false, "EG_MULTIPLE_CLAIMANTS_NOT_APPLICABLE", "Not applicable.", "DOC-NA-01", SampleUtcTime),
+                new("UnresolvedObjection", "Missing", false, true, "EG_UNRESOLVED_OBJECTION_MISSING", "Evidence is missing.", null, null),
+                new("PreviousIllegalLandActivity", "VerifiedAbsent", false, false, "EG_PREVIOUS_ILLEGAL_LAND_ACTIVITY_VERIFIED_ABSENT", "No concern recorded.", "DOC-POLICE-01", SampleUtcTime)
+            ]);
     }
 
     [Fact]

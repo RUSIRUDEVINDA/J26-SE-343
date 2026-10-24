@@ -15,6 +15,17 @@ public sealed class WorkflowExecutionDefinition
     public WorkflowRuleSetReference RuleSetReference { get; }
     public DateTime PlanCreatedAt { get; }
     public DateTime PlanApprovedAt { get; }
+    public WorkflowPrerequisiteGatePolicy? PrerequisiteGatePolicy { get; private set; }
+
+    public WorkflowExecutionDefinition WithPrerequisiteGatePolicy(WorkflowPrerequisiteGatePolicy policy)
+    {
+        if (policy == null || policy.ApprovalRequiredStages.Any(id => !_stages.Any(s => s.StageId == id)))
+            throw new InvalidWorkflowExecutionException("Gate policy must reference stages in this definition.");
+        var copy = new WorkflowExecutionDefinition(WorkflowPlanId, WorkflowPlanRevision, LeaseCaseId,
+            RuleSetReference, PlanCreatedAt, PlanApprovedAt, _stages);
+        copy.PrerequisiteGatePolicy = policy;
+        return copy;
+    }
     private readonly WorkflowStageDefinition[] _stages;
     public IReadOnlyCollection<WorkflowStageDefinition> Stages => Array.AsReadOnly(_stages);
 

@@ -192,7 +192,7 @@ public sealed class VerifiedFactSnapshot
         {
             var cur1 = e1.Current;
             var cur2 = e2.Current;
-            if (cur1.SourceExtractedFactId.Value != cur2.SourceExtractedFactId.Value ||
+            if (cur1.HumanEvidence != cur2.HumanEvidence || cur1.SourceExtractedFactId?.Value != cur2.SourceExtractedFactId?.Value ||
                 cur1.VerificationId.Value != cur2.VerificationId.Value ||
                 cur1.FactCode.Value != cur2.FactCode.Value ||
                 cur1.EffectiveValue.CanonicalValue != cur2.EffectiveValue.CanonicalValue ||

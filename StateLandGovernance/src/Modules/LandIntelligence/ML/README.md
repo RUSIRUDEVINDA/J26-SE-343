@@ -1,6 +1,41 @@
 # Land Intelligence ML Service
 
+For the **expert-labelled Colombo 400 research model**, see
+[`COLOMBO400_RESEARCH_INFERENCE.md`](./COLOMBO400_RESEARCH_INFERENCE.md). It is a
+separate, opt-in two-stage service on port 8502 and does not replace the standard
+model described below.
+
 Random Forest suitability model for Component 1. This service is **supplementary evidence only** — the .NET rule-based recommendation engine keeps all hard constraints and scoring unchanged.
+
+## Honest status (standard service)
+
+| Item | Value |
+|------|--------|
+| Held-out Random Forest accuracy | **~76.5%** (see `output/metrics_summary.json`) |
+| 80% target | **Not achieved** — do not claim otherwise |
+| Dummy majority baseline | ~49.5% |
+| Road / water / soil | **Excluded** — unavailable for research; not invented |
+| Labels | Synthetic rule labels from trustworthy fields only |
+| Colombo experimental ML | **Separate** (`experimental_ml_service.py` :8501) — do not replace `output/` |
+
+Full write-up: [`output/EVALUATION_REPORT.md`](./output/EVALUATION_REPORT.md).
+
+### Trustworthy features used
+
+- Numeric: `area_hectares`, `elevation_meters` (nullable)
+- Categorical: `requested_purpose`, `land_category`, `province`, `district`, `gis_enrichment_status`, `terrain_description`, `environmental_restriction_type`, `environmental_restriction_severity`, `spatial_constraint_present`
+
+### Explicitly ignored
+
+`distance_to_road_m`, `distance_to_water_m`, `derived_soil_group`, `soil_overlap_percentage` — accepted on the HTTP schema for .NET compatibility, dropped before prediction.
+
+### Data needed for a credible ≥80% claim
+
+- Expert or historically validated labels (not rule-replay of the same fields)
+- Measured GIS road/water/soil **only when enrichment actually exists**
+- Enough labelled rows in the minority `Suitable` class for a stable held-out set
+
+Until then, keep ML supplementary.
 
 ## Prerequisites
 
@@ -37,14 +72,17 @@ ML_SUITABILITY_SERVICE_URL=http://localhost:8500
 
 The backend calls `POST /predict` via `HttpMlSuitabilityClient`. If the service is down, recommendations continue without ML evidence.
 
-## Retrain (optional)
+## Retrain (standard)
 
 ```bash
 python generate_synthetic_dataset.py --n 3000 --out parcels_dataset.csv
 python train_random_forest.py --data parcels_dataset.csv --outdir output
+python -m unittest test_ml_service.py -v
 ```
 
-Replace synthetic data with real labelled exports when available.
+Evaluation uses an 80/20 stratified held-out test set, per-class precision/recall/F1, a Dummy majority baseline, and stratified CV **on the training fold only**.
+
+Replace synthetic data with real labelled exports when available. Reports must state synthetic vs real.
 
 ## Colombo experimental (opt-in local only)
 
@@ -65,19 +103,4 @@ $env:EXPERIMENTAL_COLOMBO_ML_MODEL_DIR = (Resolve-Path .\output_colombo_osm_back
 py -m uvicorn experimental_ml_service:app --host 127.0.0.1 --port 8501
 ```
 
-`GET /health` → `model_identity.candidate` and `model_activation_enabled=false`
-(artifact is not production-activated; this is **not** “predictions cannot run”
-when opt-in `Enabled=true`).
-
 Do **not** replace `ml_service.py` (port 8500) or live `output/` joblib.
-
-### One-shot disposable Step-3
-
-```powershell
-cd StateLandGovernance
-.\tests\IntegrationTests\LandIntelligence\ColomboExperimentalMlE2EVerify\Invoke-ColomboExpStep3E2E.ps1
-```
-
-Full-system `StateLandGovernance.Api` remains blocked by WorkflowGovernance
-`ILeaseCaseRepository` DI (see `data/gis/experiments/colombo/step3_api.log.err`).
-LandIntelligence-only HTTP verification uses port **5265** inside the Step-3 harness.

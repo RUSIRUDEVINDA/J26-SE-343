@@ -2,6 +2,11 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
+using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Application.Queries;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Commands;
+using StateLandGovernance.GovernanceIntelligence.Application.Screening.Interfaces;
+using StateLandGovernance.GovernanceIntelligence.Application.Timing;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -78,6 +83,42 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddSingleton<IEarlyGovernanceScreeningEngine, EarlyGovernanceScreeningEngine>();
         services.TryAddTransient<ScreenEarlyGovernanceCommandHandler>();
+        services.TryAddTransient<DeliverEarlyGovernanceReferralCommandHandler>();
+        services.TryAddTransient<GetEarlyGovernanceScreeningAssessmentQueryHandler>();
+        services.TryAddTransient<GetEarlyGovernanceScreeningHistoryQueryHandler>();
+        services.TryAddTransient<GetEarlyGovernanceReferralHistoryQueryHandler>();
+        services.TryAddSingleton<IEarlyGovernanceReferralPolicy, UnconfiguredEarlyGovernanceReferralPolicy>();
+        services.TryAddSingleton<TimeProvider>(TimeProvider.System);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the deterministic lease-approval handover timing calculator.
+    /// Registers the calculator plus application handlers; Component 3 data is consumed only
+    /// through the Component 4 projection-store abstraction.
+    /// </summary>
+    public static IServiceCollection AddLeaseApprovalTimingMonitoring(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.TryAddSingleton<ILeaseApprovalTimingCalculator, LeaseApprovalTimingCalculator>();
+        services.TryAddTransient<CalculateLeaseApprovalTimingCommandHandler>();
+        services.TryAddTransient<GetLeaseApprovalTimingAssessmentQueryHandler>();
+        services.TryAddTransient<GetLeaseApprovalTimingHistoryByCaseQueryHandler>();
+        services.TryAddTransient<GetLeaseApprovalTimingHistoryByWorkflowRunQueryHandler>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Governance Intelligence screening orchestration services and in-memory consolidated store.
+    /// </summary>
+    public static IServiceCollection AddGovernanceScreeningOrchestration(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.TryAddTransient<OrchestrateGovernanceScreeningCommandHandler>();
 
         return services;
     }

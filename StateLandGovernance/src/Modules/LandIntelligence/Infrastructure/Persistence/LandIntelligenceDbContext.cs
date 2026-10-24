@@ -50,6 +50,26 @@ public class LandIntelligenceDbContext : DbContext
     public DbSet<ParcelDerivedSoilGroupEntity> ParcelDerivedSoilGroups =>
         Set<ParcelDerivedSoilGroupEntity>();
 
+    public DbSet<RealParcelSourceEntity> RealParcelSources => Set<RealParcelSourceEntity>();
+
+    public DbSet<ParcelShortlistItemEntity> ParcelShortlistItems => Set<ParcelShortlistItemEntity>();
+
+    public DbSet<LeaseInterestRequestEntity> LeaseInterestRequests => Set<LeaseInterestRequestEntity>();
+
+    public DbSet<LeaseInterestValuationEntity> LeaseInterestValuations => Set<LeaseInterestValuationEntity>();
+
+    public DbSet<LeaseInterestAuthorityDecisionEntity> LeaseInterestAuthorityDecisions =>
+        Set<LeaseInterestAuthorityDecisionEntity>();
+
+    public DbSet<LeaseInterestStatusHistoryEntity> LeaseInterestStatusHistory =>
+        Set<LeaseInterestStatusHistoryEntity>();
+
+    public DbSet<ColomboStateResearchProjectLeaseReadyEntity> ColomboStateResearchProjectLeaseReady =>
+        Set<ColomboStateResearchProjectLeaseReadyEntity>();
+
+    public DbSet<ParcelGnDivisionMappingEntity> ParcelGnDivisionMappings =>
+        Set<ParcelGnDivisionMappingEntity>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);

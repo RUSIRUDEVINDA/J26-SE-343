@@ -692,7 +692,12 @@ public sealed class LeaseCase
 
     public void UpdateCurrentVerifiedFactSnapshot(Guid snapshotId)
     {
+        if (snapshotId == Guid.Empty) throw new InvalidLeaseCaseException("A published snapshot ID is required.");
+        if (CurrentVerifiedFactSnapshotId == snapshotId) return;
+        if (CompletedWorkflow != null || HandoffPackage != null)
+            throw new InvalidLeaseCaseException("Completed or prepared handoff bindings cannot be replaced through snapshot linking.");
         SetCurrentVerifiedFactSnapshot(snapshotId);
+        Revision++;
     }
 
     public void RecordScreeningResult(ScreeningResult screening)
@@ -894,8 +899,33 @@ public sealed class LeaseCase
         requirement.FulfillWithDocument(documentId, fulfilledAt);
     }
 
+    public void WaiveFulfillment(Guid obligationId, bool isCondition, int expectedRevision,
+        VerifiedAuthoritySnapshot authority, string reason, string evidenceReference, DateTime at)
+    {
+        if (Revision != expectedRevision || Status == LeaseCaseStatus.HandedOff)
+            throw new InvalidFulfillmentException("Case revision is stale or handoff is immutable.");
+        if (isCondition)
+        {
+            var condition = _approvalConditions.SingleOrDefault(c => c.Id == obligationId)
+                ?? throw new InvalidFulfillmentException("Condition not found.");
+            condition.Waive(authority, reason, evidenceReference, at);
+        }
+        else
+        {
+            var requirement = _documentSubmissionRequirements.SingleOrDefault(r => r.Id == obligationId)
+                ?? throw new InvalidFulfillmentException("Document requirement not found.");
+            requirement.Waive(authority, reason, evidenceReference, at);
+        }
+        Revision++;
+        _domainEvents.Add(new FulfillmentWaived(Guid.NewGuid(), at, Id, obligationId, isCondition,
+            authority.ActorId, reason.Trim(), evidenceReference.Trim(), Revision));
+        EvaluateOverallReadiness();
+    }
+
     public void RecordCompletedWorkflow(CompletedWorkflowDecision completedWorkflow)
     {
+        if (CompletedWorkflow != null)
+            throw new InvalidWorkflowExecutionException("The recorded completed workflow decision is immutable.");
         if (completedWorkflow == null)
         {
             throw new ArgumentNullException(nameof(completedWorkflow), "CompletedWorkflowDecision cannot be null.");
@@ -946,6 +976,88 @@ public sealed class LeaseCase
         {
             Status = LeaseCaseStatus.Draft;
         }
+    }
+
+    public CaseHandoffPackage PrepareGovernedHandoff(int expectedRevision, VerifiedAuthoritySnapshot authority,
+        string recipientContract, string idempotencyKey, DateTime at, Guid packageId)
+    {
+        EnsureHandoffAuthority(expectedRevision, authority, "HandoffPreparer", at);
+        if (string.IsNullOrWhiteSpace(recipientContract) || string.IsNullOrWhiteSpace(idempotencyKey) || packageId == Guid.Empty)
+            throw new InvalidHandoffException("An actual recipient contract, idempotency key and package ID are required.");
+        if (HandoffPackage != null)
+        {
+            if (HandoffPackage.Id == packageId && HandoffPackage.RecipientContract == recipientContract && HandoffPackage.IdempotencyKey == idempotencyKey)
+                return HandoffPackage;
+            throw new InvalidHandoffException("An existing package cannot be replaced.");
+        }
+        if (Status != LeaseCaseStatus.ReadyForHandoff || ActiveWorkflowPlan == null || CompletedWorkflow == null ||
+            ActiveWorkflowPlan.Status != WorkflowPlanStatus.Approved || CompletedWorkflow.PlanId != ActiveWorkflowPlan.Id ||
+            ActiveWorkflowPlan.VerifiedFactSnapshotId.Value != CurrentVerifiedFactSnapshotId)
+            throw new InvalidHandoffException("A current approved plan, linked snapshot and completed authorized decision are required.");
+        HandoffPackage = new(packageId, Id, ActiveWorkflowPlan.Id.Value, CurrentVerifiedFactSnapshotId, at, null,
+            CompletedWorkflow.FinalDecisionId.Value, _documentSubmissionRequirements.Where(r => r.FulfilledByDocumentId.HasValue)
+                .Select(r => r.FulfilledByDocumentId!.Value).ToArray(), recipientContract, idempotencyKey, Array.Empty<HandoffDispatchReceipt>());
+        Revision++;
+        return HandoffPackage;
+    }
+
+    public void RecordGovernedHandoffDispatch(Guid packageId, int expectedRevision, VerifiedAuthoritySnapshot authority,
+        Guid attemptId, bool acceptedByTransport, string evidenceReference, DateTime at)
+    {
+        EnsureHandoffAuthority(expectedRevision, authority, "HandoffDispatcher", at);
+        var package = RequireGovernedHandoff(packageId);
+        if (at < package.GeneratedAtUtc || attemptId == Guid.Empty || string.IsNullOrWhiteSpace(evidenceReference))
+            throw new InvalidHandoffException("Dispatch requires chronological time, attempt ID and transport evidence.");
+        var history = package.DispatchHistory ?? Array.Empty<HandoffDispatchReceipt>();
+        var existing = history.SingleOrDefault(r => r.AttemptId == attemptId);
+        if (existing != null)
+        {
+            if (existing.AcceptedByTransport == acceptedByTransport && existing.EvidenceReference == evidenceReference && existing.ActorId == authority.ActorId) return;
+            throw new InvalidHandoffException("Dispatch attempt identity cannot be reused for different evidence.");
+        }
+        if (package.DownstreamAcknowledgementId.HasValue || (history.Count > 0 && at < history.Max(r => r.AttemptedAtUtc)))
+            throw new InvalidHandoffException("Acknowledged handoff is immutable; dispatch chronology must be preserved.");
+        HandoffPackage = package with { DispatchHistory = history.Append(new HandoffDispatchReceipt(attemptId, at, authority.ActorId, acceptedByTransport, evidenceReference)).ToArray() };
+        Revision++;
+    }
+
+    public void AcknowledgeGovernedHandoff(Guid packageId, string recipientContract, string idempotencyKey,
+        Guid planId, Guid snapshotId, Guid finalDecisionId, Guid acknowledgementId, int expectedRevision,
+        VerifiedAuthoritySnapshot authority, DateTime at)
+    {
+        EnsureHandoffAuthority(expectedRevision, authority, "HandoffAcknowledger", at);
+        var package = RequireGovernedHandoff(packageId);
+        if (package.RecipientContract != recipientContract || package.IdempotencyKey != idempotencyKey ||
+            package.FinalWorkflowPlanId != planId || package.VerifiedFactSnapshotId != snapshotId ||
+            package.FinalDecisionId != finalDecisionId || acknowledgementId == Guid.Empty)
+            throw new InvalidHandoffException("Acknowledgement does not match the exact package bindings.");
+        if (package.DownstreamAcknowledgementId.HasValue)
+        {
+            if (package.DownstreamAcknowledgementId == acknowledgementId) return;
+            throw new InvalidHandoffException("Acknowledgement is immutable.");
+        }
+        if (!(package.DispatchHistory?.Any(r => r.AcceptedByTransport && r.AttemptedAtUtc <= at) ?? false))
+            throw new InvalidHandoffException("A successful prior dispatch is required before acknowledgement.");
+        HandoffPackage = package with { DownstreamAcknowledgementId = acknowledgementId, AcknowledgedAtUtc = at, AcknowledgedByActorId = authority.ActorId };
+        Status = LeaseCaseStatus.HandedOff;
+        Revision++;
+    }
+
+    private void EnsureHandoffAuthority(int expectedRevision, VerifiedAuthoritySnapshot authority, string capability, DateTime at)
+    {
+        if (Revision != expectedRevision) throw new InvalidHandoffException("Case revision is stale.");
+        if (authority == null) throw new MissingVerifiedAuthorityException("Handoff authority is required.");
+        authority.EnsureAuthorizes(authority.ActorId, capability, new(AuthorityScopeKind.LeaseCase, Id.Value.ToString("D")), at);
+    }
+
+    private CaseHandoffPackage RequireGovernedHandoff(Guid packageId)
+    {
+        var package = HandoffPackage;
+        if (package == null || package.Id != packageId || package.RecipientContract == null || package.IdempotencyKey == null ||
+            package.LeaseCaseId != Id || package.FinalWorkflowPlanId != ActiveWorkflowPlan?.Id.Value ||
+            package.VerifiedFactSnapshotId != CurrentVerifiedFactSnapshotId || package.FinalDecisionId != CompletedWorkflow?.FinalDecisionId.Value)
+            throw new InvalidHandoffException("Governed handoff package is missing or its bindings changed.");
+        return package;
     }
 
     public CaseHandoffPackage GenerateHandoffPackage(DateTime? generatedAtUtc = null, Guid? packageId = null)

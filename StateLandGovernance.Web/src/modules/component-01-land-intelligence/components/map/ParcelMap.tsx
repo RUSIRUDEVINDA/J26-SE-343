@@ -12,7 +12,6 @@ import {
 import L from "leaflet";
 import type { LandParcelResponse } from "../../types/landIntelligence";
 import {
-  formatCoordinatePair,
   getBasemapConfig,
   type LatLngTuple,
   type ParcelMapGeometry,
@@ -22,7 +21,6 @@ import styles from "./ParcelMap.module.css";
 import "leaflet/dist/leaflet.css";
 
 const MAROON = "#850906";
-const FILL = "rgba(133, 9, 6, 0.18)";
 const MAX_FIT_ZOOM = 16;
 const FIT_PADDING: [number, number] = [36, 36];
 
@@ -50,26 +48,29 @@ function escapeHtml(value: string): string {
     .replaceAll('"', "&quot;");
 }
 
-function buildPopupHtml(
-  parcel: LandParcelResponse,
-  coordinateLabel: string,
-  extraLine?: string,
-): string {
+function buildPopupHtml(parcel: LandParcelResponse): string {
   const id = escapeHtml(parcel.identifier.cadastralNumber || "Unavailable");
   const district = escapeHtml(parcel.location.district || "Unavailable");
-  const coords = escapeHtml(coordinateLabel);
-  const extra = extraLine
-    ? `<p style="margin:0.35rem 0 0;font-size:0.8rem;color:#555;">${escapeHtml(extraLine)}</p>`
-    : "";
   return `
     <div style="min-width:12rem;max-width:16rem;">
       <p style="margin:0 0 0.35rem;font-weight:700;color:${MAROON};">${id}</p>
       <p style="margin:0.2rem 0;font-size:0.8rem;">District: ${district}</p>
-      <p style="margin:0.2rem 0;font-size:0.8rem;">Coordinates: ${coords}</p>
-      <a href="/land-intelligence/parcels/${encodeURIComponent(parcel.id)}" style="display:inline-block;margin-top:0.45rem;color:${MAROON};font-weight:600;font-size:0.85rem;">View parcel intelligence</a>
-      ${extra}
-      <p style="margin:0.55rem 0 0;font-size:0.72rem;color:#707070;line-height:1.35;">Map location does not imply approval, ownership verification, or suitability.</p>
+      <a href="/land-intelligence/parcels/${encodeURIComponent(parcel.id)}" style="display:inline-block;margin-top:0.45rem;color:${MAROON};font-weight:600;font-size:0.85rem;">View parcel details</a>
     </div>`;
+}
+
+function fitMapToGeometry(
+  map: L.Map,
+  geometry: Extract<ParcelMapGeometry, { kind: "boundary" | "centroid" }>,
+) {
+  if (geometry.kind === "boundary") {
+    const bounds = L.latLngBounds(geometry.fitPositions);
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, { padding: FIT_PADDING, maxZoom: MAX_FIT_ZOOM });
+    }
+    return;
+  }
+  map.setView(geometry.position, 14, { animate: false });
 }
 
 function FitToGeometry({
@@ -82,15 +83,28 @@ function FitToGeometry({
   const map = useMap();
 
   useEffect(() => {
-    if (geometry.kind === "boundary") {
-      const bounds = L.latLngBounds(geometry.fitPositions);
-      if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: FIT_PADDING, maxZoom: MAX_FIT_ZOOM });
-      }
-      return;
-    }
-    map.setView(geometry.position, 14, { animate: false });
+    fitMapToGeometry(map, geometry);
   }, [geometry, map, requestKey]);
+
+  return null;
+}
+
+function MapResizeSync({
+  geometry,
+}: {
+  geometry: Extract<ParcelMapGeometry, { kind: "boundary" | "centroid" }>;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    const container = map.getContainer();
+    const observer = new ResizeObserver(() => {
+      map.invalidateSize({ animate: false });
+      fitMapToGeometry(map, geometry);
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [geometry, map]);
 
   return null;
 }
@@ -118,20 +132,7 @@ function RecenterControl({
       L.DomEvent.disableClickPropagation(button);
       L.DomEvent.on(button, "click", (event) => {
         L.DomEvent.preventDefault(event);
-        if (geometry.kind === "boundary") {
-          const bounds = L.latLngBounds(geometry.fitPositions);
-          if (bounds.isValid()) {
-            map.fitBounds(bounds, {
-              padding: FIT_PADDING,
-              maxZoom: MAX_FIT_ZOOM,
-              animate: true,
-            });
-          }
-        } else {
-          map.setView(geometry.position, Math.max(map.getZoom(), 14), {
-            animate: true,
-          });
-        }
+        fitMapToGeometry(map, geometry);
       });
       return container;
     };
@@ -160,14 +161,6 @@ export function ParcelMap({
       ? geometry.position
       : geometry.fitPositions[0];
 
-  const coordinateLabel =
-    geometry.kind === "centroid"
-      ? formatCoordinatePair(geometry.position[0], geometry.position[1])
-      : formatCoordinatePair(
-          parcel.spatial.centroidLatitude,
-          parcel.spatial.centroidLongitude,
-        );
-
   const boundaryData =
     geometry.kind === "boundary"
       ? {
@@ -184,8 +177,8 @@ export function ParcelMap({
     <div className={styles.mapShell}>
       {tileError ? (
         <p className={styles.tileWarning} role="status">
-          Basemap tiles failed to load. Parcel facts and coordinates remain
-          available above.
+          Basemap tiles failed to load. You can still use the parcel summary and
+          navigation links.
         </p>
       ) : null}
       <div className={styles.mapFrame} role="region" aria-label="Parcel map">
@@ -205,6 +198,7 @@ export function ParcelMap({
             }}
           />
           <FitToGeometry geometry={geometry} requestKey={0} />
+          <MapResizeSync geometry={geometry} />
           <RecenterControl geometry={geometry} />
 
           {boundaryData ? (
@@ -213,18 +207,22 @@ export function ParcelMap({
               data={boundaryData}
               style={{
                 color: MAROON,
-                weight: 2.5,
-                fillColor: FILL,
-                fillOpacity: 0.85,
+                weight: 3,
+                fillColor: MAROON,
+                fillOpacity: 0.22,
               }}
               onEachFeature={(_feature, layer) => {
-                layer.bindPopup(buildPopupHtml(parcel, coordinateLabel));
+                layer.bindPopup(buildPopupHtml(parcel));
               }}
             />
           ) : null}
 
           {geometry.kind === "centroid" ? (
-            <Marker position={geometry.position} icon={pinIcon}>
+            <Marker
+              position={geometry.position}
+              icon={pinIcon}
+              title={displayOrUnavailable(parcel.identifier.cadastralNumber)}
+            >
               <Popup>
                 <div className={styles.popup}>
                   <p className={styles.popupTitle}>
@@ -234,20 +232,12 @@ export function ParcelMap({
                     District:{" "}
                     {displayOrUnavailable(parcel.location.district)}
                   </p>
-                  <p className={styles.popupMeta}>
-                    Coordinates: {coordinateLabel}
-                  </p>
                   <a
                     href={`/land-intelligence/parcels/${parcel.id}`}
                     className={styles.popupLink}
                   >
-                    View parcel intelligence
+                    View parcel details
                   </a>
-                  <p className={styles.popupMeta}>{geometry.label}</p>
-                  <p className={styles.popupDisclaimer}>
-                    Map location does not imply approval, ownership
-                    verification, or suitability.
-                  </p>
                 </div>
               </Popup>
             </Marker>

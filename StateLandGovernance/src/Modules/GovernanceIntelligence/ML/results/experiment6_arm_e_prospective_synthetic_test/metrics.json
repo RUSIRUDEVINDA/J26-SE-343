@@ -1,0 +1,38 @@
+{
+  "evaluation_type": "synthetic prospective evaluation",
+  "support": 69,
+  "correct": 65,
+  "incorrect": 4,
+  "accuracy": 0.9420289855072463,
+  "balanced_accuracy": 0.9345238095238095,
+  "macro_precision": 0.950595238095238,
+  "macro_recall": 0.9345238095238095,
+  "macro_f1": 0.940976005293003,
+  "weighted_f1": 0.9429515401628642,
+  "wilson_95_accuracy_interval": {
+    "lower": 0.8602075664233835,
+    "upper": 0.9772276111196287
+  },
+  "probability_validation": {
+    "finite": true,
+    "inside_unit_interval": true,
+    "row_sums_within_tolerance": true,
+    "argmax_agreement": true,
+    "row_sum_tolerance": 1e-10,
+    "maximum_row_sum_error": 2.220446049250313e-16
+  },
+  "family_metrics": {
+    "eligible_family_count": 23,
+    "family_majority_accuracy": 1.0,
+    "family_majority_macro_f1": 1.0,
+    "families_all_three_variants_correct": 19,
+    "correct_variants_distribution": {
+      "0": 0,
+      "1": 0,
+      "2": 4,
+      "3": 19
+    },
+    "families_with_variant_prediction_disagreement": 4,
+    "families_with_majority_ties": 0
+  }
+}

@@ -14,7 +14,8 @@ public static class ComplianceEvaluationMapper
         GovernanceAuditRecord auditRecord,
         ComplianceResult result,
         string actionName,
-        string? proposalId = null)
+        string? proposalId = null,
+        string? caseId = null)
     {
         var auditEntity = GovernanceAuditRecordMapper.ToEntity(auditRecord);
 
@@ -49,6 +50,7 @@ public static class ComplianceEvaluationMapper
             Id = Guid.NewGuid(),
             AuditRecordId = auditEntity.Id,
             ProposalId = proposalId,
+            CaseId = caseId,
             ActionName = actionName ?? string.Empty,
             Status = result.Status.ToString(),
             DeterministicEvaluationId = result.DeterministicEvaluationId,

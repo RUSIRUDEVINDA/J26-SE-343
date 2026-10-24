@@ -1,0 +1,16 @@
+{
+  "arm": "arm_c",
+  "random_seed": 42,
+  "probability_class_order": [
+    "Administrative / Procedural / Integrity",
+    "Lease Revenue / Payment / Enforcement",
+    "Unauthorized Allocation / Transfer / Use",
+    "Protected / Environmental Lease Misuse"
+  ],
+  "real_training_weight": 1.0,
+  "synthetic_training": "all variants, unweighted",
+  "pipeline": "established word TF-IDF",
+  "character_tfidf": null,
+  "development_note": "Development grouped CV; not a final independent or prospective test.",
+  "model_saved": false
+}

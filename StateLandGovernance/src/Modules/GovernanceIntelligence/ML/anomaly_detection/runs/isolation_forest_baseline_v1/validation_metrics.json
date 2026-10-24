@@ -1,0 +1,104 @@
+{
+  "by_perturbation_type": {
+    "duplicated_sequence": {
+      "f1": 1.0,
+      "false_negative": 0,
+      "false_positive": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 6,
+      "true_negative": 0,
+      "true_positive": 6,
+      "undefined_metrics": {}
+    },
+    "excessive_handoffs": {
+      "f1": 1.0,
+      "false_negative": 0,
+      "false_positive": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 1,
+      "true_negative": 0,
+      "true_positive": 1,
+      "undefined_metrics": {}
+    },
+    "extended_gap": {
+      "f1": 1.0,
+      "false_negative": 0,
+      "false_positive": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 10,
+      "true_negative": 0,
+      "true_positive": 10,
+      "undefined_metrics": {}
+    },
+    "increased_event_count": {
+      "f1": 0.6666666666666666,
+      "false_negative": 5,
+      "false_positive": 0,
+      "precision": 1.0,
+      "recall": 0.5,
+      "support": 10,
+      "true_negative": 0,
+      "true_positive": 5,
+      "undefined_metrics": {}
+    },
+    "none": {
+      "f1": null,
+      "false_negative": 0,
+      "false_positive": 4,
+      "precision": 0.0,
+      "recall": null,
+      "support": 80,
+      "true_negative": 76,
+      "true_positive": 0,
+      "undefined_metrics": {
+        "f1": "precision_or_recall_undefined",
+        "recall": "no_actual_positive_labels"
+      }
+    },
+    "repeated_correction_loop": {
+      "f1": null,
+      "false_negative": 1,
+      "false_positive": 0,
+      "precision": null,
+      "recall": 0.0,
+      "support": 1,
+      "true_negative": 0,
+      "true_positive": 0,
+      "undefined_metrics": {
+        "f1": "precision_or_recall_undefined",
+        "precision": "no_predicted_flags"
+      }
+    }
+  },
+  "evaluation_scope": "validation only; no test rows were scored",
+  "labels": "supplied synthetic scenario labels only; not independently verified normality or wrongdoing",
+  "overall": {
+    "f1": 0.8148148148148148,
+    "false_negative": 6,
+    "false_positive": 4,
+    "precision": 0.8461538461538461,
+    "recall": 0.7857142857142857,
+    "support": 108,
+    "true_negative": 76,
+    "true_positive": 22,
+    "undefined_metrics": {}
+  },
+  "threshold": 0.5743688923115832,
+  "threshold_policy": {
+    "quantile": 0.95,
+    "quantile_method": "linear",
+    "reference_case_count": 80,
+    "strict_comparison": "anomaly_score > threshold"
+  },
+  "validation_reference_threshold_application": {
+    "actual_reference_flag_rate": 0.05,
+    "flagged_reference_cases": 4,
+    "reference_case_count": 80,
+    "scores_equal_to_threshold": 0,
+    "scores_greater_than_threshold": 4,
+    "scores_less_than_threshold": 76
+  }
+}

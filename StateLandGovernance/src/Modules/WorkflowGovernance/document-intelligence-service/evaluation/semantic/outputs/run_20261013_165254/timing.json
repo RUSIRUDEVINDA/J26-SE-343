@@ -1,0 +1,22 @@
+{
+  "timestamp_utc": "20261013_165254",
+  "ocr_duration_ms": 57200.0,
+  "qwen": {
+    "execution_status": "Executed",
+    "semantic_wall_time_ms": 332000.0,
+    "ocr_duration_ms": 57200.0,
+    "total_wall_time_ms": 389200.0,
+    "provenance": "Historical (Full 18-page Proposal1 run, scratch/proposal1_full_result_v4.json)"
+  },
+  "gemini": {
+    "execution_status": "Failed",
+    "attempts_made": 1,
+    "duration_ms": null,
+    "total_duration_ms": null,
+    "successful_attempt_duration_ms": null,
+    "retry_backoff_duration_ms": null,
+    "failed_duration_ms": 7120.159899999862,
+    "failure_reason": "HTTP 400: <html><title>Error 400 (Bad Request)!!1</title></html>",
+    "provenance": "Failed (HTTP 400: <html><title>Error 400 (Bad Request)!!1</title></html>)"
+  }
+}

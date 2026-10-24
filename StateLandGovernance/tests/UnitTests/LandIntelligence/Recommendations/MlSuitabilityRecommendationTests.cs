@@ -75,6 +75,60 @@ public sealed class MlSuitabilityRecommendationTests
     }
 
     [Fact]
+    public void BuildRequestPayload_sends_hectares_unchanged_for_hectare_area()
+    {
+        var parcel = CreateParcelWithArea(new LandArea(5m, AreaUnit.Hectares));
+
+        var payload = HttpMlSuitabilityClient.BuildRequestPayload(parcel, LandUseType.Agricultural);
+
+        Assert.Equal(5d, payload.AreaHectares, precision: 6);
+    }
+
+    [Fact]
+    public void BuildRequestPayload_converts_acres_to_hectares()
+    {
+        var parcel = CreateParcelWithArea(new LandArea(10m, AreaUnit.Acres));
+
+        var payload = HttpMlSuitabilityClient.BuildRequestPayload(parcel, LandUseType.Agricultural);
+
+        Assert.Equal(4.04686d, payload.AreaHectares, precision: 5);
+        Assert.NotEqual(10d, payload.AreaHectares);
+    }
+
+    [Fact]
+    public void BuildRequestPayload_converts_square_meters_to_hectares()
+    {
+        var parcel = CreateParcelWithArea(new LandArea(25_000m, AreaUnit.SquareMeters));
+
+        var payload = HttpMlSuitabilityClient.BuildRequestPayload(parcel, LandUseType.Agricultural);
+
+        Assert.Equal(2.5d, payload.AreaHectares, precision: 6);
+    }
+
+    // The domain AreaUnit currently has no Perch member (hectares, acres and square metres only).
+    // A perch (25.2929 m²) therefore reaches the ML request via its square-metre equivalent.
+    [Fact]
+    public void BuildRequestPayload_converts_perch_equivalent_square_meters_to_hectares()
+    {
+        const decimal squareMetersPerPerch = 25.2929m;
+        var parcel = CreateParcelWithArea(new LandArea(40m * squareMetersPerPerch, AreaUnit.SquareMeters));
+
+        var payload = HttpMlSuitabilityClient.BuildRequestPayload(parcel, LandUseType.Agricultural);
+
+        Assert.Equal(0.101172d, payload.AreaHectares, precision: 5);
+    }
+
+    private static LandParcel CreateParcelWithArea(LandArea area) =>
+        new(
+            new ParcelIdentifier("SYNTH-ML-AREA", "SYNTHETIC-PLAN"),
+            new LandCategory(LandCategoryType.StateLand, "[SYNTHETIC]"),
+            area,
+            new AdministrativeLocation("Western", "Colombo", "Colombo DS"),
+            new SpatialReference(6.9271, 79.8612, "EPSG:4326"),
+            new LandUse(LandUseType.Agricultural, "[SYNTHETIC]"),
+            new LandCharacteristics("Loam", "Gently sloping", 25m));
+
+    [Fact]
     public async Task PredictAsync_returns_null_when_ml_service_is_unreachable()
     {
         var client = new HttpMlSuitabilityClient(
@@ -158,6 +212,44 @@ public sealed class MlSuitabilityRecommendationTests
         Assert.DoesNotContain(
             recommendation.Evidence,
             e => e.RelatedCriterionName == "MlSuitabilityPrediction");
+    }
+
+    [Fact]
+    public async Task RecommendAsync_calls_ml_only_for_top_ranked_results()
+    {
+        var parcels = new[]
+        {
+            SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-A"),
+            SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-B"),
+            SyntheticRecommendationParcelFactory.CreateSuitableParcel("SYNTH-C"),
+        };
+        var trackingMlClient = new TrackingMlSuitabilityClient(
+            new MlSuitabilityPrediction("Suitable", new Dictionary<string, decimal> { ["Suitable"] = 0.9m }));
+        var engine = RecommendationEngineTestFactory.CreateWithMlClient(trackingMlClient, parcels);
+
+        var response = await engine.RecommendAsync(new LandRecommendationSearchRequest
+        {
+            RequiredPurpose = LandUseType.Agricultural,
+            PreferredLocation = new PreferredLocationCriteria { District = "Colombo" },
+            MaxResults = 2
+        });
+
+        Assert.Equal(2, response.Recommendations.Count);
+        Assert.Equal(2, trackingMlClient.CallCount);
+    }
+
+    [Fact]
+    public async Task PredictAsync_skips_further_calls_after_first_unreachable_failure()
+    {
+        var client = new HttpMlSuitabilityClient(
+            new HttpClient { BaseAddress = new Uri("http://127.0.0.1:1"), Timeout = TimeSpan.FromMilliseconds(100) },
+            NullLogger<HttpMlSuitabilityClient>.Instance);
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel();
+
+        await client.PredictAsync(parcel, LandUseType.Agricultural);
+        await client.PredictAsync(parcel, LandUseType.Agricultural);
+
+        Assert.Null(await client.PredictAsync(parcel, LandUseType.Agricultural));
     }
 
     [Fact]

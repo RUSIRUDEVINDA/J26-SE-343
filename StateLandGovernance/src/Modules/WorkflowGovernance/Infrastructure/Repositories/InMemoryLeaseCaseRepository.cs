@@ -47,4 +47,31 @@ internal sealed class InMemoryLeaseCaseRepository : ILeaseCaseRepository
 
         return Task.CompletedTask;
     }
+
+    public Task<(System.Collections.Generic.IReadOnlyList<LeaseCase> Items, int TotalCount)> ListAsync(
+        int skip,
+        int take,
+        Guid? ownerActorId = null,
+        CancellationToken cancellationToken = default)
+    {
+        var boundedTake = Math.Clamp(take, 1, 100);
+        var boundedSkip = Math.Max(0, skip);
+
+        var query = _byId.Values.AsEnumerable();
+
+        if (ownerActorId.HasValue && ownerActorId.Value != Guid.Empty)
+        {
+            query = query.Where(x => x.CreatedByActorId == ownerActorId.Value);
+        }
+
+        var total = query.Count();
+        var items = query
+            .OrderByDescending(x => x.CreatedAt)
+            .ThenBy(x => x.Id.Value)
+            .Skip(boundedSkip)
+            .Take(boundedTake)
+            .ToList();
+
+        return Task.FromResult< (System.Collections.Generic.IReadOnlyList<LeaseCase>, int) >((items, total));
+    }
 }

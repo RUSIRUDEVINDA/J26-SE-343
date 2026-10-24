@@ -20,5 +20,8 @@ public sealed record GovernanceDecisionSnapshotDto(
     string? MandateKey = null,
     string? MandateMode = null,
     string? LandUseCode = null,
-    IReadOnlyList<string>? IncompatibleLandUseCodes = null
+    IReadOnlyList<string>? IncompatibleLandUseCodes = null,
+    string? ApplicantId = null,
+    string? ParcelGeometry = null,
+    string? RecordStatus = null
 );

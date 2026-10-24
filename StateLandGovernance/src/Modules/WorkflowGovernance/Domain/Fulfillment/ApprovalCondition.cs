@@ -13,6 +13,7 @@ public sealed class ApprovalCondition
     public string Description { get; }
     public FulfillmentStatus Status { get; private set; }
     public DateTime? FulfilledAtUtc { get; private set; }
+    public FulfillmentWaiver? Waiver { get; private set; }
 
     public ApprovalCondition(
         Guid id,
@@ -20,7 +21,8 @@ public sealed class ApprovalCondition
         InstitutionCode institutionCode,
         string description,
         FulfillmentStatus status = FulfillmentStatus.Pending,
-        DateTime? fulfilledAtUtc = null)
+        DateTime? fulfilledAtUtc = null,
+        FulfillmentWaiver? waiver = null)
     {
         if (id == Guid.Empty)
         {
@@ -38,6 +40,15 @@ public sealed class ApprovalCondition
         Description = description.Trim();
         Status = status;
         FulfilledAtUtc = fulfilledAtUtc;
+        Waiver = waiver;
+    }
+
+    internal void Waive(StateLandGovernance.WorkflowGovernance.Domain.Authority.VerifiedAuthoritySnapshot authority,
+        string reason, string evidenceReference, DateTime at)
+    {
+        var waiver = FulfillmentWaiver.Create(LeaseCaseId, Status, authority, reason, evidenceReference, at);
+        Waiver = waiver;
+        Status = FulfillmentStatus.Waived;
     }
 
     public void Fulfill(DateTime fulfilledAt)

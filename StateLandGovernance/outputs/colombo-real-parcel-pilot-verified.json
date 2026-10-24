@@ -1,0 +1,23 @@
+{
+  "SourceName": "Survey Department/iLAS public GIS",
+  "SourceLayer": "Publishing_Server/LUSE_Cadastre_2026/MapServer/0",
+  "SourceZip": "C:\\Users\\Ravindu Peiris\\Documents\\GitHub\\J26-SE-343\\StateLandGovernance\\data\\gis\\source\\Colombo_District_GIS.zip",
+  "SourceZipSha256": "771ddd15009e791cf55533c5f29b6161a0b3b48095a329008b2d120bbe6612e0",
+  "SourceLayerSha256": "c673a95e73e4d872551e3d27f1f90d91e9543945b74e43f0231fb169df6c60dd",
+  "District": "Colombo",
+  "GnCode": null,
+  "Mode": "apply",
+  "InputFeaturesRead": 150,
+  "ValidFeatures": 150,
+  "Inserted": 0,
+  "Updated": 150,
+  "Skipped": 0,
+  "Duplicates": 0,
+  "SkipReasons": {},
+  "DatabaseParcelCount": 150,
+  "SourceMetadataCount": 150,
+  "ParcelPolygonCount": 150,
+  "DemoParcelCount": 0,
+  "StartedAtUtc": "2026-09-30T15:44:59.2101133+00:00",
+  "CompletedAtUtc": "2026-09-30T15:45:00.2052509+00:00"
+}

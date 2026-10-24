@@ -1,0 +1,1083 @@
+{
+  "scope": "133 untracked originals at review start; new sanitized examples/summaries are listed in manual-groups.json. No runtime values or credentials are included.",
+  "files": [
+    {
+      "path": "StateLandGovernance/docs/configuration/development-fixtures/spatial-inputs-v1.json",
+      "bytes": 1434,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/configuration/pending-approval/DECISION_CHECKLIST.md",
+      "bytes": 8389,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/configuration/pending-approval/PROPOSAL_SOURCE_INVENTORY.md",
+      "bytes": 6187,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/configuration/pending-approval/README.md",
+      "bytes": 7930,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/configuration/pending-approval/c4-catalogue-rule.json",
+      "bytes": 460,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 64,
+      "sha256": "8ac6dd8749052f41ace5b14e97703e159d3eb87fc3c57588d4fbe35f0d574ccc"
+    },
+    {
+      "path": "StateLandGovernance/docs/configuration/pending-approval/governance-evidence.json",
+      "bytes": 349,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 63,
+      "sha256": "a2d017d0eebc027ddf288572903547efb7ecfd983c326bd9c69a3a74f9071cb3"
+    },
+    {
+      "path": "StateLandGovernance/docs/configuration/pending-approval/institutional-routing.json",
+      "bytes": 442,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 63,
+      "sha256": "3cb5ead0427e27d4c6bf0c5aa8615b9202115c5fdaa964e314b78434a7cbdd11"
+    },
+    {
+      "path": "StateLandGovernance/docs/configuration/pending-approval/normal-case-authority.example.json",
+      "bytes": 394,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/configuration/pending-approval/screening-evidence-context.json",
+      "bytes": 246,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 63,
+      "sha256": "4715cab56cf5e091b72d9b904e8ee2bb2a5404c5765ffe116185a5df0b4f7b0d"
+    },
+    {
+      "path": "StateLandGovernance/docs/configuration/pending-approval/spatial-review-evidence.json",
+      "bytes": 119,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 63,
+      "sha256": "ed55314d7f38016f9e4d32288f0be6ad5c683c7054bfb877f3e5c22bb4fab27b"
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/BATCH4B_ACCEPTANCE.md",
+      "bytes": 20911,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/C4_APPLICANT_ACCESS_EVIDENCE.json",
+      "bytes": 111,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/C4_FRONTEND_BOUNDARY_EVIDENCE.json",
+      "bytes": 237,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/C4_INDEPENDENT_SCREENING_INTEGRITY_EVIDENCE.json",
+      "bytes": 82038,
+      "flags": [
+        "ExistingCaseOrActorBinding",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/C4_INDEPENDENT_UI_EVIDENCE.json",
+      "bytes": 22622,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/C4_POLISH_BOUNDARY_EVIDENCE.json",
+      "bytes": 287,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/C4_POLISH_FINAL_UI_EVIDENCE.json",
+      "bytes": 1942,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/C4_POLISH_PERSISTENCE_EVIDENCE.json",
+      "bytes": 288,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/C4_POLISH_RENDER_EVIDENCE.json",
+      "bytes": 865,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/C4_POLISH_SCREENING_EVIDENCE.json",
+      "bytes": 97834,
+      "flags": [
+        "ExistingCaseOrActorBinding",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/C4_POLISH_UI_EVIDENCE.json",
+      "bytes": 12504,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/CASE_ASSIGNMENT_ACCEPTANCE.md",
+      "bytes": 13406,
+      "flags": [
+        "ExistingCaseOrActorBinding"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/DEVELOPMENT_SIGNIN_ACCEPTANCE.md",
+      "bytes": 9652,
+      "flags": [
+        "ExistingCaseOrActorBinding",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/GUIDED_WORKSPACE_ACCEPTANCE.md",
+      "bytes": 11200,
+      "flags": [
+        "ExistingCaseOrActorBinding",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/INTEGRATION_REPAIR_ACCEPTANCE.md",
+      "bytes": 12201,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/NORMAL_CASE_REPAIR_ACCEPTANCE.md",
+      "bytes": 9303,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/NORMAL_HOST_SCREENING_ACCEPTANCE.md",
+      "bytes": 10722,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/PORTAL_C4_SCREENING_ACCEPTANCE.md",
+      "bytes": 14119,
+      "flags": [
+        "ExistingCaseOrActorBinding",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/PROPOSAL_INTAKE_ACCEPTANCE.md",
+      "bytes": 4960,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/STABILIZATION_ACCEPTANCE.md",
+      "bytes": 23159,
+      "flags": [
+        "LocalPath",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/STABILIZATION_CHANGE_INVENTORY.md",
+      "bytes": 28137,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/SYNTHETIC_PROPOSAL_ACCEPTANCE.md",
+      "bytes": 4638,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/UPLOADED_SYNTHETIC_SCREENING_ACCEPTANCE.md",
+      "bytes": 10309,
+      "flags": [
+        "ExistingCaseOrActorBinding",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/USER_WORKFLOW_SLICE_ACCEPTANCE.md",
+      "bytes": 19754,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/WORKFLOW_PLANNING_ACCEPTANCE.md",
+      "bytes": 11672,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/batch4b-http-evidence.json",
+      "bytes": 99039,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/case-assignment-browser-evidence.json",
+      "bytes": 7548,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/case-assignment-persistence-evidence.json",
+      "bytes": 5849,
+      "flags": [
+        "ExistingCaseOrActorBinding"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/case-assignment-routed-browser-evidence.json",
+      "bytes": 3082,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/development-signin-browser-evidence.json",
+      "bytes": 2036,
+      "flags": [
+        "ExistingCaseOrActorBinding"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/guided-c4-run-evidence.json",
+      "bytes": 464,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/guided-draft-filter-evidence.json",
+      "bytes": 167,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/guided-fixture-browser-evidence.json",
+      "bytes": 953,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/guided-persistence-evidence.json",
+      "bytes": 865,
+      "flags": [
+        "ExistingCaseOrActorBinding"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/guided-roles-browser-evidence.json",
+      "bytes": 902,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/guided-workspace-browser-evidence.json",
+      "bytes": 5119,
+      "flags": [
+        "ExistingCaseOrActorBinding"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/integration-repair-evidence.json",
+      "bytes": 10944,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/manual-commits/20261020/C4_FAILURES.md",
+      "bytes": 8436,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/manual-commits/20261020/README.md",
+      "bytes": 12369,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/manual-commits/20261020/c4-failure-classification.json",
+      "bytes": 8709,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/manual-commits/20261020/manual-commit-plan.json",
+      "bytes": 138006,
+      "flags": [
+        "LocalPath",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/normal-case-repair-evidence.json",
+      "bytes": 23521,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/normal-host-browser-evidence.json",
+      "bytes": 817,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/normal-host-screening-evidence.json",
+      "bytes": 8326,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/owner-proposals/POST_WORKFLOW_INTEGRITY_CONTRACT.md",
+      "bytes": 1952,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 65,
+      "sha256": "9bbfca9ec29f0af07cfd4d0462d4db36e54db6852518289e231d8b3b0d103767"
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/owner-proposals/PROTECTED_COMPONENT_REPAIRS.md",
+      "bytes": 10135,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/owner-proposals/c4-full-input-contract.patch",
+      "bytes": 3460,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/owner-proposals/normal-host-authentication.patch",
+      "bytes": 523,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/portal-screening-browser-evidence.json",
+      "bytes": 1752,
+      "flags": [
+        "ExistingCaseOrActorBinding"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/proposal-browser-evidence.json",
+      "bytes": 378,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/proposal-intake-evidence.json",
+      "bytes": 2719,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/stabilization-api-evidence.json",
+      "bytes": 188042,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/stabilization-browser-evidence.json",
+      "bytes": 5220,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/stabilization-c4-coverage.json",
+      "bytes": 2295,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/stabilization-change-inventory.json",
+      "bytes": 77495,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/synthetic-proposal-scenario-browser-evidence.json",
+      "bytes": 877,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/uploaded-case-screening-browser-evidence.json",
+      "bytes": 40982,
+      "flags": [
+        "ExistingCaseOrActorBinding",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/uploaded-case-screening-persistence-evidence.json",
+      "bytes": 886,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/uploaded-human-district-evidence.json",
+      "bytes": 3579,
+      "flags": [
+        "ExistingCaseOrActorBinding",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/uploaded-screening-final-ui-evidence.json",
+      "bytes": 196,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/uploaded-screening-permission-evidence.json",
+      "bytes": 66,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/workflow-extensions-browser-evidence.json",
+      "bytes": 460,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/workflow-extensions-http-evidence.json",
+      "bytes": 7055,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/workflow-planning-browser-evidence.json",
+      "bytes": 300,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/workflow-planning-http-evidence.json",
+      "bytes": 3133,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/workflow-postgres-fixture-evidence.json",
+      "bytes": 27493,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/workflow-proposal-review-evidence.json",
+      "bytes": 4942,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/docs/verification/workflow-slice-http-evidence.json",
+      "bytes": 5976,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/src/Api/development-accounts.local.json",
+      "bytes": 11609,
+      "flags": [
+        "ExistingCaseOrActorBinding",
+        "PasswordVerifier"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/src/Api/portal-development-spatial.json",
+      "bytes": 9443,
+      "flags": [
+        "ExistingCaseOrActorBinding"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "StateLandGovernance/tools/ProjectWorkflowProvisioner/PortalResearchProvisioner.cs",
+      "bytes": 10016,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 56,
+      "sha256": "22e2f156644aad347c208488f0b9acc610fd992cbbebd9b110fcc0185a8a1691"
+    },
+    {
+      "path": "StateLandGovernance/tools/ProjectWorkflowProvisioner/Program.cs",
+      "bytes": 6649,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 56,
+      "sha256": "94bed34480f5bc5146805887e73674c67495f809eafab9b4a113fde60083a43d"
+    },
+    {
+      "path": "StateLandGovernance/tools/ProjectWorkflowProvisioner/ProjectWorkflowProvisioner.csproj",
+      "bytes": 383,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 56,
+      "sha256": "97de49bf45cfbe06765623a7b099892ae8e0962c1851e3c56ef5db7576211ec7"
+    },
+    {
+      "path": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/ConcurrencyPersistenceProof.cs",
+      "bytes": 3561,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 57,
+      "sha256": "e3ac4156c1f919c752db147d1cc85706a17b3ae982bbc2e4f9328acc70becdde"
+    },
+    {
+      "path": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/ExecutionPersistenceProof.cs",
+      "bytes": 11568,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 57,
+      "sha256": "bd292934afab9baae0a7b3df35078374fcfaffd758b40bac74e7d52a93fc9643"
+    },
+    {
+      "path": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/FullWorkflowPersistenceProof.cs",
+      "bytes": 9064,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 57,
+      "sha256": "dc62b8968cb6c9d1a0c43b617d72ca13a219f9c5f0a89d2ec4940e797271c59c"
+    },
+    {
+      "path": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/GovernedExtensionsPersistenceProof.cs",
+      "bytes": 7996,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 57,
+      "sha256": "f911af53da497880cac50e4ec0e22170c464a2e5fdac9333d14814181ee32c2e"
+    },
+    {
+      "path": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/Program.cs",
+      "bytes": 8444,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 57,
+      "sha256": "858ef582a8a329becd1d1a30ae73147f55883e636699867ff67ab6d3431cec8a"
+    },
+    {
+      "path": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/README.md",
+      "bytes": 3068,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 57,
+      "sha256": "4e546861927f8c732cdb8e9655ca5e5b9dbf9e1d85766b6c6b4452d4d9fb6752"
+    },
+    {
+      "path": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/StabilizationAcceptanceHost.cs",
+      "bytes": 19035,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 57,
+      "sha256": "6446c5c88deba4fc5ef73dda55849957c6319e4aa6a81f2802dce855a2168edd"
+    },
+    {
+      "path": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/WorkflowPlanningPersistenceProof.csproj",
+      "bytes": 450,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 57,
+      "sha256": "a9785aa3574b7f82ae3f116dc1c02e68a816134bf2b4d8b440cf5a1a1b43736f"
+    },
+    {
+      "path": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/stabilization-browser.py",
+      "bytes": 4642,
+      "flags": [
+        "TokenLike"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 58,
+      "sha256": "0c6b4d86ad80cd843507abef397a561849e8db72240a1ac8700cc4cb5eb72559"
+    },
+    {
+      "path": "StateLandGovernance/tools/WorkflowPlanningPersistenceProof/stabilization-scenario.py",
+      "bytes": 13426,
+      "flags": [
+        "TokenLike"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 58,
+      "sha256": "104874771c8dfe2445025241ae49706afa241340e4b0bef634e8d789838145b9"
+    },
+    {
+      "path": "StateLandGovernance/tools/document-intelligence/create_synthetic_proposal.py",
+      "bytes": 11246,
+      "flags": [
+        "LocalPath",
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 59,
+      "sha256": "e8d4375f74ab99f238fb34db155274bf9791a9b7f6f99a006a03c83668797fe9"
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre.zip",
+      "bytes": 6164714,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre/MANUAL_TEST_GUIDE.md",
+      "bytes": 13050,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre/SYNTHETIC_RESEARCH_12_ACRE_scanned.pdf",
+      "bytes": 5236965,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 61,
+      "sha256": "c096b6dee867c31ceb21c83e679825977613ca0af9da6c1b70b898ce738a5ddc"
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre/SYNTHETIC_RESEARCH_12_ACRE_text.pdf",
+      "bytes": 1286667,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 61,
+      "sha256": "5fe1b5e00c29030147f2a28a21ea9f8f1ffacaf127a61aa30cc62bfcab717568"
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre/artifact-validation.json",
+      "bytes": 1924,
+      "flags": [],
+      "disposition": "Proposed manual group",
+      "manualGroup": 60,
+      "sha256": "f50293e90842cbbd702857ca3bc3344b737c9df9358ecf2ada34107a485ee229"
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre/expected-17-fields.json",
+      "bytes": 1324,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 60,
+      "sha256": "c2f899aeef2c5e144a02c43fb3cbc8fcec7eb096961df8c9b9e9d6c8c81b4de8"
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre/expected-17-fields.md",
+      "bytes": 2425,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 60,
+      "sha256": "98424159a26aba6f10ad8faca0e461cfc11294110df37e3b427f3b2995980b23"
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre/proposal-editable.html",
+      "bytes": 26060,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 60,
+      "sha256": "dfaada0ff2246738fe7b3ba16e94d85d2f4714841011ca213e49ac915230269e"
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre/proposal-source.json",
+      "bytes": 41444,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 59,
+      "sha256": "863770906d6833b4be2ae070c352611b728f530eff8c1059c0e75187ec004b6f"
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre/requirement-coverage.csv",
+      "bytes": 2218,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 60,
+      "sha256": "c59aeab0c7a18fddd5fa5ddea79a6879fe34007f55c9855ff6db04c7b2ca452e"
+    },
+    {
+      "path": "output/pdf/synthetic-proposal-12-acre/requirement-coverage.md",
+      "bytes": 3325,
+      "flags": [
+        "IdentityOrEvidenceContent"
+      ],
+      "disposition": "Proposed manual group",
+      "manualGroup": 60,
+      "sha256": "18ebc721edcd2484ca378be936a78f8e2aa36b586fcfc3d03950c23e8a29dadc"
+    },
+    {
+      "path": "output/screenshots/c4-pp1/complaints-mobile.png",
+      "bytes": 84974,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/complaints.png",
+      "bytes": 110014,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/development-mobile.png",
+      "bytes": 110339,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/development.png",
+      "bytes": 133273,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/evaluation-mobile.png",
+      "bytes": 155101,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/evaluation.png",
+      "bytes": 178450,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/follow-up-mobile.png",
+      "bytes": 86680,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/follow-up.png",
+      "bytes": 106834,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/historical-drawer.png",
+      "bytes": 168661,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/history-mobile.png",
+      "bytes": 69330,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/history.png",
+      "bytes": 95318,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/integrity-mobile.png",
+      "bytes": 63631,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/integrity.png",
+      "bytes": 87731,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/ordinary-workflow-actual-model.png",
+      "bytes": 195942,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/overview-mobile.png",
+      "bytes": 113652,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/overview.png",
+      "bytes": 130436,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/post-workflow-mobile.png",
+      "bytes": 174660,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/post-workflow.png",
+      "bytes": 107393,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/progressive-conflict-mobile.png",
+      "bytes": 129724,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/progressive-conflict.png",
+      "bytes": 154779,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/progressive-early-governance.png",
+      "bytes": 123485,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/progressive-regulatory.png",
+      "bytes": 149699,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/progressive-summary.png",
+      "bytes": 169426,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/revised-workflow-actual-model.png",
+      "bytes": 203375,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/screening-mobile.png",
+      "bytes": 74522,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/screening.png",
+      "bytes": 96269,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/sign-in.png",
+      "bytes": 177423,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    },
+    {
+      "path": "output/screenshots/c4-pp1/transport-error-test.png",
+      "bytes": 114981,
+      "flags": [],
+      "disposition": "Hold original: review/sanitization or optional local artifact",
+      "manualGroup": null
+    }
+  ]
+}

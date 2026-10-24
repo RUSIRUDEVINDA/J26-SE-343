@@ -18,6 +18,32 @@ public sealed class LandRecommendationSearchRequestValidatorTests
         Assert.True(result.IsValid);
     }
 
+    [Theory]
+    [InlineData(LandUseType.Agricultural)]
+    [InlineData(LandUseType.Residential)]
+    [InlineData(LandUseType.Commercial)]
+    public void Validate_accepts_supported_purposes(LandUseType purpose)
+    {
+        var result = _validator.Validate(CreateValidRequest() with { RequiredPurpose = purpose });
+
+        Assert.True(result.IsValid);
+    }
+
+    [Theory]
+    [InlineData(LandUseType.Industrial)]
+    [InlineData(LandUseType.Tourism)]
+    [InlineData(LandUseType.Conservation)]
+    [InlineData(LandUseType.MixedUse)]
+    [InlineData(LandUseType.Other)]
+    [InlineData((LandUseType)123)]
+    public void Validate_rejects_unsupported_purposes(LandUseType purpose)
+    {
+        var result = _validator.Validate(CreateValidRequest() with { RequiredPurpose = purpose });
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, error => error.Contains("Required purpose", StringComparison.Ordinal));
+    }
+
     [Fact]
     public void Validate_fails_for_invalid_custom_criterion_weight()
     {
@@ -80,12 +106,6 @@ public sealed class LandRecommendationSearchRequestValidatorTests
             Province = "Western",
             District = "Colombo"
         },
-        Accessibility = new AccessibilityCriteria
-        {
-            RequireRoadAccess = true,
-            MaxRoadDistanceMeters = 1000m
-        },
-        Environmental = new EnvironmentalCriteria(),
         Regulatory = new RegulatoryCriteria()
     };
 }

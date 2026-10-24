@@ -1,0 +1,15 @@
+{
+  "WorkflowGovernance": {
+    "AuthorityAssignments": [
+      {
+        "ActorId": null,
+        "CaseId": null,
+        "DocumentId": null,
+        "InstitutionCode": null,
+        "Capabilities": [],
+        "SourceReference": null,
+        "ExpiresAtUtc": null
+      }
+    ]
+  }
+}

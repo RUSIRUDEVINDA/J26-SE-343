@@ -29,16 +29,16 @@ public class InMemoryGovernanceEvaluationStore : IGovernanceEvaluationStore
 
     public Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, CancellationToken cancellationToken = default)
     {
-        return StoreComplianceEvaluationAsync(auditRecord, result, actionName, proposalId: null, cancellationToken);
+        return StoreComplianceEvaluationAsync(auditRecord, result, actionName, proposalId: null, caseId: null, cancellationToken);
     }
 
-    public async Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, string? proposalId, CancellationToken cancellationToken = default)
+    public async Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, string? proposalId, string? caseId = null, CancellationToken cancellationToken = default)
     {
         if (auditRecord == null) throw new ArgumentNullException(nameof(auditRecord));
         if (result == null) throw new ArgumentNullException(nameof(result));
 
         await _auditRepository.AddAsync(auditRecord, cancellationToken);
-        var (_, evalEntity) = ComplianceEvaluationMapper.MapToEntities(auditRecord, result, actionName, proposalId);
+        var (_, evalEntity) = ComplianceEvaluationMapper.MapToEntities(auditRecord, result, actionName, proposalId, caseId);
         _complianceEvaluations.Add(evalEntity);
     }
 

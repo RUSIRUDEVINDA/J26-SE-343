@@ -225,4 +225,40 @@ public class RegulatoryComplianceEngineTests
             Assert.Equal(firstRun.Conditions[i].Description, secondRun.Conditions[i].Description);
         }
     }
+
+    [Fact]
+    public void Evaluate_ShouldUseSuppliedEvaluationTimestamp_Deterministically()
+    {
+        // Arrange
+        var evaluationTime = new DateTime(2026, 6, 15, 10, 30, 0, DateTimeKind.Utc);
+        var input = new LeaseEvaluationInput(
+            LeaseDurationYears: 45, // requires condition (90 days)
+            ProposedUse: "Commercial", // in residential requires condition (30 days)
+            LeaseAmount: 500.00m, // below threshold requires condition (45 days)
+            ZoningArea: "Residential"
+        );
+        var rules = new List<RegulatoryRule>
+        {
+            new MaxLeaseDurationRule(),
+            new ZoningMatchRule(),
+            new MinimumLeaseValueRule()
+        };
+
+        // Act
+        var result = _engine.Evaluate(input, rules, evaluationTime);
+
+        // Assert
+        Assert.Equal(ComplianceStatus.Conditional, result.Status);
+        Assert.Equal(evaluationTime, result.EvaluationTimestamp);
+        Assert.Equal(3, result.Conditions.Count);
+
+        var durationCond = result.Conditions.First(c => c.Description.Contains("ministerial review"));
+        Assert.Equal(evaluationTime.AddDays(90), durationCond.RequiredByDate);
+
+        var valuerCond = result.Conditions.First(c => c.Description.Contains("Chief Valuer"));
+        Assert.Equal(evaluationTime.AddDays(45), valuerCond.RequiredByDate);
+
+        var zoningCond = result.Conditions.First(c => c.Description.Contains("environmental clearance"));
+        Assert.Equal(evaluationTime.AddDays(30), zoningCond.RequiredByDate);
+    }
 }

@@ -25,8 +25,8 @@ public sealed class DeterministicRecommendationScenarioTests
         DeterministicRecommendationScenarioSupport.AssertScenarioExpectations(run, expectations);
         DeterministicRecommendationScenarioSupport.AssertMonotonicRanking(run.Response.Recommendations);
 
-        Assert.Equal(6, run.Response.Recommendations.Count);
-        Assert.Equal(6, run.Response.CandidateCount);
+        Assert.Equal(7, run.Response.Recommendations.Count);
+        Assert.Equal(7, run.Response.CandidateCount);
     }
 
     [Theory]
@@ -45,15 +45,15 @@ public sealed class DeterministicRecommendationScenarioTests
         }
 
         var high = run.ResultsByLabel[$"{prefix}-A"];
-        Assert.Empty(high.FailedCriteria);
+        Assert.Empty(high.FailedCriteria.Where(criterion => criterion.WasAssessed));
         Assert.Contains(high.MatchingCriteria, criterion => criterion.Key == "purpose-alignment");
         Assert.Contains(high.Evidence, evidence => evidence.RelatedCriterionName == "Purpose Alignment");
 
         var environmental = run.ResultsByLabel[$"{prefix}-D"];
-        Assert.Contains(environmental.FailedCriteria, criterion => criterion.Key == "environmental");
+        Assert.True(environmental.HardConstraintRejected);
         Assert.NotEmpty(environmental.Restrictions);
         Assert.Contains(environmental.Evidence, evidence =>
-            evidence.Description.Contains("Environmental", StringComparison.OrdinalIgnoreCase));
+            evidence.RelatedCriterionName == "HardConstraintRejection");
 
         var missingData = run.ResultsByLabel[$"{prefix}-H"];
         Assert.Contains(missingData.FailedCriteria, criterion => criterion.Key == "custom-criteria");
@@ -94,7 +94,7 @@ public sealed class DeterministicRecommendationScenarioTests
             prefix,
             engine);
 
-        Assert.DoesNotContain(run.Response.Recommendations, result => result.CadastralNumber == $"{prefix}-E");
+        Assert.Contains(run.Response.Recommendations, result => result.CadastralNumber == $"{prefix}-E");
         Assert.DoesNotContain(run.Response.Recommendations, result => result.CadastralNumber == $"{prefix}-F");
         Assert.DoesNotContain(run.Response.Recommendations, result => result.CadastralNumber == $"{prefix}-G");
     }

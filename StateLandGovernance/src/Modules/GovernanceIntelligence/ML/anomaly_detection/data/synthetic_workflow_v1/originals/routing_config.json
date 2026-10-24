@@ -1,0 +1,63 @@
+{
+  "provinces": [
+    "Western",
+    "Central",
+    "Southern",
+    "Northern",
+    "Eastern",
+    "North Western",
+    "North Central",
+    "Uva",
+    "Sabaragamuwa"
+  ],
+  "land_purposes": [
+    "Residential",
+    "Commercial",
+    "Agricultural",
+    "Institutional"
+  ],
+  "applicant_types": [
+    "Individual",
+    "Company",
+    "Government Body",
+    "Cooperative"
+  ],
+  "legal_routes": {
+    "Residential": {
+      "clearances": [
+        "Survey Clearance",
+        "DS Field Report"
+      ],
+      "higher_approval_prob": 0.1,
+      "registration_prob": 0.6
+    },
+    "Commercial": {
+      "clearances": [
+        "Survey Clearance",
+        "Environmental Clearance",
+        "DS Field Report"
+      ],
+      "higher_approval_prob": 0.55,
+      "registration_prob": 0.85
+    },
+    "Agricultural": {
+      "clearances": [
+        "Survey Clearance",
+        "Agrarian Services Clearance"
+      ],
+      "higher_approval_prob": 0.2,
+      "registration_prob": 0.4
+    },
+    "Institutional": {
+      "clearances": [
+        "Survey Clearance",
+        "Environmental Clearance",
+        "Irrigation Dept Clearance",
+        "DS Field Report"
+      ],
+      "higher_approval_prob": 0.75,
+      "registration_prob": 0.9
+    }
+  },
+  "note": "Synthetic routing config; not sourced from any real department system."
+}

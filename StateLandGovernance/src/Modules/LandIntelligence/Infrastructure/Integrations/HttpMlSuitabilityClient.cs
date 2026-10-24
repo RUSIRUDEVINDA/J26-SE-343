@@ -18,6 +18,7 @@ public sealed class HttpMlSuitabilityClient : IMlSuitabilityClient
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<HttpMlSuitabilityClient> _logger;
+    private bool _serviceUnavailableForRequest;
 
     public HttpMlSuitabilityClient(HttpClient httpClient, ILogger<HttpMlSuitabilityClient> logger)
     {
@@ -30,6 +31,11 @@ public sealed class HttpMlSuitabilityClient : IMlSuitabilityClient
         LandUseType requestedPurpose,
         CancellationToken cancellationToken = default)
     {
+        if (_serviceUnavailableForRequest)
+        {
+            return null;
+        }
+
         try
         {
             var payload = BuildRequestPayload(parcel, requestedPurpose);
@@ -58,9 +64,10 @@ public sealed class HttpMlSuitabilityClient : IMlSuitabilityClient
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
+            _serviceUnavailableForRequest = true;
             _logger.LogWarning(
                 ex,
-                "ML suitability service unreachable for parcel {CadastralNumber}; continuing without ML evidence.",
+                "ML suitability service unreachable for parcel {CadastralNumber}; skipping remaining ML calls for this search.",
                 parcel.Identifier.CadastralNumber);
             return null;
         }
@@ -92,7 +99,8 @@ public sealed class HttpMlSuitabilityClient : IMlSuitabilityClient
         return new MlPredictRequest(
             RequestedPurpose: requestedPurpose.ToString(),
             LandCategory: parcel.Category.Type.ToString(),
-            AreaHectares: (double)parcel.Area.Value,
+            // Always send hectares: parcel.Area.Value is in parcel.Area.Unit (acres, m², …), not necessarily hectares.
+            AreaHectares: (double)parcel.Area.ToHectares(),
             Province: parcel.Location.Province,
             District: parcel.Location.District,
             ElevationMeters: ToNullableDouble(parcel.Characteristics?.ElevationMeters),

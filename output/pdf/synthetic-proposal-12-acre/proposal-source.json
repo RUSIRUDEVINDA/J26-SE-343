@@ -1,0 +1,1097 @@
+{
+  "label": "SYNTHETIC RESEARCH TEST — NOT A REAL APPLICATION",
+  "reference": "SYNTHETIC-12A-2026-001",
+  "version": "1.0",
+  "date": "2026-10-19",
+  "templateId": "STD-PROP-2026-V1",
+  "templateVersion": "1.0",
+  "pages": [
+    {
+      "title": "01 | Applicant and project summary",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "1. Applicant identity",
+          "requirementId": "applicant_name"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Applicant name: Mira Senali Testdeniya. Applicant type: Individual. This is a fictional adult applicant created solely for research testing. All names, identifiers, contacts and declarations in this document are synthetic."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Field",
+            "Synthetic declaration"
+          ],
+          "rows": [
+            [
+              "Residential address",
+              "24 Lantern Lane, DEVELOPMENT_RESIDENTIAL_VILLAGE, DEVELOPMENT_RESIDENTIAL_DISTRICT, DEVELOPMENT_RESIDENTIAL_PROVINCE. This is NOT the proposed project site."
+            ],
+            [
+              "Residential GN division",
+              "DEVELOPMENT_RESIDENTIAL_GN"
+            ],
+            [
+              "Residential DS division",
+              "DEVELOPMENT_RESIDENTIAL_DS"
+            ],
+            [
+              "Telephone and email",
+              "TEST-PHONE-0001 (deliberately non-dialable); mira.testdeniya@example.invalid (non-deliverable test email)."
+            ],
+            [
+              "Applicant NIC / test identifier",
+              "SYNTHETIC-NIC-IND-001. Not a government-issued NIC; deliberately invalid as a real identity credential."
+            ],
+            [
+              "Date of birth and age",
+              "12 April 1990; age 36 on proposal date 19 October 2026."
+            ],
+            [
+              "Sex",
+              "Female (fictional test profile)."
+            ],
+            [
+              "Marital status",
+              "Single (fictional test profile)."
+            ],
+            [
+              "Education",
+              "Completed secondary education; fictional 2010 Agricultural Practice Certificate, TEST TRAINING CENTRE."
+            ],
+            [
+              "Professional qualifications",
+              "Fictional six-month crop-management and drip-irrigation training, TEST TRAINING CENTRE, 2011. No real credential or licence is asserted."
+            ]
+          ]
+        },
+        {
+          "kind": "heading",
+          "text": "2. Project name",
+          "requirementId": "project_name"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Project title: Lantern Field Papaya and Vegetable Project. Proposal reference: SYNTHETIC-12A-2026-001; document version 1.0, dated 19 October 2026."
+        },
+        {
+          "kind": "heading",
+          "text": "3. Project nature",
+          "requirementId": "project_nature"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Proposed land use: Agriculture. Project purpose: establish a small irrigated papaya and vegetable farm for the domestic market on 12 acres under a requested 15-year lease."
+        },
+        {
+          "kind": "heading",
+          "text": "4. Project introduction",
+          "requirementId": "project_introduction"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Project description: A fictional individual-operated agricultural enterprise allocating 6 acres to papaya, 4 acres to seasonal vegetables, 1 acre to access/storage/water infrastructure and 1 acre to conservation/drainage. The plan provides 6 full-time positions including the owner-manager. Initial investment: LKR 12,000,000, entirely fictional owner equity. This is a proposed plan, not an operational farm or approved lease."
+        }
+      ]
+    },
+    {
+      "title": "02 | Proposed land, tenure and buildings",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "5. Proposed land location and lease request",
+          "requirementId": "project_land_location"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Land location: DEVELOPMENT_MOCK_FARM_12A, on SYNTHETIC TEST ACCESS ROAD R-TEST-01. Project Province: DEVELOPMENT_MOCK_PROVINCE_A; District: DEVELOPMENT_MOCK_DISTRICT; Divisional Secretariat Division: DEVELOPMENT_MOCK_DS; Grama Niladhari Division: DEVELOPMENT_MOCK_GN_001. These are synthetic administrative identifiers for the Development scenario, not real jurisdictions."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Project input",
+            "Explicit requested value"
+          ],
+          "rows": [
+            [
+              "Requested land extent / unit",
+              "12 acres (4.85622770688 hectares). The entire synthetic parcel is requested."
+            ],
+            [
+              "Requested lease period",
+              "15 years; intended test period 1 January 2027 to 31 December 2041, subject to actual authorisation and commencement."
+            ],
+            [
+              "Synthetic cadastral reference",
+              "DEVELOPMENT-MOCK-12A-001; a fixture identifier, not a survey or C1 ownership record."
+            ],
+            [
+              "Initial investment / currency",
+              "12,000,000 / LKR. This is the total initial investment, not annual turnover or operating expenditure."
+            ]
+          ]
+        },
+        {
+          "kind": "heading",
+          "text": "6. Existing business registration — inapplicability",
+          "requirementId": "existing_business_registration"
+        },
+        {
+          "kind": "paragraph",
+          "text": "No existing business is being extended or relocated. This is a proposed new individual enterprise. Existing-business registration details are therefore inapplicable. No registration certificate is claimed or attached. Any registration needed for actual operations would be obtained separately; this declaration is synthetic source evidence for template applicability only."
+        },
+        {
+          "kind": "heading",
+          "text": "7. Ownership form",
+          "requirementId": "ownership_form"
+        },
+        {
+          "kind": "paragraph",
+          "text": "The applicant is an Individual / proposed sole proprietor. Requested tenure is leasehold only; freehold ownership of the land is not claimed. The project is not a company, partnership or cooperative. No actual land allocation, title, consent or official approval is asserted."
+        },
+        {
+          "kind": "heading",
+          "text": "8. Initial buildings and structures",
+          "requirementId": "initial_buildings"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Planned initial construction: one simple single-storey, open-sided crop packing/storage shed, 80 square metres, and a 20-square-metre water-tank base. Total structural footprint: 100 square metres, within the 1-acre infrastructure allocation. No residence, factory or worker accommodation is proposed. Estimated shed cost is LKR 900,000; the tank/base and drip network are included in the LKR 2,100,000 irrigation allocation. Required construction and access permissions are not yet granted."
+        }
+      ]
+    },
+    {
+      "title": "03 | Initial site layout and future buildings",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "9. Initial site layout",
+          "requirementId": "initial_site_layout"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Illustrative allocation at establishment; schematic only, not to scale and not a cadastral survey. The four allocations sum exactly to 12 acres. The packing shed and tank base are contained within, and do not add to, the 1-acre infrastructure block."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Allocation",
+            "Acres",
+            "Purpose"
+          ],
+          "rows": [
+            [
+              "Block A",
+              "6",
+              "Papaya cultivation, drip irrigation and internal crop rows."
+            ],
+            [
+              "Block B",
+              "4",
+              "Seasonal vegetables with rotation beds and irrigation."
+            ],
+            [
+              "Block C",
+              "1",
+              "Access track, 80 m2 shed, 20 m2 tank base, loading and water facilities."
+            ],
+            [
+              "Block D",
+              "1",
+              "Vegetated margins, drainage and soil/water conservation."
+            ],
+            [
+              "TOTAL",
+              "12",
+              "No additional land is requested."
+            ]
+          ]
+        },
+        {
+          "kind": "diagram",
+          "boxes": [
+            [
+              "A: PAPAYA\n6 acres",
+              "B: VEGETABLES\n4 acres"
+            ],
+            [
+              "C: ACCESS / STORAGE\n1 acre",
+              "D: CONSERVATION\n1 acre"
+            ]
+          ]
+        },
+        {
+          "kind": "heading",
+          "text": "10. Future buildings over the 15-year period — inapplicability",
+          "requirementId": "future_buildings_15_years"
+        },
+        {
+          "kind": "paragraph",
+          "text": "No additional buildings or expansion of the 100-square-metre initial structural footprint are planned during years 1–15 (2027–2041). The initial 80-square-metre shed and 20-square-metre tank base will be maintained. Future additional-building descriptions/areas are inapplicable because none are planned. Any later proposal to construct more would require a separately reviewed revision and applicable permissions; it is not approved by this document."
+        }
+      ]
+    },
+    {
+      "title": "04 | Development layout and access sketch",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "11. Future development layout",
+          "requirementId": "future_development_layout"
+        },
+        {
+          "kind": "paragraph",
+          "text": "The 12-acre boundary allocation remains unchanged for all 15 requested years. Years 1–5: establish crops and stabilize irrigation. Years 6–10: renew papaya blocks progressively within the same 6 acres; continue vegetable rotation within 4 acres. Years 11–15: renew equipment, maintain drainage and prepare an end-of-term land-restoration plan. No new building, adjacent parcel or extra acreage is included."
+        },
+        {
+          "kind": "diagram",
+          "boxes": [
+            [
+              "2027–2031\nEstablish A + B",
+              "2032–2036\nRenew within A + B"
+            ],
+            [
+              "2037–2041\nMaintain / restore",
+              "C + D unchanged\n1 acre + 1 acre"
+            ]
+          ]
+        },
+        {
+          "kind": "heading",
+          "text": "12. Access and location sketch",
+          "requirementId": "access_location_sketch"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Schematic route: fictional Test Junction J-01 → SYNTHETIC TEST ACCESS ROAD R-TEST-01 → proposed gate → internal access in Block C → Blocks A and B. North is shown schematically; no surveyed bearings, legal right of way, real public-road connection or approved access is claimed."
+        },
+        {
+          "kind": "diagram",
+          "boxes": [
+            [
+              "NORTH (schematic)\nTest Junction J-01",
+              "R-TEST-01\nSynthetic access road"
+            ],
+            [
+              "Proposed gate\nBlock C access",
+              "Crop blocks A / B\nDrainage margin D"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "These two sketches describe a fictional development intention. They do not prove ownership, permitted access, environmental clearance, absence of overlap or absence of complaints."
+        }
+      ]
+    },
+    {
+      "title": "05 | Employment, inputs and raw materials",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "13. Employment plan",
+          "requirementId": "employment_table"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Expected employment: 6 full-time positions, including the owner-manager and 5 hired staff. All salary values are fictional planning allowances. No seasonal positions are counted in the six-person total."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Role",
+            "Persons",
+            "Monthly LKR / person",
+            "Monthly total LKR"
+          ],
+          "rows": [
+            [
+              "Owner-manager",
+              "1",
+              "80,000",
+              "80,000"
+            ],
+            [
+              "Field supervisor",
+              "1",
+              "60,000",
+              "60,000"
+            ],
+            [
+              "Field workers",
+              "4",
+              "35,000",
+              "140,000"
+            ],
+            [
+              "TOTAL",
+              "6",
+              "—",
+              "280,000"
+            ]
+          ]
+        },
+        {
+          "kind": "heading",
+          "text": "14. Raw material and input sources",
+          "requirementId": "raw_material_sources"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Raw-material requirements apply to this agricultural project. Planned inputs and sources are fictional procurement assumptions, not supply agreements. Initial planting stock is a separate startup cost; recurring materials below are operating inputs."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Input",
+            "Planned synthetic source"
+          ],
+          "rows": [
+            [
+              "Compost / soil amendments",
+              "TEST SUPPLIER A, within DEVELOPMENT_MOCK_DISTRICT."
+            ],
+            [
+              "Vegetable seed / replacement stock",
+              "TEST NURSERY B, within DEVELOPMENT_MOCK_DS."
+            ],
+            [
+              "Crop-protection / biological inputs",
+              "TEST SUPPLIER C; use only products permitted at actual operation."
+            ],
+            [
+              "Consumable crates / packing supplies",
+              "TEST PACKAGING D, domestic supplier."
+            ]
+          ]
+        },
+        {
+          "kind": "heading",
+          "text": "15. Recurring raw-material costs",
+          "requirementId": "raw_material_costs"
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Input",
+            "Monthly budget LKR",
+            "Annual budget LKR"
+          ],
+          "rows": [
+            [
+              "Compost / soil amendments",
+              "45,000",
+              "540,000"
+            ],
+            [
+              "Seed / replacement stock",
+              "20,000",
+              "240,000"
+            ],
+            [
+              "Crop-protection / biological inputs",
+              "15,000",
+              "180,000"
+            ],
+            [
+              "Consumable crates / supplies",
+              "10,000",
+              "120,000"
+            ],
+            [
+              "TOTAL",
+              "90,000",
+              "1,080,000"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "The LKR 90,000 monthly input subtotal is included once in the monthly operating budget on page 7. The LKR 1,400,000 startup planting allocation on page 8 establishes the farm; it is not included again in recurring inputs."
+        }
+      ]
+    },
+    {
+      "title": "06 | Markets, marketing and turnover",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "16. Current domestic market",
+          "requirementId": "current_market"
+        },
+        {
+          "kind": "paragraph",
+          "text": "As a new unestablished project, current sales and signed customer contracts are zero. The assumed target market consists of domestic fresh-produce wholesalers and local retailers in the fictional DEVELOPMENT_MOCK_DISTRICT. The planning price is LKR 100 per kilogram for both papaya and mixed vegetables. This is a synthetic price assumption, not a market quotation, secured price or guaranteed demand."
+        },
+        {
+          "kind": "heading",
+          "text": "17. Future marketing and foreign-market inapplicability",
+          "requirementId": "future_marketing"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Domestic strategy: grade produce at the shed, use reusable crates, schedule two consolidated collections weekly at maturity and seek two independent wholesale buyers after permission to operate. Keep batch and complaint records and adjust crop timing to demand. Foreign-market strategy is inapplicable: no exports, foreign buyers, export revenue or foreign-market certification are proposed during the 15-year test plan. No buyer agreement or certification is claimed."
+        },
+        {
+          "kind": "heading",
+          "text": "18. Project turnover projections",
+          "requirementId": "project_turnover"
+        },
+        {
+          "kind": "paragraph",
+          "text": "All forecasts use constant fictional 2026 LKR prices. The first operating year assumes half of steady-state production while crops establish; years 2 and 3 assume steady production. Turnover is gross sales, not investment, profit or secured revenue."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Operating year",
+            "Papaya sales LKR",
+            "Vegetable sales LKR",
+            "Total turnover LKR"
+          ],
+          "rows": [
+            [
+              "2027 — establishment",
+              "5,400,000",
+              "1,600,000",
+              "7,000,000"
+            ],
+            [
+              "2028 — full production",
+              "10,800,000",
+              "3,200,000",
+              "14,000,000"
+            ],
+            [
+              "2029 — full production",
+              "10,800,000",
+              "3,200,000",
+              "14,000,000"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Demand and price risk: maintain multiple prospective buyers and crop rotation; review actual prices monthly. No public procurement order, guaranteed offtake or official marketing approval is asserted."
+        }
+      ]
+    },
+    {
+      "title": "07 | Sales estimates and monthly working capital",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "19. Sales-income calculation",
+          "requirementId": "sales_income_estimates"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Steady-state annual sales for 2028 and 2029 reconcile to LKR 14,000,000. The 2027 half-output assumption yields LKR 7,000,000."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Crop",
+            "Full-year quantity kg",
+            "LKR / kg",
+            "Annual sales LKR"
+          ],
+          "rows": [
+            [
+              "Papaya",
+              "108,000",
+              "100",
+              "10,800,000"
+            ],
+            [
+              "Mixed vegetables",
+              "32,000",
+              "100",
+              "3,200,000"
+            ],
+            [
+              "TOTAL",
+              "140,000",
+              "—",
+              "14,000,000"
+            ]
+          ]
+        },
+        {
+          "kind": "heading",
+          "text": "20. Monthly working-capital budget",
+          "requirementId": "monthly_working_capital"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Monthly operating cash requirement: LKR 500,000. Annual operating cash requirement: LKR 6,000,000. Initial six-month working-capital reserve: LKR 3,000,000 (6 × 500,000), included within the LKR 12,000,000 initial investment. The reserve is a financing allocation, not an extra operating expense."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Operating cost",
+            "Monthly LKR",
+            "Annual LKR"
+          ],
+          "rows": [
+            [
+              "Payroll — 6 positions",
+              "280,000",
+              "3,360,000"
+            ],
+            [
+              "Recurring raw materials — page 5",
+              "90,000",
+              "1,080,000"
+            ],
+            [
+              "Water / energy",
+              "30,000",
+              "360,000"
+            ],
+            [
+              "Transport / collection",
+              "50,000",
+              "600,000"
+            ],
+            [
+              "Repairs / maintenance",
+              "20,000",
+              "240,000"
+            ],
+            [
+              "Administration / insurance allowance",
+              "15,000",
+              "180,000"
+            ],
+            [
+              "Environmental monitoring allowance",
+              "15,000",
+              "180,000"
+            ],
+            [
+              "TOTAL",
+              "500,000",
+              "6,000,000"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Lease rent and taxes are not known and are excluded from this operating illustration; their amounts must be determined separately. They are not assumed to be zero. No debt is planned, so financing interest is not included. Financial viability would need reassessment once actual rent, taxes and permissions are known."
+        }
+      ]
+    },
+    {
+      "title": "08 | Initial investment, financing and production",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "21. Initial project capital cost and financing",
+          "requirementId": "project_capital_cost_and_funding"
+        },
+        {
+          "kind": "paragraph",
+          "text": "TOTAL INITIAL INVESTMENT: LKR 12,000,000. INVESTMENT CURRENCY: LKR. This total comprises LKR 9,000,000 establishment capital plus a LKR 3,000,000 opening working-capital reserve. All allocations are synthetic estimates."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Initial investment item",
+            "Amount LKR"
+          ],
+          "rows": [
+            [
+              "Land preparation / crop-bed establishment",
+              "1,800,000"
+            ],
+            [
+              "Drip irrigation, tank and 20 m2 base",
+              "2,100,000"
+            ],
+            [
+              "Farm tools and small equipment",
+              "1,500,000"
+            ],
+            [
+              "Initial planting stock / establishment materials",
+              "1,400,000"
+            ],
+            [
+              "80 m2 packing and storage shed",
+              "900,000"
+            ],
+            [
+              "Initial soil/water testing and setup",
+              "600,000"
+            ],
+            [
+              "Capital contingency allowance",
+              "700,000"
+            ],
+            [
+              "ESTABLISHMENT CAPITAL SUBTOTAL",
+              "9,000,000"
+            ],
+            [
+              "Opening working capital: 6 months × LKR 500,000",
+              "3,000,000"
+            ],
+            [
+              "TOTAL INITIAL INVESTMENT",
+              "12,000,000"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Funding source: fictional owner equity LKR 12,000,000 (100% of initial investment); loans LKR 0; grants LKR 0. Funding sources total exactly LKR 12,000,000. This is a synthetic funding plan, not proof of funds, a bank approval or an actual commitment. The contingency is included once in the capital subtotal."
+        },
+        {
+          "kind": "heading",
+          "text": "22. Expected agricultural production",
+          "requirementId": "expected_production"
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Crop / allocation",
+            "Assumed full-year yield",
+            "Full-year output"
+          ],
+          "rows": [
+            [
+              "Papaya — 6 acres",
+              "18,000 kg per acre",
+              "108,000 kg"
+            ],
+            [
+              "Mixed vegetables — 4 acres",
+              "8,000 kg per acre",
+              "32,000 kg"
+            ],
+            [
+              "Infrastructure + conservation — 2 acres",
+              "No saleable crop output",
+              "0 kg"
+            ],
+            [
+              "TOTAL — 12 acres",
+              "Fictional yield assumptions",
+              "140,000 kg"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Year 2027 produces 54,000 kg papaya and 16,000 kg vegetables (70,000 kg total); 2028–2029 use full-year quantities. Yield is a forecast and is not guaranteed."
+        }
+      ]
+    },
+    {
+      "title": "09 | Indicative profit, loss and cash forecast",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "23. Three-year forecast before unpriced lease rent and taxes",
+          "requirementId": "profit_loss_forecast"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Illustrative annual depreciation is LKR 900,000: a simplified planning charge of LKR 9,000,000 establishment capital over ten years, with no residual value. This is a test-model assumption, not a tax or accounting determination. Working-capital reserves are not depreciated."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Line item — LKR",
+            "2027",
+            "2028",
+            "2029"
+          ],
+          "rows": [
+            [
+              "Gross sales / turnover",
+              "7,000,000",
+              "14,000,000",
+              "14,000,000"
+            ],
+            [
+              "Operating cash costs",
+              "6,000,000",
+              "6,000,000",
+              "6,000,000"
+            ],
+            [
+              "Operating cash surplus, before rent/tax",
+              "1,000,000",
+              "8,000,000",
+              "8,000,000"
+            ],
+            [
+              "Illustrative depreciation",
+              "900,000",
+              "900,000",
+              "900,000"
+            ],
+            [
+              "Indicative surplus after depreciation, before rent/tax",
+              "100,000",
+              "7,100,000",
+              "7,100,000"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "The final line is not net profit after all obligations. Lease rent, taxes, any required statutory charges, owner withdrawals and unplanned reinvestment are unpriced and excluded, not zero. This proposal cannot establish an approved financial appraisal."
+        },
+        {
+          "kind": "heading",
+          "text": "23A. Cash reconciliation — not additional investment"
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Cash line — LKR",
+            "2027",
+            "2028",
+            "2029"
+          ],
+          "rows": [
+            [
+              "Opening working reserve",
+              "3,000,000",
+              "4,000,000",
+              "12,000,000"
+            ],
+            [
+              "Sales less operating cash costs",
+              "1,000,000",
+              "8,000,000",
+              "8,000,000"
+            ],
+            [
+              "Illustrative closing cash before rent/tax/withdrawals",
+              "4,000,000",
+              "12,000,000",
+              "20,000,000"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "At establishment, LKR 12,000,000 owner equity funds LKR 9,000,000 capital expenditure and LKR 3,000,000 opening reserve. Subsequent projected sales fund operating costs. No second equity injection or double counting of the reserve is assumed. Price/yield downside and actual lease charges may reduce these surpluses."
+        }
+      ]
+    },
+    {
+      "title": "10 | Implementation and management",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "24. Proposed implementation schedule",
+          "requirementId": "implementation_schedule"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Planning date: 19 October 2026. Requested lease duration: 15 years. The illustrative programme starts 1 January 2027 and ends 31 December 2041 only if the required lease, site access and permissions are actually granted. If not, all start dates must be rebaselined; this programme is not authority to occupy or build."
+        },
+        {
+          "kind": "table",
+          "headers": [
+            "Proposed period",
+            "Activity / milestone",
+            "Responsible role"
+          ],
+          "rows": [
+            [
+              "Oct–Dec 2026",
+              "Submit proposal, clarify requirements, seek required permissions; no site occupation assumed.",
+              "Fictional applicant / owner-manager"
+            ],
+            [
+              "Jan–Mar 2027",
+              "After permissions: establish beds, irrigation, tank and shed within approved footprint.",
+              "Owner-manager and field supervisor"
+            ],
+            [
+              "Apr–Jun 2027",
+              "Plant papaya and vegetable rotation; train six staff; establish records.",
+              "Field supervisor"
+            ],
+            [
+              "Jul–Dec 2027",
+              "Partial harvest and first domestic sales; review water use and costs monthly.",
+              "Owner-manager / field workers"
+            ],
+            [
+              "2028–2031",
+              "Steady production; annual review and preventive maintenance.",
+              "Owner-manager / supervisor"
+            ],
+            [
+              "2032–2036",
+              "Renew crops progressively within existing allocations; no new buildings.",
+              "Owner-manager / supervisor"
+            ],
+            [
+              "2037–2041",
+              "Maintain assets, restore exhausted beds and prepare end-of-term restoration/lease review.",
+              "Owner-manager"
+            ]
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "text": "Management controls: maintain payroll, sales, water, crop-input and maintenance logs. Review output (target 140,000 kg/year at steady state), six-person employment, operating cash cost (LKR 6,000,000/year) and drainage condition quarterly. Correct deviations through a documented revised plan; do not treat this schedule as an institutional approval."
+        }
+      ]
+    },
+    {
+      "title": "11 | Environment, sustainability and declarations",
+      "blocks": [
+        {
+          "kind": "heading",
+          "text": "25. Environmental impacts and mitigation",
+          "requirementId": "environmental_impact"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Predicted risks include soil erosion, nutrient runoff, water demand, packaging waste and equipment noise. Mitigation plan: preserve the 1-acre conservation/drainage block; use vegetated margins and contour beds; schedule drip irrigation by soil moisture; compost suitable organic residue; segregate and return containers; prevent chemical discharge; maintain a spill kit; work in daylight. The LKR 15,000 monthly monitoring allowance supports logs and periodic checks. These are proposed measures, not an environmental impact assessment, clearance or evidence of site suitability."
+        },
+        {
+          "kind": "heading",
+          "text": "26. Sustainability and maintenance",
+          "requirementId": "sustainability_maintenance"
+        },
+        {
+          "kind": "paragraph",
+          "text": "Rotate vegetables within 4 acres, renew papaya within 6 acres, maintain the 1-acre infrastructure area and retain the 1-acre conservation allocation for all 15 years. Inspect drip lines weekly, drainage monthly and the shed/tank quarterly; budget LKR 20,000/month for repairs. Record water use, soil cover, input use, staff training and waste transfers. Use the domestic marketing plan to spread demand risk. End-of-term intention is orderly restoration under the actual lease terms, not an assumed extension or handoff approval."
+        },
+        {
+          "kind": "heading",
+          "text": "27. Synthetic applicant declaration, date and contact",
+          "requirementId": "applicant_signature_date_contact"
+        },
+        {
+          "kind": "paragraph",
+          "text": "I, Mira Senali Testdeniya, declare solely within this fictional research scenario that this proposal states my proposed 12-acre agricultural plan, requested 15-year lease and LKR 12,000,000 initial investment. I understand that submission, OCR extraction, completeness review and C4 findings do not grant a lease or approve an application. I will seek required permissions before any actual occupation, work or construction.\n\nSynthetic typed signature: MIRA SENALI TESTDENIYA — TEST DECLARATION ONLY. No real handwritten or digital signature is supplied. Date: 19 October 2026. Contact: TEST-PHONE-0001; mira.testdeniya@example.invalid. No real NIC, contact or legal signature is asserted."
+        },
+        {
+          "kind": "paragraph",
+          "text": "Supporting-document references: internal site-layout annex (page 3), development/access sketches (page 4), employment/input schedules (page 5), financial schedules (pages 7–9), implementation schedule (page 10) and environmental plan/declaration (page 11). No external approval certificate, identity document, survey, bank letter or official clearance is attached."
+        },
+        {
+          "kind": "paragraph",
+          "text": "Legal / statutory basis: user-project test requirements STD-PROP-2026-V1, version 1.0; this is not law. No verified statutory citation or official approval is claimed. This proposal makes no assertion of no complaints, no disputes or no spatial conflict. Such coverage belongs only to separately selected, explicitly synthetic screening evidence."
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "applicant_name": {
+      "page": 1,
+      "section": "1. Applicant identity"
+    },
+    "applicant_address": {
+      "page": 1,
+      "section": "Residential address"
+    },
+    "applicant_residential_gn": {
+      "page": 1,
+      "section": "Residential GN division"
+    },
+    "applicant_residential_ds": {
+      "page": 1,
+      "section": "Residential DS division"
+    },
+    "applicant_telephone": {
+      "page": 1,
+      "section": "Telephone and email"
+    },
+    "applicant_nic": {
+      "page": 1,
+      "section": "Applicant NIC / test identifier"
+    },
+    "applicant_birth_date_age": {
+      "page": 1,
+      "section": "Date of birth and age"
+    },
+    "applicant_sex": {
+      "page": 1,
+      "section": "Sex"
+    },
+    "applicant_marital_status": {
+      "page": 1,
+      "section": "Marital status"
+    },
+    "applicant_education": {
+      "page": 1,
+      "section": "Education"
+    },
+    "applicant_professional_qualifications": {
+      "page": 1,
+      "section": "Professional qualifications"
+    },
+    "project_name": {
+      "page": 1,
+      "section": "2. Project name"
+    },
+    "project_nature": {
+      "page": 1,
+      "section": "3. Project nature"
+    },
+    "project_introduction": {
+      "page": 1,
+      "section": "4. Project introduction"
+    },
+    "project_land_location": {
+      "page": 2,
+      "section": "5. Proposed land location and lease request"
+    },
+    "existing_business_registration": {
+      "page": 2,
+      "section": "6. Existing business registration — inapplicability"
+    },
+    "ownership_form": {
+      "page": 2,
+      "section": "7. Ownership form"
+    },
+    "initial_buildings": {
+      "page": 2,
+      "section": "8. Initial buildings and structures"
+    },
+    "initial_site_layout": {
+      "page": 3,
+      "section": "9. Initial site layout"
+    },
+    "future_buildings_15_years": {
+      "page": 3,
+      "section": "10. Future buildings over the 15-year period — inapplicability"
+    },
+    "future_development_layout": {
+      "page": 4,
+      "section": "11. Future development layout"
+    },
+    "access_location_sketch": {
+      "page": 4,
+      "section": "12. Access and location sketch"
+    },
+    "employment_table": {
+      "page": 5,
+      "section": "13. Employment plan"
+    },
+    "raw_material_sources": {
+      "page": 5,
+      "section": "14. Raw material and input sources"
+    },
+    "raw_material_costs": {
+      "page": 5,
+      "section": "15. Recurring raw-material costs"
+    },
+    "current_market": {
+      "page": 6,
+      "section": "16. Current domestic market"
+    },
+    "future_marketing": {
+      "page": 6,
+      "section": "17. Future marketing and foreign-market inapplicability"
+    },
+    "project_turnover": {
+      "page": 6,
+      "section": "18. Project turnover projections"
+    },
+    "sales_income_estimates": {
+      "page": 7,
+      "section": "19. Sales-income calculation"
+    },
+    "monthly_working_capital": {
+      "page": 7,
+      "section": "20. Monthly working-capital budget"
+    },
+    "project_capital_cost_and_funding": {
+      "page": 8,
+      "section": "21. Initial project capital cost and financing"
+    },
+    "expected_production": {
+      "page": 8,
+      "section": "22. Expected agricultural production"
+    },
+    "profit_loss_forecast": {
+      "page": 9,
+      "section": "23. Three-year forecast before unpriced lease rent and taxes"
+    },
+    "implementation_schedule": {
+      "page": 10,
+      "section": "24. Proposed implementation schedule"
+    },
+    "environmental_impact": {
+      "page": 11,
+      "section": "25. Environmental impacts and mitigation"
+    },
+    "sustainability_maintenance": {
+      "page": 11,
+      "section": "26. Sustainability and maintenance"
+    },
+    "applicant_signature_date_contact": {
+      "page": 11,
+      "section": "27. Synthetic applicant declaration, date and contact"
+    }
+  },
+  "expected17Fields": {
+    "applicant_name": "Mira Senali Testdeniya",
+    "applicant_type": "Individual",
+    "project_title": "Lantern Field Papaya and Vegetable Project",
+    "project_purpose": "Establish a small irrigated papaya and vegetable farm for the domestic market",
+    "land_location": "DEVELOPMENT_MOCK_FARM_12A, SYNTHETIC TEST ACCESS ROAD R-TEST-01, DEVELOPMENT_MOCK_GN_001",
+    "district": "DEVELOPMENT_MOCK_DISTRICT",
+    "divisional_secretariat_division": "DEVELOPMENT_MOCK_DS",
+    "land_extent": "12",
+    "land_extent_unit": "acres",
+    "requested_lease_period": "15 years",
+    "proposed_land_use": "Agriculture",
+    "investment_amount": "12000000",
+    "investment_currency": "LKR",
+    "expected_employment": "6 full-time positions including owner-manager; 5 hired staff",
+    "project_description": "6 acres papaya, 4 acres seasonal vegetables, 1 acre infrastructure and 1 acre conservation; irrigated domestic-market farm",
+    "supporting_document_references": "Internal annexes: site layout p3; development/access sketches p4; employment/input schedules p5; financial schedules pp7–9; implementation p10; environment/declaration p11. No external certificates attached.",
+    "legal_statutory_basis": "User-project test template STD-PROP-2026-V1 version 1.0 only; no verified statutory citation or official approval claimed."
+  },
+  "financialChecks": {
+    "initialCapitalItems": [
+      1800000,
+      2100000,
+      1500000,
+      1400000,
+      900000,
+      600000,
+      700000
+    ],
+    "establishmentCapital": 9000000,
+    "openingWorkingCapital": 3000000,
+    "initialInvestment": 12000000,
+    "monthlyCosts": [
+      280000,
+      90000,
+      30000,
+      50000,
+      20000,
+      15000,
+      15000
+    ],
+    "monthlyTotal": 500000,
+    "annualTotal": 6000000,
+    "financingEquity": 12000000,
+    "loans": 0,
+    "grants": 0,
+    "acreAllocations": [
+      6,
+      4,
+      1,
+      1
+    ],
+    "annualSales": 14000000
+  }
+}

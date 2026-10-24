@@ -1,0 +1,201 @@
+Research_ID,Combined_Group,True_Label,Predicted_Label,Fold,prob_Administrative___Procedural___Integrity,prob_Lease_Revenue___Payment___Enforcement,prob_Protected___Environmental_Lease_Misuse,prob_Unauthorized_Allocation___Transfer___Use
+STATE-LEASE-001,CG-STATE-LEASE-001,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.2413,0.2031,0.2006,0.355
+STATE-LEASE-002,CG-STATE-LEASE-002,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.2832,0.2425,0.2058,0.2685
+STATE-LEASE-003,CG-STATE-LEASE-003,Lease Revenue / Payment / Enforcement,Unauthorized Allocation / Transfer / Use,4,0.2249,0.2266,0.2026,0.3458
+STATE-LEASE-004,CG-STATE-LEASE-004,Administrative / Procedural / Integrity,Protected / Environmental Lease Misuse,1,0.1835,0.1865,0.3462,0.2838
+STATE-LEASE-005,CG-STATE-LEASE-005,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.208,0.1906,0.2199,0.3816
+STATE-LEASE-006,CG-STATE-LEASE-006,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,1,0.2495,0.1506,0.2955,0.3044
+STATE-LEASE-007,CG-STATE-LEASE-007,Administrative / Procedural / Integrity,Protected / Environmental Lease Misuse,3,0.2401,0.1766,0.3076,0.2757
+STATE-LEASE-008,CG-STATE-LEASE-008,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2567,0.2771,0.2166,0.2497
+STATE-LEASE-009,CG-STATE-LEASE-009,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,0.2222,0.2007,0.331,0.2461
+STATE-LEASE-010,CG-STATE-LEASE-010,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.2271,0.2056,0.1957,0.3716
+STATE-LEASE-011,CG-STATE-LEASE-011,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.2374,0.2046,0.2319,0.326
+STATE-LEASE-012,CG-STATE-LEASE-012,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,3,0.228,0.1796,0.2885,0.3038
+STATE-LEASE-013,CG-STATE-LEASE-013,Protected / Environmental Lease Misuse,Administrative / Procedural / Integrity,1,0.3196,0.2405,0.2175,0.2225
+STATE-LEASE-014,CG-STATE-LEASE-014,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.2272,0.2128,0.2845,0.2755
+STATE-LEASE-015,CG-STATE-LEASE-015,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.22,0.1859,0.3495,0.2446
+STATE-LEASE-016,CG-STATE-LEASE-016,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.2454,0.1752,0.2987,0.2806
+STATE-LEASE-017,CG-STATE-LEASE-017,Lease Revenue / Payment / Enforcement,Protected / Environmental Lease Misuse,3,0.265,0.1771,0.2871,0.2708
+STATE-LEASE-018,CG-STATE-LEASE-018,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.19,0.1839,0.3999,0.2262
+STATE-LEASE-019,CG-STATE-LEASE-019,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.2285,0.2075,0.2977,0.2663
+STATE-LEASE-020,CG-STATE-LEASE-020,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,0.1958,0.1477,0.3219,0.3347
+STATE-LEASE-021,CG-STATE-LEASE-021,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.2546,0.1952,0.2757,0.2745
+STATE-LEASE-022,CG-STATE-LEASE-022,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.1965,0.3058,0.1808,0.3169
+STATE-LEASE-023,CG-STATE-LEASE-023,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,1,0.2135,0.2307,0.2497,0.3061
+STATE-LEASE-024,CG-STATE-LEASE-024,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.1954,0.1759,0.2782,0.3505
+STATE-LEASE-025,CG-STATE-LEASE-025,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.2414,0.1771,0.3005,0.281
+STATE-LEASE-026,CG-STATE-LEASE-026,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,0.1793,0.1568,0.3797,0.2842
+STATE-LEASE-027,CG-STATE-LEASE-027,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.305,0.2451,0.1888,0.2611
+STATE-LEASE-028,CG-STATE-LEASE-027,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.356,0.2683,0.1481,0.2275
+STATE-LEASE-029,CG-STATE-LEASE-029,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,2,0.2571,0.3371,0.137,0.2688
+STATE-LEASE-030,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,0.3015,0.2062,0.2319,0.2605
+STATE-LEASE-031,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,0.3143,0.3093,0.1675,0.209
+STATE-LEASE-032,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,0.312,0.3088,0.1572,0.222
+STATE-LEASE-033,CG-STATE-LEASE-030,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.2727,0.2393,0.178,0.3099
+STATE-LEASE-034,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2873,0.3979,0.1432,0.1716
+STATE-LEASE-035,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,0.2999,0.2557,0.1673,0.2771
+STATE-LEASE-036,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,0.3191,0.2833,0.1723,0.2253
+STATE-LEASE-037,CG-STATE-LEASE-037,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.3454,0.2414,0.2205,0.1926
+STATE-LEASE-038,CG-STATE-LEASE-038,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.2087,0.4738,0.1492,0.1682
+STATE-LEASE-039,CG-STATE-LEASE-039,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2487,0.3421,0.1919,0.2173
+STATE-LEASE-040,CG-STATE-LEASE-040,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.241,0.1998,0.3013,0.2579
+STATE-LEASE-041,CG-STATE-LEASE-041,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.3957,0.2965,0.1328,0.1751
+STATE-LEASE-042,CG-STATE-LEASE-042,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,0.2387,0.3806,0.1723,0.2083
+STATE-LEASE-043,CG-STATE-LEASE-042,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,0.295,0.3482,0.1717,0.1851
+STATE-LEASE-044,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2698,0.4004,0.1599,0.1698
+STATE-LEASE-045,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2189,0.4262,0.1639,0.1909
+STATE-LEASE-046,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2564,0.3324,0.201,0.2102
+STATE-LEASE-047,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2702,0.3302,0.1969,0.2027
+STATE-LEASE-048,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2069,0.4026,0.1822,0.2084
+STATE-LEASE-049,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.1938,0.5181,0.1382,0.15
+STATE-LEASE-050,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.1791,0.5501,0.1289,0.1419
+STATE-LEASE-051,CG-STATE-LEASE-030,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.2879,0.2708,0.2303,0.211
+STATE-LEASE-052,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.1947,0.514,0.1384,0.1529
+STATE-LEASE-053,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2134,0.441,0.1718,0.1738
+STATE-LEASE-054,CG-STATE-LEASE-030,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.3538,0.253,0.1662,0.227
+STATE-LEASE-055,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2501,0.3894,0.1712,0.1894
+STATE-LEASE-056,CG-STATE-LEASE-030,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.3487,0.2071,0.1912,0.253
+STATE-LEASE-057,CG-STATE-LEASE-030,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.3487,0.2071,0.1912,0.253
+STATE-LEASE-058,CG-STATE-LEASE-030,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.3487,0.2071,0.1912,0.253
+STATE-LEASE-059,CG-STATE-LEASE-030,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,3,0.2619,0.2245,0.1921,0.3215
+STATE-LEASE-060,CG-STATE-LEASE-030,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.3558,0.2172,0.2067,0.2203
+STATE-LEASE-061,CG-STATE-LEASE-030,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2691,0.3034,0.2229,0.2046
+STATE-LEASE-062,CG-STATE-LEASE-030,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,3,0.2461,0.31,0.2122,0.2317
+WEB-063,CG-WEB-063,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,2,0.3016,0.3344,0.1784,0.1856
+WEB-064,CG-WEB-063,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.3389,0.3094,0.1489,0.2028
+WEB-065,CG-WEB-065,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.3658,0.2537,0.1982,0.1822
+WEB-066,CG-WEB-065,Lease Revenue / Payment / Enforcement,Administrative / Procedural / Integrity,3,0.3657,0.2962,0.1558,0.1823
+WEB-067,CG-WEB-067,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.3805,0.2989,0.1334,0.1873
+WEB-068,CG-WEB-068,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,0.2952,0.3694,0.1246,0.2108
+WEB-069,CG-WEB-069,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,1,0.2964,0.3342,0.1232,0.2462
+WEB-070,CG-WEB-070,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.2593,0.4126,0.1293,0.1988
+WEB-071,CG-WEB-070,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,4,0.2579,0.3005,0.1493,0.2923
+WEB-072,CG-WEB-070,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.2237,0.4449,0.1262,0.2051
+WEB-073,CG-WEB-073,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,4,0.2527,0.4338,0.1292,0.1843
+WEB-074,CG-WEB-074,Unauthorized Allocation / Transfer / Use,Lease Revenue / Payment / Enforcement,5,0.2569,0.3219,0.1418,0.2794
+WEB-075,CG-WEB-074,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.2311,0.496,0.1076,0.1652
+WEB-076,CG-WEB-076,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.2665,0.3517,0.1438,0.238
+WEB-077,CG-WEB-076,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.2442,0.426,0.1282,0.2017
+WEB-078,CG-WEB-076,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.2744,0.3359,0.1609,0.2288
+WEB-079,CG-STATE-LEASE-029,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.2321,0.4601,0.1118,0.1961
+WEB-080,CG-STATE-LEASE-029,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,2,0.2435,0.4684,0.1165,0.1716
+WEB-081,CG-WEB-081,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.4219,0.1979,0.1941,0.1861
+WEB-082,CG-WEB-082,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.3412,0.2132,0.1939,0.2516
+WEB-083,CG-WEB-083,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.3441,0.2232,0.2249,0.2078
+WEB-084,CG-WEB-084,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.3255,0.2582,0.2171,0.1992
+WEB-085,CG-WEB-085,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.4031,0.1752,0.1854,0.2364
+WEB-086,CG-WEB-086,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,1,0.5438,0.1416,0.1511,0.1636
+WEB-087,CG-WEB-087,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.5299,0.1727,0.1496,0.1478
+WEB-088,CG-WEB-088,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.4262,0.1856,0.1837,0.2045
+WEB-089,CG-WEB-089,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.4275,0.1606,0.2113,0.2007
+WEB-090,CG-WEB-090,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.4814,0.1772,0.1695,0.1719
+WEB-091,CG-WEB-091,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.3552,0.1923,0.2292,0.2232
+WEB-092,CG-WEB-092,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.4027,0.1944,0.1962,0.2067
+WEB-093,CG-WEB-093,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.3709,0.2861,0.1709,0.1721
+WEB-094,CG-WEB-094,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.3646,0.1749,0.2455,0.215
+WEB-095,CG-WEB-095,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.3371,0.2173,0.1812,0.2644
+WEB-096,CG-WEB-096,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.3137,0.1945,0.2496,0.2421
+WEB-097,CG-WEB-097,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.3748,0.1939,0.2299,0.2014
+WEB-098,CG-WEB-098,Administrative / Procedural / Integrity,Unauthorized Allocation / Transfer / Use,5,0.2838,0.2001,0.2077,0.3083
+WEB-099,CG-WEB-099,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.288,0.2804,0.1969,0.2347
+WEB-100,CG-WEB-100,Administrative / Procedural / Integrity,Lease Revenue / Payment / Enforcement,3,0.2484,0.2947,0.2083,0.2487
+WEB-101,CG-WEB-101,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.3322,0.2182,0.1822,0.2675
+WEB-102,CG-WEB-102,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,4,0.3182,0.2221,0.26,0.1997
+WEB-103,CG-WEB-103,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,2,0.4811,0.1977,0.1626,0.1586
+WEB-104,CG-WEB-104,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,3,0.3911,0.1706,0.229,0.2092
+WEB-105,CG-WEB-105,Administrative / Procedural / Integrity,Administrative / Procedural / Integrity,5,0.2874,0.2329,0.2423,0.2374
+WEB-106,CG-WEB-106,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,1,0.1623,0.5054,0.17,0.1623
+WEB-107,CG-WEB-107,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.2359,0.4076,0.1618,0.1947
+WEB-108,CG-WEB-108,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.151,0.5058,0.1412,0.2021
+WEB-109,CG-WEB-109,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.1732,0.3871,0.1909,0.2489
+WEB-110,CG-WEB-110,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.1672,0.3539,0.2025,0.2764
+WEB-111,CG-WEB-107,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.1839,0.2826,0.2749,0.2587
+WEB-112,CG-WEB-112,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.2411,0.3379,0.1875,0.2335
+WEB-113,CG-WEB-113,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.2708,0.3645,0.163,0.2017
+WEB-114,CG-WEB-114,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.2458,0.3566,0.1814,0.2162
+WEB-115,CG-WEB-115,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.2588,0.3227,0.1914,0.2271
+WEB-116,CG-WEB-116,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.2337,0.4568,0.1533,0.1562
+WEB-117,CG-WEB-117,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2523,0.2845,0.207,0.2562
+WEB-118,CG-WEB-118,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.201,0.4142,0.1763,0.2085
+WEB-119,CG-WEB-119,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.2333,0.4192,0.1908,0.1566
+WEB-120,CG-WEB-120,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.1749,0.5367,0.131,0.1574
+WEB-121,CG-WEB-121,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,3,0.2009,0.4286,0.1831,0.1875
+WEB-122,CG-WEB-122,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,2,0.2266,0.4104,0.1697,0.1932
+WEB-123,CG-WEB-123,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.2338,0.419,0.1345,0.2128
+WEB-124,CG-WEB-124,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,5,0.2195,0.4151,0.1613,0.204
+WEB-125,CG-WEB-125,Lease Revenue / Payment / Enforcement,Lease Revenue / Payment / Enforcement,4,0.2388,0.3346,0.1677,0.2588
+WEB-126,CG-WEB-126,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.2654,0.1648,0.1881,0.3817
+WEB-127,CG-WEB-127,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.1874,0.1613,0.2532,0.3981
+WEB-128,CG-WEB-128,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.1702,0.2266,0.2024,0.4008
+WEB-129,CG-WEB-129,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.2161,0.1908,0.2312,0.3619
+WEB-130,CG-WEB-130,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.1469,0.1319,0.2501,0.471
+WEB-131,CG-WEB-131,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,0.1776,0.1783,0.3376,0.3066
+WEB-132,CG-WEB-128,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.1991,0.1803,0.2042,0.4164
+WEB-133,CG-WEB-133,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.1806,0.1527,0.1681,0.4986
+WEB-134,CG-WEB-134,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.241,0.1625,0.2874,0.3091
+WEB-135,CG-WEB-135,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.2445,0.192,0.2416,0.3219
+WEB-136,CG-WEB-136,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.2463,0.1953,0.2352,0.3233
+WEB-137,CG-WEB-137,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.183,0.1464,0.2112,0.4595
+WEB-138,CG-WEB-134,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,2,0.1454,0.1406,0.454,0.26
+WEB-139,CG-WEB-135,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.2321,0.1535,0.2868,0.3276
+WEB-140,CG-WEB-140,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.2017,0.1838,0.2415,0.3729
+WEB-141,CG-WEB-141,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.2043,0.163,0.2535,0.3793
+WEB-142,CG-WEB-142,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.1606,0.2317,0.245,0.3627
+WEB-143,CG-WEB-143,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.2121,0.241,0.2335,0.3134
+WEB-144,CG-WEB-140,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.1494,0.1387,0.3116,0.4003
+WEB-145,CG-WEB-145,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.1513,0.1448,0.3424,0.3615
+WEB-146,CG-WEB-142,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.1747,0.1844,0.2423,0.3987
+WEB-147,CG-WEB-147,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,0.1687,0.1935,0.3529,0.2849
+WEB-148,CG-WEB-148,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,4,0.2235,0.1584,0.399,0.2191
+WEB-149,CG-WEB-149,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,2,0.2524,0.2216,0.2213,0.3047
+WEB-150,CG-WEB-150,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,2,0.159,0.1698,0.4164,0.2548
+WEB-151,CG-WEB-147,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,0.1504,0.158,0.3617,0.3298
+WEB-152,CG-WEB-152,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.1817,0.1882,0.2129,0.4172
+WEB-153,CG-WEB-153,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,4,0.1684,0.1697,0.2282,0.4338
+WEB-154,CG-WEB-154,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.2659,0.2292,0.2203,0.2846
+WEB-155,CG-WEB-155,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,3,0.2205,0.171,0.3086,0.2999
+WEB-156,CG-WEB-152,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,1,0.1397,0.14,0.2858,0.4344
+WEB-157,CG-WEB-157,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,5,0.2362,0.2203,0.2717,0.2719
+WEB-158,CG-WEB-158,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,2,0.1536,0.1768,0.3516,0.318
+WEB-159,CG-WEB-159,Unauthorized Allocation / Transfer / Use,Administrative / Procedural / Integrity,2,0.2857,0.2185,0.25,0.2457
+WEB-160,CG-WEB-160,Unauthorized Allocation / Transfer / Use,Unauthorized Allocation / Transfer / Use,3,0.2566,0.211,0.2402,0.2922
+WEB-161,CG-WEB-157,Unauthorized Allocation / Transfer / Use,Protected / Environmental Lease Misuse,5,0.1785,0.1639,0.3357,0.3219
+WEB-162,CG-WEB-162,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.1794,0.1377,0.4915,0.1915
+WEB-163,CG-WEB-163,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.2089,0.1999,0.3694,0.2218
+WEB-164,CG-WEB-164,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.22,0.1912,0.4394,0.1494
+WEB-165,CG-WEB-165,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.1628,0.1439,0.4709,0.2224
+WEB-166,CG-WEB-162,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.1377,0.1092,0.5223,0.2309
+WEB-167,CG-WEB-167,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.129,0.1495,0.5174,0.204
+WEB-168,CG-WEB-168,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.2297,0.1581,0.3928,0.2193
+WEB-169,CG-WEB-165,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.1661,0.149,0.466,0.219
+WEB-170,CG-WEB-170,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.2196,0.1471,0.4211,0.2122
+WEB-171,CG-WEB-171,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.1876,0.1702,0.3536,0.2886
+WEB-172,CG-WEB-172,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.2575,0.1723,0.3582,0.2121
+WEB-173,CG-WEB-173,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.182,0.1459,0.4012,0.2709
+WEB-174,CG-WEB-174,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.175,0.128,0.4298,0.2672
+WEB-175,CG-WEB-171,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.1398,0.1633,0.4278,0.2691
+WEB-176,CG-WEB-172,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.2574,0.1525,0.3085,0.2815
+WEB-177,CG-WEB-177,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,0.1908,0.1583,0.2752,0.3757
+WEB-178,CG-WEB-178,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,0.2035,0.1841,0.2573,0.3552
+WEB-179,CG-WEB-179,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.2182,0.1682,0.3336,0.28
+WEB-180,CG-WEB-180,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.1594,0.1723,0.42,0.2484
+WEB-181,CG-WEB-177,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,0.1417,0.1045,0.2751,0.4787
+WEB-182,CG-WEB-178,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,4,0.1445,0.137,0.358,0.3604
+WEB-183,CG-WEB-183,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.1591,0.1282,0.4518,0.2609
+WEB-184,CG-WEB-184,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.2598,0.1963,0.3354,0.2085
+WEB-185,CG-WEB-185,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.1984,0.1751,0.3367,0.2899
+WEB-186,CG-WEB-186,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.1902,0.2038,0.344,0.262
+WEB-187,CG-WEB-183,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.1339,0.1137,0.439,0.3133
+WEB-188,CG-WEB-184,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.1705,0.1435,0.4342,0.2518
+WEB-189,CG-WEB-189,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.1744,0.1462,0.395,0.2844
+WEB-190,CG-WEB-190,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.2049,0.1708,0.4236,0.2006
+WEB-191,CG-WEB-191,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,5,0.2513,0.1548,0.4173,0.1766
+WEB-192,CG-WEB-192,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.2364,0.1976,0.3284,0.2376
+WEB-193,CG-WEB-189,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.1266,0.111,0.3866,0.3758
+WEB-194,CG-WEB-190,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,3,0.1455,0.1641,0.4852,0.2051
+WEB-195,CG-WEB-195,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.1667,0.1488,0.4103,0.2742
+WEB-196,CG-WEB-196,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.1723,0.179,0.339,0.3098
+WEB-197,CG-WEB-197,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,2,0.2509,0.1786,0.3687,0.2017
+WEB-198,CG-WEB-198,Protected / Environmental Lease Misuse,Unauthorized Allocation / Transfer / Use,1,0.1286,0.1625,0.2628,0.4461
+WEB-199,CG-WEB-195,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,4,0.1202,0.1012,0.3935,0.3852
+WEB-200,CG-WEB-196,Protected / Environmental Lease Misuse,Protected / Environmental Lease Misuse,1,0.1277,0.1585,0.4337,0.2801

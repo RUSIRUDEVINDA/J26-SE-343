@@ -85,6 +85,13 @@ internal static class DeterministicRecommendationScenarioFactory
             }
         }
 
+        if (spatialSeverity is null && role != ScenarioParcelRole.MissingData)
+        {
+            parcel.AttachGisDerivedIntelligence(new ParcelGisDerivedIntelligence(
+                GisEnrichmentOverallStatus.Complete,
+                null));
+        }
+
         return parcel;
     }
 
@@ -124,7 +131,7 @@ internal static class DeterministicRecommendationScenarioFactory
             ScenarioParcelRole.MediumSuitability => (
                 LandCategoryType.StateLand,
                 targetPurpose,
-                4.5m,
+                5.2m,
                 "Western",
                 "Gampaha",
                 1200m,

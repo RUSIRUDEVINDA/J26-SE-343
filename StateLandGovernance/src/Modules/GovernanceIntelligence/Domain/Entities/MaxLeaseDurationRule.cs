@@ -24,6 +24,11 @@ public sealed class MaxLeaseDurationRule : RegulatoryRule
 
     public override void Evaluate(LeaseEvaluationInput input, List<Violation> violations, List<ComplianceCondition> conditions)
     {
+        Evaluate(input, violations, conditions, DateTime.UtcNow);
+    }
+
+    public override void Evaluate(LeaseEvaluationInput input, List<Violation> violations, List<ComplianceCondition> conditions, DateTime evaluationTimestamp)
+    {
         if (input.LeaseDurationYears <= 0)
         {
             violations.Add(new Violation(Code, "Lease duration must be greater than zero."));
@@ -38,7 +43,7 @@ public sealed class MaxLeaseDurationRule : RegulatoryRule
         {
             conditions.Add(new ComplianceCondition(
                 $"Lease duration of {input.LeaseDurationYears} years requires explicit ministerial review and gazette notification.",
-                DateTime.UtcNow.AddDays(90)));
+                evaluationTimestamp.AddDays(90)));
         }
     }
 }

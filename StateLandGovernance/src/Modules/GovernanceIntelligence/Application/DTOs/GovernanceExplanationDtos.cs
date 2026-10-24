@@ -70,5 +70,15 @@ public sealed record GovernanceExplanationResultDto(
     bool RequiresHumanReview,
     IReadOnlyList<GovernanceExplanationItemDto> Explanations,
     DateTime EvaluationTimestamp,
-    string Disclaimer
+    string Disclaimer,
+    GovernanceExplanationEnhancementDto? PlainLanguageEnhancement = null
+);
+
+public sealed record GovernanceExplanationEnhancementDto(
+    bool Applied,
+    string Provider,
+    string Model,
+    string PromptVersion,
+    string Status,
+    string? OutputHash
 );

@@ -22,6 +22,7 @@ public class EarlyGovernanceScreeningPostgresIntegrationTests
 {
     private const string PrecedingMigration = "20260825141654_GovernanceIntelligence_RemoveLegacyComplianceChildTables";
     private const string TargetMigration = "20260918072800_GovernanceIntelligence_AddEarlyGovernanceScreeningEvaluations";
+    private const string ReferralMigration = "20261008074415_GovernanceIntelligence_AddEarlyGovernanceCommissionerReferrals";
     private const string EnvironmentVariableName = "COMPONENT4_TEST_POSTGRES_CONNECTION";
     private const string ExpectedDatabasePrefix = "component4_screening_test_";
 
@@ -66,25 +67,20 @@ public class EarlyGovernanceScreeningPostgresIntegrationTests
         string caseId = "CASE-PG-2026-001",
         string inputVersion = "v1.0")
     {
-        var engine = new EarlyGovernanceScreeningEngine();
-        var handler = new ScreenEarlyGovernanceCommandHandler(engine);
-
-        var command = new ScreenEarlyGovernanceCommand(
-            CaseId: caseId,
-            InputVersion: inputVersion,
-            Indicators: new List<EarlyGovernanceIndicatorDto>
-            {
-                new("LegalDispute", "VerifiedPresent", "DOC-DISPUTE-01", SampleUtcTime),
-                new("UnauthorizedOccupation", "Unavailable"),
-                new("UnauthorizedConstruction", "VerifiedAbsent", "DOC-SURVEY-01", SampleUtcTime),
-                new("FamilyOrInheritanceClaim", "Unverified"),
-                new("MultipleClaimants", "NotApplicable", "DOC-NA-01", SampleUtcTime),
-                new("UnresolvedObjection", "Missing"),
-                new("PreviousIllegalLandActivity", "VerifiedAbsent", "DOC-POLICE-01", SampleUtcTime)
-            }
-        );
-
-        return handler.HandleAsync(command).GetAwaiter().GetResult();
+        return new EarlyGovernanceScreeningResultDto(
+            caseId,
+            inputVersion,
+            "ReviewRequired",
+            true,
+            [
+                new("LegalDispute", "VerifiedPresent", true, false, "EG_LEGAL_DISPUTE_VERIFIED_PRESENT", "Officer review is required.", "DOC-DISPUTE-01", SampleUtcTime),
+                new("UnauthorizedOccupation", "Unavailable", false, true, "EG_UNAUTHORIZED_OCCUPATION_UNAVAILABLE", "Evidence is unavailable.", null, null),
+                new("UnauthorizedConstruction", "VerifiedAbsent", false, false, "EG_UNAUTHORIZED_CONSTRUCTION_VERIFIED_ABSENT", "No concern recorded.", "DOC-SURVEY-01", SampleUtcTime),
+                new("FamilyOrInheritanceClaim", "Unverified", false, true, "EG_FAMILY_OR_INHERITANCE_CLAIM_UNVERIFIED", "Evidence is unverified.", null, null),
+                new("MultipleClaimants", "NotApplicable", false, false, "EG_MULTIPLE_CLAIMANTS_NOT_APPLICABLE", "Not applicable.", "DOC-NA-01", SampleUtcTime),
+                new("UnresolvedObjection", "Missing", false, true, "EG_UNRESOLVED_OBJECTION_MISSING", "Evidence is missing.", null, null),
+                new("PreviousIllegalLandActivity", "VerifiedAbsent", false, false, "EG_PREVIOUS_ILLEGAL_LAND_ACTIVITY_VERIFIED_ABSENT", "No concern recorded.", "DOC-POLICE-01", SampleUtcTime)
+            ]);
     }
 
     [Fact]
@@ -372,6 +368,134 @@ public class EarlyGovernanceScreeningPostgresIntegrationTests
             Assert.DoesNotContain(secretMarker, ex.Message);
             Assert.DoesNotContain(secretMarker, ex.ToString());
         }
+    }
+
+    [Fact]
+    public async Task ReferralIntent_MigrationsAtomicPersistenceHistoryAndRetryState_AreVerifiedOnPostgres()
+    {
+        var connectionString = GetValidatedTestConnectionString();
+        using (var migrationContext = CreateDbContext(connectionString))
+        {
+            await migrationContext.Database.MigrateAsync();
+        }
+
+        await using (var connection = new NpgsqlConnection(connectionString))
+        {
+            await connection.OpenAsync();
+            Assert.True(await MigrationHistoryEntryExistsAsync(connection, ReferralMigration));
+            Assert.True(await TableExistsAsync(connection, "governance_intelligence", "early_governance_referrals"));
+        }
+
+        var assessmentId = Guid.NewGuid();
+        var workflowRunId = Guid.NewGuid();
+        var referralId = Guid.NewGuid();
+        var correlationId = Guid.NewGuid();
+        const string caseId = "CASE-PG-REFERRAL-001";
+        var result = CreateSampleResult(caseId, "v-referral-1");
+        var intent = new EarlyGovernanceReferralIntentDto(
+            referralId, correlationId, assessmentId, caseId, workflowRunId,
+            "EG_COMMISSIONER_REFERRAL_REQUIRED", "Approved referral rule matched fictional evidence.",
+            ["DOC-FICTIONAL-001", "DOC-FICTIONAL-002"], SampleUtcTime);
+
+        using (var writeContext = CreateDbContext(connectionString))
+        {
+            var store = new PostgresEarlyGovernanceScreeningStore(writeContext);
+            await store.AddAssessmentAsync(
+                assessmentId, workflowRunId, SampleUtcTime, result, intent);
+        }
+
+        using (var freshContext = CreateDbContext(connectionString))
+        {
+            var store = new PostgresEarlyGovernanceScreeningStore(freshContext);
+            var stored = await store.GetByIdAsync(assessmentId);
+            Assert.NotNull(stored);
+            Assert.Equal(workflowRunId, stored.WorkflowRunId);
+            Assert.Equal(caseId, stored.Result.CaseId);
+            var referral = Assert.IsType<StoredEarlyGovernanceReferralDto>(stored.Referral);
+            Assert.Equal(referralId, referral.ReferralId);
+            Assert.Equal(correlationId, referral.CorrelationId);
+            Assert.Equal(assessmentId, referral.AssessmentId);
+            Assert.Equal(workflowRunId, referral.WorkflowRunId);
+            Assert.Equal(intent.ReasonCode, referral.ReasonCode);
+            Assert.Equal(intent.Reason, referral.Reason);
+            Assert.Equal(intent.EvidenceReferences, referral.EvidenceReferences);
+            Assert.Equal(SampleUtcTime, referral.RequestedAtUtc);
+            Assert.Equal(EarlyGovernanceReferralDeliveryState.Pending, referral.DeliveryState);
+            Assert.Equal(0, referral.DeliveryAttemptCount);
+        }
+
+        var secondAssessmentId = Guid.NewGuid();
+        var secondIntent = intent with
+        {
+            ReferralId = Guid.NewGuid(),
+            AssessmentId = secondAssessmentId,
+            RequestedAtUtc = SampleUtcTime.AddMinutes(1)
+        };
+        using (var duplicateContext = CreateDbContext(connectionString))
+        {
+            var store = new PostgresEarlyGovernanceScreeningStore(duplicateContext);
+            var exception = await Assert.ThrowsAsync<DbUpdateException>(() => store.AddAssessmentAsync(
+                secondAssessmentId, workflowRunId, SampleUtcTime.AddMinutes(1), result, secondIntent));
+            Assert.Equal(PostgresErrorCodes.UniqueViolation, Assert.IsType<PostgresException>(exception.InnerException).SqlState);
+        }
+        using (var rollbackContext = CreateDbContext(connectionString))
+        {
+            Assert.Null(await new PostgresEarlyGovernanceScreeningStore(rollbackContext).GetByIdAsync(secondAssessmentId));
+        }
+
+        var thirdAssessmentId = Guid.NewGuid();
+        var thirdIntent = intent with
+        {
+            ReferralId = Guid.NewGuid(), CorrelationId = Guid.NewGuid(), AssessmentId = thirdAssessmentId,
+            RequestedAtUtc = SampleUtcTime.AddMinutes(2)
+        };
+        using (var historyWriteContext = CreateDbContext(connectionString))
+        {
+            await new PostgresEarlyGovernanceScreeningStore(historyWriteContext).AddAssessmentAsync(
+                thirdAssessmentId, workflowRunId, SampleUtcTime.AddMinutes(2), result, thirdIntent);
+        }
+        using (var historyContext = CreateDbContext(connectionString))
+        {
+            var store = new PostgresEarlyGovernanceScreeningStore(historyContext);
+            var limited = await store.GetReferralHistoryByCaseIdAsync(caseId, 1);
+            Assert.Single(limited);
+            Assert.Equal(thirdIntent.ReferralId, limited[0].ReferralId);
+            Assert.Empty(await store.GetReferralHistoryByCaseIdAsync("CASE-PG-OTHER", 10));
+        }
+
+        using (var deliveryContext = CreateDbContext(connectionString))
+        {
+            var store = new PostgresEarlyGovernanceScreeningStore(deliveryContext);
+            Assert.True(await store.TryBeginReferralDeliveryAsync(referralId, 0, SampleUtcTime.AddMinutes(3)));
+            Assert.False(await store.TryBeginReferralDeliveryAsync(referralId, 1, SampleUtcTime.AddMinutes(4)));
+            await store.MarkReferralDeliveryFailedAsync(referralId, 1, "C3_TEMPORARILY_UNAVAILABLE");
+            Assert.True(await store.TryBeginReferralDeliveryAsync(referralId, 1, SampleUtcTime.AddMinutes(4)));
+            await store.MarkReferralAcknowledgedAsync(
+                referralId, 2, SampleUtcTime.AddMinutes(5), "COMMISSIONER-REVIEW-PG-001");
+            Assert.False(await store.TryBeginReferralDeliveryAsync(referralId, 2, SampleUtcTime.AddMinutes(6)));
+        }
+        using (var deliveryReadContext = CreateDbContext(connectionString))
+        {
+            var referral = await new PostgresEarlyGovernanceScreeningStore(deliveryReadContext)
+                .GetReferralByIdAsync(referralId);
+            Assert.NotNull(referral);
+            Assert.Equal(EarlyGovernanceReferralDeliveryState.Acknowledged, referral.DeliveryState);
+            Assert.Equal(2, referral.DeliveryAttemptCount);
+            Assert.Equal("COMMISSIONER-REVIEW-PG-001", referral.CommissionerReviewProcessReference);
+            Assert.Null(referral.LastFailureCode);
+        }
+
+        await using var constraintConnection = new NpgsqlConnection(connectionString);
+        await constraintConnection.OpenAsync();
+        await using var invalidCommand = constraintConnection.CreateCommand();
+        invalidCommand.CommandText = """
+            UPDATE governance_intelligence.early_governance_referrals
+            SET delivery_attempt_count = -1
+            WHERE referral_id = @referralId;
+        """;
+        invalidCommand.Parameters.AddWithValue("referralId", referralId);
+        var constraintException = await Assert.ThrowsAsync<PostgresException>(() => invalidCommand.ExecuteNonQueryAsync());
+        Assert.Equal(PostgresErrorCodes.CheckViolation, constraintException.SqlState);
     }
 
     private static async Task<bool> TableExistsAsync(NpgsqlConnection conn, string schema, string table)

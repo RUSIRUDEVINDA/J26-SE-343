@@ -13,6 +13,8 @@ export type NavItem = {
   label: string;
   href: string;
   icon: string;
+  /** Emphasise the primary workflow entry in the sidebar. */
+  primary?: boolean;
 };
 
 /** Only routes that are implemented and functional in this frontend. */
@@ -22,11 +24,7 @@ export const component01NavItems: NavItem[] = [
     label: "Find Suitable Land",
     href: `${LAND_INTELLIGENCE_BASE}/find-suitable-land`,
     icon: "✦",
-  },
-  {
-    label: "Recommendations",
-    href: `${LAND_INTELLIGENCE_BASE}/recommendations`,
-    icon: "✦",
+    primary: true,
   },
   {
     label: "Parcel Intelligence",
@@ -34,9 +32,66 @@ export const component01NavItems: NavItem[] = [
     icon: "▤",
   },
   {
+    label: "My requests",
+    href: `${LAND_INTELLIGENCE_BASE}/my-requests`,
+    icon: "☰",
+  },
+  {
     label: "Knowledge Graph",
     href: `${LAND_INTELLIGENCE_BASE}/knowledge-graph`,
     icon: "◎",
+  },
+];
+
+/** Shown only when the API research-demo officer NIC lookup gate is active. */
+export const officerLeaseInterestLookupNavItem: NavItem = {
+  label: "Officer applicant lookup",
+  href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-lookup`,
+  icon: "⚑",
+};
+
+export const officerLeaseInterestQueueNavItem: NavItem = {
+  label: "Officer verification queue",
+  href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-queue`,
+  icon: "⚑",
+};
+
+export const officerLeaseInterestValuationQueueNavItem: NavItem = {
+  label: "Officer valuation queue",
+  href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-valuation-queue`,
+  icon: "⚑",
+};
+
+export const authorityLeaseInterestQueueNavItem: NavItem = {
+  label: "Authority review queue",
+  href: `${LAND_INTELLIGENCE_BASE}/authority/lease-interest-queue`,
+  icon: "⚖",
+};
+
+export const WORKFLOW_GOVERNANCE_BASE = "/workflow-governance";
+
+export const workflowGovernanceNavItems: NavItem[] = [
+  { label: "Module home", href: "/component-03", icon: "▦" },
+  {
+    label: "Case queue",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/cases`,
+    icon: "☰",
+    primary: true,
+  },
+  {
+    label: "Proposal intake",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/intake`,
+    icon: "✎",
+  },
+  {
+    label: "Track application",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/tracking`,
+    icon: "◎",
+  },
+  {
+    label: "My applications",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/cases`,
+    icon: "☷",
   },
 ];
 
@@ -49,20 +104,20 @@ export const moduleLandingLinks = [
   },
   {
     id: "component-02",
-    title: "Lease Feasibility",
+    title: "Financial Intelligence & Proposal Support",
     href: "/component-02",
-    available: false,
+    available: true,
   },
   {
     id: "component-03",
-    title: "Governance Intelligence",
+    title: "Workflow Governance",
     href: "/component-03",
     available: false,
   },
   {
     id: "component-04",
-    title: "Workflow Governance",
+    title: "Governance Intelligence",
     href: "/component-04",
-    available: false,
+    available: true,
   },
 ];

@@ -17,5 +17,9 @@ public sealed record DocumentIntelligenceRequest(
     string MediaType,
     string LogicalCategory,
     IReadOnlyList<string> RequestedCapabilities,
-    string? LanguageHint = null
-);
+    string? LanguageHint = null,
+    string? SemanticProvider = null
+)
+{
+    public Guid AnalysisRunId { get; init; } = Guid.NewGuid();
+}

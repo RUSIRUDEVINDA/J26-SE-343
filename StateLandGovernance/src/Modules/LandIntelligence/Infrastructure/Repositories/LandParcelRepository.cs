@@ -3,6 +3,7 @@ using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Application.RealParcels;
 using StateLandGovernance.LandIntelligence.Domain.Entities;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Entities;
@@ -35,9 +36,10 @@ public sealed class LandParcelRepository : ILandParcelRepository
         string cadastralNumber,
         CancellationToken cancellationToken = default)
     {
+        var trimmed = cadastralNumber.Trim();
         var entity = await BaseQuery()
             .FirstOrDefaultAsync(
-                parcel => parcel.CadastralNumber == cadastralNumber,
+                parcel => parcel.CadastralNumber.ToLower() == trimmed.ToLower(),
                 cancellationToken);
 
         return entity is null ? null : LandParcelPersistenceMapper.ToDomain(entity);
@@ -114,21 +116,88 @@ public sealed class LandParcelRepository : ILandParcelRepository
 
     private IQueryable<LandParcelEntity> BuildSearchQuery(LandSearchRequest request)
     {
-        var query = BaseQuery();
+        // Active UI/API paths never surface synthetic demo fixtures (DEMO-* cadastral numbers).
+        var query = BaseQuery()
+            .Where(parcel => !EF.Functions.ILike(parcel.CadastralNumber, "DEMO-%"));
+
+        if (!string.IsNullOrWhiteSpace(request.CadastralNumber))
+        {
+            var cadastral = request.CadastralNumber.Trim();
+            query = query.Where(parcel =>
+                parcel.CadastralNumber.ToLower() == cadastral.ToLower());
+        }
 
         if (!string.IsNullOrWhiteSpace(request.Province))
         {
-            query = query.Where(parcel => parcel.Province == request.Province);
+            var province = request.Province.Trim();
+            query = query.Where(parcel => EF.Functions.ILike(parcel.Province, province));
         }
 
         if (!string.IsNullOrWhiteSpace(request.District))
         {
-            query = query.Where(parcel => parcel.District == request.District);
+            var district = request.District.Trim();
+            query = query.Where(parcel => EF.Functions.ILike(parcel.District, district));
         }
 
         if (!string.IsNullOrWhiteSpace(request.DivisionalSecretariat))
         {
-            query = query.Where(parcel => parcel.DivisionalSecretariat == request.DivisionalSecretariat);
+            var division = request.DivisionalSecretariat.Trim();
+            query = query.Where(parcel => EF.Functions.ILike(parcel.DivisionalSecretariat, division));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.GramaNiladhariDivision))
+        {
+            var gnDivision = request.GramaNiladhariDivision.Trim();
+            query = query.Where(parcel =>
+                (parcel.GramaNiladhariDivision != null
+                 && EF.Functions.ILike(parcel.GramaNiladhariDivision, gnDivision))
+                || _dbContext.ParcelGnDivisionMappings.Any(mapping =>
+                    (mapping.LandParcelId == parcel.Id
+                     || mapping.CadastralNumber == parcel.CadastralNumber)
+                    && mapping.SourceCodeGnName != null
+                    && EF.Functions.ILike(mapping.SourceCodeGnName, gnDivision)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.SourceReportedLandUse))
+        {
+            var filter = request.SourceReportedLandUse.Trim().ToLower();
+            query = query.Where(parcel =>
+                _dbContext.RealParcelSources.Any(source =>
+                    source.LandParcelId == parcel.Id
+                    && ((source.LandUseCode != null && source.LandUseCode.ToLower() == filter)
+                        || (source.LandUseEnglishLabel != null && source.LandUseEnglishLabel.ToLower() == filter))));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.ResearchLandCoverGroup))
+        {
+            // Canonical land use: original cadastral code(s) OR qualifying project GIS group(s).
+            // Accepts canonical labels/keys and legacy GIS group names (e.g. "Scrub / low jungle").
+            var canonical = CanonicalLandUseCatalog.TryResolve(request.ResearchLandCoverGroup);
+            if (canonical is null)
+            {
+                query = query.Where(_ => false);
+            }
+            else
+            {
+                var sourceCodes = canonical.SourceLandUseCodes.ToArray();
+                var gisGroups = canonical.GisSupplementGroups.ToArray();
+                var mappedIds = _dbContext.Database.SqlQuery<Guid>(
+                    $"SELECT \"LandParcelId\" AS \"Value\" FROM land_intelligence.research_supplement_land_cover WHERE \"SupplementGroup\" = ANY({gisGroups})");
+                query = query.Where(parcel => mappedIds.Contains(parcel.Id)
+                    || _dbContext.RealParcelSources.Any(source =>
+                        source.LandParcelId == parcel.Id
+                        && source.LandUseCode != null
+                        && sourceCodes.Contains(source.LandUseCode)));
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.DerivedSoilGroup))
+        {
+            var soilFilter = request.DerivedSoilGroup.Trim().ToLower();
+            query = query.Where(parcel =>
+                parcel.DerivedSoilGroup != null
+                && parcel.DerivedSoilGroup.SoilGroupName != null
+                && parcel.DerivedSoilGroup.SoilGroupName.ToLower() == soilFilter);
         }
 
         if (request.CategoryType.HasValue)
@@ -168,4 +237,29 @@ public sealed class LandParcelRepository : ILandParcelRepository
 
         return query;
     }
+
+    public async Task<IReadOnlyList<string>> ListDerivedSoilGroupOptionsAsync(
+        string? district = null,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _dbContext.LandParcels
+            .AsNoTracking()
+            .Where(parcel => !EF.Functions.ILike(parcel.CadastralNumber, "DEMO-%"))
+            .Where(parcel => parcel.DerivedSoilGroup != null
+                             && parcel.DerivedSoilGroup.SoilGroupName != null
+                             && parcel.DerivedSoilGroup.SoilGroupName != "");
+
+        if (!string.IsNullOrWhiteSpace(district))
+        {
+            var trimmed = district.Trim();
+            query = query.Where(parcel => EF.Functions.ILike(parcel.District, trimmed));
+        }
+
+        return await query
+            .Select(parcel => parcel.DerivedSoilGroup!.SoilGroupName)
+            .Distinct()
+            .OrderBy(name => name)
+            .ToListAsync(cancellationToken);
+    }
+
 }

@@ -1,0 +1,24 @@
+{
+  "approvedBy": null,
+  "template": {
+    "id": null,
+    "version": null,
+    "name": null,
+    "authoritativeSourceReference": null,
+    "status": null,
+    "requirements": [
+      {
+        "id": null,
+        "kind": null,
+        "displayName": null,
+        "isMandatory": null,
+        "templateId": null,
+        "templateVersion": null,
+        "authoritativeSourceReference": null,
+        "orderIndex": null,
+        "applicabilityContext": null
+      }
+    ],
+    "effectivePeriod": { "validFromUtc": null, "validToUtc": null }
+  }
+}

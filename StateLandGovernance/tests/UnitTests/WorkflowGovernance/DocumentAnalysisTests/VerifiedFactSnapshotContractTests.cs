@@ -95,7 +95,7 @@ public class VerifiedFactSnapshotContractTests
     public void Unsupported_CannotBeConstructedAsEntry()
     {
         var type = typeof(VerifiedFactEntry);
-        var ctor = type.GetConstructors(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).First();
+        var ctor = type.GetConstructors(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Single(c => c.GetParameters().Length == 7);
         var ex = Assert.Throws<System.Reflection.TargetInvocationException>(() => ctor.Invoke(new object[] { new ExtractedFactId(Guid.NewGuid()), new HumanFactVerificationId(Guid.NewGuid()), new FactCode("c"), new AnalysisFactValue(AnalysisFactValueKind.Text, "v"), FactVerificationDecision.Unsupported, Guid.NewGuid(), _utcNow }));
         Assert.IsType<InvalidVerifiedFactSnapshotException>(ex.InnerException);
     }

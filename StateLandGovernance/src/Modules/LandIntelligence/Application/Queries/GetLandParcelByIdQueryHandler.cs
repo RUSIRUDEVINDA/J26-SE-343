@@ -1,6 +1,8 @@
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using ValidationException = StateLandGovernance.LandIntelligence.Application.Interfaces.ValidationException;
 using StateLandGovernance.LandIntelligence.Application.Mappings;
+using StateLandGovernance.LandIntelligence.Application.Services;
 using StateLandGovernance.LandIntelligence.Domain.Exceptions;
 
 namespace StateLandGovernance.LandIntelligence.Application.Queries;
@@ -9,10 +11,23 @@ public sealed class GetLandParcelByIdQueryHandler
     : IQueryHandler<GetLandParcelByIdQuery, LandParcelDto>
 {
     private readonly ILandParcelRepository _landParcelRepository;
+    private readonly IRealParcelSourceReadRepository _realParcelSourceReadRepository;
+    private readonly LandParcelAvailabilityComposer _availabilityComposer;
+    private readonly ILandIntelligenceGisCoverageService _gisCoverageService;
+    private readonly IParcelGnDivisionMappingReadRepository _gnDivisionMappingReadRepository;
 
-    public GetLandParcelByIdQueryHandler(ILandParcelRepository landParcelRepository)
+    public GetLandParcelByIdQueryHandler(
+        ILandParcelRepository landParcelRepository,
+        IRealParcelSourceReadRepository realParcelSourceReadRepository,
+        LandParcelAvailabilityComposer availabilityComposer,
+        ILandIntelligenceGisCoverageService gisCoverageService,
+        IParcelGnDivisionMappingReadRepository gnDivisionMappingReadRepository)
     {
         _landParcelRepository = landParcelRepository;
+        _realParcelSourceReadRepository = realParcelSourceReadRepository;
+        _availabilityComposer = availabilityComposer;
+        _gisCoverageService = gisCoverageService;
+        _gnDivisionMappingReadRepository = gnDivisionMappingReadRepository;
     }
 
     public async Task<LandParcelDto> HandleAsync(
@@ -27,6 +42,28 @@ public sealed class GetLandParcelByIdQueryHandler
         var parcel = await _landParcelRepository.GetByIdAsync(query.LandParcelId, cancellationToken)
             ?? throw new LandParcelNotFoundException(query.LandParcelId);
 
-        return LandParcelMapper.ToDto(parcel);
+        var cadastralSource = await _realParcelSourceReadRepository.GetByParcelIdAsync(
+            parcel.Id,
+            cancellationToken);
+
+        var availability = await _availabilityComposer.BuildAsync(
+            parcel.Id,
+            cadastralSource,
+            cancellationToken);
+
+        var gisEnrichment = await _gisCoverageService.GetParcelEnrichmentSummaryAsync(
+            parcel.Id,
+            cancellationToken);
+
+        var gnDivisionMapping = await _gnDivisionMappingReadRepository.GetByParcelIdAsync(
+            parcel.Id,
+            cancellationToken);
+
+        return LandParcelMapper.ToDto(
+            parcel,
+            cadastralSource,
+            availability,
+            gisEnrichment,
+            gnDivisionMapping);
     }
 }

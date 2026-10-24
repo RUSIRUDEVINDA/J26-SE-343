@@ -1,0 +1,86 @@
+{
+  "actual_estimator_parameters": {
+    "bootstrap": false,
+    "contamination": "auto",
+    "max_features": 1.0,
+    "max_samples": "auto",
+    "n_estimators": 200,
+    "n_jobs": null,
+    "random_state": 42,
+    "verbose": 0,
+    "warm_start": false
+  },
+  "baseline_name": "isolation_forest_baseline_v1",
+  "created_utc": "2026-10-08T16:45:39.886211+00:00",
+  "dataset_path": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\anomaly_detection\\data\\synthetic_workflow_v1",
+  "dependencies": {
+    "joblib": "1.5.2",
+    "numpy": "2.3.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.1 (tags/v3.13.1:0671451, Dec  3 2024, 19:06:28) [MSC v.1942 64 bit (AMD64)]",
+    "scikit_learn": "1.7.2"
+  },
+  "feature_order": [
+    "event_count",
+    "elapsed_days",
+    "max_gap_hours",
+    "mean_gap_hours",
+    "unique_activities",
+    "repeated_activity_count",
+    "resource_handoffs",
+    "institution_switches",
+    "distinct_resources"
+  ],
+  "input_sha256": {
+    "X_train": "72435ed6959dc2c7c79a22a27f88dc32165ec66635c008fce90540002a1287fe",
+    "X_validation": "f9e130dd642800bb39787bd1f39267a9d9320952f86236e184cf5f7f6d98be27",
+    "audit_summary": "44ec8122676ee761d57bea3ee3128c11e7beff2581a8dc72d4f7c9ba703559bf",
+    "case_catalog": "82966109d323f402bd699bb6fca480852dedfc4158e7827aa2ed84858e87ff60",
+    "dataset_readme": "18cca4e986c839d5023f3f7b46d0d8f84044011762a736690d6eb43e092b3be0",
+    "feature_contract": "c99f2390dde960397fe15e069c5b29da5f489036573969baf56840d64abe196c",
+    "keys_train": "18526c9466c0d44502ae88b8ab83bce2b991f006a0563827500bb988419e3b83",
+    "keys_validation": "5dd5b8642a7a7bb3f6edc32cd52eb8e236b010941111b2ce81dc23dba6478987",
+    "split_manifest": "413fa775a5df391653ec6123e008ceb6fbeb671d48dd491d12b3f83f2aa21954",
+    "y_validation": "575f093f7481993526ef9f18f83354f77aaf3da4e01ebac427ec690a30ff4bd8"
+  },
+  "limitations": [
+    "Synthetic-only completed-case experiment; no production or departmental validation.",
+    "Reference-normal is generator-designated and not independently verified normality.",
+    "Synthetic anomaly labels are controlled perturbation scenarios, not corruption, legal noncompliance, or wrongdoing labels.",
+    "Anomaly scores are not probabilities or calibrated confidence estimates.",
+    "The source injected anomaly fraction is not a real-world prevalence estimate.",
+    "No test set was scored in this milestone.",
+    "Generator lineage is not supplied; exact trace-group checks do not establish independent family generation."
+  ],
+  "model_artifact": "isolation_forest.joblib",
+  "model_sha256": "59ed4a73d56d9f06798c4ebc4684a633afe72841c41ed0b3ba4e7bb658782b46",
+  "output_directory": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance\\src\\Modules\\GovernanceIntelligence\\ML\\anomaly_detection\\runs\\isolation_forest_baseline_v1",
+  "preprocessing": "none; raw validated numerical feature matrix used directly",
+  "random_seed": 42,
+  "score_direction": "anomaly_score = -model.score_samples(X); larger values are more statistically unusual",
+  "source_origin": {
+    "record_origins": [
+      "user_supplied_synthetic"
+    ],
+    "recorded_source_zip_sha256": "adf77147bdfae5b1149a72e6d70766778d99ae291369c0953ff1485dd039568c",
+    "source_zip_hash_independently_verified": false
+  },
+  "split_manifest_sha256": "413fa775a5df391653ec6123e008ceb6fbeb671d48dd491d12b3f83f2aa21954",
+  "threshold_policy": {
+    "quantile": 0.95,
+    "quantile_method": "linear",
+    "reference_case_count": 80,
+    "strict_comparison": "anomaly_score > threshold"
+  },
+  "training": {
+    "labels_or_ids_passed_to_fit": false,
+    "rows": 240,
+    "source": "splits/X_train.csv only",
+    "test_rows_scored": false
+  },
+  "validation": {
+    "labels_used_only_after_scoring_for_threshold_and_reporting": true,
+    "reference_rows_used_for_threshold": 80,
+    "rows": 108
+  }
+}

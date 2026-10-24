@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Queries;
+using LandSearchRequest = StateLandGovernance.LandIntelligence.Application.DTOs.LandSearchRequest;
 using StateLandGovernance.LandIntelligence.Presentation.Mappings;
 using StateLandGovernance.LandIntelligence.Presentation.Models;
 using StateLandGovernance.LandIntelligence.Presentation.Models.Responses;
@@ -21,17 +21,55 @@ public sealed class LandParcelsController : ControllerBase
     private readonly GetLandParcelByIdQueryHandler _getByIdHandler;
     private readonly GetSpatialConstraintsByParcelIdQueryHandler _constraintsHandler;
     private readonly GetLandRelationshipsQueryHandler _relationshipsHandler;
+    private readonly ListSourceReportedLandUseOptionsQueryHandler _sourceLandUseOptionsHandler;
+    private readonly ListDerivedSoilGroupOptionsQueryHandler _derivedSoilGroupOptionsHandler;
+    private readonly GetLandParcelMetricsQueryHandler _metricsHandler;
+    private readonly GetLandIntelligenceGisCoverageQueryHandler _gisCoverageHandler;
+    private readonly ListGramaNiladhariDivisionOptionsQueryHandler _gramaNiladhariDivisionOptionsHandler;
+    private readonly ListApprovedPreliminaryParcelsQueryHandler _approvedPreliminaryParcelsHandler;
 
     public LandParcelsController(
         SearchLandParcelsQueryHandler searchHandler,
         GetLandParcelByIdQueryHandler getByIdHandler,
         GetSpatialConstraintsByParcelIdQueryHandler constraintsHandler,
-        GetLandRelationshipsQueryHandler relationshipsHandler)
+        GetLandRelationshipsQueryHandler relationshipsHandler,
+        ListSourceReportedLandUseOptionsQueryHandler sourceLandUseOptionsHandler,
+        ListDerivedSoilGroupOptionsQueryHandler derivedSoilGroupOptionsHandler,
+        GetLandParcelMetricsQueryHandler metricsHandler,
+        GetLandIntelligenceGisCoverageQueryHandler gisCoverageHandler,
+        ListGramaNiladhariDivisionOptionsQueryHandler gramaNiladhariDivisionOptionsHandler,
+        ListApprovedPreliminaryParcelsQueryHandler approvedPreliminaryParcelsHandler)
     {
         _searchHandler = searchHandler;
         _getByIdHandler = getByIdHandler;
         _constraintsHandler = constraintsHandler;
         _relationshipsHandler = relationshipsHandler;
+        _sourceLandUseOptionsHandler = sourceLandUseOptionsHandler;
+        _derivedSoilGroupOptionsHandler = derivedSoilGroupOptionsHandler;
+        _metricsHandler = metricsHandler;
+        _gisCoverageHandler = gisCoverageHandler;
+        _gramaNiladhariDivisionOptionsHandler = gramaNiladhariDivisionOptionsHandler;
+        _approvedPreliminaryParcelsHandler = approvedPreliminaryParcelsHandler;
+    }
+
+    [HttpGet("metrics")]
+    [ProducesResponseType(typeof(LandParcelMetricsResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<LandParcelMetricsResponse>> GetParcelMetricsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var metrics = await _metricsHandler.HandleAsync(new GetLandParcelMetricsQuery(), cancellationToken);
+        return Ok(LandIntelligenceApiResponseMapper.ToResponse(metrics));
+    }
+
+    [HttpGet("gis-coverage")]
+    [ProducesResponseType(typeof(LandIntelligenceGisCoverageResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<LandIntelligenceGisCoverageResponse>> GetGisCoverageAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var coverage = await _gisCoverageHandler.HandleAsync(
+            new GetLandIntelligenceGisCoverageQuery(),
+            cancellationToken);
+        return Ok(LandIntelligenceApiResponseMapper.ToResponse(coverage));
     }
 
     /// <summary>
@@ -46,6 +84,71 @@ public sealed class LandParcelsController : ControllerBase
     {
         var response = await _searchHandler.HandleAsync(new SearchLandParcelsQuery(request), cancellationToken);
         return Ok(LandIntelligenceApiResponseMapper.ToResponse(response));
+    }
+
+    /// <summary>
+    /// Lists distinct source-reported land-use codes present in imported cadastre metadata.
+    /// </summary>
+    [HttpGet("source-reported-land-use-options")]
+    [ProducesResponseType(typeof(IReadOnlyList<SourceReportedLandUseOptionResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<SourceReportedLandUseOptionResponse>>> ListSourceReportedLandUseOptionsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var options = await _sourceLandUseOptionsHandler.HandleAsync(
+            new ListSourceReportedLandUseOptionsQuery(),
+            cancellationToken);
+
+        return Ok(options
+            .Select(option => new SourceReportedLandUseOptionResponse(option.Code, option.EnglishLabel, option.ParcelCount))
+            .ToList());
+    }
+
+    /// <summary>
+    /// Lists distinct GIS-derived soil group names for parcels in an optional district.
+    /// Empty when the district has no imported soil coverage.
+    /// </summary>
+    [HttpGet("derived-soil-group-options")]
+    [ProducesResponseType(typeof(DerivedSoilGroupOptionsResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<DerivedSoilGroupOptionsResponse>> ListDerivedSoilGroupOptionsAsync(
+        [FromQuery] string? district = null,
+        CancellationToken cancellationToken = default)
+    {
+        var options = await _derivedSoilGroupOptionsHandler.HandleAsync(
+            new ListDerivedSoilGroupOptionsQuery(district),
+            cancellationToken);
+        return Ok(new DerivedSoilGroupOptionsResponse(options));
+    }
+
+    /// <summary>
+    /// Lists distinct Grama Niladhari division names that have at least one imported land parcel (optional district filter).
+    /// </summary>
+    [HttpGet("grama-niladhari-division-options")]
+    [ProducesResponseType(typeof(GramaNiladhariDivisionOptionsResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<GramaNiladhariDivisionOptionsResponse>> ListGramaNiladhariDivisionOptionsAsync(
+        [FromQuery] string? district = null,
+        CancellationToken cancellationToken = default)
+    {
+        var options = await _gramaNiladhariDivisionOptionsHandler.HandleAsync(
+            new ListGramaNiladhariDivisionOptionsQuery(district),
+            cancellationToken);
+        return Ok(new GramaNiladhariDivisionOptionsResponse(options));
+    }
+
+    /// <summary>
+    /// Lists parcels with a current authority-approved preliminary lease interest request (ApprovedInPrinciple).
+    /// Not an executed lease or land reservation.
+    /// </summary>
+    [HttpGet("approved-preliminary")]
+    [ProducesResponseType(typeof(ApprovedPreliminaryParcelListResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApprovedPreliminaryParcelListResponse>> ListApprovedPreliminaryParcelsAsync(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await _approvedPreliminaryParcelsHandler.HandleAsync(
+            new ListApprovedPreliminaryParcelsQuery(page, pageSize),
+            cancellationToken);
+        return Ok(LandIntelligenceApiResponseMapper.ToApprovedPreliminaryParcelListResponse(response));
     }
 
     /// <summary>

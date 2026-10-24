@@ -11,12 +11,28 @@ public static class RecommendationInfrastructureExtensions
 {
     public static IServiceCollection AddLandIntelligenceRecommendations(this IServiceCollection services)
     {
-        var mlServiceUrl = Environment.GetEnvironmentVariable("ML_SUITABILITY_SERVICE_URL");
-        services.AddHttpClient<IMlSuitabilityClient, HttpMlSuitabilityClient>(client =>
+        var useColomboResearchModel = string.Equals(
+            Environment.GetEnvironmentVariable("COLOMBO400_RESEARCH_ML_ENABLED"),
+            "true", StringComparison.OrdinalIgnoreCase);
+        if (useColomboResearchModel)
         {
-            client.BaseAddress = new Uri(mlServiceUrl ?? "http://localhost:8500");
-            client.Timeout = TimeSpan.FromSeconds(5);
-        });
+            var researchServiceUrl = Environment.GetEnvironmentVariable("COLOMBO400_RESEARCH_ML_URL")
+                ?? "http://localhost:8502";
+            services.AddHttpClient<IMlSuitabilityClient, HttpColombo400ResearchMlClient>(client =>
+            {
+                client.BaseAddress = new Uri(researchServiceUrl);
+                client.Timeout = TimeSpan.FromSeconds(5);
+            });
+        }
+        else
+        {
+            var mlServiceUrl = Environment.GetEnvironmentVariable("ML_SUITABILITY_SERVICE_URL");
+            services.AddHttpClient<IMlSuitabilityClient, HttpMlSuitabilityClient>(client =>
+            {
+                client.BaseAddress = new Uri(mlServiceUrl ?? "http://localhost:8500");
+                client.Timeout = TimeSpan.FromSeconds(5);
+            });
+        }
 
         services.AddHttpClient<IExperimentalColomboMlClient, HttpExperimentalColomboMlClient>((sp, client) =>
         {
@@ -26,14 +42,13 @@ public static class RecommendationInfrastructureExtensions
         });
 
         services.AddScoped<IExperimentalColomboMlEvidenceService, ExperimentalColomboMlEvidenceService>();
+        services.AddScoped<IRecommendationParcelContext, RecommendationParcelContext>();
 
         services.AddScoped<IRecommendationCriterionEvaluator, PurposeAlignmentCriterionEvaluator>();
-        services.AddScoped<IRecommendationCriterionEvaluator, RequiredAreaCriterionEvaluator>();
+        services.AddScoped<IRecommendationCriterionEvaluator, TargetAreaCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, LandCategoryCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, LandUseCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, LocationPreferenceCriterionEvaluator>();
-        services.AddScoped<IRecommendationCriterionEvaluator, AccessibilityCriterionEvaluator>();
-        services.AddScoped<IRecommendationCriterionEvaluator, EnvironmentalCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, RegulatoryCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, SpatialConstraintCriterionEvaluator>();
         services.AddScoped<IRecommendationCriterionEvaluator, CustomCriteriaEvaluator>();
