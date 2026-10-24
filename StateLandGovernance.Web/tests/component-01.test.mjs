@@ -193,6 +193,7 @@ function submitReadyDraft(overrides = {}) {
 test("lease interest status labels cover officer workflow states", () => {
   assert.equal(leaseInterestStatusLabel(3), "Pending verification");
   assert.equal(leaseInterestStatusLabel(4), "Needs information");
+  assert.equal(leaseInterestApplicantOutcome(3), "");
   assert.match(leaseInterestApplicantOutcome(5), /rejected/i);
 });
 
@@ -265,6 +266,15 @@ test("draft default purpose Other is not shown as applicant selection", () => {
   assert.equal(leaseInterestPurposeDisplay(99, 3), "Other");
   assert.equal(isLeaseInterestDraftStatus(1), true);
   assert.equal(isLeaseInterestDraftStatus(3), false);
+});
+
+const { valuationFormTypeForRequestedPurpose } = loadCommonJs(
+  "../src/modules/component-01-land-intelligence/utils/leaseInterestValuationFormType.ts",
+);
+
+test("valuation worksheet type maps from requested purpose", () => {
+  assert.equal(valuationFormTypeForRequestedPurpose(1), "AgriculturalCommercial");
+  assert.equal(valuationFormTypeForRequestedPurpose(4), "Residential");
 });
 
 test("match score display shows 100 only for exact 100 and truncates near-perfect", () => {
@@ -555,8 +565,8 @@ test("applicant valuation display: builds overview, observations, and breakdown 
   assert.equal(blocks.length, 3);
   assert.equal(blocks[0].title, "Assessment overview");
   assert.equal(
-    blocks[0].fields.find((f) => f.id === "revision")?.value,
-    "2",
+    blocks[0].fields.find((f) => f.id === "revision"),
+    undefined,
   );
   assert.ok(
     blocks[1].fields.some((f) => f.id === "cultivation" && f.value.includes("Mixed")),

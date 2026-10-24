@@ -46,7 +46,10 @@ public sealed record LeaseInterestAuthorityQueueItemDto(
     int LatestValuationRevision,
     LeaseInterestRequestStatus Status,
     string? CadastralNumber,
-    string? District);
+    string? District,
+    LeaseInterestApplicantKindDto ApplicantKind,
+    string? NationalIdentityCardNumber,
+    string? BusinessRegistrationNumber);
 
 public sealed record LeaseInterestAuthorityQueueResponseDto(
     IReadOnlyList<LeaseInterestAuthorityQueueItemDto> Items,

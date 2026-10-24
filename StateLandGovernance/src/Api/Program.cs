@@ -540,4 +540,30 @@ app.MapGet(
 
 app.Run();
 
+static async Task EnsureColomboGnDivisionMappingImportedAsync(IServiceProvider services)
+{
+    try
+    {
+        var importService = services.GetService<IParcelGnDivisionMappingImportService>();
+        if (importService is null)
+        {
+            return;
+        }
+
+        var report = await importService.EnsureImportedAsync();
+        Console.WriteLine(
+            "[LandIntelligence] Colombo GN division mapping import ({0}): rows={1}, upserted={2}, linked={3}, unlinked={4}.",
+            report.Mode,
+            report.RowsRead,
+            report.Upserted,
+            report.ParcelsLinked,
+            report.UnlinkedCadastralNumbers);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(
+            $"[LandIntelligence] Colombo GN division mapping import skipped: {ex.Message}");
+    }
+}
+
 public partial class Program;
