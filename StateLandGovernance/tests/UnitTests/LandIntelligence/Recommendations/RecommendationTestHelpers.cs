@@ -713,6 +713,10 @@ internal sealed class FakeApprovedPreliminaryLeaseParcelRegistry : IApprovedPrel
         int pageSize,
         CancellationToken cancellationToken = default) =>
         Task.FromResult(new ApprovedPreliminaryParcelListResponse([], page, pageSize, 0));
+
+    public Task<IReadOnlyList<Guid>> ListParcelIdsWithConflictingApprovalsAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<Guid>>([]);
 }
 
 internal sealed class FakeProjectLeaseReadyDesignationReadRepository : IProjectLeaseReadyDesignationReadRepository

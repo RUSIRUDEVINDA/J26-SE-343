@@ -36,7 +36,7 @@ public sealed class LeaseInterestValuationIdempotencyTests : IDisposable
     public void Dispose() => _db.Dispose();
 
     [Fact]
-    public async Task RecordAsync_first_save_creates_revision_one_and_keeps_referred_status()
+    public async Task RecordAsync_first_save_creates_revision_one_and_refers_to_authority()
     {
         var recorded = await _service.RecordAsync(
             _requestId,
@@ -77,25 +77,65 @@ public sealed class LeaseInterestValuationIdempotencyTests : IDisposable
     }
 
     [Fact]
-    public async Task RecordAsync_two_distinct_keys_allocate_sequential_revisions()
+    public async Task RecordAsync_second_distinct_key_is_rejected_after_first_save()
     {
         var first = await _service.RecordAsync(
             _requestId,
             ValidInput(100m),
             "key-a",
             CancellationToken.None);
-        var second = await _service.RecordAsync(
-            _requestId,
-            ValidInput(200m),
-            "key-b",
-            CancellationToken.None);
+
+        var conflict = await Assert.ThrowsAsync<LeaseInterestInvalidStateException>(() =>
+            _service.RecordAsync(
+                _requestId,
+                ValidInput(200m),
+                "key-b",
+                CancellationToken.None));
 
         Assert.Equal(1, first.Revision);
-        Assert.Equal(2, second.Revision);
-        Assert.Equal(2, await _db.LeaseInterestValuations.CountAsync());
+        Assert.Equal(1, await _db.LeaseInterestValuations.CountAsync());
+        Assert.Contains("already been recorded", conflict.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Equal(
             LeaseInterestRequestStatus.ReferredToAuthority,
             (await _db.LeaseInterestRequests.SingleAsync()).Status);
+    }
+
+    [Fact]
+    public async Task RecordAsync_legacy_multi_revision_request_blocks_further_save()
+    {
+        var now = _clock.GetUtcNow();
+        _db.LeaseInterestValuations.AddRange(
+            new LeaseInterestValuationEntity
+            {
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                LeaseInterestRequestId = _requestId,
+                LandParcelId = _parcelId,
+                Revision = 1,
+                FormType = "AgriculturalCommercial",
+                AssessedLandValueLkr = 100m,
+                WorksheetJson = """{"leaseFileNumber":"LF-1","divisionalSecretariat":"Colombo"}""",
+                IdempotencyKey = "legacy-1",
+                RecordedByOfficerId = _officerId,
+                RecordedAtUtc = now,
+            },
+            new LeaseInterestValuationEntity
+            {
+                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                LeaseInterestRequestId = _requestId,
+                LandParcelId = _parcelId,
+                Revision = 2,
+                FormType = "AgriculturalCommercial",
+                AssessedLandValueLkr = 200m,
+                WorksheetJson = """{"leaseFileNumber":"LF-2","divisionalSecretariat":"Colombo"}""",
+                IdempotencyKey = "legacy-2",
+                RecordedByOfficerId = _officerId,
+                RecordedAtUtc = now,
+            });
+        await _db.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<LeaseInterestInvalidStateException>(() =>
+            _service.RecordAsync(_requestId, ValidInput(300m), "key-new", CancellationToken.None));
+        Assert.Equal(2, await _db.LeaseInterestValuations.CountAsync());
     }
 
     [Fact]
@@ -112,16 +152,37 @@ public sealed class LeaseInterestValuationIdempotencyTests : IDisposable
         var serviceB = new LeaseInterestValuationService(
             dbB, new StubOfficer(_officerId), new StubCaller(Guid.NewGuid()), _clock);
 
-        var results = await Task.WhenAll(
-            serviceA.RecordAsync(_requestId, ValidInput(300m), "parallel-0", CancellationToken.None),
-            serviceB.RecordAsync(_requestId, ValidInput(301m), "parallel-1", CancellationToken.None));
+        LeaseInterestValuationDto? winner = null;
+        Exception? loserError = null;
+        var taskA = Task.Run(async () =>
+        {
+            winner = await serviceA.RecordAsync(
+                _requestId,
+                ValidInput(300m),
+                "parallel-0",
+                CancellationToken.None);
+        });
+        var taskB = Task.Run(async () =>
+        {
+            try
+            {
+                await serviceB.RecordAsync(
+                    _requestId,
+                    ValidInput(301m),
+                    "parallel-1",
+                    CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                loserError = ex;
+            }
+        });
+        await Task.WhenAll(taskA, taskB);
 
-        Assert.Equal(2, results.Select(x => x.Id).Distinct().Count());
-        Assert.Equal(2, results.Select(x => x.IdempotencyKey).Distinct().Count());
-        Assert.Equal(
-            new[] { 1, 2 },
-            results.Select(x => x.Revision).OrderBy(x => x).ToArray());
-        Assert.Equal(2, await dbVerify.LeaseInterestValuations.CountAsync());
+        Assert.NotNull(winner);
+        Assert.Equal(1, winner!.Revision);
+        Assert.IsType<LeaseInterestInvalidStateException>(loserError);
+        Assert.Equal(1, await dbVerify.LeaseInterestValuations.CountAsync());
         Assert.Equal(
             LeaseInterestRequestStatus.ReferredToAuthority,
             (await dbVerify.LeaseInterestRequests.SingleAsync()).Status);
@@ -177,7 +238,7 @@ public sealed class LeaseInterestValuationIdempotencyTests : IDisposable
             Id = _requestId,
             OwnerId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
             LandParcelId = _parcelId,
-            Status = LeaseInterestRequestStatus.ReferredToAuthority,
+            Status = LeaseInterestRequestStatus.AwaitingValuation,
             PayloadJson = "{}",
             RequestedPurpose = (int)LandUseType.Agricultural,
             ConsentToPreliminaryAssessment = true,
