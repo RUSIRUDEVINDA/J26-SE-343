@@ -45,13 +45,13 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
     public LeaseInterestDocumentChecklistDto GetDocumentChecklist() =>
         new(
             [
-                new("nic", "National Identity Card (individual)", "May be requested during verification."),
-                new("registration", "Business registration certificate (organization)", "May be requested during verification."),
+                new("nic", "National Identity Card (individual)", "Requested during verification."),
+                new("registration", "Business registration certificate (organization)", "Requested during verification."),
                 new("survey", "Survey plan or cadastral extract", "If available from your records."),
                 new("project", "Project brief or feasibility summary", "Optional at this stage."),
-                new("financial", "Financial capacity evidence", "Not collected electronically in this pilot."),
+                new("financial", "Financial capacity evidence", "Optional at this stage."),
             ],
-            "Secure document upload is not enabled. An officer may request documents through official channels after preliminary review.");
+            "An officer may request documents through official channels after preliminary review.");
 
     public async Task<LeaseInterestRequestDetailDto?> FindForParcelAsync(
         Guid landParcelId,
@@ -156,6 +156,8 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             throw new LeaseInterestInvalidStateException(
                 "Only draft requests can be edited. Submit a new interest from parcel intelligence if needed.");
         }
+
+        await _parcelEligibility.EnsureEligibleForLeaseInterestAsync(entity.LandParcelId, cancellationToken);
 
         var now = _timeProvider.GetUtcNow();
         entity.PayloadJson = LeaseInterestPayloadSerializer.Serialize(draft);

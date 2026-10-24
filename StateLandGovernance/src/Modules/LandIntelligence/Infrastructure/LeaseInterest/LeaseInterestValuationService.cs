@@ -4,6 +4,7 @@ using Npgsql;
 using System.Text.Json;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Application.LeaseInterest;
 using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.Exceptions;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
@@ -66,19 +67,16 @@ public sealed class LeaseInterestValuationService : ILeaseInterestValuationServi
         }
 
         var request = await RequireSubmittedRequestAsync(requestId, cancellationToken);
-        if (request.Status != LeaseInterestRequestStatus.ReferredToAuthority)
-        {
-            throw new LeaseInterestInvalidStateException(
-                "Record the valuation after the request has been referred to the authority.");
-        }
-
-        ValidateInput(input);
 
         var prior = await FindByIdempotencyKeyAsync(requestId, normalizedKey, cancellationToken);
         if (prior is not null)
         {
             return Map(prior);
         }
+
+        await AssertCanRecordValuationAsync(request, officerId, cancellationToken);
+
+        ValidateInput(input);
 
         var gate = RevisionGates.GetOrAdd(requestId, _ => new SemaphoreSlim(1, 1));
         await gate.WaitAsync(cancellationToken);
@@ -94,11 +92,7 @@ public sealed class LeaseInterestValuationService : ILeaseInterestValuationServi
 
                 // Re-load tracked request so UpdatedAtUtc can be touched without changing Status.
                 request = await RequireSubmittedRequestAsync(requestId, cancellationToken);
-                if (request.Status != LeaseInterestRequestStatus.ReferredToAuthority)
-                {
-                    throw new LeaseInterestInvalidStateException(
-                        "Record the valuation after the request has been referred to the authority.");
-                }
+                await AssertCanRecordValuationAsync(request, officerId, cancellationToken);
 
                 Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = null;
                 try
@@ -126,6 +120,14 @@ public sealed class LeaseInterestValuationService : ILeaseInterestValuationServi
                         }
 
                         return Map(prior);
+                    }
+
+                    var existingValuationCount = await _db.LeaseInterestValuations
+                        .CountAsync(x => x.LeaseInterestRequestId == requestId, cancellationToken);
+                    if (existingValuationCount > 0)
+                    {
+                        throw new LeaseInterestInvalidStateException(
+                            "A valuation has already been recorded for this request. Valuations cannot be edited or submitted again.");
                     }
 
                     var lastRevision = await _db.LeaseInterestValuations
@@ -159,8 +161,23 @@ public sealed class LeaseInterestValuationService : ILeaseInterestValuationServi
                         RecordedAtUtc = _clock.GetUtcNow(),
                     };
 
-                    // Intentionally does not update LeaseInterestRequest.Status — valuation is separate from referral.
                     request.UpdatedAtUtc = entity.RecordedAtUtc;
+                    if (request.Status != LeaseInterestRequestStatus.ReferredToAuthority)
+                    {
+                        request.Status = LeaseInterestRequestStatus.ReferredToAuthority;
+                        _db.LeaseInterestStatusHistory.Add(new LeaseInterestStatusHistoryEntity
+                        {
+                            Id = Guid.NewGuid(),
+                            LeaseInterestRequestId = requestId,
+                            Status = LeaseInterestRequestStatus.ReferredToAuthority,
+                            ChangedAtUtc = entity.RecordedAtUtc,
+                            Note = LeaseInterestOfficerWorkflowRules.ValuationReferralNote,
+                            ActorKind = LeaseInterestStatusActorKind.Officer,
+                            ActorId = officerId,
+                            VisibleToApplicant = true,
+                        });
+                    }
+
                     _db.LeaseInterestValuations.Add(entity);
                     await _db.SaveChangesAsync(cancellationToken);
                     if (transaction is not null)
@@ -498,6 +515,30 @@ public sealed class LeaseInterestValuationService : ILeaseInterestValuationServi
         }
 
         return _actor.OfficerActorId.Value;
+    }
+
+    private async Task AssertCanRecordValuationAsync(
+        LeaseInterestRequestEntity request,
+        Guid officerId,
+        CancellationToken cancellationToken)
+    {
+        var existingValuationCount = await _db.LeaseInterestValuations
+            .CountAsync(x => x.LeaseInterestRequestId == request.Id, cancellationToken);
+        if (existingValuationCount > 0)
+        {
+            throw new LeaseInterestInvalidStateException(
+                "A valuation has already been recorded for this request. Valuations cannot be edited or submitted again.");
+        }
+
+        if (!LeaseInterestOfficerWorkflowRules.CanOfficerRecordValuation(
+                request.Status,
+                existingValuationCount > 0,
+                request.VerificationCompletedByOfficerId,
+                officerId))
+        {
+            throw new LeaseInterestInvalidStateException(
+                "Record the valuation only after preliminary verification is complete and the request is awaiting valuation.");
+        }
     }
 
     private async Task<LeaseInterestRequestEntity> RequireSubmittedRequestAsync(
