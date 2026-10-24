@@ -124,7 +124,7 @@ public sealed record LeaseInterestOfficerLookupRequestDto(
     string? NationalIdentityCardNumber,
     string? BusinessRegistrationNumber,
     int Page = 1,
-    int PageSize = 20);
+    int PageSize = 10);
 
 public sealed record LeaseInterestOfficerLookupItemDto(
     Guid RequestId,
@@ -138,7 +138,8 @@ public sealed record LeaseInterestOfficerLookupItemDto(
     int? RequestedDurationYears,
     LeaseInterestApplicantKindDto ApplicantKind,
     string? NationalIdentityCardNumber,
-    string? BusinessRegistrationNumber);
+    string? BusinessRegistrationNumber,
+    bool HasOfficerValuation = false);
 
 public sealed record LeaseInterestOfficerLookupResponseDto(
     IReadOnlyList<LeaseInterestOfficerLookupItemDto> Items,
@@ -157,7 +158,11 @@ public sealed record LeaseInterestOfficerQueueItemDto(
     DateTimeOffset? SubmittedAtUtc,
     LeaseInterestRequestStatus Status,
     string? CadastralNumber,
-    string? District);
+    string? District,
+    LeaseInterestApplicantKindDto ApplicantKind,
+    string? NationalIdentityCardNumber,
+    string? BusinessRegistrationNumber,
+    bool HasOfficerValuation = false);
 
 public sealed record LeaseInterestOfficerQueueResponseDto(
     IReadOnlyList<LeaseInterestOfficerQueueItemDto> Items,
@@ -186,4 +191,9 @@ public sealed record LeaseInterestOfficerRequestDetailDto(
     string? CadastralNumber,
     string? District,
     string ApplicantOutcomeSummary,
-    LeaseInterestApplicantAuthorityDecisionDto? LatestAuthorityDecision = null);
+    LeaseInterestApplicantAuthorityDecisionDto? LatestAuthorityDecision = null,
+    Guid? VerificationCompletedByOfficerId = null,
+    Guid? CurrentOfficerActorId = null,
+    bool CanRecordVerificationDecision = false,
+    bool CanRecordValuation = false,
+    bool HasOfficerValuation = false);

@@ -682,6 +682,7 @@
 .successTitle {
   margin: 0 0 0.35rem;
   font-size: 1.05rem;
+  text-align: center;
 }
 
 .successBody {
@@ -695,6 +696,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+  justify-content: center;
 }
 
 .sideSummary {

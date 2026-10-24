@@ -646,6 +646,9 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.Property<DateTimeOffset?>("SubmittedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("VerificationCompletedByOfficerId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTimeOffset>("UpdatedAtUtc")
                         .IsConcurrencyToken()
                         .HasColumnType("timestamp with time zone");
@@ -661,6 +664,11 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
                     b.HasIndex("ApplicantBrnLookupDigest");
 
                     b.HasIndex("LandParcelId");
+
+                    b.HasIndex("LandParcelId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_lease_interest_requests_one_approved_in_principle_per_parcel")
+                        .HasFilter("\"Status\" = 7");
 
                     b.HasIndex("OwnerId");
 

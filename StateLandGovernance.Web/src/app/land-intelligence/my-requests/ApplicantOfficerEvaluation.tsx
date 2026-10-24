@@ -35,18 +35,11 @@ export function ApplicantOfficerEvaluation({
             Officer evaluation
           </h2>
         </div>
-        {state.kind === "available" ? (
-          <span className={styles.evaluationRevisionBadge} role="status">
-            Revision {state.summary.revision}
-          </span>
-        ) : null}
       </div>
 
       <p className={styles.evaluationLead} role="note">
-        This section shows the latest officer-recorded land valuation for your
-        request. It is separate from any authority approval or rejection and is{" "}
-        <strong>not</strong> a lease, land reservation, or official government
-        approval.
+        This section shows the officer-recorded land valuation for your
+        request.
       </p>
 
       {state.kind === "loading" ? (

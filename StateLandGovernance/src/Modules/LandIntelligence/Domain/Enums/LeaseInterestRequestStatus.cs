@@ -13,4 +13,12 @@ public enum LeaseInterestRequestStatus
     /// Not a lease, reservation, or official government lease approval — formal lease processing is still required.
     /// </summary>
     ApprovedInPrinciple = 7,
+    /// <summary>
+    /// Another request for the same parcel was approved in principle; this request was not rejected on its merits.
+    /// </summary>
+    ClosedAnotherPreliminaryApproved = 8,
+    /// <summary>
+    /// Preliminary verification complete; awaiting a different officer's one-time valuation.
+    /// </summary>
+    AwaitingValuation = 9,
 }

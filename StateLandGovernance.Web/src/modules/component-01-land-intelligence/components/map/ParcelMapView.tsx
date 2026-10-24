@@ -145,11 +145,6 @@ export function ParcelMapView({ parcelId }: { parcelId: string }) {
     [parcel],
   );
 
-  const recommendationsHref = "/land-intelligence/recommendations";
-  const intelligenceHref = parcel
-    ? `/land-intelligence/parcels/${parcel.id}`
-    : `/land-intelligence/parcels/${parcelId}`;
-
   const cadastral = parcel
     ? displayOrUnavailable(parcel.identifier.cadastralNumber)
     : "";
@@ -159,26 +154,6 @@ export function ParcelMapView({ parcelId }: { parcelId: string }) {
       <PageHeading
         title="Parcel map"
         subtitle="See where this parcel is recorded on the map."
-        action={
-          <div className={styles.headingActions}>
-            <Button
-              href={recommendationsHref}
-              variant="secondary"
-              className={styles.headingAction}
-            >
-              Back to recommendations
-            </Button>
-            {parcel ? (
-              <Button
-                href={intelligenceHref}
-                variant="primary"
-                className={styles.headingAction}
-              >
-                View parcel details
-              </Button>
-            ) : null}
-          </div>
-        }
       />
 
       {loadState.status === "loading" ? (
@@ -245,22 +220,6 @@ export function ParcelMapView({ parcelId }: { parcelId: string }) {
                   <dd>{customerLandUseLabel(parcel)}</dd>
                 </div>
               </dl>
-              <div className={styles.summaryActions}>
-                <Button
-                  href={recommendationsHref}
-                  variant="secondary"
-                  className={styles.summaryAction}
-                >
-                  Back to recommendations
-                </Button>
-                <Button
-                  href={intelligenceHref}
-                  variant="primary"
-                  className={styles.summaryAction}
-                >
-                  View parcel details
-                </Button>
-              </div>
             </aside>
           </div>
         </div>

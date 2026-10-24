@@ -155,6 +155,30 @@ public sealed class LandOfficerLeaseInterestController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("valuation-queue")]
+    [ProducesResponseType(typeof(LeaseInterestOfficerQueueResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<LeaseInterestOfficerQueueResponseDto>> ListValuationQueueAsync(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+        if (!_accessGate.IsPreliminaryReviewEnabled)
+        {
+            return StatusCode(
+                StatusCodes.Status403Forbidden,
+                new ApiErrorResponse(
+                    StatusCodes.Status403Forbidden,
+                    "Forbidden",
+                    "Officer preliminary review is not available in this environment."));
+        }
+
+        var result = await _review.ListValuationQueueAsync(
+            new LeaseInterestOfficerQueueRequestDto(page, pageSize),
+            cancellationToken);
+        return Ok(result);
+    }
+
     [HttpGet("requests/{requestId:guid}")]
     [ProducesResponseType(typeof(LeaseInterestOfficerRequestDetailDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status403Forbidden)]

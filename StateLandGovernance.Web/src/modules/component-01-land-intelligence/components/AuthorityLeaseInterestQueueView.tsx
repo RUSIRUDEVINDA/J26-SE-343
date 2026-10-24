@@ -25,6 +25,12 @@ import styles from "./OfficerLeaseInterestLookup.module.css";
 
 const PAGE_SIZE = 20;
 
+function applicantIdentifier(row: LeaseInterestAuthorityQueueItem): string {
+  return row.applicantKind === 2
+    ? row.businessRegistrationNumber ?? "—"
+    : row.nationalIdentityCardNumber ?? "—";
+}
+
 function formatDate(iso: string | null | undefined): string {
   if (!iso) {
     return "—";
@@ -135,7 +141,7 @@ export function AuthorityLeaseInterestQueueView() {
   const panelId = "authority-queue-panel";
 
   return (
-    <div className={styles.layout}>
+    <div className={styles.layoutFullWidth}>
 
       <div
         className={styles.tabList}
@@ -190,6 +196,7 @@ export function AuthorityLeaseInterestQueueView() {
                   <thead>
                     <tr>
                       <th scope="col">Reference</th>
+                      <th scope="col">NIC / BRN</th>
                       <th scope="col">Valuation</th>
                       <th scope="col">Status</th>
                       <th scope="col">Cadastral</th>
@@ -203,6 +210,9 @@ export function AuthorityLeaseInterestQueueView() {
                       return (
                         <tr key={row.requestId}>
                           <td>{row.acknowledgementReference ?? "—"}</td>
+                          <td className={styles.mono}>
+                            {applicantIdentifier(row)}
+                          </td>
                           <td>
                             Rev {row.latestValuationRevision}
                             <br />

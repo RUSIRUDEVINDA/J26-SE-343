@@ -24,11 +24,11 @@ public static class LeaseInterestStatusTransitions
             LeaseInterestRequestStatus.PendingVerification => next is
                 LeaseInterestRequestStatus.NeedsInformation
                 or LeaseInterestRequestStatus.Declined
-                or LeaseInterestRequestStatus.ReferredToAuthority,
+                or LeaseInterestRequestStatus.AwaitingValuation,
             LeaseInterestRequestStatus.NeedsInformation => next is
                 LeaseInterestRequestStatus.PendingVerification
                 or LeaseInterestRequestStatus.Declined
-                or LeaseInterestRequestStatus.ReferredToAuthority,
+                or LeaseInterestRequestStatus.AwaitingValuation,
             _ => false,
         };
 
@@ -87,15 +87,19 @@ public static class LeaseInterestStatusTransitions
                 "Draft — not submitted.",
             LeaseInterestRequestStatus.Submitted =>
                 "Submitted — awaiting officer queue (preliminary interest only).",
-            LeaseInterestRequestStatus.PendingVerification =>
-                "Pending officer verification. Your expression of interest is not a reservation or lease approval.",
+            LeaseInterestRequestStatus.PendingVerification => string.Empty,
             LeaseInterestRequestStatus.NeedsInformation =>
                 "More information is required before officer verification can continue.",
             LeaseInterestRequestStatus.Declined =>
-                "Rejected after review. This is not a court decision and does not reserve land.",
+                "Rejected after review.",
+            LeaseInterestRequestStatus.AwaitingValuation =>
+                "Preliminary verification is complete. A valuation officer will record the land worksheet next.",
             LeaseInterestRequestStatus.ReferredToAuthority =>
-                "Referred for authority follow-up. An officer valuation may be recorded.",
+                "Referred for authority follow-up after officer valuation (preliminary only).",
             LeaseInterestRequestStatus.ApprovedInPrinciple => string.Empty,
+            LeaseInterestRequestStatus.ClosedAnotherPreliminaryApproved =>
+                "Closed — another preliminary request for this parcel was approved in principle. " +
+                "This is not a rejection of your proposal on its merits.",
             _ => "Status unknown.",
         };
 }

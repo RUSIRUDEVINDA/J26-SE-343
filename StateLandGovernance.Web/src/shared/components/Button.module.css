@@ -10,6 +10,7 @@
   cursor: pointer;
   text-decoration: none;
   border: 1px solid transparent;
+  appearance: none;
   transition: opacity 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -39,6 +40,12 @@
   background: var(--color-primary);
   color: #fff;
   border-color: var(--color-primary);
+}
+
+.primary:disabled {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
 }
 
 .secondary {

@@ -17,4 +17,10 @@ public interface IApprovedPreliminaryLeaseParcelRegistry
         int page,
         int pageSize,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Parcels with more than one ApprovedInPrinciple request (legacy data integrity issue; not auto-repaired).
+    /// </summary>
+    Task<IReadOnlyList<Guid>> ListParcelIdsWithConflictingApprovalsAsync(
+        CancellationToken cancellationToken = default);
 }

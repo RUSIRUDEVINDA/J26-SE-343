@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 
 #nullable disable
 
@@ -8,6 +10,8 @@ namespace StateLandGovernance.LandIntelligence.Infrastructure.Persistence.Migrat
 /// Repairs partial imports where __ef_migrations_history was applied without all column DDL
 /// (e.g. missing land_parcels characteristic / provenance columns).
 /// </summary>
+[DbContext(typeof(LandIntelligenceDbContext))]
+[Migration("20261023153000_RepairLandParcelsMissingColumns")]
 public partial class RepairLandParcelsMissingColumns : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)

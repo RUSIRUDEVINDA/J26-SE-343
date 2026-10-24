@@ -180,7 +180,6 @@ export function buildValuationWorksheetSections(
           label: "Paper form type",
           value: valuationFormTypeLabel(valuation.formType),
         },
-        { label: "Revision", value: String(valuation.revision) },
         {
           label: "Recorded by officer",
           value: displayOptionalText(valuation.recordedByOfficerId),

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Application.LeaseInterest;
@@ -99,6 +100,19 @@ public sealed class LeaseInterestAuthorityReviewService : ILeaseInterestAuthorit
                 .FirstOrDefaultAsync(cancellationToken);
 
             var parcel = await _parcelRepository.GetByIdAsync(row.LandParcelId, cancellationToken);
+            var draft = LeaseInterestPayloadSerializer.Deserialize(row.PayloadJson);
+            var applicant = draft.Applicant;
+            var nic = _nicProtector.Decrypt(row.ApplicantNicCiphertext);
+            string? brn = null;
+            if (applicant.Kind == LeaseInterestApplicantKindDto.Organization)
+            {
+                brn = LeaseInterestBusinessRegistration.TryNormalize(
+                    applicant.OrganizationRegistrationNumber,
+                    out var normalizedBrn)
+                    ? normalizedBrn
+                    : null;
+            }
+
             items.Add(
                 new LeaseInterestAuthorityQueueItemDto(
                     row.Id,
@@ -109,7 +123,10 @@ public sealed class LeaseInterestAuthorityReviewService : ILeaseInterestAuthorit
                     latestValuation?.Revision ?? 0,
                     row.Status,
                     parcel?.Identifier.CadastralNumber,
-                    parcel?.Location.District));
+                    parcel?.Location.District,
+                    applicant.Kind,
+                    nic,
+                    brn));
         }
 
         return new LeaseInterestAuthorityQueueResponseDto(items, total, page, pageSize);
@@ -190,6 +207,32 @@ public sealed class LeaseInterestAuthorityReviewService : ILeaseInterestAuthorit
         var now = _timeProvider.GetUtcNow();
         var reason = input.Reason.Trim();
 
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+
+        if (nextStatus == LeaseInterestRequestStatus.ApprovedInPrinciple)
+        {
+            var parcelId = entity.LandParcelId;
+            var conflictingApproval = await _dbContext.LeaseInterestRequests
+                .AnyAsync(
+                    x =>
+                        x.LandParcelId == parcelId
+                        && x.Id != entity.Id
+                        && x.Status == LeaseInterestRequestStatus.ApprovedInPrinciple,
+                    cancellationToken);
+            if (conflictingApproval)
+            {
+                throw new LeaseInterestInvalidStateException(
+                    LeaseInterestParcelExclusiveApprovalPolicy.BlockSecondApprovalMessage);
+            }
+
+            await CloseOtherOpenRequestsForParcelAsync(
+                parcelId,
+                entity.Id,
+                now,
+                authorityId,
+                cancellationToken);
+        }
+
         entity.Status = nextStatus;
         entity.UpdatedAtUtc = now;
 
@@ -206,26 +249,29 @@ public sealed class LeaseInterestAuthorityReviewService : ILeaseInterestAuthorit
             RecordedAtUtc = now,
         });
 
-        _dbContext.LeaseInterestStatusHistory.Add(new LeaseInterestStatusHistoryEntity
-        {
-            Id = Guid.NewGuid(),
-            LeaseInterestRequestId = entity.Id,
-            Status = nextStatus,
-            ChangedAtUtc = now,
-            Note = BuildApplicantVisibleNote(input.Decision, reason),
-            ActorKind = LeaseInterestStatusActorKind.Authority,
-            ActorId = authorityId,
-            VisibleToApplicant = true,
-        });
+        AppendStatusHistory(
+            entity.Id,
+            nextStatus,
+            now,
+            BuildApplicantVisibleNote(input.Decision, reason),
+            LeaseInterestStatusActorKind.Authority,
+            authorityId,
+            true);
 
         try
         {
             await _dbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
         }
         catch (DbUpdateConcurrencyException)
         {
             throw new LeaseInterestInvalidStateException(
                 "This request was updated by someone else. Refresh the page and review the latest details before submitting again.");
+        }
+        catch (DbUpdateException ex) when (IsOneApprovalPerParcelViolation(ex))
+        {
+            throw new LeaseInterestInvalidStateException(
+                LeaseInterestParcelExclusiveApprovalPolicy.BlockSecondApprovalMessage);
         }
 
         await _dbContext.Entry(entity).Collection(e => e.StatusHistory).LoadAsync(cancellationToken);
@@ -341,6 +387,72 @@ public sealed class LeaseInterestAuthorityReviewService : ILeaseInterestAuthorit
             valuations,
             decisions,
             canRecord);
+    }
+
+    private async Task CloseOtherOpenRequestsForParcelAsync(
+        Guid landParcelId,
+        Guid approvedRequestId,
+        DateTimeOffset now,
+        Guid authorityId,
+        CancellationToken cancellationToken)
+    {
+        var others = await _dbContext.LeaseInterestRequests
+            .Where(x => x.LandParcelId == landParcelId && x.Id != approvedRequestId)
+            .ToListAsync(cancellationToken);
+
+        foreach (var other in others)
+        {
+            if (!LeaseInterestParcelExclusiveApprovalPolicy.IsOpenForParcelExclusiveClosure(other.Status))
+            {
+                continue;
+            }
+
+            other.Status = LeaseInterestRequestStatus.ClosedAnotherPreliminaryApproved;
+            other.UpdatedAtUtc = now;
+            AppendStatusHistory(
+                other.Id,
+                LeaseInterestRequestStatus.ClosedAnotherPreliminaryApproved,
+                now,
+                LeaseInterestParcelExclusiveApprovalPolicy.ApplicantClosedBecauseAnotherApprovedNote,
+                LeaseInterestStatusActorKind.System,
+                authorityId,
+                true);
+        }
+    }
+
+    private void AppendStatusHistory(
+        Guid leaseInterestRequestId,
+        LeaseInterestRequestStatus status,
+        DateTimeOffset changedAtUtc,
+        string? note,
+        LeaseInterestStatusActorKind actorKind,
+        Guid? actorId,
+        bool visibleToApplicant)
+    {
+        _dbContext.LeaseInterestStatusHistory.Add(new LeaseInterestStatusHistoryEntity
+        {
+            Id = Guid.NewGuid(),
+            LeaseInterestRequestId = leaseInterestRequestId,
+            Status = status,
+            ChangedAtUtc = changedAtUtc,
+            Note = note,
+            ActorKind = actorKind,
+            ActorId = actorId,
+            VisibleToApplicant = visibleToApplicant,
+        });
+    }
+
+    private static bool IsOneApprovalPerParcelViolation(DbUpdateException exception)
+    {
+        if (exception.InnerException is not PostgresException postgres)
+        {
+            return false;
+        }
+
+        return postgres.SqlState == PostgresErrorCodes.UniqueViolation
+            && postgres.ConstraintName?.Contains(
+                "one_approved_in_principle_per_parcel",
+                StringComparison.OrdinalIgnoreCase) == true;
     }
 
     private static string BuildApplicantVisibleNote(

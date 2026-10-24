@@ -23,7 +23,6 @@ import {
   type ParcelCatalogPageSize,
 } from "@/modules/component-01-land-intelligence/components/ParcelCatalog";
 import { ParcelDetails } from "@/modules/component-01-land-intelligence/components/ParcelDetails";
-import { SaveParcelButton } from "@/modules/component-01-land-intelligence/components/SaveParcelButton";
 import {
   findParcelsByCadastralNumber,
   listApprovedPreliminaryParcels,
@@ -815,7 +814,6 @@ export function ParcelIntelligenceView({
             className="parcelFormRow"
             style={{ marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}
           >
-            <SaveParcelButton parcelId={parcel.id} variant="secondary" />
             <Button
               href={`/land-intelligence/parcels/${parcel.id}/lease-interest`}
               variant="primary"

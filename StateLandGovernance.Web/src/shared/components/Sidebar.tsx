@@ -10,6 +10,7 @@ import {
   LAND_INTELLIGENCE_BASE,
   officerLeaseInterestLookupNavItem,
   officerLeaseInterestQueueNavItem,
+  officerLeaseInterestValuationQueueNavItem,
   type NavItem,
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
@@ -76,7 +77,11 @@ export function Sidebar({
     const extras: NavItem[] = [];
     if (officerLookupEnabled) {
       if (!items.some((item) => item.href === officerLeaseInterestQueueNavItem.href)) {
-        extras.push(officerLeaseInterestQueueNavItem, officerLeaseInterestLookupNavItem);
+        extras.push(
+          officerLeaseInterestQueueNavItem,
+          officerLeaseInterestValuationQueueNavItem,
+          officerLeaseInterestLookupNavItem,
+        );
       }
     }
     if (

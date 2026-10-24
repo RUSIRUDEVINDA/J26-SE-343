@@ -8,7 +8,8 @@ public sealed class LeaseInterestStatusTransitionsTests
     [Theory]
     [InlineData(LeaseInterestRequestStatus.PendingVerification, LeaseInterestRequestStatus.NeedsInformation, true)]
     [InlineData(LeaseInterestRequestStatus.PendingVerification, LeaseInterestRequestStatus.Declined, true)]
-    [InlineData(LeaseInterestRequestStatus.PendingVerification, LeaseInterestRequestStatus.ReferredToAuthority, true)]
+    [InlineData(LeaseInterestRequestStatus.PendingVerification, LeaseInterestRequestStatus.AwaitingValuation, true)]
+    [InlineData(LeaseInterestRequestStatus.PendingVerification, LeaseInterestRequestStatus.ReferredToAuthority, false)]
     [InlineData(LeaseInterestRequestStatus.NeedsInformation, LeaseInterestRequestStatus.PendingVerification, true)]
     [InlineData(LeaseInterestRequestStatus.Draft, LeaseInterestRequestStatus.PendingVerification, false)]
     [InlineData(LeaseInterestRequestStatus.PendingVerification, LeaseInterestRequestStatus.Draft, false)]
@@ -70,9 +71,17 @@ public sealed class LeaseInterestStatusTransitionsTests
     }
 
     [Fact]
+    public void ApplicantOutcomeSummary_PendingVerification_IsEmpty()
+    {
+        var summary = LeaseInterestStatusTransitions.ApplicantOutcomeSummary(
+            LeaseInterestRequestStatus.PendingVerification);
+        Assert.Equal(string.Empty, summary);
+    }
+
+    [Fact]
     public void DecisionLabels_AreApprovedAndRejectedOnly()
     {
-        Assert.Equal("Approved", LeaseInterestAuthorityDecisionLabels.DecisionLabel(
+        Assert.Equal("Approved in principle", LeaseInterestAuthorityDecisionLabels.DecisionLabel(
             LeaseInterestAuthorityDecisionKind.Approved));
         Assert.Equal("Rejected", LeaseInterestAuthorityDecisionLabels.DecisionLabel(
             LeaseInterestAuthorityDecisionKind.Rejected));

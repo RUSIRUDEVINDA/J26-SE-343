@@ -7,7 +7,7 @@ public static class LeaseInterestAuthorityDecisionLabels
     public static string DecisionLabel(LeaseInterestAuthorityDecisionKind decision) =>
         decision switch
         {
-            LeaseInterestAuthorityDecisionKind.Approved => "Approved",
+            LeaseInterestAuthorityDecisionKind.Approved => "Approved in principle",
             LeaseInterestAuthorityDecisionKind.Rejected => "Rejected",
             _ => "Unknown decision",
         };

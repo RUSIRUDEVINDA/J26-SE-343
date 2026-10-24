@@ -13,6 +13,7 @@ import {
 } from "@/modules/component-01-land-intelligence/services/landIntelligenceApi";
 import {
   FIND_SUITABLE_LAND_FORM_SESSION_KEY,
+  FIND_SUITABLE_LAND_RESTORE_ONCE_KEY,
   RECOMMENDATIONS_SESSION_KEY,
   type FindSuitableLandFormState,
   type LandRecommendationSearchRequest,
@@ -168,6 +169,7 @@ function writeFormForEdit(formState: FindSuitableLandFormState) {
       FIND_SUITABLE_LAND_FORM_SESSION_KEY,
       JSON.stringify(formState),
     );
+    sessionStorage.setItem(FIND_SUITABLE_LAND_RESTORE_ONCE_KEY, "1");
     window.dispatchEvent(new Event(FORM_STORE_EVENT));
   } catch {
     // Session write can fail in private mode.

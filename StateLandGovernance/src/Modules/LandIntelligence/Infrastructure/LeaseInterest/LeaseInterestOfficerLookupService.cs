@@ -31,18 +31,19 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
     {
         var nicProvided = !string.IsNullOrWhiteSpace(request.NationalIdentityCardNumber);
         var brnProvided = !string.IsNullOrWhiteSpace(request.BusinessRegistrationNumber);
-        if (nicProvided == brnProvided)
+        if (nicProvided && brnProvided)
         {
             throw new ValidationException(
-                [
-                    nicProvided
-                        ? "Provide either a NIC or a business registration number (BRN), not both."
-                        : "Enter a NIC or business registration number (BRN) to search.",
-                ]);
+                ["Provide either a NIC or a business registration number (BRN), not both."]);
         }
 
         var page = request.Page < 1 ? 1 : request.Page;
-        var pageSize = request.PageSize < 1 ? 20 : Math.Min(request.PageSize, MaxPageSize);
+        var pageSize = request.PageSize < 1 ? 10 : Math.Min(request.PageSize, MaxPageSize);
+
+        if (!nicProvided && !brnProvided)
+        {
+            return await ListAllSubmittedAsync(page, pageSize, cancellationToken);
+        }
 
         if (nicProvided)
         {
@@ -57,6 +58,27 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
             request.BusinessRegistrationNumber!,
             page,
             pageSize,
+            cancellationToken);
+    }
+
+    private async Task<LeaseInterestOfficerLookupResponseDto> ListAllSubmittedAsync(
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        var query = _dbContext.LeaseInterestRequests
+            .AsNoTracking()
+            .Where(x =>
+                x.Status != LeaseInterestRequestStatus.Draft
+                && x.SubmittedAtUtc != null);
+
+        return await MaterializeLookupPageAsync(
+            query,
+            page,
+            pageSize,
+            revealApplicantIdentifiers: false,
+            normalizedNic: null,
+            normalizedBrn: null,
             cancellationToken);
     }
 
@@ -76,9 +98,17 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
             .AsNoTracking()
             .Where(x =>
                 x.ApplicantNicLookupDigest == digest
-                && x.Status != LeaseInterestRequestStatus.Draft);
+                && x.Status != LeaseInterestRequestStatus.Draft
+                && x.SubmittedAtUtc != null);
 
-        return await MaterializeLookupPageAsync(query, page, pageSize, normalized, null, cancellationToken);
+        return await MaterializeLookupPageAsync(
+            query,
+            page,
+            pageSize,
+            revealApplicantIdentifiers: true,
+            normalizedNic: normalized,
+            normalizedBrn: null,
+            cancellationToken);
     }
 
     private async Task<LeaseInterestOfficerLookupResponseDto> LookupByBrnDigestAsync(
@@ -97,15 +127,24 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
             .AsNoTracking()
             .Where(x =>
                 x.ApplicantBrnLookupDigest == digest
-                && x.Status != LeaseInterestRequestStatus.Draft);
+                && x.Status != LeaseInterestRequestStatus.Draft
+                && x.SubmittedAtUtc != null);
 
-        return await MaterializeLookupPageAsync(query, page, pageSize, null, normalized, cancellationToken);
+        return await MaterializeLookupPageAsync(
+            query,
+            page,
+            pageSize,
+            revealApplicantIdentifiers: true,
+            normalizedNic: null,
+            normalizedBrn: normalized,
+            cancellationToken);
     }
 
     private async Task<LeaseInterestOfficerLookupResponseDto> MaterializeLookupPageAsync(
         IQueryable<Infrastructure.Persistence.Entities.LeaseInterestRequestEntity> query,
         int page,
         int pageSize,
+        bool revealApplicantIdentifiers,
         string? normalizedNic,
         string? normalizedBrn,
         CancellationToken cancellationToken)
@@ -124,15 +163,35 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
             var parcel = await _parcelRepository.GetByIdAsync(row.LandParcelId, cancellationToken);
             var draft = LeaseInterestPayloadSerializer.Deserialize(row.PayloadJson);
             var applicant = draft.Applicant;
-            var nic =
-                applicant.Kind == LeaseInterestApplicantKindDto.Individual
-                    ? _nicProtector.Decrypt(row.ApplicantNicCiphertext) ?? normalizedNic
-                    : _nicProtector.Decrypt(row.ApplicantNicCiphertext);
-            var brn = LeaseInterestBusinessRegistration.TryNormalize(
+            string? nic = null;
+            string? brn = null;
+            var decryptedNic = _nicProtector.Decrypt(row.ApplicantNicCiphertext);
+            var normalizedBrnFromPayload = LeaseInterestBusinessRegistration.TryNormalize(
                 applicant.OrganizationRegistrationNumber,
                 out var normalizedFromPayload)
                 ? normalizedFromPayload
-                : normalizedBrn;
+                : null;
+
+            if (revealApplicantIdentifiers)
+            {
+                nic =
+                    applicant.Kind == LeaseInterestApplicantKindDto.Individual
+                        ? decryptedNic ?? normalizedNic
+                        : decryptedNic;
+                brn = normalizedBrnFromPayload ?? normalizedBrn;
+            }
+            else
+            {
+                nic = SriLankanNic.Mask(decryptedNic);
+                if (applicant.Kind == LeaseInterestApplicantKindDto.Organization)
+                {
+                    brn = SriLankanNic.Mask(normalizedBrnFromPayload);
+                }
+            }
+
+            var hasValuation = await _dbContext.LeaseInterestValuations
+                .AsNoTracking()
+                .AnyAsync(v => v.LeaseInterestRequestId == row.Id, cancellationToken);
 
             items.Add(
                 new LeaseInterestOfficerLookupItemDto(
@@ -147,7 +206,8 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
                     row.RequestedDurationYears,
                     applicant.Kind,
                     nic,
-                    brn));
+                    brn,
+                    hasValuation));
         }
 
         return new LeaseInterestOfficerLookupResponseDto(items, total, page, pageSize);
