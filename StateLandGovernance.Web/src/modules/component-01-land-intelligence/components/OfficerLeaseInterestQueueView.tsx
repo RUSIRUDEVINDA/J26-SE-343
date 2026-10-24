@@ -6,8 +6,15 @@ import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { LoadingState } from "@/shared/components/LoadingState";
-import { listOfficerLeaseInterestQueue } from "../services/officerLeaseInterestApi";
+import {
+  listOfficerLeaseInterestQueue,
+  listOfficerLeaseInterestValuationQueue,
+} from "../services/officerLeaseInterestApi";
 import type { LeaseInterestOfficerQueueItem } from "../types/landIntelligence";
+import {
+  officerLeaseInterestReviewHref,
+  officerLeaseInterestReviewLinkLabel,
+} from "../utils/officerLeaseInterestNavigation";
 import { leaseInterestStatusLabel } from "../utils/leaseInterestStatus";
 import styles from "./OfficerLeaseInterestLookup.module.css";
 
@@ -24,7 +31,19 @@ function formatDate(iso: string | null | undefined): string {
   }
 }
 
-export function OfficerLeaseInterestQueueView() {
+function applicantIdentifier(
+  row: LeaseInterestOfficerQueueItem,
+): string {
+  return row.applicantKind === 2
+    ? row.businessRegistrationNumber ?? "—"
+    : row.nationalIdentityCardNumber ?? "—";
+}
+
+export function OfficerLeaseInterestQueueView({
+  queueKind = "verification",
+}: {
+  queueKind?: "verification" | "valuation";
+}) {
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<LeaseInterestOfficerQueueItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -35,10 +54,10 @@ export function OfficerLeaseInterestQueueView() {
     setLoading(true);
     setError(null);
     try {
-      const response = await listOfficerLeaseInterestQueue(
-        targetPage,
-        PAGE_SIZE,
-      );
+      const response =
+        queueKind === "valuation"
+          ? await listOfficerLeaseInterestValuationQueue(targetPage, PAGE_SIZE)
+          : await listOfficerLeaseInterestQueue(targetPage, PAGE_SIZE);
       setItems(response.items);
       setTotalCount(response.totalCount);
       setPage(response.page);
@@ -60,12 +79,16 @@ export function OfficerLeaseInterestQueueView() {
             : err.message || `Request failed (HTTP ${err.status}).`,
         );
       } else {
-        setError("Unable to load verification queue.");
+        setError(
+          queueKind === "valuation"
+            ? "Unable to load valuation queue."
+            : "Unable to load verification queue.",
+        );
       }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [queueKind]);
 
   useEffect(() => {
     void loadPage(1);
@@ -74,10 +97,16 @@ export function OfficerLeaseInterestQueueView() {
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   return (
-    <div className={styles.layout}>
+    <div className={styles.layoutFullWidth}>
 
       {loading && items.length === 0 ? (
-        <LoadingState message="Loading verification queue…" />
+        <LoadingState
+          message={
+            queueKind === "valuation"
+              ? "Loading valuation queue…"
+              : "Loading verification queue…"
+          }
+        />
       ) : null}
       {error ? <ErrorMessage message={error} /> : null}
 
@@ -87,10 +116,15 @@ export function OfficerLeaseInterestQueueView() {
             ✓
           </div>
           <p className={styles.queueEmptyEyebrow}>OFFICER VERIFICATION</p>
-          <h2 id="queue-empty-title">No requests to review right now</h2>
+          <h2 id="queue-empty-title">
+            {queueKind === "valuation"
+              ? "No requests awaiting valuation"
+              : "No requests to review right now"}
+          </h2>
           <p className={styles.queueEmptyDescription}>
-            New lease-interest requests awaiting officer verification will appear here.
-            You can check again or look up an existing request by NIC.
+            {queueKind === "valuation"
+              ? "Requests will appear here after verification is complete and before an officer valuation is recorded."
+              : "New lease-interest requests awaiting officer verification will appear here. You can check again or look up an existing request by NIC or BRN."}
           </p>
           <div className={styles.queueEmptyActions}>
             <Button type="button" onClick={() => void loadPage(1)}>
@@ -117,6 +151,7 @@ export function OfficerLeaseInterestQueueView() {
                     <th>Reference</th>
                     <th>Submitted</th>
                     <th>Status</th>
+                    <th>NIC / BRN</th>
                     <th>Cadastral</th>
                     <th>District</th>
                     <th>Actions</th>
@@ -128,6 +163,7 @@ export function OfficerLeaseInterestQueueView() {
                       <td>{row.acknowledgementReference ?? "—"}</td>
                       <td>{formatDate(row.submittedAtUtc)}</td>
                       <td>{leaseInterestStatusLabel(row.status)}</td>
+                      <td className={styles.mono}>{applicantIdentifier(row)}</td>
                       <td className={styles.mono}>
                         {row.cadastralNumber ?? "—"}
                       </td>
@@ -135,10 +171,17 @@ export function OfficerLeaseInterestQueueView() {
                       <td>
                         <div className={styles.rowActions}>
                           <Link
-                            href={`/land-intelligence/officer/lease-interest-review/${row.requestId}`}
+                            href={officerLeaseInterestReviewHref(
+                              row.requestId,
+                              row.status,
+                              row.hasOfficerValuation ?? false,
+                            )}
                             className={styles.rowLink}
                           >
-                            Review
+                            {officerLeaseInterestReviewLinkLabel(
+                              row.status,
+                              row.hasOfficerValuation ?? false,
+                            )}
                           </Link>
                           <Link
                             href={`/land-intelligence/parcels/${row.landParcelId}`}

@@ -21,8 +21,11 @@
 .textLink { white-space: nowrap; font-size: .85rem; }
 .detailsGrid { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.15rem 1.5rem; }
 .detailsGrid div { min-width: 0; }
-.detailsGrid dt { margin-bottom: .3rem; color: var(--color-muted); font-size: .78rem; }
-.detailsGrid dd { margin: 0; font-size: .94rem; font-weight: 650; overflow-wrap: anywhere; }
+.detailsGrid dt { margin-bottom: .3rem; color: var(--color-muted); font-size: .78rem; font-weight: 0; }
+.detailsGrid dd { margin: 0; font-size: .94rem; font-weight: 400; overflow-wrap: anywhere; }
+.proposalBlock { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-card-border); }
+.proposalBlock p { margin: 0 0 .75rem; font-size: .9rem; line-height: 1.5; overflow-wrap: anywhere; }
+.proposalBlock p:last-child { margin-bottom: 0; }
 .secondary { color: var(--color-muted); font-size: .8rem; font-weight: 400; }
 .timeline { margin: 0; padding: 0; list-style: none; }
 .timelineItem { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: .8rem; position: relative; padding-bottom: 1.3rem; }
@@ -70,7 +73,12 @@ textarea.input { resize: vertical; line-height: 1.5; }
 .rowRemove { margin-bottom: 1.15rem; }
 .rowAdd { margin-bottom: .9rem; color: var(--color-primary); font-weight: 700; }
 .rowAdd:focus-visible, .rowRemove:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
-.valuationLatest, .valuationPending { margin: 1rem 0 0; padding: .8rem 1rem; border-radius: 10px; background: #f4f7f4; font-size: .88rem; line-height: 1.5; }
+.valuationLatest, .valuationPending, .valuationRecorded { margin: 1rem 0 0; padding: .8rem 1rem; border-radius: 10px; background: #f4f7f4; font-size: .88rem; line-height: 1.5; }
+.valuationRecorded { border: 1px solid #c5dcc8; }
+.confirmSummary { margin: 0 0 1rem; display: grid; gap: .65rem; font-size: .9rem; }
+.confirmSummary div { display: grid; gap: .15rem; }
+.confirmSummary dt { margin: 0; color: var(--color-muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+.confirmSummary dd { margin: 0; font-weight: 600; }
 .valuationPending { background: #fff5e6; }
 .revisionHistory { margin-top: 1.2rem; font-size: .85rem; }
 .revisionHistory summary { cursor: pointer; font-weight: 700; }
@@ -97,6 +105,7 @@ textarea.input { resize: vertical; line-height: 1.5; }
 .modalTitle {
   margin: 0 0 0.35rem;
   font-size: 1.05rem;
+  text-align: center;
 }
 .modalBody {
   margin: 0 0 1rem;
@@ -108,6 +117,7 @@ textarea.input { resize: vertical; line-height: 1.5; }
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+  justify-content: center;
 }
 @media (max-width: 1000px) { .contentGrid { grid-template-columns: minmax(0, 1fr); } .decisionCard { position: static; } }
 @media (max-width: 640px) { .caseHeader { flex-direction: column; } .detailsGrid, .valuationGrid { grid-template-columns: minmax(0, 1fr); } .worksheetRow { grid-template-columns: minmax(0, 1fr); gap: 0; } .rowRemove { width: fit-content; } .card, .decisionCard { padding: 1rem; } .sectionHeading { align-items: flex-start; } }

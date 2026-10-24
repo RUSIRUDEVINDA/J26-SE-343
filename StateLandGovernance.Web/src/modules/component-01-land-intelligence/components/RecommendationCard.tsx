@@ -141,7 +141,7 @@ export function RecommendationCard({
         onClick={() => setExpanded((open) => !open)}
       >
         <span className={styles.rank} aria-label={orderingAria}>
-          <span className={styles.rankOrder}>Order {displayOrder}</span>
+          <span className={styles.rankOrder}>Parcel {displayOrder}</span>
           {isTied ? (
             <span className={styles.rankTie}>Tied</span>
           ) : null}
