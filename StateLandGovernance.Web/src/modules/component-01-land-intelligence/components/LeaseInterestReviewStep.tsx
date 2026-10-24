@@ -256,7 +256,7 @@ export function LeaseInterestReviewStep({
           label="Checklist"
           value={
             checklist?.items.length
-              ? `${checklist.items.length} item(s) — guidance only (no upload in this demo)`
+              ? `${checklist.items.length} item(s) — guidance only`
               : "Checklist unavailable"
           }
         />
