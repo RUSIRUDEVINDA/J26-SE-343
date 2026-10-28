@@ -219,8 +219,15 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
             input.InvestmentAmount,
             input.ZoningArea ?? string.Empty);
 
+        if (input.DevelopmentRegulatoryInput != null &&
+            (!input.IsDevelopmentSpatialMock || effectivePolicy?.Version.StartsWith("DEV-CATALOGUE:", StringComparison.Ordinal) != true ||
+             input.DevelopmentRegulatoryInput.ProposalId != input.CaseId ||
+             string.IsNullOrWhiteSpace(input.DevelopmentRegulatoryInputVersion) || string.IsNullOrWhiteSpace(input.DevelopmentRegulatorySourceReference)))
+            throw new InvalidOperationException("Structured demonstration inputs require the bound Development catalogue policy and labelled provenance.");
         var result = effectivePolicy == null ? _complianceEngine.Evaluate(legacyInput, rules, evaluationTimestamp)
-            : _complianceEngine.EvaluateNpd(new ProposalComplianceInput(input.CaseId,
+            : _complianceEngine.EvaluateNpd(input.DevelopmentRegulatoryInput != null
+                ? StateLandGovernance.GovernanceIntelligence.Application.DTOs.ProposalComplianceInputMapper.Map(input.DevelopmentRegulatoryInput, strictDemonstrationInput:true)
+                : new ProposalComplianceInput(input.CaseId,
                 Location: new(input.Province, input.District, input.DivisionalSecretariat, input.SpatialEvidence?.GramaNiladhariDivision, null),
                 LandRequirement: new(RequiresLand: true, ExtentHectares: input.ExtentHectares),
                 Budget: new(SubmittedProjectBudget: input.InvestmentAmount, CostComponents: null),
@@ -248,7 +255,7 @@ public sealed class OrchestrateGovernanceScreeningCommandHandler
 
         var section = new RegulatoryComplianceSectionDto(
             Status: result.Status.ToString(),
-            EvaluatedRulesCount: effectivePolicy?.Rules.Count ?? rules.Count,
+            EvaluatedRulesCount: effectivePolicy == null ? rules.Count : result.Findings.Count,
             ViolationsCount: violations.Count,
             ConditionsCount: conditions.Count,
             Violations: violations,
