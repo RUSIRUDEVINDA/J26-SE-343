@@ -1,0 +1,88 @@
+{
+  "scenario": "kiwula-kale-named-route-v2",
+  "sourceVersion": "kiwula-named-route/2",
+  "proposalId": "kiulakale-demonstration-adaptation-v1",
+  "title": "Project_Proposal_Kiwula Kale",
+  "status": "Prepared only — not registered or executed",
+  "disclosure": "Prepared PP1 decisions and routing assumptions, not official government activity. Provincial branch and departmental applicability require confirmation.",
+  "eventTimeZone": "Asia/Colombo",
+  "timestampSemantics": "Local business time with Colombo offset; model timestamps remain naive wall-clock strings",
+  "institutions": [
+    "Mahakumbukkadawala Divisional Secretariat",
+    "Department of Agriculture",
+    "North Western Provincial Environmental Authority",
+    "North Western Provincial Land Commissioner’s Department",
+    "Land Commissioner General’s Department"
+  ],
+  "assumptions": [
+    "Agriculture and environmental reviews selected for this prepared agricultural scenario only; not mandatory findings.",
+    "North Western provincial branch chosen as a presentation assumption, not verified province coverage.",
+    "No Agrarian Development, Pradeshiya Sabha or irrigation authority inserted without a scenario-specific reason.",
+    "Notification is distinct from Commissioner decision; no legal handover asserted."
+  ],
+  "events": [
+    {
+      "eventSeq": 1,
+      "activity": "Application Received",
+      "institutionName": "Mahakumbukkadawala Divisional Secretariat",
+      "resource": "prepared-route-role-1",
+      "timestamp": "2026-02-02T09:00:00+05:30",
+      "anomalyInputTimestamp": "2026-02-02T09:00:00",
+      "outcome": "Received"
+    },
+    {
+      "eventSeq": 2,
+      "activity": "Document Review",
+      "institutionName": "Department of Agriculture",
+      "resource": "prepared-route-role-2",
+      "timestamp": "2026-02-05T09:00:00+05:30",
+      "anomalyInputTimestamp": "2026-02-05T09:00:00",
+      "outcome": "Technical review requested"
+    },
+    {
+      "eventSeq": 3,
+      "activity": "Recommendation",
+      "institutionName": "North Western Provincial Environmental Authority",
+      "resource": "prepared-route-role-3",
+      "timestamp": "2026-02-08T09:00:00+05:30",
+      "anomalyInputTimestamp": "2026-02-08T09:00:00",
+      "outcome": "Conditional recommendation"
+    },
+    {
+      "eventSeq": 4,
+      "activity": "DS Review",
+      "institutionName": "Mahakumbukkadawala Divisional Secretariat",
+      "resource": "prepared-route-role-1",
+      "timestamp": "2026-02-11T09:00:00+05:30",
+      "anomalyInputTimestamp": "2026-02-11T09:00:00",
+      "outcome": "Recommended subject to evidence"
+    },
+    {
+      "eventSeq": 5,
+      "activity": "Regional Review",
+      "institutionName": "North Western Provincial Land Commissioner’s Department",
+      "resource": "prepared-route-role-4",
+      "timestamp": "2026-02-14T09:00:00+05:30",
+      "anomalyInputTimestamp": "2026-02-14T09:00:00",
+      "outcome": "Conditional recommendation"
+    },
+    {
+      "eventSeq": 6,
+      "activity": "Commissioner Decision",
+      "institutionName": "Land Commissioner General’s Department",
+      "resource": "prepared-route-role-5",
+      "timestamp": "2026-02-17T09:00:00+05:30",
+      "anomalyInputTimestamp": "2026-02-17T09:00:00",
+      "outcome": "Conditional approval"
+    },
+    {
+      "eventSeq": 7,
+      "activity": "DS Final Notification",
+      "institutionName": "Mahakumbukkadawala Divisional Secretariat",
+      "resource": "prepared-route-role-1",
+      "timestamp": "2026-02-19T09:00:00+05:30",
+      "anomalyInputTimestamp": "2026-02-19T09:00:00",
+      "outcome": "Decision notified"
+    }
+  ]
+}
