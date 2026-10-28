@@ -1,3 +1,5 @@
+using System;
+using StateLandGovernance.GovernanceIntelligence.Application.RegulatoryReports;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +13,8 @@ namespace StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 /// </summary>
 public interface IGovernanceEvaluationStore
 {
+    Task<Guid> StoreOwnedComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result,string actionName,string? proposalId,string? caseId,SavedRegulatoryProvenance provenance,CancellationToken ct)
+        =>throw new NotSupportedException("Owned regulatory persistence unavailable.");
     Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, CancellationToken cancellationToken = default);
     Task StoreComplianceEvaluationAsync(GovernanceAuditRecord auditRecord, ComplianceResult result, string actionName, string? proposalId, string? caseId = null, CancellationToken cancellationToken = default);
     Task StoreConflictEvaluationAsync(GovernanceAuditRecord auditRecord, IReadOnlyList<DetectedConflict> conflicts, string actionName, int totalEvaluatedDecisions, CancellationToken cancellationToken = default);

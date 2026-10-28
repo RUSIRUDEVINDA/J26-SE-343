@@ -103,9 +103,9 @@ public static class NpdRuleCatalogue
             {
                 SourceAuthority = ruleDef.SourceReference.SourceAuthority,
                 SourceDocument = ruleDef.SourceReference.SourceDocument,
-                SourceSection = !string.IsNullOrWhiteSpace(finding.SourceReference?.SourceSection)
-                    ? finding.SourceReference.SourceSection
-                    : ruleDef.SourceReference.SourceSection
+                SourceSection = !string.IsNullOrWhiteSpace(ruleDef.SourceReference.SourceSection)
+                    ? ruleDef.SourceReference.SourceSection
+                    : finding.SourceReference.SourceSection
             }
         };
     }
@@ -330,7 +330,17 @@ public static class NpdRuleCatalogue
     private static ComplianceFinding EvaluateStakeholderCoordination(ProposalComplianceInput input)
     {
         var stk = input.Stakeholders;
-        if (stk == null || stk.ExpectedStakeholders == null || stk.ExpectedStakeholders.Count == 0)
+        if (stk == null || stk.ExpectedStakeholders == null)
+        {
+            return new ComplianceFinding(
+                "NPD-STK-001", "1.0", RuleEvaluationType.StakeholderCoordinationEvidence, RuleApplicability.Undetermined,
+                RuleResultStatus.InsufficientInformation, "Medium", false, true,
+                "Stakeholder applicability evidence is unavailable.", "Supply a reviewed expected-stakeholder declaration.",
+                EvidenceStatus.Missing, CalculationStatus.MissingInputs,
+                NpdSource with { SourceSection = "Item 9 — Stakeholder Coordination" },
+                "Provide stakeholder evidence; missing is not an explicit NotApplicable decision.");
+        }
+        if (stk.ExpectedStakeholders.Count == 0)
         {
             return new ComplianceFinding(
                 "NPD-STK-001", "1.0", RuleEvaluationType.StakeholderCoordinationEvidence, RuleApplicability.NotApplicable,

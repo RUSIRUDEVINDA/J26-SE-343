@@ -20,5 +20,6 @@ public sealed record ComplianceResultDto(
     IReadOnlyList<ViolationDto> Violations,
     IReadOnlyList<ComplianceConditionDto> Conditions,
     IReadOnlyList<ComplianceFindingDto>? Findings = null,
-    string? DeterministicEvaluationId = null
+    string? DeterministicEvaluationId = null,
+    System.Guid? StoredEvaluationId = null
 );

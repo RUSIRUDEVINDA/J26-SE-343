@@ -41,9 +41,25 @@ public class GovernanceIntelligenceDbContext : DbContext
     public DbSet<WorkflowAnomalyAssessmentEntity> WorkflowAnomalyAssessments => Set<WorkflowAnomalyAssessmentEntity>();
     public DbSet<LeaseApprovalTimingAssessmentEntity> LeaseApprovalTimingAssessments => Set<LeaseApprovalTimingAssessmentEntity>();
 
+    private void ProtectRegulatoryFollowups()
+    {
+        if (ChangeTracker.Entries<RegulatoryFollowupEntity>().Any(x => x.State is EntityState.Modified or EntityState.Deleted))
+            throw new InvalidOperationException("Regulatory follow-up history is append-only.");
+    }
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        ProtectRegulatoryFollowups();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        ProtectRegulatoryFollowups();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        if(ChangeTracker.Entries<ScreeningEvidenceAttachmentEntity>().Any(x=>x.State is EntityState.Modified or EntityState.Deleted) || ChangeTracker.Entries<ScreeningEvidenceVerificationEntity>().Any(x=>x.State is EntityState.Modified or EntityState.Deleted) || ChangeTracker.Entries<ComplaintAssignmentEntity>().Any(x=>x.State is EntityState.Modified or EntityState.Deleted) || ChangeTracker.Entries<ComplaintHandlingEntity>().Any(x=>x.State is EntityState.Modified or EntityState.Deleted))
+        if(ChangeTracker.Entries<RegulatoryFollowupEntity>().Any(x=>x.State is EntityState.Modified or EntityState.Deleted) || ChangeTracker.Entries<ScreeningEvidenceAttachmentEntity>().Any(x=>x.State is EntityState.Modified or EntityState.Deleted) || ChangeTracker.Entries<ScreeningEvidenceVerificationEntity>().Any(x=>x.State is EntityState.Modified or EntityState.Deleted) || ChangeTracker.Entries<ComplaintAssignmentEntity>().Any(x=>x.State is EntityState.Modified or EntityState.Deleted) || ChangeTracker.Entries<ComplaintHandlingEntity>().Any(x=>x.State is EntityState.Modified or EntityState.Deleted))
             throw new InvalidOperationException("Complaint assignment history is append-only.");
         return base.SaveChangesAsync(cancellationToken);
     }
