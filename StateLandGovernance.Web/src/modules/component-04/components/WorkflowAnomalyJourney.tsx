@@ -117,15 +117,15 @@ export function WorkflowAnomalyJourneyView({
   processedEventCount?: number;
 }) {
   const features = assessment ? [
-    ["Event count", assessment.eventCount],
-    ["Elapsed days", assessment.elapsedDays],
-    ["Maximum gap hours", assessment.maxGapHours],
-    ["Mean gap hours", assessment.meanGapHours],
-    ["Unique activities", assessment.uniqueActivities],
-    ["Repeated activity count", assessment.repeatedActivityCount],
-    ["Resource handoffs", assessment.resourceHandoffs],
-    ["Institution switches", assessment.institutionSwitches],
-    ["Distinct resources", assessment.distinctResources],
+    ["Event count", assessment.eventCount, "How many recorded steps are in the completed workflow."],
+    ["Elapsed days", assessment.elapsedDays, "The time from the first recorded step to the last recorded step."],
+    ["Maximum gap hours", assessment.maxGapHours, "The longest wait between two consecutive recorded steps."],
+    ["Mean gap hours", assessment.meanGapHours, "The average wait between consecutive recorded steps."],
+    ["Unique activities", assessment.uniqueActivities, "How many different types of work were recorded."],
+    ["Repeated activity count", assessment.repeatedActivityCount, "How many recorded steps repeated an activity already seen in this workflow."],
+    ["Resource handoffs", assessment.resourceHandoffs, "How many times responsibility moved to a different recorded person or resource."],
+    ["Institution switches", assessment.institutionSwitches, "How many times the workflow moved from one institution to another."],
+    ["Distinct resources", assessment.distinctResources, "How many different recorded people or resources took part across the institutions."],
   ] as const : [];
 
   return <div className={styles.content}>
@@ -215,14 +215,15 @@ export function WorkflowAnomalyJourneyView({
         <p className={styles.guidance}>{assessment.flagged
           ? "Review the workflow history and supporting records before allowing normal processing to continue."
           : "No statistical escalation was produced. This does not prove that the workflow is compliant or free from governance concerns."}</p>
+        <button className={styles.action} type="button" disabled title="Workflow Governance handoff is not available yet">Send results to Workflow Governance</button>
       </section>
 
       <section aria-labelledby="feature-context-title">
         <h3 id="feature-context-title">Observed workflow characteristics</h3>
-        <div className={styles.tableWrap}><table><thead><tr><th scope="col">Characteristic</th><th scope="col">Persisted value</th></tr></thead><tbody>
-          {features.map(([label, value]) => <tr key={label}><th scope="row">{label}</th><td>{value}</td></tr>)}
+        <div className={styles.tableWrap}><table><thead><tr><th scope="col">Characteristic</th><th scope="col">Persisted value</th><th scope="col">What it means</th></tr></thead><tbody>
+          {features.map(([label, value, description]) => <tr key={label}><th scope="row">{label}</th><td>{value}</td><td>{description}</td></tr>)}
         </tbody></table></div>
-        <p>These values provide review context and are not proven causes of the model result.</p>
+        <p>The model considers all nine measurements together. They provide review context; no individual value is a proven cause of the result.</p>
       </section>
     </>}
 
