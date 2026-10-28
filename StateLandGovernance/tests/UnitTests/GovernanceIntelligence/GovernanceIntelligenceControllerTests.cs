@@ -1,3 +1,6 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -19,6 +22,7 @@ public class GovernanceIntelligenceControllerTests
 {
     private readonly GovernanceIntelligenceController _controller;
     private readonly SpyAuditRepository _spyAuditRepo;
+    private readonly IConfiguration _sandbox = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string,string?>{{"GovernanceIntelligence:ConflictSandbox:WritesEnabled","true"}}).Build();
 
     private class SpyAuditRepository : IGovernanceAuditRepository
     {
@@ -62,6 +66,8 @@ public class GovernanceIntelligenceControllerTests
         var verificationHandler = new EvaluateConditionalVerificationCommandHandler(verificationEngine, evalStore, timeProvider);
 
         _controller = new GovernanceIntelligenceController(complianceHandler, conflictHandler, riskHandler, explanationHandler, consensusHandler, verificationHandler);
+        _controller.ControllerContext = new() { HttpContext = new DefaultHttpContext() };
+        _controller.HttpContext.User = new(new ClaimsIdentity(new[]{new Claim(ClaimTypes.NameIdentifier,Guid.NewGuid().ToString()),new Claim(ClaimTypes.Role,"Officer")},"unit"));
     }
 
     [Fact]
@@ -78,7 +84,7 @@ public class GovernanceIntelligenceControllerTests
         );
 
         // Act
-        var response = await _controller.DetectConflicts(command, CancellationToken.None);
+        var response = await _controller.DetectConflicts(command, CancellationToken.None, _sandbox);
 
         // Assert
         var result = Assert.IsType<OkObjectResult>(response.Result);
@@ -91,7 +97,7 @@ public class GovernanceIntelligenceControllerTests
     {
         // 2. Truly null command returns 400
         // Act
-        var response = await _controller.DetectConflicts(null!, CancellationToken.None);
+        var response = await _controller.DetectConflicts(null!, CancellationToken.None, _sandbox);
 
         // Assert
         Assert.IsType<BadRequestObjectResult>(response.Result);
@@ -108,7 +114,7 @@ public class GovernanceIntelligenceControllerTests
         );
 
         // Act
-        var response = await _controller.DetectConflicts(command, CancellationToken.None);
+        var response = await _controller.DetectConflicts(command, CancellationToken.None, _sandbox);
 
         // Assert
         Assert.IsType<BadRequestObjectResult>(response.Result);
@@ -129,7 +135,7 @@ public class GovernanceIntelligenceControllerTests
         );
 
         // Act
-        var response = await _controller.DetectConflicts(command, CancellationToken.None);
+        var response = await _controller.DetectConflicts(command, CancellationToken.None, _sandbox);
 
         // Assert
         var result = Assert.IsType<BadRequestObjectResult>(response.Result);
@@ -153,7 +159,7 @@ public class GovernanceIntelligenceControllerTests
         );
 
         // Act
-        await _controller.DetectConflicts(command, token);
+        await _controller.DetectConflicts(command, token, _sandbox);
 
         // Assert
         Assert.Equal(token, _spyAuditRepo.CapturedToken);
