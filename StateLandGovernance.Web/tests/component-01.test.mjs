@@ -164,3 +164,14 @@ test("match score display shows 100 only for exact 100 and truncates near-perfec
   assert.equal(formatRuleScore(95.55), "95.55");
   assert.equal(formatCriterionScore(90), "90.00");
 });
+
+test("recommendations page isolates URL search parameters behind an accessible Suspense fallback", () => {
+  const page = fs.readFileSync(
+    new URL("../src/app/land-intelligence/recommendations/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(page, /import \{ Suspense \} from "react"/);
+  assert.match(page, /fallback=\{<LoadingState message="Loading recommendations…" \/>\}/);
+  assert.match(page, /<Suspense[\s\S]*?<RecommendationsView \/>[\s\S]*?<\/Suspense>/);
+});
