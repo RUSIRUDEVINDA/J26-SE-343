@@ -22,6 +22,35 @@ public sealed class ManualEvidenceStore(GovernanceIntelligenceDbContext db,IComp
  Task Lock(Guid request,CancellationToken ct)=>db.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock(hashtextextended({"c4-manual-evidence:"+request},0))",ct);
  static ScreeningEvidence Metadata(ScreeningEvidenceAttachmentEntity r)=>new(r.Id,r.RequestId,r.Concern,r.CreatorActorId,r.CreatedAtUtc,r.FileName,r.ContentType,r.Content.Length,r.ContentSha256);
  static ScreeningVerification View(ScreeningEvidenceVerificationEntity r)=>new(r.Id,r.RequestId,r.Concern,r.Revision,r.PreviousStatus,r.Status,r.CreatorActorId,r.CreatedAtUtc,r.Remarks,JsonSerializer.Deserialize<Guid[]>(r.AttachmentIdsJson)!,JsonSerializer.Deserialize<string[]>(r.ReferencesJson)!,r.EventSha256);
+ public async Task<PreviousScreeningEvidencePage> PreviousAsync(Guid request,int limit,string? cursor,CancellationToken ct){
+  await Scope(request,false,ct);
+  if(limit is <1 or >10)throw new ArgumentException("History page size must be between 1 and 10.");
+  var requests=db.Set<OfficerAssessmentRequestEntity>().AsNoTracking();
+  var investigations=db.Set<OfficerInvestigationEntity>().AsNoTracking();
+  var anchor=await requests.SingleAsync(x=>x.Id==request,ct);
+  var source=await investigations.SingleOrDefaultAsync(x=>x.Id==anchor.InvestigationId&&x.CreatorActorId==anchor.CreatorActorId,ct)??throw new KeyNotFoundException();
+  if(string.IsNullOrWhiteSpace(source.ProposalId)||anchor.ScopeKey!=source.ProposalId)throw new OfficerUnavailableException();
+  var central=await commissioner.CanReadAllAsync(actor.ActorId,ct);
+  // Stable persisted proposal identity, never a display label or browser-supplied proposal key.
+  var query=from r in requests join i in investigations on r.InvestigationId equals (Guid?)i.Id
+   where r.Kind=="early"&&r.State=="Saved"&&r.EarlyAssessmentId!=null&&r.Id!=request
+    &&i.ProposalId==source.ProposalId&&r.ScopeKey==i.ProposalId&&i.CreatorActorId==r.CreatorActorId
+    &&(central||r.CreatorActorId==actor.ActorId)
+    &&(r.CreatedAtUtc<anchor.CreatedAtUtc||(r.CreatedAtUtc==anchor.CreatedAtUtc&&r.Id.CompareTo(anchor.Id)<0))
+    &&(Attachments.Any(a=>a.RequestId==r.Id)||Events.Any(e=>e.RequestId==r.Id)) select r;
+  if(cursor!=null){
+   if(cursor.Length>36||!Guid.TryParse(cursor,out var lastId))throw new ArgumentException("Invalid history cursor.");
+   var last=await query.SingleOrDefaultAsync(x=>x.Id==lastId,ct)??throw new ArgumentException("History cursor no longer available; refresh history.");
+   await Scope(last.Id,false,ct);
+   query=query.Where(x=>x.CreatedAtUtc<last.CreatedAtUtc||(x.CreatedAtUtc==last.CreatedAtUtc&&x.Id.CompareTo(last.Id)<0));
+  }
+  var rows=await query.OrderByDescending(x=>x.CreatedAtUtc).ThenByDescending(x=>x.Id).Take(limit+1).ToArrayAsync(ct);
+  var items=new List<PreviousScreeningEvidence>();
+  foreach(var row in rows.Take(limit)){var evidence=await ReadAsync(row.Id,ct);items.Add(new(row.Id,row.EarlyAssessmentId!.Value,row.CreatedAtUtc,evidence with{CanVerify=false}));}
+  foreach(var item in items)await Scope(item.RequestId,false,ct);
+  await Scope(request,false,ct);
+  return new(items,rows.Length>limit?items[^1].RequestId.ToString():null);
+ }
  public async Task<ManualEvidenceView> ReadAsync(Guid request,CancellationToken ct){var can=await Scope(request,false,ct);var attachments=await Attachments.AsNoTracking().Where(x=>x.RequestId==request).OrderBy(x=>x.CreatedAtUtc).Select(x=>new ScreeningEvidence(x.Id,x.RequestId,x.Concern,x.CreatorActorId,x.CreatedAtUtc,x.FileName,x.ContentType,x.Content.Length,x.ContentSha256)).Take(100).ToArrayAsync(ct);var history=await Events.AsNoTracking().Where(x=>x.RequestId==request).OrderBy(x=>x.Concern).ThenBy(x=>x.Revision).Take(1000).ToArrayAsync(ct);await Scope(request,false,ct);return new(can,attachments,history.Select(View).ToArray());}
  public async Task<ScreeningEvidence> AttachAsync(Guid request,AttachScreeningEvidence input,CancellationToken ct){await Scope(request,true,ct);input=ManualEvidenceInput.Validate(input);var contentHash=Convert.ToHexString(SHA256.HashData(input.Content)).ToLowerInvariant();var hash=OfficerFlowInput.Hash(JsonSerializer.Serialize(new{request,input.Concern,input.FileName,input.ContentType,contentHash}));
   await using var tx=await db.Database.BeginTransactionAsync(ct);await Lock(request,ct);await Scope(request,true,ct);
