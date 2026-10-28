@@ -16,6 +16,7 @@ import {
   type NavItem,
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
+import {canShowGovernanceNavigation} from "@/modules/component-04/services/postLogin";
 
 function isActive(
   pathname: string,
@@ -118,6 +119,7 @@ export function Sidebar({
 
   const visibleItems = useMemo(() => {
     return navItems.filter((item) => {
+      if(item.href.startsWith("/component-04")&&!canShowGovernanceNavigation(user))return false;
       if (
         !user ||
         !item.href.startsWith("/workflow-governance")
@@ -157,7 +159,7 @@ export function Sidebar({
     >
       <nav className={styles.nav}>
         {visibleItems.map((item) => {
-          const active = isActive(pathname, item.href, basePath);
+          const active = isActive(pathname, item.href, basePath) && (basePath!=="/component-04" || !visibleItems.some(other=>other.href.length>item.href.length&&isActive(pathname,other.href,basePath)));
 
           const className = [
             styles.link,
@@ -174,9 +176,9 @@ export function Sidebar({
               className={className}
               aria-current={active ? "page" : undefined}
             >
-              <span className={styles.icon} aria-hidden="true">
+              {item.icon&&<span className={styles.icon} aria-hidden="true">
                 {item.icon}
-              </span>
+              </span>}
               <span className={styles.label}>{item.label}</span>
             </Link>
           );
