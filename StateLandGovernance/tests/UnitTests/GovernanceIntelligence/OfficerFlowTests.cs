@@ -1,0 +1,22 @@
+using Microsoft.Extensions.Configuration;
+using StateLandGovernance.GovernanceIntelligence.Application.OfficerFlows;
+using StateLandGovernance.GovernanceIntelligence.Application.Demonstrations;
+using StateLandGovernance.GovernanceIntelligence.Domain.Enums;
+using Xunit;
+namespace StateLandGovernance.UnitTests.GovernanceIntelligence;
+public sealed class OfficerFlowTests {
+ static SaveInvestigation Input()=>new(Guid.NewGuid(),KiwulaCatalogue.ProposalId,Enum.GetNames<EarlyGovernanceIndicatorType>().Select(n=>new OfficerFinding(n,"NotYetVerified","")).ToArray());
+ [Theory][InlineData("IssueFound","A reported concern needs separate independent verification.","Unverified")][InlineData("NoIssueFound","","Unverified")][InlineData("NotYetVerified","","Missing")][InlineData("NotYetVerified","Waiting for records","Unverified")]
+ public void ChoicesPreservedWithoutPromotion(string choice,string remarks,string state){var input=Input();var rows=input.Findings.ToArray();rows[0]=rows[0] with{Choice=choice,Remarks=remarks};var checkedInput=OfficerFlowInput.Validate(input with{Findings=rows});Assert.Contains(checkedInput.Findings,x=>x.Choice==choice&&x.Remarks==remarks);var saved=new Investigation(Guid.NewGuid(),Guid.NewGuid(),input.ProposalId,input.SubmissionKey,OfficerFlowInput.Version,"",checkedInput.Findings,DateTimeOffset.UtcNow,null);Assert.Equal(state,OfficerFlowInput.Indicators(saved)[0].EvidenceState);}
+ [Fact]public void InvalidAndDuplicatedConcernsRejected(){var input=Input();Assert.Throws<ArgumentException>(()=>OfficerFlowInput.Validate(input with{Findings=input.Findings.Take(6).ToArray()}));Assert.Throws<ArgumentException>(()=>OfficerFlowInput.Validate(input with{Findings=Enumerable.Repeat(input.Findings[0],7).ToArray()}));Assert.Throws<ArgumentException>(()=>OfficerFlowInput.Validate(input with{Findings=input.Findings.Select(x=>x with{Choice="VerifiedAbsent"}).ToArray()}));Assert.Throws<ArgumentException>(()=>OfficerFlowInput.Validate(input with{Findings=input.Findings.Select(x=>x with{Choice="IssueFound",Remarks="yes"}).ToArray()}));}
+ [Fact]public void NewRunsKeepVettedVersionAndChronology(){var first=NamedOfficerWorkflow.Create(Guid.NewGuid(),Guid.NewGuid(),DateTimeOffset.UtcNow);var second=NamedOfficerWorkflow.Create(Guid.NewGuid(),Guid.NewGuid(),DateTimeOffset.UtcNow);Assert.NotEqual(first.WorkflowRunId,second.WorkflowRunId);Assert.Equal(first.Events.Select(e=>e.Activity),second.Events.Select(e=>e.Activity));Assert.Equal(Enumerable.Range(1,7),first.Events.Select(e=>e.EventSeq));Assert.Equal("DS Final Notification",first.Events.Last().Activity);Assert.Equal("Commissioner Decision",first.Events[^2].Activity);Assert.True(first.Events.Zip(first.Events.Skip(1)).All(p=>p.First.Timestamp<=p.Second.Timestamp));}
+ [Theory][InlineData(true,503)][InlineData(false,403)]
+ public async Task TrustedDsProfileRequiresExactAuthenticatedActor(bool sameActor,int expected){
+ var actor=Guid.NewGuid();var configuration=new Microsoft.Extensions.Configuration.ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string,string?>{{"LocalDevelopmentSignIn:Accounts:0:Username","proof-ds"},{"LocalDevelopmentSignIn:Accounts:0:ActorId",(sameActor?actor:Guid.NewGuid()).ToString("D")},{"LocalDevelopmentSignIn:Accounts:0:TokenRole","Officer"},{"LocalDevelopmentSignIn:Accounts:0:Institution","DS"}}).Build();
+ var controller=new StateLandGovernance.GovernanceIntelligence.Presentation.Controllers.OfficerFlowsController(null!,new TestEnvironment(),configuration){ControllerContext=new(){HttpContext=new Microsoft.AspNetCore.Http.DefaultHttpContext()}};
+ controller.HttpContext.User=new(new System.Security.Claims.ClaimsIdentity([new(System.Security.Claims.ClaimTypes.NameIdentifier,actor.ToString()),new(System.Security.Claims.ClaimTypes.Role,"Officer"),new("development_account","proof-ds")],"unit"));
+ var result=await controller.Catalogue(default);if(expected==403)Assert.IsType<Microsoft.AspNetCore.Mvc.ForbidResult>(result);else Assert.Equal(expected,Assert.IsAssignableFrom<Microsoft.AspNetCore.Mvc.ObjectResult>(result).StatusCode);
+ }
+ sealed class TestEnvironment:Microsoft.Extensions.Hosting.IHostEnvironment{public string EnvironmentName{get;set;}="Development";public string ApplicationName{get;set;}="test";public string ContentRootPath{get;set;}="";public Microsoft.Extensions.FileProviders.IFileProvider ContentRootFileProvider{get;set;}=new Microsoft.Extensions.FileProviders.NullFileProvider();}
+}
+
