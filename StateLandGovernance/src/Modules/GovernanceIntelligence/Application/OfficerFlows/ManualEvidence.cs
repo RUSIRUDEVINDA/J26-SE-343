@@ -5,7 +5,10 @@ public sealed record VerifyScreeningEvidence(Guid SubmissionKey,string Concern,i
 public sealed record ScreeningEvidence(Guid Id,Guid RequestId,string Concern,Guid ActorId,DateTimeOffset CreatedAtUtc,string FileName,string ContentType,int Bytes,string Sha256);
 public sealed record ScreeningVerification(Guid Id,Guid RequestId,string Concern,int Revision,string PreviousStatus,string Status,Guid ActorId,DateTimeOffset CreatedAtUtc,string Remarks,Guid[] AttachmentIds,string[] EvidenceReferences,string EventSha256);
 public sealed record ManualEvidenceView(bool CanVerify,IReadOnlyList<ScreeningEvidence> Attachments,IReadOnlyList<ScreeningVerification> History);
+public sealed record PreviousScreeningEvidence(Guid RequestId,Guid AssessmentId,DateTimeOffset CreatedAtUtc,ManualEvidenceView Evidence);
+public sealed record PreviousScreeningEvidencePage(IReadOnlyList<PreviousScreeningEvidence> Items,string? NextCursor);
 public interface IManualEvidenceStore {
+ Task<PreviousScreeningEvidencePage> PreviousAsync(Guid request,int limit,string? cursor,CancellationToken ct);
  Task<ManualEvidenceView> ReadAsync(Guid request,CancellationToken ct);
  Task<ScreeningEvidence> AttachAsync(Guid request,AttachScreeningEvidence input,CancellationToken ct);
  Task<ScreeningVerification> VerifyAsync(Guid request,VerifyScreeningEvidence input,CancellationToken ct);
