@@ -1,3 +1,4 @@
+using StateLandGovernance.GovernanceIntelligence.Application.RegulatoryReports;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -32,18 +33,16 @@ EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
 
-if (
-    builder.Environment.IsDevelopment()
-    && builder.Configuration.GetValue<bool>(
-        "LocalDevelopmentSignIn:Enabled"
-    )
-)
+if (args.Contains("--setup-demo-accounts", StringComparer.Ordinal))
 {
-    builder.Configuration.AddJsonFile(
-        "development-accounts.local.json",
-        optional: false,
-        reloadOnChange: false
-    );
+    await PortalAccountStore.SetupAsync(builder.Configuration, builder.Environment, builder.Environment.ContentRootPath);
+    return;
+}
+
+if (builder.Configuration.GetValue<bool>("PortalAuthentication:Enabled") ||
+    (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("LocalDevelopmentSignIn:Enabled")))
+{
+    await PortalAccountStore.LoadAsync(builder.Configuration);
 }
 
 var isOcrDemoEnabled =
@@ -104,6 +103,10 @@ builder.Services.AddGovernanceIntelligenceInfrastructure(
     builder.Configuration,
     builder.Environment
 );
+
+builder.Services.Configure<DevelopmentRegulatoryReportReadOptions>(
+    builder.Configuration.GetSection("GovernanceIntelligence:IndependentRegulatoryRead"));
+builder.Services.Replace(ServiceDescriptor.Scoped<IIndependentRegulatoryReadAssignments, DevelopmentRegulatoryReportAssignments>());
 
 builder.Services.AddTransient<EvaluateComplianceCommandHandler>();
 builder.Services.AddGovernanceConflictDetection();
@@ -183,6 +186,7 @@ builder.Services.AddTransient<
 
 builder.Services.AddSingleton<DevelopmentAccounts>();
 builder.Services.AddScoped<UploadedCaseResearchScenarios>();
+builder.Services.AddScoped<StateLandGovernance.WorkflowGovernance.Application.Interfaces.IDevelopmentRegulatoryInputSource,DevelopmentRegulatoryInputSource>();
 builder.Services.AddScoped<DevelopmentSpatialInputProvider>();
 
 builder.Services.AddScoped<
@@ -191,6 +195,15 @@ builder.Services.AddScoped<
 >();
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IRegulatoryCaseBindingValidator,RegulatoryCaseBindingValidator>();
+builder.Services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintReferenceAccess, ComplaintReferenceAccess>();
+builder.Services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintOfficerDirectory, CentralComplaintDirectory>();
+builder.Services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintCentralGrantSource, CentralComplaintGrantFile>();
+builder.Services.Configure<CommissionerReportReadOptions>(builder.Configuration.GetSection("GovernanceIntelligence:CommissionerReportReads"));
+builder.Services.AddScoped(sp=>sp.GetRequiredService<IOptionsSnapshot<CommissionerReportReadOptions>>().Value);
+builder.Services.AddScoped<ICommissionerReportGrantSource,CommissionerReportGrantFile>();
+builder.Services.AddScoped<ICommissionerReportReadAccess,CommissionerReportReadAccess>();
+builder.Services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintActorContext, ComplaintHttpActor>();
 
 builder.Services.AddScoped<
     StateLandGovernance.WorkflowGovernance.Application.Interfaces.IScreeningEvidenceProvider,
@@ -384,36 +397,6 @@ if (app.Environment.IsDevelopment())
         }
     }
 
-    try
-    {
-        using var scope = app.Services.CreateScope();
-
-        var dbContext = scope.ServiceProvider
-            .GetService<LandIntelligenceDbContext>();
-
-        if (
-            dbContext != null
-            && dbContext.Database.CanConnect()
-        )
-        {
-            dbContext.Database.Migrate();
-        }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine(
-            $"[Development] LandIntelligence migration skipped: {ex.Message}"
-        );
-    }
-}
-else
-{
-    using var scope = app.Services.CreateScope();
-
-    var dbContext = scope.ServiceProvider
-        .GetRequiredService<LandIntelligenceDbContext>();
-
-    dbContext.Database.Migrate();
 }
 
 app.Use(async (context, next) =>

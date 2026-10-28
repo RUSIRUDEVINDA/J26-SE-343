@@ -57,6 +57,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped(sp => sp.GetRequiredService<IOptionsSnapshot<CentralComplaintOptions>>().Value);
         services.AddScoped<ComplaintAssignmentAuditInterceptor>();
         services.AddScoped<ScreeningEvidenceAuditInterceptor>();
+        services.AddScoped<InvestigationEvidenceAuditInterceptor>();
+        services.AddScoped<OfficerSequenceStore>();
+        services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.OfficerFlows.IOfficerSequenceStore>(sp=>sp.GetRequiredService<OfficerSequenceStore>());
+        services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.OfficerFlows.IOfficerSequencePrerequisites>(sp=>sp.GetRequiredService<OfficerSequenceStore>());
+        services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.OfficerFlows.IInvestigationEvidenceStore, InvestigationEvidenceStore>();
+        services.AddScoped<RegulatoryFollowupAuditInterceptor>();
+        services.AddScoped<IRegulatoryFollowupStore, RegulatoryFollowupStore>();
         services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.OfficerFlows.IManualEvidenceStore, ManualEvidenceStore>();
         services.AddScoped<ComplaintRoutingPolicy>();
         services.AddScoped<CentralComplaintService>();
@@ -87,7 +94,7 @@ public static class ServiceCollectionExtensions
         if (!string.IsNullOrWhiteSpace(connectionString))
         {
             services.AddDbContext<GovernanceIntelligenceDbContext>((sp, options) =>
-                options.AddInterceptors(sp.GetRequiredService<ComplaintAssignmentAuditInterceptor>(),sp.GetRequiredService<ScreeningEvidenceAuditInterceptor>()).UseNpgsql(connectionString, npgsqlOptions =>
+                options.AddInterceptors(sp.GetRequiredService<InvestigationEvidenceAuditInterceptor>(),sp.GetRequiredService<ComplaintAssignmentAuditInterceptor>(),sp.GetRequiredService<ScreeningEvidenceAuditInterceptor>(),sp.GetRequiredService<RegulatoryFollowupAuditInterceptor>()).UseNpgsql(connectionString, npgsqlOptions =>
                 {
                     npgsqlOptions.MigrationsHistoryTable("__ef_migrations_history", GovernanceIntelligenceDbContext.SchemaName);
                 }));
