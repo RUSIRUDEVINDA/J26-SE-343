@@ -128,7 +128,7 @@ function buildSummaryChips(
   return chips;
 }
 
-function hasRestrictiveFilters(formState?: FindSuitableLandFormState): boolean {
+function hasRestrictiveFilters(formState?: FindSuitableLandFormState | null): boolean {
   if (!formState) {
     return false;
   }
