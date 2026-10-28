@@ -20,11 +20,12 @@ export function ParcelCatalog({
   selectedId?: string | null;
   onSelect: (id: string) => void;
   supplementByParcelId?: Map<string, ResearchSupplementParcelResponse>;
-  currentPage?: number;
   pageSize?: number;
-  onPageChange?: (page: number) => void;
   onCadastralSearch?: (query: string) => void;
-}) {
+} & (
+  | { currentPage: number; onPageChange: (page: number) => void }
+  | { currentPage?: number; onPageChange?: undefined }
+)) {
   const totalPages = pageSize ? Math.ceil(totalCount / pageSize) : 1;
 
   return (
