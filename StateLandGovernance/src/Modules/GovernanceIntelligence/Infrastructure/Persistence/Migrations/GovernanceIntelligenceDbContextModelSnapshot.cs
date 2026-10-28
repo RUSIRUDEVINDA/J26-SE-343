@@ -1930,6 +1930,11 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InvestigationId")
+                        .IsUnique()
+                        .HasDatabaseName("ux_officer_investigation_finalization")
+                        .HasFilter("\"Operation\" = 'InvestigationFinalized'");
+
                     b.HasIndex("RequestId", "CreatedAtUtc")
                         .HasDatabaseName("ix_officer_action_events_request");
 
@@ -1944,7 +1949,7 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
 
                             t.HasCheckConstraint("ck_officer_event_parent", "(\"InvestigationId\" IS NULL) <> (\"RequestId\" IS NULL)");
 
-                            t.HasCheckConstraint("ck_officer_operation", "\"Operation\" IN ('InvestigationSaved','RequestSubmitted','InferenceStarted','AssessmentSaved','AssessmentFailed','OutcomeUnknown')");
+                            t.HasCheckConstraint("ck_officer_operation", "\"Operation\" IN ('InvestigationSaved','RequestSubmitted','InferenceStarted','AssessmentSaved','AssessmentFailed','OutcomeUnknown') OR (\"Operation\"='InvestigationFinalized' AND \"InvestigationId\" IS NOT NULL AND \"RequestId\" IS NULL)");
                         });
                 });
 
@@ -2047,6 +2052,81 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                             t.HasCheckConstraint("ck_officer_revision", "\"Revision\">0");
 
                             t.HasCheckConstraint("ck_officer_state", "\"State\" IN ('Pending','Saved','Failed','Unknown')");
+                        });
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.OfficerInvestigationAttachmentEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Concern")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("ContentSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasPrecision(6)
+                        .HasColumnType("timestamp(6) with time zone");
+
+                    b.Property<Guid>("CreatorActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("InputSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("InvestigationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SubmissionKey")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id")
+                        .HasName("pk_investigation_attachments");
+
+                    b.HasAlternateKey("CreatorActorId", "SubmissionKey")
+                        .HasName("uq_investigation_attachment_submission");
+
+                    b.HasIndex("InvestigationId", "CreatedAtUtc", "Id")
+                        .HasDatabaseName("ix_investigation_attachment_history");
+
+                    b.ToTable("officer_investigation_attachments", "governance_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("ck_investigation_attachment_bytes", "octet_length(\"Content\") BETWEEN 1 AND 5242880");
+
+                            t.HasCheckConstraint("ck_investigation_attachment_concern", "\"Concern\" IN ('LegalDispute','UnauthorizedOccupation','UnauthorizedConstruction','FamilyOrInheritanceClaim','MultipleClaimants','UnresolvedObjection','PreviousIllegalLandActivity')");
+
+                            t.HasCheckConstraint("ck_investigation_attachment_content_hash", "encode(sha256(\"Content\"),'hex')=\"ContentSha256\"");
+
+                            t.HasCheckConstraint("ck_investigation_attachment_filename", "length(btrim(\"FileName\")) BETWEEN 1 AND 150 AND position('/' in \"FileName\")=0 AND position(chr(92) in \"FileName\")=0 AND position(':' in \"FileName\")=0 AND \"FileName\" !~ '[[:cntrl:]]'");
+
+                            t.HasCheckConstraint("ck_investigation_attachment_hashes", "\"ContentSha256\" ~ '^[0-9a-f]{64}$' AND \"InputSha256\" ~ '^[0-9a-f]{64}$'");
+
+                            t.HasCheckConstraint("ck_investigation_attachment_identity", "\"Id\" <> '00000000-0000-0000-0000-000000000000'::uuid AND \"CreatorActorId\" <> '00000000-0000-0000-0000-000000000000'::uuid AND \"SubmissionKey\" <> '00000000-0000-0000-0000-000000000000'::uuid");
+
+                            t.HasCheckConstraint("ck_investigation_attachment_type", "\"ContentType\" IN ('application/pdf','image/png','image/jpeg','text/plain')");
                         });
                 });
 
@@ -2234,6 +2314,119 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .IsUnique();
 
                     b.ToTable("regulatory_evaluation_provenance", "governance_intelligence");
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.RegulatoryFollowupEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CanonicalJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EvaluationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EventSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("InputSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("MissingInformation")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("Operation")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid?>("PreviousEventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReferencesJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Remarks")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("ReviewOutcome")
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<int>("Revision")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RuleCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("RuleVersion")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<Guid>("SubmissionKey")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PreviousEventId")
+                        .IsUnique();
+
+                    b.HasIndex("ActorId", "SubmissionKey")
+                        .IsUnique();
+
+                    b.HasIndex("EvaluationId", "CreatedAtUtc");
+
+                    b.HasIndex("EvaluationId", "RuleCode")
+                        .IsUnique()
+                        .HasDatabaseName("ux_regulatory_finding_closure")
+                        .HasFilter("\"Operation\"='FindingVerifiedClosed'");
+
+                    b.HasIndex("EvaluationId", "RuleCode", "Revision")
+                        .IsUnique();
+
+                    b.HasIndex("PreviousEventId", "EvaluationId", "RuleCode");
+
+                    b.ToTable("regulatory_followup_events", "governance_intelligence", t =>
+                        {
+                            t.HasCheckConstraint("ck_regulatory_followup_hash", "\"InputSha256\" ~ '^[0-9a-f]{64}$' AND \"EventSha256\" ~ '^[0-9a-f]{64}$'");
+
+                            t.HasCheckConstraint("ck_regulatory_followup_operation", "(\"Operation\"='ClarificationRequested' AND \"ReviewOutcome\" IS NULL AND \"MissingInformation\" IS NOT NULL AND length(\"MissingInformation\") BETWEEN 20 AND 2000) OR (\"Operation\"='HumanReviewRecorded' AND \"MissingInformation\" IS NULL AND \"ReviewOutcome\" IS NOT NULL AND \"ReviewOutcome\" IN ('NoAdditionalConcern','AdditionalInformationRequired','FurtherInstitutionalLegalReview')) OR (\"Operation\"='NoFollowupRequired' AND \"ReviewOutcome\" IS NULL AND \"MissingInformation\" IS NULL) OR (\"Operation\"='FindingVerifiedClosed' AND \"ReviewOutcome\" IS NULL AND \"MissingInformation\" IS NULL) ");
+
+                            t.HasCheckConstraint("ck_regulatory_followup_refs", "jsonb_typeof(\"ReferencesJson\")='array' AND jsonb_array_length(\"ReferencesJson\")<=10 AND NOT jsonb_path_exists(\"ReferencesJson\", '$[*] ? (@.type() != \"string\")')");
+
+                            t.HasCheckConstraint("ck_regulatory_followup_remarks", "length(\"Remarks\") <= 2000 AND (\"Operation\"='FindingVerifiedClosed' OR length(\"Remarks\")>=20)");
+
+                            t.HasCheckConstraint("ck_regulatory_followup_revision", "(\"Revision\"=1 AND \"PreviousEventId\" IS NULL) OR (\"Revision\">1 AND \"PreviousEventId\" IS NOT NULL)");
+
+                            t.HasCheckConstraint("ck_regulatory_followup_rule", "length(\"RuleCode\")>0 AND length(\"RuleVersion\")>0");
+
+                            t.HasCheckConstraint("ck_regulatory_followup_status", "\"Status\"='Recorded'");
+                        });
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.RegulatorySourceEntity", b =>
@@ -2987,6 +3180,17 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.OfficerInvestigationAttachmentEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.OfficerInvestigationEntity", null)
+                        .WithMany()
+                        .HasForeignKey("InvestigationId", "CreatorActorId")
+                        .HasPrincipalKey("Id", "CreatorActorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_investigation_attachment_owner");
+                });
+
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.OfficerInvestigationEntity", b =>
                 {
                     b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.OfficerInvestigationEntity", null)
@@ -3018,6 +3222,21 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.
                         .HasForeignKey("EvaluationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.RegulatoryFollowupEntity", b =>
+                {
+                    b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.ComplianceEvaluationEntity", null)
+                        .WithMany()
+                        .HasForeignKey("EvaluationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.RegulatoryFollowupEntity", null)
+                        .WithMany()
+                        .HasForeignKey("PreviousEventId", "EvaluationId", "RuleCode")
+                        .HasPrincipalKey("Id", "EvaluationId", "RuleCode")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities.RiskEvaluationEntity", b =>
