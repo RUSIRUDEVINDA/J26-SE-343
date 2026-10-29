@@ -1,0 +1,1064 @@
+{
+  "CheckedUtc": "2026-10-23T07:56:50.393789+00:00",
+  "DatabaseIdentity": {
+    "database": "c4_handover_local",
+    "oid": "34144",
+    "readOnly": "on",
+    "role": "slg_c4_regulatory_runtime"
+  },
+  "References": [
+    {
+      "Path": ".env",
+      "Lines": [
+        12
+      ],
+      "Category": "Runtime fallback/CLI C4 connection"
+    },
+    {
+      "Path": ".tmp/RegulatoryActivationHost/Program.cs",
+      "Lines": [
+        21
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/activate-central-reviewed-sql.py",
+      "Lines": [
+        10,
+        15
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/activate-complaints-scope.py",
+      "Lines": [
+        10
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/apply-approved-kiwula-v2.py",
+      "Lines": [
+        14,
+        18
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/apply-approved-kiwula.py",
+      "Lines": [
+        14,
+        18
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/apply-approved-postworkflow.py",
+      "Lines": [
+        10,
+        13,
+        18
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/apply-approved-regulatory.py",
+      "Lines": [
+        10,
+        11,
+        19
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/apply-officer-approved-ordinary.py",
+      "Lines": [
+        10,
+        12
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/audit-c4-login-and-rename.py",
+      "Lines": [
+        26,
+        38
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/audit-central-complaint-intake.py",
+      "Lines": [
+        5
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/backup-complaints-preparation.py",
+      "Lines": [
+        6,
+        8,
+        9
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/c4-flow-approval-backup.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/central-activation-preflight.py",
+      "Lines": [
+        21,
+        46
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/central-activation-preparation-20261023_053654/candidate-central-environment.NOT_ENABLED.local.json",
+      "Lines": [
+        32
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/central-persistent-authorization-review-20261023/candidate-environment.NOT_ENABLED.local.json",
+      "Lines": [
+        32
+      ],
+      "Category": "ACTIVE API process environment source"
+    },
+    {
+      "Path": ".tmp/central-preparation-current.json",
+      "Lines": [
+        4
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/complaints-backup-permission-evidence.json",
+      "Lines": [
+        17
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/complaints-fresh-backup.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/complaints-launch-environment.local.json",
+      "Lines": [
+        1
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/complaints-running-safety.json",
+      "Lines": [
+        25
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/diagnose-central-schema.py",
+      "Lines": [
+        4
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/document-c4-final.py",
+      "Lines": [
+        118
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/document-c4-flow-checkpoint.py",
+      "Lines": [
+        69
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/document-kiwula-v2-activation.py",
+      "Lines": [
+        22
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/document-postworkflow-live-activation.py",
+      "Lines": [
+        10,
+        77
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/document-postworkflow-repair.py",
+      "Lines": [
+        44,
+        82
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/finalize-central-ordinary-activation.py",
+      "Lines": [
+        13
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/independent-report-activation-preflight.json",
+      "Lines": [
+        15
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/inspect-c4-store-reference.py",
+      "Lines": [
+        8
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/inspect-restored-c4.py",
+      "Lines": [
+        11
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/kiulakale-readonly-postflight.json",
+      "Lines": [
+        23
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/kiulakale-session-host/Program.cs",
+      "Lines": [
+        16
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/kiulakale-session-preflight.json",
+      "Lines": [
+        23
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/kiwula-backup.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/kiwula-baseline-v2.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/kiwula-launch-environment.local.json",
+      "Lines": [
+        32
+      ],
+      "Category": "Preserved launcher baseline, checked by hash"
+    },
+    {
+      "Path": ".tmp/kiwula-preactivation-environment.local.json",
+      "Lines": [
+        1
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/officer-activation-backup.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/postworkflow-activation-preflight.json",
+      "Lines": [
+        6
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/postworkflow-backup-access-resolved.json",
+      "Lines": [
+        3,
+        4
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/postworkflow-backup-evidence.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/postworkflow-launch-environment.local.json",
+      "Lines": [
+        1
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/postworkflow-preactivation-env.local.json",
+      "Lines": [
+        1
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/preflight-postworkflow-activation-readable.py",
+      "Lines": [
+        8
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/prepare-c4-flow-backup.py",
+      "Lines": [
+        7,
+        8,
+        10,
+        21
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/prepare-central-combined-backup.py",
+      "Lines": [
+        18,
+        26,
+        35,
+        36,
+        53
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/prepare-kiwula-backup.py",
+      "Lines": [
+        7,
+        8,
+        10,
+        21
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/prepare-kiwula-baseline-v2.py",
+      "Lines": [
+        7,
+        8,
+        10,
+        21
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/prepare-officer-activation-backup.py",
+      "Lines": [
+        7,
+        8,
+        10,
+        21
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/prepare-postworkflow-backup.py",
+      "Lines": [
+        11,
+        12,
+        14
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/prepare-regulatory-activation.py",
+      "Lines": [
+        12,
+        13
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/recheck-approved-regulatory.py",
+      "Lines": [
+        13,
+        19
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/regulatory-activation-approved-recheck.json",
+      "Lines": [
+        11
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/regulatory-activation-backup.json",
+      "Lines": [
+        2,
+        11,
+        215
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/regulatory-activation-preflight.json",
+      "Lines": [
+        4,
+        208
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/regulatory-actual-startup-sessions.json",
+      "Lines": [
+        16
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/regulatory-approved-sql-applied.json",
+      "Lines": [
+        138
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/regulatory-launch-environment.local.json",
+      "Lines": [
+        1
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/regulatory-live-activation-verification.json",
+      "Lines": [
+        321,
+        348
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/regulatory-restore-verification.json",
+      "Lines": [
+        6
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/regulatory-running-process-safety.json",
+      "Lines": [
+        27
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/run-c4-final-sql.py",
+      "Lines": [
+        4,
+        7
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/run-kiwula-readonly-sql.py",
+      "Lines": [
+        4,
+        7
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/verify-central-restored-copy.py",
+      "Lines": [
+        9,
+        16,
+        28
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/verify-complaints-restore-and-permissions.py",
+      "Lines": [
+        15
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/verify-postworkflow-backup-copy.py",
+      "Lines": [
+        3,
+        4
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/write-kiulakale-plan.py",
+      "Lines": [
+        54
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/write-kiwula-checkpoint.py",
+      "Lines": [
+        29,
+        96,
+        100
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/write-kiwula-live-manual.py",
+      "Lines": [
+        41,
+        51
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": ".tmp/write-postworkflow-handover.py",
+      "Lines": [
+        6,
+        65,
+        87
+      ],
+      "Category": "Ignored local preparation/backup/test artifact; review before any reuse, preserve historical copies"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/C3_C4_COMPLETE_SYSTEM_UNDERSTANDING.md",
+      "Lines": [
+        150,
+        340,
+        393,
+        675
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/C3_SHARED_CATALOGUE_CHANGE_REGISTER.md",
+      "Lines": [
+        71,
+        96,
+        116,
+        139,
+        141,
+        165
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/C4_BACKEND_CHANGELOG.md",
+      "Lines": [
+        9,
+        285,
+        484,
+        503,
+        586,
+        678,
+        811,
+        815,
+        852,
+        872,
+        895,
+        897,
+        921
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/FINAL_C4_COMPLETION_REPORT.md",
+      "Lines": [
+        7
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/SHARED_AUTH_CHANGE_REGISTER.md",
+      "Lines": [
+        37
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ACTIVATED_CENTRAL_COMPLAINT_MANUAL_GUIDE.md",
+      "Lines": [
+        54
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/AUDIT_AND_APPROVAL_CHECKPOINT.md",
+      "Lines": [
+        32
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/COMBINED_ACTIVATION_CHECKPOINT.md",
+      "Lines": [
+        46,
+        59
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/FINAL_ACTIVATION_PREPARATION_GO_NO_GO.md",
+      "Lines": [
+        12,
+        18,
+        85,
+        87,
+        89
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/FRESH_BACKUP_AND_ACTIVATION_PLAN.md",
+      "Lines": [
+        32,
+        37,
+        81
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/HANDLING_ORDINARY_READ_ONLY_EVIDENCE.json",
+      "Lines": [
+        5
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/IMPLEMENTED_AND_ACTIVATION_CHECKPOINT.md",
+      "Lines": [
+        57
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATED_AND_VERIFIED.md",
+      "Lines": [
+        15
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_IMMEDIATE_PREFLIGHT.json",
+      "Lines": [
+        4
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_SQL_EVIDENCE.json",
+      "Lines": [
+        2
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_ORDINARY_READ_ONLY_EVIDENCE.json",
+      "Lines": [
+        5
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_PRIVATE_CONFIGURATION_BASELINE.json",
+      "Lines": [],
+      "Category": "Active launcher baseline identity/hash contract (indirect reference through config/baseline)"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_FRESH_BACKUP_AND_RESTORE.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/READ_ONLY_METADATA.json",
+      "Lines": [
+        5
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/ACTIVATED_DEMONSTRATION.md",
+      "Lines": [
+        83
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/ACTIVATION_PREPARATION_EVIDENCE.json",
+      "Lines": [
+        19,
+        292
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/COMPLAINTS_CONTROLLED_ACTIVATION_PREPARATION.md",
+      "Lines": [
+        7,
+        21,
+        62,
+        70
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/IMPLEMENTED_AND_ACTIVATION_PLAN.md",
+      "Lines": [
+        38,
+        40,
+        43,
+        45,
+        100
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/LIVE_COMPLAINT_DEMONSTRATION_EVIDENCE.json",
+      "Lines": [
+        350
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/REVIEWED_ADDITIONAL_CONFIGURATION.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/REVIEWED_ADDITIONAL_RUNTIME_PERMISSIONS.sql",
+      "Lines": [
+        8
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/independent-regulatory-reports/ACTIVATED.md",
+      "Lines": [
+        21
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ACTIVATED_AND_VERIFIED.md",
+      "Lines": [
+        3,
+        15
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ACTIVATION_BASELINE_V2_20261022.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/BACKUP_AND_RESTORE_EVIDENCE.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_FINAL_PP1_DEMONSTRATION.md",
+      "Lines": [
+        105
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_PP1_FLOW_FIX_AND_APPROVAL_CHECKPOINT.md",
+      "Lines": [
+        62,
+        63
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/CONTROLLED_ACTIVATION_CHECKPOINT.md",
+      "Lines": [
+        23,
+        26,
+        121,
+        125
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_MANUAL_WALKTHROUGH.md",
+      "Lines": [
+        39,
+        49
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_ACTIVATED_AND_VERIFIED.md",
+      "Lines": [
+        16
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_ACTIVATION_BACKUP_V2.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_BACKUP_AND_BASELINE.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_MANUAL_WALKTHROUGH.md",
+      "Lines": [
+        35,
+        46
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ORDINARY_CONFIGURATION_BASELINE.json",
+      "Lines": [
+        33
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/ACTIVATED_STATUS.md",
+      "Lines": [
+        8,
+        15,
+        34
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/ACTIVATION_RESTORE_VERIFICATION.json",
+      "Lines": [
+        6
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/CONTROLLED_ACTIVATION_APPROVAL.md",
+      "Lines": [
+        7,
+        18,
+        49,
+        71
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/IMPLEMENTED_AND_ACTIVATION_PLAN.md",
+      "Lines": [
+        60,
+        135
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/LIVE_ACTIVATION_EVIDENCE.json",
+      "Lines": [
+        322,
+        349,
+        395
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/REVIEWED_CONFIGURATION_CHANGES.json",
+      "Lines": [
+        15
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/REVIEWED_ORDERED_FORWARD.sql",
+      "Lines": [
+        8
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/ACTIVATED_AND_VERIFIED.md",
+      "Lines": [
+        3,
+        9,
+        10,
+        71
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/ACTIVATION_ATTEMPT_BLOCKED.json",
+      "Lines": [
+        8
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/ACTIVATION_ATTEMPT_BLOCKED.md",
+      "Lines": [
+        7
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/BACKUP_AND_MIGRATION_EVIDENCE.json",
+      "Lines": [
+        3
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/CONTROLLED_ACTIVATION_CHECKPOINT.md",
+      "Lines": [
+        35,
+        36,
+        73,
+        105
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/IMPLEMENTED_AND_ACTIVATION_PLAN.md",
+      "Lines": [
+        30,
+        32,
+        52
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_ACTIVATION_PREFLIGHT.json",
+      "Lines": [
+        6
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_BACKUP_ACCESS_RESOLUTION.json",
+      "Lines": [
+        3,
+        4
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/REVIEWED_ADDITIONAL_PERMISSIONS.sql",
+      "Lines": [
+        1
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "StateLandGovernance/tools/development/Start-CentralComplaintsApprovedApi.ps1",
+      "Lines": [
+        35
+      ],
+      "Category": "Source/tool/configuration reference; inspect before future use"
+    },
+    {
+      "Path": "StateLandGovernance/tools/development/Start-CentralComplaintsPersistentApprovedApi.ps1",
+      "Lines": [
+        35
+      ],
+      "Category": "Source/tool/configuration reference; inspect before future use"
+    },
+    {
+      "Path": "StateLandGovernance/tools/development/Start-CentralComplaintsStartupCorrectedApprovedApi.ps1",
+      "Lines": [
+        35
+      ],
+      "Category": "ACTIVE launcher exact-database safety guard"
+    },
+    {
+      "Path": "StateLandGovernance/tools/development/Start-KiwulaApprovedApi.ps1",
+      "Lines": [
+        22
+      ],
+      "Category": "Source/tool/configuration reference; inspect before future use"
+    },
+    {
+      "Path": "StateLandGovernance/tools/verification/inspect_c4_kiwula.py",
+      "Lines": [
+        14,
+        18
+      ],
+      "Category": "Source/tool/configuration reference; inspect before future use"
+    },
+    {
+      "Path": "output/kiulakale-pp1-demonstration/ACTIVATION_AND_SESSION_PLAN.md",
+      "Lines": [
+        52
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "output/kiulakale-pp1-demonstration/run/readonly-session-postflight.json",
+      "Lines": [
+        23
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    },
+    {
+      "Path": "output/kiulakale-pp1-demonstration/run/scoped-session-preflight.json",
+      "Lines": [
+        23
+      ],
+      "Category": "Historical/documentation evidence; preserve original, add versioned successor"
+    }
+  ],
+  "UnreadableDirectories": [],
+  "Excluded": "binary dumps/logs/generated node_modules/.next/bin/obj/venvs; no raw matching lines or private values included",
+  "SqlFilesDatabaseNameAbsent": {
+    "COMBINED_REVIEWED_FORWARD.sql": true,
+    "COMBINED_REVIEWED_ADDITIONAL_PERMISSIONS.sql": true
+  },
+  "RenamePerformed": false,
+  "ConnectionsGrantsOrSettingsChanged": false
+}

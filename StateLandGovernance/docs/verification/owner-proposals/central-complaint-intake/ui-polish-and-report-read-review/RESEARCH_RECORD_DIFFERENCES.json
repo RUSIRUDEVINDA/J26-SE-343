@@ -1,0 +1,54 @@
+{
+  "Comparison": "Earlier activation baseline versus current read-only snapshot",
+  "Tables": {
+    "governance_intelligence.compliance_evaluations": {
+      "EarlierCount": 71,
+      "CurrentCount": 72,
+      "EveryOriginalRowHashRetained": true
+    },
+    "governance_intelligence.component3_workflow_projections": {
+      "EarlierCount": 20,
+      "CurrentCount": 21,
+      "EveryOriginalRowHashRetained": true
+    },
+    "governance_intelligence.early_governance_screening_evaluations": {
+      "EarlierCount": 41,
+      "CurrentCount": 42,
+      "EveryOriginalRowHashRetained": true
+    },
+    "governance_intelligence.governance_audit_anchor_outbox": {
+      "EarlierCount": 103,
+      "CurrentCount": 104,
+      "EveryOriginalRowHashRetained": true
+    },
+    "governance_intelligence.governance_audit_records": {
+      "EarlierCount": 226,
+      "CurrentCount": 227,
+      "EveryOriginalRowHashRetained": true
+    },
+    "governance_intelligence.officer_action_events": {
+      "EarlierCount": 30,
+      "CurrentCount": 35,
+      "EveryOriginalRowHashRetained": true
+    },
+    "governance_intelligence.officer_assessment_requests": {
+      "EarlierCount": 11,
+      "CurrentCount": 13,
+      "EveryOriginalRowHashRetained": true
+    },
+    "governance_intelligence.regulatory_evaluation_provenance": {
+      "EarlierCount": 13,
+      "CurrentCount": 14,
+      "EveryOriginalRowHashRetained": true
+    },
+    "governance_intelligence.workflow_anomaly_assessments": {
+      "EarlierCount": 18,
+      "CurrentCount": 19,
+      "EveryOriginalRowHashRetained": true
+    }
+  },
+  "SubmittingProcessNotEstablished": true,
+  "TaskIssuedOrdinaryRecordWrites": 0,
+  "RowsRewrittenOrDeletedToMatchBaseline": 0,
+  "FutureDeploymentRequiresFreshBackupForCurrentRecords": true
+}

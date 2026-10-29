@@ -1,0 +1,18 @@
+{
+  "Date": "2026-10-23 Asia/Colombo",
+  "FrontendPassed": 143,
+  "BackendFocusedPassed": 275,
+  "ArchitecturePassed": 7,
+  "IsolatedRepositoryChecks": 35,
+  "SavedReportsRead": 30,
+  "Isolation": "127.0.0.1:57657/c4_central_restore_preparation_20261023_053654 with transaction_read_only=on",
+  "ModelCalls": 0,
+  "WriteCommandsInvoked": 0,
+  "ApiBuildAndReviewPublish": "Passed; review package NOT deployed",
+  "FocusedLint": "0 errors",
+  "TypeScript": "Only existing C1 RecommendationsView309 TS2345 and ParcelCatalog131/143 TS18048",
+  "ActiveApiPidUnchanged": 27588,
+  "ReadAllFeatureOrdinaryEnabled": false,
+  "DatabaseRenamed": false,
+  "BrowserVisualChecks": "Unavailable; HTTP routes200 only"
+}
