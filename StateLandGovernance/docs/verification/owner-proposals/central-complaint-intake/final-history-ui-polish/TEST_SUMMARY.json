@@ -1,0 +1,13 @@
+{
+  "FrontendPassed": 189,
+  "ArchitecturePassed": 7,
+  "Skipped": 0,
+  "FocusedLintErrors": 0,
+  "FocusedLintWarnings": 0,
+  "OrdinaryReadChecks": 113,
+  "SavedReportBodiesUnchanged": 64,
+  "TypeScript": "Only three known C1 errors",
+  "BrowserVisual": "Manual pending; inventory empty",
+  "RestartRedeploymentSchemaPermissionModelChanges": false,
+  "StageCommitPush": false
+}
