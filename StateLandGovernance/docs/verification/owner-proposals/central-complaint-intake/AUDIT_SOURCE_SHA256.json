@@ -1,0 +1,14 @@
+{
+  "StateLandGovernance/src/Api/Security/DevelopmentAccounts.cs": "c61910c288fd811bc95a23890f9bdc321765ad2a0c1cc0b4a45300133d6aa7d1",
+  "StateLandGovernance/src/Api/Security/PortalAccountStore.cs": "cdc6bbd300161110d66c13fde66cf0e1344500304ae8ad38059972566b457c41",
+  "StateLandGovernance/src/Api/Security/ComplaintReferenceAccess.cs": "95380cd005ebcc79a0d28c1a4d78797b3b62596c9ead07caefa4ada924496588",
+  "StateLandGovernance/src/Modules/WorkflowGovernance/Presentation/Security/IntakeAssignmentDirectory.cs": "2910fd0b3ae07326c26c85c9610fc9d84d2f6ee131054eb86516c59ad1c1efb7",
+  "StateLandGovernance/src/Modules/WorkflowGovernance/Application/Commands/CaseAssignmentService.cs": "8d0ac90285f798f85876db7367e919af22ce03e58f7a9cd778620f45274af3ac",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Complaints/RegisteredComplaints.cs": "f47c54d1e4be87fd8fdac544dde874ffa88d4701075fadbc8bc133d14d5e5e57",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/RegisteredComplaintStore.cs": "69c77bbf487db0785602db0d57f63e23570ad2ca8a7ae616e73514e789b6c427",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/RegisteredComplaintEntityConfiguration.cs": "e3557d289606e9bf328b30542a85e9462fe2e2fe78dabde8177d07896d1530d8",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/OfficerFlowConfigurations.cs": "fd53e396b3f3d36293a1ef14796cf4beef812732d64e057c8792e142a9a1a614",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/RegisteredComplaintsController.cs": "f8b4e08a6b0d01202a4ae6ecd0c9dc02322151d3e1becb2b8f6c288f6d8f1dbf",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/GovernanceIntelligenceController.cs": "68068f563b15d8698aaf1cada284a5d0259f62adf3bd96dfe04ba83f379713db",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Domain/Enums/EngineType.cs": "73715b9b2d545e914e22bde93b29f26dd0f1d1632687b570e50c65769da38309"
+}

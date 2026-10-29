@@ -1,0 +1,26 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Exactly sixteen approved columns",
+    "Both FKs restrictive",
+    "Four PK/unique indexes and exactly two reviewed query indexes",
+    "Runtime has no schema CREATE",
+    "Runtime has no superuser or role/database creation",
+    "Database unique constraints reject duplicate event",
+    "Database rejects blank reason",
+    "Database rejects malformed digest",
+    "EF rejects history UPDATE before SQL",
+    "Failed mutation and rejected inserts preserve event bytes"
+  ],
+  "ActualSavedClassifications": [
+    {
+      "AssessmentId": "09fa53f0-0511-45f7-8eb8-09f779a34e4e",
+      "ModelVersion": "v2",
+      "PredictedCategory": "Lease Revenue / Payment / Enforcement",
+      "AdministrativeProceduralIntegrityProbability": 0.32551130918636795,
+      "LeaseRevenuePaymentEnforcementProbability": 0.415605523531013,
+      "UnauthorizedAllocationTransferUseProbability": 0.1252269116945554,
+      "ProtectedEnvironmentalLeaseMisuseProbability": 0.1336562555880636
+    }
+  ]
+}
