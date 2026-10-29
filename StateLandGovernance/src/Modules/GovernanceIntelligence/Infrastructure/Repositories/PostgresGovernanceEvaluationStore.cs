@@ -1,3 +1,5 @@
+using System.Text.Json;
+using StateLandGovernance.GovernanceIntelligence.Application.RegulatoryReports;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -42,6 +44,13 @@ public class PostgresGovernanceEvaluationStore : IGovernanceEvaluationStore
         await EnqueueAuditOutboxInternalAsync(auditRecord, cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<Guid> StoreOwnedComplianceEvaluationAsync(GovernanceAuditRecord auditRecord,ComplianceResult result,string actionName,string? proposalId,string? caseId,SavedRegulatoryProvenance provenance,CancellationToken ct){
+        var(auditEntity,evalEntity)=ComplianceEvaluationMapper.MapToEntities(auditRecord,result,actionName,proposalId,caseId);
+        _dbContext.GovernanceAuditRecords.Add(auditEntity);_dbContext.ComplianceEvaluations.Add(evalEntity);
+        _dbContext.Set<RegulatoryEvaluationProvenanceEntity>().Add(new(){EvaluationId=evalEntity.Id,CreatorActorId=provenance.CreatorActorId,SubmissionKey=provenance.SubmissionKey,SubmissionHash=provenance.SubmissionHash,ProvenanceJson=JsonSerializer.Serialize(provenance,RegulatoryJson.Options)});
+        await EnqueueAuditOutboxInternalAsync(auditRecord,ct);await _dbContext.SaveChangesAsync(ct);return evalEntity.Id;
     }
 
     public async Task StoreConflictEvaluationAsync(GovernanceAuditRecord auditRecord, IReadOnlyList<DetectedConflict> conflicts, string actionName, int totalEvaluatedDecisions, CancellationToken cancellationToken = default)

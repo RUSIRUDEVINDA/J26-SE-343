@@ -1,0 +1,8 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {sequenceHref,sequenceQuery} from "../src/modules/component-04/services/officerSequence";
+import {c4Navigation} from "../src/modules/component-04/services/c4Navigation";
+test("exact saved IDs survive route construction and reload parsing",()=>{const href=sequenceHref("conflict","early-id","reg-id");const url=new URL(href,"http://localhost");assert.equal(url.searchParams.get("earlyRequestId"),"early-id");assert.equal(url.searchParams.get("regulatoryEvaluationId"),"reg-id");assert.equal(sequenceQuery(null,null),"");assert.equal(sequenceHref("early"),"/component-04/assessments/early");});
+test("navbar orders the officer stages and retains separate Anomaly",()=>{const names=c4Navigation.map(x=>x.label);assert.ok(names.indexOf("Early Governance")<names.indexOf("Regulatory Screening"));assert.ok(names.indexOf("Regulatory Screening")<names.indexOf("Conflict Detection"));assert.equal(c4Navigation.find(x=>x.label==="Post-Workflow Anomaly")?.href,"/component-04/post-workflow");});
+test("workspace derives progression from backend, not Next clicks or latest timestamps",()=>{const source=readFileSync("src/modules/component-04/components/KiwulaAssessmentWorkspace.tsx","utf8");assert.match(source,/readSequence\(earlyId,regulatoryId\)/);assert.match(source,/sequence\?\.canRunRegulatory/);assert.match(source,/sequence\?\.canProceedToConflict/);assert.match(source,/<CombinedFindingsSummary/);assert.doesNotMatch(source,/Send to Workflow Governance|conflictCompleted|ConflictFinalized/);});

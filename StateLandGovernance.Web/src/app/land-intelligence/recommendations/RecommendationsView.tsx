@@ -52,6 +52,7 @@ function parsePayload(raw: string | null): RecommendationsSessionPayload | null 
   if (!raw) {
     return null;
   }
+
   try {
     return JSON.parse(raw) as RecommendationsSessionPayload;
   } catch {
@@ -61,11 +62,14 @@ function parsePayload(raw: string | null): RecommendationsSessionPayload | null 
 
 function getPayloadSnapshot(): RecommendationsSessionPayload | null {
   const raw = sessionStorage.getItem(RECOMMENDATIONS_SESSION_KEY);
+
   if (payloadSnapshot && payloadSnapshot.raw === raw) {
     return payloadSnapshot.value;
   }
+
   const value = parsePayload(raw);
   payloadSnapshot = { raw, value };
+
   return value;
 }
 
@@ -75,8 +79,10 @@ function getServerPayloadSnapshot(): RecommendationsSessionPayload | null {
 
 function subscribePayloadStore(onStoreChange: () => void) {
   const handler = () => onStoreChange();
+
   window.addEventListener("storage", handler);
   window.addEventListener(REC_STORE_EVENT, handler);
+
   return () => {
     window.removeEventListener("storage", handler);
     window.removeEventListener(REC_STORE_EVENT, handler);
@@ -114,19 +120,23 @@ export function buildSummaryChips(
   if (request.preferredLocation?.province) {
     chips.push({ label: `Province: ${request.preferredLocation.province}` });
   }
+
   if (request.preferredLocation?.gramaNiladhariDivision) {
     chips.push({
       label: `Grama Niladhari division: ${request.preferredLocation.gramaNiladhariDivision}`,
     });
   }
+
   const targetArea =
     request.targetAreaHectares ??
     request.preferredAreaHectares ??
     request.requiredAreaHectares;
+
   if (targetArea != null) {
     const entered = formState?.targetAreaValue?.trim();
     const unit = formState?.targetAreaUnit;
     const scoredHa = Number(targetArea).toFixed(3);
+
     if (entered && unit) {
       chips.push({
         label: `Target area: ${entered} ${targetAreaUnitShortLabel(unit)} (${scoredHa} ha scored)`,
@@ -135,16 +145,19 @@ export function buildSummaryChips(
       chips.push({ label: `Target area: ${scoredHa} ha` });
     }
   }
+
   if (request.sourceReportedLandUse) {
     chips.push({
       label: `Source land use: ${request.sourceReportedLandUse}`,
     });
   }
+
   if (request.researchLandCoverGroup) {
     chips.push({
       label: `Land use: ${request.researchLandCoverGroup} (original label or GIS)`,
     });
   }
+
   if (request.maxResults != null) {
     chips.push({ label: `Max results: ${request.maxResults}` });
   }
@@ -158,6 +171,7 @@ function hasRestrictiveFilters(
   if (!formState) {
     return false;
   }
+
   return Boolean(
     formState.targetAreaValue.trim() || formState.sourceReportedLandUse.trim(),
   );
@@ -200,14 +214,14 @@ function ResultsSkeleton() {
 export function RecommendationsView() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const [researchSupplement, setResearchSupplement] = useState<
     ResearchSupplementParcelResponse[]
   >([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchContext, setSearchContext] = useState<SearchContext | null>(
-    null,
-  );
+  const [searchContext, setSearchContext] = useState<SearchContext | null>(null);
+
   const fetchedFingerprintRef = useRef<string | null>(null);
 
   const hydrated = useSyncExternalStore(
@@ -215,6 +229,7 @@ export function RecommendationsView() {
     getClientHydrated,
     getServerHydrated,
   );
+
   const payload = useSyncExternalStore(
     subscribePayloadStore,
     getPayloadSnapshot,
@@ -223,13 +238,19 @@ export function RecommendationsView() {
 
   useEffect(() => {
     let cancelled = false;
+
     listResearchSupplement()
       .then((rows) => {
-        if (!cancelled) setResearchSupplement(rows);
+        if (!cancelled) {
+          setResearchSupplement(rows);
+        }
       })
       .catch(() => {
-        if (!cancelled) setResearchSupplement([]);
+        if (!cancelled) {
+          setResearchSupplement([]);
+        }
       });
+
     return () => {
       cancelled = true;
     };
@@ -241,12 +262,14 @@ export function RecommendationsView() {
     }
 
     const parsed = parseRecommendationSearchParams(searchParams);
+
     if (!parsed) {
       if (payload?.request && payload.response) {
         const fingerprint = recommendationSearchFingerprint(
           payload.request,
           payload.formState,
         );
+
         setSearchContext({
           request: payload.request,
           formState: payload.formState ?? {
@@ -263,9 +286,11 @@ export function RecommendationsView() {
           fingerprint,
           source: "session",
         });
+
         setError(null);
         setLoading(false);
       }
+
       return;
     }
 
@@ -281,6 +306,7 @@ export function RecommendationsView() {
       )
     ) {
       fetchedFingerprintRef.current = fingerprint;
+
       setSearchContext({
         request: payload.request,
         formState: payload.formState ?? formState,
@@ -288,8 +314,10 @@ export function RecommendationsView() {
         fingerprint,
         source: "session",
       });
+
       setError(null);
       setLoading(false);
+
       return;
     }
 
@@ -298,6 +326,7 @@ export function RecommendationsView() {
     }
 
     let cancelled = false;
+
     fetchedFingerprintRef.current = fingerprint;
     setLoading(true);
     setError(null);
@@ -307,6 +336,7 @@ export function RecommendationsView() {
         if (cancelled) {
           return;
         }
+
         const next: SearchContext = {
           request,
           formState,
@@ -314,7 +344,9 @@ export function RecommendationsView() {
           fingerprint,
           source: "url",
         };
+
         setSearchContext(next);
+
         try {
           const sessionPayload: RecommendationsSessionPayload = {
             request,
@@ -322,6 +354,7 @@ export function RecommendationsView() {
             submittedAt: new Date().toISOString(),
             formState,
           };
+
           sessionStorage.setItem(
             RECOMMENDATIONS_SESSION_KEY,
             JSON.stringify(sessionPayload),
@@ -330,6 +363,7 @@ export function RecommendationsView() {
         } catch {
           // ignore session write failures
         }
+
         setLoading(false);
       })
       .catch(() => {
@@ -400,10 +434,7 @@ export function RecommendationsView() {
   if (!searchContext) {
     return (
       <>
-        <PageHeading
-          title="Suitable Land Results"
-          subtitle=""
-        />
+        <PageHeading title="Suitable Land Results" subtitle="" />
         <EmptyState
           title="No recommendation results yet"
           description="Run a search from Find Suitable Land to load live API results."
@@ -438,6 +469,7 @@ export function RecommendationsView() {
       targetAreaUnit: "hectares",
       sourceReportedLandUse: "",
     };
+
     writeFormForEdit(cleared);
     router.push("/land-intelligence/find-suitable-land");
   }
@@ -462,6 +494,7 @@ export function RecommendationsView() {
             candidates after filters
           </span>
         </div>
+
         <div className={styles.chipRow}>
           {chips.map((chip) => (
             <span
@@ -487,6 +520,7 @@ export function RecommendationsView() {
               >
                 Edit search
               </Button>
+
               {canClearFilters ? (
                 <Button
                   type="button"
@@ -506,6 +540,7 @@ export function RecommendationsView() {
               Results ({response.recommendations.length} shown · ranked by
               suitability score)
             </h2>
+
             {response.recommendations.map((item) => (
               <RecommendationCard
                 key={item.parcelId}
@@ -515,6 +550,7 @@ export function RecommendationsView() {
               />
             ))}
           </div>
+
           <RecommendationAssessmentPanel
             candidateCount={response.candidateCount}
             resultCount={response.recommendations.length}

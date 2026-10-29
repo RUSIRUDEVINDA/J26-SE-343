@@ -1,3 +1,4 @@
+using StateLandGovernance.GovernanceIntelligence.Application.RegulatoryReports;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -36,25 +37,38 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("GovernanceCaseReviewer", policy => policy
-        .RequireAuthenticatedUser()
-        .RequireRole("Officer", "ComplianceOfficer", "LandOfficer")
-        .RequireClaim("authority_case_id")
-        .RequireClaim("capability", "CaseWorkspaceReviewer"));
+    options.AddPolicy(
+        "GovernanceCaseReviewer",
+        policy => policy
+            .RequireAuthenticatedUser()
+            .RequireRole("Officer", "ComplianceOfficer", "LandOfficer")
+            .RequireClaim("authority_case_id")
+            .RequireClaim("capability", "CaseWorkspaceReviewer")
+    );
 });
 
+if (args.Contains("--setup-demo-accounts", StringComparer.Ordinal))
+{
+    await PortalAccountStore.SetupAsync(
+        builder.Configuration,
+        builder.Environment,
+        builder.Environment.ContentRootPath
+    );
+
+    return;
+}
+
 if (
-    builder.Environment.IsDevelopment()
-    && builder.Configuration.GetValue<bool>(
-        "LocalDevelopmentSignIn:Enabled"
+    builder.Configuration.GetValue<bool>("PortalAuthentication:Enabled")
+    || (
+        builder.Environment.IsDevelopment()
+        && builder.Configuration.GetValue<bool>(
+            "LocalDevelopmentSignIn:Enabled"
+        )
     )
 )
 {
-    builder.Configuration.AddJsonFile(
-        "development-accounts.local.json",
-        optional: false,
-        reloadOnChange: false
-    );
+    await PortalAccountStore.LoadAsync(builder.Configuration);
 }
 
 var isOcrDemoEnabled =
@@ -116,6 +130,19 @@ builder.Services.AddGovernanceIntelligenceInfrastructure(
     builder.Environment
 );
 
+builder.Services.Configure<DevelopmentRegulatoryReportReadOptions>(
+    builder.Configuration.GetSection(
+        "GovernanceIntelligence:IndependentRegulatoryRead"
+    )
+);
+
+builder.Services.Replace(
+    ServiceDescriptor.Scoped<
+        IIndependentRegulatoryReadAssignments,
+        DevelopmentRegulatoryReportAssignments
+    >()
+);
+
 builder.Services.AddTransient<EvaluateComplianceCommandHandler>();
 builder.Services.AddGovernanceConflictDetection();
 builder.Services.AddGovernanceRiskIntelligence();
@@ -159,17 +186,16 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "DevelopmentFrontend",
-        policy =>
-            policy
-                .WithOrigins(
-                    "http://localhost:3000",
-                    "http://127.0.0.1:3000",
-                    "http://localhost:5173",
-                    "http://127.0.0.1:5173"
-                )
-                .WithExposedHeaders("X-Correlation-ID")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
+        policy => policy
+            .WithOrigins(
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+                "http://localhost:5173",
+                "http://127.0.0.1:5173"
+            )
+            .WithExposedHeaders("X-Correlation-ID")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
     );
 });
 
@@ -194,6 +220,12 @@ builder.Services.AddTransient<
 
 builder.Services.AddSingleton<DevelopmentAccounts>();
 builder.Services.AddScoped<UploadedCaseResearchScenarios>();
+
+builder.Services.AddScoped<
+    StateLandGovernance.WorkflowGovernance.Application.Interfaces.IDevelopmentRegulatoryInputSource,
+    DevelopmentRegulatoryInputSource
+>();
+
 builder.Services.AddScoped<DevelopmentSpatialInputProvider>();
 
 builder.Services.AddScoped<
@@ -202,6 +234,53 @@ builder.Services.AddScoped<
 >();
 
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<
+    IRegulatoryCaseBindingValidator,
+    RegulatoryCaseBindingValidator
+>();
+
+builder.Services.AddScoped<
+    StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintReferenceAccess,
+    ComplaintReferenceAccess
+>();
+
+builder.Services.AddScoped<
+    StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintOfficerDirectory,
+    CentralComplaintDirectory
+>();
+
+builder.Services.AddScoped<
+    StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintCentralGrantSource,
+    CentralComplaintGrantFile
+>();
+
+builder.Services.Configure<CommissionerReportReadOptions>(
+    builder.Configuration.GetSection(
+        "GovernanceIntelligence:CommissionerReportReads"
+    )
+);
+
+builder.Services.AddScoped(
+    sp => sp.GetRequiredService<
+        IOptionsSnapshot<CommissionerReportReadOptions>
+    >().Value
+);
+
+builder.Services.AddScoped<
+    ICommissionerReportGrantSource,
+    CommissionerReportGrantFile
+>();
+
+builder.Services.AddScoped<
+    ICommissionerReportReadAccess,
+    CommissionerReportReadAccess
+>();
+
+builder.Services.AddScoped<
+    StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintActorContext,
+    ComplaintHttpActor
+>();
 
 builder.Services.AddScoped<
     StateLandGovernance.WorkflowGovernance.Application.Interfaces.IScreeningEvidenceProvider,
@@ -394,52 +473,6 @@ if (app.Environment.IsDevelopment())
             );
         }
     }
-
-    using (var scope = app.Services.CreateScope())
-    {
-        try
-        {
-            var dbContext = scope.ServiceProvider.GetService<LandIntelligenceDbContext>();
-            if (dbContext != null && dbContext.Database.CanConnect())
-            {
-                dbContext.Database.Migrate();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[Development] LandIntelligence migration skipped: {ex.Message}");
-        }
-
-        try
-        {
-            var workflowDb = scope.ServiceProvider.GetService<WorkflowGovernanceDbContext>();
-            if (workflowDb != null && workflowDb.Database.CanConnect())
-            {
-                workflowDb.Database.Migrate();
-                Console.WriteLine("[WorkflowGovernance] PostgreSQL persistence connected and migrations verified.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[WorkflowGovernance] PostgreSQL migration error: {ex.Message}");
-        }
-    }
-}
-else
-{
-    using var scope = app.Services.CreateScope();
-
-    var dbContext = scope.ServiceProvider
-        .GetRequiredService<LandIntelligenceDbContext>();
-
-    dbContext.Database.Migrate();
-    await LandIntelligenceSchemaRepair.ApplyAsync(dbContext);
-    var nicProtector = scope.ServiceProvider
-        .GetRequiredService<StateLandGovernance.LandIntelligence.Application.Interfaces.INicPersonalDataProtector>();
-    await StateLandGovernance.LandIntelligence.Infrastructure.LeaseInterest.LeaseInterestBrnLookupBackfill.ApplyAsync(
-        dbContext,
-        nicProtector);
-    await EnsureColomboGnDivisionMappingImportedAsync(scope.ServiceProvider);
 }
 
 app.Use(async (context, next) =>
@@ -539,31 +572,5 @@ app.MapGet(
 );
 
 app.Run();
-
-static async Task EnsureColomboGnDivisionMappingImportedAsync(IServiceProvider services)
-{
-    try
-    {
-        var importService = services.GetService<IParcelGnDivisionMappingImportService>();
-        if (importService is null)
-        {
-            return;
-        }
-
-        var report = await importService.EnsureImportedAsync();
-        Console.WriteLine(
-            "[LandIntelligence] Colombo GN division mapping import ({0}): rows={1}, upserted={2}, linked={3}, unlinked={4}.",
-            report.Mode,
-            report.RowsRead,
-            report.Upserted,
-            report.ParcelsLinked,
-            report.UnlinkedCadastralNumbers);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine(
-            $"[LandIntelligence] Colombo GN division mapping import skipped: {ex.Message}");
-    }
-}
 
 public partial class Program;

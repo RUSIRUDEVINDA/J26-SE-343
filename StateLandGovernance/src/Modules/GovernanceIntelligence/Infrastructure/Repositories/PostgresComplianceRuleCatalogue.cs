@@ -76,10 +76,12 @@ public sealed class PostgresComplianceRuleCatalogue : IComplianceRuleCatalogue
                     entity.Source.Authority ?? "Department of National Planning",
                     entity.Source.DocumentTitle ?? "Operational Manual / Project Submission Format",
                     entity.SourceSection ?? "General Operational Guidance",
-                    entity.Source.DocumentReference,
-                    entity.Source.Checksum,
-                    entity.Source.PublishedDate,
-                    entity.Source.EffectiveFrom
+                    SourcePage: null, // No page number exists in the imported source row.
+                    SourceVersion: entity.Source.DocumentVersion,
+                    EffectiveFrom: entity.Source.EffectiveFrom,
+                    EffectiveTo: entity.Source.EffectiveTo,
+                    SourceDocumentReference: entity.Source.DocumentReference,
+                    SourceChecksumLabel: entity.Source.Checksum
                 );
             }
             else

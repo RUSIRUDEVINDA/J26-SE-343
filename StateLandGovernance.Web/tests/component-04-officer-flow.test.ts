@@ -1,0 +1,4 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import {pendingOfficerKey,namedScenario} from "../src/modules/component-04/services/officerFlows";
+test("Officer retries retain actor-scoped request keys without changing scenario version",()=>{const data=new Map<string,string>();const storage={getItem:(k:string)=>data.get(k)??null,setItem:(k:string,v:string)=>{data.set(k,v);}};assert.equal(pendingOfficerKey("one","anomaly",storage,()=>"request-one"),"request-one");assert.equal(pendingOfficerKey("one","anomaly",storage,()=>"should-not-replace"),"request-one");assert.equal(pendingOfficerKey("two","anomaly",storage,()=>"request-two"),"request-two");assert.equal(pendingOfficerKey("one","early",storage,()=>"early-one"),"early-one");assert.equal(namedScenario,"kiwula-kale-named-route-v2");});

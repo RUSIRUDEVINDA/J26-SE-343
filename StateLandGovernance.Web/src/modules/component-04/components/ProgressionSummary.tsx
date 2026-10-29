@@ -1,0 +1,5 @@
+import type {SequenceReadiness} from "../services/officerSequence";
+export function ProgressionSummary({state,stage}:{state:SequenceReadiness;stage:string}){
+ const count=state.holds.length;
+ return <section aria-label="Current progression status"><p>{stage==="early"?(state.canRunRegulatory?"Saved Early screening is available for Regulatory Screening.":"Save and finalize the seven findings, then run Early Governance screening before continuing."):state.canProceedToConflict?"All current C4 findings are addressed. Outstanding concerns remain documented for downstream handling. Continue within C4 screening; this is not legal, institutional or lease approval.":count?`Progression is on hold: ${count} finding${count===1?"":"s"} awaiting officer follow-up. Record a valid permitted follow-up for each listed finding to continue within C4 screening. Later legal and institutional approvals are outside this gate.`:"Complete the selected saved screening stages before continuing."}</p>{count>0&&<details><summary>Technical Details - progression requirements</summary><ul>{state.holds.map(h=><li key={h}>{h}</li>)}</ul></details>}</section>;
+}

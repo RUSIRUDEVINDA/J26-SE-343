@@ -1,4 +1,6 @@
+import {DevelopmentSessionBar} from "./DevelopmentSessionBar";
 import Image from "next/image";
+import {SignInLink} from "./SignInLink";
 import {
   SYSTEM_TITLE,
   SYSTEM_TITLE_SINHALA,
@@ -6,7 +8,7 @@ import {
 } from "@/shared/constants/navigation";
 import styles from "./AppHeader.module.css";
 
-export function AppHeader() {
+export function AppHeader({unifiedAccount=false}:{unifiedAccount?:boolean}) {
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
@@ -30,6 +32,7 @@ export function AppHeader() {
           </p>
         </div>
       </div>
+      {unifiedAccount?<DevelopmentSessionBar compact/>:<SignInLink className={styles.signIn}/>}
     </header>
   );
 }

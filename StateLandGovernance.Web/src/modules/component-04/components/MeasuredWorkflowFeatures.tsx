@@ -1,0 +1,19 @@
+import styles from "./MeasuredWorkflowFeatures.module.css";
+import {assessWorkflowDuration,type WorkflowTimeline} from "../services/workflowDuration";
+const fields=[
+ ["eventCount","Events","count","How many recorded steps are in the completed workflow."],
+ ["elapsedDays","Elapsed time","days","The time from the first recorded step to the last recorded step."],
+ ["maxGapHours","Longest gap","hours","The longest wait between two consecutive recorded steps."],
+ ["meanGapHours","Mean gap","hours","The average wait between consecutive recorded steps."],
+ ["uniqueActivities","Unique activities","count","How many different types of work were recorded."],
+ ["repeatedActivityCount","Repeated activities","count","How many recorded steps repeated an activity already seen in this workflow."],
+ ["resourceHandoffs","Resource handoffs","count","How many times responsibility moved to a different recorded person or resource."],
+ ["institutionSwitches","Institution switches","count","How many times the workflow moved from one institution to another."],
+ ["distinctResources","Distinct resources","count","How many different recorded people or resources took part across the institutions."]
+] as const;
+type Metrics=Record<typeof fields[number][0],number>&{modelVersion:string;anomalyScore:number;threshold:number;flagged?:boolean;modelArtifactSha256?:string|null;inputSha256:string;advisoryNote?:string};
+export function MeasuredWorkflowFeatures({result,timeline}:{result:Metrics;timeline?:WorkflowTimeline}){
+ const duration=assessWorkflowDuration(timeline,result.elapsedDays);
+ return <><section className={styles.scorePanel} data-flagged={result.flagged===true||undefined} aria-label="Anomaly analysis summary"><h3 className={styles.flag}>{result.flagged===true?"UNUSUAL WORKFLOW ACTIVITY FLAGGED":result.flagged===false?"No unusual workflow activity flagged":"Flag status unavailable"}</h3><p>{result.flagged===true?"This workflow sequence has been flagged because its combined pattern differs from the model's reference workflows. The result is advisory and is not proof of misconduct.":result.flagged===false?"This workflow sequence was not flagged by the model. The result is advisory and does not establish compliance or approval.":"No flag verdict is available in this saved result."}</p><p>The nine measurements below are considered together. No single measurement is proven to have caused the flag, and the anomaly score is not a probability of misconduct. Numerical diagnostics are available in Technical details.</p></section>{duration&&<section className={styles.durationCard} data-status={duration.status} aria-label="Workflow duration"><h4>Workflow duration</h4><p role="status">{duration.message}</p><p className={styles.durationGuide}>Timing guide: a recorded workflow is acceptable when it takes at least one week and no more than two calendar months. A warning is shown when it finishes sooner or later. This timing guide is separate from the workflow pattern alert.</p></section>}<section aria-label="Measured workflow features"><h4>Measured workflow features</h4><dl className={styles.grid}>{fields.map(([key,label,unit,description])=><div key={key}><dt>{label}</dt><dd>{result[key]} <span>{unit}</span></dd><p>{description}</p></div>)}</dl></section>
+ <details className={styles.technical}><summary>Technical details</summary><dl><dt>Model</dt><dd>Isolation Forest · {result.modelVersion}</dd><dt>Anomaly score</dt><dd>{result.anomalyScore}</dd><dt>Threshold</dt><dd>{result.threshold}</dd><dt>Artifact SHA256</dt><dd>{result.modelArtifactSha256??"Unavailable"}</dd><dt>Input SHA256</dt><dd>{result.inputSha256}</dd></dl>{result.advisoryNote&&<p>Reference-pattern advisory only: this anomaly score is not a probability, confidence, misconduct finding, legal-compliance determination, or an explanation of what caused the result. It is available only for complete recorded workflows.</p>}</details></>;
+}

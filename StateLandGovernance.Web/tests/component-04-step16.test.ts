@@ -1,0 +1,27 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import React from "react";
+import {renderToStaticMarkup} from "react-dom/server";
+import {readFileSync,readdirSync} from "node:fs";
+import path from "node:path";
+import {RegulatoryScreening} from "../src/modules/component-04/components/RegulatoryScreening";
+import {currentRegulatoryForEarly} from "../src/modules/component-04/services/currentEarlySelection";
+import {workflowPendingKey,savePending,pendingRequest,clearPending,type RegulatoryRequest} from "../src/modules/component-04/services/regulatorySubmission";
+import type {RegulatoryReport,RegulatoryFinding} from "../src/modules/component-04/services/independentRegulatoryReports";
+const report={metadata:{id:"current-eval",status:"InsufficientInformation"},provenance:{earlyRequestId:"current-early"},findings:Array.from({length:24},(_,i)=>({ruleCode:`rule-${i}`,ruleVersion:"1",status:i%3===0?"Compliant":i%3===1?"InsufficientInformation":"RequiresHumanReview",applicability:"Applicable",category:`Category${i}`,observedValueSummary:`Current observed ${i}`,expectedRequirement:"Saved requirement",recommendedAction:"Original recommendation",evidenceStatus:"Unverified"}))} as RegulatoryReport;
+const html=(value:RegulatoryReport|null,early="current-early")=>renderToStaticMarkup(React.createElement(RegulatoryScreening,{result:value,earlyRequestId:early,onResult:()=>{}}));
+test("fresh Early cannot display any previous Regulatory results or follow-ups",()=>{assert.equal(currentRegulatoryForEarly(report,"new-early",null),null);const clean=html(report,"new-early");assert.doesNotMatch(clean,/Returned regulatory findings|Current Regulatory Follow-ups|Verified &amp; Closed|Current observed/);assert.match(clean,/Run Regulatory Screening/);});
+test("only exact evaluation and Early provenance restores the saved current evaluation",()=>{assert.equal(currentRegulatoryForEarly(report,"current-early","current-eval"),report);assert.equal(currentRegulatoryForEarly(report,"current-early","old-eval"),null);assert.equal(currentRegulatoryForEarly(report,null,"current-eval"),null);});
+test("all 24 original progressive cards are restored in saved engine order before follow-ups",()=>{const rendered=html(report);assert.match(rendered,/aria-label="Returned regulatory findings"/);const list=rendered.slice(rendered.indexOf('aria-label="Returned regulatory findings"'));assert.equal((list.slice(0,list.indexOf("</ol>")).match(/<li /g)??[]).length,24);assert.ok(rendered.indexOf('Current observed 0')<rendered.indexOf('Current observed 23'));assert.ok(rendered.indexOf('Returned regulatory findings')<rendered.indexOf('Current Regulatory Follow-ups'));assert.match(rendered,/Technical Details - original regulatory engine results/);assert.equal(report.findings?.filter((f:RegulatoryFinding)=>f.status==="Compliant").length,8);});
+test("pending submission identities isolate actors and every Early workflow",()=>{assert.notEqual(workflowPendingKey("ds","early-a"),workflowPendingKey("ds","early-b"));assert.notEqual(workflowPendingKey("ds","early-a"),workflowPendingKey("other","early-a"));});
+test("workspace renders a real Unicode continuation arrow",()=>{const source=readFileSync(new URL('../src/modules/component-04/components/KiwulaAssessmentWorkspace.tsx',import.meta.url),'utf8');assert.match(source,/Continue to Conflict Detection →/);assert.doesNotMatch(source,/Ã|Â|â€/);});
+test("frontend source text contains no confirmed mojibake or replacement characters",()=>{const root=path.resolve('src');function visit(dir:string){for(const entry of readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);if(entry.isDirectory())visit(file);else if(/\.(tsx?|css|json)$/.test(file)&&!file.includes(path.sep+'evidence'+path.sep)){const text=readFileSync(file,'utf8');assert.doesNotMatch(text,/(?:Ã[\u0080-\u00ff]|Â[\u0080-\u00bf]|â[€‚„†‡ˆ‰Š‹ŒŽ]|ï¿½|\ufffd)/,file);}}}visit(root);});
+
+test("uncertain legacy or scoped submission never replaces a new Early journey",()=>{
+ const original=Object.getOwnPropertyDescriptor(globalThis,"window"),originalStorage=Object.getOwnPropertyDescriptor(globalThis,"sessionStorage");const data=new Map<string,string>();const storage={getItem:(k:string)=>data.get(k)??null,setItem:(k:string,v:string)=>{data.set(k,v);},removeItem:(k:string)=>{data.delete(k);}};
+ Object.defineProperty(globalThis,"window",{configurable:true,value:{sessionStorage:storage}});Object.defineProperty(globalThis,"sessionStorage",{configurable:true,value:storage});
+ try{storage.setItem("slg.localDevelopmentSession",JSON.stringify({accessToken:"test",expiresAtUtc:"2099-01-01T00:00:00Z",user:{actorId:"ds"}}));
+  const old={earlyRequestId:"early-old",submissionKey:"old-key"} as RegulatoryRequest;storage.setItem("regulatory-pending:ds",JSON.stringify(old));assert.equal(pendingRequest("early-new"),null);assert.equal(pendingRequest("early-old")?.submissionKey,"old-key");
+  const current={earlyRequestId:"early-new",submissionKey:"new-key"} as RegulatoryRequest;savePending(current,"early-new");assert.equal(pendingRequest("early-new")?.submissionKey,"new-key");clearPending("early-new");assert.equal(pendingRequest("early-new"),null);assert.equal(pendingRequest("early-old")?.submissionKey,"old-key");
+ }finally{if(original)Object.defineProperty(globalThis,"window",original);else Reflect.deleteProperty(globalThis,"window");if(originalStorage)Object.defineProperty(globalThis,"sessionStorage",originalStorage);else Reflect.deleteProperty(globalThis,"sessionStorage");}
+});

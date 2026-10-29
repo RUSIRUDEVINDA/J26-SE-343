@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import {
+  readDevelopmentSession,
+  type DevelopmentUser,
+} from "@/lib/developmentSession";
 import { getResearchDemoConfig } from "@/modules/component-01-land-intelligence/services/researchDemoApi";
+import { canShowGovernanceNavigation } from "@/modules/component-04/services/postLogin";
 import {
   authorityLeaseInterestQueueNavItem,
   component01NavItems,
@@ -15,10 +20,15 @@ import {
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
 
-function isActive(pathname: string, href: string, basePath: string): boolean {
+function isActive(
+  pathname: string,
+  href: string,
+  basePath: string,
+): boolean {
   if (href === basePath) {
     return pathname === href;
   }
+
   if (href.endsWith("/parcels")) {
     return (
       pathname === href ||
@@ -26,6 +36,7 @@ function isActive(pathname: string, href: string, basePath: string): boolean {
       pathname.startsWith(`${LAND_INTELLIGENCE_BASE}/parcel-intelligence`)
     );
   }
+
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -41,15 +52,33 @@ export function Sidebar({
   compactMobile?: boolean;
 }) {
   const pathname = usePathname();
+
+  const [user, setUser] = useState<DevelopmentUser | null>(null);
   const [officerLookupEnabled, setOfficerLookupEnabled] = useState(false);
   const [authorityReviewEnabled, setAuthorityReviewEnabled] = useState(false);
+
   const isLandIntelligenceNav = basePath === LAND_INTELLIGENCE_BASE;
+
+  useEffect(() => {
+    const update = () => {
+      setUser(readDevelopmentSession()?.user ?? null);
+    };
+
+    update();
+    window.addEventListener("development-session-changed", update);
+
+    return () => {
+      window.removeEventListener("development-session-changed", update);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isLandIntelligenceNav) {
       return;
     }
+
     let cancelled = false;
+
     void getResearchDemoConfig()
       .then((config) => {
         if (!cancelled) {
@@ -65,6 +94,7 @@ export function Sidebar({
           setAuthorityReviewEnabled(false);
         }
       });
+
     return () => {
       cancelled = true;
     };
@@ -74,33 +104,89 @@ export function Sidebar({
     if (!isLandIntelligenceNav) {
       return items;
     }
+
     const extras: NavItem[] = [];
+
     if (officerLookupEnabled) {
-      if (!items.some((item) => item.href === officerLeaseInterestQueueNavItem.href)) {
-        extras.push(
-          officerLeaseInterestQueueNavItem,
-          officerLeaseInterestValuationQueueNavItem,
-          officerLeaseInterestLookupNavItem,
-        );
-      }
+      extras.push(
+        officerLeaseInterestQueueNavItem,
+        officerLeaseInterestValuationQueueNavItem,
+        officerLeaseInterestLookupNavItem,
+      );
     }
-    if (
-      authorityReviewEnabled &&
-      !items.some((item) => item.href === authorityLeaseInterestQueueNavItem.href)
-    ) {
+
+    if (authorityReviewEnabled) {
       extras.push(authorityLeaseInterestQueueNavItem);
     }
-    return extras.length ? [...items, ...extras] : items;
-  }, [items, isLandIntelligenceNav, officerLookupEnabled, authorityReviewEnabled]);
+
+    const additionalItems = extras.filter(
+      (extra, index) =>
+        !items.some((item) => item.href === extra.href) &&
+        extras.findIndex((item) => item.href === extra.href) === index,
+    );
+
+    return additionalItems.length ? [...items, ...additionalItems] : items;
+  }, [
+    items,
+    isLandIntelligenceNav,
+    officerLookupEnabled,
+    authorityReviewEnabled,
+  ]);
+
+  const visibleItems = useMemo(() => {
+    return navItems.filter((item) => {
+      if (
+        item.href.startsWith("/component-04") &&
+        !canShowGovernanceNavigation(user)
+      ) {
+        return false;
+      }
+
+      if (!user || !item.href.startsWith("/workflow-governance")) {
+        return true;
+      }
+
+      if (!user.institution) {
+        return item.href.includes("/applicant/");
+      }
+
+      if (
+        user.institution === "DS" ||
+        user.institution === "DEVELOPMENT_RESEARCH"
+      ) {
+        return (
+          item.href.endsWith("/cases") ||
+          item.href.endsWith("/ocr-demo") ||
+          (user.institution === "DS" &&
+            item.href.endsWith("/assignments"))
+        );
+      }
+
+      return (
+        item.href.endsWith("/commissioner") &&
+        user.institution === "COMMISSIONER"
+      );
+    });
+  }, [navItems, user]);
 
   return (
     <aside
-      className={`${styles.sidebar} ${compactMobile ? styles.compactMobile : ""}`}
+      className={`${styles.sidebar} ${
+        compactMobile ? styles.compactMobile : ""
+      }`}
       aria-label={label}
     >
       <nav className={styles.nav}>
-        {navItems.map((item) => {
-          const active = isActive(pathname, item.href, basePath);
+        {visibleItems.map((item) => {
+          const active =
+            isActive(pathname, item.href, basePath) &&
+            (basePath !== "/component-04" ||
+              !visibleItems.some(
+                (other) =>
+                  other.href.length > item.href.length &&
+                  isActive(pathname, other.href, basePath),
+              ));
+
           const className = [
             styles.link,
             active ? styles.active : styles.inactive,
@@ -111,14 +197,16 @@ export function Sidebar({
 
           return (
             <Link
-              key={item.label}
+              key={item.href}
               href={item.href}
               className={className}
               aria-current={active ? "page" : undefined}
             >
-              <span className={styles.icon} aria-hidden="true">
-                {item.icon}
-              </span>
+              {item.icon && (
+                <span className={styles.icon} aria-hidden="true">
+                  {item.icon}
+                </span>
+              )}
               <span className={styles.label}>{item.label}</span>
             </Link>
           );

@@ -1,0 +1,9 @@
+{
+  "NewMigration": "20261023093022_AddScreeningEvidenceVerification",
+  "OnlyTwoNewTables": true,
+  "NewTablesInitiallyEmpty": true,
+  "RuntimeNewRights": "SELECT/INSERT only on two tables; original request SELECT setup isolated only",
+  "ForwardSqlSha256": "746e4a0445ac405e079cf831a1d8d3454b57f9e84782ec87e966ea21708238e8",
+  "PermissionsSqlSha256": "8aca5b27808b9c2cd3618c7a188d4404cbc6bc0e885f27e53a5445e8240114b7",
+  "HelperCorrection": "Initial statement guard matched ON DELETE RESTRICT FK clauses; corrected to match leading destructive SQL statements, no schema change."
+}

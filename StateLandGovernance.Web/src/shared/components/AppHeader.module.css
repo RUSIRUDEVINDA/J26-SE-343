@@ -10,6 +10,21 @@
   min-height: 64px;
 }
 
+.signIn {
+  margin-left: auto;
+  flex-shrink: 0;
+  padding: 0.65rem 1.1rem;
+  border-radius: 8px;
+  background: #800d16;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+}
+.signIn:focus-visible { outline: 3px solid #b76b27; outline-offset: 3px; }
+.header .signIn,.header .signIn:visited{display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;color:#fff!important;background:#850906;border:1px solid #850906;border-radius:6px;padding:.65rem 1rem;line-height:1.4;text-align:center;white-space:nowrap;text-decoration:none}
+.header .signIn:hover{background:#690704;border-color:#690704}
+.header .signIn:disabled{opacity:.55;cursor:not-allowed}
+
 .brand {
   display: flex;
   align-items: center;
@@ -70,3 +85,5 @@
     font-size: 0.8rem;
   }
 }
+
+.account{margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end;min-width:0;font:13px/1.4 PP1Inter,Arial,sans-serif}.identity{display:grid;gap:2px;text-align:right}.identity strong{font-size:13px;font-weight:600}.identity small{font-size:11px;color:#655e58}.account .signIn{margin:0;border:0;background:#850906;color:#fff;padding:8px 12px;border-radius:6px;font:inherit;cursor:pointer}@media(max-width:600px){.header:has(.account){flex-wrap:wrap;border-radius:8px}.account{width:100%;justify-content:space-between;padding-top:7px;border-top:1px solid #eee6de}.identity{text-align:left}}

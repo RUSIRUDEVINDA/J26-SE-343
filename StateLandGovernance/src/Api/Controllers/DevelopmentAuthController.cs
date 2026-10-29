@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StateLandGovernance.Api.Security;
 namespace StateLandGovernance.Api.Controllers;
-[ApiController, Route("api/development-auth")]
+[ApiController, Route("api/development-auth"), Route("api/auth")]
 public sealed class DevelopmentAuthController(DevelopmentAccounts accounts) : ControllerBase
 {
     public sealed record Credentials(string Username,string Password);
@@ -43,24 +43,24 @@ public sealed class DevelopmentAuthController(DevelopmentAccounts accounts) : Co
         catch(ArgumentException ex){return BadRequest(new {error=ex.Message});}
         catch(InvalidOperationException ex){return Conflict(new {error=ex.Message});}
     }
-    [HttpGet("status"),AllowAnonymous] public IActionResult Status() => Ok(new { enabled=accounts.Local(HttpContext),developmentOnly=true });
+    [HttpGet("status"),AllowAnonymous] public IActionResult Status() => Ok(new { enabled=accounts.CanSignIn(HttpContext) });
     [HttpPost("sign-in"),AllowAnonymous] public IActionResult SignIn(Credentials request)
     {
-        if(!accounts.Local(HttpContext))return NotFound();
+        if(!accounts.CanSignIn(HttpContext))return NotFound();
         Response.Headers.CacheControl="no-store";
         var result=accounts.SignIn(request.Username??"",request.Password??"");
-        return result is null ? Unauthorized(new ProblemDetails { Status=401,Title="Sign-in failed",Detail="Incorrect local test username or password." }) : Ok(result);
+        return result is null ? Unauthorized(new ProblemDetails { Status=401,Title="Sign-in failed",Detail="Incorrect username or password." }) : Ok(result);
     }
     [HttpGet("me")] public IActionResult Me()
     {
-        if(!accounts.Local(HttpContext))return NotFound();
+        if(!accounts.CanSignIn(HttpContext))return NotFound();
         if(User.Identity?.IsAuthenticated!=true || User.FindFirst("development_account")?.Value is not {} username)return Unauthorized();
         var a=accounts.Account(username);Response.Headers.CacheControl="no-store";
         return a is null ? Unauthorized() : Ok(accounts.View(a));
     }
     [HttpPost("sign-out")] public IActionResult SignOutSession()
     {
-        if(!accounts.Local(HttpContext))return NotFound();
+        if(!accounts.CanSignIn(HttpContext))return NotFound();
         accounts.SignOut(User);return NoContent();
     }
 }

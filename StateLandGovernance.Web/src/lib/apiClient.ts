@@ -17,7 +17,7 @@ export type LandIntelligenceApiAuthRole =
   | "none";
 import { landIntelligenceOwnerHeaders } from "../modules/component-01-land-intelligence/utils/landIntelligenceOwner";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "").replace("http://127.0.0.1:", "http://localhost:") ?? "";
 
 export class ApiClientError extends Error {
   readonly status: number;

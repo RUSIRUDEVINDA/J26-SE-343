@@ -1,0 +1,14 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import React from "react";
+import {renderToStaticMarkup} from "react-dom/server";
+import {canFinalizeInvestigation,type InvestigationFile} from "../src/modules/component-04/services/investigationEvidence";
+import {investigationConcerns} from "../src/modules/component-04/services/earlyInvestigation";
+import {EarlyGovernanceStepOne} from "../src/modules/component-04/components/EarlyGovernanceStepOne";
+import type {Finding} from "../src/modules/component-04/services/officerFlows";
+const findings:Finding[]=investigationConcerns.map(([concern])=>({concern,choice:"NoIssueFound",remarks:""}));
+test("seven explicit negative findings need no file",()=>assert.equal(canFinalizeInvestigation(findings,[]),true));
+test("untouched findings cannot finalize",()=>assert.equal(canFinalizeInvestigation(findings.map((f,i)=>i===0?{...f,choice:"NotYetVerified"}:f),[]),false));
+test("IssueFound requires returned saved concern metadata",()=>{const mixed=findings.map((f,i)=>i===0?{...f,choice:"IssueFound" as const,remarks:"A meaningful recorded issue requires supporting evidence."}:f);assert.equal(canFinalizeInvestigation(mixed,[]),false);assert.equal(canFinalizeInvestigation(mixed,[{concern:findings[1].concern} as InvestigationFile]),false);assert.equal(canFinalizeInvestigation(mixed,[{concern:findings[0].concern} as InvestigationFile]),true);});
+test("duplicate concerns cannot finalize",()=>assert.equal(canFinalizeInvestigation(Array(7).fill(findings[0]),[]),false));
+test("new investigation starts untouched with explicit save/finalize and no selectable NotYetVerified",()=>{const html=renderToStaticMarkup(React.createElement(EarlyGovernanceStepOne));assert.equal((html.match(/Select a finding/g)??[]).length,7);assert.doesNotMatch(html,/>Not Yet Verified<\/option>/);assert.match(html,/Save Investigation Draft/);assert.match(html,/Finalize Investigation Findings/);assert.doesNotMatch(html,/Save this draft first to attach evidence/);assert.match(html,/select supporting files now/);assert.doesNotMatch(html,/New Investigation|Open an Existing Investigation/);});

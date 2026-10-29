@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,20 +24,22 @@ public sealed class PostgresGovernanceAuditRepository : IGovernanceAuditReposito
 {
     private readonly GovernanceIntelligenceDbContext _dbContext;
     private readonly TimeProvider _timeProvider;
+    private readonly IConfiguration? _configuration;
 
     public PostgresGovernanceAuditRepository(
         GovernanceIntelligenceDbContext dbContext,
-        TimeProvider? timeProvider = null)
+        TimeProvider? timeProvider = null,IConfiguration? configuration=null)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _timeProvider = timeProvider ?? TimeProvider.System;
+        _configuration=configuration;
     }
 
     public async Task<GovernanceAuditRecord?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.GovernanceAuditRecords
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == id && !x.ActionName.StartsWith("C4-KIWULA-EXAMPLE:"), cancellationToken);
 
         return entity is null ? null : GovernanceAuditRecordMapper.ToDomain(entity);
     }
@@ -44,8 +47,11 @@ public sealed class PostgresGovernanceAuditRepository : IGovernanceAuditReposito
     public async Task<IReadOnlyList<GovernanceAuditCaseHistoryDto>> GetByCaseIdAsync(
         string caseId, int limit, CancellationToken cancellationToken = default)
     {
+        var evaluations=_dbContext.ComplianceEvaluations.AsNoTracking();
+        if(_configuration?.GetValue<bool>("GovernanceIntelligence:RegulatoryProvenance:Enabled")==true)
+            evaluations=evaluations.Where(x=>!_dbContext.Set<RegulatoryEvaluationProvenanceEntity>().Any(p=>p.EvaluationId==x.Id));
         return await (
-            from evaluation in _dbContext.ComplianceEvaluations.AsNoTracking()
+            from evaluation in evaluations
             join audit in _dbContext.GovernanceAuditRecords.AsNoTracking() on evaluation.AuditRecordId equals audit.Id
             join receipt in _dbContext.GovernanceAuditAnchorReceipts.AsNoTracking() on audit.Id equals receipt.AuditRecordId into receiptGroup
             from receipt in receiptGroup.DefaultIfEmpty()

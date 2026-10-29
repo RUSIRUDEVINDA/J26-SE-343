@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageLayout, PageHeading } from "@/shared/components/PageLayout";
 import { moduleLandingLinks } from "@/shared/constants/navigation";
+import {GovernanceModuleLink} from "@/modules/component-04/components/GovernanceModuleLink";
 
 export default function HomePage() {
   return (
@@ -11,7 +12,7 @@ export default function HomePage() {
       />
       <div className="landingGrid">
         {moduleLandingLinks.map((module) =>
-          module.available ? (
+          module.id==="component-04"?<GovernanceModuleLink key={module.id}/>:module.available ? (
             <Link key={module.id} href={module.href} className="landingCard">
               <h2>{module.title}</h2>
               <p>
