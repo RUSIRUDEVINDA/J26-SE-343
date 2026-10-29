@@ -1,0 +1,16 @@
+{
+  "Utc": "2026-10-23T07:22:52.841387+00:00",
+  "FrontendRoutes": {
+    "/sign-in": 200,
+    "/component-04/central-complaints": 200,
+    "/component-04/complaint-inbox": 200,
+    "/component-04/assessments": 200,
+    "/workflow-governance/applicant/complaints": 200
+  },
+  "MlHealth": {
+    "status": "ready",
+    "model_version": "v2"
+  },
+  "BrowserAutomationAvailable": false,
+  "InferenceRequested": false
+}
