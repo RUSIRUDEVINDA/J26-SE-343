@@ -1,0 +1,22 @@
+[
+  {
+    "Path": "StateLandGovernance.Web/tests/component-04-anomaly-verification.test.ts",
+    "BeforeSha256": null,
+    "Sha256": "13281ecfdda5fc67b3518f8ea64e68c154022267ac9583d73fe0669a130e4f30"
+  },
+  {
+    "Path": "StateLandGovernance.Web/tests/component-04-handover.test.ts",
+    "BeforeSha256": "9e3e8247117eb0837a4572db4c6abe116c9125e2254dddc53abfec5434b3b5e6",
+    "Sha256": "e4d77b7c282cbbb8b91cb3f66045fc3fd0c9d33ed626d740535b2dfa3d1d8af3"
+  },
+  {
+    "Path": "StateLandGovernance.Web/tests/component-04-polish.test.ts",
+    "BeforeSha256": "f21fefca8a8262922d1b15808a1e6216f9cefcff4684163c21d2ef6d49448405",
+    "Sha256": "8cfa1eb318f23eed4b89f58b7cc6d76a91ecc8fe1ab547014575fe5422bae8d9"
+  },
+  {
+    "Path": "StateLandGovernance/tests/IntegrationTests/ReportReadProof/Program.cs",
+    "BeforeSha256": "a0f53535390a2e6049a835856748d2c2522c2cede0da12e41b4816aba85ff5be",
+    "Sha256": "0e01d30cd6d7c023e0c247c35dad1fc39a6f9037e5496982366fa4efe73aa446"
+  }
+]
