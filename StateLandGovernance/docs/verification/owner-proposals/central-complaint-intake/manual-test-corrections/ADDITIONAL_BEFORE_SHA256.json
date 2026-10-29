@@ -1,0 +1,6 @@
+{
+  "StateLandGovernance.Web/src/modules/component-04/services/complaintHandling.ts": "8b95dda61ff368b0979750d56544d144cb7e6cf0b3dc58d75b51ce6725650e5e",
+  "StateLandGovernance.Web/src/shared/components/SignInLink.tsx": "b3f0071090182c7109ce3bcb2b90db77edc02d3c6a728b0a2ad9343f55c3936f",
+  "StateLandGovernance/tests/IntegrationTests/ManualEvidenceProof/Program.cs": "80b516f2a26c527916015868dd06c63d7fc555e02e8372ee965b83a4d5e2efbf",
+  "StateLandGovernance/tests/IntegrationTests/ComplaintHandlingProof/Program.cs": "364eddbbcac8946cc407b173b6677fd327ca2006e7eca7518ea097060adf0972"
+}

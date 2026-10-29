@@ -1,0 +1,86 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/COMMISSIONER sign-in",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Applicant/None sign-in",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/DS sign-in",
+    "Responsible DS retrieves zero saved attachments, independent real verification",
+    "Original Legal Dispute Verified event remains reference-only and unchanged",
+    "Commissioner retains read-only evidence history",
+    "Anonymous and applicant evidence denied",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/DS sign-in",
+    "Other DS evidence denied",
+    "All existing Commissioner complaint permissions unchanged",
+    "Central queue readable unassigned",
+    "Central queue readable commissioner",
+    "Central queue readable ds",
+    "Central queue readable terminal",
+    "Central reads current actual handling projection 67a68a6a-4429-451b-8c14-50f639035e0b",
+    "Central reads preserved complaint/classification 67a68a6a-4429-451b-8c14-50f639035e0b",
+    "Two triage mirror events belong to AssignedToDs complaint without Start Investigation",
+    "Current assigned DS retrieves persisted handling history",
+    "Applicant handling history remains public-only",
+    "Central reads current actual handling projection aac71241-a1fd-4f4b-822d-5d5a1ca37b2c",
+    "Central reads preserved complaint/classification aac71241-a1fd-4f4b-822d-5d5a1ca37b2c",
+    "Start Investigation is persisted for the other complaint",
+    "Current assigned DS retrieves persisted handling history",
+    "Applicant handling history remains public-only",
+    "Applicant remains denied C4 admission",
+    "Commissioner assessment execution not enabled",
+    "Both rendered sign-in links retain complaint return",
+    "Header on sign-in page retains the valid return query"
+  ],
+  "EvidenceContext": {
+    "RequestId": "64105595-9f53-499c-8276-e71daec4af6c",
+    "InvestigationId": "fbb610b8-6200-42e1-829c-9f50653c4e9d",
+    "EarlyAssessmentId": "30909f90-2444-48fe-8770-c3ce0ca89fc9"
+  },
+  "Proposal1PdfExists": false,
+  "Proposal1BytesRetrievable": "No attachment row exists",
+  "ComplaintFindings": [
+    {
+      "ComplaintId": "67a68a6a-4429-451b-8c14-50f639035e0b",
+      "State": "AssignedToDs",
+      "History": [
+        {
+          "Id": "0b225631-3ae6-49ac-874d-9c921043c740",
+          "Revision": 1,
+          "Operation": "AssignDs"
+        },
+        {
+          "Id": "24f57c4b-d538-4fd3-8eeb-c6d70f865765",
+          "Revision": 2,
+          "Operation": "DsReviewRecorded"
+        },
+        {
+          "Id": "0be187f1-96a8-4783-a3e3-cf938d502b55",
+          "Revision": 3,
+          "Operation": "DsReviewRecorded"
+        }
+      ]
+    },
+    {
+      "ComplaintId": "aac71241-a1fd-4f4b-822d-5d5a1ca37b2c",
+      "State": "UnderInvestigation",
+      "History": [
+        {
+          "Id": "c2eeb4da-15f8-4245-afb2-0a8445f2b279",
+          "Revision": 1,
+          "Operation": "AssignDs"
+        },
+        {
+          "Id": "d32c26c8-edc2-41bf-8f83-a4204bb17a13",
+          "Revision": 2,
+          "Operation": "StartInvestigation"
+        }
+      ]
+    }
+  ],
+  "OrdinaryWrites": 0,
+  "InferenceCalls": 0,
+  "GraphicalChecks": "Browser unavailable; HTTP/SSR and automated tests only"
+}

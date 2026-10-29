@@ -1,0 +1,34 @@
+{
+  "Frontend": {
+    "Passed": 182,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "FinalFocused": {
+    "Passed": 16,
+    "Failed": 0
+  },
+  "Backend": {
+    "Passed": 35,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "IsolatedPdfChecks": 45,
+  "IsolatedHandlingChecks": 10,
+  "OrdinaryReadOnlyChecks": 32,
+  "LintErrors": 0,
+  "ExistingLintWarnings": 3,
+  "TypeScript": "Only three existing C1 failures",
+  "Browser": {
+    "apps": [],
+    "browsers": []
+  },
+  "OrdinaryWrites": 0,
+  "InferenceCalls": 0,
+  "CommissionerExecutionImplemented": false
+}
