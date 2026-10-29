@@ -1,0 +1,29 @@
+{
+  "Frontend": {
+    "Passed": 168,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "FocusedLint": {
+    "Errors": 0,
+    "ExistingWarnings": 3
+  },
+  "TypeScript": "Only three existing C1 errors",
+  "ReadOnlyRuntimeChecks": 173,
+  "SavedReports": 53,
+  "ManualEvidenceChecks": 82,
+  "EarlyWorkspaces": 12,
+  "BrowserInventory": {
+    "apps": [],
+    "browsers": []
+  },
+  "GraphicalChecks": "Pending manual observation",
+  "BackendChanges": false,
+  "OrdinaryWrites": 0,
+  "InferenceCalls": 0
+}
