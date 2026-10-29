@@ -1,0 +1,14 @@
+{
+  "Frontend": 185,
+  "FocusedBackend": 35,
+  "Architecture": 7,
+  "IsolatedRestoredHttpStorage": 66,
+  "OrdinaryAuthenticatedRead": 113,
+  "Skipped": 0,
+  "FocusedLintErrors": 0,
+  "TypeScript": "Only three pre-existing C1 errors",
+  "VisualBrowser": "Unavailable; manual pending",
+  "OrdinaryFixtureWrites": 0,
+  "InferenceCalls": 0,
+  "IsolatedContainerStopped": true
+}
