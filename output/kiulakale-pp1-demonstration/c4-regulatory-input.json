@@ -1,0 +1,315 @@
+{
+  "proposalId": "kiulakale-demonstration-adaptation-v1",
+  "location": {
+    "province": null,
+    "district": "Puttalam",
+    "divisionalSecretariatDivision": "Mahakumbukkadawala",
+    "gramaNiladhariDivision": "614/F Kiwula No. 01",
+    "description": "Kiwula Kale Estates: proposed 17-acre coconut holding in the Anamaduwa local-authority area. Exact parcel boundaries and access rights are Unknown."
+  },
+  "landRequirement": {
+    "requiresLand": true,
+    "extentHectares": 6.8797,
+    "landType": null,
+    "allocationDetails": "Demonstration assumption: request a 15-year agricultural lease, conditional on lawful grant; 16 acres coconut, 0.35 acres service infrastructure, 0.15 acres conservation/drainage, 0.50 acres reserved for a future dairy feasibility decision. No land grant, ownership or current occupation asserted.",
+    "resettlementApplicable": null
+  },
+  "preliminaryAssessment": null,
+  "policyAlignment": {
+    "declaredPolicies": null,
+    "alignmentExplanation": "The original pp4 and 8-9 describe coconut supply constraints and domestic demand. This adaptation proposes measured coconut production, local jobs and soil/water management. Applicable national policies and their versions remain Unknown; this rationale is not policy approval."
+  },
+  "stakeholders": {
+    "expectedStakeholders": null,
+    "consultedStakeholders": null,
+    "duplicationAssessmentSupplied": null,
+    "overlapMitigationRef": null
+  },
+  "resultFramework": {
+    "nodes": [
+      {
+        "nodeId": "Livelihood impact",
+        "nodeType": "Impact",
+        "title": "Sustained agricultural livelihoods without unapproved land use",
+        "parentNodeId": null,
+        "kpiReferences": []
+      },
+      {
+        "nodeId": "Farm outcome",
+        "nodeType": "Outcome",
+        "title": "Mature coconut harvest and six planned employment positions",
+        "parentNodeId": "Livelihood impact",
+        "kpiReferences": [
+          "Coconut harvest",
+          "Employment"
+        ]
+      },
+      {
+        "nodeId": "Orchard output",
+        "nodeType": "Output",
+        "title": "Established palms, irrigation and protected soil",
+        "parentNodeId": "Farm outcome",
+        "kpiReferences": [
+          "Palm establishment",
+          "Soil protection"
+        ]
+      }
+    ]
+  },
+  "impactAssessment": {
+    "impactAssessmentApplicable": true,
+    "negativeImpacts": [
+      {
+        "impactId": "Runoff",
+        "description": "Potential fertilizer runoff and sediment movement",
+        "mitigationPlanRef": "English proposal section 9: vegetated margins, contour drainage and controlled nutrient application"
+      },
+      {
+        "impactId": "Water demand",
+        "description": "Potential dry-season pumping pressure",
+        "mitigationPlanRef": "English proposal section 9: water-use log, soil-moisture scheduling and assessor-set abstraction limits"
+      }
+    ]
+  },
+  "riskFramework": {
+    "risks": [
+      {
+        "riskId": "Yield delay",
+        "description": "Palms may bear later or yield less than the scenario",
+        "mitigationStrategy": "Stage expenditure, maintain replacement planting allowance and review annual survival/yield records",
+        "isAssumption": false
+      },
+      {
+        "riskId": "Market price",
+        "description": "Farm-gate price may fall below the assumed LKR 60 per nut",
+        "mitigationStrategy": "Compare buyers, grade harvests and review the budget quarterly",
+        "isAssumption": false
+      },
+      {
+        "riskId": "Water availability",
+        "description": "Groundwater quantity and permitted abstraction are not established",
+        "mitigationStrategy": "Obtain relevant assessment before irrigation investment; do not treat source claims as clearance",
+        "isAssumption": false
+      },
+      {
+        "riskId": "Permission timing",
+        "description": "The scenario assumes lawful access before year 1; no grant is confirmed",
+        "mitigationStrategy": "Rebase dates and defer works if permission is delayed",
+        "isAssumption": true
+      }
+    ]
+  },
+  "disasterRiskAssessment": {
+    "applicable": null,
+    "assessmentCompleted": null,
+    "assessmentReference": null,
+    "hazardsConsidered": [
+      "Drought",
+      "Intense rainfall and localized flooding"
+    ],
+    "mitigationMeasures": [
+      "Proposed moisture monitoring and contour drainage; formal review pending"
+    ],
+    "responsibleRole": "Project manager",
+    "remarks": "Applicant planning considerations only; formal applicability and assessment are Unknown."
+  },
+  "monitoringPlan": {
+    "kpis": [
+      {
+        "kpiId": "Palm establishment",
+        "outputOrOutcomeRef": "Orchard output",
+        "unitOfMeasure": "Living palms",
+        "baselineValue": 0,
+        "baselineYear": 2026,
+        "targetValue": 1280,
+        "meansOfVerification": "Plant count each quarter",
+        "dataSource": "Planting and survival register",
+        "responsibleRole": "Field supervisor"
+      },
+      {
+        "kpiId": "Coconut harvest",
+        "outputOrOutcomeRef": "Farm outcome",
+        "unitOfMeasure": "Nuts per year",
+        "baselineValue": 0,
+        "baselineYear": 2026,
+        "targetValue": 102400,
+        "meansOfVerification": "Count and reconcile eight harvest records annually from year 8",
+        "dataSource": "Harvest and sales register",
+        "responsibleRole": "Farm records officer"
+      },
+      {
+        "kpiId": "Employment",
+        "outputOrOutcomeRef": "Farm outcome",
+        "unitOfMeasure": "Positions at maturity",
+        "baselineValue": 0,
+        "baselineYear": 2026,
+        "targetValue": 6,
+        "meansOfVerification": "Annual payroll and seasonal-worker review from year 8",
+        "dataSource": "Payroll register",
+        "responsibleRole": "Project manager"
+      },
+      {
+        "kpiId": "Soil protection",
+        "outputOrOutcomeRef": "Orchard output",
+        "unitOfMeasure": "Percent planted area with soil cover",
+        "baselineValue": 0,
+        "baselineYear": 2026,
+        "targetValue": 90,
+        "meansOfVerification": "Quarterly fixed-point observation",
+        "dataSource": "Soil and water log",
+        "responsibleRole": "Field supervisor"
+      }
+    ]
+  },
+  "budget": {
+    "submittedProjectBudget": 11800000,
+    "costComponents": [
+      {
+        "componentId": "Cost 1",
+        "name": "Land development and infrastructure",
+        "amount": 3000000
+      },
+      {
+        "componentId": "Cost 2",
+        "name": "Watch hut and store",
+        "amount": 500000
+      },
+      {
+        "componentId": "Cost 3",
+        "name": "Farm machinery and irrigation equipment",
+        "amount": 1500000
+      },
+      {
+        "componentId": "Cost 4",
+        "name": "Other establishment items",
+        "amount": 50000
+      },
+      {
+        "componentId": "Cost 5",
+        "name": "Planning and design allowance",
+        "amount": 150000
+      },
+      {
+        "componentId": "Cost 6",
+        "name": "Environmental and worker-safety setup",
+        "amount": 150000
+      },
+      {
+        "componentId": "Cost 7",
+        "name": "Establishment contingency",
+        "amount": 450000
+      },
+      {
+        "componentId": "Cost 8",
+        "name": "Five-year pre-bearing operating reserve",
+        "amount": 6000000
+      }
+    ]
+  },
+  "financing": {
+    "financingSources": [
+      {
+        "sourceId": "Establishment contribution",
+        "name": "Planned owner contribution for establishment; fictional, not proof of funds",
+        "amount": 5800000
+      },
+      {
+        "sourceId": "Operating reserve contribution",
+        "name": "Planned owner contribution to pre-bearing operating reserve; fictional, not proof of funds",
+        "amount": 6000000
+      }
+    ],
+    "revenueExpected": true,
+    "revenueForecastAmount": 6144000
+  },
+  "socialSafeguard": {
+    "resettlementApplicable": null,
+    "resettlementCost": null,
+    "genderConsidered": true,
+    "accessibilityConsidered": true
+  },
+  "implementation": {
+    "activities": [
+      {
+        "activityId": "Planning",
+        "name": "Confirm tenure, access, survey and required studies before works",
+        "responsibleRole": "Project manager"
+      },
+      {
+        "activityId": "Site preparation",
+        "name": "Set out planting rows and erosion controls only after required permissions",
+        "responsibleRole": "Field supervisor"
+      },
+      {
+        "activityId": "Water and buildings",
+        "name": "Install irrigation and the watch hut/store after required design review",
+        "responsibleRole": "Project manager"
+      },
+      {
+        "activityId": "Planting",
+        "name": "Establish 1,280 coconut palms and maintain the young plantation",
+        "responsibleRole": "Field supervisor"
+      },
+      {
+        "activityId": "Monitoring",
+        "name": "Record water, inputs, employment, costs and harvests",
+        "responsibleRole": "Farm records officer"
+      },
+      {
+        "activityId": "Maintenance",
+        "name": "Inspect irrigation weekly and buildings/drainage monthly",
+        "responsibleRole": "Field supervisor"
+      },
+      {
+        "activityId": "Restoration",
+        "name": "Prepare end-of-term restoration and handback proposal; no extension assumed",
+        "responsibleRole": "Project manager"
+      }
+    ],
+    "oAndMArrangement": "Annual preventive maintenance, irrigation inspection weekly, drainage and watch hut/store monthly; LKR 240,000 repairs budget per mature operating year, included once in operating costs. Permissions and technical inspections remain separate.",
+    "oAndMCost": 240000,
+    "oAndMFundingSource": "Pre-bearing maintenance is within the funded LKR 1.2m annual early-operation allowance; from revenue years, planned coconut sales fund the mature operating budget. No secured revenue or real funding verification is asserted."
+  },
+  "economicAppraisal": {
+    "selectedMethod": "NPV",
+    "discountRate": 0.1,
+    "cashFlows": [
+      -11800000,
+      0,
+      0,
+      0,
+      0,
+      0,
+      872000,
+      1408000,
+      2200000,
+      2200000,
+      2200000,
+      2200000,
+      2200000,
+      2200000,
+      2200000,
+      1800000
+    ],
+    "cashFlowPeriod": "Annual",
+    "submittedNpv": null,
+    "submittedIrr": null,
+    "submittedPaybackPeriod": null,
+    "submittedCbr": null,
+    "submittedPvBenefits": null,
+    "submittedPvCosts": null,
+    "cbrConvention": "Unresolved"
+  },
+  "evidenceReferences": [
+    {
+      "evidenceId": "Original proposal reference",
+      "referenceNumber": "Proposal1.pdf SHA256 7d047f9e2e357a78909594db164af96703682e703ee2075b5a7fcf25b81692c3",
+      "verificationStatus": "Provided"
+    },
+    {
+      "evidenceId": "Adaptation calculations",
+      "referenceNumber": "English demonstration proposal sections 5-8 and financial-schedule.json; assumptions, not confirmed records",
+      "verificationStatus": "Provided"
+    }
+  ]
+}
