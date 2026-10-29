@@ -1,0 +1,188 @@
+{
+  "Status": "Passed",
+  "Database": "c4_handling_test_complete",
+  "Port": 57657,
+  "Checks": [
+    "Additive migration creates empty assignment table; no backfill",
+    "Pre-migration original payload preserved",
+    "Anonymous central queue denied 401",
+    "DS institution alone has no central authority",
+    "Central permission checked before ID existence",
+    "Applicant denied central routes",
+    "Unlinked complaint saved with one genuine frozen classifier response",
+    "Applicant idempotent replay invokes no second classification",
+    "Owner sees exact saved classification",
+    "Foreign applicant and absent ID share 404",
+    "Unassigned DS cannot read unlinked complaint",
+    "Central queue includes existing and new unassigned complaints",
+    "Safe trusted DS selector",
+    "Initial assignment saved under restricted role",
+    "DS list scoped to current explicit assignment",
+    "Other eligible DS denied",
+    "Same key/content assignment replay",
+    "Changed body under same key conflicts 409",
+    "Redundant new-key assignment rejected",
+    "Authorized review preserves original and classification",
+    "Append-only reassignment chain",
+    "Previous DS immediately loses read access",
+    "Previous DS loses review writes",
+    "Previous DS loses retry access without inference",
+    "Historical replay reports current assignment without restoring former access",
+    "Live directory revocation fails closed",
+    "Central sees assigned-but-ineligible target",
+    "Concurrent initial assignments serialize with one winner",
+    "Review/reassignment shared lock permits only authorized transaction ordering",
+    "Reassigned DS remains revoked after race",
+    "Expired central grant denied immediately",
+    "New host retrieves saved original/classification without inference",
+    "Canonical bytes bind all typed fields and microsecond UTC timestamps after PostgreSQL roundtrip",
+    "Unlinked complaint supports direct Commissioner responsibility without case ID",
+    "Direct takeover revokes historical DS access",
+    "DS list filters direct handling before pagination",
+    "Applicant-safe history excludes internal notes and private actor IDs",
+    "Central action history preserves actual internal notes",
+    "Formal information request changes only handling status",
+    "Handling never rewrites original/classification state",
+    "Reasoned resolution has no active handler and preserves decision history",
+    "Terminal complaint rejects new investigation notes",
+    "Review permission alone cannot reopen without explicit operation",
+    "Explicit audited reopening returns responsibility to Commissioner",
+    "Reopening never restores former DS access",
+    "Same-key lifecycle replay creates no duplicate event",
+    "Changed lifecycle content under same key conflicts",
+    "Explicit new assignment to former DS restores only complaint scope",
+    "Current DS cannot read former Commissioner-private notes",
+    "DS cannot use ordinary action route for central final decisions",
+    "Resolution revokes DS reads/history/review/retry scope",
+    "Resolved complaint appears in server-filtered terminal queue",
+    "Concurrent same-key actions have one insert and one replay",
+    "Stale handling revision cannot mutate a reopened complaint",
+    "Rejected evidence leaves no handling row or revision change",
+    "Handling canonical bytes bind typed columns/details and normalized UTC after PostgreSQL roundtrip",
+    "Handling runtime has SELECT/INSERT only, no UPDATE/DELETE",
+    "All direct/DS decisions, replay and history reads invoke no additional classifier or anomaly model",
+    "No new table UPDATE permission",
+    "No new table DELETE permission",
+    "Actual restricted DELETE denied",
+    "No duplicate aggregate or model assessment",
+    "Routing creates no blockchain/outbox entries",
+    "Real host directory reads isolated accounts/settings and observes profile revocation without restart"
+  ],
+  "ActualClassifierCalls": 1,
+  "IsolatedComplaintId": "2c86e0f8-540f-4c17-a8a0-d3bf524c656c",
+  "AssignmentIds": [
+    "9e133b18-e7aa-444d-8ee4-e33396d1078a",
+    "ba6725d1-4f6c-4a6d-811a-a82d4a603714",
+    "13fa599b-8945-455a-b843-3eddf7c66287"
+  ],
+  "HandlingEvents": [
+    {
+      "Id": "5e23b0b8-d39c-4ca2-9a5d-eaf6fe86d599",
+      "Revision": 1,
+      "Operation": "AssignDs",
+      "Status": "AssignedToDs"
+    },
+    {
+      "Id": "91437275-f4ac-4edb-bc67-eb2094eb4adf",
+      "Revision": 2,
+      "Operation": "DsReviewRecorded",
+      "Status": "AssignedToDs"
+    },
+    {
+      "Id": "d562b8b7-9490-4816-83d6-4163d2f81b32",
+      "Revision": 3,
+      "Operation": "ReassignDs",
+      "Status": "AssignedToDs"
+    },
+    {
+      "Id": "c6a28eaf-6ebe-4e95-877d-ed7eedfd2bae",
+      "Revision": 4,
+      "Operation": "ReassignDs",
+      "Status": "AssignedToDs"
+    },
+    {
+      "Id": "46daf140-415f-4a96-b9fa-a480ca55534c",
+      "Revision": 5,
+      "Operation": "TakeDirect",
+      "Status": "UnderCommissionerReview"
+    },
+    {
+      "Id": "4dfb14e0-c623-4c22-b314-7ce2f5474f65",
+      "Revision": 6,
+      "Operation": "RecordNote",
+      "Status": "UnderCommissionerReview"
+    },
+    {
+      "Id": "2fb98c52-87a1-45f0-9bbd-cd5eabad8f1b",
+      "Revision": 7,
+      "Operation": "RequestInformation",
+      "Status": "InformationRequested"
+    },
+    {
+      "Id": "93491821-5170-47b9-88ce-2930ceca1448",
+      "Revision": 8,
+      "Operation": "StartInvestigation",
+      "Status": "UnderInvestigation"
+    },
+    {
+      "Id": "c101f257-22e7-44fc-a1d1-1d6565797ce4",
+      "Revision": 9,
+      "Operation": "RecordFindings",
+      "Status": "UnderInvestigation"
+    },
+    {
+      "Id": "36fa7f5e-0baa-46ba-9ce1-bec5fe9efc13",
+      "Revision": 10,
+      "Operation": "Resolve",
+      "Status": "Resolved"
+    },
+    {
+      "Id": "7c929b32-102b-4e44-8c06-46da51b10fbe",
+      "Revision": 11,
+      "Operation": "Close",
+      "Status": "Closed"
+    },
+    {
+      "Id": "5119a685-9233-412c-aae7-9206e08970a5",
+      "Revision": 12,
+      "Operation": "Reopen",
+      "Status": "Reopened"
+    },
+    {
+      "Id": "b2934bac-3182-426c-ae2b-3ac179a40c9a",
+      "Revision": 13,
+      "Operation": "AssignDs",
+      "Status": "AssignedToDs"
+    },
+    {
+      "Id": "13d411ea-c45d-4e9b-87cd-f649a1a70d06",
+      "Revision": 14,
+      "Operation": "StartInvestigation",
+      "Status": "UnderInvestigation"
+    },
+    {
+      "Id": "a7882be8-3760-437f-bd7d-b21276707084",
+      "Revision": 15,
+      "Operation": "RecordFindings",
+      "Status": "UnderInvestigation"
+    },
+    {
+      "Id": "a62691f6-e402-491a-8beb-496af62ddf64",
+      "Revision": 16,
+      "Operation": "Resolve",
+      "Status": "Resolved"
+    },
+    {
+      "Id": "07d45fc0-5423-4faf-aab1-9ea9eaaf9c7a",
+      "Revision": 17,
+      "Operation": "Reopen",
+      "Status": "Reopened"
+    },
+    {
+      "Id": "fab20b3a-f96c-4f99-b8a0-71cd8915dff8",
+      "Revision": 18,
+      "Operation": "RecordNote",
+      "Status": "Reopened"
+    }
+  ]
+}
