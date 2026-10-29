@@ -1,0 +1,15 @@
+{
+  "Status": "Passed",
+  "Oid": 34144,
+  "Tables": 41,
+  "Migrations": 21,
+  "FreshArchiveSchemaAllRowsGrantsMatch": true,
+  "PeersModelsPrivateConfigurationUnchanged": true,
+  "ExistingApiPid": 13300,
+  "OldAndNewPackageHashesMatch": true,
+  "NoSchemaOrPermissionDelta": true,
+  "IsolatedHttpChecks": 47,
+  "BackendTests": 324,
+  "FrontendTests": 162,
+  "ArchitectureTests": 7
+}

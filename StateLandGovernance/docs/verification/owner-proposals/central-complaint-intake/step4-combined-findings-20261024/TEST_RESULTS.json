@@ -1,0 +1,45 @@
+{
+  "FocusedBackend": {
+    "Passed": 334,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0
+  },
+  "SummaryAndSequenceFrontend": {
+    "Passed": 29,
+    "Failed": 0
+  },
+  "FullFrontend": {
+    "Passed": 225,
+    "Failed": 2,
+    "Total": 227,
+    "Skipped": 0
+  },
+  "ReadOnlyHttp": {
+    "Passed": 48,
+    "Failed": 0
+  },
+  "BroadBackendDiagnostic": {
+    "Passed": 965,
+    "Failed": 13,
+    "Total": 978,
+    "Skipped": 0
+  },
+  "FocusedLint": {
+    "Errors": 0,
+    "Warnings": 0
+  },
+  "TypeScript": {
+    "Errors": 3,
+    "Scope": "existing C1 failures only"
+  },
+  "ProductionBackendChanges": 0,
+  "NewMigrations": 0,
+  "NewPermissions": 0,
+  "OrdinaryWrites": 0,
+  "OrdinaryServiceActions": 0,
+  "Step4ModelInference": 0
+}

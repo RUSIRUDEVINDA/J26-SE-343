@@ -1,0 +1,12 @@
+{
+  "Purpose": "Step 8B disposable Governance test database",
+  "Database": "component4_screening_test_step8b_20261024_earlyref",
+  "DockerServerPort": 5432,
+  "ExternalLoopbackPort": 57657,
+  "Oid": "66917",
+  "OrdinaryDatabase": "state_land_governance_c4",
+  "OrdinaryOid": "34144",
+  "TargetGuard": "The psql command is explicitly pinned to 127.0.0.1:57657. PostgreSQL reports its internal container port 5432; that is distinct from the host endpoint and ordinary target is never contacted.",
+  "OrdinaryWrites": 0,
+  "CreatedEmpty": true
+}

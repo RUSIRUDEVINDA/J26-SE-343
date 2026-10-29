@@ -1,0 +1,17 @@
+{
+  "StateLandGovernance.Web/src/app/component-04/page.tsx": "b2f861e821abfcac3c49af3edb6477b9863bc5abdf255c02243b91ff01b4858f",
+  "StateLandGovernance.Web/src/app/component-04/layout.tsx": "8ca54791b36e7389c8ea23267cf90e90814aa32ee45fc7e37dfda40dff242e40",
+  "StateLandGovernance.Web/src/modules/component-04/services/c4Navigation.ts": "6a4d301c5a9bca3c8b5a4fa1a8bde2647a418eefb49bd26a0ce67388713cfb6f",
+  "StateLandGovernance.Web/src/shared/components/Sidebar.tsx": "0a680d9c1dd882ec9f10f9aab76e2543e243b875d5b813a61ba26e04131c7cc0",
+  "StateLandGovernance.Web/src/shared/components/PageLayout.tsx": "36739089c3c6d16159b3fcaf6bcfabb07b41b0b86f703ea2229d0c26ea919a11",
+  "StateLandGovernance.Web/src/shared/components/DevelopmentSessionBar.tsx": "4624d703b0baa1be28d4b35b3d119b847336edbfdaf2254491893ff1b8a85f01",
+  "StateLandGovernance.Web/src/shared/components/AppHeader.module.css": "084541cc5d0b9266feb9189687ec9f7ec9898bba7cc92ab3c9d47f503d7ec847",
+  "StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.tsx": "5bd89caf9348de591e48ed4436d4b83cc1293d390cfc7169ab8a133527ebf153",
+  "StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.module.css": "bcd32b7a3bba2fa14d81e3faf61c6e0048bb073dd5857090748850253d4f8636",
+  "StateLandGovernance.Web/src/modules/component-04/components/OfficerAnomalyPanel.tsx": "3a12ef718944fb6391d8018f44c3a89dc6b994b16d7aee4f43c7c0fc72ef850d",
+  "StateLandGovernance.Web/src/modules/component-04/components/OfficerSavedReports.tsx": "1be0cc9879ca80538f34f76c19eab555c6eaf2d833a99fa09dd89613d9772441",
+  "StateLandGovernance.Web/src/modules/component-04/components/ProgressiveSteps.module.css": "624071b20b64c636a18ff533f62aa833e4c1ae4e22769afcecf201c63121ae74",
+  "StateLandGovernance.Web/src/modules/component-04/components/KiwulaAssessmentWorkspace.tsx": "43efd66d15621f35c8701943a901e0328c1567e3de92ab4d06dce1ff3334cf10",
+  "StateLandGovernance.Web/src/modules/component-04/components/KiwulaAssessmentWorkspace.module.css": "45f28179a38b381415e6daccfafa178868fdc5a8b352e749a507f9214597d65c",
+  "StateLandGovernance.Web/src/modules/component-04/components/GovernanceWorkspace.module.css": "0ced4efec0efadfc9fc14f096173dfc806cfac3604450fcd2c3513519ee0f9c7"
+}

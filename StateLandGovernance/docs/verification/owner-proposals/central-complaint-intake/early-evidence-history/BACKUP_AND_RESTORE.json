@@ -1,0 +1,18 @@
+{
+  "Status": "Passed",
+  "Identity": {
+    "Name": "state_land_governance_c4",
+    "Oid": "34144"
+  },
+  "Tables": 41,
+  "Migrations": 21,
+  "Archive": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\c4-early-evidence-history-backup-20261024\\state_land_governance_c4.dump",
+  "Bytes": 1810188,
+  "Sha256": "b3ad48da2f3f726af4c9d549972b94773f27d0922767f9cef148a842bc1d1b60",
+  "IsolatedDatabase": "c4_early_evidence_restore_20261024",
+  "AllOriginalRowsSchemaHistoryMatch": true,
+  "OwnershipAndAclRestoreSkipped": true,
+  "OriginalAclDefinitionsRetainedInArchive": true,
+  "OrdinaryWrites": 0,
+  "PriorApiPid": 16456
+}

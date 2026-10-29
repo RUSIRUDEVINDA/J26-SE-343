@@ -1,0 +1,8 @@
+{
+  "ASPNETCORE_ENVIRONMENT": "Development",
+  "ASPNETCORE_URLS": "http://localhost:5264",
+  "GOVERNANCE_INTELLIGENCE_CONNECTION": "Host=localhost;Port=5432;Database=state_land_governance_c4;Username=slg_c4_regulatory_runtime;Password=<secure operator supplied>",
+  "GovernanceIntelligence__CentralComplaints__GrantFilePath": "<secure reviewed complaint permission document>",
+  "GovernanceIntelligence__CommissionerReportReads__GrantFilePath": "<separate secure reviewed report-read permission document>",
+  "NOTE": "INCOMPLETE illustrative template, never load as runtime configuration. Preserve all existing read-only peer/account connections, session settings and disabled sandboxes/workers through the reviewed private candidate. No authority is granted by this file."
+}

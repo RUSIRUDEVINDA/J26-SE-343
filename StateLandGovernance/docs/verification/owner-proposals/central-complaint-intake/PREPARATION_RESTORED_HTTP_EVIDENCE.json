@@ -1,0 +1,20 @@
+{
+  "Status": "Passed",
+  "Database": "c4_central_restore_preparation_20261023_053654",
+  "Checks": [
+    "Reviewed restored migrations create empty tables without backfill",
+    "Anonymous restored-copy queue denied",
+    "DS has no central authority",
+    "Real repository finds isolated fixture among preserved restored records",
+    "Foreign applicant denied without enumeration",
+    "Assigned DS can read isolated fixture on restored schema",
+    "Terminal handling revokes DS scope on restored copy",
+    "Historical assignment replay preserves effective terminal handling",
+    "Owner history omits internal metadata on restored copy",
+    "Canonical event hashes roundtrip under copied restricted grants",
+    "Restored-copy proof invokes no classifier or anomaly inference"
+  ],
+  "FixtureId": "6ae57def-a07f-4ec2-a647-94e6a284e307",
+  "AssignmentEvent": "8d0b8733-f348-4bcf-8da2-7d94d2f954c8",
+  "ModelCalls": 0
+}

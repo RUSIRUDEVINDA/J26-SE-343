@@ -1,0 +1,13 @@
+{
+  "Database": "c4_step3_restore_20261024",
+  "Tables": 42,
+  "Migrations": 23,
+  "AllPreexistingRowsPreserved": true,
+  "OnlyNewFictionalComplaintRowsAdded": true,
+  "AllOtherTableFingerprintsExact": true,
+  "SchemaHistoryAndGrantsUnchanged": true,
+  "AddressHttpChecks": 21,
+  "EvidenceReadAndDownloadChecks": 59,
+  "RealModelCalls": 0,
+  "OrdinaryWrites": 0
+}

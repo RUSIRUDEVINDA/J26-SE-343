@@ -1,0 +1,495 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Endpoint has server authorization: api/governance-intelligence/central-complaints/capabilities",
+    "Applicant denied before protected handler: GET api/governance-intelligence/central-complaints/capabilities",
+    "Endpoint has server authorization: api/governance-intelligence/central-complaints",
+    "Applicant denied before protected handler: GET api/governance-intelligence/central-complaints",
+    "Endpoint has server authorization: api/governance-intelligence/central-complaints/officers",
+    "Applicant denied before protected handler: GET api/governance-intelligence/central-complaints/officers",
+    "Endpoint has server authorization: api/governance-intelligence/central-complaints/{id:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/central-complaints/{id:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/central-complaints/{id:guid}/assignments",
+    "Applicant denied before protected handler: GET api/governance-intelligence/central-complaints/{id:guid}/assignments",
+    "Endpoint has server authorization: api/governance-intelligence/central-complaints/{id:guid}/assignments",
+    "Applicant denied before protected handler: POST api/governance-intelligence/central-complaints/{id:guid}/assignments",
+    "Endpoint has server authorization: api/governance-intelligence/central-complaints/{id:guid}/actions",
+    "Applicant denied before protected handler: GET api/governance-intelligence/central-complaints/{id:guid}/actions",
+    "Endpoint has server authorization: api/governance-intelligence/central-complaints/{id:guid}/actions",
+    "Applicant denied before protected handler: POST api/governance-intelligence/central-complaints/{id:guid}/actions",
+    "Endpoint has server authorization: api/governance-intelligence/access",
+    "Applicant denied before protected handler: GET api/governance-intelligence/access",
+    "Endpoint has server authorization: api/governance-intelligence/evaluate-compliance",
+    "Applicant denied before protected handler: POST api/governance-intelligence/evaluate-compliance",
+    "Endpoint has server authorization: api/governance-intelligence/detect-conflicts",
+    "Applicant denied before protected handler: POST api/governance-intelligence/detect-conflicts",
+    "Endpoint has server authorization: api/governance-intelligence/evaluate-risk",
+    "Applicant denied before protected handler: POST api/governance-intelligence/evaluate-risk",
+    "Endpoint has server authorization: api/governance-intelligence/explain",
+    "Applicant denied before protected handler: POST api/governance-intelligence/explain",
+    "Endpoint has server authorization: api/governance-intelligence/evaluate-consensus",
+    "Applicant denied before protected handler: POST api/governance-intelligence/evaluate-consensus",
+    "Endpoint has server authorization: api/governance-intelligence/verify-conditions",
+    "Applicant denied before protected handler: POST api/governance-intelligence/verify-conditions",
+    "Endpoint has server authorization: api/governance-intelligence/classify-complaint",
+    "Applicant denied before protected handler: POST api/governance-intelligence/classify-complaint",
+    "Endpoint has server authorization: api/governance-intelligence/predict-workflow-anomaly",
+    "Applicant denied before protected handler: POST api/governance-intelligence/predict-workflow-anomaly",
+    "Endpoint has server authorization: api/governance-intelligence/screen-early-governance",
+    "Applicant denied before protected handler: POST api/governance-intelligence/screen-early-governance",
+    "Endpoint has server authorization: api/governance-intelligence/audits/{auditRecordId:guid}/receipt",
+    "Applicant denied before protected handler: GET api/governance-intelligence/audits/{auditRecordId:guid}/receipt",
+    "Endpoint has server authorization: api/governance-intelligence/audits/history/cases/{caseId}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/audits/history/cases/{caseId}",
+    "Endpoint has server authorization: api/governance-intelligence/audits/{auditRecordId:guid}/anchor",
+    "Applicant denied before protected handler: POST api/governance-intelligence/audits/{auditRecordId:guid}/anchor",
+    "Endpoint has server authorization: api/governance-intelligence/audits/{auditRecordId:guid}/verify",
+    "Applicant denied before protected handler: POST api/governance-intelligence/audits/{auditRecordId:guid}/verify",
+    "Endpoint has server authorization: api/governance-intelligence/dashboard",
+    "Applicant denied before protected handler: GET api/governance-intelligence/dashboard",
+    "Endpoint has server authorization: api/governance-intelligence/workflow-anomalies/assess",
+    "Applicant denied before protected handler: POST api/governance-intelligence/workflow-anomalies/assess",
+    "Endpoint has server authorization: api/governance-intelligence/workflow-anomalies/{assessmentId:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/workflow-anomalies/{assessmentId:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/workflow-anomalies/history/cases/{caseId}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/workflow-anomalies/history/cases/{caseId}",
+    "Endpoint has server authorization: api/governance-intelligence/workflow-anomalies/history/workflow-runs/{workflowRunId:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/workflow-anomalies/history/workflow-runs/{workflowRunId:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/workflow-projections/cases/{caseId}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/workflow-projections/cases/{caseId}",
+    "Endpoint has server authorization: api/governance-intelligence/lease-timing/assess",
+    "Applicant denied before protected handler: POST api/governance-intelligence/lease-timing/assess",
+    "Endpoint has server authorization: api/governance-intelligence/lease-timing/{assessmentId:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/lease-timing/{assessmentId:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/lease-timing/history/cases/{caseId}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/lease-timing/history/cases/{caseId}",
+    "Endpoint has server authorization: api/governance-intelligence/lease-timing/history/workflow-runs/{workflowRunId:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/lease-timing/history/workflow-runs/{workflowRunId:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/screening/{assessmentId:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/screening/{assessmentId:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/screening/history/cases/{caseId}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/screening/history/cases/{caseId}",
+    "Endpoint has server authorization: api/governance-intelligence/referrals/history/cases/{caseId}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/referrals/history/cases/{caseId}",
+    "Endpoint has server authorization: api/governance-intelligence/referrals/{referralId:guid}/deliver",
+    "Applicant denied before protected handler: POST api/governance-intelligence/referrals/{referralId:guid}/deliver",
+    "Endpoint has server authorization: api/governance-intelligence/complaints/{assessmentId:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/complaints/{assessmentId:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/complaints/history/cases/{caseId}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/complaints/history/cases/{caseId}",
+    "Endpoint has server authorization: api/governance-intelligence/pp1/seeds",
+    "Applicant denied before protected handler: POST api/governance-intelligence/pp1/seeds",
+    "Endpoint has server authorization: api/governance-intelligence/screening/orchestrate",
+    "Applicant denied before protected handler: POST api/governance-intelligence/screening/orchestrate",
+    "Endpoint has server authorization: api/governance-intelligence/screening/cases/{caseId}/latest",
+    "Applicant denied before protected handler: GET api/governance-intelligence/screening/cases/{caseId}/latest",
+    "Endpoint has server authorization: api/governance-intelligence/screening/cases/{caseId}/history-consolidated",
+    "Applicant denied before protected handler: GET api/governance-intelligence/screening/cases/{caseId}/history-consolidated",
+    "Endpoint has server authorization: api/governance-intelligence/screening/fixtures",
+    "Applicant denied before protected handler: GET api/governance-intelligence/screening/fixtures",
+    "Endpoint has server authorization: api/governance-intelligence/screening/fixtures/{caseId}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/screening/fixtures/{caseId}",
+    "Endpoint has server authorization: api/governance-intelligence/regulatory-assessments",
+    "Applicant denied before protected handler: GET api/governance-intelligence/regulatory-assessments",
+    "Endpoint has server authorization: api/governance-intelligence/regulatory-assessments/{id:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/regulatory-assessments/{id:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/regulatory-assessments/capabilities",
+    "Applicant denied before protected handler: GET api/governance-intelligence/regulatory-assessments/capabilities",
+    "Endpoint has server authorization: api/governance-intelligence/regulatory-assessments/submissions/{key:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/regulatory-assessments/submissions/{key:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/kiwula-assessments/catalogue",
+    "Applicant denied before protected handler: GET api/governance-intelligence/kiwula-assessments/catalogue",
+    "Endpoint has server authorization: api/governance-intelligence/kiwula-assessments",
+    "Applicant denied before protected handler: GET api/governance-intelligence/kiwula-assessments",
+    "Endpoint has server authorization: api/governance-intelligence/kiwula-assessments/{id:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/kiwula-assessments/{id:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/kiwula-assessments",
+    "Applicant denied before protected handler: POST api/governance-intelligence/kiwula-assessments",
+    "Endpoint has server authorization: api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence",
+    "Applicant denied before protected handler: GET api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence",
+    "Endpoint has server authorization: api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence/attachments",
+    "Applicant denied before protected handler: POST api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence/attachments",
+    "Endpoint has server authorization: api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence/attachments/{attachment:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence/attachments/{attachment:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence/verifications",
+    "Applicant denied before protected handler: POST api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence/verifications",
+    "Endpoint has server authorization: api/governance-intelligence/officer-assessments/catalogue",
+    "Applicant denied before protected handler: GET api/governance-intelligence/officer-assessments/catalogue",
+    "Endpoint has server authorization: api/governance-intelligence/officer-investigations",
+    "Applicant denied before protected handler: POST api/governance-intelligence/officer-investigations",
+    "Endpoint has server authorization: api/governance-intelligence/officer-investigations",
+    "Applicant denied before protected handler: GET api/governance-intelligence/officer-investigations",
+    "Endpoint has server authorization: api/governance-intelligence/officer-investigations/{id:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/officer-investigations/{id:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/officer-assessments/early",
+    "Applicant denied before protected handler: POST api/governance-intelligence/officer-assessments/early",
+    "Endpoint has server authorization: api/governance-intelligence/officer-assessments/anomaly",
+    "Applicant denied before protected handler: POST api/governance-intelligence/officer-assessments/anomaly",
+    "Endpoint has server authorization: api/governance-intelligence/officer-assessments/{id:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/officer-assessments/{id:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/officer-assessments",
+    "Applicant denied before protected handler: GET api/governance-intelligence/officer-assessments",
+    "Endpoint has server authorization: api/governance-intelligence/post-workflow-demonstrations/catalogue",
+    "Applicant denied before protected handler: GET api/governance-intelligence/post-workflow-demonstrations/catalogue",
+    "Endpoint has server authorization: api/governance-intelligence/post-workflow-demonstrations",
+    "Applicant denied before protected handler: GET api/governance-intelligence/post-workflow-demonstrations",
+    "Endpoint has server authorization: api/governance-intelligence/post-workflow-demonstrations/{id:guid}",
+    "Applicant denied before protected handler: GET api/governance-intelligence/post-workflow-demonstrations/{id:guid}",
+    "Endpoint has server authorization: api/governance-intelligence/post-workflow-demonstrations",
+    "Applicant denied before protected handler: POST api/governance-intelligence/post-workflow-demonstrations",
+    "Endpoint has server authorization: api/governance-intelligence/post-workflow-demonstrations/retries",
+    "Applicant denied before protected handler: POST api/governance-intelligence/post-workflow-demonstrations/retries",
+    "Applicant-specific complaint endpoint remains deliberately authorized for ownership checks",
+    "Anonymous route admission denied401",
+    "Existing officer role admitted without changing report/complaint scopes"
+  ],
+  "ProtectedEndpointChecks": [
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/central-complaints/capabilities",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/central-complaints",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/central-complaints/officers",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/central-complaints/{id:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/central-complaints/{id:guid}/assignments",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/central-complaints/{id:guid}/assignments",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/central-complaints/{id:guid}/actions",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/central-complaints/{id:guid}/actions",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/access",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/evaluate-compliance",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/detect-conflicts",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/evaluate-risk",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/explain",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/evaluate-consensus",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/verify-conditions",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/classify-complaint",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/predict-workflow-anomaly",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/screen-early-governance",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/audits/{auditRecordId:guid}/receipt",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/audits/history/cases/{caseId}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/audits/{auditRecordId:guid}/anchor",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/audits/{auditRecordId:guid}/verify",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/dashboard",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/workflow-anomalies/assess",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/workflow-anomalies/{assessmentId:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/workflow-anomalies/history/cases/{caseId}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/workflow-anomalies/history/workflow-runs/{workflowRunId:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/workflow-projections/cases/{caseId}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/lease-timing/assess",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/lease-timing/{assessmentId:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/lease-timing/history/cases/{caseId}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/lease-timing/history/workflow-runs/{workflowRunId:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/screening/{assessmentId:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/screening/history/cases/{caseId}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/referrals/history/cases/{caseId}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/referrals/{referralId:guid}/deliver",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/complaints/{assessmentId:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/complaints/history/cases/{caseId}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/pp1/seeds",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/screening/orchestrate",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/screening/cases/{caseId}/latest",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/screening/cases/{caseId}/history-consolidated",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/screening/fixtures",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/screening/fixtures/{caseId}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/regulatory-assessments",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/regulatory-assessments/{id:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/regulatory-assessments/capabilities",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/regulatory-assessments/submissions/{key:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/kiwula-assessments/catalogue",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/kiwula-assessments",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/kiwula-assessments/{id:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/kiwula-assessments",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence/attachments",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence/attachments/{attachment:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/officer-assessments/{request:guid}/manual-evidence/verifications",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/officer-assessments/catalogue",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/officer-investigations",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/officer-investigations",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/officer-investigations/{id:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/officer-assessments/early",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/officer-assessments/anomaly",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/officer-assessments/{id:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/officer-assessments",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/post-workflow-demonstrations/catalogue",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/post-workflow-demonstrations",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "GET",
+      "Route": "api/governance-intelligence/post-workflow-demonstrations/{id:guid}",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/post-workflow-demonstrations",
+      "ApplicantStatus": 403
+    },
+    {
+      "Method": "POST",
+      "Route": "api/governance-intelligence/post-workflow-demonstrations/retries",
+      "ApplicantStatus": 403
+    }
+  ],
+  "ModelCalls": 0,
+  "DatabaseConnections": 0
+}

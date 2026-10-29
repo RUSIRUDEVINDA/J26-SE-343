@@ -1,0 +1,32 @@
+{
+  "OriginalStep4BroadBackend": {
+    "Total": 978,
+    "Passed": 965,
+    "Failed": 13
+  },
+  "Classifications": [
+    {
+      "Count": 11,
+      "Classification": "Missing isolated PostgreSQL test configuration",
+      "Groups": {
+        "Phase3BPostgresAndSmokeIntegrationTests": 2,
+        "EarlyGovernanceScreeningPostgresIntegrationTests": 2,
+        "ComplaintClassificationAssessmentPostgresIntegrationTests": 6,
+        "Phase3APersistenceFoundationTests": 1
+      },
+      "Evidence": "All throw required COMPONENT4_TEST_POSTGRES_CONNECTION precondition before infrastructure/engine behavior. Required prefix component4_screening_test_. No configuration supplied or production target substituted."
+    },
+    {
+      "Count": 1,
+      "Classification": "Python smoke launcher environment",
+      "Evidence": "WorkflowAnomalyRealSmokeIntegrationTests uses py -3.13 unless COMPONENT4_TEST_PYTHON_EXECUTABLE is supplied. Prior exit112: No installed Python found; no model inference occurred. Not rerun to avoid unnecessary inference."
+    },
+    {
+      "Count": 1,
+      "Classification": "Reproducible project XML path test-harness error",
+      "Evidence": "ProjectFiles_ShouldNotContainForbiddenPackageReferences again fails at XDocument.Load(string), UriFormatException, before package assertions. Separate ignored .NET8 diagnostic loads all five exact csproj files successfully by ordinary path and stream. Full test-context path/URI cause remains unresolved. No application/package or test implementation was changed."
+    }
+  ],
+  "IdentifiedNewC4RuntimeRegressions": [],
+  "Qualification": "Blocked preconditions do not prove configured integration behavior; broader suite is not claimed passing."
+}

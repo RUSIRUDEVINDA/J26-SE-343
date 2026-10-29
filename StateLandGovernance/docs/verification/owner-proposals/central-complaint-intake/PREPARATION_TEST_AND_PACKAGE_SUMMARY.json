@@ -1,0 +1,50 @@
+{
+  "Date": "2026-10-23 Asia/Colombo",
+  "SixBlockedRegressions": {
+    "passed": 6,
+    "failed": 0
+  },
+  "FocusedCombinedBackend": {
+    "passed": 241,
+    "failed": 0,
+    "skipped": 0
+  },
+  "RestoredCopyHttp": {
+    "passed": 11,
+    "failed": 0,
+    "modelCalls": 0
+  },
+  "ExactGrantBindingAndWindow": "Passed; starts 24Oct09:00 Sri Lanka; expired/before-window denied",
+  "ApiPublish": "Passed; Release, 88 hashed files; not started",
+  "LauncherValidateOnly": "Passed in process-scoped ExecutionPolicy Bypass; no policy persisted, no process started",
+  "SourceReview": {
+    "ApplicationChangesSinceCombinedReview": false,
+    "TestHarnessOnlyChange": {
+      "StateLandGovernance/tests/IntegrationTests/ComplaintHandlingProof/Program.cs": {
+        "reviewed": "557b18ca9f21e1ba2c7f4dc887d2a9691d94e4e18d0a2f7cd92d2fc3aabbdfab",
+        "current": "a3096395dbdcf5c445a8d5134db24fa9b7eceaf7d06ff8a0f13831ff57c23b8a"
+      }
+    },
+    "NewReviewedLauncher": "StateLandGovernance/tools/development/Start-CentralComplaintsApprovedApi.ps1"
+  },
+  "PrivateConfigurationUnchanged": true,
+  "OrdinaryMigrationGrantApiChanges": false,
+  "NoOrdinaryServiceListenersObserved": [
+    5264,
+    3000,
+    8104
+  ],
+  "InheritedLimitations": [
+    "139 frontend/5 architecture passes are prior recorded evidence, not rerun during preparation",
+    "3 existing C1 TypeScript errors remain",
+    "Browser visual/keyboard/responsive tests pending",
+    "No ordinary Commissioner login/authority issued",
+    "Package not started against ordinary or restored data; actual controllers/repositories tested via isolated proof host"
+  ],
+  "PreparationCorrections": [
+    "Old temporary operator-config copy inaccessible; no ACL changes; existing local operator credential used only for forced-read-only C4 backup",
+    "Restricted-runtime pg_dump denied synthetic schema; incomplete attempt retained, never used as backup",
+    "Initial restore comparison required explicit UTC, C ordering, canonical row JSON and equivalent literal-array-cast deparser normalization",
+    "Restored test harness required TakeDirect notes and client-side fictional-fixture JSON lookup; no application change"
+  ]
+}

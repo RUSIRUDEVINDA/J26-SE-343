@@ -1,0 +1,17 @@
+{
+  "Status": "Passed",
+  "ExistingApiPid": 16456,
+  "OrdinaryAllRowsSchemaHistoryGrantsUnchanged": true,
+  "RestoredOriginalRowsPreservedAfterIsolatedFixtures": true,
+  "BackupChecksumRechecked": true,
+  "PrivateCandidateAndTwoGrantDocumentsUnchanged": true,
+  "SuccessorPackageHashesMatch": true,
+  "NoStartupMigrations": true,
+  "Models": {
+    "ComplaintV2": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+    "AnomalyV1": "59ed4a73d56d9f06798c4ebc4684a633afe72841c41ed0b3ba4e7bb658782b46"
+  },
+  "SavedReportsBaselined": 64,
+  "NoSchemaPermissionDelta": true,
+  "OrdinaryWrites": 0
+}

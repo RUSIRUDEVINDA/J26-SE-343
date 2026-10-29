@@ -1,0 +1,82 @@
+{
+  "StateLandGovernance.Web/src/app/component-04/layout.tsx": {
+    "BeforeTaskSha256": "2c717d1c65421f028647304ca3d990fb7d7fee4f4e7c8f248e8acc714480f35c",
+    "AfterSha256": "8ca54791b36e7389c8ea23267cf90e90814aa32ee45fc7e37dfda40dff242e40"
+  },
+  "StateLandGovernance.Web/src/shared/components/Sidebar.tsx": {
+    "BeforeTaskSha256": "d8712b00c06bac0d547a645ab1e5b7b8783270cbc7db5eb9712107e89aaac9b9",
+    "AfterSha256": "0a680d9c1dd882ec9f10f9aab76e2543e243b875d5b813a61ba26e04131c7cc0"
+  },
+  "StateLandGovernance.Web/src/app/page.tsx": {
+    "BeforeTaskSha256": "4642b95345132f799fcd2944cb39c34434dce14ea9b75be127096255629f6296",
+    "AfterSha256": "262f168281a67d1c78be36956a5dda6d5569b2764790f68f3d8b39f7781a6614"
+  },
+  "StateLandGovernance.Web/src/app/sign-in/page.tsx": {
+    "BeforeTaskSha256": "cfa96ae66ef814df0d8444f723754e9c44f7cefe8aff59d93b35a37febc67349",
+    "AfterSha256": "6c4a0d3e506514bc1b71c11281de29c8893765b9dad9b8774d093d48c76cbeb5"
+  },
+  "StateLandGovernance.Web/src/modules/component-04/services/postLogin.ts": {
+    "BeforeTaskSha256": "1c513c42bbc64e271e0df89d7c0180f7440ab7ac6e5a0a4199bcca3a3b230e34",
+    "AfterSha256": "7bd65162fb48ae2839cf7d10d6f725ba12cbca9d58207d812754d176cc6efa7f"
+  },
+  "StateLandGovernance.Web/src/modules/component-04/services/c4Navigation.ts": {
+    "BeforeTaskSha256": "c8786a97524a46886c803843ab10df7d56888e51aaf7b1407344a6590df84a49",
+    "AfterSha256": "6a4d301c5a9bca3c8b5a4fa1a8bde2647a418eefb49bd26a0ce67388713cfb6f"
+  },
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/GovernanceIntelligenceController.cs": {
+    "BeforeTaskSha256": "68068f563b15d8698aaf1cada284a5d0259f62adf3bd96dfe04ba83f379713db",
+    "AfterSha256": "caaacbf3de5aac3caf616a0b12828900a5e2c9a53442bdb3a61f64adf22b58db"
+  },
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/GovernanceAccessController.cs": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "8e010ebe4e660a5162d32b83c47db31d8c95090fa6122fdc4355366f1454490f"
+  },
+  "StateLandGovernance.Web/src/modules/component-04/services/governanceRouteAccess.ts": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "6f366afc2302bd2991425131696f4a069d21bafad537f35c28e1956161fa5178"
+  },
+  "StateLandGovernance.Web/src/app/api/c4-session/route.ts": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "e9cfe6c3fb41a520b013ec565e4cd69300e962909c9fc35ec686c0e0c0141632"
+  },
+  "StateLandGovernance.Web/src/proxy.ts": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "fe59aab86ff0c24d5e6fbc17ed42c0be86c7ad8652c4aa36580123c904f186d5"
+  },
+  "StateLandGovernance.Web/src/modules/component-04/components/GovernanceModuleLink.tsx": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "6d05889c71f13823dd945210cee9b923eca8fd3cd723432c9760d218f86b9058"
+  },
+  "StateLandGovernance.Web/src/modules/component-04/components/GovernanceSessionBoundary.tsx": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "001b8089ae16a8cb817ac0c550185e26d0531de7cd7a27f584957175f5d05b04"
+  },
+  "StateLandGovernance.Web/tests/component-04-route-access.test.ts": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "1a3b32898422605e13aeb348178fd0d71dd2682c58fdc3706aad664477981a7a"
+  },
+  "StateLandGovernance.Web/tests/component-04-final-improvements.test.ts": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "ebd036fe1a0f113d91a19228997977cff679936626cd096fa6e6ac193c395049"
+  },
+  "StateLandGovernance.Web/tests/loader.mjs": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "52a35780a3e98815c6303d3ba058d33a0a5a4c301b8467a3a3dc8b0e66ef1f71"
+  },
+  "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/GovernanceAccessTests.cs": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "17aa059cf2dea399263633c4035f98fe64e12751f91e4908a32488d11e43b49a"
+  },
+  "StateLandGovernance/tests/IntegrationTests/GovernanceAccessProof/GovernanceAccessProof.csproj": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "dee4c7ac40aa2d03323571098e7ae6f10361fe2b0edad5c42a8318aa6b321bd1"
+  },
+  "StateLandGovernance/tests/IntegrationTests/GovernanceAccessProof/Program.cs": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "898f1abe528569ed4567c641c6ff0f728ba623496e094ab137cac9c351492e53"
+  },
+  "StateLandGovernance/tools/development/Start-C4NavigationAccessApprovedApi.ps1": {
+    "BeforeTaskSha256": "New file or already modified prerequisite; exact source hash recorded",
+    "AfterSha256": "b69342f68c7512d067feec99c84788f017c73270c728c272fcc61617d731f186"
+  }
+}

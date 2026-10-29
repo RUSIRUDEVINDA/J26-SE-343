@@ -1,0 +1,10 @@
+{
+  "reviewManifestMatches": true,
+  "sourceManifestMatches": true,
+  "packageManifestMatches": true,
+  "mandatoryGate": "No automatic startup migrations",
+  "result": "FAILED: Program.cs calls C1 Database.Migrate at startup",
+  "ordinaryWrites": false,
+  "apiStartedOrStopped": false,
+  "remainingDatabaseAndBackupPreflight": "Not reached"
+}

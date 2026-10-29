@@ -1,0 +1,512 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/COMMISSIONER sign-in",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Applicant/None sign-in",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/DS sign-in",
+    "Existing API healthy; no restart",
+    "Commissioner exact existing complaint permissions",
+    "Existing central queue readable unassigned",
+    "Existing central queue readable commissioner",
+    "Existing central queue readable ds",
+    "Existing central queue readable terminal",
+    "DS receives no central authority",
+    "applicant cannot enter protected C4",
+    "applicant cannot read central complaints",
+    "anonymous cannot enter protected C4",
+    "anonymous cannot read central complaints",
+    "Legitimate applicant complaint tracking remains readable",
+    "Saved report unchanged 0ffae4e0-f1a1-4a5a-ae14-6bb88fc52385",
+    "Applicant report denial 0ffae4e0-f1a1-4a5a-ae14-6bb88fc52385",
+    "Saved report unchanged 5f0b8dda-cfdc-4136-9e7d-b87640ba4de6",
+    "Applicant report denial 5f0b8dda-cfdc-4136-9e7d-b87640ba4de6",
+    "Saved report unchanged 1b3c3bdd-8641-4155-bd75-5c24c3bbfcf8",
+    "Applicant report denial 1b3c3bdd-8641-4155-bd75-5c24c3bbfcf8",
+    "Saved report unchanged edd3d36c-3a7e-4984-bf56-1764ed572fe6",
+    "Applicant report denial edd3d36c-3a7e-4984-bf56-1764ed572fe6",
+    "Saved report unchanged 15ebb0e0-5e84-4ccb-a03f-e9dfb795460b",
+    "Applicant report denial 15ebb0e0-5e84-4ccb-a03f-e9dfb795460b",
+    "Saved report unchanged c10e9a1b-58b8-4d66-a28c-e8bdacbec3ed",
+    "Applicant report denial c10e9a1b-58b8-4d66-a28c-e8bdacbec3ed",
+    "Saved report unchanged 1641b788-a8d9-47ff-9d0e-3dd55b9858b6",
+    "Applicant report denial 1641b788-a8d9-47ff-9d0e-3dd55b9858b6",
+    "Saved report unchanged c08db467-2b27-42e7-8251-dce45f7fda6b",
+    "Applicant report denial c08db467-2b27-42e7-8251-dce45f7fda6b",
+    "Saved report unchanged 8d4765b0-fe41-477a-ac89-2e7c012b5a9e",
+    "Applicant report denial 8d4765b0-fe41-477a-ac89-2e7c012b5a9e",
+    "Saved report unchanged 2f02dac9-6989-4724-8c64-75195de330da",
+    "Applicant report denial 2f02dac9-6989-4724-8c64-75195de330da",
+    "Saved report unchanged a677914e-29b4-46d4-8301-d7ca86a033bb",
+    "Applicant report denial a677914e-29b4-46d4-8301-d7ca86a033bb",
+    "Saved report unchanged 1ba5e80a-d5b5-4e2f-bbcb-cc377c4861ea",
+    "Applicant report denial 1ba5e80a-d5b5-4e2f-bbcb-cc377c4861ea",
+    "Saved report unchanged 8ebf5f10-2eef-484f-a68b-4f8b0b2c59e8",
+    "Applicant report denial 8ebf5f10-2eef-484f-a68b-4f8b0b2c59e8",
+    "Saved report unchanged a6eaf34f-f719-442d-ad7f-2a4b6aef6aed",
+    "Applicant report denial a6eaf34f-f719-442d-ad7f-2a4b6aef6aed",
+    "Saved report unchanged d125fbfc-7f34-4b6c-aa22-e4f58452f7f4",
+    "Applicant report denial d125fbfc-7f34-4b6c-aa22-e4f58452f7f4",
+    "Saved report unchanged c3aaa788-3a74-4020-a5f9-a4a26b347663",
+    "Applicant report denial c3aaa788-3a74-4020-a5f9-a4a26b347663",
+    "Saved report unchanged 6a96bdbc-8835-4a2c-9793-7cb06ddec93e",
+    "Applicant report denial 6a96bdbc-8835-4a2c-9793-7cb06ddec93e",
+    "Saved report unchanged 07b0c7e6-3f89-44cc-9285-39a0472adaf6",
+    "Applicant report denial 07b0c7e6-3f89-44cc-9285-39a0472adaf6",
+    "Saved report unchanged 05f0ac73-869b-46dd-8d8d-b06814f9f164",
+    "Applicant report denial 05f0ac73-869b-46dd-8d8d-b06814f9f164",
+    "Saved report unchanged 8075650d-dedb-462b-9a21-48ef4d92ce44",
+    "Applicant report denial 8075650d-dedb-462b-9a21-48ef4d92ce44",
+    "Saved report unchanged b5a456d9-84f4-4374-8534-8abd413fb63d",
+    "Applicant report denial b5a456d9-84f4-4374-8534-8abd413fb63d",
+    "Saved report unchanged 39fd4bf7-0e93-444b-a55f-330fa6b122b9",
+    "Applicant report denial 39fd4bf7-0e93-444b-a55f-330fa6b122b9",
+    "Saved report unchanged d4e358c1-148c-41e0-b80c-6c8899413056",
+    "Applicant report denial d4e358c1-148c-41e0-b80c-6c8899413056",
+    "Saved report unchanged 7a64edd4-1cd0-4da8-bd34-00d0e3fd4a73",
+    "Applicant report denial 7a64edd4-1cd0-4da8-bd34-00d0e3fd4a73",
+    "Saved report unchanged 03a17f88-de88-4bd0-9806-eade481697a3",
+    "Applicant report denial 03a17f88-de88-4bd0-9806-eade481697a3",
+    "Saved report unchanged d95e7443-be83-4a99-ae44-e55e8ede95c2",
+    "Applicant report denial d95e7443-be83-4a99-ae44-e55e8ede95c2",
+    "Saved report unchanged 1cb309d5-9b74-46f0-b1ec-71424beb7839",
+    "Applicant report denial 1cb309d5-9b74-46f0-b1ec-71424beb7839",
+    "Saved report unchanged fad5c3ef-829f-42d0-9df0-ca045709b879",
+    "Applicant report denial fad5c3ef-829f-42d0-9df0-ca045709b879",
+    "Saved report unchanged 096b3a1a-0eef-454f-955c-d68b880678fb",
+    "Applicant report denial 096b3a1a-0eef-454f-955c-d68b880678fb",
+    "Saved report unchanged e602eb00-e621-416d-a356-02cf59b04751",
+    "Applicant report denial e602eb00-e621-416d-a356-02cf59b04751",
+    "Saved report unchanged 29f53e56-9e9a-4e04-9ed3-350d1a7518d3",
+    "Applicant report denial 29f53e56-9e9a-4e04-9ed3-350d1a7518d3",
+    "Saved report unchanged d4cd2468-3ded-4aa8-b4af-d987cd1abdeb",
+    "Applicant report denial d4cd2468-3ded-4aa8-b4af-d987cd1abdeb",
+    "Saved report unchanged 329bd3c0-8258-4c17-9791-b4eac057fc04",
+    "Applicant report denial 329bd3c0-8258-4c17-9791-b4eac057fc04",
+    "Saved report unchanged 9230b50a-30f1-409b-a165-d09dc69711e7",
+    "Applicant report denial 9230b50a-30f1-409b-a165-d09dc69711e7",
+    "Saved report unchanged 8c4b2b27-a909-4982-879f-ffe76bd16c9e",
+    "Applicant report denial 8c4b2b27-a909-4982-879f-ffe76bd16c9e",
+    "Saved report unchanged 848f3b0f-37c7-4142-a61f-14dbac51893d",
+    "Applicant report denial 848f3b0f-37c7-4142-a61f-14dbac51893d",
+    "Saved report unchanged a5f1574f-e4f4-4461-ad49-d69474c24b1b",
+    "Applicant report denial a5f1574f-e4f4-4461-ad49-d69474c24b1b",
+    "Saved report unchanged f2c1541e-3c95-4bae-a608-aeeffc16473f",
+    "Applicant report denial f2c1541e-3c95-4bae-a608-aeeffc16473f",
+    "Saved report unchanged f623d66c-021f-40ee-8360-d047b5f07b76",
+    "Applicant report denial f623d66c-021f-40ee-8360-d047b5f07b76",
+    "Saved report unchanged 1a0280e0-8bad-4bc0-a3a1-d195f5020a91",
+    "Applicant report denial 1a0280e0-8bad-4bc0-a3a1-d195f5020a91",
+    "Saved report unchanged ec3f7c3a-1b4d-4aa6-a5bb-30452dfb0842",
+    "Applicant report denial ec3f7c3a-1b4d-4aa6-a5bb-30452dfb0842",
+    "Saved report unchanged 9c49c6e0-4317-431d-8614-01a214c258d9",
+    "Applicant report denial 9c49c6e0-4317-431d-8614-01a214c258d9",
+    "Saved report unchanged 9aa03236-4f7d-4ae0-ba17-35b51ecdc5e6",
+    "Applicant report denial 9aa03236-4f7d-4ae0-ba17-35b51ecdc5e6",
+    "Saved report unchanged 31bcac9b-2cd4-46e8-b5e6-218238473c24",
+    "Applicant report denial 31bcac9b-2cd4-46e8-b5e6-218238473c24",
+    "Saved report unchanged 6eb61b8e-2c2e-45d2-b7ab-896104657cdb",
+    "Applicant report denial 6eb61b8e-2c2e-45d2-b7ab-896104657cdb",
+    "Saved report unchanged 9a5b03db-3fb3-43f7-b5f9-2d650923b8b6",
+    "Applicant report denial 9a5b03db-3fb3-43f7-b5f9-2d650923b8b6",
+    "Saved report unchanged 8a52705d-5e88-4a91-bb50-5fb2a5b82949",
+    "Applicant report denial 8a52705d-5e88-4a91-bb50-5fb2a5b82949",
+    "Saved report unchanged 6dc53d1e-f3c6-4446-9cbe-ea254f4ff3ce",
+    "Applicant report denial 6dc53d1e-f3c6-4446-9cbe-ea254f4ff3ce",
+    "Saved report unchanged 4675150b-1676-42fd-ba54-e6e22bf11c89",
+    "Applicant report denial 4675150b-1676-42fd-ba54-e6e22bf11c89",
+    "Saved report unchanged def33d46-60a5-4efe-bfff-8475556b261b",
+    "Applicant report denial def33d46-60a5-4efe-bfff-8475556b261b",
+    "Saved report unchanged 16f8490a-e025-4062-94f0-5442c8493a3b",
+    "Applicant report denial 16f8490a-e025-4062-94f0-5442c8493a3b",
+    "Saved report unchanged d6a65487-e1b1-49f1-8cbc-0205655af99f",
+    "Applicant report denial d6a65487-e1b1-49f1-8cbc-0205655af99f",
+    "Saved report unchanged e8e9db3f-42ae-4d97-852e-4e918641db2e",
+    "Applicant report denial e8e9db3f-42ae-4d97-852e-4e918641db2e",
+    "Persisted named-workflow scenario/version fields do not contain corrupted question marks",
+    "HttpOnly route session bridge available",
+    "HttpOnly route session bridge available",
+    "HttpOnly route session bridge available",
+    "Applicant direct route denied /component-04",
+    "Applicant redirect does not render governance shell /component-04",
+    "Commissioner root contains Next redirect to canonical Proposals (streaming meta or HTTP)",
+    "Applicant direct route denied /component-04/assessments",
+    "Applicant redirect does not render governance shell /component-04/assessments",
+    "Commissioner route ready /component-04/assessments",
+    "Old disclosure/Overview absent /component-04/assessments",
+    "Applicant direct route denied /component-04/assessments/regulatory",
+    "Applicant redirect does not render governance shell /component-04/assessments/regulatory",
+    "Commissioner route ready /component-04/assessments/regulatory",
+    "Old disclosure/Overview absent /component-04/assessments/regulatory",
+    "Applicant direct route denied /component-04/assessments/history",
+    "Applicant redirect does not render governance shell /component-04/assessments/history",
+    "Commissioner route ready /component-04/assessments/history",
+    "Old disclosure/Overview absent /component-04/assessments/history",
+    "Applicant direct route denied /component-04/assessments/conflict",
+    "Applicant redirect does not render governance shell /component-04/assessments/conflict",
+    "Commissioner route ready /component-04/assessments/conflict",
+    "Old disclosure/Overview absent /component-04/assessments/conflict",
+    "Applicant direct route denied /component-04/assessments/early",
+    "Applicant redirect does not render governance shell /component-04/assessments/early",
+    "Commissioner route ready /component-04/assessments/early",
+    "Old disclosure/Overview absent /component-04/assessments/early",
+    "Applicant direct route denied /component-04/post-workflow",
+    "Applicant redirect does not render governance shell /component-04/post-workflow",
+    "Commissioner route ready /component-04/post-workflow",
+    "Old disclosure/Overview absent /component-04/post-workflow",
+    "Applicant direct route denied /component-04/central-complaints",
+    "Applicant redirect does not render governance shell /component-04/central-complaints",
+    "Commissioner route ready /component-04/central-complaints",
+    "Old disclosure/Overview absent /component-04/central-complaints",
+    "Applicant direct route denied /component-04/institutional-workflow",
+    "Applicant redirect does not render governance shell /component-04/institutional-workflow",
+    "Commissioner route ready /component-04/institutional-workflow",
+    "Old disclosure/Overview absent /component-04/institutional-workflow",
+    "Eligible DS root contains Next redirect to Proposals",
+    "Existing DS route ready /component-04/assessments",
+    "Existing DS route ready /component-04/assessments/early",
+    "Existing DS route ready /component-04/assessments/history",
+    "Existing DS route ready /component-04/complaint-inbox",
+    "Existing public sign-in/complaint page ready /sign-in",
+    "Redundant banner absent /sign-in",
+    "Existing public sign-in/complaint page ready /workflow-governance/applicant/complaints",
+    "Redundant banner absent /workflow-governance/applicant/complaints",
+    "Anonymous C4 admission remains denied"
+  ],
+  "SavedReports": [
+    {
+      "Id": "0ffae4e0-f1a1-4a5a-ae14-6bb88fc52385",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/0ffae4e0-f1a1-4a5a-ae14-6bb88fc52385",
+      "BodySha256": "598e6491337f5b8ff7b8b0aa92cb86d3d8c59b52bc78059a846d4647620a8b06"
+    },
+    {
+      "Id": "5f0b8dda-cfdc-4136-9e7d-b87640ba4de6",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/5f0b8dda-cfdc-4136-9e7d-b87640ba4de6",
+      "BodySha256": "0fc4130210e949902ebf9114e5305848093cafb7ad26730ca2fc0738c560c068"
+    },
+    {
+      "Id": "1b3c3bdd-8641-4155-bd75-5c24c3bbfcf8",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/1b3c3bdd-8641-4155-bd75-5c24c3bbfcf8",
+      "BodySha256": "8b901863437eb3fb2ef59cf3f3b5950cb017d1f0e3641163690475fdcdfe31b6"
+    },
+    {
+      "Id": "edd3d36c-3a7e-4984-bf56-1764ed572fe6",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/edd3d36c-3a7e-4984-bf56-1764ed572fe6",
+      "BodySha256": "4c36004232c59364773b6a1ab92cc4127de42114b4cbf4a6a7825e0edc9551be"
+    },
+    {
+      "Id": "15ebb0e0-5e84-4ccb-a03f-e9dfb795460b",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/15ebb0e0-5e84-4ccb-a03f-e9dfb795460b",
+      "BodySha256": "a67ddbe45432369b0668c0c4a710560b2e0ca42dd1ede902278e1ff64bc96eb2"
+    },
+    {
+      "Id": "c10e9a1b-58b8-4d66-a28c-e8bdacbec3ed",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/c10e9a1b-58b8-4d66-a28c-e8bdacbec3ed",
+      "BodySha256": "2cfeca9e160d999748460511fa774ab966c9ac6f00c043a40f9e10ec1b32b05a"
+    },
+    {
+      "Id": "1641b788-a8d9-47ff-9d0e-3dd55b9858b6",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/1641b788-a8d9-47ff-9d0e-3dd55b9858b6",
+      "BodySha256": "2ca6a1055f1f06e0ba5ba6dfb435144bd731b8b2a048b49056d17d905e00df28"
+    },
+    {
+      "Id": "c08db467-2b27-42e7-8251-dce45f7fda6b",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/c08db467-2b27-42e7-8251-dce45f7fda6b",
+      "BodySha256": "4d92d3662d06f96c27fb823c8768a04039bac99894c556f22daacdac1c5db159"
+    },
+    {
+      "Id": "8d4765b0-fe41-477a-ac89-2e7c012b5a9e",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/8d4765b0-fe41-477a-ac89-2e7c012b5a9e",
+      "BodySha256": "45efee33454b9f234ddb6cc9907e240cc3fbb6791f1e1a30bda760ef382b1328"
+    },
+    {
+      "Id": "2f02dac9-6989-4724-8c64-75195de330da",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/2f02dac9-6989-4724-8c64-75195de330da",
+      "BodySha256": "143fb65f8be7613d7561953a663d3e3fa42253b644ae15998e44e311e1bc88bc"
+    },
+    {
+      "Id": "a677914e-29b4-46d4-8301-d7ca86a033bb",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/a677914e-29b4-46d4-8301-d7ca86a033bb",
+      "BodySha256": "34439b27cd748bafdc9087f204d7fa3a90eebd5a885989871e1e3e27ddf6847a"
+    },
+    {
+      "Id": "1ba5e80a-d5b5-4e2f-bbcb-cc377c4861ea",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/1ba5e80a-d5b5-4e2f-bbcb-cc377c4861ea",
+      "BodySha256": "29b9f4e8fbe7fb42c9f93701e09c79c7a75f3671f0d82e25028b3807fc10a24d"
+    },
+    {
+      "Id": "8ebf5f10-2eef-484f-a68b-4f8b0b2c59e8",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/8ebf5f10-2eef-484f-a68b-4f8b0b2c59e8",
+      "BodySha256": "94e02494426e00dc704bb443317e8a3884d5e3cab867acd22bb05fbfe7818204"
+    },
+    {
+      "Id": "a6eaf34f-f719-442d-ad7f-2a4b6aef6aed",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/a6eaf34f-f719-442d-ad7f-2a4b6aef6aed",
+      "BodySha256": "4b06c37544fdb18781923957c150d574e285ffb563625df70c974d8677eef213"
+    },
+    {
+      "Id": "d125fbfc-7f34-4b6c-aa22-e4f58452f7f4",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/d125fbfc-7f34-4b6c-aa22-e4f58452f7f4",
+      "BodySha256": "60c08acdc8d79f0e0d5e37fcdb2644a82b836b131b4df38e6c0472c4ce16d37e"
+    },
+    {
+      "Id": "c3aaa788-3a74-4020-a5f9-a4a26b347663",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/c3aaa788-3a74-4020-a5f9-a4a26b347663",
+      "BodySha256": "36efcefffd814080155852478fca48c471f6a98efcce29bf65772d812e3df52c"
+    },
+    {
+      "Id": "6a96bdbc-8835-4a2c-9793-7cb06ddec93e",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/6a96bdbc-8835-4a2c-9793-7cb06ddec93e",
+      "BodySha256": "a65810083984db33c57bf4cfc7e73601fd80e9d02b84f94e06e6e5d593160e71"
+    },
+    {
+      "Id": "07b0c7e6-3f89-44cc-9285-39a0472adaf6",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/07b0c7e6-3f89-44cc-9285-39a0472adaf6",
+      "BodySha256": "c61dd20763687e97503f59643f3016304788a246f2fb1c65a2fa5ae9169a2354"
+    },
+    {
+      "Id": "05f0ac73-869b-46dd-8d8d-b06814f9f164",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/05f0ac73-869b-46dd-8d8d-b06814f9f164",
+      "BodySha256": "9095ee04c4a56bf26760c28126b4f39cadeb04c7202069067ee8f79463ac953a"
+    },
+    {
+      "Id": "8075650d-dedb-462b-9a21-48ef4d92ce44",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/8075650d-dedb-462b-9a21-48ef4d92ce44",
+      "BodySha256": "3a66e0c7f212ed942b8b950d365505882785c6118db2793075260789ca7a1be9"
+    },
+    {
+      "Id": "b5a456d9-84f4-4374-8534-8abd413fb63d",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/b5a456d9-84f4-4374-8534-8abd413fb63d",
+      "BodySha256": "b8a510a926f02016a2b5d59ce6d7f7b439515812622aae4be0f387903b2d689b"
+    },
+    {
+      "Id": "39fd4bf7-0e93-444b-a55f-330fa6b122b9",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/39fd4bf7-0e93-444b-a55f-330fa6b122b9",
+      "BodySha256": "4f35cd6f5d96b0d81fc178a49e88da622ebe38e76ede9d31474042ad96f4ff68"
+    },
+    {
+      "Id": "d4e358c1-148c-41e0-b80c-6c8899413056",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/d4e358c1-148c-41e0-b80c-6c8899413056",
+      "BodySha256": "c315c3ee442dbbd4aa8877c405af9e1b8dfc0bfd5fde3530241d56e0bdb9b526"
+    },
+    {
+      "Id": "7a64edd4-1cd0-4da8-bd34-00d0e3fd4a73",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/7a64edd4-1cd0-4da8-bd34-00d0e3fd4a73",
+      "BodySha256": "66d2682a28aa3e44ec63124148fd6d42029f92c72ed258fa7fc7bb8804448d7f"
+    },
+    {
+      "Id": "03a17f88-de88-4bd0-9806-eade481697a3",
+      "ApiPath": "/api/governance-intelligence/kiwula-assessments/03a17f88-de88-4bd0-9806-eade481697a3",
+      "BodySha256": "7f1e1ea291885ea22277c8811565b948393ce428bb8d19d17e003f889a233243"
+    },
+    {
+      "Id": "d95e7443-be83-4a99-ae44-e55e8ede95c2",
+      "ApiPath": "/api/governance-intelligence/kiwula-assessments/d95e7443-be83-4a99-ae44-e55e8ede95c2",
+      "BodySha256": "625ef1f019db2c9e0dae2468dac26e53dc66f4728a940997af8341c4b5a85ac5"
+    },
+    {
+      "Id": "1cb309d5-9b74-46f0-b1ec-71424beb7839",
+      "ApiPath": "/api/governance-intelligence/kiwula-assessments/1cb309d5-9b74-46f0-b1ec-71424beb7839",
+      "BodySha256": "30a9eb8d2794d10e6caac7e6d8131c82192f44e1c97615f8bcf5dbfa0ceb4872"
+    },
+    {
+      "Id": "fad5c3ef-829f-42d0-9df0-ca045709b879",
+      "ApiPath": "/api/governance-intelligence/post-workflow-demonstrations/fad5c3ef-829f-42d0-9df0-ca045709b879",
+      "BodySha256": "a0ca7dfb171eddc2e80f5d27bab2f1379ea75bd78f727ea39cfddc5b40ae4357"
+    },
+    {
+      "Id": "096b3a1a-0eef-454f-955c-d68b880678fb",
+      "ApiPath": "/api/governance-intelligence/post-workflow-demonstrations/096b3a1a-0eef-454f-955c-d68b880678fb",
+      "BodySha256": "960050453e8e2d46b3aaae605e65cc8d01b3cdeec113b4cc4029080b0297e982"
+    },
+    {
+      "Id": "e602eb00-e621-416d-a356-02cf59b04751",
+      "ApiPath": "/api/governance-intelligence/post-workflow-demonstrations/e602eb00-e621-416d-a356-02cf59b04751",
+      "BodySha256": "ee665c1090a7f04c2661b0381ec387b961beb9e0f75ae37df2d3236ad61e9cca"
+    },
+    {
+      "Id": "29f53e56-9e9a-4e04-9ed3-350d1a7518d3",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/29f53e56-9e9a-4e04-9ed3-350d1a7518d3",
+      "BodySha256": "c3b4908b41992f2a013dbed6eb44ca3e8600c3498d74a5a9855bbab81f99d65d"
+    },
+    {
+      "Id": "d4cd2468-3ded-4aa8-b4af-d987cd1abdeb",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/d4cd2468-3ded-4aa8-b4af-d987cd1abdeb",
+      "BodySha256": "36e06160b2bbb41b71dd1be1dae38393928e724baea6c10c63d8cd7b0be1a40e"
+    },
+    {
+      "Id": "329bd3c0-8258-4c17-9791-b4eac057fc04",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/329bd3c0-8258-4c17-9791-b4eac057fc04",
+      "BodySha256": "31d0aee9a8817c5e9e4b864af665cd052c5d690262bc9517e2e2e96af7a9ef9a"
+    },
+    {
+      "Id": "9230b50a-30f1-409b-a165-d09dc69711e7",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/9230b50a-30f1-409b-a165-d09dc69711e7",
+      "BodySha256": "901057020cbc94ebe9b86c7c248463fe13d11b0a6291a25e2e122f16edd2f1ce"
+    },
+    {
+      "Id": "8c4b2b27-a909-4982-879f-ffe76bd16c9e",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/8c4b2b27-a909-4982-879f-ffe76bd16c9e",
+      "BodySha256": "cb6bbf96c30a580ca02e8d949df276b8cf0dcd994c604c237f419e15be4db025"
+    },
+    {
+      "Id": "848f3b0f-37c7-4142-a61f-14dbac51893d",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/848f3b0f-37c7-4142-a61f-14dbac51893d",
+      "BodySha256": "373a85ec3ed62fa65d72790e162bcf6587900e41e2764a0bbf8bfec01f47a0d5"
+    },
+    {
+      "Id": "a5f1574f-e4f4-4461-ad49-d69474c24b1b",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/a5f1574f-e4f4-4461-ad49-d69474c24b1b",
+      "BodySha256": "0a0010cb408c8f4482c73efcd77d198f6e448009a0335922f23bb4283bacccca"
+    },
+    {
+      "Id": "f2c1541e-3c95-4bae-a608-aeeffc16473f",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/f2c1541e-3c95-4bae-a608-aeeffc16473f",
+      "BodySha256": "462176bd4131a60891403bf6ebe75b4bfcc3e2db34b8c1ae7130f08d93f77c71"
+    },
+    {
+      "Id": "f623d66c-021f-40ee-8360-d047b5f07b76",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/f623d66c-021f-40ee-8360-d047b5f07b76",
+      "BodySha256": "90ffa2b293e1ba21593f7cc4d06cbde8124a9ced3ac5863294e2c21509fc7a57"
+    },
+    {
+      "Id": "1a0280e0-8bad-4bc0-a3a1-d195f5020a91",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/1a0280e0-8bad-4bc0-a3a1-d195f5020a91",
+      "BodySha256": "cd9063a3966a954775a20c8971f01f02bc71860614be5be6627fd219d034de37"
+    },
+    {
+      "Id": "ec3f7c3a-1b4d-4aa6-a5bb-30452dfb0842",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/ec3f7c3a-1b4d-4aa6-a5bb-30452dfb0842",
+      "BodySha256": "31e6b07f5a21283286b8a9b2f0203c4a4514c76aa265521c1782f944696e392f"
+    },
+    {
+      "Id": "9c49c6e0-4317-431d-8614-01a214c258d9",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/9c49c6e0-4317-431d-8614-01a214c258d9",
+      "BodySha256": "01bfa5a3beae4634e80fb6bffbb81b78b1c5c7e62ef39c78ce36b6e7b1492513"
+    },
+    {
+      "Id": "9aa03236-4f7d-4ae0-ba17-35b51ecdc5e6",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/9aa03236-4f7d-4ae0-ba17-35b51ecdc5e6",
+      "BodySha256": "1811c67298aef2f73c8888cb52c941d23ad302dd6a4bf1902189d00486393030"
+    },
+    {
+      "Id": "31bcac9b-2cd4-46e8-b5e6-218238473c24",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/31bcac9b-2cd4-46e8-b5e6-218238473c24",
+      "BodySha256": "1b8945c2a8a5e8d90cd139d49985ca6b6ef358a50d429e19559e27c832dce005"
+    },
+    {
+      "Id": "6eb61b8e-2c2e-45d2-b7ab-896104657cdb",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/6eb61b8e-2c2e-45d2-b7ab-896104657cdb",
+      "BodySha256": "2149ab2e697a0656f0f8e39a70666b686b12d48f9bedbc216b81171befb724b7"
+    },
+    {
+      "Id": "9a5b03db-3fb3-43f7-b5f9-2d650923b8b6",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/9a5b03db-3fb3-43f7-b5f9-2d650923b8b6",
+      "BodySha256": "a17186fe2142bc07e1f40868232e914ada9822306c9076cce07a2c5cd61162e5"
+    },
+    {
+      "Id": "8a52705d-5e88-4a91-bb50-5fb2a5b82949",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/8a52705d-5e88-4a91-bb50-5fb2a5b82949",
+      "BodySha256": "6a072d9e636faefb1ea9b7b508b4709f2499a5c5cf73384e451e8aa8938c49cf"
+    },
+    {
+      "Id": "6dc53d1e-f3c6-4446-9cbe-ea254f4ff3ce",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/6dc53d1e-f3c6-4446-9cbe-ea254f4ff3ce",
+      "BodySha256": "43f993ee25e897e6cfa90284448ade58c3057a12503fbd8aa3481794d31a4b67"
+    },
+    {
+      "Id": "4675150b-1676-42fd-ba54-e6e22bf11c89",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/4675150b-1676-42fd-ba54-e6e22bf11c89",
+      "BodySha256": "fd92ef98a6e8aea6b17692ab8ce85ce467f26e52002f44e6e9e79c8f2ba278d7"
+    },
+    {
+      "Id": "def33d46-60a5-4efe-bfff-8475556b261b",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/def33d46-60a5-4efe-bfff-8475556b261b",
+      "BodySha256": "d382d350ba541c518754b673703e9308fe5420cda454101f7fbc1774c9aa5280"
+    },
+    {
+      "Id": "16f8490a-e025-4062-94f0-5442c8493a3b",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/16f8490a-e025-4062-94f0-5442c8493a3b",
+      "BodySha256": "f3f584d426a973dfb3dfbbda3d7c2a20e326d4fb855ac416b4ec86f3d5da44ae"
+    },
+    {
+      "Id": "d6a65487-e1b1-49f1-8cbc-0205655af99f",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/d6a65487-e1b1-49f1-8cbc-0205655af99f",
+      "BodySha256": "b853ecef6b511e342deffa1d1024e369c74091d8a99adc4bde8c9ff2cce14121"
+    },
+    {
+      "Id": "e8e9db3f-42ae-4d97-852e-4e918641db2e",
+      "ApiPath": "/api/governance-intelligence/officer-assessments/e8e9db3f-42ae-4d97-852e-4e918641db2e",
+      "BodySha256": "0a1ae0c81ce2265bd68249b990ca696286ded03dd509b4df32ade6c5bc8e80f1"
+    }
+  ],
+  "Routes": [
+    {
+      "Path": "/component-04",
+      "CommissionerStatus": 307,
+      "Location": "/component-04/assessments",
+      "ApplicantStatus": 307
+    },
+    {
+      "Path": "/component-04/assessments",
+      "CommissionerStatus": 200,
+      "Location": null,
+      "ApplicantStatus": 307
+    },
+    {
+      "Path": "/component-04/assessments/regulatory",
+      "CommissionerStatus": 200,
+      "Location": null,
+      "ApplicantStatus": 307
+    },
+    {
+      "Path": "/component-04/assessments/history",
+      "CommissionerStatus": 200,
+      "Location": null,
+      "ApplicantStatus": 307
+    },
+    {
+      "Path": "/component-04/assessments/conflict",
+      "CommissionerStatus": 200,
+      "Location": null,
+      "ApplicantStatus": 307
+    },
+    {
+      "Path": "/component-04/assessments/early",
+      "CommissionerStatus": 200,
+      "Location": null,
+      "ApplicantStatus": 307
+    },
+    {
+      "Path": "/component-04/post-workflow",
+      "CommissionerStatus": 200,
+      "Location": null,
+      "ApplicantStatus": 307
+    },
+    {
+      "Path": "/component-04/central-complaints",
+      "CommissionerStatus": 200,
+      "Location": null,
+      "ApplicantStatus": 307
+    },
+    {
+      "Path": "/component-04/institutional-workflow",
+      "CommissionerStatus": 200,
+      "Location": null,
+      "ApplicantStatus": 307
+    }
+  ],
+  "StoredNamedWorkflowFields": [
+    {
+      "Scenario": "kiwula-kale-named-route-v2",
+      "ScopeKey": "kiwula-kale-named-route-v2",
+      "SourceVersion": "kiwula-named-route/2"
+    }
+  ],
+  "QuestionMarkSource": "Two static frontend labels; no human display name column in request persistence. Stored scenario/version unchanged.",
+  "OrdinaryDataWrites": 0,
+  "InferenceCalls": 0,
+  "GraphicalVerification": "Unavailable; HTTP/SSR only"
+}

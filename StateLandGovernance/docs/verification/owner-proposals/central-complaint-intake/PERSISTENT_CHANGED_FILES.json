@@ -1,0 +1,52 @@
+{
+  "StateLandGovernance/src/Api/Program.cs": {
+    "before": "3d09544a1dfba88bf5a5211c332e870cebb411dac28114232c5d9472daad4988",
+    "after": "3a1718aa781258a516a7385d3587a59d03ef437cbc940add660e589606ab9295",
+    "status": "Modified"
+  },
+  "StateLandGovernance/src/Api/Security/CentralComplaintDirectory.cs": {
+    "before": "191dd4e04d87ebac1492964c05e52df6c7533147d60cc4040f15158780c9bd34",
+    "after": "c272a415817c31da98b1d7b6cad28a7bdc3974114335c17bb2e3b7dcd778dd1a",
+    "status": "Modified"
+  },
+  "StateLandGovernance/src/Api/Security/CentralComplaintGrantFile.cs": {
+    "before": null,
+    "after": "3a55d1de819190247cc9bce5b9190725e71a600eef4c92abf96255203d37ee63",
+    "status": "Added or prior baseline not captured"
+  },
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Complaints/CentralComplaints.cs": {
+    "before": "f7400c121b014b8b96c40af699f7da1ff76ef06360820418c7c3985b014c984b",
+    "after": "6ea766227318bd32e45aac1ace402b3d45c81d7ec96c34a5d2f3ec4b8b8bb5d5",
+    "status": "Modified"
+  },
+  "StateLandGovernance/tests/ArchitectureTests/CentralComplaintBoundaryTests.cs": {
+    "before": "373cbe87f7f97fa27b5f98c5ac898045fd374619b4c241cf1738a6fa4e9397b2",
+    "after": "c2bb7d840495c2bb6ad1e34621a55a338f5bec503ac60a9d4a38c8b504f976f4",
+    "status": "Modified"
+  },
+  "StateLandGovernance/tests/IntegrationTests/ComplaintHandlingProof/Program.cs": {
+    "before": "a3096395dbdcf5c445a8d5134db24fa9b7eceaf7d06ff8a0f13831ff57c23b8a",
+    "after": "364eddbbcac8946cc407b173b6677fd327ca2006e7eca7518ea097060adf0972",
+    "status": "Modified"
+  },
+  "StateLandGovernance/tests/IntegrationTests/PersistentComplaintAuthorizationProof/PersistentComplaintAuthorizationProof.csproj": {
+    "before": null,
+    "after": "8b32b1ee75e2a719fb08fb3b45cfa13f9d90baf883ce7a278d8bdeb9b3bda6e5",
+    "status": "Added or prior baseline not captured"
+  },
+  "StateLandGovernance/tests/IntegrationTests/PersistentComplaintAuthorizationProof/Program.cs": {
+    "before": null,
+    "after": "7c6e80bf752bc6037584f4f9b3509f5a00e93f7743b5336a9699f36ff2f98a69",
+    "status": "Added or prior baseline not captured"
+  },
+  "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/PersistentCentralComplaintPolicyTests.cs": {
+    "before": null,
+    "after": "d2d2dd0bf91f942455f57f5ab0a831f1f7c03076daadc18c6a4d787ae7e431c5",
+    "status": "Added or prior baseline not captured"
+  },
+  "StateLandGovernance/tools/development/Start-CentralComplaintsPersistentApprovedApi.ps1": {
+    "before": null,
+    "after": "8468c14bded228e0b73d4189257e2f382b64f6a271b79f0f357b2d0ad9e66c10",
+    "status": "Added or prior baseline not captured"
+  }
+}

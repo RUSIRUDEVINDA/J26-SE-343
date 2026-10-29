@@ -1,0 +1,22 @@
+{
+  "Status": "Passed",
+  "ActualConfigurationBinding": true,
+  "ActorId": "0ab669fe-d0ab-5695-ad55-10f6b3b5aab3",
+  "GrantId": "3970d3d2-5fca-4858-a9ae-e98ed04f9809",
+  "ValidFromUtc": "2026-10-24T03:30:00+00:00",
+  "ExpiresAtUtc": "2026-10-25T03:30:00+00:00",
+  "Operations": [
+    "TakeDirect",
+    "AssignDs",
+    "StartInvestigation",
+    "RecordNote",
+    "RequestInformation",
+    "RecordFindings",
+    "Resolve",
+    "Close",
+    "Reopen"
+  ],
+  "BeforeWindowDenied": true,
+  "ExpiryDenied": true,
+  "OrdinaryAuthorityIssued": false
+}

@@ -1,0 +1,166 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Kiwula conflict retains original creator",
+    "Kiwula early retains original creator",
+    "Kiwula early retains original creator",
+    "Workflow report preserves creator and actual saved assessment",
+    "Workflow report preserves creator and actual saved assessment",
+    "Workflow report preserves creator and actual saved assessment",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Cross-creator listings use actual saved records",
+    "Live report grant revocation removes cross-creator listing access",
+    "Inactive profile denied",
+    "Unactivated feature fails closed",
+    "All isolated repository checks enforced read-only"
+  ],
+  "Reports": [
+    {
+      "kind": "regulatory",
+      "id": "0ffae4e0-f1a1-4a5a-ae14-6bb88fc52385"
+    },
+    {
+      "kind": "regulatory",
+      "id": "5f0b8dda-cfdc-4136-9e7d-b87640ba4de6"
+    },
+    {
+      "kind": "regulatory",
+      "id": "1b3c3bdd-8641-4155-bd75-5c24c3bbfcf8"
+    },
+    {
+      "kind": "regulatory",
+      "id": "edd3d36c-3a7e-4984-bf56-1764ed572fe6"
+    },
+    {
+      "kind": "regulatory",
+      "id": "15ebb0e0-5e84-4ccb-a03f-e9dfb795460b"
+    },
+    {
+      "kind": "regulatory",
+      "id": "c10e9a1b-58b8-4d66-a28c-e8bdacbec3ed"
+    },
+    {
+      "kind": "regulatory",
+      "id": "1641b788-a8d9-47ff-9d0e-3dd55b9858b6"
+    },
+    {
+      "kind": "regulatory",
+      "id": "c08db467-2b27-42e7-8251-dce45f7fda6b"
+    },
+    {
+      "kind": "regulatory",
+      "id": "8d4765b0-fe41-477a-ac89-2e7c012b5a9e"
+    },
+    {
+      "kind": "regulatory",
+      "id": "2f02dac9-6989-4724-8c64-75195de330da"
+    },
+    {
+      "kind": "regulatory",
+      "id": "a677914e-29b4-46d4-8301-d7ca86a033bb"
+    },
+    {
+      "kind": "regulatory",
+      "id": "1ba5e80a-d5b5-4e2f-bbcb-cc377c4861ea"
+    },
+    {
+      "kind": "regulatory",
+      "id": "8ebf5f10-2eef-484f-a68b-4f8b0b2c59e8"
+    },
+    {
+      "kind": "conflict",
+      "id": "03a17f88-de88-4bd0-9806-eade481697a3"
+    },
+    {
+      "kind": "early",
+      "id": "d95e7443-be83-4a99-ae44-e55e8ede95c2"
+    },
+    {
+      "kind": "early",
+      "id": "1cb309d5-9b74-46f0-b1ec-71424beb7839"
+    },
+    {
+      "kind": "workflow",
+      "id": "fad5c3ef-829f-42d0-9df0-ca045709b879"
+    },
+    {
+      "kind": "workflow",
+      "id": "096b3a1a-0eef-454f-955c-d68b880678fb"
+    },
+    {
+      "kind": "workflow",
+      "id": "e602eb00-e621-416d-a356-02cf59b04751"
+    },
+    {
+      "kind": "early",
+      "id": "29f53e56-9e9a-4e04-9ed3-350d1a7518d3"
+    },
+    {
+      "kind": "anomaly",
+      "id": "d4cd2468-3ded-4aa8-b4af-d987cd1abdeb"
+    },
+    {
+      "kind": "anomaly",
+      "id": "329bd3c0-8258-4c17-9791-b4eac057fc04"
+    },
+    {
+      "kind": "anomaly",
+      "id": "9230b50a-30f1-409b-a165-d09dc69711e7"
+    },
+    {
+      "kind": "anomaly",
+      "id": "8c4b2b27-a909-4982-879f-ffe76bd16c9e"
+    },
+    {
+      "kind": "early",
+      "id": "848f3b0f-37c7-4142-a61f-14dbac51893d"
+    },
+    {
+      "kind": "early",
+      "id": "a5f1574f-e4f4-4461-ad49-d69474c24b1b"
+    },
+    {
+      "kind": "anomaly",
+      "id": "f2c1541e-3c95-4bae-a608-aeeffc16473f"
+    },
+    {
+      "kind": "early",
+      "id": "f623d66c-021f-40ee-8360-d047b5f07b76"
+    },
+    {
+      "kind": "early",
+      "id": "1a0280e0-8bad-4bc0-a3a1-d195f5020a91"
+    },
+    {
+      "kind": "anomaly",
+      "id": "ec3f7c3a-1b4d-4aa6-a5bb-30452dfb0842"
+    }
+  ],
+  "Database": "c4_central_restore_preparation_20261023_053654",
+  "OrdinaryChanges": false,
+  "ModelCalls": 0,
+  "WriteCommandsInvoked": 0
+}

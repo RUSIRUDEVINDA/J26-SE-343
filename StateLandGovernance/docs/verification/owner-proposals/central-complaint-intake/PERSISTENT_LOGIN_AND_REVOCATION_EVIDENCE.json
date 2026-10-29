@@ -1,0 +1,23 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Anonymous capabilities denied",
+    "Existing sign-in/password verification/live JWT session yields persistent capabilities",
+    "Exact central permissions and operations returned",
+    "Other Commissioner is not automatically authorized",
+    "DS Officer cannot inherit central permissions",
+    "Applicant cannot access central capabilities",
+    "Same live JWT immediately denied after file revocation without restart",
+    "Historical expired timed grant remains denied",
+    "Removed server grant denies same live session",
+    "Fresh inactive account metadata revokes same live JWT without restart",
+    "Explicit isolated account reactivation plus unrevoked grant restores eligibility",
+    "Duplicate permission document properties fail closed without old-grant fallback",
+    "Permission-file hash accompanies grant/source provenance for existing action audit events"
+  ],
+  "IsolatedIdentityDatabase": "c4_persistent_auth_accounts_20261023",
+  "OrdinaryAccountChanges": false,
+  "ModelCalls": 0,
+  "GrantExpiresAtUtc": null,
+  "GrantPersistent": true
+}

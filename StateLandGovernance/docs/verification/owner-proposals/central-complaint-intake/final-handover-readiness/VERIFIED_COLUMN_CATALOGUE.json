@@ -1,0 +1,2412 @@
+[
+  {
+    "table": "__ef_migrations_history",
+    "column": "MigrationId",
+    "type": "character varying"
+  },
+  {
+    "table": "__ef_migrations_history",
+    "column": "ProductVersion",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "ComplaintId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "Revision",
+    "type": "integer"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "TargetActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "TargetOfficeCode",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "AssignedByActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "AssignedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "Reason",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "SubmissionKey",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "InputSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "PreviousAssignmentId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "DirectorySnapshotSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "AuthorizationGrantId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "AuthorizationSourceReference",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "EventCanonicalJson",
+    "type": "text"
+  },
+  {
+    "table": "complaint_assignment_events",
+    "column": "EventSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "assessment_id",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "case_id",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "complaint_text",
+    "type": "text"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "model_version",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "predicted_category",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "administrative_procedural_integrity_probability",
+    "type": "numeric"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "lease_revenue_payment_enforcement_probability",
+    "type": "numeric"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "unauthorized_allocation_transfer_use_probability",
+    "type": "numeric"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "protected_environmental_lease_misuse_probability",
+    "type": "numeric"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "advisory_note",
+    "type": "text"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "closed_set_note",
+    "type": "text"
+  },
+  {
+    "table": "complaint_classification_assessments",
+    "column": "assessed_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "ComplaintId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "Revision",
+    "type": "integer"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "PreviousEventId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "Operation",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "FromState",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "ToState",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "HandlingMode",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "ResponsibleActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "AssignmentEventId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "ActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "ActedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "Reason",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "DetailsJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "EvidenceReferencesJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "PublicSummary",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "SubmissionKey",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "InputSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "AuthorizationGrantId",
+    "type": "uuid"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "AuthorizationSourceReference",
+    "type": "character varying"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "EventCanonicalJson",
+    "type": "text"
+  },
+  {
+    "table": "complaint_handling_events",
+    "column": "EventSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_evaluations",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "compliance_evaluations",
+    "column": "AuditRecordId",
+    "type": "uuid"
+  },
+  {
+    "table": "compliance_evaluations",
+    "column": "ActionName",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_evaluations",
+    "column": "Status",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_evaluations",
+    "column": "EvaluationTimestamp",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "compliance_evaluations",
+    "column": "DeterministicEvaluationId",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_evaluations",
+    "column": "FindingsJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "compliance_evaluations",
+    "column": "ProposalId",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_evaluations",
+    "column": "RuleSetVersion",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_evaluations",
+    "column": "CaseId",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "RuleCode",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "RuleVersion",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "SourceId",
+    "type": "uuid"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "SourceSection",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "Category",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "Description",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "RuleType",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "CalculationKey",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "Severity",
+    "type": "character varying"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "IsBlocking",
+    "type": "boolean"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "Enabled",
+    "type": "boolean"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "EffectiveFrom",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "compliance_rules",
+    "column": "EffectiveTo",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "projection_id",
+    "type": "uuid"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "case_id",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "land_parcel_id",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "division_code",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "district_name",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "province_name",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "gn_division_code",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "requested_land_use_category",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "extent_ha",
+    "type": "numeric"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "ownership_evidence_status",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "protected_zone_overlap_state",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "overlapping_sensitive_zone_codes_json",
+    "type": "jsonb"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "boundary_confirmation_status",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "encumbrance_or_dispute_flag",
+    "type": "boolean"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "parcel_evidence_refs_json",
+    "type": "jsonb"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "input_sha256",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "source_system",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "source_record_id",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "source_record_version",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "source_observed_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "is_synthetic",
+    "type": "boolean"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "provenance_kind",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "synthetic_seed_id",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "synthetic_seed_version",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "generated_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "purpose",
+    "type": "character varying"
+  },
+  {
+    "table": "component1_case_projections",
+    "column": "ingested_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "projection_id",
+    "type": "uuid"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "workflow_run_id",
+    "type": "uuid"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "case_id",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "workflow_type",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "trace_status",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "trace_completeness",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "current_or_terminal_stage_code",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "event_timestamp_semantics",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "event_time_zone",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "event_count",
+    "type": "integer"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "first_event_timestamp_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "last_event_timestamp_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "final_event_activity",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "events_snapshot_json",
+    "type": "jsonb"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "complete_proposal_roadmap_start_status",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "complete_proposal_roadmap_start_occurred_at",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "complete_proposal_roadmap_start_source",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "complete_proposal_roadmap_start_source_reference",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "approval_handover_status",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "approval_handover_occurred_at",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "approval_handover_source",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "approval_handover_source_reference",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "input_sha256",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "source_system",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "source_record_id",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "source_record_version",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "source_observed_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "is_synthetic",
+    "type": "boolean"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "provenance_kind",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "synthetic_seed_id",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "synthetic_seed_version",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "generated_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "purpose",
+    "type": "character varying"
+  },
+  {
+    "table": "component3_workflow_projections",
+    "column": "ingested_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "condition_results",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "condition_results",
+    "column": "ConditionalVerificationEvaluationId",
+    "type": "uuid"
+  },
+  {
+    "table": "condition_results",
+    "column": "ConditionId",
+    "type": "character varying"
+  },
+  {
+    "table": "condition_results",
+    "column": "IsMandatory",
+    "type": "boolean"
+  },
+  {
+    "table": "condition_results",
+    "column": "Status",
+    "type": "character varying"
+  },
+  {
+    "table": "condition_results",
+    "column": "FailureReason",
+    "type": "text"
+  },
+  {
+    "table": "condition_results",
+    "column": "OrderIndex",
+    "type": "integer"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "AuditRecordId",
+    "type": "uuid"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "VerificationId",
+    "type": "character varying"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "SubjectId",
+    "type": "character varying"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "Outcome",
+    "type": "character varying"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "TotalConditionsCount",
+    "type": "integer"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "MandatoryConditionsCount",
+    "type": "integer"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "SatisfiedMandatoryCount",
+    "type": "integer"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "UnsatisfiedMandatoryCount",
+    "type": "integer"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "SatisfiedOptionalCount",
+    "type": "integer"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "PendingConditionsCount",
+    "type": "integer"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "MissingConditionsCount",
+    "type": "integer"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "ExpiredConditionsCount",
+    "type": "integer"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "SummaryExplanation",
+    "type": "text"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "RecommendedAction",
+    "type": "text"
+  },
+  {
+    "table": "conditional_verification_evaluations",
+    "column": "EvaluationTimestamp",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "conflict_evaluations",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "conflict_evaluations",
+    "column": "AuditRecordId",
+    "type": "uuid"
+  },
+  {
+    "table": "conflict_evaluations",
+    "column": "ActionName",
+    "type": "character varying"
+  },
+  {
+    "table": "conflict_evaluations",
+    "column": "Status",
+    "type": "character varying"
+  },
+  {
+    "table": "conflict_evaluations",
+    "column": "TotalEvaluatedDecisions",
+    "type": "integer"
+  },
+  {
+    "table": "conflict_evaluations",
+    "column": "DetectedConflictsCount",
+    "type": "integer"
+  },
+  {
+    "table": "conflict_evaluations",
+    "column": "HighestSeverity",
+    "type": "character varying"
+  },
+  {
+    "table": "conflict_evaluations",
+    "column": "EvaluationTimestamp",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "ConflictEvaluationId",
+    "type": "uuid"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "ConflictId",
+    "type": "character varying"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "ConflictType",
+    "type": "character varying"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "Severity",
+    "type": "character varying"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "DetectionStatus",
+    "type": "character varying"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "SubjectId",
+    "type": "character varying"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "InvolvedDecisionIdsJson",
+    "type": "text"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "InvolvedInstitutionsJson",
+    "type": "text"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "Explanation",
+    "type": "text"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "EvidenceRule",
+    "type": "text"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "RecommendedAction",
+    "type": "text"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "DetectionTimestamp",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "conflict_findings",
+    "column": "OrderIndex",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "AuditRecordId",
+    "type": "uuid"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "ConsensusEvaluationId",
+    "type": "character varying"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "SubjectId",
+    "type": "character varying"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "Outcome",
+    "type": "character varying"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "TotalExpectedInstitutions",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "SubmittedCount",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "ParticipatingCount",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "MissingCount",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "ApprovalCount",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "RejectionCount",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "ConditionalApprovalCount",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "AbstentionCount",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "PendingCount",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "QuorumSatisfied",
+    "type": "boolean"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "MandatoryInstitutionsSatisfied",
+    "type": "boolean"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "ConsensusThresholdSatisfied",
+    "type": "boolean"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "BlockingInstitutionCount",
+    "type": "integer"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "SummaryExplanation",
+    "type": "text"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "RecommendedAction",
+    "type": "text"
+  },
+  {
+    "table": "consensus_evaluations",
+    "column": "EvaluationTimestamp",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "consolidated_screening_assessments",
+    "column": "id",
+    "type": "uuid"
+  },
+  {
+    "table": "consolidated_screening_assessments",
+    "column": "case_id",
+    "type": "character varying"
+  },
+  {
+    "table": "consolidated_screening_assessments",
+    "column": "proposal_version",
+    "type": "character varying"
+  },
+  {
+    "table": "consolidated_screening_assessments",
+    "column": "snapshot_sha256",
+    "type": "character varying"
+  },
+  {
+    "table": "consolidated_screening_assessments",
+    "column": "evaluated_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "consolidated_screening_assessments",
+    "column": "result_json",
+    "type": "jsonb"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "referral_id",
+    "type": "uuid"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "correlation_id",
+    "type": "uuid"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "assessment_id",
+    "type": "uuid"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "case_id",
+    "type": "character varying"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "workflow_run_id",
+    "type": "uuid"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "reason_code",
+    "type": "character varying"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "reason",
+    "type": "character varying"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "evidence_references_json",
+    "type": "jsonb"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "requested_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "delivery_state",
+    "type": "character varying"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "delivery_attempt_count",
+    "type": "integer"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "last_attempt_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "acknowledged_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "commissioner_review_process_reference",
+    "type": "character varying"
+  },
+  {
+    "table": "early_governance_referrals",
+    "column": "last_failure_code",
+    "type": "character varying"
+  },
+  {
+    "table": "early_governance_screening_evaluations",
+    "column": "assessment_id",
+    "type": "uuid"
+  },
+  {
+    "table": "early_governance_screening_evaluations",
+    "column": "case_id",
+    "type": "character varying"
+  },
+  {
+    "table": "early_governance_screening_evaluations",
+    "column": "input_version",
+    "type": "character varying"
+  },
+  {
+    "table": "early_governance_screening_evaluations",
+    "column": "created_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "early_governance_screening_evaluations",
+    "column": "snapshot_schema_version",
+    "type": "integer"
+  },
+  {
+    "table": "early_governance_screening_evaluations",
+    "column": "result_snapshot_json",
+    "type": "jsonb"
+  },
+  {
+    "table": "early_governance_screening_evaluations",
+    "column": "workflow_run_id",
+    "type": "uuid"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "AuditRecordId",
+    "type": "uuid"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "RecordHash",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "EngineType",
+    "type": "integer"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "RecordVersion",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "Status",
+    "type": "integer"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "RetryCount",
+    "type": "integer"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "NextAttemptAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "LastErrorMessage",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "CreatedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "governance_audit_anchor_outbox",
+    "column": "ProcessedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "AuditRecordId",
+    "type": "uuid"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "RecordHash",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "AnchorStatus",
+    "type": "integer"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "TransactionReference",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "BlockNumber",
+    "type": "bigint"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "ContractAddress",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "AnchoredAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "LastVerifiedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "VerificationStatus",
+    "type": "integer"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "FailureReason",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "RetryCount",
+    "type": "integer"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "CreatedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "governance_audit_anchor_receipts",
+    "column": "UpdatedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "governance_audit_records",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "governance_audit_records",
+    "column": "EngineType",
+    "type": "integer"
+  },
+  {
+    "table": "governance_audit_records",
+    "column": "ActionName",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_audit_records",
+    "column": "Status",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_audit_records",
+    "column": "Details",
+    "type": "text"
+  },
+  {
+    "table": "governance_audit_records",
+    "column": "Timestamp",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "governance_audit_records",
+    "column": "HashVersion",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "GovernanceExplanationEvaluationId",
+    "type": "uuid"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "ItemId",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "SourceEngine",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "OutcomeStatus",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "Severity",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "ReasonCode",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "Title",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "PlainLanguageExplanation",
+    "type": "text"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "RecommendedAction",
+    "type": "text"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "RequiresHumanAttention",
+    "type": "boolean"
+  },
+  {
+    "table": "governance_explanation_items",
+    "column": "OrderIndex",
+    "type": "integer"
+  },
+  {
+    "table": "governance_explanations",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "governance_explanations",
+    "column": "AuditRecordId",
+    "type": "uuid"
+  },
+  {
+    "table": "governance_explanations",
+    "column": "ExplanationId",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_explanations",
+    "column": "SubjectId",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_explanations",
+    "column": "OverallSeverity",
+    "type": "character varying"
+  },
+  {
+    "table": "governance_explanations",
+    "column": "RequiresHumanReview",
+    "type": "boolean"
+  },
+  {
+    "table": "governance_explanations",
+    "column": "Disclaimer",
+    "type": "text"
+  },
+  {
+    "table": "governance_explanations",
+    "column": "EvaluationTimestamp",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "institution_positions",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "institution_positions",
+    "column": "ConsensusEvaluationId",
+    "type": "uuid"
+  },
+  {
+    "table": "institution_positions",
+    "column": "InstitutionId",
+    "type": "character varying"
+  },
+  {
+    "table": "institution_positions",
+    "column": "Position",
+    "type": "character varying"
+  },
+  {
+    "table": "institution_positions",
+    "column": "AuthorityRole",
+    "type": "character varying"
+  },
+  {
+    "table": "institution_positions",
+    "column": "ReasonCode",
+    "type": "character varying"
+  },
+  {
+    "table": "institution_positions",
+    "column": "SubmittedTimestamp",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "institution_positions",
+    "column": "OrderIndex",
+    "type": "integer"
+  },
+  {
+    "table": "kiwula_assessment_provenance",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "kiwula_assessment_provenance",
+    "column": "CreatorActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "kiwula_assessment_provenance",
+    "column": "SubmissionKey",
+    "type": "uuid"
+  },
+  {
+    "table": "kiwula_assessment_provenance",
+    "column": "Engine",
+    "type": "character varying"
+  },
+  {
+    "table": "kiwula_assessment_provenance",
+    "column": "ConflictEvaluationId",
+    "type": "uuid"
+  },
+  {
+    "table": "kiwula_assessment_provenance",
+    "column": "EarlyAssessmentId",
+    "type": "uuid"
+  },
+  {
+    "table": "kiwula_assessment_provenance",
+    "column": "PayloadJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "assessment_id",
+    "type": "uuid"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "workflow_run_id",
+    "type": "uuid"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "case_id",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "workflow_projection_id",
+    "type": "uuid"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "policy_version",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "time_zone_id",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "assessment_date_colombo",
+    "type": "date"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "complete_proposal_roadmap_start_date",
+    "type": "date"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "expected_approval_handover_date",
+    "type": "date"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "approval_handover_date",
+    "type": "date"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "days_elapsed",
+    "type": "integer"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "days_beyond_expected",
+    "type": "integer"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "timing_state",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "evidence_state",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "advisory_note",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "input_sha256",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "source_system",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "source_record_id",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "source_record_version",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "source_observed_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "is_synthetic",
+    "type": "boolean"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "provenance_kind",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "synthetic_seed_id",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "synthetic_seed_version",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "generated_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "purpose",
+    "type": "character varying"
+  },
+  {
+    "table": "lease_approval_timing_assessments",
+    "column": "assessed_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "officer_action_events",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_action_events",
+    "column": "CreatorActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_action_events",
+    "column": "InvestigationId",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_action_events",
+    "column": "RequestId",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_action_events",
+    "column": "Operation",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_action_events",
+    "column": "CreatedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "officer_action_events",
+    "column": "DetailsJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "officer_action_events",
+    "column": "EventSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "CreatorActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "SubmissionKey",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "Kind",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "ScopeKey",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "SourceVersion",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "InputSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "InvestigationId",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "Scenario",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "WorkflowRunId",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "ProjectionId",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "State",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "CreatedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "FinishedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "EarlyAssessmentId",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "AnomalyAssessmentId",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "FailureCode",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_assessment_requests",
+    "column": "Revision",
+    "type": "integer"
+  },
+  {
+    "table": "officer_investigations",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_investigations",
+    "column": "CreatorActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_investigations",
+    "column": "ProposalId",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_investigations",
+    "column": "SubmissionKey",
+    "type": "uuid"
+  },
+  {
+    "table": "officer_investigations",
+    "column": "SourceVersion",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_investigations",
+    "column": "InputSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "officer_investigations",
+    "column": "FindingsJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "officer_investigations",
+    "column": "CreatedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "officer_investigations",
+    "column": "SupersedesId",
+    "type": "uuid"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "CreatorActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "Scenario",
+    "type": "character varying"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "Version",
+    "type": "character varying"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "CreatedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "WorkflowRunId",
+    "type": "uuid"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "ProjectionId",
+    "type": "uuid"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "AssessmentId",
+    "type": "uuid"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "State",
+    "type": "character varying"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "Failure",
+    "type": "character varying"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "Attempt",
+    "type": "integer"
+  },
+  {
+    "table": "post_workflow_demonstrations",
+    "column": "AttemptsJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "registered_complaint_classifications",
+    "column": "AssessmentId",
+    "type": "uuid"
+  },
+  {
+    "table": "registered_complaint_classifications",
+    "column": "ComplaintId",
+    "type": "uuid"
+  },
+  {
+    "table": "registered_complaints",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "registered_complaints",
+    "column": "ApplicantId",
+    "type": "uuid"
+  },
+  {
+    "table": "registered_complaints",
+    "column": "SubmissionKey",
+    "type": "uuid"
+  },
+  {
+    "table": "registered_complaints",
+    "column": "CaseId",
+    "type": "uuid"
+  },
+  {
+    "table": "registered_complaints",
+    "column": "SubmittedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "registered_complaints",
+    "column": "Revision",
+    "type": "integer"
+  },
+  {
+    "table": "registered_complaints",
+    "column": "PayloadJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "regulatory_evaluation_provenance",
+    "column": "EvaluationId",
+    "type": "uuid"
+  },
+  {
+    "table": "regulatory_evaluation_provenance",
+    "column": "CreatorActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "regulatory_evaluation_provenance",
+    "column": "SubmissionKey",
+    "type": "uuid"
+  },
+  {
+    "table": "regulatory_evaluation_provenance",
+    "column": "SubmissionHash",
+    "type": "character varying"
+  },
+  {
+    "table": "regulatory_evaluation_provenance",
+    "column": "ProvenanceJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "SourceType",
+    "type": "character varying"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "Authority",
+    "type": "character varying"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "DocumentTitle",
+    "type": "character varying"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "DocumentVersion",
+    "type": "character varying"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "GazetteNumber",
+    "type": "character varying"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "PublishedDate",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "EffectiveFrom",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "EffectiveTo",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "DocumentReference",
+    "type": "character varying"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "Checksum",
+    "type": "character varying"
+  },
+  {
+    "table": "regulatory_sources",
+    "column": "IsActive",
+    "type": "boolean"
+  },
+  {
+    "table": "risk_evaluations",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "risk_evaluations",
+    "column": "AuditRecordId",
+    "type": "uuid"
+  },
+  {
+    "table": "risk_evaluations",
+    "column": "SubjectId",
+    "type": "character varying"
+  },
+  {
+    "table": "risk_evaluations",
+    "column": "OverallRiskScore",
+    "type": "integer"
+  },
+  {
+    "table": "risk_evaluations",
+    "column": "Severity",
+    "type": "character varying"
+  },
+  {
+    "table": "risk_evaluations",
+    "column": "RequiresHumanReview",
+    "type": "boolean"
+  },
+  {
+    "table": "risk_evaluations",
+    "column": "EvaluationTimestamp",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "RiskEvaluationId",
+    "type": "uuid"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "IndicatorId",
+    "type": "character varying"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "Category",
+    "type": "character varying"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "ScoreContribution",
+    "type": "integer"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "Severity",
+    "type": "character varying"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "SubjectId",
+    "type": "character varying"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "InvolvedActorsJson",
+    "type": "text"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "TriggeredRule",
+    "type": "text"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "Explanation",
+    "type": "text"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "RecommendedAction",
+    "type": "text"
+  },
+  {
+    "table": "risk_indicators",
+    "column": "OrderIndex",
+    "type": "integer"
+  },
+  {
+    "table": "rule_parameters",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "rule_parameters",
+    "column": "RuleId",
+    "type": "uuid"
+  },
+  {
+    "table": "rule_parameters",
+    "column": "ParameterName",
+    "type": "character varying"
+  },
+  {
+    "table": "rule_parameters",
+    "column": "ParameterValue",
+    "type": "character varying"
+  },
+  {
+    "table": "rule_parameters",
+    "column": "Unit",
+    "type": "character varying"
+  },
+  {
+    "table": "rule_parameters",
+    "column": "EffectiveFrom",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "rule_parameters",
+    "column": "EffectiveTo",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "RequestId",
+    "type": "uuid"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "CreatorActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "SubmissionKey",
+    "type": "uuid"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "Concern",
+    "type": "character varying"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "FileName",
+    "type": "character varying"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "ContentType",
+    "type": "character varying"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "Content",
+    "type": "bytea"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "ContentSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "InputSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "screening_evidence_attachments",
+    "column": "CreatedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "Id",
+    "type": "uuid"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "RequestId",
+    "type": "uuid"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "CreatorActorId",
+    "type": "uuid"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "SubmissionKey",
+    "type": "uuid"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "Concern",
+    "type": "character varying"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "Revision",
+    "type": "integer"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "PreviousEventId",
+    "type": "uuid"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "PreviousStatus",
+    "type": "character varying"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "Status",
+    "type": "character varying"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "Remarks",
+    "type": "character varying"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "AttachmentIdsJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "ReferencesJson",
+    "type": "jsonb"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "InputSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "CreatedAtUtc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "CanonicalJson",
+    "type": "text"
+  },
+  {
+    "table": "screening_evidence_verifications",
+    "column": "EventSha256",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "assessment_id",
+    "type": "uuid"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "workflow_run_id",
+    "type": "uuid"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "case_id",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "workflow_projection_id",
+    "type": "uuid"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "model_version",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "model_artifact_sha256",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "anomaly_score",
+    "type": "double precision"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "threshold",
+    "type": "double precision"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "flagged",
+    "type": "boolean"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "event_count",
+    "type": "integer"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "elapsed_days",
+    "type": "double precision"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "max_gap_hours",
+    "type": "double precision"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "mean_gap_hours",
+    "type": "double precision"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "unique_activities",
+    "type": "integer"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "repeated_activity_count",
+    "type": "integer"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "resource_handoffs",
+    "type": "integer"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "institution_switches",
+    "type": "integer"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "distinct_resources",
+    "type": "integer"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "advisory_note",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "input_sha256",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "source_system",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "source_record_id",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "source_record_version",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "source_observed_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "is_synthetic",
+    "type": "boolean"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "provenance_kind",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "synthetic_seed_id",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "synthetic_seed_version",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "generated_at_utc",
+    "type": "timestamp with time zone"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "purpose",
+    "type": "character varying"
+  },
+  {
+    "table": "workflow_anomaly_assessments",
+    "column": "assessed_at_utc",
+    "type": "timestamp with time zone"
+  }
+]

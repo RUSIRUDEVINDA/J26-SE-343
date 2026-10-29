@@ -1,0 +1,20 @@
+{
+  "StateLandGovernance/docs/verification/FINAL_C4_COMPLETION_REPORT.md": "c70458aaa645da83a6b02bf83c87d3ee598d550559857f861b43e8ca6dddb50a",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ACTIVATED_CENTRAL_COMPLAINT_MANUAL_GUIDE.md": "5d2da6dc5d5e1cf8ea6d0ec5bc5c81e261f864443c76a729da576814abb18515",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ACTIVATED_VERIFY_READ_ONLY.sql": "7b7bcff06fe6ab0e0bf69d99f466e1ba15dc586122713639b100d7fc402c204a",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/COMBINED_REVIEWED_ADDITIONAL_PERMISSIONS.sql": "af43e6e34ca44ea83579cb67785e3b7a0f11d45fc1b322d9d0a769f8c4589a4c",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/COMBINED_REVIEWED_FORWARD.sql": "76aeb2a3c57d3ee0db05e657004f7e7f927695829111a3e9092599dc5d181f2b",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/FINAL_C4_COMPLETION_REPORT_BEFORE_ORDINARY_ACTIVATION.md": "4a0d8102ae22b481a9f80f5fdbf2ee01a0c16be4005932ecfd6a273e3bd3193f",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATED_AND_VERIFIED.md": "d0d51471cd39428baf139c1a73fefba2450ac2d1c5f2f8227641f4ba4da726c6",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_FINAL_PRESERVATION.json": "b53b067e2ad349312624ea8e8f908d7a301d03856cecbb648356ab7f8e23f7be",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_IMMEDIATE_PREFLIGHT.json": "c53f8d9e58313e777e48c6ecd73a5b7ee488fd2861d8f11ebf045b8f65181a8e",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_RUNTIME_EVIDENCE.json": "133ca46755d1ffca95cc574c468bcb402b733ec9b37a71002cc859c0284e18d7",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_SERVICE_READINESS.json": "e17b59f574d57cf2ec310b40ebd8914eafdcf90a31c1bf92929fabd3ceda3da5",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_SQL_EVIDENCE.json": "d27050a091856000c65bcefb54072445b223be1f4deaadbc593f9a2a0ec5ec65",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_STARTUP_GATE_STOP.json": "9ea1addd09bde5cc8a71a222cd5170dc30bd4a9631cc0f970a76cc67d4b513e8",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_PROPOSED_GRANTS.json": "ac0e3a9e3409b7ffc00d901713e115f253df0c3e6631f5a8a21edeaba542aa0f",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_PROPOSED_SETTINGS.json": "3b32f6f469533e0eea0cc5f03baa14d48aa7540252c9ff9a7e86bd56e091e5bd",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/STARTUP_CORRECTED_PACKAGE_SHA256.json": "4e6ee966f04e0faebe3b8e19f5d9fcffddc7b93d23c348eab142905375e04dfc",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/STARTUP_CORRECTED_SOURCE_SHA256.json": "cac0d462beff40a290996dfc294fd4bc9b49ace44ec2dcfcbf8fe53c7df0ac5b",
+  "StateLandGovernance/tools/development/Start-CentralComplaintsStartupCorrectedApprovedApi.ps1": "54186bb7e7442a472ddc5314b0ee86c548e2b09283d3eb86c92695d510e6b7d0"
+}

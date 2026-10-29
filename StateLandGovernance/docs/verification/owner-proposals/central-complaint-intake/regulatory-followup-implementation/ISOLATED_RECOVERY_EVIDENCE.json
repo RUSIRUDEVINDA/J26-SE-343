@@ -1,0 +1,9 @@
+{
+  "Status": "Passed",
+  "ExplicitTransactionRollbackPreservesCount": true,
+  "AddedTableRightsRevokedOnlyInIsolation": true,
+  "RestrictedSelectDeniedAfterRevocation": true,
+  "AllSavedEventsRetained": 15,
+  "FinalIsolatedState": "New history retained, test-role new-table rights revoked",
+  "OrdinaryWrites": 0
+}

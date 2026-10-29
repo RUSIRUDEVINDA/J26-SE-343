@@ -1,0 +1,10 @@
+{
+  "Database": "c4_step3_restore_20261024",
+  "AllTablesFingerprintsSchemaHistoryAndGrantsUnchanged": true,
+  "Tables": 42,
+  "Migrations": 23,
+  "HttpChecks": 48,
+  "EngineExecutions": 0,
+  "ClassifierOrAnomalyCalls": 0,
+  "DatabaseWrites": 0
+}

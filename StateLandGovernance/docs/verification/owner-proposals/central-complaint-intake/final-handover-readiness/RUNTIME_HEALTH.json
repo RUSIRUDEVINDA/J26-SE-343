@@ -1,0 +1,21 @@
+{
+  "Utc": "2026-10-23T11:47:13.450620+00:00",
+  "Services": {
+    "api": {
+      "Status": 200,
+      "Healthy": true
+    },
+    "ml": {
+      "Status": 200,
+      "Healthy": true
+    },
+    "portal": {
+      "Status": 200,
+      "Healthy": true
+    }
+  },
+  "ApiRestarted": false,
+  "MlRestarted": false,
+  "FrontendRestarted": false,
+  "NewFrontendServedByExistingNextDevelopmentProcess": true
+}

@@ -1,0 +1,30 @@
+{
+  "Frontend": {
+    "Passed": 173,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Backend": {
+    "Passed": 35,
+    "Failed": 0,
+    "Skipped": 0,
+    "Filter": "CommissionerReportReadTests|OfficerFlowTests|ManualEvidenceTests|RegisteredComplaintTests|ComplaintHandlingTests"
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "FocusedLint": {
+    "Errors": 0,
+    "ExistingWarnings": 2
+  },
+  "TypeScript": "Three existing C1 errors only",
+  "ReadOnlyRuntimeChecks": 69,
+  "SavedReports": 53,
+  "CommissionerOfficerFlowExecutionImplemented": false,
+  "NewExecutionOrInferenceProof": "Not performed; policy/source boundary unresolved",
+  "BrowserChecks": "Manual pending",
+  "OrdinaryWrites": 0,
+  "InferenceCalls": 0
+}

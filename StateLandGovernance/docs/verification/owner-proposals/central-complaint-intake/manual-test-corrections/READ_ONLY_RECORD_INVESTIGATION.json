@@ -1,0 +1,496 @@
+{
+  "Target": "state_land_governance_c4",
+  "Oid": 34144,
+  "Schemas": {
+    "screening_evidence_attachments": [
+      {
+        "name": "Id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "RequestId",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "CreatorActorId",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "SubmissionKey",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "Concern",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "FileName",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "ContentType",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "Content",
+        "type": "bytea",
+        "nullable": "NO"
+      },
+      {
+        "name": "ContentSha256",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "InputSha256",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "CreatedAtUtc",
+        "type": "timestamp with time zone",
+        "nullable": "NO"
+      }
+    ],
+    "screening_evidence_verifications": [
+      {
+        "name": "Id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "RequestId",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "CreatorActorId",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "SubmissionKey",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "Concern",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "Revision",
+        "type": "integer",
+        "nullable": "NO"
+      },
+      {
+        "name": "PreviousEventId",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "name": "PreviousStatus",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "Status",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "Remarks",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "AttachmentIdsJson",
+        "type": "jsonb",
+        "nullable": "NO"
+      },
+      {
+        "name": "ReferencesJson",
+        "type": "jsonb",
+        "nullable": "NO"
+      },
+      {
+        "name": "InputSha256",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "CreatedAtUtc",
+        "type": "timestamp with time zone",
+        "nullable": "NO"
+      },
+      {
+        "name": "CanonicalJson",
+        "type": "text",
+        "nullable": "NO"
+      },
+      {
+        "name": "EventSha256",
+        "type": "character varying",
+        "nullable": "NO"
+      }
+    ],
+    "complaint_handling_events": [
+      {
+        "name": "Id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "ComplaintId",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "Revision",
+        "type": "integer",
+        "nullable": "NO"
+      },
+      {
+        "name": "PreviousEventId",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "name": "Operation",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "FromState",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "ToState",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "HandlingMode",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "ResponsibleActorId",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "name": "AssignmentEventId",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "name": "ActorId",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "ActedAtUtc",
+        "type": "timestamp with time zone",
+        "nullable": "NO"
+      },
+      {
+        "name": "Reason",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "DetailsJson",
+        "type": "jsonb",
+        "nullable": "NO"
+      },
+      {
+        "name": "EvidenceReferencesJson",
+        "type": "jsonb",
+        "nullable": "NO"
+      },
+      {
+        "name": "PublicSummary",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "SubmissionKey",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "InputSha256",
+        "type": "character varying",
+        "nullable": "NO"
+      },
+      {
+        "name": "AuthorizationGrantId",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "name": "AuthorizationSourceReference",
+        "type": "character varying",
+        "nullable": "YES"
+      },
+      {
+        "name": "EventCanonicalJson",
+        "type": "text",
+        "nullable": "NO"
+      },
+      {
+        "name": "EventSha256",
+        "type": "character varying",
+        "nullable": "NO"
+      }
+    ],
+    "registered_complaints": [
+      {
+        "name": "Id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "ApplicantId",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "SubmissionKey",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "name": "CaseId",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "name": "SubmittedAtUtc",
+        "type": "timestamp with time zone",
+        "nullable": "NO"
+      },
+      {
+        "name": "Revision",
+        "type": "integer",
+        "nullable": "NO"
+      },
+      {
+        "name": "PayloadJson",
+        "type": "jsonb",
+        "nullable": "NO"
+      }
+    ]
+  },
+  "Attachments": [],
+  "Verifications": [
+    {
+      "Id": "2e17ff49-c777-48c8-8e75-578b8d567084",
+      "RequestId": "64105595-9f53-499c-8276-e71daec4af6c",
+      "Concern": "LegalDispute",
+      "Revision": 1,
+      "Status": "Verified",
+      "AttachmentIds": [],
+      "ReferenceCount": 1,
+      "CreatedAtUtc": "2026-10-23T16:55:37.712683+00:00"
+    }
+  ],
+  "HandlingEvents": [
+    {
+      "Id": "0b225631-3ae6-49ac-874d-9c921043c740",
+      "ComplaintId": "67a68a6a-4429-451b-8c14-50f639035e0b",
+      "Revision": 1,
+      "Operation": "AssignDs",
+      "FromState": "Unassigned",
+      "ToState": "AssignedToDs",
+      "AtUtc": "2026-10-23T10:46:27.418492+00:00"
+    },
+    {
+      "Id": "24f57c4b-d538-4fd3-8eeb-c6d70f865765",
+      "ComplaintId": "67a68a6a-4429-451b-8c14-50f639035e0b",
+      "Revision": 2,
+      "Operation": "DsReviewRecorded",
+      "FromState": "AssignedToDs",
+      "ToState": "AssignedToDs",
+      "AtUtc": "2026-10-23T17:05:04.443852+00:00"
+    },
+    {
+      "Id": "0be187f1-96a8-4783-a3e3-cf938d502b55",
+      "ComplaintId": "67a68a6a-4429-451b-8c14-50f639035e0b",
+      "Revision": 3,
+      "Operation": "DsReviewRecorded",
+      "FromState": "AssignedToDs",
+      "ToState": "AssignedToDs",
+      "AtUtc": "2026-10-23T17:05:11.695054+00:00"
+    },
+    {
+      "Id": "c2eeb4da-15f8-4245-afb2-0a8445f2b279",
+      "ComplaintId": "aac71241-a1fd-4f4b-822d-5d5a1ca37b2c",
+      "Revision": 1,
+      "Operation": "AssignDs",
+      "FromState": "Unassigned",
+      "ToState": "AssignedToDs",
+      "AtUtc": "2026-10-23T11:11:28.450495+00:00"
+    },
+    {
+      "Id": "d32c26c8-edc2-41bf-8f83-a4204bb17a13",
+      "ComplaintId": "aac71241-a1fd-4f4b-822d-5d5a1ca37b2c",
+      "Revision": 2,
+      "Operation": "StartInvestigation",
+      "FromState": "AssignedToDs",
+      "ToState": "UnderInvestigation",
+      "AtUtc": "2026-10-23T17:03:03.088257+00:00"
+    }
+  ],
+  "Triage": [
+    {
+      "ComplaintId": "67a68a6a-4429-451b-8c14-50f639035e0b",
+      "Revision": 4,
+      "PayloadKeys": [
+        "Id",
+        "CaseId",
+        "Reviews",
+        "Subject",
+        "Attempts",
+        "ParcelId",
+        "Revision",
+        "InputHash",
+        "ApplicantId",
+        "ReviewStatus",
+        "ComplaintText",
+        "SubmissionKey",
+        "SubmittedAtUtc",
+        "ClassificationState"
+      ],
+      "ReviewMetadata": [
+        {
+          "Id": "a9a6b26c-fb2a-4ef9-a91a-a4c9fe578838",
+          "Status": "UnderReview",
+          "AtUtc": "2026-10-23T17:05:04.4340687+00:00",
+          "ReasonLength": 37
+        },
+        {
+          "Id": "c74a1f28-8fa2-4203-9637-276e8738a8f7",
+          "Status": "UnderReview",
+          "AtUtc": "2026-10-23T17:05:11.6899846+00:00",
+          "ReasonLength": 37
+        }
+      ]
+    },
+    {
+      "ComplaintId": "c79fa287-ae81-43ce-8c06-19fd7aabaa37",
+      "Revision": 2,
+      "PayloadKeys": [
+        "Id",
+        "CaseId",
+        "Reviews",
+        "Subject",
+        "Attempts",
+        "ParcelId",
+        "Revision",
+        "InputHash",
+        "ApplicantId",
+        "ReviewStatus",
+        "ComplaintText",
+        "SubmissionKey",
+        "SubmittedAtUtc",
+        "ClassificationState"
+      ],
+      "ReviewMetadata": []
+    },
+    {
+      "ComplaintId": "17f97817-edf1-47b2-893b-c7d7d133bbb6",
+      "Revision": 3,
+      "PayloadKeys": [
+        "Id",
+        "CaseId",
+        "Reviews",
+        "Subject",
+        "Attempts",
+        "ParcelId",
+        "Revision",
+        "InputHash",
+        "ApplicantId",
+        "ReviewStatus",
+        "ComplaintText",
+        "SubmissionKey",
+        "SubmittedAtUtc",
+        "ClassificationState"
+      ],
+      "ReviewMetadata": []
+    },
+    {
+      "ComplaintId": "38bf34fc-b1e0-408c-9570-1bb1dd6e8334",
+      "Revision": 2,
+      "PayloadKeys": [
+        "Id",
+        "CaseId",
+        "Reviews",
+        "Subject",
+        "Attempts",
+        "ParcelId",
+        "Revision",
+        "InputHash",
+        "ApplicantId",
+        "ReviewStatus",
+        "ComplaintText",
+        "SubmissionKey",
+        "SubmittedAtUtc",
+        "ClassificationState"
+      ],
+      "ReviewMetadata": []
+    },
+    {
+      "ComplaintId": "aac71241-a1fd-4f4b-822d-5d5a1ca37b2c",
+      "Revision": 2,
+      "PayloadKeys": [
+        "Id",
+        "CaseId",
+        "Reviews",
+        "Subject",
+        "Attempts",
+        "ParcelId",
+        "Revision",
+        "InputHash",
+        "ApplicantId",
+        "ReviewStatus",
+        "ComplaintText",
+        "SubmissionKey",
+        "SubmittedAtUtc",
+        "ClassificationState"
+      ],
+      "ReviewMetadata": []
+    },
+    {
+      "ComplaintId": "2b8ad6b9-0b89-418d-a3c2-999531cfc94a",
+      "Revision": 2,
+      "PayloadKeys": [
+        "Id",
+        "CaseId",
+        "Reviews",
+        "Subject",
+        "Attempts",
+        "ParcelId",
+        "Revision",
+        "InputHash",
+        "ApplicantId",
+        "ReviewStatus",
+        "ComplaintText",
+        "SubmissionKey",
+        "SubmittedAtUtc",
+        "ClassificationState"
+      ],
+      "ReviewMetadata": []
+    }
+  ],
+  "Readonly": true
+}

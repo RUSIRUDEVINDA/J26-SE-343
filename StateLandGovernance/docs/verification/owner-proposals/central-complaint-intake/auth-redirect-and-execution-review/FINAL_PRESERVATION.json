@@ -1,0 +1,15 @@
+{
+  "Status": "Passed",
+  "Target": "state_land_governance_c4",
+  "Oid": 34144,
+  "Tables": 41,
+  "Migrations": 21,
+  "AllRowsSchemaGrantsSettingsSequencesUnchanged": true,
+  "PrivateSettingsAndIndependentGrantsUnchanged": true,
+  "FrozenModelsUnchanged": true,
+  "ApiPid": 16456,
+  "ApiPackageUnchanged": true,
+  "ApiDllSha256": "cccef9b06fbdf2136a98f7836f6bfba04cfdf6b9e85b3d6294b1f85d25b1432d",
+  "ServicesRestarted": false,
+  "OrdinaryFixturesAndInferenceCalls": 0
+}

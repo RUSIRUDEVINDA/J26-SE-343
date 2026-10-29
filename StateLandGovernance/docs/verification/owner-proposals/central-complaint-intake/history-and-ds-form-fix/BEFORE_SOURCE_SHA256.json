@@ -1,0 +1,12 @@
+{
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/RegulatoryReports/IndependentRegulatoryReports.cs": "e45e41bb8483cbee29581080400e69c3b33689b35a6a372a77c55c1fdea5e88f",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/RegulatoryReports/RegulatoryFollowups.cs": "c9f5e30f8be2bd438cb76a7a729d02398d5d7af44a53f79fb4667b18b94c21fe",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/RegulatoryFollowupStore.cs": "7f6e8c361e4871f1dfa92f06b67684be51b90a09038af0248568de0148528951",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/RegulatoryFollowupsController.cs": "ed0aa7bb764a9f9d4a7fa23a284030ecc24ee105e5adea036d9676bb56c0a408",
+  "StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFollowups.tsx": "5440c98b93f14cc7612b6da86a7e9e5312fc5240925fd9edd3a5bb85fa1919f5",
+  "StateLandGovernance.Web/src/modules/component-04/services/regulatoryFollowups.ts": "429712b9365c2de02a6021ca22092aff06796ab75ed6d55885b714188ab8d00b",
+  "StateLandGovernance.Web/src/modules/component-04/components/ComplaintHandlingPanel.tsx": "d989493e79afb82ab8abcbcd8d179f8cdab3687569f071efc71a433b53462813",
+  "StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.tsx": "7da0ae08c0dc719e6af5e109efc97ddba97ac5eb3dcac58534493765b77a8e2b",
+  "StateLandGovernance/tests/IntegrationTests/RegulatoryFollowupProof/Program.cs": "7e67af0ff8f14e13f0acf2b337fb80b74a44189e4459cf0d198ab2f2fe893b17",
+  "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/RegulatoryFollowupTests.cs": "2e0bd57def96134c52b9583c9a6b1feecb31750d840fa706af4e3b1c5ca766e0"
+}

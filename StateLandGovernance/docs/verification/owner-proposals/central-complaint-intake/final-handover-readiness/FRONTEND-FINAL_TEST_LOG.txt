@@ -1,0 +1,1160 @@
+
+> state-land-governance-web@0.1.0 test
+> node --import ./tests/register.mjs --experimental-strip-types --test tests/**/*.test.ts tests/*.test.mjs
+
+TAP version 13
+# Subtest: lease interest status labels cover officer workflow states
+ok 1 - lease interest status labels cover officer workflow states
+  ---
+  duration_ms: 2.8734
+  type: 'test'
+  ...
+# Subtest: GIS coverage badges treat missing data as neutral unavailable
+ok 2 - GIS coverage badges treat missing data as neutral unavailable
+  ---
+  duration_ms: 0.3148
+  type: 'test'
+  ...
+# Subtest: target area units convert to hectares for API scoring
+ok 3 - target area units convert to hectares for API scoring
+  ---
+  duration_ms: 0.5402
+  type: 'test'
+  ...
+# Subtest: private claimant blocks lease interest eligibility
+ok 4 - private claimant blocks lease interest eligibility
+  ---
+  duration_ms: 0.3779
+  type: 'test'
+  ...
+# Subtest: lease interest submit requires positive requested area from parcel
+ok 5 - lease interest submit requires positive requested area from parcel
+  ---
+  duration_ms: 0.4804
+  type: 'test'
+  ...
+# Subtest: proposal syncs requested area from parcel record
+ok 6 - proposal syncs requested area from parcel record
+  ---
+  duration_ms: 0.3385
+  type: 'test'
+  ...
+# Subtest: missing parcel area blocks lease interest eligibility
+ok 7 - missing parcel area blocks lease interest eligibility
+  ---
+  duration_ms: 0.2942
+  type: 'test'
+  ...
+# Subtest: draft default purpose Other is not shown as applicant selection
+ok 8 - draft default purpose Other is not shown as applicant selection
+  ---
+  duration_ms: 0.3028
+  type: 'test'
+  ...
+# Subtest: match score display shows 100 only for exact 100 and truncates near-perfect
+ok 9 - match score display shows 100 only for exact 100 and truncates near-perfect
+  ---
+  duration_ms: 0.5316
+  type: 'test'
+  ...
+# (node:36072) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:36072) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:36072) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-catalogue-findings.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Catalogue statuses remain distinct from satisfied findings
+ok 10 - Catalogue statuses remain distinct from satisfied findings
+  ---
+  duration_ms: 1.8987
+  type: 'test'
+  ...
+# Subtest: Unresolved and inapplicable findings never receive a success tone
+ok 11 - Unresolved and inapplicable findings never receive a success tone
+  ---
+  duration_ms: 0.3377
+  type: 'test'
+  ...
+# Subtest: Returned blocking flags remain visible even with an applicability status
+ok 12 - Returned blocking flags remain visible even with an applicability status
+  ---
+  duration_ms: 0.2891
+  type: 'test'
+  ...
+# (node:31536) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:31536) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:31536) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-central-complaints.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Central reads use the current portal session, no-store GET and never trigger classification
+ok 13 - Central reads use the current portal session, no-store GET and never trigger classification
+  ---
+  duration_ms: 67.3737
+  type: 'test'
+  ...
+# Subtest: Assignment transport preserves an uncertain request key/body and exposes a conflict
+ok 14 - Assignment transport preserves an uncertain request key/body and exposes a conflict
+  ---
+  duration_ms: 5.9188
+  type: 'test'
+  ...
+# (node:39348) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:39348) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:39348) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-complaint-handling.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Handling UI offers only operations returned by the server
+ok 15 - Handling UI offers only operations returned by the server
+  ---
+  duration_ms: 21.1208
+  type: 'test'
+  ...
+# Subtest: Applicant-safe read-only handling history does not invent write controls or findings
+ok 16 - Applicant-safe read-only handling history does not invent write controls or findings
+  ---
+  duration_ms: 46.2203
+  type: 'test'
+  ...
+# Subtest: Evidence entry preserves references as data and rejects malformed or excessive entries
+ok 17 - Evidence entry preserves references as data and rejects malformed or excessive entries
+  ---
+  duration_ms: 2.279
+  type: 'test'
+  ...
+# (node:29360) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:29360) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:29360) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-final-improvements.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Exact Commissioner lands on Governance Overview; other users retain existing default
+ok 18 - Exact Commissioner lands on Governance Overview; other users retain existing default
+  ---
+  duration_ms: 1.7441
+  type: 'test'
+  ...
+# Subtest: Prominent score and threshold retain precise technical values and flagged result
+ok 19 - Prominent score and threshold retain precise technical values and flagged result
+  ---
+  duration_ms: 24.5349
+  type: 'test'
+  ...
+# Subtest: Evidence explanation counts only actual recorded states without promoting observations
+ok 20 - Evidence explanation counts only actual recorded states without promoting observations
+  ---
+  duration_ms: 2.678
+  type: 'test'
+  ...
+# (node:13624) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:13624) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:13624) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-handover.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Only the exact applicant complaint return is allowed, only for an applicant session
+ok 21 - Only the exact applicant complaint return is allowed, only for an applicant session
+  ---
+  duration_ms: 1.9257
+  type: 'test'
+  ...
+# Subtest: Complaint sign-in has a visible label and explicit allowlisted return without secrets
+ok 22 - Complaint sign-in has a visible label and explicit allowlisted return without secrets
+  ---
+  duration_ms: 30.2864
+  type: 'test'
+  ...
+# Subtest: Regulatory explanations use returned findings without inventing requirements
+ok 23 - Regulatory explanations use returned findings without inventing requirements
+  ---
+  duration_ms: 23.1333
+  type: 'test'
+  ...
+# Subtest: Anomaly verdict is a heading; nine features and exact technical values remain
+ok 24 - Anomaly verdict is a heading; nine features and exact technical values remain
+  ---
+  duration_ms: 21.1324
+  type: 'test'
+  ...
+# Subtest: Manual evidence labels are UTF-8 without confirmed mojibake
+ok 25 - Manual evidence labels are UTF-8 without confirmed mojibake
+  ---
+  duration_ms: 2.0908
+  type: 'test'
+  ...
+# (node:15460) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:15460) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:15460) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-independent-regulatory.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Actual persisted24-rule response retains every finding and observed count
+ok 26 - Actual persisted24-rule response retains every finding and observed count
+  ---
+  duration_ms: 6.5197
+  type: 'test'
+  ...
+# Subtest: Filters retain exact returned findings and sources
+ok 27 - Filters retain exact returned findings and sources
+  ---
+  duration_ms: 0.6695
+  type: 'test'
+  ...
+# Subtest: Unresolved and explicit NotApplicable never become satisfied checks
+ok 28 - Unresolved and explicit NotApplicable never become satisfied checks
+  ---
+  duration_ms: 0.5342
+  type: 'test'
+  ...
+# Subtest: Sign-in, denial, missing and service errors remain distinct
+ok 29 - Sign-in, denial, missing and service errors remain distinct
+  ---
+  duration_ms: 0.7201
+  type: 'test'
+  ...
+# (node:13164) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:13164) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:13164) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-inputs.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: All independent scenarios contain input contracts only, never seeded scores or fake extracted provenance
+ok 30 - All independent scenarios contain input contracts only, never seeded scores or fake extracted provenance
+  ---
+  duration_ms: 6.5937
+  type: 'test'
+  ...
+# Subtest: Model adapter preserves supported C3 trace events and requires a distinct DS terminal notification
+ok 31 - Model adapter preserves supported C3 trace events and requires a distinct DS terminal notification
+  ---
+  duration_ms: 1.7985
+  type: 'test'
+  ...
+# Subtest: Incomplete input stays unavailable and test coverage states are separately explicit
+ok 32 - Incomplete input stays unavailable and test coverage states are separately explicit
+  ---
+  duration_ms: 0.9427
+  type: 'test'
+  ...
+# Subtest: Input panel requires both local Development and explicit server opt-in
+ok 33 - Input panel requires both local Development and explicit server opt-in
+  ---
+  duration_ms: 0.297
+  type: 'test'
+  ...
+# Subtest: History is current only for the exact backend-current assessment and snapshot
+ok 34 - History is current only for the exact backend-current assessment and snapshot
+  ---
+  duration_ms: 0.316
+  type: 'test'
+  ...
+# Subtest: Actual engine responses must match the selected case
+ok 35 - Actual engine responses must match the selected case
+  ---
+  duration_ms: 0.3019
+  type: 'test'
+  ...
+# (node:17596) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:17596) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:17596) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-investigation.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Officer observations never promote themselves to verified absence or presence
+ok 36 - Officer observations never promote themselves to verified absence or presence
+  ---
+  duration_ms: 1.8556
+  type: 'test'
+  ...
+# Subtest: Issue Found requires substantive remarks; the form retains exactly seven distinct concerns
+ok 37 - Issue Found requires substantive remarks; the form retains exactly seven distinct concerns
+  ---
+  duration_ms: 0.6985
+  type: 'test'
+  ...
+# Subtest: Prepared named workflow preserves chronological ordering and a separate terminal notification
+ok 38 - Prepared named workflow preserves chronological ordering and a separate terminal notification
+  ---
+  duration_ms: 78.876
+  type: 'test'
+  ...
+# (node:36268) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:36268) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:36268) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-kiwula.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Uncertain submissions and reloads preserve a key; other actor and engine have separate keys
+ok 39 - Uncertain submissions and reloads preserve a key; other actor and engine have separate keys
+  ---
+  duration_ms: 2.0021
+  type: 'test'
+  ...
+# Subtest: Account switch aborts pending assessment retrieval and cannot restore old private results
+ok 40 - Account switch aborts pending assessment retrieval and cannot restore old private results
+  ---
+  duration_ms: 0.8689
+  type: 'test'
+  ...
+# Subtest: Submission failures and missing deployment remain actionable and never imply success
+ok 41 - Submission failures and missing deployment remain actionable and never imply success
+  ---
+  duration_ms: 0.4825
+  type: 'test'
+  ...
+# Subtest: Saved screening selection excludes other proposals and input versions without altering history
+ok 42 - Saved screening selection excludes other proposals and input versions without altering history
+  ---
+  duration_ms: 8.9196
+  type: 'test'
+  ...
+# Subtest: Deliberate new submissions retain uncertain keys across reload and rotate only after completion
+ok 43 - Deliberate new submissions retain uncertain keys across reload and rotate only after completion
+  ---
+  duration_ms: 16.7187
+  type: 'test'
+  ...
+# (node:10596) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:10596) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:10596) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-officer-flow.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Officer retries retain actor-scoped request keys without changing scenario version
+ok 44 - Officer retries retain actor-scoped request keys without changing scenario version
+  ---
+  duration_ms: 1.6994
+  type: 'test'
+  ...
+# (node:2736) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:2736) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:2736) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-polish.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: C4 proposal and regulatory navigation have distinct preserved deep links
+ok 45 - C4 proposal and regulatory navigation have distinct preserved deep links
+  ---
+  duration_ms: 3.5494
+  type: 'test'
+  ...
+# Subtest: Proposals initially render only the listing and separate view/screen actions
+ok 46 - Proposals initially render only the listing and separate view/screen actions
+  ---
+  duration_ms: 44.1183
+  type: 'test'
+  ...
+# Subtest: Regulatory route opens the real screening form rather than the proposal table
+ok 47 - Regulatory route opens the real screening form rather than the proposal table
+  ---
+  duration_ms: 7.1565
+  type: 'test'
+  ...
+# Subtest: All nine measured feature values preserve precision and show units separately from model identity
+ok 48 - All nine measured feature values preserve precision and show units separately from model identity
+  ---
+  duration_ms: 3.269
+  type: 'test'
+  ...
+# (node:14932) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:14932) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:14932) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-post-workflow.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Pending and failed submissions never imply a model outcome
+ok 49 - Pending and failed submissions never imply a model outcome
+  ---
+  duration_ms: 2.556
+  type: 'test'
+  ...
+# Subtest: Endpoint deployment, activation, auth, storage and network errors stay distinct
+ok 50 - Endpoint deployment, activation, auth, storage and network errors stay distinct
+  ---
+  duration_ms: 1.2447
+  type: 'test'
+  ...
+# Subtest: Account switching aborts old requests and rejects all stale responses
+ok 51 - Account switching aborts old requests and rejects all stale responses
+  ---
+  duration_ms: 0.8102
+  type: 'test'
+  ...
+# Subtest: Post-workflow screen uses actual authenticated retrieval and deliberate execution
+ok 52 - Post-workflow screen uses actual authenticated retrieval and deliberate execution
+  ---
+  duration_ms: 15.6921
+  type: 'test'
+  ...
+# (node:10892) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:10892) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:10892) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-prerequisites.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Prerequisites publish loading until the actual GET response resolves
+ok 53 - Prerequisites publish loading until the actual GET response resolves
+  ---
+  duration_ms: 3.7323
+  type: 'test'
+  ...
+# Subtest: Returned blockers take precedence over a ready status
+ok 54 - Returned blockers take precedence over a ready status
+  ---
+  duration_ms: 18.5034
+  type: 'test'
+  ...
+# Subtest: Empty, missing and malformed responses never confirm readiness
+ok 55 - Empty, missing and malformed responses never confirm readiness
+  ---
+  duration_ms: 1.9994
+  type: 'test'
+  ...
+# Subtest: Empty blocker arrays alone do not establish readiness
+ok 56 - Empty blocker arrays alone do not establish readiness
+  ---
+  duration_ms: 0.8465
+  type: 'test'
+  ...
+# Subtest: Failed requests retain useful errors and correlation references
+ok 57 - Failed requests retain useful errors and correlation references
+  ---
+  duration_ms: 0.996
+  type: 'test'
+  ...
+# (node:25244) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:25244) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:25244) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-presentation.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Persisted case context never selects an unassigned requested or saved case
+ok 58 - Persisted case context never selects an unassigned requested or saved case
+  ---
+  duration_ms: 1.9465
+  type: 'test'
+  ...
+# Subtest: Explicit assigned case navigation takes precedence over prior context
+ok 59 - Explicit assigned case navigation takes precedence over prior context
+  ---
+  duration_ms: 0.3516
+  type: 'test'
+  ...
+# Subtest: Blocking findings remain issues even when human review is also required
+ok 60 - Blocking findings remain issues even when human review is also required
+  ---
+  duration_ms: 0.3195
+  type: 'test'
+  ...
+# (node:13132) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:13132) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:13132) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-progressive-ui.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Incomplete and review states never become successful findings
+ok 61 - Incomplete and review states never become successful findings
+  ---
+  duration_ms: 19.2169
+  type: 'test'
+  ...
+# Subtest: Native progressive expanders preserve supplied findings and details
+ok 62 - Native progressive expanders preserve supplied findings and details
+  ---
+  duration_ms: 5.2699
+  type: 'test'
+  ...
+# Subtest: Investigation dropdown remains outside the remarks expander summary
+ok 63 - Investigation dropdown remains outside the remarks expander summary
+  ---
+  duration_ms: 1.7779
+  type: 'test'
+  ...
+# Subtest: Scenario event labels stay neutral and times explicitly use Sri Lanka
+ok 64 - Scenario event labels stay neutral and times explicitly use Sri Lanka
+  ---
+  duration_ms: 39.3274
+  type: 'test'
+  ...
+# (node:21576) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:21576) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:21576) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-registered-complaints.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: ML failure remains registered and never claims verification
+ok 65 - ML failure remains registered and never claims verification
+  ---
+  duration_ms: 5.4098
+  type: 'test'
+  ...
+# Subtest: Interrupted classification waits for its lease and retries the saved record
+ok 66 - Interrupted classification waits for its lease and retries the saved record
+  ---
+  duration_ms: 0.3958
+  type: 'test'
+  ...
+# Subtest: Submission retry preserves idempotency key until acknowledged
+ok 67 - Submission retry preserves idempotency key until acknowledged
+  ---
+  duration_ms: 3.7912
+  type: 'test'
+  ...
+# (node:27516) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:27516) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:27516) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-regulatory-submission.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Loading prepared input preserves unknowns and cannot create a case binding
+ok 68 - Loading prepared input preserves unknowns and cannot create a case binding
+  ---
+  duration_ms: 3.4385
+  type: 'test'
+  ...
+# Subtest: Pending submission is frozen for same-key retries and isolated by signed-in actor
+ok 69 - Pending submission is frozen for same-key retries and isolated by signed-in actor
+  ---
+  duration_ms: 4.1327
+  type: 'test'
+  ...
+# Subtest: Definitive validation/denial allows correction with the same key; uncertain failures stay frozen
+ok 70 - Definitive validation/denial allows correction with the same key; uncertain failures stay frozen
+  ---
+  duration_ms: 0.4795
+  type: 'test'
+  ...
+# (node:19944) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:19944) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:19944) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04-route-access.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Commissioner landing and complaint navigation are distinct; applicant returns to its own dashboard
+ok 71 - Commissioner landing and complaint navigation are distinct; applicant returns to its own dashboard
+  ---
+  duration_ms: 2.1308
+  type: 'test'
+  ...
+# Subtest: Server proxy denies applicant every nested C4 route before rendering and never trusts forged headers
+ok 72 - Server proxy denies applicant every nested C4 route before rendering and never trusts forged headers
+  ---
+  duration_ms: 22.4426
+  type: 'test'
+  ...
+# Subtest: Server route validates current bearer on every request and replaces browser-supplied identity headers
+ok 73 - Server route validates current bearer on every request and replaces browser-supplied identity headers
+  ---
+  duration_ms: 4.1295
+  type: 'test'
+  ...
+# Subtest: Anonymous and revoked sessions fail closed; admission outage renders no protected children
+ok 74 - Anonymous and revoked sessions fail closed; admission outage renders no protected children
+  ---
+  duration_ms: 2.9566
+  type: 'test'
+  ...
+# Subtest: HttpOnly bridge requires same origin and server-valid token, preserving applicant deny classification
+ok 75 - HttpOnly bridge requires same origin and server-valid token, preserving applicant deny classification
+  ---
+  duration_ms: 8.5385
+  type: 'test'
+  ...
+# Subtest: Component 4 landing dashboard contains only the business overview
+ok 76 - Component 4 landing dashboard contains only the business overview
+  ---
+  duration_ms: 4.5463
+  type: 'test'
+  ...
+# Subtest: Component 4 layout keeps the two demonstration journeys and supporting report access
+ok 77 - Component 4 layout keeps the two demonstration journeys and supporting report access
+  ---
+  duration_ms: 1.6275
+  type: 'test'
+  ...
+# Subtest: NPD compliance presets provide distinct complete, incomplete and adverse proposal JSON
+ok 78 - NPD compliance presets provide distinct complete, incomplete and adverse proposal JSON
+  ---
+  duration_ms: 0.7945
+  type: 'test'
+  ...
+# Subtest: Live dashboard failure never falls back to demo success
+ok 79 - Live dashboard failure never falls back to demo success
+  ---
+  duration_ms: 1.1233
+  type: 'test'
+  ...
+# Subtest: Live dashboard success renders only the real response
+ok 80 - Live dashboard success renders only the real response
+  ---
+  duration_ms: 25.3833
+  type: 'test'
+  ...
+# Subtest: Explicit demo reads are isolated and use unique assessment identities
+ok 81 - Explicit demo reads are isolated and use unique assessment identities
+  ---
+  duration_ms: 0.7751
+  type: 'test'
+  ...
+# Subtest: Search and status filtering intersect, preserve history identity and handle empty results
+ok 82 - Search and status filtering intersect, preserve history identity and handle empty results
+  ---
+  duration_ms: 0.463
+  type: 'test'
+  ...
+# Subtest: NotAssessed and unknown conflict results are neutral, not failures
+ok 83 - NotAssessed and unknown conflict results are neutral, not failures
+  ---
+  duration_ms: 0.2464
+  type: 'test'
+  ...
+# Subtest: Officer timestamps use Colombo while naive event timestamps remain unassigned
+ok 84 - Officer timestamps use Colombo while naive event timestamps remain unassigned
+  ---
+  duration_ms: 20.5992
+  type: 'test'
+  ...
+# Subtest: Fictional workflow anomaly follows higher-score and score-greater-than-threshold semantics
+ok 85 - Fictional workflow anomaly follows higher-score and score-greater-than-threshold semantics
+  ---
+  duration_ms: 0.6326
+  type: 'test'
+  ...
+# Subtest: Compliance evaluation uses only the published ASP.NET Core route and does not retry
+ok 86 - Compliance evaluation uses only the published ASP.NET Core route and does not retry
+  ---
+  duration_ms: 1.0974
+  type: 'test'
+  ...
+# Subtest: Component 4 browser requests do not create Component 1 authentication sessions
+ok 87 - Component 4 browser requests do not create Component 1 authentication sessions
+  ---
+  duration_ms: 0.4799
+  type: 'test'
+  ...
+# Subtest: Conflict evaluation uses the published route with decision snapshots
+ok 88 - Conflict evaluation uses the published route with decision snapshots
+  ---
+  duration_ms: 0.3973
+  type: 'test'
+  ...
+# Subtest: Risk, explanation, consensus, and condition evaluations use validated published DTO responses
+ok 89 - Risk, explanation, consensus, and condition evaluations use validated published DTO responses
+  ---
+  duration_ms: 1.1918
+  type: 'test'
+  ...
+# Subtest: Malformed nested evaluation responses fail closed
+ok 90 - Malformed nested evaluation responses fail closed
+  ---
+  duration_ms: 0.3312
+  type: 'test'
+  ...
+# Subtest: Evaluation errors distinguish validation, missing routes, conflicts, authorization, and server outage
+ok 91 - Evaluation errors distinguish validation, missing routes, conflicts, authorization, and server outage
+  ---
+  duration_ms: 0.4438
+  type: 'test'
+  ...
+# Subtest: Evaluation timeout aborts the request and reports timeout instead of success
+ok 92 - Evaluation timeout aborts the request and reports timeout instead of success
+  ---
+  duration_ms: 0.439
+  type: 'test'
+  ...
+# Subtest: Complaint v2 response preserves assessment identity, original text, and exactly four probabilities
+ok 93 - Complaint v2 response preserves assessment identity, original text, and exactly four probabilities
+  ---
+  duration_ms: 0.5833
+  type: 'test'
+  ...
+# Subtest: Malformed complaint success response fails closed
+ok 94 - Malformed complaint success response fails closed
+  ---
+  duration_ms: 0.3029
+  type: 'test'
+  ...
+# Subtest: Incomplete or out-of-order anomaly traces are rejected before HTTP submission
+ok 95 - Incomplete or out-of-order anomaly traces are rejected before HTTP submission
+  ---
+  duration_ms: 0.4656
+  type: 'test'
+  ...
+# Subtest: Workflow anomaly response exposes score, threshold, flag, advisory, and nine features
+ok 96 - Workflow anomaly response exposes score, threshold, flag, advisory, and nine features
+  ---
+  duration_ms: 0.4916
+  type: 'test'
+  ...
+# Subtest: Early-screening status and blockchain receipt responses are validated
+ok 97 - Early-screening status and blockchain receipt responses are validated
+  ---
+  duration_ms: 2.0565
+  type: 'test'
+  ...
+# Subtest: Early-screening input rejects unknown and duplicate indicators
+ok 98 - Early-screening input rejects unknown and duplicate indicators
+  ---
+  duration_ms: 0.4274
+  type: 'test'
+  ...
+# (node:11104) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:11104) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:11104) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/component-04/workflowAnomalyJourney.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Commissioner workflow anomaly journey
+    # Subtest: renders persisted events in sequence with conditional and correction markers
+    ok 1 - renders persisted events in sequence with conditional and correction markers
+      ---
+      duration_ms: 21.7186
+      type: 'test'
+      ...
+    # Subtest: renders synthetic provenance, confirmed processing stages, and all nine features
+    ok 2 - renders synthetic provenance, confirmed processing stages, and all nine features
+      ---
+      duration_ms: 5.2516
+      type: 'test'
+      ...
+    # Subtest: renders flagged and unflagged guidance without probability or confidence labels
+    ok 3 - renders flagged and unflagged guidance without probability or confidence labels
+      ---
+      duration_ms: 10.7208
+      type: 'test'
+      ...
+    # Subtest: renders missing and partial evidence truthfully
+    ok 4 - renders missing and partial evidence truthfully
+      ---
+      duration_ms: 3.4636
+      type: 'test'
+      ...
+    # Subtest: allows an eligible persisted trace to run a fresh model inference
+    ok 5 - allows an eligible persisted trace to run a fresh model inference
+      ---
+      duration_ms: 4.3046
+      type: 'test'
+      ...
+    # Subtest: shows live sequential trace progress while model inference is running
+    ok 6 - shows live sequential trace progress while model inference is running
+      ---
+      duration_ms: 2.1397
+      type: 'test'
+      ...
+    # Subtest: contains no client threshold calculation, raw JSON path, mock fallback, or audit verification call
+    ok 7 - contains no client threshold calculation, raw JSON path, mock fallback, or audit verification call
+      ---
+      duration_ms: 2.0088
+      type: 'test'
+      ...
+    1..7
+ok 99 - Commissioner workflow anomaly journey
+  ---
+  duration_ms: 52.5571
+  type: 'suite'
+  ...
+# (node:15132) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:15132) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:15132) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/workflow-governance/assessmentState.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: an absent assessment is never stale regardless of currentness
+ok 100 - an absent assessment is never stale regardless of currentness
+  ---
+  duration_ms: 1.6002
+  type: 'test'
+  ...
+# Subtest: only an existing outdated assessment is stale
+ok 101 - only an existing outdated assessment is stale
+  ---
+  duration_ms: 0.3427
+  type: 'test'
+  ...
+# (node:28528) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:28528) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:28528) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/workflow-governance/caseNextAction.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: A confirmed but incomplete proposal still directs the officer to content review
+ok 102 - A confirmed but incomplete proposal still directs the officer to content review
+  ---
+  duration_ms: 1.8993
+  type: 'test'
+  ...
+# Subtest: Missing and unconfigured assessments never direct the user to screening
+ok 103 - Missing and unconfigured assessments never direct the user to screening
+  ---
+  duration_ms: 0.331
+  type: 'test'
+  ...
+# Subtest: Published snapshot alone does not imply completed verification and completeness stage
+ok 104 - Published snapshot alone does not imply completed verification and completeness stage
+  ---
+  duration_ms: 0.2475
+  type: 'test'
+  ...
+# Subtest: Persisted workflow and handoff states lead to their actual readiness screens
+ok 105 - Persisted workflow and handoff states lead to their actual readiness screens
+  ---
+  duration_ms: 0.2206
+  type: 'test'
+  ...
+# (node:26536) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:26536) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:26536) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/workflow-governance/caseScreening.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: C3 local officer headers require explicit Development opt-in
+ok 106 - C3 local officer headers require explicit Development opt-in
+  ---
+  duration_ms: 2.4814
+  type: 'test'
+  ...
+# Subtest: Production never emits C3 development authority headers
+ok 107 - Production never emits C3 development authority headers
+  ---
+  duration_ms: 0.4879
+  type: 'test'
+  ...
+# Subtest: A remote hostname cannot use the local Development header scheme
+ok 108 - A remote hostname cannot use the local Development header scheme
+  ---
+  duration_ms: 0.4499
+  type: 'test'
+  ...
+# Subtest: Applicant headers retain owner identity without officer authority
+ok 109 - Applicant headers retain owner identity without officer authority
+  ---
+  duration_ms: 0.6584
+  type: 'test'
+  ...
+# (node:6816) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:6816) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:6816) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/workflow-governance/completenessActions.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: classification confirmation resolves an uncertain original without changing its history
+ok 110 - classification confirmation resolves an uncertain original without changing its history
+  ---
+  duration_ms: 1.6694
+  type: 'test'
+  ...
+# (node:1736) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:1736) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:1736) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/workflow-governance/developmentSession.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Development session expiry clears stored credentials
+ok 111 - Development session expiry clears stored credentials
+  ---
+  duration_ms: 6.7393
+  type: 'test'
+  ...
+# Subtest: Normal login redirects to platform home while preserving the role profile and session
+ok 112 - Normal login redirects to platform home while preserving the role profile and session
+  ---
+  duration_ms: 66.4252
+  type: 'test'
+  ...
+# (node:26532) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:26532) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:26532) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/workflow-governance/normalHostErrors.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: 401 and empty 403 provide actionable access messages
+ok 113 - 401 and empty 403 provide actionable access messages
+  ---
+  duration_ms: 41.4508
+  type: 'test'
+  ...
+# Subtest: 500 exposes safe reference and never exception content
+ok 114 - 500 exposes safe reference and never exception content
+  ---
+  duration_ms: 1.8278
+  type: 'test'
+  ...
+# Subtest: conflict preserves the prerequisite action returned by the API
+ok 115 - conflict preserves the prerequisite action returned by the API
+  ---
+  duration_ms: 1.0382
+  type: 'test'
+  ...
+# (node:20040) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:20040) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:20040) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/workflow-governance/ocrDemo.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: OCR-5 Temporary OCR Browser Frontend Tests
+    # Subtest: 1. no-file submit disabled in default state
+    ok 1 - 1. no-file submit disabled in default state
+      ---
+      duration_ms: 13.3271
+      type: 'test'
+      ...
+    # Subtest: 2. language selector maps correctly to eng, sin, sin+eng
+    ok 2 - 2. language selector maps correctly to eng, sin, sin+eng
+      ---
+      duration_ms: 15.7339
+      type: 'test'
+      ...
+    # Subtest: 3. successful response renders full text
+    ok 3 - 3. successful response renders full text
+      ---
+      duration_ms: 0.4953
+      type: 'test'
+      ...
+    # Subtest: 4. Sinhala Unicode renders unchanged without character mangling
+    ok 4 - 4. Sinhala Unicode renders unchanged without character mangling
+      ---
+      duration_ms: 0.262
+      type: 'test'
+      ...
+    # Subtest: 5. multi-page response renders page order correctly
+    ok 5 - 5. multi-page response renders page order correctly
+      ---
+      duration_ms: 0.9229
+      type: 'test'
+      ...
+    # Subtest: 6. governance notice is displayed prominently and unaltered
+    ok 6 - 6. governance notice is displayed prominently and unaltered
+      ---
+      duration_ms: 0.4185
+      type: 'test'
+      ...
+    # Subtest: 7. warnings are rendered when present
+    ok 7 - 7. warnings are rendered when present
+      ---
+      duration_ms: 0.365
+      type: 'test'
+      ...
+    # Subtest: 8. 413 error (Payload Too Large) is formatted safely without stack traces
+    ok 8 - 8. 413 error (Payload Too Large) is formatted safely without stack traces
+      ---
+      duration_ms: 0.3754
+      type: 'test'
+      ...
+    # Subtest: 9. 415 error (Unsupported Media Type) is formatted safely
+    ok 9 - 9. 415 error (Unsupported Media Type) is formatted safely
+      ---
+      duration_ms: 0.7164
+      type: 'test'
+      ...
+    # Subtest: 10. 503 error (Service Unavailable) is formatted safely
+    ok 10 - 10. 503 error (Service Unavailable) is formatted safely
+      ---
+      duration_ms: 0.5336
+      type: 'test'
+      ...
+    # Subtest: 11. network failure (status 0) is displayed with clear user action
+    ok 11 - 11. network failure (status 0) is displayed with clear user action
+      ---
+      duration_ms: 0.244
+      type: 'test'
+      ...
+    # Subtest: 12. clear/reset resets file, result, and error state
+    ok 12 - 12. clear/reset resets file, result, and error state
+      ---
+      duration_ms: 0.2712
+      type: 'test'
+      ...
+    # Subtest: 13. mode selector renders OCR Only and OCR + Governed Semantic Analysis options
+    ok 13 - 13. mode selector renders OCR Only and OCR + Governed Semantic Analysis options
+      ---
+      duration_ms: 1.0771
+      type: 'test'
+      ...
+    # Subtest: 14. mode mapping in FormData correctly serializes ocr and analyze
+    ok 14 - 14. mode mapping in FormData correctly serializes ocr and analyze
+      ---
+      duration_ms: 0.1238
+      type: 'test'
+      ...
+    # Subtest: 15. candidate facts table renders structured facts, values, and page references
+    ok 15 - 15. candidate facts table renders structured facts, values, and page references
+      ---
+      duration_ms: 0.4565
+      type: 'test'
+      ...
+    # Subtest: 16. grounding badges distinguish verified vs unverified OCR grounding
+    ok 16 - 16. grounding badges distinguish verified vs unverified OCR grounding
+      ---
+      duration_ms: 0.1922
+      type: 'test'
+      ...
+    # Subtest: 17. Sinhala candidate facts and evidence quotes render without encoding corruption
+    ok 17 - 17. Sinhala candidate facts and evidence quotes render without encoding corruption
+      ---
+      duration_ms: 0.2157
+      type: 'test'
+      ...
+    # Subtest: 18. candidate facts disclaimer is displayed when candidates are present
+    ok 18 - 18. candidate facts disclaimer is displayed when candidates are present
+      ---
+      duration_ms: 0.1411
+      type: 'test'
+      ...
+    # Subtest: 19. classification card renders document type and confidence
+    ok 19 - 19. classification card renders document type and confidence
+      ---
+      duration_ms: 0.1868
+      type: 'test'
+      ...
+    # Subtest: 20. execution duration breakdown renders OCR, semantic, and total timing
+    ok 20 - 20. execution duration breakdown renders OCR, semantic, and total timing
+      ---
+      duration_ms: 0.3132
+      type: 'test'
+      ...
+    # Subtest: 21. Unavailable classification renders 'Semantic inference did not complete.' without '0.0%'
+    ok 21 - 21. Unavailable classification renders 'Semantic inference did not complete.' without '0.0%'
+      ---
+      duration_ms: 0.2047
+      type: 'test'
+      ...
+    # Subtest: 22. empty candidates in analyze mode renders clear notice rather than empty table
+    ok 22 - 22. empty candidates in analyze mode renders clear notice rather than empty table
+      ---
+      duration_ms: 0.1808
+      type: 'test'
+      ...
+    # Subtest: 23. analyze mode execution summary separates OCR and Semantic Extraction status
+    ok 23 - 23. analyze mode execution summary separates OCR and Semantic Extraction status
+      ---
+      duration_ms: 0.233
+      type: 'test'
+      ...
+    # Subtest: 24. governed 17-field inventory table renders all catalog fields with governance statuses
+    ok 24 - 24. governed 17-field inventory table renders all catalog fields with governance statuses
+      ---
+      duration_ms: 1.58
+      type: 'test'
+      ...
+    # Subtest: 25. all candidates table renders rejected candidates with validation reasons without silent loss
+    ok 25 - 25. all candidates table renders rejected candidates with validation reasons without silent loss
+      ---
+      duration_ms: 0.4312
+      type: 'test'
+      ...
+    # Subtest: 26. summary counts grid displays candidate, accepted, rejected, and conflict counts
+    ok 26 - 26. summary counts grid displays candidate, accepted, rejected, and conflict counts
+      ---
+      duration_ms: 0.254
+      type: 'test'
+      ...
+    # Subtest: 27. renders sourceType pill and normalized English translation in inventory and candidates
+    ok 27 - 27. renders sourceType pill and normalized English translation in inventory and candidates
+      ---
+      duration_ms: 0.2497
+      type: 'test'
+      ...
+    # Subtest: 28. semantic provider maps correctly to gemini and qwen in FormData
+    ok 28 - 28. semantic provider maps correctly to gemini and qwen in FormData
+      ---
+      duration_ms: 0.1771
+      type: 'test'
+      ...
+    # Subtest: 29. renders Gemini provider dynamically in card header when Gemini is returned
+    ok 29 - 29. renders Gemini provider dynamically in card header when Gemini is returned
+      ---
+      duration_ms: 0.2724
+      type: 'test'
+      ...
+    1..29
+ok 116 - OCR-5 Temporary OCR Browser Frontend Tests
+  ---
+  duration_ms: 42.7041
+  type: 'suite'
+  ...
+# (node:14520) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:14520) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:14520) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/workflow-governance/proposalSelection.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Proposal review targets the selected exact version/result despite an earlier Deed analysis
+ok 117 - Proposal review targets the selected exact version/result despite an earlier Deed analysis
+  ---
+  duration_ms: 1.6291
+  type: 'test'
+  ...
+# Subtest: An ambiguous or absent selection never falls back to the first analysis
+ok 118 - An ambiguous or absent selection never falls back to the first analysis
+  ---
+  duration_ms: 0.2836
+  type: 'test'
+  ...
+# Subtest: A mismatched version or result cannot be submitted as the displayed Proposal
+ok 119 - A mismatched version or result cannot be submitted as the displayed Proposal
+  ---
+  duration_ms: 0.2802
+  type: 'test'
+  ...
+# Subtest: A Deed cannot be made the Proposal selection by changing its identifier alone
+ok 120 - A Deed cannot be made the Proposal selection by changing its identifier alone
+  ---
+  duration_ms: 0.1728
+  type: 'test'
+  ...
+# (node:15284) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:15284) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:15284) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///D:/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/AI-Driven-Digital-Lease-Governance-for-State-Land-Management/StateLandGovernance.Web/tests/workflow-governance/reviewFilters.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\StateLandGovernance.Web\\package.json.
+# Subtest: Outstanding facts include absent candidates, but exclude persisted decisions
+ok 121 - Outstanding facts include absent candidates, but exclude persisted decisions
+  ---
+  duration_ms: 0.8971
+  type: 'test'
+  ...
+# Subtest: Present machine content is never presented as individually reviewed
+ok 122 - Present machine content is never presented as individually reviewed
+  ---
+  duration_ms: 0.1849
+  type: 'test'
+  ...
+1..122
+# tests 156
+# suites 2
+# pass 156
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4969.4554

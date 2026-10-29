@@ -1,0 +1,20 @@
+{
+  "Utc": "2026-10-23T08:58:35.873010+00:00",
+  "Status": "Passed",
+  "Target": "localhost:5432/state_land_governance_c4",
+  "Oid": "34144",
+  "ApiPid": 18396,
+  "Package": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\central-controller-corrected-api",
+  "ActualProcessEnvironmentMatches": true,
+  "All38C4TableFingerprintsExact": true,
+  "All19MigrationsExact": true,
+  "AllSchemaOwnerAclTableColumnGrantsSequenceSettingsExact": true,
+  "PeerAndAccountFingerprintsExact": true,
+  "BothPermissionFilesRestoredExactly": true,
+  "SourcePackageLauncherHashesMatch": true,
+  "FrozenModelsExact": true,
+  "StartupAndVerificationLogHasNoSqlWrite": true,
+  "FreshBackupStillReadableAndMatches": true,
+  "NoMigrationGrantRenameOrOrdinaryRecordWrite": true,
+  "InferenceCallsRequested": 0
+}

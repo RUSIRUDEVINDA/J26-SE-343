@@ -1,0 +1,21 @@
+{
+  "Status": "Passed",
+  "OrdinaryDatabase": "state_land_governance_c4",
+  "Oid": 34144,
+  "Tables": 41,
+  "Migrations": 21,
+  "AllOriginalRowsSchemaHistoryGrantsSequencesMatchFreshBaseline": true,
+  "OrdinaryWrites": 0,
+  "NewTablesCreated": false,
+  "MigrationRun": false,
+  "GrantChange": false,
+  "ModelsPrivateConfigurationPermissionsAndPublishedPackageUnchanged": true,
+  "ApplicationSourceChangesBeforeReviewFirstReply": [
+    "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/RegisteredComplaintsController.cs",
+    "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/RegisteredComplaintStore.cs",
+    "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Complaints/RegisteredComplaints.cs"
+  ],
+  "NoSchemaDependentImplementation": true,
+  "ExistingServicesRestarted": false,
+  "GitStageCommitPush": false
+}

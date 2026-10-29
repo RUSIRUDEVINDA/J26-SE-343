@@ -1,0 +1,30 @@
+{
+  "Status": "Passed",
+  "Utc": "2026-10-23T13:42:11.802251+00:00",
+  "Target": "state_land_governance_c4",
+  "Oid": 34144,
+  "Tables": 41,
+  "Migrations": 21,
+  "AppliedOnly": "20261023121903_AddRegulatoryFollowupEvents",
+  "AddedRuntimeGrants": [
+    {
+      "s": "governance_intelligence",
+      "t": "regulatory_followup_events",
+      "p": "INSERT",
+      "g": "slg_c4_regulatory_runtime",
+      "grantable": "NO"
+    },
+    {
+      "s": "governance_intelligence",
+      "t": "regulatory_followup_events",
+      "p": "SELECT",
+      "g": "slg_c4_regulatory_runtime",
+      "grantable": "NO"
+    }
+  ],
+  "NewTableInitiallyEmpty": true,
+  "AllOriginalRowsAndPriorRightsPreserved": true,
+  "SchemaMatchesRehearsedFreshRestore": true,
+  "PeerAccountsUnchanged": true,
+  "ApiStoppedDuringSql": true
+}
