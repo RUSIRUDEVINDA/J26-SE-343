@@ -1,0 +1,113 @@
+{
+  "Browser": "Headed Google Chrome controlled through Playwright; real isolated UI/password/JWT/API",
+  "BrowserOrigin": "http://localhost:3157",
+  "FrontendInternal": 3158,
+  "ApiPort": 5807,
+  "MlPort": 8187,
+  "Scenarios": [
+    {
+      "Evidence": "browser-journey.json",
+      "Status": "Passed",
+      "Checks": [
+        "Graphical DS sign-in uses normal password/JWT/session bridge",
+        "Seven explicit investigation concerns visible",
+        "Draft save enabled after explicit findings",
+        "Graphical draft save returned persisted investigation",
+        "Graphical exact-concern evidence upload accepted",
+        "Explicit finalization recorded after server validation",
+        "Graphical authenticated download matches stored SHA256",
+        "Actual Early screening saved",
+        "Selected Early identity survives navigation",
+        "Actual 24-rule Regulatory evaluation saved",
+        "Actual unresolved Regulatory findings hold forward navigation after reload",
+        "Anomaly opens independently despite unfinished Regulatory stage",
+        "Actual anomaly-v1 invocation saved",
+        "Anomaly score is hidden in collapsed technical details",
+        "Anomaly mobile viewport has no document horizontal overflow"
+      ]
+    },
+    {
+      "Evidence": "browser-complaints.json",
+      "Status": "Passed",
+      "Checks": [
+        "Applicant normal landing retained",
+        "Graphical address submission obtained real classifier-v2 result",
+        "Applicant saved free-text location survives reload without C1 lookup",
+        "Applicant direct governance route redirected without governance navigation",
+        "Synthetic Commissioner retains existing fallback landing; exact ordinary identity landing covered by regression",
+        "Commissioner Inbox opens four queues plus refresh",
+        "Graphical Commissioner assignment persisted",
+        "Assigned DS graphical investigation and findings persisted",
+        "Commissioner reasoned terminal decision persisted only on isolated fixture",
+        "Central complaint mobile page has no horizontal overflow",
+        "Terminal handling removes former DS inbox scope",
+        "Applicant history omits private DS notes",
+        "Keyboard Tab reaches an interactive control"
+      ]
+    },
+    {
+      "Evidence": "browser-summary-evidence.json",
+      "Status": "Passed",
+      "Checks": [
+        "Graphical responsible DS manual attachment and immutable verification survive reload",
+        "No Follow-up Required and every applicable required human review saved graphically",
+        "Ready chain navigates to unchanged Conflict screen with exact selected IDs",
+        "Combined Findings handoff remains disabled without C3 transmission",
+        "No historical Conflict result is silently selected",
+        "Exact Combined Findings chain survives reload",
+        "Graphical back/forward preserves summary destination",
+        "Combined Findings mobile viewport has no horizontal overflow"
+      ]
+    },
+    {
+      "Evidence": "browser-roles-states.json",
+      "Status": "Passed",
+      "Checks": [
+        "Exact Commissioner login target /component-04 resolves to the existing Proposals landing",
+        "Exact Commissioner Complaint Inbox sidebar opens authorized management",
+        "Commissioner graphical evidence history is read-only",
+        "Commissioner can independently open Post-Workflow preview",
+        "Commissioner authorized saved DS anomaly report renders actual advisory",
+        "Other DS empty inbox excludes isolated complaint",
+        "Cross-officer report error contains no evidence filenames",
+        "Early investigation mobile page has no horizontal overflow",
+        "Early mobile keyboard reaches interactive control",
+        "Graphical pending state visible during deliberately delayed isolated request",
+        "Graphical error state visible after deliberately aborted isolated request"
+      ]
+    },
+    {
+      "Evidence": "browser-selected-conflict.json",
+      "Status": "Passed",
+      "Checks": [
+        "Explicit actual same-proposal/creator saved comparison rendered",
+        "Selected exact comparison survives reload",
+        "Historical comparison clearly distinguished from parcel clearance",
+        "Handoff stays disabled"
+      ]
+    }
+  ],
+  "ScreenshotsSecureDirectory": ".tmp/c4-step7a",
+  "ScreenshotSha256": {
+    "combined-summary-mobile.png": "5856091b8ed30d8682f8eca7a5ce84b29e5d4bd7d04264442574528a6ce74fae",
+    "combined-summary.png": "41535144806da32304fb90a22b0fcac68c9e769f57448d74985c23137ba96edb",
+    "commissioner-saved-anomaly.png": "19bb442ba8374850d7ee15d0e10d87078ded817b8509846a3617d7212162a6c8",
+    "complaint-applicant.png": "6f1c695994f62e9f412a573243b2b6df83ed75f2e644100274e550a5bcace4c2",
+    "complaint-central-mobile.png": "2567e0b6ce84de287441122af679796eb3fae776ad50775d8cb38c9a20e1ce65",
+    "complaint-ds-findings.png": "07300632bbd0fef514abd988bf833c2c6c9a99280fa90ca48954add763242cb6",
+    "early-mobile.png": "baff726ffdb9827c06f86697bf11b529dad3b283f15e8447797c8a21fbaea676",
+    "journey-anomaly-mobile.png": "ad6cad12cb07a2fbda7d39f3c5374fe3b6d098f14ebd7081172572508bcfa241",
+    "journey-anomaly-saved.png": "d80ef9cfe6def67b7f982d557bf03e95849b58ee5d61e9bf1f1c10f28fa72f1d",
+    "journey-early-saved.png": "b186add1e83ad3079c7223249d3d9eff289a336a5dcc105d59754de5dabfe8dd",
+    "journey-regulatory-held.png": "f946675bca419bcc79b6bf191688714cc5fa012f55f044564214a41328b68745",
+    "manual-verification.png": "40363ef6ed201fa86cf407e00800f6cc0eded245f91b91f158f49478932ee890",
+    "summary-selected-conflict.png": "915a854a4ac5ad1d432fb965e7a04a92293889314962e9012ce0c5586de01054"
+  },
+  "Limitations": [
+    "Loading/error scenario deliberately delays/aborts an isolated request and is explicitly a simulation.",
+    "Keyboard Tab/focus and 1440/390-pixel layouts were observed; no comprehensive screen-reader or accessibility audit.",
+    "Actual saved non-flagged model result exists but has no standalone officer/demo report association; non-flagged presentation is covered by frontend regression tests, not a graphical authorized saved-report check.",
+    "No graphical ordinary environment test or ordinary deployment."
+  ],
+  "OrdinaryMutations": 0
+}

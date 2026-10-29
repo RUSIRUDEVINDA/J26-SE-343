@@ -1,0 +1,28 @@
+{
+  "Status": "Passed",
+  "ComparisonRestore": "c4_step7a_preservation_20261024",
+  "BackupSha256": "1b5f7ba0872f0cf59fe9f118c06cb3079f9c6a965120b568e31647e3f3032dd0",
+  "Original41TablesExactBeforeTests": true,
+  "EveryOriginalRowHashMultisetRetainedAfterFictionalWrites": true,
+  "OriginalTablesCompared": 41,
+  "IsolatedSchemaHistoryGrantsAndSequencesUnchangedSinceApprovedMigrations": true,
+  "IsolatedTables": 42,
+  "IsolatedMigrations": 23,
+  "AttachmentRuntimePrivileges": [
+    {
+      "s": "governance_intelligence",
+      "t": "officer_investigation_attachments",
+      "p": "INSERT",
+      "g": "step1_runtime",
+      "grantable": "NO"
+    },
+    {
+      "s": "governance_intelligence",
+      "t": "officer_investigation_attachments",
+      "p": "SELECT",
+      "g": "step1_runtime",
+      "grantable": "NO"
+    }
+  ],
+  "NoOrdinaryWriteOrServiceAction": true
+}

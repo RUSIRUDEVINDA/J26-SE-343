@@ -1,0 +1,42 @@
+[
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/OfficerFlows/OfficerSequence.cs",
+    "BeforeSha256": "922b4c99f3e0681e8a8b52a983ca1bfa1902780c2f3726b4e1ef8467e5faa15a",
+    "Sha256": "95c92b3ed86686aebec1a1f601845d679f29863b0c9893a97172cbb8d3842115"
+  },
+  {
+    "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/ArchitectureTests.cs",
+    "BeforeSha256": "c8c7e2e8ff3cef592fe079dbe0d30782c116e57da1a0b3dc6153ac85f067e5d7",
+    "Sha256": "945aa3ee1d562e61f17ff30c6154859d5155200f6a47e57763eb9a3f3efef843"
+  },
+  {
+    "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/OfficerSequenceTests.cs",
+    "BeforeSha256": "eb63b2751ffe1e76783a8678ec66890c89a2cca503b3c5bfbc01f01b49ef6556",
+    "Sha256": "2cb46d1d24197034301e92dc2d726358723021d97321c3fe21c89f4c2d1595d2"
+  },
+  {
+    "Path": "StateLandGovernance.Web/src/modules/component-04/components/EarlyGovernanceInvestigation.tsx",
+    "BeforeSha256": "30a7b0f94d235421ed209f8a77e2d18c91b93a02c060dbc1aff5d01d9af44caf",
+    "Sha256": "b5d92e20fad630d13f29fdbd5fe00b15d2ee7412db32d668d403eadd297a8f90"
+  },
+  {
+    "Path": "StateLandGovernance.Web/src/modules/component-04/components/OfficerSavedReports.tsx",
+    "BeforeSha256": "00f6b4b5c3cf47d8de63a16d84a106587b70c3463ef5595cba3bbf1f9adcf6fb",
+    "Sha256": "bf566d5942a97072af2201b882bb649a29aac668c9f79923fa97a7e41ac5102f"
+  },
+  {
+    "Path": "StateLandGovernance.Web/src/modules/component-04/services/officerFlows.ts",
+    "BeforeSha256": "be8a0d55a1cb6de43a3b17f9695f07fd60bffbdcd3ce235752e7955123ee1024",
+    "Sha256": "ef44238d743f04993e37f333fcbb6f952eb1ceea74d96a4381deffa88ba8f17a"
+  },
+  {
+    "Path": "StateLandGovernance.Web/tests/component-04-saved-report-draft-scope.test.ts",
+    "BeforeSha256": null,
+    "Sha256": "6e5a2d763f687aa884365ad16e70539994363b9efdc37b6f18fb91eabeda00e6"
+  },
+  {
+    "Path": "StateLandGovernance.Web/tests/component-04-source-encoding.test.ts",
+    "BeforeSha256": null,
+    "Sha256": "743c8b626d32c6c9d4e5b5568044fc675a425442bbe704c08b5b1fbd5b00ebf2"
+  }
+]

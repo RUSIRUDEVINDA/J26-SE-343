@@ -1,0 +1,73 @@
+{
+  "Backend": {
+    "FinalBroadPartition": {
+      "Passed": 970,
+      "Failed": 0,
+      "Skipped": 0,
+      "Log": ".tmp/c4-step7a-backend-final.log"
+    },
+    "DedicatedPostgres": {
+      "Early": {
+        "PassedInInitialClassRun": 3,
+        "InitialOrderDependentFailure": 1,
+        "FreshDatabaseRerunPassed": 1
+      },
+      "Complaint": {
+        "Passed": 6
+      },
+      "Phase3BRealModelAndPostgres": {
+        "Passed": 2
+      }
+    },
+    "UniqueTestsWithPassingEvidence": 982,
+    "Qualification": "Partitioned configured runs, not one unified all-green command. The initial Early fixture ordering failure tries to migrate backward after another method advances the same fixture; forward-only Down correctly refuses. The method passes alone in a new database. No test disabled or assertions weakened.",
+    "FocusedSequence": {
+      "Passed": 14,
+      "IncludedInBroadCount": true
+    },
+    "XmlPathRegression": "XDocument reads an opened stream; package-reference assertions retained; passes standalone and broad run."
+  },
+  "Frontend": {
+    "Passed": 245,
+    "Failed": 0,
+    "Skipped": 0,
+    "Log": ".tmp/c4-step7a-frontend-final.log"
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "FocusedLint": {
+    "Errors": 0,
+    "Warnings": 0
+  },
+  "TypeScript": {
+    "C4Errors": 0,
+    "ExistingC1Errors": [
+      "RecommendationsView.tsx:309 TS2345",
+      "ParcelCatalog.tsx:131 TS18048",
+      "ParcelCatalog.tsx:143 TS18048"
+    ]
+  },
+  "ProductionBuild": {
+    "Compiled": true,
+    "CompilationSeconds": 8.8,
+    "SuccessfulFullBuild": false,
+    "Failure": "Three existing C1 TypeScript errors",
+    "Log": ".tmp/c4-step7a-production-build-after-encoding.log"
+  },
+  "PriorStep4ThirteenFailures": {
+    "MissingIsolatedPostgresConfiguration": 11,
+    "MissingPythonLauncherConfiguration": 1,
+    "XmlPathHarnessFailure": 1,
+    "AllHavePassingConfiguredOrCorrectedEvidenceNow": true
+  },
+  "EnvironmentFixtureCorrections": [
+    "Private grant document SchemaVersion key",
+    "Explicit isolated C4 read-write connection; peers/accounts stay read-only",
+    "Headed browser proxy same-origin session bridge and webpack for junction-based isolated frontend",
+    "Exact permitted Commissioner UUID mirrored only in a synthetic isolated profile; no broader authority introduced"
+  ],
+  "OrdinaryDeployment": false
+}
