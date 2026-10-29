@@ -1,0 +1,18 @@
+{
+  "Status": "Passed",
+  "OrdinaryOid": 34144,
+  "OrdinaryTables": 40,
+  "OrdinaryMigrations": 20,
+  "AllArchivedOriginalRowsStillPresentUnchanged": true,
+  "OrdinarySchemaGrantsUnchanged": true,
+  "ConcurrentOrdinaryAdditions": [],
+  "FreshOrdinaryBackupRequiredBeforeDeployment": false,
+  "PeerAccountsUnchanged": true,
+  "RestoredOriginalRowsUnchanged": true,
+  "RestrictedNewTableRights": [
+    "INSERT",
+    "SELECT"
+  ],
+  "FrozenModelsUnchanged": true,
+  "OrdinaryWrites": 0
+}

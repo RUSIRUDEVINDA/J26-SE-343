@@ -1,0 +1,206 @@
+{
+  "ImplementationSource": [
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/IndependentRegulatoryReports.tsx",
+      "BeforeSha256": "8b4163653126a1c1a767a27989233c27612c78b6136e57eb04dd5822799b2531",
+      "AfterSha256": "06adcc95ff83555af739aa0a11c6244b305d36e6c8ec9e950472a5bbd9e7a932"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFollowups.module.css",
+      "BeforeSha256": null,
+      "AfterSha256": "3969c053d35ac580df3693a45364807e3bd5d80d996d2cc0aa5b4b6f54154ddf"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFollowups.tsx",
+      "BeforeSha256": null,
+      "AfterSha256": "5440c98b93f14cc7612b6da86a7e9e5312fc5240925fd9edd3a5bb85fa1919f5"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/RegulatoryScreening.tsx",
+      "BeforeSha256": "1bcb901f58e27d8f3f51b04c82614e1c53b342a9e1bab0af1d59759cc960720b",
+      "AfterSha256": "1d799b73a621ef62419031c933b4258da0571d9d87685fc560dda2106441295f"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/services/regulatoryFollowups.ts",
+      "BeforeSha256": null,
+      "AfterSha256": "429712b9365c2de02a6021ca22092aff06796ab75ed6d55885b714188ab8d00b"
+    },
+    {
+      "Path": "StateLandGovernance.Web/tests/component-04-followups.test.ts",
+      "BeforeSha256": null,
+      "AfterSha256": "4dffcd4c8f5aeb0e15e628444602363888b15ccb4d2597fedab7e953a9800861"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/RegulatoryReports/RegulatoryFollowups.cs",
+      "BeforeSha256": null,
+      "AfterSha256": "c9f5e30f8be2bd438cb76a7a729d02398d5d7af44a53f79fb4667b18b94c21fe"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/DependencyInjection/ServiceCollectionExtensions.cs",
+      "BeforeSha256": "4a09afe98e5d959735d9b5bb6244085a4c5fe97e0838e7c0024309bb55906678",
+      "AfterSha256": "0c9e07cd70e2e19d747ba233037fd32752daa86843490ef0c535a941dfe250a5"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/RegulatoryFollowupConfiguration.cs",
+      "BeforeSha256": null,
+      "AfterSha256": "4c6a3e1229ec8a853cbab445d37d0f14b3ed4706c9810d55ce6f46648b928073"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Entities/RegulatoryFollowupEntity.cs",
+      "BeforeSha256": null,
+      "AfterSha256": "c7895a1a31041f77345be1b3551fc920f8160bc0953af36c4166f40bff0758e6"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/GovernanceIntelligenceDbContext.cs",
+      "BeforeSha256": "79c1e203f82e06713c42dee61a8b1a68ef95d5312940c6ad6fd828b4d4755353",
+      "AfterSha256": "50f09aaacd2375d88b943d76aebb06cae6f8ff8bd51a7a46431329e4f52e445f"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261023121903_AddRegulatoryFollowupEvents.Designer.cs",
+      "BeforeSha256": null,
+      "AfterSha256": "a2cb22fc3470557a6799e4dc53c77cdb694c6bc471dcf42cb1170e5abcc1a94f"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261023121903_AddRegulatoryFollowupEvents.cs",
+      "BeforeSha256": null,
+      "AfterSha256": "a5bde6406c2e3ad44eb497eba5b4fcd2c026c2739903fc51f1102d46108c128d"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/GovernanceIntelligenceDbContextModelSnapshot.cs",
+      "BeforeSha256": "9bc38c78907c9982b6ad067f9dd103049442c899d75e53fbdfaf706df522eba5",
+      "AfterSha256": "7115e16293b7f16e3b1f26fd1d894a38cbbc07a526887fd4d29ab68b31ca5135"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/RegulatoryFollowupAuditInterceptor.cs",
+      "BeforeSha256": null,
+      "AfterSha256": "d8899b2b9ddecca711709d4a43a3a5f1c713b78e6030236c5c1a37393bcf3096"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/RegulatoryFollowupStore.cs",
+      "BeforeSha256": null,
+      "AfterSha256": "7f6e8c361e4871f1dfa92f06b67684be51b90a09038af0248568de0148528951"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/RegulatoryFollowupsController.cs",
+      "BeforeSha256": null,
+      "AfterSha256": "ed0aa7bb764a9f9d4a7fa23a284030ecc24ee105e5adea036d9676bb56c0a408"
+    },
+    {
+      "Path": "StateLandGovernance/tests/IntegrationTests/RegulatoryFollowupProof/RegulatoryFollowupProof.csproj",
+      "BeforeSha256": null,
+      "AfterSha256": "f8dfa5b79a6b5bd58da80b569da27f6dcd1d3d14f6e2641b70c124937e5d6648"
+    },
+    {
+      "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/RegulatoryFollowupTests.cs",
+      "BeforeSha256": null,
+      "AfterSha256": "ac61442a3347304a799614eae8704567747967e865c882b4bdc9b7b44359c83a"
+    },
+    {
+      "Path": "StateLandGovernance/tests/IntegrationTests/RegulatoryFollowupProof/Program.cs",
+      "BeforeSha256": null,
+      "AfterSha256": "7e67af0ff8f14e13f0acf2b337fb80b74a44189e4459cf0d198ab2f2fe893b17"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/FINAL_C4_COMPLETION_REPORT.md",
+      "BeforeSha256": "f837b0b01d7b84ba7d2f18e11b7ef4137a5f430a50b29ed0c760dc3d21714ecd",
+      "AfterSha256": "4419facdd0f008117333124d0d4bff48a83b8397d9eb30f72666eb444067d635"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/HANDOVER_GUIDE.md",
+      "BeforeSha256": "ecc625b263dd3f6db0e74fcbfb79d61fd6942c6aae0d3ca4191de84a74117c41",
+      "AfterSha256": "a429f18a3dd9bc7efe8b3309ef228e29a3ce202f1dafade69a13b513285a2981"
+    }
+  ],
+  "Package": {
+    "appsettings.Development.json": "79326df35415efd96cc63fac4d7e85fccdbf232e2cba22a2c0bbeff70b27b7b3",
+    "appsettings.json": "db6f88b2794f7f181f2ca03320c4bd5678657e3802090d222caee2cb268eae38",
+    "Azure.AI.FormRecognizer.dll": "440a0364a07b8e4cac9801052a730956a8775888ca715ede8cb759e15503553b",
+    "Azure.Core.dll": "ffd2c0d1f42c080fb74e7d2249b15bbc2a87d09e43b2d5c4ae0b33cf05be01f4",
+    "development-accounts.local.json": "2c6e9dd99962e69425b8b3bac6108869e0c8a9eaf29795883343fdd145fd9c3e",
+    "Microsoft.AspNetCore.Authentication.JwtBearer.dll": "2daee91353eb2d8d51b26794805ed3c44df4b762e472a664593706e74de2423c",
+    "Microsoft.AspNetCore.OpenApi.dll": "e64ea8b80493bd52fcec8feb17ea723ed5b7517cb6b834b90f6482bbfdcb19f9",
+    "Microsoft.Bcl.AsyncInterfaces.dll": "00f26117b0a77b562d5c01038d8b52f8d0b9e18b7c532e16dfae1857a19f2271",
+    "Microsoft.EntityFrameworkCore.Abstractions.dll": "eed0c71d87fecfcad5c2e93e80489cf4f2ea64bdc6b2d4fb75a47afe6e779e3f",
+    "Microsoft.EntityFrameworkCore.dll": "840b292a869c907038cf9adf2a2fc5e0f1adf82266398d9479d5e45138596e0f",
+    "Microsoft.EntityFrameworkCore.Relational.dll": "5c79fe8de0135db7c5d95edfcbf68bf4fc575452614361b65a50dd6e1988aba2",
+    "Microsoft.Extensions.Configuration.Abstractions.dll": "fe22857d7cc47d1c4a85b1e02062efd71303e8515224fa0a15c0bc9f1d0f83a5",
+    "Microsoft.Extensions.DependencyInjection.Abstractions.dll": "fd1d92dc1de8339f669123e23014e50c71cdf94383dfe0487593f0ca22d35fc7",
+    "Microsoft.Extensions.Diagnostics.Abstractions.dll": "9864dbcfdbfe395bbd64deec7568fdaf0cbc3850f0cd8f53e7359189bd158082",
+    "Microsoft.Extensions.Hosting.Abstractions.dll": "27f074952005f74ba37fc62756690255e5f743ff3f7426fcdeb65a0d6ec9ff77",
+    "Microsoft.Extensions.Logging.Abstractions.dll": "64a312509ba806554f56c5c54c5db0652cfacd5347344c095103f56717587753",
+    "Microsoft.Extensions.Options.dll": "5e01894cbc0661bacb8ca8f485a40d5ee4e02f28fef58007668a0276431b4693",
+    "Microsoft.Extensions.Primitives.dll": "213ec12fa9738fb641e05382591cfb67c71fa466e853e4b611bb2e8acaaeec23",
+    "Microsoft.IdentityModel.Abstractions.dll": "bffdf8b81f62dccaf51e9ef305a86c3a1ce6b45fb6db40e16b58977bf5b49ef6",
+    "Microsoft.IdentityModel.JsonWebTokens.dll": "773671e3bfaaccb4fb42440cb719afe5643158200f90e5031798945878f8478f",
+    "Microsoft.IdentityModel.Logging.dll": "6aa18998d11162da711c76a13a1177fe1263b5a878bbc53f49d36da6522cf454",
+    "Microsoft.IdentityModel.Protocols.dll": "24cbe9fad98d18d84cf376a2fb3a0d968b0f8bf8bef00be74fa4a8aa991bef1f",
+    "Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": "3aa495e1ab1866aa65b8fb1f9786f887ce32b5f629fd7639940944ee73dd5142",
+    "Microsoft.IdentityModel.Tokens.dll": "5e72cf40fda1dfc1d680e2e9eaf2b70672b40f8ca7980ccc0e300ae79a95f1d7",
+    "Microsoft.OpenApi.dll": "092295674a94967656e758ff73bfcef96b3ba2593eb54e1c208d4d85820bd4fc",
+    "Neo4j.Driver.dll": "dc6ea653313b57208535c76015780a52102802e62bbb620a19eebb20b502290c",
+    "NetTopologySuite.dll": "012dcfd89b7d89d2e55ad5f373a3069553f4aed11ec0db01f841aec94656a8ca",
+    "NetTopologySuite.Features.dll": "fb47afb8baf6f1fc3c95b5ca62a57f459653e0fa70c00fb354ddf6d01c03aaf2",
+    "NetTopologySuite.IO.GeoJSON.dll": "7543cc805a9adde3cfb5de1d7a84916cb24e6ab8fc153cc0d8eb884b0f56885e",
+    "NetTopologySuite.IO.PostGis.dll": "5db28055516e36152050fc40dab451b4a898dfe43ba5614146068e90a32fb1e0",
+    "Newtonsoft.Json.dll": "22c649f75fce5be7c7ccda8880473b634ef69ecf33f5d1ab8ad892caf47d5a07",
+    "Npgsql.dll": "4eae12b3b78777e1942fbcf815c2c9b522e7f16fa0fc74d4b1ba23fd8f272c07",
+    "Npgsql.EntityFrameworkCore.PostgreSQL.dll": "db9fad1032119ca6bc4a3c9e4afc4e32ae2c1ece1914540a3a5c1080aa59ba3e",
+    "Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite.dll": "f3b00d7a950a546d46c5784faad0a17f630271fe8523f010c71c7e9a1ee6335d",
+    "Npgsql.NetTopologySuite.dll": "4b64c6fb951185528546a76cb8a667954ace9ae0a75a39fa8233917a05b8154e",
+    "portal-development-spatial.json": "2c3489c9b153f511279cf767e889493e4ffd1381bc174f46ae58fd117e4cc8bc",
+    "StateLandGovernance.Api.deps.json": "d847c946de08a1dd4b959e954eacfec9afa58d431515eff8b431d30140a2ef0f",
+    "StateLandGovernance.Api.dll": "d02c242af42b82081914794c7067e3503ecb1d6d019e89789fc60fdbf0d60b2f",
+    "StateLandGovernance.Api.exe": "4b2acb6ec1bf56f2f9e75d0bf16fcac4fe2d0eb094cfa166c0ab3a915be1be5d",
+    "StateLandGovernance.Api.pdb": "f8e9dc03cbd08fed531e2641ea5c3f40f9af8d298800d620f5476ce7a131b9eb",
+    "StateLandGovernance.Api.runtimeconfig.json": "bfcd9777228f00ce830a77b9ee3d2d735afec5e998def17c549c6b004dd354cf",
+    "StateLandGovernance.BuildingBlocks.dll": "d01ff25ef50b20e3d305884c4c62be3fcf4e1bdfd36f531972846b5484b9d06d",
+    "StateLandGovernance.BuildingBlocks.pdb": "ccc4bf50c6334f954c48929b1cb482fb65656246a61a0dcdc09ad584b9b54d0c",
+    "StateLandGovernance.GovernanceIntelligence.Application.dll": "43a0ccd4308e0dcbc46bba19843cecc2a8985f84591bc44be8969973f3d4f24b",
+    "StateLandGovernance.GovernanceIntelligence.Application.pdb": "cc780d55e746e568c4e880865a29bca90876b3c867f97430c7b11d11f270a35e",
+    "StateLandGovernance.GovernanceIntelligence.Domain.dll": "3a8ca3c6bb7705e3401096d33fbdf600886f0b8562810f0039a2a3d316583c06",
+    "StateLandGovernance.GovernanceIntelligence.Domain.pdb": "53c26fd2eafb0274085d7ba188dd568cce77b329c5838de43aa5c5c2db4170e8",
+    "StateLandGovernance.GovernanceIntelligence.Infrastructure.dll": "9e6ba351996056adc0ed7b73d720abb03bc02a6e62c81a089d4e23a29ddbe4a6",
+    "StateLandGovernance.GovernanceIntelligence.Infrastructure.pdb": "73c725a19bac9808d72b38ff376532d188d1c6a0e7f8eec4363a8a0f0bddf336",
+    "StateLandGovernance.GovernanceIntelligence.Presentation.dll": "e5d4f6fba602a399c4a1d2671289bf41172751a7b9659e01281876660a116f45",
+    "StateLandGovernance.GovernanceIntelligence.Presentation.pdb": "5e496fd246b9eb22de52f182ffee73d65ed81abf2380d78b1aa5d92137130258",
+    "StateLandGovernance.LandIntelligence.Application.dll": "68e8b30d4edd70296545bfe2755c35b3a9833b685a5e335b10136163ebc13a07",
+    "StateLandGovernance.LandIntelligence.Application.pdb": "755c864ddc39151f3485e46d35b70ac8cfc3ea305d7f6bfa9e69f486bc3e86bf",
+    "StateLandGovernance.LandIntelligence.Domain.dll": "64fc5d51c339b4a729d297fb4a43d5cc61feaf38c74f8f20fc26e6c112256046",
+    "StateLandGovernance.LandIntelligence.Domain.pdb": "ec2228fcd374b8f1f641c463179faefbdb31dcbc4364aabac2f2b59994eab88f",
+    "StateLandGovernance.LandIntelligence.Infrastructure.dll": "24a4fe778aeab57f12b2082b3c1651fd5f41fb74bad098dce23c6324e080d5c2",
+    "StateLandGovernance.LandIntelligence.Infrastructure.pdb": "003edcc604f69b716052a46b0a440907a3ca7cb95b3f420c36403ea5c9829028",
+    "StateLandGovernance.LandIntelligence.Presentation.dll": "47f04af6523d2d40cc20db3aaa5f04c046612e30b0f54c5179814d9d17b1b271",
+    "StateLandGovernance.LandIntelligence.Presentation.pdb": "909f164e8842d397ce6cc7479ddde070521b8b93e65965b70af3d6291bcf225e",
+    "StateLandGovernance.LeaseFeasibility.Application.dll": "6793be506d7eeccab9af4151f7fc55f1747cc0978b342c69b99b7ed3a01b7394",
+    "StateLandGovernance.LeaseFeasibility.Application.pdb": "196563b3ec1ad037551f52055c37827c26ab39886f4432d195e10a951b970b16",
+    "StateLandGovernance.LeaseFeasibility.Domain.dll": "5527d30637179de2fd9621fc1b706b4463da4c16838cfdf83bf3f6c6a2db61ee",
+    "StateLandGovernance.LeaseFeasibility.Domain.pdb": "aca5eba753fea5fbe168a8827c277a3de989b7011d81fb498be1df215762db41",
+    "StateLandGovernance.LeaseFeasibility.Infrastructure.dll": "900e23d72771756ae0bab9d732e37d0c4bd5a74cabd606714e54d31f87bed0ef",
+    "StateLandGovernance.LeaseFeasibility.Infrastructure.pdb": "ef749ed190920d1187e5099dc78e0b5f3c332741b950f72a6f0a110e357b438d",
+    "StateLandGovernance.LeaseFeasibility.Presentation.dll": "b36c046b0aa4478fa50835ea8d737e23b49dd4eb06f35c58fed7f3dc74cbc369",
+    "StateLandGovernance.LeaseFeasibility.Presentation.pdb": "2e2040431883ee51c7fa6f466ff7b7339c6c0fa68089d3738d5288d687251e7a",
+    "StateLandGovernance.Shared.Application.dll": "4f040bf47fd72be49087cc4b70c460b7c652278c008c9fd8d3caa5345ce54eba",
+    "StateLandGovernance.Shared.Application.pdb": "0f3969e6822c517d1109df0660a9c0d663c5ad5244fea4988e08982699a0a1e7",
+    "StateLandGovernance.Shared.Domain.dll": "5a4cef69d0427032f941b649c551f2aea868f17fa565a673c280f5dd173510a2",
+    "StateLandGovernance.Shared.Domain.pdb": "841f21f2d56543cfda21a84ff7b96caf9c741fc3ce8a0ec15450536dbb50e377",
+    "StateLandGovernance.Shared.Infrastructure.dll": "bb9413e52db12d3d96a4f2ed8c73340cda693eb40a562cf8593d057e314643af",
+    "StateLandGovernance.Shared.Infrastructure.pdb": "8c3213eacbef0707e772e2af3c3343503cf6ed18e772aeabd7eb4fee25041cd3",
+    "StateLandGovernance.WorkflowGovernance.Application.dll": "12c80099021e0c87c1518c635c094a462ff605aa430b8ce8a7154092c647d428",
+    "StateLandGovernance.WorkflowGovernance.Application.pdb": "9247157bdeec478c7987c39e25525c90fb19f000025ae9c728ea74e7a21d4231",
+    "StateLandGovernance.WorkflowGovernance.Domain.dll": "1d5bb797ccc4c756bb6d742b4c12d71560ae3e7f817a065a107553b38ca10c2b",
+    "StateLandGovernance.WorkflowGovernance.Domain.pdb": "389d404793cb25f2ff0b0eed73a08be408b934d0df35a91adfa5f14109fc631e",
+    "StateLandGovernance.WorkflowGovernance.Infrastructure.dll": "5a564f5d8ed9d0a966505b28bb9c5265059b820dda44916cac485a4657d3d51a",
+    "StateLandGovernance.WorkflowGovernance.Infrastructure.pdb": "cfede528035256d617000971ca04cb0c17d2e7eeb3295f0fd8f095ba44a688e1",
+    "StateLandGovernance.WorkflowGovernance.Presentation.dll": "fe6a1d5d69899e292a429910f73991e84900c3efa59eecde49b9ab52a797515d",
+    "StateLandGovernance.WorkflowGovernance.Presentation.pdb": "df592bb118056f2e64f716d9aa3c2250f34fffda13362c8f5765374e4a90794c",
+    "Swashbuckle.AspNetCore.Swagger.dll": "146c31d07d201e2f8ae7444c64a24d75c36fd84ddcbae8d480cf71e1a5ebadfc",
+    "Swashbuckle.AspNetCore.SwaggerGen.dll": "d99d588bb6efcc43904af6c814ee2d0697d08cd0aff22fd234e9ad246e61ce12",
+    "Swashbuckle.AspNetCore.SwaggerUI.dll": "ea8eb61eab51e160ac80b2c628b4aff3bab0e83c86c95ce3078f62e2283340b2",
+    "System.Diagnostics.DiagnosticSource.dll": "59ba210866df6464add023ec17137a26a346885d4c160064b2e1df6e2f3d9238",
+    "System.IdentityModel.Tokens.Jwt.dll": "727c72e31ab4c4a06dacb159dbc45800db83461ff9c1960e8a5277c4e8fd8dbc",
+    "System.Memory.Data.dll": "293ca5d86358fb2ce00da02c63eefcb344689fc0c636b61c97c3f1b15a80aa51",
+    "web.config": "3a545eed211c45e3aab7fd7764491f075efacee47b99b14fa567503dfdfca99a"
+  },
+  "FreshProofSourceSha256": "cac588804424d170effd1e4fdde436905f0180d191fd53f89596ec3700e3aaeb",
+  "FreshProofDifference": "Only strict isolated target name changed to new current-data restore; implementation untouched"
+}
