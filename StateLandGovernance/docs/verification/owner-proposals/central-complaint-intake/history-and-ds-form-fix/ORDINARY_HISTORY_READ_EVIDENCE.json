@@ -1,0 +1,469 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/COMMISSIONER sign-in",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/DS sign-in",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Applicant/None sign-in",
+    "Unrelated DS/applicant historical anchor denied",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Applicant/None sign-in",
+    "Unrelated DS/applicant historical anchor denied",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/DS sign-in",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Authorized previous follow-up page readable",
+    "Exact saved proposal plus independent report authority matches persisted historical events",
+    "Historical events keep original assessment identities",
+    "Authorized previous follow-up page readable",
+    "Explicit Commissioner prior-history read scope",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Unrelated DS/applicant historical anchor denied",
+    "Anonymous previous-history denied",
+    "Existing ordinary clarification is discoverable from subsequent authorized assessments"
+  ],
+  "OwnedAnchorsVerified": 24,
+  "ExistingFollowupCount": 1,
+  "AnchorsWithPreviousEvents": [
+    {
+      "CurrentAssessmentId": "0ffae4e0-f1a1-4a5a-ae14-6bb88fc52385",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "5f0b8dda-cfdc-4136-9e7d-b87640ba4de6",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "1b3c3bdd-8641-4155-bd75-5c24c3bbfcf8",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "edd3d36c-3a7e-4984-bf56-1764ed572fe6",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "15ebb0e0-5e84-4ccb-a03f-e9dfb795460b",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "c10e9a1b-58b8-4d66-a28c-e8bdacbec3ed",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "1641b788-a8d9-47ff-9d0e-3dd55b9858b6",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "c08db467-2b27-42e7-8251-dce45f7fda6b",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "8d4765b0-fe41-477a-ac89-2e7c012b5a9e",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "2f02dac9-6989-4724-8c64-75195de330da",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "a677914e-29b4-46d4-8301-d7ca86a033bb",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "1ba5e80a-d5b5-4e2f-bbcb-cc377c4861ea",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "8ebf5f10-2eef-484f-a68b-4f8b0b2c59e8",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "a6eaf34f-f719-442d-ad7f-2a4b6aef6aed",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "d125fbfc-7f34-4b6c-aa22-e4f58452f7f4",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "c3aaa788-3a74-4020-a5f9-a4a26b347663",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "6a96bdbc-8835-4a2c-9793-7cb06ddec93e",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "07b0c7e6-3f89-44cc-9285-39a0472adaf6",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "05f0ac73-869b-46dd-8d8d-b06814f9f164",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "8075650d-dedb-462b-9a21-48ef4d92ce44",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "b5a456d9-84f4-4374-8534-8abd413fb63d",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "39fd4bf7-0e93-444b-a55f-330fa6b122b9",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    },
+    {
+      "CurrentAssessmentId": "7a64edd4-1cd0-4da8-bd34-00d0e3fd4a73",
+      "HistoricalAssessmentIds": [
+        "d4e358c1-148c-41e0-b80c-6c8899413056"
+      ],
+      "HistoricalEventIds": [
+        "719c94ae-bf27-42a2-b98a-e17a374ce869"
+      ],
+      "EventCount": 1
+    }
+  ],
+  "OrdinaryWrites": 0,
+  "InferenceCalls": 0,
+  "GraphicalBrowser": "Not performed"
+}
