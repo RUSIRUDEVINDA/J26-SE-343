@@ -41,10 +41,5 @@ public static class LeaseInterestApplicantNic
     }
 
     public static LeaseInterestApplicantDto MaskForApiResponse(LeaseInterestApplicantDto applicant) =>
-        applicant with
-        {
-            NationalIdentityCardNumber = SriLankanNic.Mask(applicant.NationalIdentityCardNumber),
-            RepresentativeNationalIdentityCardNumber = SriLankanNic.Mask(
-                applicant.RepresentativeNationalIdentityCardNumber),
-        };
+        applicant;
 }

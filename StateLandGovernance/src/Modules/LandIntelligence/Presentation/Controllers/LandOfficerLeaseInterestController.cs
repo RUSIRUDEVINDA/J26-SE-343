@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using StateLandGovernance.LandIntelligence.Application.Security;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Domain.Exceptions;
 using StateLandGovernance.LandIntelligence.Presentation.Models;
 using StateLandGovernance.LandIntelligence.Presentation.Models.Responses;
 using ValidationException = StateLandGovernance.LandIntelligence.Application.Interfaces.ValidationException;
@@ -22,16 +23,78 @@ public sealed class LandOfficerLeaseInterestController : ControllerBase
 {
     private readonly ILeaseInterestOfficerLookupService _lookup;
     private readonly ILeaseInterestOfficerReviewService _review;
+    private readonly ILeaseInterestValuationService _valuations;
     private readonly ILeaseInterestOfficerAccessGate _accessGate;
 
     public LandOfficerLeaseInterestController(
         ILeaseInterestOfficerLookupService lookup,
         ILeaseInterestOfficerReviewService review,
+        ILeaseInterestValuationService valuations,
         ILeaseInterestOfficerAccessGate accessGate)
     {
         _lookup = lookup;
         _review = review;
+        _valuations = valuations;
         _accessGate = accessGate;
+    }
+
+    [HttpGet("requests/{requestId:guid}/valuations")]
+    [ProducesResponseType(typeof(IReadOnlyList<LeaseInterestValuationDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<LeaseInterestValuationDto>>> ListValuationsAsync(
+        Guid requestId, CancellationToken cancellationToken = default)
+    {
+        if (!_accessGate.IsPreliminaryReviewEnabled) return Forbid();
+        return Ok(await _valuations.ListAsync(requestId, cancellationToken));
+    }
+
+    [HttpPost("requests/{requestId:guid}/valuations")]
+    [ProducesResponseType(typeof(LeaseInterestValuationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<LeaseInterestValuationDto>> RecordValuationAsync(
+        Guid requestId,
+        [FromBody] RecordLeaseInterestValuationDto? input,
+        CancellationToken cancellationToken = default)
+    {
+        if (!_accessGate.IsPreliminaryReviewEnabled) return Forbid();
+        if (input is null)
+        {
+            return BadRequest(new ApiErrorResponse(
+                StatusCodes.Status400BadRequest,
+                "Validation failed",
+                "The valuation request body is required.",
+                ["Provide the valuation worksheet fields in the request body."]));
+        }
+
+        var idempotencyKey = Request.Headers.TryGetValue("Idempotency-Key", out var values)
+            ? values.FirstOrDefault()
+            : null;
+
+        try
+        {
+            return Ok(await _valuations.RecordAsync(requestId, input, idempotencyKey, cancellationToken));
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new ApiErrorResponse(
+                StatusCodes.Status400BadRequest,
+                "Validation failed",
+                "The valuation could not be recorded.",
+                ex.Errors.ToList()));
+        }
+        catch (LeaseInterestInvalidStateException ex)
+        {
+            var isConcurrency = ex.Message.Contains("same time", StringComparison.OrdinalIgnoreCase)
+                || ex.Message.Contains("changed while the valuation", StringComparison.OrdinalIgnoreCase)
+                || ex.Message.Contains("Refresh and try again", StringComparison.OrdinalIgnoreCase);
+            return StatusCode(
+                isConcurrency ? StatusCodes.Status409Conflict : StatusCodes.Status400BadRequest,
+                new ApiErrorResponse(
+                    isConcurrency ? StatusCodes.Status409Conflict : StatusCodes.Status400BadRequest,
+                    isConcurrency ? "Conflict" : "Invalid request state",
+                    ex.Message,
+                    [ex.Message]));
+        }
     }
 
     [HttpPost("lookup")]
@@ -63,7 +126,7 @@ public sealed class LandOfficerLeaseInterestController : ControllerBase
                 new ApiErrorResponse(
                     StatusCodes.Status400BadRequest,
                     "Validation failed",
-                    "The NIC lookup request could not be processed.",
+                    "The lookup request could not be processed.",
                     ex.Errors.ToList()));
         }
     }
@@ -87,6 +150,30 @@ public sealed class LandOfficerLeaseInterestController : ControllerBase
         }
 
         var result = await _review.ListQueueAsync(
+            new LeaseInterestOfficerQueueRequestDto(page, pageSize),
+            cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("valuation-queue")]
+    [ProducesResponseType(typeof(LeaseInterestOfficerQueueResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<LeaseInterestOfficerQueueResponseDto>> ListValuationQueueAsync(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+        if (!_accessGate.IsPreliminaryReviewEnabled)
+        {
+            return StatusCode(
+                StatusCodes.Status403Forbidden,
+                new ApiErrorResponse(
+                    StatusCodes.Status403Forbidden,
+                    "Forbidden",
+                    "Officer preliminary review is not available in this environment."));
+        }
+
+        var result = await _review.ListValuationQueueAsync(
             new LeaseInterestOfficerQueueRequestDto(page, pageSize),
             cancellationToken);
         return Ok(result);

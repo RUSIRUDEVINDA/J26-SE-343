@@ -1,13 +1,20 @@
-import { developmentToken, readDevelopmentSession, clearDevelopmentSession } from "./developmentSession";
 import type { ApiErrorResponse } from "@/shared/types/common";
 import {
+  SESSION_EXPIRED_DETAIL,
+  SESSION_EXPIRED_TITLE,
   ensureApplicantAccessToken,
+  ensureAuthorityAccessToken,
   ensureOfficerAccessToken,
   isDemoOwnerHeaderEnabled,
   landIntelligenceBearerHeaders,
+  sendWithSessionRetry,
 } from "../modules/component-01-land-intelligence/utils/landIntelligenceSession";
 
-export type LandIntelligenceApiAuthRole = "applicant" | "officer" | "none";
+export type LandIntelligenceApiAuthRole =
+  | "applicant"
+  | "officer"
+  | "authority"
+  | "none";
 import { landIntelligenceOwnerHeaders } from "../modules/component-01-land-intelligence/utils/landIntelligenceOwner";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "").replace("http://127.0.0.1:", "http://localhost:") ?? "";
@@ -50,11 +57,14 @@ function ensureBaseUrl(): string {
 async function resolveAccessToken(
   authRole: LandIntelligenceApiAuthRole,
 ): Promise<string | null> {
-  if (authRole === "none") return typeof window !== "undefined" ? readDevelopmentSession()?.accessToken ?? null : null;
-  const local = await developmentToken();
-  if (local.enabled) return local.token;
+  if (authRole === "none") {
+    return null;
+  }
   if (authRole === "officer") {
     return await ensureOfficerAccessToken();
+  }
+  if (authRole === "authority") {
+    return await ensureAuthorityAccessToken();
   }
   return await ensureApplicantAccessToken();
 }
@@ -78,20 +88,100 @@ async function mergeHeaders(
   };
 }
 
-export async function parseError(response: Response): Promise<ApiClientError> {
-  if (response.status === 401 && typeof window !== "undefined" && readDevelopmentSession()) clearDevelopmentSession();
-  let body: Record<string, unknown> = {};
-  try { const parsed = await response.json(); body = parsed && typeof parsed === "object" ? parsed : {}; } catch { /* Empty HTTP error responses are valid. */ }
-  const reference = typeof body.traceId === "string" ? body.traceId : response.headers.get("X-Correlation-ID");
-  const fallback = response.status === 401 ? "Sign in to continue."
-    : response.status === 403 ? "Required access or case/institution assignment is missing. Ask the case administrator to verify your access."
-    : response.status >= 500 ? `The service could not complete this request.${reference ? ` Error reference: ${reference}` : " Please contact support."}`
-    : "The request could not be completed. Check the case prerequisites and try again.";
-  return new ApiClientError({ status: response.status,
-    title: typeof body.title === "string" ? body.title : response.statusText,
-    detail: response.status === 401 || response.status === 403 || response.status >= 500 ? fallback
-      : typeof body.detail === "string" ? body.detail : typeof body.error === "string" ? body.error : fallback,
-    errors: Array.isArray(body.errors) ? body.errors : undefined });
+function flattenApiErrors(errors: unknown): string[] | undefined {
+  if (!errors) {
+    return undefined;
+  }
+  if (Array.isArray(errors)) {
+    const list = errors.filter((item): item is string => typeof item === "string");
+    return list.length > 0 ? list : undefined;
+  }
+  if (typeof errors !== "object") {
+    return undefined;
+  }
+
+  const messages: string[] = [];
+  for (const [key, value] of Object.entries(errors as Record<string, unknown>)) {
+    const entries = Array.isArray(value) ? value : [value];
+    for (const entry of entries) {
+      if (typeof entry !== "string" || !entry.trim()) {
+        continue;
+      }
+      if (key === "input" || key === "$") {
+        messages.push(entry);
+        continue;
+      }
+      const field = key
+        .replace(/^\$\./, "")
+        .replace(/([A-Z])/g, " $1")
+        .replace(/[._]/g, " ")
+        .trim()
+        .toLowerCase();
+      messages.push(field ? `${field}: ${entry}` : entry);
+    }
+  }
+  return messages.length > 0 ? messages : undefined;
+}
+
+async function parseError(response: Response): Promise<ApiClientError> {
+  try {
+    const body = (await response.json()) as ApiErrorResponse & {
+      errors?: unknown;
+    };
+    const errors = flattenApiErrors(body.errors);
+
+    return new ApiClientError({
+      status: body.status ?? response.status,
+      title: body.title ?? response.statusText,
+      detail:
+        body.detail ??
+        errors?.[0] ??
+        "Request failed.",
+      errors,
+    });
+  } catch {
+    return new ApiClientError({
+      status: response.status,
+      title: response.statusText,
+      detail: "Request failed.",
+    });
+  }
+}
+
+function sessionExpiredError(status: number): ApiClientError {
+  return new ApiClientError({
+    status,
+    title: SESSION_EXPIRED_TITLE,
+    detail: SESSION_EXPIRED_DETAIL,
+  });
+}
+
+/**
+ * Sends a request with the role's token. On the first 401/403 the research-demo
+ * token is renewed and the request is retried exactly once. Unusable sessions
+ * are cleared. Returns only successful responses; failures throw
+ * ApiClientError. Role authorization is still enforced by the API.
+ */
+async function authorizedFetch(
+  url: string,
+  buildInit: () => Promise<RequestInit>,
+  authRole: LandIntelligenceApiAuthRole,
+): Promise<Response> {
+  const { response, retried, renewalFailed } = await sendWithSessionRetry(
+    authRole,
+    async () => fetch(url, await buildInit()),
+  );
+
+  if (response.ok) {
+    return response;
+  }
+
+  // 401 after renewal (or no renewal possible) means the session is unusable.
+  if (response.status === 401 && (retried || renewalFailed)) {
+    throw sessionExpiredError(401);
+  }
+
+  throw await parseError(response);
 }
 
 export async function apiGet<T>(
@@ -101,21 +191,21 @@ export async function apiGet<T>(
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
-  const response = await fetch(url, {
-    ...init,
-    method: "GET",
-    headers: await mergeHeaders(
-      {
-        Accept: "application/json",
-        ...init?.headers,
-      },
-      authRole,
-    ),
-  });
-
-  if (!response.ok) {
-    throw await parseError(response);
-  }
+  const response = await authorizedFetch(
+    url,
+    async () => ({
+      ...init,
+      method: "GET",
+      headers: await mergeHeaders(
+        {
+          Accept: "application/json",
+          ...init?.headers,
+        },
+        authRole,
+      ),
+    }),
+    authRole,
+  );
 
   if (response.status === 204) {
     return undefined as T;
@@ -127,6 +217,26 @@ export async function apiGet<T>(
   }
 
   return JSON.parse(text) as T;
+}
+
+export async function apiDownloadBlob(
+  path: string,
+  authRole: LandIntelligenceApiAuthRole = "applicant",
+  init?: RequestInit,
+): Promise<Blob> {
+  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+
+  const response = await authorizedFetch(
+    url,
+    async () => ({
+      ...init,
+      method: "GET",
+      headers: await mergeHeaders(init?.headers, authRole),
+    }),
+    authRole,
+  );
+
+  return await response.blob();
 }
 
 /** GET that maps HTTP 204 / empty body to null. */
@@ -146,29 +256,27 @@ export async function apiPost<T>(
   authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
-  const headers = await mergeHeaders(
-    {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...init?.headers,
-    },
-    authRole,
-  );
-
   if (init?.signal?.aborted) {
     throw new DOMException("The request was aborted.", "AbortError");
   }
 
-  const response = await fetch(url, {
-    ...init,
-    method: "POST",
-    headers,
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    throw await parseError(response);
-  }
+  const response = await authorizedFetch(
+    url,
+    async () => ({
+      ...init,
+      method: "POST",
+      headers: await mergeHeaders(
+        {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          ...init?.headers,
+        },
+        authRole,
+      ),
+      body: JSON.stringify(body),
+    }),
+    authRole,
+  );
 
   return (await response.json()) as T;
 }
@@ -177,33 +285,35 @@ export async function apiPostFormData<T>(
   path: string,
   formData: FormData,
   init?: RequestInit,
-  authRole: LandIntelligenceApiAuthRole = "applicant",
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
   let response: Response;
 
   try {
-    response = await fetch(url, {
-      ...init,
-      method: "POST",
-      headers: await mergeHeaders({
-        Accept: "application/json",
-        ...init?.headers,
-      }, authRole),
-      body: formData,
-    });
-  } catch {
+    response = await authorizedFetch(
+      url,
+      async () => ({
+        ...init,
+        method: "POST",
+        headers: await mergeHeaders({
+          Accept: "application/json",
+          ...init?.headers,
+        }),
+        body: formData,
+      }),
+      "applicant",
+    );
+  } catch (err) {
+    if (err instanceof ApiClientError) {
+      throw err;
+    }
     throw new ApiClientError({
       status: 0,
       title: "Network Error",
       detail:
         "Unable to reach the OCR API. Check that the ASP.NET Core API is running.",
     });
-  }
-
-  if (!response.ok) {
-    throw await parseError(response);
   }
 
   return (await response.json()) as T;
@@ -217,23 +327,23 @@ export async function apiPut<T>(
 ): Promise<T> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
-  const response = await fetch(url, {
-    ...init,
-    method: "PUT",
-    headers: await mergeHeaders(
-      {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        ...init?.headers,
-      },
-      authRole,
-    ),
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    throw await parseError(response);
-  }
+  const response = await authorizedFetch(
+    url,
+    async () => ({
+      ...init,
+      method: "PUT",
+      headers: await mergeHeaders(
+        {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          ...init?.headers,
+        },
+        authRole,
+      ),
+      body: JSON.stringify(body),
+    }),
+    authRole,
+  );
 
   if (response.status === 204) {
     return undefined as T;
@@ -249,45 +359,19 @@ export async function apiDelete(
 ): Promise<void> {
   const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
-  const response = await fetch(url, {
-    ...init,
-    method: "DELETE",
-    headers: await mergeHeaders(
-      {
-        Accept: "application/json",
-        ...init?.headers,
-      },
-      authRole,
-    ),
-  });
-
-  if (!response.ok) {
-    throw await parseError(response);
-  }
-}
-
-export async function apiDownloadBlob(
-  path: string,
-  authRole: LandIntelligenceApiAuthRole = "officer",
-  init?: RequestInit,
-): Promise<Blob> {
-  const url = `${ensureBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
-
-  const response = await fetch(url, {
-    ...init,
-    method: "GET",
-    headers: await mergeHeaders(
-      {
-        Accept: "*/*",
-        ...init?.headers,
-      },
-      authRole
-    ),
-  });
-
-  if (!response.ok) {
-    throw await parseError(response);
-  }
-
-  return await response.blob();
+  await authorizedFetch(
+    url,
+    async () => ({
+      ...init,
+      method: "DELETE",
+      headers: await mergeHeaders(
+        {
+          Accept: "application/json",
+          ...init?.headers,
+        },
+        authRole,
+      ),
+    }),
+    authRole,
+  );
 }

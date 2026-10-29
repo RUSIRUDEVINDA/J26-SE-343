@@ -1,5 +1,6 @@
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.Interfaces;
+using StateLandGovernance.LandIntelligence.Domain.Enums;
 
 namespace StateLandGovernance.LandIntelligence.Application.Validators;
 
@@ -12,6 +13,14 @@ public sealed class LandRecommendationSearchRequestValidator : IRequestValidator
         if (request.MaxResults is <= 0 or > 100)
         {
             errors.Add("Max results must be between 1 and 100.");
+        }
+
+        if (request.RequiredPurpose is not (
+            LandUseType.Agricultural or
+            LandUseType.Residential or
+            LandUseType.Commercial))
+        {
+            errors.Add("Required purpose must be Agricultural, Residential, or Commercial.");
         }
 
         if (request.TargetAreaHectares is < 0)

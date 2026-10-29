@@ -1,22 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import {
   readDevelopmentSession,
   type DevelopmentUser,
 } from "@/lib/developmentSession";
 import { getResearchDemoConfig } from "@/modules/component-01-land-intelligence/services/researchDemoApi";
+import { canShowGovernanceNavigation } from "@/modules/component-04/services/postLogin";
 import {
+  authorityLeaseInterestQueueNavItem,
   component01NavItems,
   LAND_INTELLIGENCE_BASE,
   officerLeaseInterestLookupNavItem,
   officerLeaseInterestQueueNavItem,
+  officerLeaseInterestValuationQueueNavItem,
   type NavItem,
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
-import {canShowGovernanceNavigation} from "@/modules/component-04/services/postLogin";
 
 function isActive(
   pathname: string,
@@ -31,9 +33,7 @@ function isActive(
     return (
       pathname === href ||
       pathname.startsWith(`${href}/`) ||
-      pathname.startsWith(
-        `${LAND_INTELLIGENCE_BASE}/parcel-intelligence`,
-      )
+      pathname.startsWith(`${LAND_INTELLIGENCE_BASE}/parcel-intelligence`)
     );
   }
 
@@ -52,26 +52,23 @@ export function Sidebar({
   compactMobile?: boolean;
 }) {
   const pathname = usePathname();
+
   const [user, setUser] = useState<DevelopmentUser | null>(null);
-  const [officerLookupEnabled, setOfficerLookupEnabled] =
-    useState(false);
+  const [officerLookupEnabled, setOfficerLookupEnabled] = useState(false);
+  const [authorityReviewEnabled, setAuthorityReviewEnabled] = useState(false);
 
   const isLandIntelligenceNav = basePath === LAND_INTELLIGENCE_BASE;
 
   useEffect(() => {
     const update = () => {
-      setUser(readDevelopmentSession()?.user || null);
+      setUser(readDevelopmentSession()?.user ?? null);
     };
 
     update();
-
     window.addEventListener("development-session-changed", update);
 
     return () => {
-      window.removeEventListener(
-        "development-session-changed",
-        update,
-      );
+      window.removeEventListener("development-session-changed", update);
     };
   }, []);
 
@@ -85,14 +82,16 @@ export function Sidebar({
     void getResearchDemoConfig()
       .then((config) => {
         if (!cancelled) {
-          setOfficerLookupEnabled(
-            config.officerLeaseInterestNicLookupEnabled,
+          setOfficerLookupEnabled(config.officerLeaseInterestNicLookupEnabled);
+          setAuthorityReviewEnabled(
+            Boolean(config.authorityLeaseInterestReviewEnabled),
           );
         }
       })
       .catch(() => {
         if (!cancelled) {
           setOfficerLookupEnabled(false);
+          setAuthorityReviewEnabled(false);
         }
       });
 
@@ -102,28 +101,48 @@ export function Sidebar({
   }, [isLandIntelligenceNav]);
 
   const navItems = useMemo((): NavItem[] => {
-    if (!isLandIntelligenceNav || !officerLookupEnabled) {
+    if (!isLandIntelligenceNav) {
       return items;
     }
 
-    const additionalItems = [
-      officerLeaseInterestQueueNavItem,
-      officerLeaseInterestLookupNavItem,
-    ].filter(
-      (additionalItem) =>
-        !items.some((item) => item.href === additionalItem.href),
+    const extras: NavItem[] = [];
+
+    if (officerLookupEnabled) {
+      extras.push(
+        officerLeaseInterestQueueNavItem,
+        officerLeaseInterestValuationQueueNavItem,
+        officerLeaseInterestLookupNavItem,
+      );
+    }
+
+    if (authorityReviewEnabled) {
+      extras.push(authorityLeaseInterestQueueNavItem);
+    }
+
+    const additionalItems = extras.filter(
+      (extra, index) =>
+        !items.some((item) => item.href === extra.href) &&
+        extras.findIndex((item) => item.href === extra.href) === index,
     );
 
-    return [...items, ...additionalItems];
-  }, [items, isLandIntelligenceNav, officerLookupEnabled]);
+    return additionalItems.length ? [...items, ...additionalItems] : items;
+  }, [
+    items,
+    isLandIntelligenceNav,
+    officerLookupEnabled,
+    authorityReviewEnabled,
+  ]);
 
   const visibleItems = useMemo(() => {
     return navItems.filter((item) => {
-      if(item.href.startsWith("/component-04")&&!canShowGovernanceNavigation(user))return false;
       if (
-        !user ||
-        !item.href.startsWith("/workflow-governance")
+        item.href.startsWith("/component-04") &&
+        !canShowGovernanceNavigation(user)
       ) {
+        return false;
+      }
+
+      if (!user || !item.href.startsWith("/workflow-governance")) {
         return true;
       }
 
@@ -159,7 +178,14 @@ export function Sidebar({
     >
       <nav className={styles.nav}>
         {visibleItems.map((item) => {
-          const active = isActive(pathname, item.href, basePath) && (basePath!=="/component-04" || !visibleItems.some(other=>other.href.length>item.href.length&&isActive(pathname,other.href,basePath)));
+          const active =
+            isActive(pathname, item.href, basePath) &&
+            (basePath !== "/component-04" ||
+              !visibleItems.some(
+                (other) =>
+                  other.href.length > item.href.length &&
+                  isActive(pathname, other.href, basePath),
+              ));
 
           const className = [
             styles.link,
@@ -176,9 +202,11 @@ export function Sidebar({
               className={className}
               aria-current={active ? "page" : undefined}
             >
-              {item.icon&&<span className={styles.icon} aria-hidden="true">
-                {item.icon}
-              </span>}
+              {item.icon && (
+                <span className={styles.icon} aria-hidden="true">
+                  {item.icon}
+                </span>
+              )}
               <span className={styles.label}>{item.label}</span>
             </Link>
           );

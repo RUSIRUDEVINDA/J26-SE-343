@@ -10,6 +10,7 @@ public static class LandSearchRequestNormalizer
             Province = TrimOrNull(request.Province),
             District = TrimOrNull(request.District),
             DivisionalSecretariat = TrimOrNull(request.DivisionalSecretariat),
+            CadastralNumber = TrimOrNull(request.CadastralNumber),
             SourceReportedLandUse = TrimOrNull(request.SourceReportedLandUse),
             ResearchLandCoverGroup = TrimOrNull(request.ResearchLandCoverGroup),
         };

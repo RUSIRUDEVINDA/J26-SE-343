@@ -1,26 +1,24 @@
-import { StatusBadge } from "@/shared/components/StatusBadge";
-import type {
-  LandParcelResponse,
-  LandRelationshipResponse,
-  SpatialConstraintResponse,
+import Link from "next/link";
+import {
+  LandCategoryType,
+  type LandParcelResponse,
+  type LandRelationshipResponse,
 } from "../types/landIntelligence";
 import {
   landCategoryTypeLabels,
   landUseTypeLabels,
-  spatialConstraintTypeLabels,
-  restrictionSeverityLabels,
 } from "../utils/enumMappings";
 import { displayOrUnavailable, displayOrUnknown, formatArea } from "../utils/formatters";
 import {
-  gisCoverageBadgeTone,
-  gisCoverageStatusLabel,
-} from "../utils/gisCoverageStatus";
-import {
   sourceReportedClaimantCategoryDisplay,
   sourceReportedLandUseDisplay,
+  sourceReportedLandUseEnglishDisplay,
 } from "../utils/sourceReportedCadastre";
+import {
+  formatGnDivisionAssignment,
+  formatGnDivisionPrimaryDisplay,
+} from "../utils/gnDivisionMappingDisplay";
 import styles from "./ParcelDetails.module.css";
-import listStyles from "./Lists.module.css";
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
@@ -31,349 +29,213 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-const researchDemoUiEnabled =
-  process.env.NEXT_PUBLIC_LAND_INTELLIGENCE_RESEARCH_DEMO === "true";
+function readableType(value: string): string {
+  const words = value
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/_/g, " ")
+    .trim();
+  return words.charAt(0).toUpperCase() + words.slice(1).toLowerCase();
+}
+
+function landCategoryConnectionLabel(raw: string): string {
+  const enumValue = LandCategoryType[raw as keyof typeof LandCategoryType];
+  if (typeof enumValue === "number") {
+    return landCategoryTypeLabels[enumValue as LandCategoryType] ?? raw;
+  }
+  return readableType(raw);
+}
+
+/** Graph "Has category" uses governance enum on the parcel row, not cadastre land-use codes. */
+function parcelConnectionDescription(
+  item: LandRelationshipResponse,
+  parcel: LandParcelResponse,
+): string {
+  const raw = item.description?.trim() ?? "";
+  if (item.relationshipType === "HAS_CATEGORY") {
+    const categoryLabel = landCategoryConnectionLabel(raw);
+    if (raw === "Other" && parcel.cadastralSource) {
+      const cadastreLandUse = sourceReportedLandUseEnglishDisplay(
+        parcel.cadastralSource,
+      );
+      if (cadastreLandUse) {
+        return `cadastre land use: ${cadastreLandUse}`;
+      }
+    }
+    return categoryLabel;
+  }
+  return raw || "No descriptive label recorded";
+}
 
 export function ParcelDetails({
   parcel,
-  constraints,
   relationships,
   relationshipsError,
   relationshipsLoading,
 }: {
   parcel: LandParcelResponse;
-  constraints: SpatialConstraintResponse[];
   relationships?: LandRelationshipResponse[] | null;
   relationshipsError?: string | null;
   relationshipsLoading?: boolean;
 }) {
+  const gnMapping = parcel.gnDivisionMapping;
+  const gnNeedsReview =
+    gnMapping?.reviewStatusDisplay === "Needs administrative review";
+  const cadastralNumber = displayOrUnknown(parcel.identifier.cadastralNumber);
+  const sourceLandUse = parcel.cadastralSource
+    ? sourceReportedLandUseDisplay(parcel.cadastralSource) || "Unavailable"
+    : parcel.currentUse
+      ? landUseTypeLabels[parcel.currentUse.type] ??
+        displayOrUnavailable(parcel.currentUse.description)
+      : "Unavailable";
+  const claimant = parcel.cadastralSource
+    ? sourceReportedClaimantCategoryDisplay(parcel.cadastralSource) ||
+      "Unavailable"
+    : "Unavailable";
+  const gnDisplay = gnMapping
+    ? gnNeedsReview
+      ? "Needs administrative review"
+      : formatGnDivisionPrimaryDisplay(gnMapping)
+    : displayOrUnavailable(parcel.location.gramaNiladhariDivision);
+
   return (
-    <div>
-      <div className={styles.card}>
+    <div className={styles.details}>
+      <header className={styles.hero}>
+        <div>
+          <p className={styles.eyebrow}>PARCEL RECORD</p>
+          <h2 className={styles.parcelNumber}>{cadastralNumber}</h2>
+          <p className={styles.heroMeta}>
+            {displayOrUnavailable(parcel.location.district)} ·{" "}
+            {formatArea(parcel.area.value, parcel.area.unit)} · {sourceLandUse}
+          </p>
+        </div>
+        <span className={styles.sourceBadge}>Source-reported claimant: {claimant}</span>
+      </header>
+
+      <div className={styles.sectionGrid}>
+        <section className={styles.card} aria-labelledby="parcel-overview-title">
+          <h3 id="parcel-overview-title" className={styles.sectionTitle}>Parcel overview</h3>
+          <div className={styles.grid}>
+            <DetailRow label="Area" value={formatArea(parcel.area.value, parcel.area.unit)} />
+            <DetailRow label={parcel.cadastralSource ? "Source-reported land use" : "Current use"} value={sourceLandUse} />
+            <DetailRow label="Source-reported claimant" value={claimant} />
+            <DetailRow label="Survey plan reference" value={displayOrUnavailable(parcel.identifier.surveyPlanReference)} />
+          </div>
+        </section>
+
+        <section className={styles.card} aria-labelledby="parcel-location-title">
+          <h3 id="parcel-location-title" className={styles.sectionTitle}>Location</h3>
+          <div className={styles.grid}>
+            <DetailRow label="Province" value={displayOrUnavailable(parcel.location.province)} />
+            <DetailRow label="District" value={displayOrUnavailable(parcel.location.district)} />
+            <DetailRow label="Grama Niladhari division" value={gnDisplay} />
+          </div>
+          {gnMapping ? (
+            <p className={styles.inlineNote}>
+              {gnNeedsReview
+                ? "The source code and map marker need administrative review. See the GN mapping details below."
+                : ""}
+            </p>
+          ) : null}
+        </section>
+      </div>
+
+      {gnMapping ? (
+        <section className={styles.card} aria-labelledby="parcel-gn-title">
+          <div className={styles.sectionHeading}>
+            <h3 id="parcel-gn-title" className={styles.sectionTitle}>GN division mapping</h3>
+            <span className={gnNeedsReview ? styles.reviewBadge : styles.matchedBadge}>
+              {gnMapping.reviewStatusDisplay}
+            </span>
+          </div>
+          <div className={styles.grid}>
+            {gnNeedsReview ? (
+              <>
+                <DetailRow label="From source administrative code" value={formatGnDivisionAssignment(gnMapping.sourceFromAdministrativeCode)} />
+                <DetailRow label="At parcel map marker" value={formatGnDivisionAssignment(gnMapping.gnAtMapMarker)} />
+              </>
+            ) : (
+              <>
+                <DetailRow label="GN division name" value={gnMapping.primaryAssignment?.gnName ?? "Unavailable"} />
+                <DetailRow label="DS division" value={displayOrUnavailable(gnMapping.primaryAssignment?.divisionalSecretariat)} />
+              </>
+            )}
+          </div>
+          <p className={styles.inlineNote}>{gnMapping.provenanceLabel}</p>
+        </section>
+      ) : null}
+
+      <section className={styles.card} aria-labelledby="parcel-evidence-title">
+        <h3 id="parcel-evidence-title" className={styles.sectionTitle}>Recorded parcel evidence</h3>
         <div className={styles.grid}>
-          <DetailRow
-            label="Cadastral number"
-            value={displayOrUnknown(parcel.identifier.cadastralNumber)}
-          />
-          <DetailRow label="Parcel UUID" value={parcel.id} />
-          <DetailRow
-            label="Survey plan reference"
-            value={displayOrUnavailable(parcel.identifier.surveyPlanReference)}
-          />
-          <DetailRow
-            label="Domain category"
-            value={
-              parcel.cadastralSource
-                ? "Not classified (cadastre import — domain category unchanged)"
-                : landCategoryTypeLabels[parcel.category.type] ??
-                  displayOrUnavailable(parcel.category.description)
-            }
-          />
+          <DetailRow label="Environmental restrictions recorded" value={String(parcel.environmentalRestrictionCount)} />
+          <DetailRow label="Infrastructure features recorded" value={String(parcel.infrastructureFeatureCount)} />
+        </div>
+       
+      </section>
+
+      <details className={styles.technicalDetails}>
+        <summary>Source data and technical identifiers</summary>
+        <div className={styles.grid}>
+          <DetailRow label="Centroid" value={`${parcel.spatial.centroidLatitude}, ${parcel.spatial.centroidLongitude}`} />
+          <DetailRow label="Coordinate system" value={displayOrUnavailable(parcel.spatial.coordinateSystem)} />
           {parcel.cadastralSource ? (
             <>
+              <DetailRow label="Source parcel ID" value={displayOrUnavailable(parcel.cadastralSource.sourceFeatureId)} />
+              <DetailRow label="Source land-use code" value={displayOrUnavailable(parcel.cadastralSource.sourceReportedLandUseCode)} />
               <DetailRow
-                label="Source-reported land use"
-                value={
-                  sourceReportedLandUseDisplay(parcel.cadastralSource) ||
-                  "Unavailable"
-                }
-              />
-              <DetailRow
-                label="Source-reported claimant category"
-                value={
-                  sourceReportedClaimantCategoryDisplay(parcel.cadastralSource) ||
-                  "Unavailable"
-                }
-              />
-              <DetailRow
-                label="Source parcel id"
+                label="Original source land-use text"
                 value={displayOrUnavailable(
-                  parcel.cadastralSource.sourceFeatureId,
+                  sourceReportedLandUseEnglishDisplay(parcel.cadastralSource),
                 )}
               />
-              <DetailRow
-                label="Source land-use code"
-                value={displayOrUnavailable(
-                  parcel.cadastralSource.sourceReportedLandUseCode,
-                )}
-              />
-              <DetailRow
-                label="Source land-use text"
-                value={displayOrUnavailable(
-                  parcel.cadastralSource.sourceReportedLandUseText,
-                )}
-              />
-              <DetailRow
-                label="Source parcel status code"
-                value={displayOrUnavailable(
-                  parcel.cadastralSource.sourceParcelStatusCode,
-                )}
-              />
-              <DetailRow
-                label="GN division index"
-                value={displayOrUnavailable(parcel.cadastralSource.gnIndex)}
-              />
-              <DetailRow
-                label="Source provenance"
-                value={displayOrUnavailable(
-                  parcel.cadastralSource.sourceProvenanceLabel,
-                )}
-              />
-              <DetailRow
-                label="Research record id"
-                value={displayOrUnavailable(
-                  parcel.cadastralSource.researchRecordId ??
-                    parcel.availability?.researchRecordId,
-                )}
-              />
-              <DetailRow
-                label="Lease availability (official)"
-                value={
-                  parcel.availability?.actualLeaseAvailabilityLabel ??
-                  "Not verified"
-                }
-              />
-              {parcel.availability?.projectLeaseReady ? (
-                <>
-                  <DetailRow
-                    label="Project designation"
-                    value={parcel.availability.projectLeaseReady.designationLabel}
-                  />
-                  <DetailRow
-                    label="Project designation notice"
-                    value={parcel.availability.projectLeaseReady.designationNotice}
-                  />
-                </>
-              ) : null}
-              {researchDemoUiEnabled &&
-              parcel.availability?.simulatedWorkflow ? (
-                <div className={styles.row}>
-                  <span className={styles.label}>Simulated workflow status</span>
-                  <span className={styles.value}>
-                    <StatusBadge tone="warning">
-                      {parcel.availability.simulatedWorkflow.simulatedLeaseStatus}
-                    </StatusBadge>
-                    <span className={styles.simulatedHint}>
-                      Simulated — not legal availability
-                    </span>
-                  </span>
-                </div>
-              ) : null}
+              <DetailRow label="Source parcel status code" value={displayOrUnavailable(parcel.cadastralSource.sourceParcelStatusCode)} />
+              <DetailRow label="Research record ID" value={displayOrUnavailable(parcel.cadastralSource.researchRecordId ?? parcel.availability?.researchRecordId)} />
+              <DetailRow label="Cadastral source GN index" value={displayOrUnavailable(parcel.cadastralSource.gnIndex)} />
             </>
-          ) : (
-            <DetailRow
-              label="Current use"
-              value={
-                parcel.currentUse
-                  ? landUseTypeLabels[parcel.currentUse.type] ??
-                    displayOrUnavailable(parcel.currentUse.description)
-                  : "Unavailable"
-              }
-            />
-          )}
-          <DetailRow
-            label="Area"
-            value={formatArea(parcel.area.value, parcel.area.unit)}
-          />
-          <DetailRow
-            label="Province"
-            value={displayOrUnavailable(parcel.location.province)}
-          />
-          <DetailRow
-            label="District"
-            value={displayOrUnavailable(parcel.location.district)}
-          />
-          <DetailRow
-            label="Divisional secretariat"
-            value={displayOrUnavailable(parcel.location.divisionalSecretariat)}
-          />
-          <DetailRow
-            label="Grama Niladhari division"
-            value={displayOrUnavailable(
-              parcel.location.gramaNiladhariDivision,
-            )}
-          />
-          <DetailRow
-            label="Soil type"
-            value={displayOrUnavailable(parcel.characteristics?.soilType)}
-          />
-          <DetailRow
-            label="Terrain"
-            value={displayOrUnavailable(
-              parcel.characteristics?.terrainDescription,
-            )}
-          />
-          <DetailRow
-            label="Elevation (m)"
-            value={
-              parcel.characteristics?.elevationMeters == null
-                ? "Unavailable"
-                : String(parcel.characteristics.elevationMeters)
-            }
-          />
-          <DetailRow
-            label="Centroid"
-            value={`${parcel.spatial.centroidLatitude}, ${parcel.spatial.centroidLongitude}`}
-          />
-          <DetailRow
-            label="Coordinate system"
-            value={displayOrUnavailable(parcel.spatial.coordinateSystem)}
-          />
-          <DetailRow
-            label="Spatial constraints (count)"
-            value={String(parcel.spatialConstraintCount)}
-          />
-          <DetailRow
-            label="Environmental restrictions (count)"
-            value={String(parcel.environmentalRestrictionCount)}
-          />
-          <DetailRow
-            label="Infrastructure features (count)"
-            value={String(parcel.infrastructureFeatureCount)}
-          />
-          <DetailRow
-            label="Regulatory references (count)"
-            value={String(parcel.regulatoryReferenceCount)}
-          />
+          ) : null}
+          {gnMapping ? (
+            <>
+              <DetailRow label="Source GN index (DCS code)" value={displayOrUnavailable(gnMapping.sourceGnIndex)} />
+              {gnMapping.codeDistrict ? <DetailRow label="Code district" value={gnMapping.codeDistrict} /> : null}
+            </>
+          ) : null}
         </div>
-      </div>
+      </details>
 
-      <h3 className={styles.sectionTitle}>GIS enrichment</h3>
-      <div className={styles.card}>
-        {parcel.gisEnrichment ? (
-          <div className={styles.grid}>
-            <div className={styles.row}>
-              <span className={styles.label}>Overall status</span>
-              <span className={styles.value}>
-                <StatusBadge
-                  tone={gisCoverageBadgeTone(parcel.gisEnrichment.overallStatus)}
-                >
-                  {gisCoverageStatusLabel(parcel.gisEnrichment.overallStatus)}
-                </StatusBadge>
-              </span>
-            </div>
-            <DetailRow
-              label="GIS-detected district"
-              value={displayOrUnavailable(
-                parcel.gisEnrichment.detectedDistrict,
-              )}
-            />
-            <DetailRow
-              label="GIS-detected province"
-              value={displayOrUnavailable(
-                parcel.gisEnrichment.detectedProvince,
-              )}
-            />
-            <DetailRow
-              label="Enriched at (UTC)"
-              value={
-                parcel.gisEnrichment.enrichedAtUtc
-                  ? new Date(parcel.gisEnrichment.enrichedAtUtc).toISOString()
-                  : "Unavailable"
-              }
-            />
-            <p className={styles.noteText}>{parcel.gisEnrichment.assessmentNotice}</p>
+      <section className={styles.card} aria-labelledby="parcel-connections-title">
+        <div className={styles.sectionHeading}>
+          <div>
+            <h3 id="parcel-connections-title" className={styles.sectionTitle}>Recorded connections</h3>
+            <p className={styles.sectionSubtitle}>Relationships recorded for this parcel.</p>
           </div>
-        ) : (
-          <p className={styles.noteText}>
-            GIS enrichment summary unavailable from the API.
-          </p>
-        )}
-      </div>
-
-      <h3 className={styles.sectionTitle}>Spatial constraints</h3>
-      {constraints.length === 0 ? (
-        <div className={styles.note} role="note">
-          <p className={listStyles.empty}>No recorded constraints.</p>
-          <p className={styles.noteText}>
-            This does not mean the parcel is safe, unrestricted, or free of
-            constraints — only that none were returned by the API for this
-            record.
-          </p>
+          <Link className={styles.explorerLink} href={`/land-intelligence/knowledge-graph?parcelId=${parcel.id}`}>
+            Explore relationships
+          </Link>
         </div>
-      ) : (
-        <ul className={listStyles.list}>
-          {constraints.map((constraint) => (
-            <li key={constraint.id} className={listStyles.item}>
-              <p className={listStyles.meta}>
-                <strong>
-                  {spatialConstraintTypeLabels[constraint.type] ?? "Unknown"}
-                </strong>{" "}
-                · {restrictionSeverityLabels[constraint.severity] ?? "Unknown"}
-              </p>
-              <p>{displayOrUnavailable(constraint.description)}</p>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <h3 className={styles.sectionTitle}>Knowledge graph relationships</h3>
-      <p className={styles.noteText}>
-        Loaded independently from the relationships API (Neo4j when configured,
-        otherwise PostGIS baseline). A graph failure does not block parcel facts
-        above. Neo4j is not required for search or recommendations.
-      </p>
-      <p className={styles.noteText}>
-        <a href={`/land-intelligence/knowledge-graph?parcelId=${parcel.id}`}>
-          Open relationship explorer
-        </a>{" "}
-        for {displayOrUnknown(parcel.identifier.cadastralNumber)}
-      </p>
-      {relationshipsLoading ? (
-        <p className={listStyles.empty}>Loading relationships…</p>
-      ) : null}
-      {relationshipsError ? (
-        <p className={styles.noteText} role="alert">
-          Relationships unavailable: {relationshipsError}
-        </p>
-      ) : null}
-      {!relationshipsLoading &&
-      !relationshipsError &&
-      relationships &&
-      relationships.length === 0 ? (
-        <div className={styles.note} role="note">
-          <p className={listStyles.empty}>No relationships returned.</p>
-          <p className={styles.noteText}>
-            Accurate empty result — edges are not invented. Populate Neo4j sync
-            and/or GIS enrichment snapshots, or open the explorer for setup
-            steps.
-          </p>
-        </div>
-      ) : null}
-      {relationships && relationships.length > 0 ? (
-        <ul className={listStyles.list}>
-          {relationships.map((item, index) => {
-            const sourceLabel =
-              item.sourceNodeType === "LandParcel" &&
-              item.sourceNodeId === parcel.id
-                ? displayOrUnknown(parcel.identifier.cadastralNumber)
-                : `${item.sourceNodeType} (${item.sourceNodeId})`;
-            const targetLabel =
-              item.targetNodeType === "LandParcel" &&
-              item.targetNodeId === parcel.id
-                ? displayOrUnknown(parcel.identifier.cadastralNumber)
-                : `${item.targetNodeType} (${item.targetNodeId})`;
-            return (
-              <li
-                key={`${item.relationshipType}-${item.sourceNodeId}-${index}`}
-                className={listStyles.item}
-              >
-                <p className={listStyles.meta}>
-                  <strong>{item.relationshipType}</strong>
-                </p>
-                <p>
-                  {sourceLabel} → {targetLabel}
-                </p>
-                {item.description ? (
-                  <p className={listStyles.meta}>
-                    {displayOrUnavailable(item.description)}
-                  </p>
-                ) : null}
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
+        {relationshipsLoading ? <p className={styles.inlineNote}>Loading connections…</p> : null}
+        {relationshipsError ? (
+          <p className={styles.inlineNote} role="alert">Connections are unavailable right now: {relationshipsError}</p>
+        ) : null}
+        {!relationshipsLoading && !relationshipsError && relationships?.length === 0 ? (
+          <p className={styles.inlineNote}>No connections are recorded for this parcel.</p>
+        ) : null}
+        {!relationshipsLoading && !relationshipsError && relationships && relationships.length > 0 ? (
+          <ul className={styles.connectionList}>
+            {relationships.map((item, index) => {
+              const parcelIsSource = item.sourceNodeType === "LandParcel" && item.sourceNodeId === parcel.id;
+              const relatedType = parcelIsSource ? item.targetNodeType : item.sourceNodeType;
+              return (
+                <li key={`${item.relationshipType}-${item.sourceNodeId}-${item.targetNodeId}-${index}`} className={styles.connectionCard}>
+                  <span className={styles.connectionType}>{readableType(item.relationshipType)}</span>
+                  <strong>{parcelConnectionDescription(item, parcel)}</strong>
+                  <span className={styles.connectionKind}>{readableType(relatedType)}</span>
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
+      </section>
     </div>
   );
 }
+

@@ -16,32 +16,8 @@ export function RecommendationAssessmentPanel({
   return (
     <aside className={styles.panel} aria-labelledby="assessment-panel-title">
       <h2 id="assessment-panel-title" className={styles.title}>
-        How results are assessed
+        Scoring &amp; status
       </h2>
-
-      <section className={styles.section}>
-        <h3 className={styles.sectionTitle}>How to read these results</h3>
-        <ul className={styles.bullets}>
-          <li>
-            The total is a <strong>match across assessed search criteria</strong>{" "}
-            — not legal suitability, ownership verification, or lease approval.
-          </li>
-          <li>
-            A displayed <strong>100</strong> means every assessed criterion
-            matched fully. Near area matches (for example 0.045 ha vs 0.05 ha
-            target → area 90) keep the total below 100.
-          </li>
-          <li>
-            Road, water, and soil preferences are not part of search or rule
-            scoring.
-          </li>
-          <li>
-            Missing environmental / GIS evidence is{" "}
-            <strong>not assessed</strong> and is never treated as a positive
-            match.
-          </li>
-        </ul>
-      </section>
 
       <section className={styles.section}>
         <h3 className={styles.sectionTitle}>Match score</h3>

@@ -25,7 +25,8 @@ public sealed class ProjectLeaseReadyDesignationTests
 
         Assert.True(evaluation.IsDesignatedInProjectDataset);
         Assert.True(evaluation.IsEffectiveForLeaseFlow);
-        Assert.Equal(ColomboStateResearchProjectLeaseReady.DesignationLabel, evaluation.DisplayLeaseAvailabilityLabel);
+        Assert.Equal(ColomboStateResearchProjectLeaseReady.DesignationLabel, evaluation.ProjectDesignationLabel);
+        Assert.Equal(LandParcelAvailabilityMapper.NotVerifiedLabel, evaluation.DisplayLeaseAvailabilityLabel);
         Assert.False(evaluation.Designation.ExcludedBecauseSourceReportedPrivate);
     }
 
@@ -40,8 +41,28 @@ public sealed class ProjectLeaseReadyDesignationTests
 
         Assert.True(evaluation.IsDesignatedInProjectDataset);
         Assert.False(evaluation.IsEffectiveForLeaseFlow);
-        Assert.Equal(ProjectLeaseReadyDesignationEvaluator.PrivateExclusionLeaseLabel, evaluation.DisplayLeaseAvailabilityLabel);
+        Assert.Equal(ProjectLeaseReadyDesignationEvaluator.PrivateExclusionLeaseLabel, evaluation.ProjectDesignationLabel);
+        Assert.Equal(LandParcelAvailabilityMapper.NotVerifiedLabel, evaluation.DisplayLeaseAvailabilityLabel);
         Assert.True(evaluation.Designation.ExcludedBecauseSourceReportedPrivate);
+    }
+
+    [Fact]
+    public void Evaluate_MissingClaimant_IsEffectiveWithProjectLabelAndNotVerifiedAvailability()
+    {
+        var designation = CreateDesignation(Guid.NewGuid(), "COL-STATE-NO-CLAIMANT");
+
+        var withoutSource = ProjectLeaseReadyDesignationEvaluator.Evaluate(designation, null);
+        var withoutClaimantCode = ProjectLeaseReadyDesignationEvaluator.Evaluate(
+            designation,
+            CreateSource(null, null));
+
+        foreach (var evaluation in new[] { withoutSource, withoutClaimantCode })
+        {
+            Assert.True(evaluation.IsDesignatedInProjectDataset);
+            Assert.True(evaluation.IsEffectiveForLeaseFlow);
+            Assert.Equal(ColomboStateResearchProjectLeaseReady.DesignationLabel, evaluation.ProjectDesignationLabel);
+            Assert.Equal(LandParcelAvailabilityMapper.NotVerifiedLabel, evaluation.DisplayLeaseAvailabilityLabel);
+        }
     }
 
     [Fact]
@@ -81,8 +102,8 @@ public sealed class ProjectLeaseReadyDesignationTests
         var metrics = await composer.BuildMetricsAsync();
 
         Assert.Equal(350, metrics.TotalParcelCount);
-        Assert.Equal(2, metrics.ProjectLeaseReadyDesignatedCount);
-        Assert.Equal(1, metrics.ProjectLeaseReadyEffectiveCount);
+        Assert.Equal(2, metrics.ProjectDesignatedParcelsCount);
+        Assert.Equal(1, metrics.ProjectDesignatedParcelsEffectiveCount);
     }
 
     [Fact]
@@ -151,6 +172,13 @@ public sealed class ProjectLeaseReadyDesignationTests
         Assert.True(ok.IsProjectLeaseReadyDesignated);
         Assert.True(ok.IsProjectLeaseReadyEffective);
         Assert.Equal(ColomboStateResearchProjectLeaseReady.DesignationLabel, ok.ProjectLeaseReadyLabel);
+        Assert.Equal(LandParcelAvailabilityMapper.NotVerifiedLabel, ok.ActualLeaseAvailabilityLabel);
+        Assert.NotEqual(ok.ProjectLeaseReadyLabel, ok.ActualLeaseAvailabilityLabel);
+        var designationEvidence = Assert.Single(
+            ok.Evidence,
+            e => e.Source == "ProjectLeaseReadyDesignation");
+        Assert.Contains(ColomboStateResearchProjectLeaseReady.DesignationLabel, designationEvidence.Description);
+        Assert.Contains("Official lease availability: Not verified", designationEvidence.Description);
         Assert.False(ok.HardConstraintRejected);
 
         var blocked = response.Recommendations.Single(r => r.CadastralNumber == "LEASE-READY-RESTRICTED");
@@ -158,6 +186,82 @@ public sealed class ProjectLeaseReadyDesignationTests
         Assert.True(blocked.IsProjectLeaseReadyEffective);
         Assert.True(blocked.HardConstraintRejected);
         Assert.False(string.IsNullOrWhiteSpace(blocked.HardConstraintReason));
+    }
+
+    [Fact]
+    public async Task Engine_OutsideDataset_HasNoProjectDesignationButNotVerifiedAvailability()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel("OUTSIDE-DATASET-001");
+        var sources = new Dictionary<Guid, CadastralSourceMetadataDto>
+        {
+            [parcel.Id] = CreateSource("2", "State"),
+        };
+
+        var engine = RecommendationEngineTestFactory.CreateWithSources(
+            sources,
+            new Dictionary<Guid, ProjectLeaseReadyDesignationRecord>(),
+            parcel);
+        var response = await engine.RecommendAsync(new LandRecommendationSearchRequest
+        {
+            RequiredPurpose = LandUseType.Agricultural,
+            MaxResults = 10,
+        });
+
+        var recommendation = Assert.Single(response.Recommendations);
+        Assert.False(recommendation.IsProjectLeaseReadyDesignated);
+        Assert.False(recommendation.IsProjectLeaseReadyEffective);
+        Assert.Null(recommendation.ProjectLeaseReadyLabel);
+        Assert.Equal(LandParcelAvailabilityMapper.NotVerifiedLabel, recommendation.ActualLeaseAvailabilityLabel);
+        Assert.DoesNotContain(recommendation.Evidence, e => e.Source == "ProjectLeaseReadyDesignation");
+    }
+
+    [Fact]
+    public async Task Engine_DesignatedWithoutClaimantSource_KeepsProjectLabelAndNotVerifiedAvailability()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel("MISSING-CLAIMANT-001");
+        var designations = new Dictionary<Guid, ProjectLeaseReadyDesignationRecord>
+        {
+            [parcel.Id] = CreateDesignation(parcel.Id, "R-NO-SOURCE"),
+        };
+
+        var engine = RecommendationEngineTestFactory.CreateWithSources(
+            new Dictionary<Guid, CadastralSourceMetadataDto>(),
+            designations,
+            parcel);
+        var response = await engine.RecommendAsync(new LandRecommendationSearchRequest
+        {
+            RequiredPurpose = LandUseType.Agricultural,
+            MaxResults = 10,
+        });
+
+        var recommendation = Assert.Single(response.Recommendations);
+        Assert.True(recommendation.IsProjectLeaseReadyDesignated);
+        Assert.True(recommendation.IsProjectLeaseReadyEffective);
+        Assert.Equal(ColomboStateResearchProjectLeaseReady.DesignationLabel, recommendation.ProjectLeaseReadyLabel);
+        Assert.Equal(LandParcelAvailabilityMapper.NotVerifiedLabel, recommendation.ActualLeaseAvailabilityLabel);
+    }
+
+    [Fact]
+    public async Task Engine_SourceReportedPrivate_IsExcludedFromRecommendations()
+    {
+        var parcel = SyntheticRecommendationParcelFactory.CreateSuitableParcel("PRIVATE-EXCLUDED-001");
+        var designations = new Dictionary<Guid, ProjectLeaseReadyDesignationRecord>
+        {
+            [parcel.Id] = CreateDesignation(parcel.Id, "R-PRIVATE"),
+        };
+        var sources = new Dictionary<Guid, CadastralSourceMetadataDto>
+        {
+            [parcel.Id] = CreateSource("3", "Private"),
+        };
+
+        var engine = RecommendationEngineTestFactory.CreateWithSources(sources, designations, parcel);
+        var response = await engine.RecommendAsync(new LandRecommendationSearchRequest
+        {
+            RequiredPurpose = LandUseType.Agricultural,
+            MaxResults = 10,
+        });
+
+        Assert.Empty(response.Recommendations);
     }
 
     [Fact]

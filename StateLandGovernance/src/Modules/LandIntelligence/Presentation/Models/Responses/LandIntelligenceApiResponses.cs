@@ -59,6 +59,27 @@ public sealed record LandUseResponse(
 /// <summary>
 /// Source-reported cadastral metadata for real imported parcels. Does not include ownership or claimant fields.
 /// </summary>
+public sealed record GnDivisionAdministrativeAssignmentResponse(
+    string GnName,
+    string? GnNumber,
+    string? DivisionalSecretariat);
+
+public sealed record ParcelGnDivisionMappingResponse(
+    string Status,
+    string WorkbookStatusLabel,
+    string ReviewStatusDisplay,
+    string ProvenanceLabel,
+    string SourceGnIndex,
+    GnDivisionAdministrativeAssignmentResponse? PrimaryAssignment,
+    GnDivisionAdministrativeAssignmentResponse? SourceFromAdministrativeCode,
+    GnDivisionAdministrativeAssignmentResponse? GnAtMapMarker,
+    string? CodeDistrict,
+    double? MapMarkerLatitude,
+    double? MapMarkerLongitude,
+    string DatasetKey,
+    string CadastralNumber,
+    DateTimeOffset ImportedAtUtc);
+
 public sealed record CadastralSourceMetadataResponse(
     string SourceProvenanceLabel,
     string SourceLayer,
@@ -142,7 +163,8 @@ public sealed record ParcelGisEnrichmentSummaryResponse(
 
 public sealed record ResearchDemoConfigResponse(
     bool Enabled,
-    bool OfficerLeaseInterestNicLookupEnabled);
+    bool OfficerLeaseInterestNicLookupEnabled,
+    bool AuthorityLeaseInterestReviewEnabled = false);
 
 public sealed record SourceReportedLandUseOptionResponse(
     string Code,
@@ -150,6 +172,8 @@ public sealed record SourceReportedLandUseOptionResponse(
     int ParcelCount);
 
 public sealed record DerivedSoilGroupOptionsResponse(IReadOnlyList<string> Options);
+
+public sealed record GramaNiladhariDivisionOptionsResponse(IReadOnlyList<string> Options);
 
 public sealed record LandParcelResponse(
     Guid Id,
@@ -166,7 +190,8 @@ public sealed record LandParcelResponse(
     int RegulatoryReferenceCount,
     CadastralSourceMetadataResponse? CadastralSource = null,
     LandParcelAvailabilityResponse? Availability = null,
-    ParcelGisEnrichmentSummaryResponse? GisEnrichment = null);
+    ParcelGisEnrichmentSummaryResponse? GisEnrichment = null,
+    ParcelGnDivisionMappingResponse? GnDivisionMapping = null);
 
 public sealed record LandSearchResultResponse(
     Guid Id,
@@ -184,6 +209,24 @@ public sealed record LandSearchResultResponse(
 
 public sealed record LandSearchResultsResponse(
     IReadOnlyList<LandSearchResultResponse> Results,
+    int Page,
+    int PageSize,
+    int TotalCount);
+
+public sealed record ApprovedPreliminaryParcelSummaryResponse(
+    Guid LandParcelId,
+    string CadastralNumber,
+    string Province,
+    string District,
+    decimal AreaValue,
+    AreaUnit AreaUnit,
+    string? SourceReportedLandUse,
+    DateTimeOffset ApprovedAtUtc,
+    Guid LeaseInterestRequestId,
+    string? RequestReference);
+
+public sealed record ApprovedPreliminaryParcelListResponse(
+    IReadOnlyList<ApprovedPreliminaryParcelSummaryResponse> Results,
     int Page,
     int PageSize,
     int TotalCount);
@@ -284,7 +327,8 @@ public sealed record LandParcelRecommendationResponse(
     int DisplayOrder = 0,
     int RuleScoreRank = 0,
     int RuleScoreTieCount = 0,
-    bool IsTiedOnRuleScore = false);
+    bool IsTiedOnRuleScore = false,
+    string? ActualLeaseAvailabilityLabel = null);
 
 public sealed record LandRecommendationSearchResultsResponse(
     LandUseType RequiredPurpose,

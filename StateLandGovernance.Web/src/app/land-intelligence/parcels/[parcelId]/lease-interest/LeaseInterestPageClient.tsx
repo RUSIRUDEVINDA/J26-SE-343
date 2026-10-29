@@ -14,7 +14,7 @@ export function LeaseInterestPageClient({ parcelId }: { parcelId: string }) {
         subtitle={
           onReviewStep
             ? "Check your details before submitting for preliminary assessment."
-            : "Start a request only when ready. Viewing this page alone does not create a draft. Submission is preliminary verification only — not a reservation or approval."
+            : "Review the parcel and the steps before starting your request."
         }
       />
       <LeaseInterestFormView

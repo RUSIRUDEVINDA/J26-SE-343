@@ -38,7 +38,7 @@ public sealed class RuleBasedLandRecommendationEngineTests
             TargetParcelId = parcel.Id,
             RequiredLandCategory = LandCategoryType.ReservedLand,
             RequiredLandUse = LandUseType.Conservation,
-            RequiredPurpose = LandUseType.Conservation
+            RequiredPurpose = LandUseType.Agricultural
         });
 
         var recommendation = Assert.Single(response.Recommendations);

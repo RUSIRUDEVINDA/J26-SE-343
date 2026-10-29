@@ -5,6 +5,7 @@ import {
   LandUseType,
   RestrictionSeverity,
   SpatialConstraintType,
+  supportedLandUseTypes,
 } from "../types/landIntelligence";
 
 export const landUseTypeLabels: Record<LandUseType, string> = {
@@ -64,12 +65,10 @@ export const criterionCategoryLabels: Record<CriterionCategory, string> = {
   [CriterionCategory.CustomCriterion]: "Custom criterion",
 };
 
-export const landUseTypeOptions = Object.entries(landUseTypeLabels).map(
-  ([value, label]) => ({
-    value: Number(value) as LandUseType,
-    label,
-  }),
-);
+export const landUseTypeOptions = supportedLandUseTypes.map((value) => ({
+  value,
+  label: landUseTypeLabels[value],
+}));
 
 export const landCategoryOptions = [
   { value: "", label: "Any category" },

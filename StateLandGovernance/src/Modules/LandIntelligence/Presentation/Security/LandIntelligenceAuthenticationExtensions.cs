@@ -69,6 +69,15 @@ public static class LandIntelligenceAuthenticationExtensions
                 });
 
             options.AddPolicy(
+                LandIntelligenceAuth.Policies.Authority,
+                policy =>
+                {
+                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(LandIntelligenceAuth.Roles.Authority);
+                });
+
+            options.AddPolicy(
                 LandIntelligenceAuth.Policies.InternalMaintainer,
                 policy =>
                 {

@@ -36,6 +36,7 @@ public sealed record PreferredLocationCriteria
     public string? Province { get; init; }
     public string? District { get; init; }
     public string? DivisionalSecretariat { get; init; }
+    public string? GramaNiladhariDivision { get; init; }
 }
 
 public sealed record RegulatoryCriteria
@@ -110,6 +111,7 @@ public sealed record LandParcelRecommendationResult(
     string? SourceParcelStatusCode = null,
     string? SourceProvenanceLabel = null,
     DateTimeOffset? SourceImportedAtUtc = null,
+    /// <summary>Project dataset designation label only — never official lease availability.</summary>
     string? ProjectLeaseReadyLabel = null,
     bool IsProjectLeaseReadyDesignated = false,
     bool IsProjectLeaseReadyEffective = false,
@@ -117,7 +119,9 @@ public sealed record LandParcelRecommendationResult(
     int DisplayOrder = 0,
     int RuleScoreRank = 0,
     int RuleScoreTieCount = 0,
-    bool IsTiedOnRuleScore = false);
+    bool IsTiedOnRuleScore = false,
+    /// <summary>Official lease availability label ("Not verified" / "Unknown") — separate from project designation.</summary>
+    string? ActualLeaseAvailabilityLabel = null);
 
 public sealed record LandRecommendationSearchResponse(
     LandUseType RequiredPurpose,

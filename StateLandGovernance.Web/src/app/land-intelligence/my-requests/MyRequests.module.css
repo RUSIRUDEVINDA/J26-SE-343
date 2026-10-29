@@ -1,3 +1,142 @@
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.tabList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  border-bottom: 1px solid var(--color-card-border);
+  max-width: 100%;
+}
+
+.tab {
+  padding: 0.55rem 1rem;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--color-primary);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.tabActive {
+  border-color: var(--color-card-border);
+  background: #fff;
+  color: var(--color-primary);
+  margin-bottom: -1px;
+}
+
+.tabPanel {
+  min-width: 0;
+}
+
+.listToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.85rem 1.25rem;
+  margin-bottom: 0.85rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.searchField {
+  flex: 1 1 14rem;
+  min-width: min(100%, 14rem);
+}
+
+.searchLabel {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--color-muted);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--color-input-border);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.86rem;
+}
+
+.searchInput:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.pageSizeControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.84rem;
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+.pageSizeSelect {
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.84rem;
+}
+
+.listFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-card-border);
+}
+
+.listSummary {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+}
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  margin-left: auto;
+}
+
+.pagerLabel {
+  font-size: 0.84rem;
+  color: var(--color-muted);
+}
+
 .sections {
   display: flex;
   flex-direction: column;
@@ -119,8 +258,110 @@
 .rowActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.5rem;
   flex-shrink: 0;
+  align-items: center;
+}
+
+.rowActions .rowAction,
+.rowActions .deleteAction {
+  min-height: 0;
+  padding: 0.4rem 0.75rem !important;
+  font-size: 0.8rem !important;
+  line-height: 1.75 !important;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.rowActions .deleteAction {
+  background: #fff;
+  border-color: var(--color-card-border);
+  color: #8a1f1f;
+}
+
+.rowActions .deleteAction:not(:disabled):hover {
+  background: #fff3f1;
+  border-color: #d9aaa5;
+  color: #8a1f1f;
+}
+
+.rowDeleteError {
+  margin: 0.35rem 0 0;
+  width: 100%;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: #8a1f1f;
+}
+
+/* Destructive confirmation remains prominent inside the modal only. */
+.dangerFilledButton {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.dangerFilledButton:not(:disabled):hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  filter: brightness(1.08);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(28, 25, 23, 0.45);
+}
+
+.modalDialog {
+  width: min(100%, 26rem);
+  border-radius: 14px;
+  padding: 1.25rem 1.35rem;
+  background: #fff;
+  border: 1px solid #e8c4c4;
+  box-shadow: 0 12px 40px rgba(28, 25, 23, 0.22);
+}
+
+.modalDialog:focus {
+  outline: none;
+}
+
+.modalDialog:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.modalTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #6b1515;
+  text-align: center;
+}
+
+.modalBody {
+  margin: 0 0 1.1rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.modalParcel {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+}
+
+.modalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
 }
 
 .errorBlock {
@@ -143,6 +384,368 @@
 }
 
 /* Detail page (shared module) */
+.requestDetail {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.requestMainColumn {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.requestOverview,
+.timelinePanel,
+.evaluationPanel,
+.authorityPanel,
+.requestDetail .valuationSection {
+  background: #fff;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.evaluationPanel,
+.authorityPanel {
+  padding: clamp(1.15rem, 2.3vw, 1.55rem);
+}
+
+.evaluationPanelHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem 1rem;
+  margin-bottom: 0.65rem;
+}
+
+.evaluationTitle {
+  margin: 0.25rem 0 0;
+  color: var(--color-primary);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  line-height: 1.3;
+}
+
+.evaluationRevisionBadge,
+.authorityDecisionBadge {
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  background: var(--color-nav-inactive);
+  border: 1px solid var(--color-card-border);
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.evaluationLead {
+  margin: 0 0 1rem;
+  color: var(--color-muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.evaluationLead strong {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.evaluationStatusMessage {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.88rem;
+}
+
+.evaluationEmpty {
+  padding: 1rem 1.1rem;
+  border: 1px dashed var(--color-card-border);
+  border-radius: 12px;
+  background: var(--color-nav-inactive);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.evaluationEmpty p {
+  margin: 0.35rem 0 0;
+  color: var(--color-muted);
+}
+
+.evaluationBlocks {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.evaluationBlock {
+  padding-top: 0.15rem;
+  border-top: 1px solid var(--color-card-border);
+}
+
+.evaluationBlock:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.evaluationBlockTitle {
+  margin: 0 0 0.55rem;
+  font-size: 0.95rem;
+  color: var(--color-primary);
+}
+
+.evaluationBlockIntro {
+  margin: 0 0 0.75rem;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.evaluationFieldGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+  gap: 0.75rem 1.25rem;
+  margin: 0;
+  padding: 0;
+}
+
+.evaluationFieldGrid dt {
+  margin: 0 0 0.2rem;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+.evaluationFieldGrid dd {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.evaluationTableWrap {
+  margin-top: 0.85rem;
+}
+
+.evaluationTableTitle {
+  margin: 0 0 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--color-muted);
+}
+
+.evaluationPeriodTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.evaluationPeriodTable th,
+.evaluationPeriodTable td {
+  border: 1px solid var(--color-card-border);
+  padding: 0.45rem 0.55rem;
+  text-align: left;
+}
+
+.evaluationPeriodTable th {
+  background: var(--color-nav-inactive);
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.authorityPanel {
+  border-top: 3px solid #416c5e;
+}
+
+.evaluationFieldFullRow {
+  grid-column: 1 / -1;
+}
+
+.evaluationFieldFullRow dd {
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.requestOverview {
+  padding: clamp(1.15rem, 2.3vw, 1.7rem);
+}
+
+.requestOverviewTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.5rem;
+}
+
+.requestEyebrow {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.requestReference {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.requestOutcome {
+  margin: 1rem 0 0;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  background: var(--color-nav-inactive);
+  border: 1px solid var(--color-card-border);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.requestFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+}
+
+.requestFacts div {
+  min-width: 8rem;
+}
+
+.requestFacts dt {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  margin-bottom: 0.2rem;
+}
+
+.requestFacts dd {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.requestColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.timelinePanel {
+  padding: 1.35rem 1.5rem;
+}
+
+.detailSectionTitle {
+  margin: 0.3rem 0 1.1rem;
+  color: var(--color-primary);
+  font-size: 1.05rem;
+}
+
+.detailTimeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.detailTimeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: 0.7rem;
+  padding-bottom: 1.25rem;
+}
+
+.detailTimeline li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 0.8rem;
+  bottom: 0;
+  left: 0.42rem;
+  width: 1px;
+  background: var(--color-card-border);
+}
+
+.detailTimeline li:last-child {
+  padding-bottom: 0;
+}
+
+.timelineMarker {
+  position: relative;
+  z-index: 1;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-card-border);
+  margin-top: 0.17rem;
+}
+
+.timelineEntryTop {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.15rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.timelineEntryTop time {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+}
+
+.timelineEntry p {
+  margin: 0.35rem 0 0;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.requestAside {
+  display: grid;
+  gap: 1rem;
+}
+
+.requestDetail .valuationSection {
+  margin: 0;
+  padding: 1.25rem 1.35rem;
+}
+
+.requestDetail .valuationSection .sectionTitle {
+  margin: 0 0 0.7rem;
+  color: var(--color-primary);
+}
+
+.valuationEmpty {
+  padding: 1rem;
+  border: 1px dashed var(--color-card-border);
+  border-radius: 12px;
+  background: var(--color-nav-inactive);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.valuationEmpty p {
+  margin: 0.25rem 0 0;
+  color: var(--color-muted);
+}
+
+.detailActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .card {
   background: #fff;
   border: 1px solid var(--color-card-border);
@@ -182,11 +785,112 @@
   font-size: 1rem;
 }
 
+.sectionHeader .sectionTitle {
+  margin: 0;
+}
+
 .timeline {
   margin: 0;
   padding-left: 1.1rem;
   font-size: 0.85rem;
   line-height: 1.5;
+}
+
+.valuationSection {
+  margin-top: 1.25rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--color-card-border);
+}
+
+.valuationBadge {
+  margin: 0 0 0.5rem;
+  display: inline-block;
+  padding: 0.25rem 0.55rem;
+  border-radius: 8px;
+  background: #eaf7ef;
+  color: #176339;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.valuationNote {
+  margin: 0 0 0.75rem;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
+.valuationError {
+  margin: 0 0 0.5rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  background: #fdeeee;
+  color: #8a1f1f;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.valuationDl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1.25rem;
+  font-size: 0.85rem;
+}
+
+.valuationDl div {
+  min-width: 0;
+}
+
+.valuationDl dt {
+  margin: 0 0 0.2rem;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.valuationDl dd {
+  margin: 0;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.technicalDetails {
+  margin-top: 1.25rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px dashed var(--color-card-border);
+  border-radius: 10px;
+  background: var(--color-nav-inactive);
+  font-size: 0.8rem;
+}
+
+.technicalDetails summary {
+  cursor: pointer;
+  font-weight: 650;
+  color: var(--color-muted);
+}
+
+.technicalDl {
+  margin: 0.65rem 0 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.technicalDl dt {
+  margin: 0 0 0.15rem;
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.technicalDl dd {
+  margin: 0;
+}
+
+.monoValue {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.76rem;
+  overflow-wrap: anywhere;
 }
 
 .actions {
@@ -196,7 +900,34 @@
   margin-top: 1rem;
 }
 
+@media (max-width: 900px) {
+  .requestColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .evaluationFieldGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 640px) {
+  .timelinePanel,
+  .requestDetail .valuationSection {
+    padding: 1.1rem;
+  }
+
+  .tab {
+    flex: 1 1 auto;
+    text-align: center;
+    min-width: 0;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.82rem;
+  }
+
+  .valuationDl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .row {
     align-items: stretch;
   }
@@ -206,6 +937,6 @@
   }
 
   .rowActions > * {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
   }
 }

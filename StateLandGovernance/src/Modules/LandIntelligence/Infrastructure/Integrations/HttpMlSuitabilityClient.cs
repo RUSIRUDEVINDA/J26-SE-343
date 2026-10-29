@@ -99,7 +99,8 @@ public sealed class HttpMlSuitabilityClient : IMlSuitabilityClient
         return new MlPredictRequest(
             RequestedPurpose: requestedPurpose.ToString(),
             LandCategory: parcel.Category.Type.ToString(),
-            AreaHectares: (double)parcel.Area.Value,
+            // Always send hectares: parcel.Area.Value is in parcel.Area.Unit (acres, m², …), not necessarily hectares.
+            AreaHectares: (double)parcel.Area.ToHectares(),
             Province: parcel.Location.Province,
             District: parcel.Location.District,
             ElevationMeters: ToNullableDouble(parcel.Characteristics?.ElevationMeters),
