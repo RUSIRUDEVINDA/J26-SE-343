@@ -5,7 +5,8 @@ namespace StateLandGovernance.LandIntelligence.Application.Interfaces;
 
 public sealed record MlSuitabilityPrediction(
     string PredictedLabel,
-    IReadOnlyDictionary<string, decimal> Probabilities);
+    IReadOnlyDictionary<string, decimal> Probabilities,
+    string ModelSource = "RandomForestSuitabilityModel");
 
 public interface IMlSuitabilityClient
 {

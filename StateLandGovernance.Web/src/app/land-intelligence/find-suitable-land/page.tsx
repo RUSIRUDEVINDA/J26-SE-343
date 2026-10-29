@@ -6,7 +6,7 @@ export default function FindSuitableLandPage() {
     <>
       <PageHeading
         title="Find Suitable Land"
-        subtitle="Set your requirements to compare recorded land parcels. Results are decision-support information, not approval or ownership confirmation."
+        subtitle=""
       />
       <FindSuitableLandForm />
     </>

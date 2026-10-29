@@ -1,0 +1,73 @@
+{
+  "random_seed": 42,
+  "split_fractions": {
+    "train": 0.7,
+    "val": 0.15,
+    "test": 0.15
+  },
+  "group_key": "Cadastral Number",
+  "stage_a_label_col": "stage_a_label",
+  "stage_b_label_col": "Suitability Label",
+  "features": {
+    "categorical": [
+      "Intended Purpose",
+      "Source-reported Land Use",
+      "Project Land-cover Group",
+      "Classification Basis",
+      "primary_cover_cat"
+    ],
+    "numeric": [
+      "Area (ha)",
+      "primary_cover_pct"
+    ],
+    "boolean": [
+      "overlap_available"
+    ],
+    "excluded": [
+      "Assessment ID",
+      "Cadastral Number (group key only)",
+      "Dataset Group",
+      "Expert Note (Optional)",
+      "Source Claimant",
+      "District",
+      "Province",
+      "Centroid Latitude",
+      "Centroid Longitude",
+      "Boundary Status (no variation across parcels)",
+      "Mapped Land-cover Overlap (replaced by three parsed columns)"
+    ]
+  },
+  "selected_stage_a_model": "GradientBoosting",
+  "selected_stage_b_model": "RandomForest",
+  "policy": {
+    "commercial_suitable_hard_block": "Candidate models predicting any Commercial Suitable on validation are disqualified. Export gate blocks ZIP if any Commercial Suitable appears in test set.",
+    "residential_suitable_advisory": "Residential Suitable = 0 is an observed dataset characteristic. Predictions are counted and reported; no hard block applied.",
+    "future_inference_enforcement": "The serving layer MUST check every prediction before returning it: if Intended Purpose == Commercial and prediction == Suitable, raise a PolicyViolationError and log the event. This rule must be enforced independently of model accuracy because a passing test score does not guarantee future compliance \u2014 the model may encounter feature distributions not seen during training."
+  },
+  "domain_notes": [
+    "Suitable label is exclusive to Agricultural purpose in this reviewed dataset.",
+    "Commercial Suitable = 0 is expert-confirmed policy for this review cycle.",
+    "Residential Suitable = 0 is an observed characteristic; not a permanent block.",
+    "Predictions are preliminary research decision-support. Not zoning approval, legal availability, reservation, permit, or lease approval."
+  ],
+  "n_rows": {
+    "stage_a": {
+      "train": 837,
+      "val": 180,
+      "test": 183
+    },
+    "stage_b": {
+      "train": 789,
+      "val": 166,
+      "test": 167
+    }
+  },
+  "package_versions": {
+    "scikit-learn": "1.6.1",
+    "pandas": "2.2.3",
+    "numpy": "2.1.3",
+    "joblib": "1.6.0",
+    "openpyxl": "3.1.5"
+  },
+  "generated_utc": "2026-10-18T18:13:08.626919+00:00"
+}

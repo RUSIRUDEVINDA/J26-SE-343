@@ -5,8 +5,8 @@ export default function OfficerLeaseInterestLookupPage() {
   return (
     <>
       <PageHeading
-        title="Lease interest lookup by NIC"
-        subtitle=""
+        title="Officer applicant lookup"
+        subtitle="Search and view submitted requests. Verification and valuation are handled from their queues."
       />
       <OfficerLeaseInterestLookupView />
     </>

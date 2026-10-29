@@ -14,17 +14,20 @@ public sealed class GetLandParcelByIdQueryHandler
     private readonly IRealParcelSourceReadRepository _realParcelSourceReadRepository;
     private readonly LandParcelAvailabilityComposer _availabilityComposer;
     private readonly ILandIntelligenceGisCoverageService _gisCoverageService;
+    private readonly IParcelGnDivisionMappingReadRepository _gnDivisionMappingReadRepository;
 
     public GetLandParcelByIdQueryHandler(
         ILandParcelRepository landParcelRepository,
         IRealParcelSourceReadRepository realParcelSourceReadRepository,
         LandParcelAvailabilityComposer availabilityComposer,
-        ILandIntelligenceGisCoverageService gisCoverageService)
+        ILandIntelligenceGisCoverageService gisCoverageService,
+        IParcelGnDivisionMappingReadRepository gnDivisionMappingReadRepository)
     {
         _landParcelRepository = landParcelRepository;
         _realParcelSourceReadRepository = realParcelSourceReadRepository;
         _availabilityComposer = availabilityComposer;
         _gisCoverageService = gisCoverageService;
+        _gnDivisionMappingReadRepository = gnDivisionMappingReadRepository;
     }
 
     public async Task<LandParcelDto> HandleAsync(
@@ -52,6 +55,15 @@ public sealed class GetLandParcelByIdQueryHandler
             parcel.Id,
             cancellationToken);
 
-        return LandParcelMapper.ToDto(parcel, cadastralSource, availability, gisEnrichment);
+        var gnDivisionMapping = await _gnDivisionMappingReadRepository.GetByParcelIdAsync(
+            parcel.Id,
+            cancellationToken);
+
+        return LandParcelMapper.ToDto(
+            parcel,
+            cadastralSource,
+            availability,
+            gisEnrichment,
+            gnDivisionMapping);
     }
 }

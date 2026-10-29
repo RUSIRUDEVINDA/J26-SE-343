@@ -3,6 +3,7 @@ import type {
   LeaseInterestCostSummary,
   UpsertLeaseInterestDraft,
 } from "../types/landIntelligence";
+import { isSupportedLandUseType } from "../types/landIntelligence";
 
 export const LEASE_INTEREST_COST_GROUPS: Array<{
   title: string;
@@ -74,6 +75,42 @@ export function groupCostLines(
   return grouped;
 }
 
+/** Mirrors the backend submit-time email check (draft saves allow incomplete/blank values). */
+export function isPlausibleContactEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/.test(value.trim());
+}
+
+/** ISO date (YYYY-MM-DD) for date inputs (min/max) in the user's local calendar. */
+export function localDateInputValue(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+/** True when value is an ISO date on or after today (local calendar). */
+export function isDesiredStartPeriodOnOrAfterToday(value: string): boolean {
+  const trimmed = value.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return false;
+  }
+  return trimmed >= localDateInputValue();
+}
+
+/** Mirrors the backend submit-time phone check: 7–15 digits, optional leading +, spaces, dashes, brackets. */
+export function isPlausibleContactPhone(value: string): boolean {
+  const trimmed = value.trim();
+  if (!/^\+?[0-9 ()-]+$/.test(trimmed)) {
+    return false;
+  }
+  const digits = trimmed.replace(/\D/g, "").length;
+  return digits >= 7 && digits <= 15;
+}
+
+/**
+ * Submit readiness only. Saving a draft is intentionally not gated by this check —
+ * the backend accepts incomplete drafts and validates only the fields that were entered.
+ */
 export function isLeaseInterestDraftReadyForSubmit(
   draft: UpsertLeaseInterestDraft,
 ): boolean {
@@ -83,10 +120,10 @@ export function isLeaseInterestDraftReadyForSubmit(
   if (!draft.applicant.legalName.trim()) {
     return false;
   }
-  if (!draft.applicant.contactPhone.trim()) {
+  if (!isPlausibleContactPhone(draft.applicant.contactPhone)) {
     return false;
   }
-  if (!draft.applicant.contactEmail.trim()) {
+  if (!isPlausibleContactEmail(draft.applicant.contactEmail)) {
     return false;
   }
   if (!draft.applicant.postalAddress.trim()) {
@@ -99,16 +136,19 @@ export function isLeaseInterestDraftReadyForSubmit(
     if (!draft.applicant.organizationRegistrationNumber?.trim()) {
       return false;
     }
-    if (!draft.applicant.representativeNationalIdentityCardNumber?.trim()) {
-      return false;
-    }
   } else if (!draft.applicant.nationalIdentityCardNumber?.trim()) {
+    return false;
+  }
+  if (!isSupportedLandUseType(draft.proposal.requestedPurpose)) {
     return false;
   }
   if (!draft.proposal.plannedActivitiesDescription.trim()) {
     return false;
   }
   if (!draft.proposal.desiredStartPeriod.trim()) {
+    return false;
+  }
+  if (!isDesiredStartPeriodOnOrAfterToday(draft.proposal.desiredStartPeriod)) {
     return false;
   }
   if (!draft.proposal.projectSummary.trim()) {

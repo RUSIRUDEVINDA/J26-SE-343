@@ -5,6 +5,169 @@
   align-items: start;
 }
 
+.layout > .panel,
+.layout > .sideSummary {
+  min-width: 0;
+}
+
+.startLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(270px, 0.8fr);
+  gap: 1.15rem;
+  align-items: start;
+  max-width: 1180px;
+}
+
+.startPanel {
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.startHeader {
+  max-width: 40rem;
+}
+
+.startEyebrow {
+  display: block;
+  color: var(--color-primary);
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.startTitle {
+  margin: 0.4rem 0 0.45rem;
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  line-height: 1.2;
+}
+
+.startLead {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.startSteps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+  list-style: none;
+  margin: 1.45rem 0;
+  padding: 0;
+}
+
+.startStep {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  padding: 0.85rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 0.88rem;
+}
+
+.startStepNumber {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-nav-inactive);
+  color: var(--color-primary);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.startStepDescription {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.startNotice,
+.startBlock {
+  border: 1px solid var(--color-warning-border);
+  border-radius: 12px;
+  background: var(--color-warning-bg);
+  padding: 0.85rem 1rem;
+  line-height: 1.45;
+  font-size: 0.84rem;
+}
+
+.startNotice p {
+  margin: 0.25rem 0 0;
+}
+
+.startBlock {
+  margin: 0.8rem 0 0;
+}
+
+.startActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  margin-top: 1.3rem;
+}
+
+.startActionHint {
+  max-width: 22rem;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.startAside {
+  display: grid;
+  gap: 0.7rem;
+  justify-items: start;
+}
+
+.startParcelCard {
+  width: 100%;
+  padding: 1.2rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.startParcelNumber {
+  margin: 0.4rem 0 1rem;
+  font-size: 1.14rem;
+  overflow-wrap: anywhere;
+}
+
+.startParcelFacts {
+  margin: 0 0 1rem;
+}
+
+.startParcelFacts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--color-card-border);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.startParcelFacts dt {
+  color: var(--color-muted);
+}
+
+.startParcelFacts dd {
+  margin: 0;
+  max-width: 55%;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
 .panel {
   background: #fff;
   border: 1px solid var(--color-card-border);
@@ -19,6 +182,17 @@
   border-radius: 12px;
   background: var(--color-warning-bg);
   border: 1px solid var(--color-warning-border);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.saveNotice {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: #eef6f1;
+  border: 1px solid #b8d4c4;
+  color: #1a3d2e;
   font-size: 0.85rem;
   line-height: 1.45;
 }
@@ -101,6 +275,20 @@
   line-height: 1.4;
 }
 
+.fieldError {
+  margin: 0.35rem 0 0;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: #8a1f1f;
+}
+
+.inputInvalid,
+.selectInvalid,
+.textareaInvalid {
+  border-color: #c44;
+  box-shadow: 0 0 0 1px rgb(196 68 68 / 22%);
+}
+
 .input,
 .select,
 .textarea {
@@ -119,6 +307,103 @@
 .textarea {
   min-height: 88px;
   resize: vertical;
+}
+
+.documentsStep {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.documentsHeading h2 {
+  margin: 0.2rem 0 0.3rem;
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.documentsHeading p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.documentsEyebrow {
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.documentsSectionTitle {
+  margin: 0 0 0.65rem;
+  font-size: 0.91rem;
+  color: var(--color-primary);
+}
+
+.documentsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.documentItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.documentNumber {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 1.7rem;
+  height: 1.7rem;
+  border-radius: 8px;
+  background: var(--color-nav-inactive);
+  color: var(--color-primary);
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.documentLabel {
+  margin: 0 0 0.22rem;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.documentNote {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.documentsNotes {
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-card-border);
+}
+
+.documentsNotes .fieldHint {
+  margin: 0 0 0.55rem;
+}
+
+.documentsNotes .textarea {
+  min-height: 105px;
+}
+
+.optionalLabel {
+  margin-left: 0.25rem;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .actions {
@@ -149,28 +434,59 @@
   border-radius: 14px;
   padding: 1rem 1.1rem;
   background: #fff;
+  min-width: 0;
 }
 
 .reviewCardHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.75rem 1rem;
+  flex-wrap: nowrap;
   margin-bottom: 0.65rem;
 }
 
 .reviewCardTitle {
   margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--color-primary);
 }
 
-.editButton {
-  flex-shrink: 0;
-  font-size: 0.78rem !important;
-  padding: 0.25rem 0.5rem !important;
-  min-height: auto !important;
+.reviewCardAction,
+.reviewCardFooterAction,
+.sideParcelAction {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+  white-space: nowrap;
+  padding: 0.48rem 1.05rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 650 !important;
+  line-height: 1.25 !important;
+  min-height: 2.4rem !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: var(--color-primary) !important;
+  border: 1px solid #e4b4b0 !important;
+  box-shadow: 0 2px 6px rgb(133 9 6 / 7%);
+}
+
+.reviewCardAction:not(:disabled):hover,
+.reviewCardFooterAction:hover,
+.sideParcelAction:hover {
+  background: var(--color-nav-inactive) !important;
+  border-color: #d9aaa5 !important;
+  color: var(--color-primary) !important;
+  filter: none !important;
+}
+
+.reviewCardAction:focus-visible,
+.reviewCardFooterAction:focus-visible,
+.sideParcelAction:focus-visible {
+  box-shadow: var(--focus-ring) !important;
 }
 
 .reviewDl {
@@ -194,9 +510,18 @@
 }
 
 .reviewCardFooter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-top: 0.85rem;
   padding-top: 0.75rem;
   border-top: 1px solid var(--color-card-border);
+}
+
+.reviewCardFooter a,
+.reviewCardFooter button {
+  width: auto;
+  max-width: 100%;
 }
 
 .monoValue,
@@ -345,9 +670,19 @@
   box-shadow: 0 12px 40px rgba(28, 25, 23, 0.22);
 }
 
+.modalDialog:focus {
+  outline: none;
+}
+
+.modalDialog:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .successTitle {
   margin: 0 0 0.35rem;
   font-size: 1.05rem;
+  text-align: center;
 }
 
 .successBody {
@@ -361,6 +696,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+  justify-content: center;
 }
 
 .sideSummary {
@@ -402,19 +738,17 @@
   overflow-wrap: anywhere;
 }
 
-.sideTechnical {
-  margin-top: 0.75rem;
-  font-size: 0.78rem;
-}
-
-.sideTechnical summary {
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--color-primary);
-}
-
 .sideActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-top: 0.85rem;
+}
+
+.sideActions a,
+.sideActions button {
+  width: auto;
+  max-width: 100%;
 }
 
 .metaList {
@@ -436,6 +770,10 @@
 }
 
 @media (max-width: 900px) {
+  .startLayout {
+    grid-template-columns: 1fr;
+  }
+
   .layout {
     grid-template-columns: 1fr;
   }
@@ -463,5 +801,19 @@
 
   .reviewActions > * {
     flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .documentsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .startSteps {
+    grid-template-columns: 1fr;
+  }
+
+  .startParcelFacts div {
+    align-items: flex-start;
   }
 }

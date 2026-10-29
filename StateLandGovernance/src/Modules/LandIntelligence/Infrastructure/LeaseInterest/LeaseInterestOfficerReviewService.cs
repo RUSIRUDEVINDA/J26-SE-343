@@ -64,21 +64,39 @@ public sealed class LeaseInterestOfficerReviewService : ILeaseInterestOfficerRev
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        var items = new List<LeaseInterestOfficerQueueItemDto>();
-        foreach (var row in rows)
-        {
-            var parcel = await _parcelRepository.GetByIdAsync(row.LandParcelId, cancellationToken);
-            items.Add(
-                new LeaseInterestOfficerQueueItemDto(
-                    row.Id,
-                    row.LandParcelId,
-                    row.AcknowledgementReference,
-                    row.SubmittedAtUtc,
-                    row.Status,
-                    parcel?.Identifier.CadastralNumber,
-                    parcel?.Location.District));
-        }
+        var items = await MapQueueItemsAsync(rows, cancellationToken);
+        return new LeaseInterestOfficerQueueResponseDto(items, total, page, pageSize);
+    }
 
+    public async Task<LeaseInterestOfficerQueueResponseDto> ListValuationQueueAsync(
+        LeaseInterestOfficerQueueRequestDto request,
+        CancellationToken cancellationToken = default)
+    {
+        RequireOfficerActor();
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 20 : Math.Min(request.PageSize, MaxPageSize);
+
+        var valuedRequestIds = _dbContext.LeaseInterestValuations
+            .AsNoTracking()
+            .Select(v => v.LeaseInterestRequestId)
+            .Distinct();
+
+        var query = _dbContext.LeaseInterestRequests
+            .AsNoTracking()
+            .Where(x =>
+                !valuedRequestIds.Contains(x.Id)
+                && (x.Status == LeaseInterestRequestStatus.AwaitingValuation
+                    || x.Status == LeaseInterestRequestStatus.ReferredToAuthority));
+
+        var total = await query.CountAsync(cancellationToken);
+        var rows = await query
+            .OrderByDescending(x => x.SubmittedAtUtc ?? x.UpdatedAtUtc)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = await MapQueueItemsAsync(rows, cancellationToken);
         return new LeaseInterestOfficerQueueResponseDto(items, total, page, pageSize);
     }
 
@@ -104,9 +122,20 @@ public sealed class LeaseInterestOfficerReviewService : ILeaseInterestOfficerRev
             throw new LeaseInterestInvalidStateException(rejection!);
         }
 
+        if (!LeaseInterestOfficerWorkflowRules.IsVerificationQueueStatus(entity.Status))
+        {
+            throw new LeaseInterestInvalidStateException(
+                "Verification decisions can only be recorded while the request is in the officer verification queue.");
+        }
+
         var now = _timeProvider.GetUtcNow();
         entity.Status = update.NewStatus;
         entity.UpdatedAtUtc = now;
+
+        if (update.NewStatus == LeaseInterestRequestStatus.AwaitingValuation)
+        {
+            entity.VerificationCompletedByOfficerId = officerId;
+        }
 
         AppendHistory(
             entity.Id,
@@ -178,6 +207,34 @@ public sealed class LeaseInterestOfficerReviewService : ILeaseInterestOfficerRev
             .Select(MapHistoryEntry)
             .ToList();
 
+        var latestAuthority = await _dbContext.LeaseInterestAuthorityDecisions
+            .AsNoTracking()
+            .Where(d => d.LeaseInterestRequestId == entity.Id)
+            .OrderByDescending(d => d.RecordedAtUtc)
+            .Select(d => new { d.Decision, d.Reason, d.RecordedAtUtc })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        LeaseInterestApplicantAuthorityDecisionDto? authoritySummary = latestAuthority is null
+            ? null
+            : new LeaseInterestApplicantAuthorityDecisionDto(
+                latestAuthority.Decision,
+                latestAuthority.Reason,
+                latestAuthority.RecordedAtUtc,
+                LeaseInterestAuthorityDecisionLabels.DecisionLabel(latestAuthority.Decision),
+                LeaseInterestAuthorityDecisionLabels.NextActionHint(latestAuthority.Decision));
+
+        var hasValuation = await _dbContext.LeaseInterestValuations
+            .AsNoTracking()
+            .AnyAsync(v => v.LeaseInterestRequestId == entity.Id, cancellationToken);
+        var officerId = _officerActor.OfficerActorId;
+        var canVerify = LeaseInterestOfficerWorkflowRules.IsVerificationQueueStatus(entity.Status);
+        var canValue = officerId is { } oid
+            && LeaseInterestOfficerWorkflowRules.CanOfficerRecordValuation(
+                entity.Status,
+                hasValuation,
+                entity.VerificationCompletedByOfficerId,
+                oid);
+
         return new LeaseInterestOfficerRequestDetailDto(
             entity.Id,
             entity.LandParcelId,
@@ -193,7 +250,56 @@ public sealed class LeaseInterestOfficerReviewService : ILeaseInterestOfficerRev
             history,
             parcel?.Identifier.CadastralNumber,
             parcel?.Location.District,
-            LeaseInterestStatusTransitions.ApplicantOutcomeSummary(entity.Status));
+            LeaseInterestStatusTransitions.ApplicantOutcomeSummary(entity.Status),
+            authoritySummary,
+            entity.VerificationCompletedByOfficerId,
+            officerId,
+            canVerify,
+            canValue,
+            hasValuation);
+    }
+
+    private async Task<List<LeaseInterestOfficerQueueItemDto>> MapQueueItemsAsync(
+        IReadOnlyList<LeaseInterestRequestEntity> rows,
+        CancellationToken cancellationToken)
+    {
+        var items = new List<LeaseInterestOfficerQueueItemDto>();
+        foreach (var row in rows)
+        {
+            var parcel = await _parcelRepository.GetByIdAsync(row.LandParcelId, cancellationToken);
+            var draft = LeaseInterestPayloadSerializer.Deserialize(row.PayloadJson);
+            var applicant = draft.Applicant;
+            var nic = _nicProtector.Decrypt(row.ApplicantNicCiphertext);
+            string? brn = null;
+            if (applicant.Kind == LeaseInterestApplicantKindDto.Organization)
+            {
+                brn = LeaseInterestBusinessRegistration.TryNormalize(
+                    applicant.OrganizationRegistrationNumber,
+                    out var normalizedBrn)
+                    ? normalizedBrn
+                    : null;
+            }
+
+            var hasValuation = await _dbContext.LeaseInterestValuations
+                .AsNoTracking()
+                .AnyAsync(v => v.LeaseInterestRequestId == row.Id, cancellationToken);
+
+            items.Add(
+                new LeaseInterestOfficerQueueItemDto(
+                    row.Id,
+                    row.LandParcelId,
+                    row.AcknowledgementReference,
+                    row.SubmittedAtUtc,
+                    row.Status,
+                    parcel?.Identifier.CadastralNumber,
+                    parcel?.Location.District,
+                    applicant.Kind,
+                    nic,
+                    brn,
+                    hasValuation));
+        }
+
+        return items;
     }
 
     private static LeaseInterestStatusHistoryEntryDto MapHistoryEntry(

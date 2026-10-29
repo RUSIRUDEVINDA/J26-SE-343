@@ -17,6 +17,7 @@ using StateLandGovernance.GovernanceIntelligence.Application.Interfaces;
 using StateLandGovernance.GovernanceIntelligence.Domain.Services;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
+using StateLandGovernance.LandIntelligence.Application.Interfaces;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
 using StateLandGovernance.LandIntelligence.Presentation;
@@ -25,6 +26,7 @@ using StateLandGovernance.LandIntelligence.Presentation.Security;
 using StateLandGovernance.Shared.Infrastructure.Configuration;
 using StateLandGovernance.WorkflowGovernance.Application;
 using StateLandGovernance.WorkflowGovernance.Infrastructure;
+using StateLandGovernance.WorkflowGovernance.Infrastructure.Persistence;
 using StateLandGovernance.WorkflowGovernance.Infrastructure.Integrations;
 using StateLandGovernance.WorkflowGovernance.Presentation;
 using StateLandGovernance.WorkflowGovernance.Presentation.Security;
@@ -33,14 +35,38 @@ EnvFileLoader.LoadFromRepositoryRoot();
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(
+        "GovernanceCaseReviewer",
+        policy => policy
+            .RequireAuthenticatedUser()
+            .RequireRole("Officer", "ComplianceOfficer", "LandOfficer")
+            .RequireClaim("authority_case_id")
+            .RequireClaim("capability", "CaseWorkspaceReviewer")
+    );
+});
+
 if (args.Contains("--setup-demo-accounts", StringComparer.Ordinal))
 {
-    await PortalAccountStore.SetupAsync(builder.Configuration, builder.Environment, builder.Environment.ContentRootPath);
+    await PortalAccountStore.SetupAsync(
+        builder.Configuration,
+        builder.Environment,
+        builder.Environment.ContentRootPath
+    );
+
     return;
 }
 
-if (builder.Configuration.GetValue<bool>("PortalAuthentication:Enabled") ||
-    (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("LocalDevelopmentSignIn:Enabled")))
+if (
+    builder.Configuration.GetValue<bool>("PortalAuthentication:Enabled")
+    || (
+        builder.Environment.IsDevelopment()
+        && builder.Configuration.GetValue<bool>(
+            "LocalDevelopmentSignIn:Enabled"
+        )
+    )
+)
 {
     await PortalAccountStore.LoadAsync(builder.Configuration);
 }
@@ -105,8 +131,17 @@ builder.Services.AddGovernanceIntelligenceInfrastructure(
 );
 
 builder.Services.Configure<DevelopmentRegulatoryReportReadOptions>(
-    builder.Configuration.GetSection("GovernanceIntelligence:IndependentRegulatoryRead"));
-builder.Services.Replace(ServiceDescriptor.Scoped<IIndependentRegulatoryReadAssignments, DevelopmentRegulatoryReportAssignments>());
+    builder.Configuration.GetSection(
+        "GovernanceIntelligence:IndependentRegulatoryRead"
+    )
+);
+
+builder.Services.Replace(
+    ServiceDescriptor.Scoped<
+        IIndependentRegulatoryReadAssignments,
+        DevelopmentRegulatoryReportAssignments
+    >()
+);
 
 builder.Services.AddTransient<EvaluateComplianceCommandHandler>();
 builder.Services.AddGovernanceConflictDetection();
@@ -151,17 +186,16 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "DevelopmentFrontend",
-        policy =>
-            policy
-                .WithOrigins(
-                    "http://localhost:3000",
-                    "http://127.0.0.1:3000",
-                    "http://localhost:5173",
-                    "http://127.0.0.1:5173"
-                )
-                .WithExposedHeaders("X-Correlation-ID")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
+        policy => policy
+            .WithOrigins(
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+                "http://localhost:5173",
+                "http://127.0.0.1:5173"
+            )
+            .WithExposedHeaders("X-Correlation-ID")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
     );
 });
 
@@ -186,7 +220,12 @@ builder.Services.AddTransient<
 
 builder.Services.AddSingleton<DevelopmentAccounts>();
 builder.Services.AddScoped<UploadedCaseResearchScenarios>();
-builder.Services.AddScoped<StateLandGovernance.WorkflowGovernance.Application.Interfaces.IDevelopmentRegulatoryInputSource,DevelopmentRegulatoryInputSource>();
+
+builder.Services.AddScoped<
+    StateLandGovernance.WorkflowGovernance.Application.Interfaces.IDevelopmentRegulatoryInputSource,
+    DevelopmentRegulatoryInputSource
+>();
+
 builder.Services.AddScoped<DevelopmentSpatialInputProvider>();
 
 builder.Services.AddScoped<
@@ -195,15 +234,53 @@ builder.Services.AddScoped<
 >();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IRegulatoryCaseBindingValidator,RegulatoryCaseBindingValidator>();
-builder.Services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintReferenceAccess, ComplaintReferenceAccess>();
-builder.Services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintOfficerDirectory, CentralComplaintDirectory>();
-builder.Services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintCentralGrantSource, CentralComplaintGrantFile>();
-builder.Services.Configure<CommissionerReportReadOptions>(builder.Configuration.GetSection("GovernanceIntelligence:CommissionerReportReads"));
-builder.Services.AddScoped(sp=>sp.GetRequiredService<IOptionsSnapshot<CommissionerReportReadOptions>>().Value);
-builder.Services.AddScoped<ICommissionerReportGrantSource,CommissionerReportGrantFile>();
-builder.Services.AddScoped<ICommissionerReportReadAccess,CommissionerReportReadAccess>();
-builder.Services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintActorContext, ComplaintHttpActor>();
+
+builder.Services.AddScoped<
+    IRegulatoryCaseBindingValidator,
+    RegulatoryCaseBindingValidator
+>();
+
+builder.Services.AddScoped<
+    StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintReferenceAccess,
+    ComplaintReferenceAccess
+>();
+
+builder.Services.AddScoped<
+    StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintOfficerDirectory,
+    CentralComplaintDirectory
+>();
+
+builder.Services.AddScoped<
+    StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintCentralGrantSource,
+    CentralComplaintGrantFile
+>();
+
+builder.Services.Configure<CommissionerReportReadOptions>(
+    builder.Configuration.GetSection(
+        "GovernanceIntelligence:CommissionerReportReads"
+    )
+);
+
+builder.Services.AddScoped(
+    sp => sp.GetRequiredService<
+        IOptionsSnapshot<CommissionerReportReadOptions>
+    >().Value
+);
+
+builder.Services.AddScoped<
+    ICommissionerReportGrantSource,
+    CommissionerReportGrantFile
+>();
+
+builder.Services.AddScoped<
+    ICommissionerReportReadAccess,
+    CommissionerReportReadAccess
+>();
+
+builder.Services.AddScoped<
+    StateLandGovernance.GovernanceIntelligence.Application.Complaints.IComplaintActorContext,
+    ComplaintHttpActor
+>();
 
 builder.Services.AddScoped<
     StateLandGovernance.WorkflowGovernance.Application.Interfaces.IScreeningEvidenceProvider,
@@ -396,7 +473,6 @@ if (app.Environment.IsDevelopment())
             );
         }
     }
-
 }
 
 app.Use(async (context, next) =>

@@ -1,0 +1,10 @@
+{
+  "source_archive_sha256": "cc270aeb474448b852155f24cb62fa0a202d147cd683bad35af0b82fab1c909e",
+  "feature_store_sha256": "f95e5d94ceebe21debd75279742480a5ec903c99065eb85c0c02b1a8e4df542f",
+  "parcel_count": 400,
+  "purpose_count_per_parcel": 3,
+  "model_sha256": {
+    "stage_a_pipeline.joblib": "80b698a4c9154a7f304b87f439d171c6def5ce5fa78ddffd595d563e1921f37f",
+    "stage_b_pipeline.joblib": "f8599377f7fc658b71238eb30a6f32a14e4ae65f23d340080c4a4cebad0aff79"
+  }
+}

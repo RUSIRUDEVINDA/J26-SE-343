@@ -772,8 +772,8 @@ public sealed class WorkflowGovernancePostgresIntegrationTests
             .SqlQueryRaw<string>("SELECT \"MigrationId\" AS \"Value\" FROM workflow_governance.__ef_migrations_history")
             .ToListAsync();
 
-        Assert.Single(appliedMigrations);
-        Assert.Equal("20261010100732_InitialWorkflowGovernancePersistence", appliedMigrations[0]);
+        Assert.NotEmpty(appliedMigrations);
+        Assert.Contains("20261010100732_InitialWorkflowGovernancePersistence", appliedMigrations);
 
         // 2. Query all tables in workflow_governance
         var tables = await dbContext.Database

@@ -36,6 +36,12 @@ public sealed class LeaseInterestRequestEntity
     /// <summary>HMAC digest of normalized NIC for exact-match officer lookup.</summary>
     public string? ApplicantNicLookupDigest { get; set; }
 
+    /// <summary>HMAC digest of normalized BRN for organization applicant officer lookup.</summary>
+    public string? ApplicantBrnLookupDigest { get; set; }
+
+    /// <summary>Officer who last moved the request to awaiting valuation (verification handoff).</summary>
+    public Guid? VerificationCompletedByOfficerId { get; set; }
+
     public ICollection<LeaseInterestStatusHistoryEntity> StatusHistory { get; set; } =
         new List<LeaseInterestStatusHistoryEntity>();
 }

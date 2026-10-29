@@ -322,6 +322,14 @@ internal sealed class FakeLandParcelRepository : ILandParcelRepository
             query = query.Where(p => p.Location.District.Equals(request.District, StringComparison.OrdinalIgnoreCase));
         }
 
+        if (!string.IsNullOrWhiteSpace(request.CadastralNumber))
+        {
+            query = query.Where(p =>
+                p.Identifier.CadastralNumber.Equals(
+                    request.CadastralNumber.Trim(),
+                    StringComparison.OrdinalIgnoreCase));
+        }
+
         if (request.CategoryType is not null)
         {
             query = query.Where(p => p.Category.Type == request.CategoryType);
@@ -616,6 +624,27 @@ internal static class RecommendationEngineTestFactory
         IRecommendationParcelContext parcelContext,
         IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>? projectLeaseReady = null,
         params LandParcel[] parcels) =>
+        CreateWithEvaluators(
+            evaluators,
+            mlClient,
+            experimentalEvidence,
+            experimentalOptions,
+            sources,
+            parcelContext,
+            projectLeaseReady,
+            approvedParcelIds: null,
+            parcels);
+
+    public static RuleBasedLandRecommendationEngine CreateWithEvaluators(
+        IReadOnlyList<IRecommendationCriterionEvaluator> evaluators,
+        IMlSuitabilityClient? mlClient,
+        IExperimentalColomboMlEvidenceService? experimentalEvidence,
+        ExperimentalColomboMlOptions? experimentalOptions,
+        IReadOnlyDictionary<Guid, CadastralSourceMetadataDto>? sources,
+        IRecommendationParcelContext parcelContext,
+        IReadOnlyDictionary<Guid, ProjectLeaseReadyDesignationRecord>? projectLeaseReady,
+        IReadOnlyCollection<Guid>? approvedParcelIds,
+        params LandParcel[] parcels) =>
         new(
             new FakeLandParcelRepository(parcels),
             evaluators,
@@ -624,7 +653,8 @@ internal static class RecommendationEngineTestFactory
             Options.Create(experimentalOptions ?? new ExperimentalColomboMlOptions { Enabled = false }),
             new FakeRealParcelSourceReadRepository(sources),
             parcelContext,
-            new FakeProjectLeaseReadyDesignationReadRepository(projectLeaseReady));
+            new FakeProjectLeaseReadyDesignationReadRepository(projectLeaseReady),
+            new FakeApprovedPreliminaryLeaseParcelRegistry(approvedParcelIds));
 
     public static RuleBasedLandRecommendationEngine CreateWithExperimental(
         IExperimentalColomboMlEvidenceService experimentalEvidence,
@@ -643,6 +673,50 @@ internal static class RecommendationEngineTestFactory
             projectLeaseReady: null,
             parcels);
     }
+
+    public static RuleBasedLandRecommendationEngine CreateWithApprovedParcelIds(
+        IReadOnlyCollection<Guid> approvedParcelIds,
+        IReadOnlyDictionary<Guid, CadastralSourceMetadataDto>? sources,
+        params LandParcel[] parcels)
+    {
+        var context = CreateParcelContext(sources);
+        return CreateWithEvaluators(
+            CreateStandardEvaluators(context),
+            mlClient: null,
+            experimentalEvidence: null,
+            experimentalOptions: null,
+            sources,
+            context,
+            projectLeaseReady: null,
+            approvedParcelIds,
+            parcels);
+    }
+}
+
+internal sealed class FakeApprovedPreliminaryLeaseParcelRegistry : IApprovedPreliminaryLeaseParcelRegistry
+{
+    private readonly HashSet<Guid> _approvedParcelIds;
+
+    public FakeApprovedPreliminaryLeaseParcelRegistry(IReadOnlyCollection<Guid>? approvedParcelIds) =>
+        _approvedParcelIds = approvedParcelIds?.ToHashSet() ?? [];
+
+    public Task<IReadOnlySet<Guid>> GetApprovedParcelIdsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlySet<Guid>>(_approvedParcelIds);
+
+    public Task<bool> HasApprovedPreliminaryRequestAsync(
+        Guid landParcelId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(_approvedParcelIds.Contains(landParcelId));
+
+    public Task<ApprovedPreliminaryParcelListResponse> ListApprovedParcelsAsync(
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(new ApprovedPreliminaryParcelListResponse([], page, pageSize, 0));
+
+    public Task<IReadOnlyList<Guid>> ListParcelIdsWithConflictingApprovalsAsync(
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<Guid>>([]);
 }
 
 internal sealed class FakeProjectLeaseReadyDesignationReadRepository : IProjectLeaseReadyDesignationReadRepository

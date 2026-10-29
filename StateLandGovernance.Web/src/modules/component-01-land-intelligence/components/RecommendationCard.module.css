@@ -250,6 +250,13 @@
   color: var(--color-muted);
 }
 
+.whyHeading {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
 .factorList {
   margin: 0;
   padding-left: 1.1rem;
@@ -294,6 +301,14 @@
   font-weight: 400;
   font-size: 0.75rem;
   line-height: 1.35;
+}
+
+.criteriaSummaryLine {
+  display: block;
+}
+
+.criteriaSummaryLine + .criteriaSummaryLine {
+  margin-top: 0.2rem;
 }
 
 .restrictionList {
@@ -374,12 +389,5 @@
   .mainMeta {
     grid-column: 2;
     grid-row: 1 / span 2;
-  }
-
-  .criteriaTable th:nth-child(4),
-  .criteriaTable td:nth-child(4),
-  .criteriaTable th:nth-child(5),
-  .criteriaTable td:nth-child(5) {
-    display: none;
   }
 }

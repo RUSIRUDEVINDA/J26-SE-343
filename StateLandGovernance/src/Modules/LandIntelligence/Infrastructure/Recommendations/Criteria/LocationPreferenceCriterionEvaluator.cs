@@ -35,6 +35,13 @@ internal sealed class LocationPreferenceCriterionEvaluator : IRecommendationCrit
             checks.Add(("divisional secretariat", Matches(preferred.DivisionalSecretariat, location.DivisionalSecretariat)));
         }
 
+        if (!string.IsNullOrWhiteSpace(preferred.GramaNiladhariDivision))
+        {
+            checks.Add((
+                "grama niladhari division",
+                Matches(preferred.GramaNiladhariDivision, location.GramaNiladhariDivision ?? string.Empty)));
+        }
+
         if (checks.Count == 0)
         {
             return CriterionEvaluationFactory.Create(

@@ -1,0 +1,424 @@
+{
+  "stage_a": {
+    "evaluation": "Stage A \u2014 Evidence Sufficiency (all test rows)",
+    "model": "GradientBoosting",
+    "n_rows": 183,
+    "accuracy": 0.9563,
+    "balanced_accuracy": 0.9195,
+    "f1_macro": 0.8768,
+    "false_sufficiency_decisions": 2,
+    "confusion_matrix": {
+      "labels": [
+        "Insufficient Evidence",
+        "Sufficient Evidence"
+      ],
+      "matrix": [
+        [
+          14,
+          2
+        ],
+        [
+          6,
+          161
+        ]
+      ]
+    },
+    "per_class": {
+      "Insufficient Evidence": {
+        "precision": 0.7,
+        "recall": 0.875,
+        "f1-score": 0.7778,
+        "support": 16.0
+      },
+      "Sufficient Evidence": {
+        "precision": 0.9877,
+        "recall": 0.9641,
+        "f1-score": 0.9758,
+        "support": 167.0
+      },
+      "accuracy": 0.9563,
+      "macro avg": {
+        "precision": 0.8439,
+        "recall": 0.9195,
+        "f1-score": 0.8768,
+        "support": 183.0
+      },
+      "weighted avg": {
+        "precision": 0.9626,
+        "recall": 0.9563,
+        "f1-score": 0.9584,
+        "support": 183.0
+      }
+    },
+    "grouped_cv": {
+      "DummyBaseline": {
+        "fit_time": [
+          0.0222,
+          0.0043
+        ],
+        "score_time": [
+          0.0223,
+          0.0056
+        ],
+        "test_accuracy": [
+          0.9426,
+          0.0184
+        ],
+        "test_balanced_accuracy": [
+          0.5,
+          0.0
+        ],
+        "test_f1_macro": [
+          0.4852,
+          0.0049
+        ]
+      },
+      "LogisticRegression": {
+        "fit_time": [
+          0.0468,
+          0.0185
+        ],
+        "score_time": [
+          0.0265,
+          0.0107
+        ],
+        "test_accuracy": [
+          0.9618,
+          0.0148
+        ],
+        "test_balanced_accuracy": [
+          0.9444,
+          0.0781
+        ],
+        "test_f1_macro": [
+          0.8529,
+          0.0406
+        ]
+      },
+      "RandomForest": {
+        "fit_time": [
+          0.9148,
+          0.0693
+        ],
+        "score_time": [
+          0.1131,
+          0.009
+        ],
+        "test_accuracy": [
+          0.9881,
+          0.0113
+        ],
+        "test_balanced_accuracy": [
+          0.9337,
+          0.0716
+        ],
+        "test_f1_macro": [
+          0.951,
+          0.0472
+        ]
+      },
+      "GradientBoosting": {
+        "fit_time": [
+          0.6993,
+          0.1007
+        ],
+        "score_time": [
+          0.0211,
+          0.0034
+        ],
+        "test_accuracy": [
+          0.9881,
+          0.0125
+        ],
+        "test_balanced_accuracy": [
+          0.9345,
+          0.0716
+        ],
+        "test_f1_macro": [
+          0.9516,
+          0.0512
+        ]
+      }
+    }
+  },
+  "stage_b_conditional": {
+    "evaluation": "Stage B \u2014 Conditional (true Sufficient Evidence filter)",
+    "model": "RandomForest",
+    "n_rows": 167,
+    "accuracy": 0.976,
+    "balanced_accuracy": 0.963,
+    "f1_macro": 0.9745,
+    "commercial_suitable_predictions": 0,
+    "residential_suitable_predictions": 0,
+    "policy_pass": true,
+    "confusion_matrix": {
+      "labels": [
+        "Moderately Suitable",
+        "Suitable",
+        "Unsuitable"
+      ],
+      "matrix": [
+        [
+          112,
+          0,
+          0
+        ],
+        [
+          0,
+          19,
+          0
+        ],
+        [
+          4,
+          0,
+          32
+        ]
+      ]
+    },
+    "per_class": {
+      "Moderately Suitable": {
+        "precision": 0.9655,
+        "recall": 1.0,
+        "f1-score": 0.9825,
+        "support": 112.0
+      },
+      "Suitable": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 19.0
+      },
+      "Unsuitable": {
+        "precision": 1.0,
+        "recall": 0.8889,
+        "f1-score": 0.9412,
+        "support": 36.0
+      },
+      "accuracy": 0.976,
+      "macro avg": {
+        "precision": 0.9885,
+        "recall": 0.963,
+        "f1-score": 0.9745,
+        "support": 167.0
+      },
+      "weighted avg": {
+        "precision": 0.9769,
+        "recall": 0.976,
+        "f1-score": 0.9756,
+        "support": 167.0
+      }
+    },
+    "per_purpose": {
+      "Agricultural": {
+        "n": 60,
+        "accuracy": 1.0,
+        "f1_macro": 1.0
+      },
+      "Residential": {
+        "n": 54,
+        "accuracy": 0.963,
+        "f1_macro": 0.9464
+      },
+      "Commercial": {
+        "n": 53,
+        "accuracy": 0.9623,
+        "f1_macro": 0.9567
+      }
+    },
+    "grouped_cv": {
+      "DummyBaseline": {
+        "fit_time": [
+          0.0218,
+          0.0041
+        ],
+        "score_time": [
+          0.0191,
+          0.0028
+        ],
+        "test_accuracy": [
+          0.6413,
+          0.0456
+        ],
+        "test_balanced_accuracy": [
+          0.3333,
+          0.0
+        ],
+        "test_f1_macro": [
+          0.2602,
+          0.0112
+        ]
+      },
+      "LogisticRegression": {
+        "fit_time": [
+          0.0753,
+          0.0202
+        ],
+        "score_time": [
+          0.0278,
+          0.0114
+        ],
+        "test_accuracy": [
+          0.8378,
+          0.034
+        ],
+        "test_balanced_accuracy": [
+          0.868,
+          0.0355
+        ],
+        "test_f1_macro": [
+          0.7947,
+          0.0514
+        ]
+      },
+      "RandomForest": {
+        "fit_time": [
+          1.6228,
+          0.4218
+        ],
+        "score_time": [
+          0.1449,
+          0.0231
+        ],
+        "test_accuracy": [
+          0.9823,
+          0.0074
+        ],
+        "test_balanced_accuracy": [
+          0.977,
+          0.0136
+        ],
+        "test_f1_macro": [
+          0.9801,
+          0.0081
+        ]
+      },
+      "GradientBoosting": {
+        "fit_time": [
+          2.1415,
+          0.3707
+        ],
+        "score_time": [
+          0.0236,
+          0.0035
+        ],
+        "test_accuracy": [
+          0.981,
+          0.0089
+        ],
+        "test_balanced_accuracy": [
+          0.9739,
+          0.0185
+        ],
+        "test_f1_macro": [
+          0.9761,
+          0.0115
+        ]
+      }
+    }
+  },
+  "end_to_end": {
+    "evaluation": "End-to-end chained (Stage A \u2192 Stage B, all test rows, four-class)",
+    "stage_a_model": "GradientBoosting",
+    "stage_b_model": "RandomForest",
+    "n_rows": 183,
+    "accuracy": 0.9563,
+    "balanced_accuracy": 0.9271,
+    "f1_macro": 0.9195,
+    "false_sufficiency_decisions": 2,
+    "commercial_suitable_predictions": 0,
+    "residential_suitable_predictions": 0,
+    "policy_pass": true,
+    "confusion_matrix": {
+      "labels": [
+        "Insufficient Evidence",
+        "Moderately Suitable",
+        "Suitable",
+        "Unsuitable"
+      ],
+      "matrix": [
+        [
+          14,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          112,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          19,
+          0
+        ],
+        [
+          6,
+          0,
+          0,
+          30
+        ]
+      ]
+    },
+    "per_class": {
+      "Insufficient Evidence": {
+        "precision": 0.7,
+        "recall": 0.875,
+        "f1-score": 0.7778,
+        "support": 16.0
+      },
+      "Moderately Suitable": {
+        "precision": 0.9825,
+        "recall": 1.0,
+        "f1-score": 0.9912,
+        "support": 112.0
+      },
+      "Suitable": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 19.0
+      },
+      "Unsuitable": {
+        "precision": 1.0,
+        "recall": 0.8333,
+        "f1-score": 0.9091,
+        "support": 36.0
+      },
+      "accuracy": 0.9563,
+      "macro avg": {
+        "precision": 0.9206,
+        "recall": 0.9271,
+        "f1-score": 0.9195,
+        "support": 183.0
+      },
+      "weighted avg": {
+        "precision": 0.963,
+        "recall": 0.9563,
+        "f1-score": 0.9573,
+        "support": 183.0
+      }
+    },
+    "per_purpose": {
+      "Agricultural": {
+        "n": 61,
+        "accuracy": 0.9836,
+        "f1_macro": 0.7466
+      },
+      "Residential": {
+        "n": 61,
+        "accuracy": 0.9344,
+        "f1_macro": 0.8692
+      },
+      "Commercial": {
+        "n": 61,
+        "accuracy": 0.9508,
+        "f1_macro": 0.9171
+      }
+    }
+  },
+  "random_seed": 42,
+  "timestamp_utc": "2026-10-18T18:13:06.704339+00:00"
+}

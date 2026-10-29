@@ -24,11 +24,11 @@ public static class LeaseInterestStatusTransitions
             LeaseInterestRequestStatus.PendingVerification => next is
                 LeaseInterestRequestStatus.NeedsInformation
                 or LeaseInterestRequestStatus.Declined
-                or LeaseInterestRequestStatus.ReferredToAuthority,
+                or LeaseInterestRequestStatus.AwaitingValuation,
             LeaseInterestRequestStatus.NeedsInformation => next is
                 LeaseInterestRequestStatus.PendingVerification
                 or LeaseInterestRequestStatus.Declined
-                or LeaseInterestRequestStatus.ReferredToAuthority,
+                or LeaseInterestRequestStatus.AwaitingValuation,
             _ => false,
         };
 
@@ -42,21 +42,64 @@ public static class LeaseInterestStatusTransitions
         return true;
     }
 
+    /// <summary>
+    /// Authority decisions after referral and officer valuation. Valuation saves never use this path.
+    /// Only Approved → ApprovedInPrinciple and Rejected → Declined are allowed.
+    /// </summary>
+    public static bool TryGetAuthorityTransition(
+        LeaseInterestRequestStatus current,
+        LeaseInterestAuthorityDecisionKind decision,
+        out LeaseInterestRequestStatus nextStatus,
+        out string? rejectionReason)
+    {
+        nextStatus = current;
+        rejectionReason = null;
+
+        if (current != LeaseInterestRequestStatus.ReferredToAuthority)
+        {
+            rejectionReason =
+                "Authority decisions can only be recorded while the request is referred to the authority.";
+            return false;
+        }
+
+        nextStatus = decision switch
+        {
+            LeaseInterestAuthorityDecisionKind.Approved =>
+                LeaseInterestRequestStatus.ApprovedInPrinciple,
+            LeaseInterestAuthorityDecisionKind.Rejected =>
+                LeaseInterestRequestStatus.Declined,
+            _ => current,
+        };
+
+        if (nextStatus == current)
+        {
+            rejectionReason = "Select Approved or Rejected.";
+            return false;
+        }
+
+        return true;
+    }
+
     public static string ApplicantOutcomeSummary(LeaseInterestRequestStatus status) =>
         status switch
         {
             LeaseInterestRequestStatus.Draft =>
-                "Draft — not submitted. This is not a reservation or lease.",
+                "Draft — not submitted.",
             LeaseInterestRequestStatus.Submitted =>
                 "Submitted — awaiting officer queue (preliminary interest only).",
-            LeaseInterestRequestStatus.PendingVerification =>
-                "Pending officer verification. Your expression of interest is not a reservation or lease approval.",
+            LeaseInterestRequestStatus.PendingVerification => string.Empty,
             LeaseInterestRequestStatus.NeedsInformation =>
-                "Officer needs more information before verification can continue. Follow official channels if contacted.",
+                "More information is required before officer verification can continue.",
             LeaseInterestRequestStatus.Declined =>
-                "Preliminary interest declined after officer review. This is not a court or authority decision.",
+                "Rejected after review.",
+            LeaseInterestRequestStatus.AwaitingValuation =>
+                "Preliminary verification is complete. A valuation officer will record the land worksheet next.",
             LeaseInterestRequestStatus.ReferredToAuthority =>
-                "Referred for authority follow-up outside this pilot. No lease has been created.",
+                "Referred for authority follow-up after officer valuation (preliminary only).",
+            LeaseInterestRequestStatus.ApprovedInPrinciple => string.Empty,
+            LeaseInterestRequestStatus.ClosedAnotherPreliminaryApproved =>
+                "Closed — another preliminary request for this parcel was approved in principle. " +
+                "This is not a rejection of your proposal on its merits.",
             _ => "Status unknown.",
         };
 }

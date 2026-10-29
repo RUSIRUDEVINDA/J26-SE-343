@@ -7,22 +7,38 @@ import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import {
   getLandIntelligenceGisCoverage,
+  listCanonicalLandUseOptions,
+  listGramaNiladhariDivisionOptions,
   listSourceReportedLandUseOptions,
   listResearchSupplement,
   searchRecommendations,
 } from "../services/landIntelligenceApi";
 import {
   FIND_SUITABLE_LAND_FORM_SESSION_KEY,
+  FIND_SUITABLE_LAND_RESTORE_ONCE_KEY,
+  isSupportedLandUseType,
   LandUseType,
   RECOMMENDATIONS_SESSION_KEY,
   type FindSuitableLandFormState,
+  type CanonicalLandUseOptionResponse,
   type IndexedDistrictSummaryResponse,
   type LandIntelligenceGisCoverageResponse,
   type RecommendationsSessionPayload,
   type SourceReportedLandUseOptionResponse,
   type ResearchSupplementParcelResponse,
 } from "../types/landIntelligence";
+import {
+  buildCanonicalLandUseChoices,
+  buildCanonicalLandUseFallbackOptions,
+  normalizeLandUseFilterValue,
+} from "../utils/canonicalLandUse";
 import { landUseTypeLabels, landUseTypeOptions } from "../utils/enumMappings";
+import {
+  buildRecommendationSearchParams,
+  buildRequestFromFormState,
+  DEFAULT_FIND_SUITABLE_MAX_RESULTS,
+  normalizeStoredFindSuitableMaxResults,
+} from "../utils/recommendationSearchState";
 import {
   convertTargetAreaToHectares,
   parseTargetAreaInputUnit,
@@ -32,18 +48,15 @@ import {
 import styles from "./FindSuitableLandForm.module.css";
 
 const FORM_STORE_EVENT = "component01.findSuitableLandForm";
-const PROJECT_LAND_USE_GROUPS = ["Coconut", "Wetland", "Scrub / low jungle"] as const;
-const HIDDEN_SOURCE_LABELS = new Set(["not checked", "other"]);
-
 const initialState: FindSuitableLandFormState = {
   requiredPurpose: "",
   targetAreaValue: "",
   targetAreaUnit: "hectares",
   preferredProvince: "",
-  preferredDistrict: "Colombo",
-  preferredDivisionalSecretariat: "",
+  preferredDistrict: "",
+  preferredGramaNiladhariDivision: "",
   sourceReportedLandUse: "",
-  maxResults: "30",
+  maxResults: DEFAULT_FIND_SUITABLE_MAX_RESULTS,
 };
 
 type FormSnapshot = {
@@ -63,7 +76,7 @@ type FieldErrors = Partial<
 
 type EvidenceStatus = "Available" | "Partial coverage" | "Unavailable";
 
-let formSnapshot: FormSnapshot | null = null;
+let formSnapshot: FormSnapshot = { raw: null, value: initialState };
 
 function parseStoredForm(raw: string | null): FindSuitableLandFormState {
   if (!raw) {
@@ -78,7 +91,9 @@ function parseStoredForm(raw: string | null): FindSuitableLandFormState {
       }
     >;
     return {
-      requiredPurpose: parsed.requiredPurpose ?? "",
+      requiredPurpose: isSupportedLandUseType(parsed.requiredPurpose)
+        ? parsed.requiredPurpose
+        : "",
       targetAreaValue:
         parsed.targetAreaValue ??
         parsed.targetAreaHectares ??
@@ -87,15 +102,16 @@ function parseStoredForm(raw: string | null): FindSuitableLandFormState {
         "",
       targetAreaUnit: parseTargetAreaInputUnit(parsed.targetAreaUnit),
       preferredProvince: parsed.preferredProvince ?? "",
-      preferredDistrict: parsed.preferredDistrict ?? "Colombo",
-      preferredDivisionalSecretariat:
-        parsed.preferredDivisionalSecretariat ?? "",
-      sourceReportedLandUse: parsed.sourceReportedLandUse === "75"
-        ? "cover:Coconut"
-        : parsed.sourceReportedLandUse ?? "",
-      maxResults: parsed.sourceReportedLandUse === "75" && parsed.maxResults === "10"
-        ? "30"
-        : parsed.maxResults ?? "30",
+      preferredDistrict: parsed.preferredDistrict ?? "",
+      preferredGramaNiladhariDivision:
+        parsed.preferredGramaNiladhariDivision ??
+        (parsed as { preferredDivisionalSecretariat?: string })
+          .preferredDivisionalSecretariat ??
+        "",
+      sourceReportedLandUse: normalizeLandUseFilterValue(
+        parsed.sourceReportedLandUse ?? "",
+      ),
+      maxResults: normalizeStoredFindSuitableMaxResults(parsed.maxResults),
     };
   } catch {
     return initialState;
@@ -103,13 +119,7 @@ function parseStoredForm(raw: string | null): FindSuitableLandFormState {
 }
 
 function getFormSnapshot(): FindSuitableLandFormState {
-  const raw = sessionStorage.getItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY);
-  if (formSnapshot && formSnapshot.raw === raw) {
-    return formSnapshot.value;
-  }
-  const value = parseStoredForm(raw);
-  formSnapshot = { raw, value };
-  return value;
+  return formSnapshot.value;
 }
 
 function getServerFormSnapshot(): FindSuitableLandFormState {
@@ -127,19 +137,27 @@ function subscribeFormStore(onStoreChange: () => void) {
 }
 
 function writeFormStore(next: FindSuitableLandFormState | null) {
-  try {
-    if (next === null) {
-      sessionStorage.removeItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY);
-      formSnapshot = { raw: null, value: initialState };
-    } else {
-      const raw = JSON.stringify(next);
-      sessionStorage.setItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY, raw);
-      formSnapshot = { raw, value: next };
-    }
-  } catch {
-    formSnapshot = { raw: null, value: next ?? initialState };
-  }
+  formSnapshot = { raw: null, value: next ?? initialState };
   window.dispatchEvent(new Event(FORM_STORE_EVENT));
+}
+
+function resetFormStoreToDefaults() {
+  try {
+    sessionStorage.removeItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY);
+  } catch {
+    // ignore private mode
+  }
+  writeFormStore(null);
+}
+
+function restoreFormStoreFromSession() {
+  try {
+    const raw = sessionStorage.getItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY);
+    formSnapshot = { raw, value: parseStoredForm(raw) };
+    window.dispatchEvent(new Event(FORM_STORE_EVENT));
+  } catch {
+    resetFormStoreToDefaults();
+  }
 }
 
 function statusClass(status: EvidenceStatus): string {
@@ -189,8 +207,13 @@ export function FindSuitableLandForm() {
     SourceReportedLandUseOptionResponse[]
   >([]);
   const [researchSupplement, setResearchSupplement] = useState<ResearchSupplementParcelResponse[]>([]);
+  const [canonicalLandUseOptions, setCanonicalLandUseOptions] = useState<
+    CanonicalLandUseOptionResponse[]
+  >([]);
   const [sourceLandUseChecked, setSourceLandUseChecked] = useState(false);
   const [gisCoverage, setGisCoverage] = useState<LandIntelligenceGisCoverageResponse | null>(null);
+  const [gnDivisionOptions, setGnDivisionOptions] = useState<string[]>([]);
+  const [gnOptionsLoading, setGnOptionsLoading] = useState(false);
   const [landUseOpen, setLandUseOpen] = useState(false);
   const [landUseMenuAbove, setLandUseMenuAbove] = useState(false);
   const landUseDropdownRef = useRef<HTMLDivElement>(null);
@@ -199,6 +222,23 @@ export function FindSuitableLandForm() {
   const persist = useCallback((next: FindSuitableLandFormState) => {
     setDraft(next);
     writeFormStore(next);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const restoreOnce =
+        sessionStorage.getItem(FIND_SUITABLE_LAND_RESTORE_ONCE_KEY) === "1";
+      sessionStorage.removeItem(FIND_SUITABLE_LAND_RESTORE_ONCE_KEY);
+      if (restoreOnce) {
+        restoreFormStoreFromSession();
+        setDraft(null);
+        return;
+      }
+    } catch {
+      // ignore private mode
+    }
+    resetFormStoreToDefaults();
+    setDraft(null);
   }, []);
 
   function updateField<K extends keyof FindSuitableLandFormState>(
@@ -221,10 +261,18 @@ export function FindSuitableLandForm() {
       listSourceReportedLandUseOptions(),
       listResearchSupplement(),
       getLandIntelligenceGisCoverage(),
-    ]).then(([source, supplement, coverage]) => {
+      listCanonicalLandUseOptions(),
+    ]).then(([source, supplement, coverage, canonical]) => {
       if (cancelled) return;
-      setSourceLandUseOptions(source.status === "fulfilled" ? source.value : []);
-      setResearchSupplement(supplement.status === "fulfilled" ? supplement.value : []);
+      const sourceOptions = source.status === "fulfilled" ? source.value : [];
+      const supplementRows = supplement.status === "fulfilled" ? supplement.value : [];
+      setSourceLandUseOptions(sourceOptions);
+      setResearchSupplement(supplementRows);
+      setCanonicalLandUseOptions(
+        canonical.status === "fulfilled"
+          ? canonical.value
+          : buildCanonicalLandUseFallbackOptions(sourceOptions, supplementRows),
+      );
       setGisCoverage(coverage.status === "fulfilled" ? coverage.value : null);
       setSourceLandUseChecked(true);
     });
@@ -233,36 +281,41 @@ export function FindSuitableLandForm() {
     };
   }, []);
 
-  const sourceCoconutCount = sourceLandUseOptions.find((option) => option.code === "75")?.parcelCount ?? 0;
-  const projectChoices = researchSupplement.length > 0
-    ? PROJECT_LAND_USE_GROUPS.map((group) => ({
-        value: `cover:${group}`,
-        label: group === "Scrub / low jungle" ? "Scrub and low jungle" : group,
-        count: researchSupplement.filter((row) => row.supplementGroup === group).length
-          + (group === "Coconut" ? sourceCoconutCount : 0),
-        origin: "project" as const,
-      })).filter((choice) => choice.count > 0)
-    : [];
-  const sourceChoices = sourceLandUseOptions
-    .filter((option) => option.parcelCount > 0)
-    .filter((option) => !(researchSupplement.length > 0 && option.code === "75"))
-    .filter((option) => !HIDDEN_SOURCE_LABELS.has(option.englishLabel.trim().toLowerCase()))
-    .map((option) => ({
-      value: option.code,
-      label: option.englishLabel,
-      count: option.parcelCount,
-      origin: "source" as const,
-    }));
-  const landUseChoices = [...projectChoices, ...sourceChoices]
-    .sort((a, b) => a.label.localeCompare(b.label));
-  const sourceLandUseDisabled = sourceLandUseChecked && landUseChoices.length === 0;
-  const selectedLandUseChoice = landUseChoices.find((choice) => choice.value === form.sourceReportedLandUse);
-
   useEffect(() => {
-    if (sourceLandUseChecked && form.sourceReportedLandUse && !selectedLandUseChoice) {
-      persist({ ...form, sourceReportedLandUse: "" });
-    }
-  }, [sourceLandUseChecked, form, selectedLandUseChoice, persist]);
+    let cancelled = false;
+    const district = form.preferredDistrict.trim();
+    setGnOptionsLoading(true);
+    void listGramaNiladhariDivisionOptions(district || undefined)
+      .then((options) => {
+        if (!cancelled) {
+          setGnDivisionOptions(options);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setGnDivisionOptions([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setGnOptionsLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [form.preferredDistrict]);
+
+  // One canonical list; counts are distinct parcel ids supplied by the API.
+  const landUseChoices = buildCanonicalLandUseChoices(canonicalLandUseOptions);
+  const normalizedLandUseValue = normalizeLandUseFilterValue(form.sourceReportedLandUse);
+  const sourceLandUseDisabled = sourceLandUseChecked && landUseChoices.length === 0;
+  const selectedLandUseChoice = landUseChoices.find((choice) => choice.value === normalizedLandUseValue);
+
+  // Stale or legacy stored values are resolved at submit time instead of syncing state in an effect.
+  const effectiveLandUseValue = sourceLandUseChecked
+    ? (selectedLandUseChoice?.value ?? "")
+    : normalizedLandUseValue;
 
   useEffect(() => {
     if (!landUseOpen) return;
@@ -357,7 +410,7 @@ export function FindSuitableLandForm() {
 
   function validateEssential(): boolean {
     const next: FieldErrors = {};
-    if (form.requiredPurpose === "") {
+    if (!isSupportedLandUseType(form.requiredPurpose)) {
       next.requiredPurpose = "Select a required purpose to continue.";
     }
     const areaValue = form.targetAreaValue.trim();
@@ -400,19 +453,6 @@ export function FindSuitableLandForm() {
     return Object.keys(next).length === 0;
   }
 
-  function validateSourceFilters(): boolean {
-    const next: FieldErrors = {};
-    if (form.sourceReportedLandUse.startsWith("cover:") &&
-        !researchSupplement.some((row) => row.supplementGroup === form.sourceReportedLandUse.slice(6))) {
-      next.sourceReportedLandUse = "Project land-cover evidence is unavailable for this selection.";
-    } else if (form.sourceReportedLandUse && !form.sourceReportedLandUse.startsWith("cover:") && sourceLandUseOptions.length === 0) {
-      next.sourceReportedLandUse =
-        "Unavailable for the selected district because this layer has not been imported.";
-    }
-    patchFieldErrors(["sourceReportedLandUse"], next);
-    return Object.keys(next).length === 0;
-  }
-
   function handleClear() {
     setDraft(initialState);
     writeFormStore(null);
@@ -426,43 +466,18 @@ export function FindSuitableLandForm() {
 
     const essentialOk = validateEssential();
     const locationOk = validateLocation();
-    const sourceOk = validateSourceFilters();
-    if (!essentialOk || !locationOk || !sourceOk) {
+    if (!essentialOk || !locationOk) {
       return;
     }
 
-    const areaValue = form.targetAreaValue.trim();
-    const parsedAreaInput =
-      areaValue === "" ? undefined : Number.parseFloat(areaValue);
-    const parsedTargetArea =
-      parsedAreaInput === undefined
-        ? undefined
-        : convertTargetAreaToHectares(parsedAreaInput, form.targetAreaUnit);
-    const parsedMaxResults = Number.parseInt(form.maxResults.trim(), 10);
-
-    const province = form.preferredProvince.trim();
-    const district = form.preferredDistrict.trim();
-    const ds = form.preferredDivisionalSecretariat.trim();
-
-    const request = {
-      requiredPurpose: form.requiredPurpose as LandUseType,
-      targetAreaHectares: parsedTargetArea ?? null,
-      preferredLocation:
-        province || district || ds
-          ? {
-              province: province || null,
-              district: district || null,
-              divisionalSecretariat: ds || null,
-            }
-          : null,
-      sourceReportedLandUse: form.sourceReportedLandUse.startsWith("cover:")
-        ? null
-        : form.sourceReportedLandUse.trim() || null,
-      researchLandCoverGroup: form.sourceReportedLandUse.startsWith("cover:")
-        ? form.sourceReportedLandUse.slice(6)
-        : null,
-      maxResults: parsedMaxResults,
+    const submitForm: FindSuitableLandFormState = {
+      ...form,
+      sourceReportedLandUse: effectiveLandUseValue,
     };
+    const request = buildRequestFromFormState(submitForm);
+    if (!request) {
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -471,37 +486,15 @@ export function FindSuitableLandForm() {
         request,
         response,
         submittedAt: new Date().toISOString(),
-        formState: form,
+        formState: submitForm,
       };
       sessionStorage.setItem(
         RECOMMENDATIONS_SESSION_KEY,
         JSON.stringify(payload),
       );
       window.dispatchEvent(new Event("component01.recommendations"));
-      writeFormStore(form);
 
-      // Build URL parameters for reproducible search
-      const params = new URLSearchParams();
-      params.set("purpose", String(request.requiredPurpose));
-      if (request.targetAreaHectares != null) {
-        params.set("area", String(request.targetAreaHectares));
-      }
-      if (request.preferredLocation?.district) {
-        params.set("district", request.preferredLocation.district);
-      }
-      if (request.preferredLocation?.province) {
-        params.set("province", request.preferredLocation.province);
-      }
-      if (request.sourceReportedLandUse) {
-        params.set("landUse", request.sourceReportedLandUse);
-      }
-      if (request.researchLandCoverGroup) {
-        params.set("landCover", request.researchLandCoverGroup);
-      }
-      if (request.maxResults != null) {
-        params.set("maxResults", String(request.maxResults));
-      }
-
+      const params = buildRecommendationSearchParams(request, submitForm);
       router.push(`/land-intelligence/recommendations?${params.toString()}`);
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -517,7 +510,7 @@ export function FindSuitableLandForm() {
   }
 
   const summary = buildSummary(form);
-  const canSearch = form.requiredPurpose !== "" && !submitting;
+  const canSearch = isSupportedLandUseType(form.requiredPurpose) && !submitting;
 
   return (
     <form className={styles.layout} onSubmit={handleSubmit} noValidate>
@@ -528,13 +521,12 @@ export function FindSuitableLandForm() {
               1. Essential
             </h2>
             <p className={styles.panelSubtitle}>
-              Purpose you need and an optional target area. Required purpose must
-              be selected before search.
+              
             </p>
             <div className={styles.grid}>
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="requiredPurpose">
-                  Required purpose{" "}
+                  Required Purpose{" "}
                   <span className={styles.required} aria-hidden="true">
                     *
                   </span>
@@ -577,7 +569,7 @@ export function FindSuitableLandForm() {
 
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="targetAreaValue">
-                  Target area
+                  Target Area
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
                 <div className={styles.areaWrap}>
@@ -627,16 +619,49 @@ export function FindSuitableLandForm() {
 
           <section className={styles.panel} aria-labelledby="location-heading">
             <h2 id="location-heading" className={styles.panelTitle}>
-              2. Location &amp; size
+              2. Location 
             </h2>
             <p className={styles.panelSubtitle}>
-              Narrow the search by administrative location and how many ranked
-              results to return.
+              
             </p>
             <div className={styles.grid}>
               <div className={styles.field}>
+                <label className={styles.label} htmlFor="preferredProvince">
+                  Preferred Province
+                  <span className={styles.optionalTag}>Optional</span>
+                </label>
+                {gisCoverage && gisCoverage.indexedDistricts.length > 0 ? (
+                  <select
+                    id="preferredProvince"
+                    className={styles.select}
+                    value={form.preferredProvince}
+                    onChange={(e) =>
+                      updateField("preferredProvince", e.target.value)
+                    }
+                  >
+                    <option value="">All Provinces</option>
+                    {[...new Set(gisCoverage.indexedDistricts.map(d => d.province))].map((province) => (
+                      <option key={province} value={province}>
+                        {province}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    id="preferredProvince"
+                    className={styles.input}
+                    value={form.preferredProvince}
+                    onChange={(e) =>
+                      updateField("preferredProvince", e.target.value)
+                    }
+                    placeholder="e.g. Western"
+                  />
+                )}
+              </div>
+
+              <div className={styles.field}>
                 <label className={styles.label} htmlFor="preferredDistrict">
-                  Preferred district
+                  Preferred District
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
                 {availableDistricts.length > 0 ? (
@@ -645,11 +670,15 @@ export function FindSuitableLandForm() {
                     className={styles.select}
                     value={form.preferredDistrict}
                     onChange={(e) =>
-                      updateField("preferredDistrict", e.target.value)
+                      persist({
+                        ...form,
+                        preferredDistrict: e.target.value,
+                        preferredGramaNiladhariDivision: "",
+                      })
                     }
                     aria-describedby="district-hint"
                   >
-                    <option value="">All indexed districts</option>
+                    <option value="">All Districts</option>
                     {availableDistricts.map((district) => (
                       <option key={district} value={district}>
                         {district}
@@ -676,66 +705,41 @@ export function FindSuitableLandForm() {
               </div>
 
               <div className={styles.field}>
-                <label className={styles.label} htmlFor="preferredProvince">
-                  Preferred province
-                  <span className={styles.optionalTag}>Optional</span>
-                </label>
-                {gisCoverage && gisCoverage.indexedDistricts.length > 0 ? (
-                  <select
-                    id="preferredProvince"
-                    className={styles.select}
-                    value={form.preferredProvince}
-                    onChange={(e) =>
-                      updateField("preferredProvince", e.target.value)
-                    }
-                  >
-                    <option value="">All indexed provinces</option>
-                    {[...new Set(gisCoverage.indexedDistricts.map(d => d.province))].map((province) => (
-                      <option key={province} value={province}>
-                        {province}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    id="preferredProvince"
-                    className={styles.input}
-                    value={form.preferredProvince}
-                    onChange={(e) =>
-                      updateField("preferredProvince", e.target.value)
-                    }
-                    placeholder="e.g. Western"
-                  />
-                )}
-              </div>
-
-              <div className={styles.field}>
                 <label
                   className={styles.label}
-                  htmlFor="preferredDivisionalSecretariat"
+                  htmlFor="preferredGramaNiladhariDivision"
                 >
-                  Divisional secretariat
+                  Grama Niladhari Division
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
-                <input
-                  id="preferredDivisionalSecretariat"
-                  className={styles.input}
-                  value={form.preferredDivisionalSecretariat}
+                <select
+                  id="preferredGramaNiladhariDivision"
+                  className={styles.select}
+                  value={form.preferredGramaNiladhariDivision}
                   onChange={(e) =>
                     updateField(
-                      "preferredDivisionalSecretariat",
+                      "preferredGramaNiladhariDivision",
                       e.target.value,
                     )
                   }
-                  placeholder="Optional"
-                  disabled
-                  aria-disabled="true"
-                />
+                  disabled={gnOptionsLoading}
+                >
+                  <option value="">
+                    {gnOptionsLoading
+                      ? "Loading divisions…"
+                      : "Any GN Division"}
+                  </option>
+                  {gnDivisionOptions.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="maxResults">
-                  Maximum results to show
+                  Maximum Results to Show
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
                 <input
@@ -763,13 +767,13 @@ export function FindSuitableLandForm() {
 
           <section className={styles.panel} aria-labelledby="source-heading">
             <h2 id="source-heading" className={styles.panelTitle}>
-              3. Source filters
+              3. Source Filters
             </h2>
             
             <div className={styles.grid}>
               <div className={`${styles.field} ${styles.fullWidth}`}>
                 <label className={styles.label} htmlFor="sourceReportedLandUse">
-                  Land-use evidence
+                  Land Use
                   <span className={styles.optionalTag}>Optional</span>
                 </label>
                 <div className={styles.landUseDropdown} ref={landUseDropdownRef}>
@@ -788,7 +792,7 @@ export function FindSuitableLandForm() {
                         setLandUseOpen(false);
                       } else {
                         showLandUseMenu(
-                          Math.max(0, landUseChoices.findIndex((choice) => choice.value === form.sourceReportedLandUse) + 1),
+                          Math.max(0, landUseChoices.findIndex((choice) => choice.value === normalizedLandUseValue) + 1),
                         );
                       }
                     }}
@@ -803,15 +807,15 @@ export function FindSuitableLandForm() {
                       ? "Unavailable for current coverage"
                       : selectedLandUseChoice
                         ? `${selectedLandUseChoice.label} (${selectedLandUseChoice.count})`
-                        : "All land uses"}</span>
-                    <span className={styles.landUseChevron} aria-hidden="true">⌄</span>
+                        : "All Land Uses"}</span>
+                    <span className={styles.landUseChevron} aria-hidden="true">▾</span>
                   </button>
                   {landUseOpen && !sourceLandUseDisabled ? (
                     <div
                       id="source-land-use-options"
                       className={`${styles.landUseMenu} ${landUseMenuAbove ? styles.landUseMenuAbove : ""}`}
                       role="listbox"
-                      aria-label="Land-use evidence"
+                      aria-label="Land use"
                       onKeyDown={(event) => {
                         if (event.key === "Escape") {
                           event.preventDefault();
@@ -846,16 +850,14 @@ export function FindSuitableLandForm() {
                 </div>
                 {sourceLandUseDisabled ? (
                   <p id="source-land-use-hint" className={styles.unavailableNote} role="status">
-                    Unavailable for the selected district because this layer has
-                    not been imported.
+                    Land-use options could not be loaded. Refresh the page after
+                    confirming that the Land Intelligence API is running.
                   </p>
                 ) : (
                   <p id="source-land-use-hint" className={styles.hint}>
-                    {selectedLandUseChoice?.origin === "project"
-                      ? "Matches the project land-cover group. The original cadastral label remains separate in parcel details."
-                      : selectedLandUseChoice?.origin === "source"
-                        ? "Matches this exact source-reported cadastral land-use label."
-                        : "Choose a land use to narrow results, or leave this as All land uses."}
+                    {selectedLandUseChoice
+                      ? "Matches the original cadastral land use or the project GIS classification. Both stay visible in parcel details."
+                      : ""}
                   </p>
                 )}
                 {fieldErrors.sourceReportedLandUse ? (
@@ -898,10 +900,7 @@ export function FindSuitableLandForm() {
                 </li>
               ))}
             </ul>
-            <p className={styles.sideNote}>
-              Partial coverage means some parcels may lack that layer. Missing
-              evidence is never treated as a positive match.
-            </p>
+
           </>
         ) : (
           <p className={styles.sideNote}>

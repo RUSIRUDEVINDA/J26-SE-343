@@ -49,7 +49,16 @@ public enum LeaseInterestStatusActorKindDto
     System = 0,
     Applicant = 1,
     Officer = 2,
+    Authority = 3,
 }
+
+/// <summary>Applicant-visible authority decision summary. Excludes internal officer notes.</summary>
+public sealed record LeaseInterestApplicantAuthorityDecisionDto(
+    LeaseInterestAuthorityDecisionKind Decision,
+    string ApplicantFacingReason,
+    DateTimeOffset RecordedAtUtc,
+    string DecisionLabel,
+    string? NextActionHint);
 
 public sealed record LeaseInterestCostLineDto(
     string Code,
@@ -92,7 +101,8 @@ public sealed record LeaseInterestRequestDetailDto(
     LeaseInterestSupportingInfoDto Supporting,
     bool ConsentToPreliminaryAssessment,
     IReadOnlyList<LeaseInterestStatusHistoryEntryDto> StatusHistory,
-    LeaseInterestCostSummaryDto CostSummary);
+    LeaseInterestCostSummaryDto CostSummary,
+    LeaseInterestApplicantAuthorityDecisionDto? LatestAuthorityDecision = null);
 
 public sealed record ParcelShortlistItemDto(
     Guid LandParcelId,
@@ -111,9 +121,10 @@ public sealed record LeaseInterestDocumentChecklistDto(
     string StorageNote);
 
 public sealed record LeaseInterestOfficerLookupRequestDto(
-    string NationalIdentityCardNumber,
+    string? NationalIdentityCardNumber,
+    string? BusinessRegistrationNumber,
     int Page = 1,
-    int PageSize = 20);
+    int PageSize = 10);
 
 public sealed record LeaseInterestOfficerLookupItemDto(
     Guid RequestId,
@@ -125,7 +136,10 @@ public sealed record LeaseInterestOfficerLookupItemDto(
     string? District,
     LandUseType RequestedPurpose,
     int? RequestedDurationYears,
-    string MaskedNationalIdentityCardNumber);
+    LeaseInterestApplicantKindDto ApplicantKind,
+    string? NationalIdentityCardNumber,
+    string? BusinessRegistrationNumber,
+    bool HasOfficerValuation = false);
 
 public sealed record LeaseInterestOfficerLookupResponseDto(
     IReadOnlyList<LeaseInterestOfficerLookupItemDto> Items,
@@ -144,7 +158,11 @@ public sealed record LeaseInterestOfficerQueueItemDto(
     DateTimeOffset? SubmittedAtUtc,
     LeaseInterestRequestStatus Status,
     string? CadastralNumber,
-    string? District);
+    string? District,
+    LeaseInterestApplicantKindDto ApplicantKind,
+    string? NationalIdentityCardNumber,
+    string? BusinessRegistrationNumber,
+    bool HasOfficerValuation = false);
 
 public sealed record LeaseInterestOfficerQueueResponseDto(
     IReadOnlyList<LeaseInterestOfficerQueueItemDto> Items,
@@ -172,4 +190,10 @@ public sealed record LeaseInterestOfficerRequestDetailDto(
     IReadOnlyList<LeaseInterestStatusHistoryEntryDto> StatusHistory,
     string? CadastralNumber,
     string? District,
-    string ApplicantOutcomeSummary);
+    string ApplicantOutcomeSummary,
+    LeaseInterestApplicantAuthorityDecisionDto? LatestAuthorityDecision = null,
+    Guid? VerificationCompletedByOfficerId = null,
+    Guid? CurrentOfficerActorId = null,
+    bool CanRecordVerificationDecision = false,
+    bool CanRecordValuation = false,
+    bool HasOfficerValuation = false);

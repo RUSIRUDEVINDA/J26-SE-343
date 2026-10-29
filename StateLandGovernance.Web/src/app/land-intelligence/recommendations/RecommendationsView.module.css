@@ -43,13 +43,6 @@
   color: var(--color-muted);
 }
 
-.pipeline {
-  margin: 0.75rem 0 0;
-  font-size: 0.8rem;
-  color: var(--color-muted);
-  line-height: 1.4;
-}
-
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 1.9fr) minmax(260px, 1fr);
@@ -122,15 +115,6 @@
   flex-wrap: wrap;
   gap: 0.65rem;
   margin-top: 0.75rem;
-}
-
-.emptyFilters {
-  margin: 0.75rem 0 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
 }
 
 @media (max-width: 960px) {

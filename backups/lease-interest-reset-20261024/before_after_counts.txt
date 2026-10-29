@@ -1,0 +1,24 @@
+Database: land_intel_colombo_state_research (localhost:5432)
+Connection source: repo-root .env LAND_INTELLIGENCE_CONNECTION
+
+BEFORE
+------
+lease_interest_authority_decisions: 9
+lease_interest_valuations: 20
+lease_interest_status_history: 82
+lease_interest_requests: 28
+parcel_shortlist_items: 3 (preserved)
+land_parcels: 400 (preserved)
+parcel_gn_division_mappings: 400 (preserved)
+
+AFTER
+-----
+lease_interest_authority_decisions: 0
+lease_interest_valuations: 0
+lease_interest_status_history: 0
+lease_interest_requests: 0
+parcel_shortlist_items: 3
+land_parcels: 400
+parcel_gn_division_mappings: 400
+
+Queue checks (after): officer_queue=0, authority_referred=0, approved_in_principle=0, total_requests=0

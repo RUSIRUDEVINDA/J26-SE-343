@@ -1,0 +1,34 @@
+.historicalRecords {
+  margin-top: 1.2rem;
+  font-size: 0.85rem;
+}
+
+.historicalRecords summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.historicalList {
+  margin: 0.75rem 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.historicalItem {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-card-border);
+}
+
+.historicalItem:first-child {
+  margin-top: 0.65rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+.historicalMeta {
+  margin: 0 0 0.65rem;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}

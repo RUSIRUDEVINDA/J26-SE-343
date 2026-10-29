@@ -40,6 +40,29 @@ public sealed class SourceReportedPurposeAlignmentTests
         Assert.DoesNotContain("current use", result.Summary, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory]
+    [InlineData(LandUseType.Industrial, LandUseType.Commercial)]
+    [InlineData(LandUseType.Tourism, LandUseType.Agricultural)]
+    [InlineData(LandUseType.MixedUse, LandUseType.Residential)]
+    public void Unsupported_domain_uses_are_not_compatible_purpose_matches(
+        LandUseType currentUse,
+        LandUseType purpose)
+    {
+        var parcel = CreateRealCadastreParcel(
+            "REAL-UNSUPPORTED-USE",
+            currentUse: currentUse);
+        var evaluator = new PurposeAlignmentCriterionEvaluator(
+            RecommendationEngineTestFactory.CreateParcelContext());
+
+        var result = evaluator.Evaluate(parcel, new LandRecommendationSearchRequest
+        {
+            RequiredPurpose = purpose
+        });
+
+        Assert.False(result.IsMet);
+        Assert.Equal(30m, result.Score);
+    }
+
     [Fact]
     public async Task Changing_purpose_changes_ranking_when_source_land_use_differs()
     {
@@ -142,7 +165,8 @@ public sealed class SourceReportedPurposeAlignmentTests
         string cadastralNumber,
         string district = "Colombo",
         decimal areaHa = 5m,
-        decimal? roadMeters = 250m)
+        decimal? roadMeters = 250m,
+        LandUseType? currentUse = null)
     {
         var parcel = new LandParcel(
             new ParcelIdentifier(cadastralNumber, "REAL-PLAN"),
@@ -150,7 +174,9 @@ public sealed class SourceReportedPurposeAlignmentTests
             new LandArea(areaHa, AreaUnit.Hectares),
             new AdministrativeLocation("Western", district, $"{district} DS"),
             new SpatialReference(6.9271, 79.8612, "EPSG:4326"),
-            currentUse: null);
+            currentUse: currentUse is null
+                ? null
+                : new LandUse(currentUse.Value, "[SYNTHETIC]"));
 
         if (roadMeters is not null)
         {

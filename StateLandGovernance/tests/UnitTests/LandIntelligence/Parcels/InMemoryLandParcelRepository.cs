@@ -24,8 +24,27 @@ internal sealed class InMemoryLandParcelRepository : ILandParcelRepository
 
     public Task<IReadOnlyList<LandParcel>> SearchAsync(
         LandSearchRequest request,
-        CancellationToken cancellationToken = default) =>
-        Task.FromResult<IReadOnlyList<LandParcel>>([.. _parcels]);
+        CancellationToken cancellationToken = default)
+    {
+        IEnumerable<LandParcel> query = _parcels;
+        if (!string.IsNullOrWhiteSpace(request.CadastralNumber))
+        {
+            query = query.Where(parcel =>
+                parcel.Identifier.CadastralNumber.Equals(
+                    request.CadastralNumber.Trim(),
+                    StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.District))
+        {
+            query = query.Where(parcel =>
+                parcel.Location.District.Equals(
+                    request.District.Trim(),
+                    StringComparison.OrdinalIgnoreCase));
+        }
+
+        return Task.FromResult<IReadOnlyList<LandParcel>>([.. query]);
+    }
 
     public Task<int> CountSearchAsync(
         LandSearchRequest request,

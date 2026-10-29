@@ -6,7 +6,7 @@ export default function OfficerLeaseInterestQueuePage() {
     <>
       <PageHeading
         title="Verification queue"
-        subtitle="Review submitted lease-interest requests — preliminary assessment only."
+        subtitle="Review submitted lease-interest requests."
       />
       <OfficerLeaseInterestQueueView />
     </>

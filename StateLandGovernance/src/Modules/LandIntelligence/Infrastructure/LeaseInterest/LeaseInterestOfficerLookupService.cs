@@ -29,24 +29,126 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
         LeaseInterestOfficerLookupRequestDto request,
         CancellationToken cancellationToken)
     {
-        if (!SriLankanNic.TryValidate(
-                request.NationalIdentityCardNumber,
-                out var normalized,
-                out var validationError))
+        var nicProvided = !string.IsNullOrWhiteSpace(request.NationalIdentityCardNumber);
+        var brnProvided = !string.IsNullOrWhiteSpace(request.BusinessRegistrationNumber);
+        if (nicProvided && brnProvided)
+        {
+            throw new ValidationException(
+                ["Provide either a NIC or a business registration number (BRN), not both."]);
+        }
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize < 1 ? 10 : Math.Min(request.PageSize, MaxPageSize);
+
+        if (!nicProvided && !brnProvided)
+        {
+            return await ListAllSubmittedAsync(page, pageSize, cancellationToken);
+        }
+
+        if (nicProvided)
+        {
+            return await LookupByNicDigestAsync(
+                request.NationalIdentityCardNumber!,
+                page,
+                pageSize,
+                cancellationToken);
+        }
+
+        return await LookupByBrnDigestAsync(
+            request.BusinessRegistrationNumber!,
+            page,
+            pageSize,
+            cancellationToken);
+    }
+
+    private async Task<LeaseInterestOfficerLookupResponseDto> ListAllSubmittedAsync(
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        var query = _dbContext.LeaseInterestRequests
+            .AsNoTracking()
+            .Where(x =>
+                x.Status != LeaseInterestRequestStatus.Draft
+                && x.SubmittedAtUtc != null);
+
+        return await MaterializeLookupPageAsync(
+            query,
+            page,
+            pageSize,
+            revealApplicantIdentifiers: false,
+            normalizedNic: null,
+            normalizedBrn: null,
+            cancellationToken);
+    }
+
+    private async Task<LeaseInterestOfficerLookupResponseDto> LookupByNicDigestAsync(
+        string rawNic,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        if (!SriLankanNic.TryValidate(rawNic, out var normalized, out var validationError))
         {
             throw new ValidationException([validationError!]);
         }
 
-        var page = request.Page < 1 ? 1 : request.Page;
-        var pageSize = request.PageSize < 1 ? 20 : Math.Min(request.PageSize, MaxPageSize);
         var digest = _nicProtector.ComputeLookupDigest(normalized);
-
         var query = _dbContext.LeaseInterestRequests
             .AsNoTracking()
             .Where(x =>
                 x.ApplicantNicLookupDigest == digest
-                && x.Status != LeaseInterestRequestStatus.Draft);
+                && x.Status != LeaseInterestRequestStatus.Draft
+                && x.SubmittedAtUtc != null);
 
+        return await MaterializeLookupPageAsync(
+            query,
+            page,
+            pageSize,
+            revealApplicantIdentifiers: true,
+            normalizedNic: normalized,
+            normalizedBrn: null,
+            cancellationToken);
+    }
+
+    private async Task<LeaseInterestOfficerLookupResponseDto> LookupByBrnDigestAsync(
+        string rawBrn,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        if (!LeaseInterestBusinessRegistration.TryValidate(rawBrn, out var normalized, out var validationError))
+        {
+            throw new ValidationException([validationError!]);
+        }
+
+        var digest = _nicProtector.ComputeLookupDigest(normalized);
+        var query = _dbContext.LeaseInterestRequests
+            .AsNoTracking()
+            .Where(x =>
+                x.ApplicantBrnLookupDigest == digest
+                && x.Status != LeaseInterestRequestStatus.Draft
+                && x.SubmittedAtUtc != null);
+
+        return await MaterializeLookupPageAsync(
+            query,
+            page,
+            pageSize,
+            revealApplicantIdentifiers: true,
+            normalizedNic: null,
+            normalizedBrn: normalized,
+            cancellationToken);
+    }
+
+    private async Task<LeaseInterestOfficerLookupResponseDto> MaterializeLookupPageAsync(
+        IQueryable<Infrastructure.Persistence.Entities.LeaseInterestRequestEntity> query,
+        int page,
+        int pageSize,
+        bool revealApplicantIdentifiers,
+        string? normalizedNic,
+        string? normalizedBrn,
+        CancellationToken cancellationToken)
+    {
         var total = await query.CountAsync(cancellationToken);
 
         var rows = await query
@@ -59,8 +161,37 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
         foreach (var row in rows)
         {
             var parcel = await _parcelRepository.GetByIdAsync(row.LandParcelId, cancellationToken);
-            var masked = _nicProtector.Mask(
-                _nicProtector.Decrypt(row.ApplicantNicCiphertext) ?? normalized);
+            var draft = LeaseInterestPayloadSerializer.Deserialize(row.PayloadJson);
+            var applicant = draft.Applicant;
+            string? nic = null;
+            string? brn = null;
+            var decryptedNic = _nicProtector.Decrypt(row.ApplicantNicCiphertext);
+            var normalizedBrnFromPayload = LeaseInterestBusinessRegistration.TryNormalize(
+                applicant.OrganizationRegistrationNumber,
+                out var normalizedFromPayload)
+                ? normalizedFromPayload
+                : null;
+
+            if (revealApplicantIdentifiers)
+            {
+                nic =
+                    applicant.Kind == LeaseInterestApplicantKindDto.Individual
+                        ? decryptedNic ?? normalizedNic
+                        : decryptedNic;
+                brn = normalizedBrnFromPayload ?? normalizedBrn;
+            }
+            else
+            {
+                nic = SriLankanNic.Mask(decryptedNic);
+                if (applicant.Kind == LeaseInterestApplicantKindDto.Organization)
+                {
+                    brn = SriLankanNic.Mask(normalizedBrnFromPayload);
+                }
+            }
+
+            var hasValuation = await _dbContext.LeaseInterestValuations
+                .AsNoTracking()
+                .AnyAsync(v => v.LeaseInterestRequestId == row.Id, cancellationToken);
 
             items.Add(
                 new LeaseInterestOfficerLookupItemDto(
@@ -73,7 +204,10 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
                     parcel?.Location.District,
                     (LandUseType)row.RequestedPurpose,
                     row.RequestedDurationYears,
-                    masked));
+                    applicant.Kind,
+                    nic,
+                    brn,
+                    hasValuation));
         }
 
         return new LeaseInterestOfficerLookupResponseDto(items, total, page, pageSize);

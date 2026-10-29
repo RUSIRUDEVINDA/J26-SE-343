@@ -12,6 +12,10 @@ public interface ILeaseInterestOfficerReviewService
         LeaseInterestOfficerQueueRequestDto request,
         CancellationToken cancellationToken = default);
 
+    Task<LeaseInterestOfficerQueueResponseDto> ListValuationQueueAsync(
+        LeaseInterestOfficerQueueRequestDto request,
+        CancellationToken cancellationToken = default);
+
     Task<LeaseInterestOfficerRequestDetailDto> UpdateStatusAsync(
         Guid requestId,
         LeaseInterestOfficerStatusUpdateDto update,

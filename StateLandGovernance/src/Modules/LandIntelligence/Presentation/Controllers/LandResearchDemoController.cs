@@ -30,5 +30,6 @@ public sealed class LandResearchDemoController : ControllerBase
         Ok(
             new ResearchDemoConfigResponse(
                 _options.Enabled,
-                _officerAccessGate.IsNicLookupEnabled));
+                _officerAccessGate.IsNicLookupEnabled,
+                _officerAccessGate.IsAuthorityReviewEnabled));
 }

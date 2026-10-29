@@ -16,7 +16,7 @@ export type ParcelMapGeometry =
   | {
       kind: "centroid";
       position: LatLngTuple;
-      label: "Recorded location — parcel boundary unavailable";
+      label: "Approximate parcel location — boundary unavailable.";
     }
   | {
       kind: "unavailable";
@@ -155,7 +155,7 @@ export function resolveParcelMapGeometry(
     return {
       kind: "centroid",
       position: [spatial.centroidLatitude, spatial.centroidLongitude],
-      label: "Recorded location — parcel boundary unavailable",
+      label: "Approximate parcel location — boundary unavailable.",
     };
   }
 

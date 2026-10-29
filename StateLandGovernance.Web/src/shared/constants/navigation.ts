@@ -27,11 +27,6 @@ export const component01NavItems: NavItem[] = [
     primary: true,
   },
   {
-    label: "Recommendations",
-    href: `${LAND_INTELLIGENCE_BASE}/recommendations`,
-    icon: "✦",
-  },
-  {
     label: "Parcel Intelligence",
     href: `${LAND_INTELLIGENCE_BASE}/parcels`,
     icon: "▤",
@@ -50,43 +45,53 @@ export const component01NavItems: NavItem[] = [
 
 /** Shown only when the API research-demo officer NIC lookup gate is active. */
 export const officerLeaseInterestLookupNavItem: NavItem = {
-  label: "Officer NIC lookup (Research demo)",
+  label: "Officer applicant lookup",
   href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-lookup`,
   icon: "⚑",
 };
 
 export const officerLeaseInterestQueueNavItem: NavItem = {
-  label: "Officer verification queue (Research demo)",
+  label: "Officer verification queue",
   href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-queue`,
   icon: "⚑",
+};
+
+export const officerLeaseInterestValuationQueueNavItem: NavItem = {
+  label: "Officer valuation queue",
+  href: `${LAND_INTELLIGENCE_BASE}/officer/lease-interest-valuation-queue`,
+  icon: "⚑",
+};
+
+export const authorityLeaseInterestQueueNavItem: NavItem = {
+  label: "Authority review queue",
+  href: `${LAND_INTELLIGENCE_BASE}/authority/lease-interest-queue`,
+  icon: "⚖",
 };
 
 export const WORKFLOW_GOVERNANCE_BASE = "/workflow-governance";
 
 export const workflowGovernanceNavItems: NavItem[] = [
-  { label: "Intake assignment", href: `${WORKFLOW_GOVERNANCE_BASE}/assignments`, icon: "?" },
-  { label: "My applications", href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/cases`, icon: "?" },
-  { label: "Commissioner rejection reports", href: `${WORKFLOW_GOVERNANCE_BASE}/commissioner`, icon: "▤" },
+  { label: "Module home", href: "/component-03", icon: "▦" },
   {
-    label: "Case Queue",
+    label: "Case queue",
     href: `${WORKFLOW_GOVERNANCE_BASE}/cases`,
-    icon: "▤",
+    icon: "☰",
     primary: true,
   },
   {
-    label: "New Case Intake",
+    label: "Proposal intake",
     href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/intake`,
-    icon: "✦",
+    icon: "✎",
   },
   {
-    label: "Track Application",
+    label: "Track application",
     href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/tracking`,
-    icon: "☰",
+    icon: "◎",
   },
   {
-    label: "OCR Intelligence Lab",
-    href: `${WORKFLOW_GOVERNANCE_BASE}/ocr-demo`,
-    icon: "◎",
+    label: "My applications",
+    href: `${WORKFLOW_GOVERNANCE_BASE}/applicant/cases`,
+    icon: "☷",
   },
 ];
 
@@ -106,8 +111,8 @@ export const moduleLandingLinks = [
   {
     id: "component-03",
     title: "Workflow Governance",
-    href: `${WORKFLOW_GOVERNANCE_BASE}/cases`,
-    available: true,
+    href: "/component-03",
+    available: false,
   },
   {
     id: "component-04",

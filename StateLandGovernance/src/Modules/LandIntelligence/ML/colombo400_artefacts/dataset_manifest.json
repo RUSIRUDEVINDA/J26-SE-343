@@ -1,0 +1,13 @@
+{
+  "file": "Colombo_400_Parcel_Expert_Label_Review_Completed_v2.xlsx",
+  "sha256": "29ded69d3645ff803c01a0dcda247324076ee3713e65ac4b8908e406deb4021f",
+  "package_versions": {
+    "scikit-learn": "1.6.1",
+    "pandas": "2.2.3",
+    "numpy": "2.1.3",
+    "joblib": "1.6.0",
+    "openpyxl": "3.1.5"
+  },
+  "random_seed": 42,
+  "timestamp_utc": "2026-10-18T18:12:39.987769+00:00"
+}

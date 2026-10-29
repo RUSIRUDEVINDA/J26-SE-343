@@ -1,44 +1,482 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import {
+  officerLeaseInterestQueueNavItem,
+  officerLeaseInterestValuationQueueNavItem,
+} from "@/shared/constants/navigation";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { LoadingState } from "@/shared/components/LoadingState";
-import { getOfficerLeaseInterestRequest, updateOfficerLeaseInterestStatus } from "../services/officerLeaseInterestApi";
-import type { LeaseInterestOfficerRequestDetail, LeaseInterestRequestStatus } from "../types/landIntelligence";
+import { getOfficerLeaseInterestRequest, listOfficerValuations, recordOfficerValuation, updateOfficerLeaseInterestStatus } from "../services/officerLeaseInterestApi";
+import type {
+  LeaseInterestOfficerRequestDetail,
+  LeaseInterestRequestStatus,
+  LeaseInterestValuation,
+  LeaseInterestValuationFormType,
+  RecordLeaseInterestValuation,
+} from "../types/landIntelligence";
+import { StatusBadge } from "@/shared/components/StatusBadge";
+import { useModalDialogA11y } from "../hooks/useModalDialogA11y";
 import { landUseTypeLabels } from "../utils/enumMappings";
-import { leaseInterestApplicantOutcome, leaseInterestStatusLabel } from "../utils/leaseInterestStatus";
+import {
+  officerValuationPanelMode,
+  partitionValuationsByLatest,
+  readonlyValuationHelpText,
+  unavailableValuationMessage,
+} from "../utils/officerClosedCase";
+import { valuationFormTypeForRequestedPurpose } from "../utils/leaseInterestValuationFormType";
+import { HistoricalValuationRecords } from "./HistoricalValuationRecords";
+import { LeaseInterestApplicantDetailFields } from "./LeaseInterestApplicantDetailFields";
+import {
+  leaseInterestApplicantOutcome,
+  leaseInterestStatusBadgeTone,
+  leaseInterestStatusLabel,
+} from "../utils/leaseInterestStatus";
+import { AuthorityValuationWorksheet } from "./AuthorityValuationWorksheet";
+import {
+  beginValuationSaveAttempt,
+  markValuationSaveFailed,
+  markValuationSaveSucceeded,
+  preserveValuationFormOnFailure,
+  type ValuationSaveAttemptState,
+} from "../utils/officerValuationSave";
 import styles from "./OfficerLeaseInterestReviewView.module.css";
 
-const REVIEW_STATUSES: LeaseInterestRequestStatus[] = [4, 5, 6];
+const AWAITING_VALUATION_STATUS = 9 as LeaseInterestRequestStatus;
+const REVIEW_STATUSES: LeaseInterestRequestStatus[] = [5, AWAITING_VALUATION_STATUS];
+const DEFAULT_OFFICER_OUTCOME: LeaseInterestRequestStatus = AWAITING_VALUATION_STATUS;
+const OFFICER_DECISION_NAVIGATE_STATUSES: LeaseInterestRequestStatus[] = [
+  5,
+  AWAITING_VALUATION_STATUS,
+];
 const formatDate = (value: string) => new Date(value).toLocaleString("en-LK", { dateStyle: "medium", timeStyle: "short" });
+type ValuationForm = {
+  formType: LeaseInterestValuationFormType;
+  assessedLandValueLkr: string;
+  leaseFileNumber: string;
+  divisionalSecretariat: string;
+  leaseApprovalDate: string;
+  leaseCommencementDate: string;
+  valuationReportDate: string;
+  leaseAgreementDate: string;
+  previousAssessedValueLkr: string;
+  leaseRatePercent: string;
+  annualLeaseAmountLkr: string;
+  firstPeriodAmountLkr: string;
+  secondPeriodAmountLkr: string;
+  secondPeriodAnnualAmountLkr: string;
+  circular2018AmountLkr: string;
+  circular2020SixAdjustmentLkr: string;
+  firstPeriodLines: { period: string; amountLkr: string }[];
+  secondPeriodLines: { period: string; amountLkr: string }[];
+  worksheetNotes: string;
+};
+const emptyValuation: ValuationForm = {
+  formType: "AgriculturalCommercial", assessedLandValueLkr: "", leaseFileNumber: "",
+  divisionalSecretariat: "", leaseApprovalDate: "", leaseCommencementDate: "",
+  valuationReportDate: "", leaseAgreementDate: "", previousAssessedValueLkr: "",
+  leaseRatePercent: "", annualLeaseAmountLkr: "", firstPeriodAmountLkr: "",
+  secondPeriodAmountLkr: "", secondPeriodAnnualAmountLkr: "", circular2018AmountLkr: "",
+  circular2020SixAdjustmentLkr: "", firstPeriodLines: [{ period: "", amountLkr: "" }],
+  secondPeriodLines: [{ period: "", amountLkr: "" }], worksheetNotes: "",
+};
+const fromValuation = (value: LeaseInterestValuation): ValuationForm => {
+  const worksheet = value.worksheet;
+  const text = (input: string | number | null | undefined) => input == null ? "" : String(input);
+  const lines = (rows: { period: string; amountLkr?: number | null }[] | null | undefined) =>
+    rows?.length ? rows.map((row) => ({ period: row.period, amountLkr: text(row.amountLkr) })) : [{ period: "", amountLkr: "" }];
+  return {
+    formType: value.formType === "Residential" ? "Residential" : "AgriculturalCommercial",
+    assessedLandValueLkr: text(value.assessedLandValueLkr),
+    leaseFileNumber: text(worksheet?.leaseFileNumber), divisionalSecretariat: text(worksheet?.divisionalSecretariat),
+    leaseApprovalDate: text(worksheet?.leaseApprovalDate), leaseCommencementDate: text(worksheet?.leaseCommencementDate),
+    valuationReportDate: text(worksheet?.valuationReportDate), leaseAgreementDate: text(worksheet?.leaseAgreementDate),
+    previousAssessedValueLkr: text(worksheet?.previousAssessedValueLkr), leaseRatePercent: text(worksheet?.leaseRatePercent),
+    annualLeaseAmountLkr: text(worksheet?.annualLeaseAmountLkr), firstPeriodAmountLkr: text(worksheet?.firstPeriodAmountLkr),
+    secondPeriodAmountLkr: text(worksheet?.secondPeriodAmountLkr), secondPeriodAnnualAmountLkr: text(worksheet?.secondPeriodAnnualAmountLkr),
+    circular2018AmountLkr: text(worksheet?.circular2018AmountLkr),
+    circular2020SixAdjustmentLkr: text(worksheet?.circular2020SixAdjustmentLkr),
+    firstPeriodLines: lines(worksheet?.firstPeriodLines), secondPeriodLines: lines(worksheet?.secondPeriodLines),
+    worksheetNotes: text(worksheet?.worksheetNotes),
+  };
+};
 
-export function OfficerLeaseInterestReviewView({ requestId }: { requestId: string }) {
+function formatLkr(value: string | number): string {
+  const amount = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(amount)) {
+    return value.toString();
+  }
+  return amount.toLocaleString("en-LK", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function valuationFormTypeLabel(formType: LeaseInterestValuationFormType): string {
+  return formType === "Residential" ? "Residential lease" : "Agricultural / commercial lease";
+}
+
+function validateValuationFormForRecord(
+  detail: LeaseInterestOfficerRequestDetail,
+  valuations: LeaseInterestValuation[],
+  formSnapshot: ValuationForm,
+): string | null {
+  if (detail.status !== 9 && detail.status !== 6) {
+    return "Record the valuation only after preliminary verification is complete.";
+  }
+  if (!detail.canRecordValuation) {
+    return "You cannot record the valuation for this request with the current officer identity.";
+  }
+  if (valuations.length > 0) {
+    return "A valuation has already been recorded for this request.";
+  }
+  if (!formSnapshot.leaseFileNumber.trim()) {
+    return "Enter the lease file number.";
+  }
+  if (!formSnapshot.divisionalSecretariat.trim()) {
+    return "Enter the Divisional Secretariat division.";
+  }
+  const amount = Number(formSnapshot.assessedLandValueLkr);
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return "Enter a positive officer-assessed land value.";
+  }
+  const optionalNumber = (value: string): number | undefined => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return undefined;
+    }
+    const parsed = Number(trimmed);
+    return Number.isFinite(parsed) ? parsed : Number.NaN;
+  };
+  const enteredFigures = [
+    formSnapshot.previousAssessedValueLkr,
+    formSnapshot.leaseRatePercent,
+    formSnapshot.annualLeaseAmountLkr,
+    formSnapshot.firstPeriodAmountLkr,
+    formSnapshot.secondPeriodAmountLkr,
+    ...(formSnapshot.formType === "Residential"
+      ? [formSnapshot.secondPeriodAnnualAmountLkr]
+      : [formSnapshot.circular2018AmountLkr, formSnapshot.circular2020SixAdjustmentLkr]),
+  ];
+  if (enteredFigures.some((value) => value.trim() && (!Number.isFinite(Number(value)) || Number(value) < 0))) {
+    return "Enter valid non-negative numbers for all manually entered figures.";
+  }
+  const firstPeriodLines = formSnapshot.firstPeriodLines
+    .filter((row) => row.period.trim() || row.amountLkr.trim())
+    .map((row) => ({
+      period: row.period.trim(),
+      amountLkr: optionalNumber(row.amountLkr),
+    }));
+  const secondPeriodLines = formSnapshot.secondPeriodLines
+    .filter((row) => row.period.trim() || row.amountLkr.trim())
+    .map((row) => ({
+      period: row.period.trim(),
+      amountLkr: optionalNumber(row.amountLkr),
+    }));
+  if (
+    [...firstPeriodLines, ...secondPeriodLines].some(
+      (row) =>
+        !row.period ||
+        (row.amountLkr !== undefined && (!Number.isFinite(row.amountLkr) || row.amountLkr < 0)),
+    )
+  ) {
+    return "Complete the period description and enter a non-negative amount for each table row.";
+  }
+  return null;
+}
+
+export type OfficerLeaseInterestWorkflowMode =
+  | "verification"
+  | "valuation"
+  | "readonly";
+
+export function OfficerLeaseInterestReviewView({
+  requestId,
+  workflowMode = "verification",
+}: {
+  requestId: string;
+  workflowMode?: OfficerLeaseInterestWorkflowMode;
+}) {
+  const router = useRouter();
   const [detail, setDetail] = useState<LeaseInterestOfficerRequestDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [note, setNote] = useState("");
-  const [newStatus, setNewStatus] = useState<LeaseInterestRequestStatus>(4);
+  const [newStatus, setNewStatus] = useState<LeaseInterestRequestStatus>(
+    DEFAULT_OFFICER_OUTCOME,
+  );
   const [saving, setSaving] = useState(false);
+  const [valuations, setValuations] = useState<LeaseInterestValuation[]>([]);
+  const [valuationForm, setValuationForm] = useState<ValuationForm>(emptyValuation);
+  const [savingValuation, setSavingValuation] = useState(false);
+  const [valuationError, setValuationError] = useState<string | null>(null);
+  const [valuationConfirmOpen, setValuationConfirmOpen] = useState(false);
+  const [valuationSuccessOpen, setValuationSuccessOpen] = useState(false);
+  const [decisionSuccessOpen, setDecisionSuccessOpen] = useState(false);
+  const [decisionSuccessStatus, setDecisionSuccessStatus] =
+    useState<LeaseInterestRequestStatus | null>(null);
+  const valuationSaveAttemptRef = useRef<ValuationSaveAttemptState>({
+    idempotencyKey: null,
+    inFlight: false,
+  });
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  function updateValuation<K extends keyof ValuationForm>(key: K, value: ValuationForm[K]) {
+    setValuationForm((current) => ({ ...current, [key]: value }));
+  }
+
+  function updatePeriodLine(group: "firstPeriodLines" | "secondPeriodLines", index: number, key: "period" | "amountLkr", value: string) {
+    setValuationForm((current) => ({
+      ...current,
+      [group]: current[group].map((row, rowIndex) => rowIndex === index ? { ...row, [key]: value } : row),
+    }));
+  }
+
+  function addPeriodLine(group: "firstPeriodLines" | "secondPeriodLines") {
+    setValuationForm((current) => ({ ...current, [group]: [...current[group], { period: "", amountLkr: "" }] }));
+  }
+
+  function removePeriodLine(group: "firstPeriodLines" | "secondPeriodLines", index: number) {
+    setValuationForm((current) => ({ ...current, [group]: current[group].filter((_, rowIndex) => rowIndex !== index) }));
+  }
+
+  async function refreshValuations() {
+    const recorded = await listOfficerValuations(requestId);
+    setValuations(recorded);
+    if (recorded[0]) {
+      setValuationForm(fromValuation(recorded[0]));
+    }
+  }
+
+  function openValuationConfirmDialog() {
+    if (!detail) {
+      return;
+    }
+    const validationError = validateValuationFormForRecord(detail, valuations, valuationForm);
+    if (validationError) {
+      setValuationError(validationError);
+      return;
+    }
+    setValuationError(null);
+    setValuationConfirmOpen(true);
+  }
+
+  async function closeValuationSuccessPopup() {
+    setValuationSuccessOpen(false);
     try {
+      await refreshValuations();
       const result = await getOfficerLeaseInterestRequest(requestId);
       setDetail(result);
-      setNewStatus(4);
-    } catch (err) {
-      setError(err instanceof ApiClientError ? err.detail || err.title : "Unable to load request for review.");
-    } finally {
-      setLoading(false);
+    } catch {
+      // Keep the successful save visible even if the follow-up refresh fails.
     }
+  }
+
+  async function handleValuationSave() {
+    if (!detail) return;
+    const attempt = beginValuationSaveAttempt(valuationSaveAttemptRef.current);
+    if (!attempt.ok) {
+      return;
+    }
+    valuationSaveAttemptRef.current = attempt.nextState;
+    setSavingValuation(true);
+    setValuationError(null);
+    setSuccess(null);
+    setValuationConfirmOpen(false);
+    const formSnapshot = preserveValuationFormOnFailure(valuationForm);
+    const validationError = validateValuationFormForRecord(detail, valuations, formSnapshot);
+    if (validationError) {
+      valuationSaveAttemptRef.current = markValuationSaveFailed(valuationSaveAttemptRef.current);
+      setSavingValuation(false);
+      setValuationError(validationError);
+      return;
+    }
+    const amount = Number(formSnapshot.assessedLandValueLkr);
+    const optionalNumber = (value: string): number | undefined => {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return undefined;
+      }
+      const parsed = Number(trimmed);
+      return Number.isFinite(parsed) ? parsed : Number.NaN;
+    };
+    const optionalDate = (value: string): string | undefined => {
+      const trimmed = value.trim();
+      return trimmed || undefined;
+    };
+    const firstPeriodLines = formSnapshot.firstPeriodLines
+      .filter((row) => row.period.trim() || row.amountLkr.trim())
+      .map((row) => ({
+        period: row.period.trim(),
+        amountLkr: optionalNumber(row.amountLkr),
+      }));
+    const secondPeriodLines = formSnapshot.secondPeriodLines
+      .filter((row) => row.period.trim() || row.amountLkr.trim())
+      .map((row) => ({
+        period: row.period.trim(),
+        amountLkr: optionalNumber(row.amountLkr),
+      }));
+    try {
+      const worksheet: RecordLeaseInterestValuation["worksheet"] = {
+        leaseFileNumber: formSnapshot.leaseFileNumber.trim(),
+        divisionalSecretariat: formSnapshot.divisionalSecretariat.trim(),
+        firstPeriodLines,
+        secondPeriodLines,
+      };
+      const leaseApprovalDate = optionalDate(formSnapshot.leaseApprovalDate);
+      const leaseCommencementDate = optionalDate(formSnapshot.leaseCommencementDate);
+      const valuationReportDate = optionalDate(formSnapshot.valuationReportDate);
+      const leaseAgreementDate = optionalDate(formSnapshot.leaseAgreementDate);
+      const previousAssessedValueLkr = optionalNumber(formSnapshot.previousAssessedValueLkr);
+      const leaseRatePercent = optionalNumber(formSnapshot.leaseRatePercent);
+      const annualLeaseAmountLkr = optionalNumber(formSnapshot.annualLeaseAmountLkr);
+      const firstPeriodAmountLkr = optionalNumber(formSnapshot.firstPeriodAmountLkr);
+      const secondPeriodAmountLkr = optionalNumber(formSnapshot.secondPeriodAmountLkr);
+      const secondPeriodAnnualAmountLkr =
+        formSnapshot.formType === "Residential"
+          ? optionalNumber(formSnapshot.secondPeriodAnnualAmountLkr)
+          : undefined;
+      const circular2018AmountLkr =
+        formSnapshot.formType === "AgriculturalCommercial"
+          ? optionalNumber(formSnapshot.circular2018AmountLkr)
+          : undefined;
+      const circular2020SixAdjustmentLkr =
+        formSnapshot.formType === "AgriculturalCommercial"
+          ? optionalNumber(formSnapshot.circular2020SixAdjustmentLkr)
+          : undefined;
+      const worksheetNotes = formSnapshot.worksheetNotes.trim() || undefined;
+
+      if (leaseApprovalDate) worksheet.leaseApprovalDate = leaseApprovalDate;
+      if (leaseCommencementDate) worksheet.leaseCommencementDate = leaseCommencementDate;
+      if (valuationReportDate) worksheet.valuationReportDate = valuationReportDate;
+      if (leaseAgreementDate) worksheet.leaseAgreementDate = leaseAgreementDate;
+      if (previousAssessedValueLkr !== undefined) worksheet.previousAssessedValueLkr = previousAssessedValueLkr;
+      if (leaseRatePercent !== undefined) worksheet.leaseRatePercent = leaseRatePercent;
+      if (annualLeaseAmountLkr !== undefined) worksheet.annualLeaseAmountLkr = annualLeaseAmountLkr;
+      if (firstPeriodAmountLkr !== undefined) worksheet.firstPeriodAmountLkr = firstPeriodAmountLkr;
+      if (secondPeriodAmountLkr !== undefined) worksheet.secondPeriodAmountLkr = secondPeriodAmountLkr;
+      if (secondPeriodAnnualAmountLkr !== undefined) {
+        worksheet.secondPeriodAnnualAmountLkr = secondPeriodAnnualAmountLkr;
+      }
+      if (circular2018AmountLkr !== undefined) worksheet.circular2018AmountLkr = circular2018AmountLkr;
+      if (circular2020SixAdjustmentLkr !== undefined) {
+        worksheet.circular2020SixAdjustmentLkr = circular2020SixAdjustmentLkr;
+      }
+      if (worksheetNotes) worksheet.worksheetNotes = worksheetNotes;
+
+      const recorded = await recordOfficerValuation(
+        requestId,
+        {
+          formType: valuationFormTypeForRequestedPurpose(detail.proposal.requestedPurpose),
+          assessedLandValueLkr: amount,
+          worksheet,
+        },
+        attempt.idempotencyKey,
+      );
+      valuationSaveAttemptRef.current = markValuationSaveSucceeded();
+      setValuations((current) => {
+        const withoutDuplicate = current.filter((item) => item.id !== recorded.id);
+        return [recorded, ...withoutDuplicate];
+      });
+      setSuccess(null);
+      setValuationSuccessOpen(true);
+      // Refresh history from the server after the database write succeeds.
+      void refreshValuations().catch(() => undefined);
+    } catch (err) {
+      valuationSaveAttemptRef.current = markValuationSaveFailed(valuationSaveAttemptRef.current);
+      // Preserve every entered field; do not reset the worksheet on failure.
+      setValuationForm(preserveValuationFormOnFailure(formSnapshot));
+      setValuationSuccessOpen(false);
+      setValuationError(
+        err instanceof ApiClientError
+          ? err.errors?.join(" ") || err.detail || err.title
+          : "Unable to record valuation.",
+      );
+    } finally {
+      setSavingValuation(false);
+      if (valuationSaveAttemptRef.current.inFlight) {
+        valuationSaveAttemptRef.current = markValuationSaveFailed(valuationSaveAttemptRef.current);
+      }
+    }
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [result, recorded] = await Promise.all([
+          getOfficerLeaseInterestRequest(requestId),
+          listOfficerValuations(requestId),
+        ]);
+        if (cancelled) {
+          return;
+        }
+        setDetail(result);
+        setValuations(recorded);
+        setValuationForm(
+          recorded[0]
+            ? fromValuation(recorded[0])
+            : {
+                ...emptyValuation,
+                formType: valuationFormTypeForRequestedPurpose(
+                  result.proposal.requestedPurpose,
+                ),
+              },
+        );
+        setNewStatus(DEFAULT_OFFICER_OUTCOME);
+      } catch (err) {
+        if (!cancelled) {
+          setError(
+            err instanceof ApiClientError
+              ? err.detail || err.title
+              : "Unable to load request for review.",
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [requestId]);
 
-  useEffect(() => { void load(); }, [load]);
+  const { dialogRef: valuationConfirmDialogRef } = useModalDialogA11y({
+    open: valuationConfirmOpen,
+    onClose: () => {
+      setValuationConfirmOpen(false);
+    },
+  });
+
+  const { dialogRef: valuationSuccessDialogRef } = useModalDialogA11y({
+    open: valuationSuccessOpen,
+    onClose: () => {
+      void closeValuationSuccessPopup();
+    },
+  });
+
+  const { dialogRef: decisionSuccessDialogRef } = useModalDialogA11y({
+    open: decisionSuccessOpen,
+    onClose: () => {
+      closeDecisionSuccessPopup();
+    },
+  });
+
+  function closeDecisionSuccessPopup() {
+    setDecisionSuccessOpen(false);
+    setDecisionSuccessStatus(null);
+    router.push(officerLeaseInterestQueueNavItem.href);
+  }
+
+  function closeValuationSuccessAndReturn() {
+    setValuationSuccessOpen(false);
+    router.push(officerLeaseInterestValuationQueueNavItem.href);
+  }
 
   async function handleStatusUpdate() {
     if (!detail || saving || !note.trim()) return;
@@ -51,7 +489,13 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
       });
       setDetail(updated);
       setNote("");
-      setSuccess(`Decision recorded: ${leaseInterestStatusLabel(updated.status)}.`);
+      if (OFFICER_DECISION_NAVIGATE_STATUSES.includes(updated.status)) {
+        setSuccess(null);
+        setDecisionSuccessStatus(updated.status);
+        setDecisionSuccessOpen(true);
+      } else {
+        setSuccess(`Decision recorded: ${leaseInterestStatusLabel(updated.status)}.`);
+      }
     } catch (err) {
       setError(err instanceof ApiClientError ? err.errors?.join(" ") || err.detail || err.title : "Status update failed.");
     } finally {
@@ -59,43 +503,454 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
     }
   }
 
-  if (loading) return <LoadingState message="Loading request for officer review…" />;
+  if (loading) {
+    return (
+      <LoadingState
+        message={
+          workflowMode === "readonly"
+            ? "Loading request details…"
+            : "Loading request for officer review…"
+        }
+      />
+    );
+  }
   if (error && !detail) return <ErrorMessage message={error} />;
   if (!detail) return null;
 
-  const canReview = detail.status === 3 || detail.status === 4;
+  const valuationEligible =
+    detail.canRecordValuation === true
+    && (detail.status === 9 || (detail.status === 6 && valuations.length === 0));
+  let panelMode = officerValuationPanelMode(detail.status, valuations.length);
+  if (workflowMode === "readonly") {
+    panelMode = valuations.length > 0 ? "readonly" : "unavailable";
+  } else if (workflowMode === "verification") {
+    panelMode =
+      panelMode === "editable" ? "unavailable" : panelMode;
+  } else if (workflowMode === "valuation" && !valuationEligible) {
+    panelMode =
+      valuations.length > 0 ? "readonly" : "unavailable";
+  }
+  const { current: currentValuation, historical: historicalValuations } =
+    partitionValuationsByLatest(valuations);
+  const requiredFormType = valuationFormTypeForRequestedPurpose(
+    detail.proposal.requestedPurpose,
+  );
+  const valuationFieldA11y = valuationError
+    ? ({ "aria-invalid": true, "aria-describedby": "valuation-error" } as const)
+    : {};
+  const canReview =
+    workflowMode === "verification"
+    && (detail.canRecordVerificationDecision === true
+      || detail.status === 3
+      || detail.status === 4);
   const outcomeOptions = detail.status === 4 ? [...REVIEW_STATUSES, 3 as const] : REVIEW_STATUSES;
+  const applicantOutcomeLine = leaseInterestApplicantOutcome(detail.status);
+  const showVerificationAside = workflowMode === "verification";
+  const showValuationSection =
+    workflowMode === "readonly"
+    || workflowMode !== "verification"
+    || valuations.length > 0
+    || detail.status === 9;
 
   return (
     <div className={styles.page}>
-      <Link href="/land-intelligence/officer/lease-interest-lookup" className={styles.backLink}>← Back to NIC lookup</Link>
+      {decisionSuccessOpen && decisionSuccessStatus != null ? (
+        <div
+          className={styles.modalOverlay}
+          role="presentation"
+          onClick={() => {
+            closeDecisionSuccessPopup();
+          }}
+        >
+          <div
+            ref={decisionSuccessDialogRef}
+            className={styles.modalDialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="officer-decision-success-title"
+            aria-describedby="officer-decision-success-body"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="officer-decision-success-title" className={styles.modalTitle}>
+              Decision recorded
+            </h2>
+            <p id="officer-decision-success-body" className={styles.modalBody}>
+              This request is now{" "}
+              <strong>{leaseInterestStatusLabel(decisionSuccessStatus)}</strong>.
+              {" "}
+              {leaseInterestApplicantOutcome(decisionSuccessStatus)}
+              {" "}
+              You will return to the verification queue.
+            </p>
+            <div className={styles.modalActions}>
+              <Button
+                type="button"
+                variant="primary"
+                onClick={() => {
+                  closeDecisionSuccessPopup();
+                }}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {valuationConfirmOpen ? (
+        <div
+          className={styles.modalOverlay}
+          role="presentation"
+          onClick={() => {
+            if (!savingValuation) {
+              setValuationConfirmOpen(false);
+            }
+          }}
+        >
+          <div
+            ref={valuationConfirmDialogRef}
+            className={styles.modalDialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="valuation-confirm-title"
+            aria-describedby="valuation-confirm-body"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="valuation-confirm-title" className={styles.modalTitle}>
+              Confirm valuation
+            </h2>
+            <p id="valuation-confirm-body" className={styles.modalBody}>
+              Review the values below. Once recorded, this valuation cannot be
+              edited or submitted again.
+            </p>
+            <dl className={styles.confirmSummary}>
+              <div>
+                <dt>Paper form type</dt>
+                <dd>{valuationFormTypeLabel(requiredFormType)}</dd>
+              </div>
+              <div>
+                <dt>Lease file number</dt>
+                <dd>{valuationForm.leaseFileNumber.trim()}</dd>
+              </div>
+              <div>
+                <dt>Divisional Secretariat</dt>
+                <dd>{valuationForm.divisionalSecretariat.trim()}</dd>
+              </div>
+              <div>
+                <dt>Assessed land value (LKR)</dt>
+                <dd>{formatLkr(valuationForm.assessedLandValueLkr)}</dd>
+              </div>
+              {valuationForm.annualLeaseAmountLkr.trim() ? (
+                <div>
+                  <dt>Annual lease amount (LKR)</dt>
+                  <dd>{formatLkr(valuationForm.annualLeaseAmountLkr)}</dd>
+                </div>
+              ) : null}
+            </dl>
+            <div className={styles.modalActions}>
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={savingValuation}
+                onClick={() => {
+                  setValuationConfirmOpen(false);
+                }}
+              >
+                Back to edit
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                disabled={savingValuation}
+                onClick={() => {
+                  void handleValuationSave();
+                }}
+              >
+                {savingValuation ? "Recording…" : "Confirm and record"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {valuationSuccessOpen ? (
+        <div
+          className={styles.modalOverlay}
+          role="presentation"
+          onClick={() => { void closeValuationSuccessPopup(); }}
+        >
+          <div
+            ref={valuationSuccessDialogRef}
+            className={styles.modalDialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="valuation-success-title"
+            aria-describedby="valuation-success-body"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="valuation-success-title" className={styles.modalTitle}>
+              Valuation recorded
+            </h2>
+            <p id="valuation-success-body" className={styles.modalBody}>
+              The officer valuation has been saved. The request is now{" "}
+              <strong>Referred to authority</strong> for a preliminary decision.
+              This does not reserve land or approve a lease.
+            </p>
+            <div className={styles.modalActions}>
+              <Button
+                type="button"
+                variant="primary"
+                onClick={() => {
+                  if (workflowMode === "valuation") {
+                    closeValuationSuccessAndReturn();
+                  } else {
+                    void closeValuationSuccessPopup();
+                  }
+                }}
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      <Link href="/land-intelligence/officer/lease-interest-lookup" className={styles.backLink}>
+        ← Back to applicant lookup
+      </Link>
       <header className={styles.caseHeader}>
         <div>
-          <p className={styles.eyebrow}>Lease interest request</p>
+          <p className={styles.eyebrow}>
+            {workflowMode === "readonly" ? "Applicant lookup" : "Lease interest request"}
+          </p>
           <h2 className={styles.reference}>{detail.acknowledgementReference ?? "Lease interest request"}</h2>
-          <p className={styles.headerText}>{detail.applicantOutcomeSummary}</p>
+          {applicantOutcomeLine.trim() ? (
+            <p className={styles.headerText}>{applicantOutcomeLine}</p>
+          ) : null}
         </div>
-        <span className={`${styles.statusBadge} ${styles[`status${detail.status}`]}`}>{leaseInterestStatusLabel(detail.status)}</span>
+        <StatusBadge tone={leaseInterestStatusBadgeTone(detail.status)}>{leaseInterestStatusLabel(detail.status)}</StatusBadge>
       </header>
-      <p className={styles.notice}><strong>Preliminary review only.</strong> This decision does not reserve land or approve a lease. The applicant can see the note you record below.</p>
-      {error ? <ErrorMessage message={error} /> : null}
+     
+      {error ? <ErrorMessage id="officer-review-error" message={error} /> : null}
       {success ? <p className={styles.success} role="status">{success}</p> : null}
       <div className={styles.contentGrid}>
         <div className={styles.mainColumn}>
           <section className={styles.card} aria-labelledby="review-details-title">
             <div className={styles.sectionHeading}>
               <div><p className={styles.eyebrow}>Case details</p><h3 id="review-details-title">Applicant and parcel</h3></div>
-              <Link href={`/land-intelligence/parcels/${detail.landParcelId}`} className={styles.textLink}>View parcel →</Link>
+              <Link href={`/land-intelligence/parcels/${detail.landParcelId}`} className={styles.textLink}>Open parcel intelligence →</Link>
             </div>
             <dl className={styles.detailsGrid}>
-              <div><dt>Applicant</dt><dd>{detail.applicant.legalName}</dd></div>
-              <div><dt>Parcel number</dt><dd>{detail.cadastralNumber ?? "Not recorded"}</dd></div>
-              <div><dt>District</dt><dd>{detail.district ?? "Not recorded"}</dd></div>
-              <div><dt>Requested purpose</dt><dd>{landUseTypeLabels[detail.proposal.requestedPurpose] ?? "Unknown"}</dd></div>
-              <div><dt>Requested term</dt><dd>{detail.proposal.requestedDurationYears} years <span className={styles.secondary}>· not approved</span></dd></div>
-              <div><dt>Submitted</dt><dd>{detail.submittedAtUtc ? formatDate(detail.submittedAtUtc) : "Not submitted"}</dd></div>
+              <LeaseInterestApplicantDetailFields applicant={detail.applicant} />
+              <div>
+                <dt>Parcel number</dt>
+                <dd>{detail.cadastralNumber ?? "Not recorded"}</dd>
+              </div>
+              <div>
+                <dt>District</dt>
+                <dd>{detail.district ?? "Not recorded"}</dd>
+              </div>
+              <div>
+                <dt>Requested purpose</dt>
+                <dd>{landUseTypeLabels[detail.proposal.requestedPurpose] ?? "Unknown"}</dd>
+              </div>
+              <div>
+                <dt>Requested area</dt>
+                <dd>
+                  {detail.proposal.requestedAreaHectares != null
+                    ? `${detail.proposal.requestedAreaHectares} ha`
+                    : "Not entered"}
+                </dd>
+              </div>
+              <div>
+                <dt>Requested term</dt>
+                <dd>
+                  {detail.proposal.requestedDurationYears} years{" "}
+                  <span className={styles.secondary}>· not approved</span>
+                </dd>
+              </div>
+              <div>
+                <dt>Desired start</dt>
+                <dd>
+                  {detail.proposal.desiredStartPeriod?.trim()
+                    ? detail.proposal.desiredStartPeriod
+                    : "Not entered"}
+                </dd>
+              </div>
+              <div>
+                <dt>Submitted</dt>
+                <dd>
+                  {detail.submittedAtUtc ? formatDate(detail.submittedAtUtc) : "Not submitted"}
+                </dd>
+              </div>
             </dl>
+            {detail.proposal.projectSummary.trim() ||
+            detail.proposal.plannedActivitiesDescription.trim() ||
+            detail.supporting.supportingNotes.trim() ? (
+              <div className={styles.proposalBlock}>
+                {detail.proposal.projectSummary.trim() ? (
+                  <p>
+                    <strong>Project summary:</strong> {detail.proposal.projectSummary}
+                  </p>
+                ) : null}
+                {detail.proposal.plannedActivitiesDescription.trim() ? (
+                  <p>
+                    <strong>Planned activities:</strong>{" "}
+                    {detail.proposal.plannedActivitiesDescription}
+                  </p>
+                ) : null}
+                {detail.supporting.supportingNotes.trim() ? (
+                  <p>
+                    <strong>Supporting notes:</strong> {detail.supporting.supportingNotes}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
           </section>
+          {showValuationSection ? (
+          <section className={styles.card} aria-labelledby="valuation-title">
+            <div className={styles.sectionHeading}>
+              <div><p className={styles.eyebrow}>Officer assessment</p><h3 id="valuation-title">Land valuation</h3></div>
+            </div>
+            {panelMode === "editable" ? (
+              <p className={styles.fieldHelp}>
+                Copy the officer-confirmed entries from the applicable paper worksheet.
+                All rates and amounts below are entered manually; the system does not
+                calculate them. You can record one valuation for this request.
+              </p>
+            ) : (
+              <p className={styles.fieldHelp}>
+                {readonlyValuationHelpText(
+                  detail.status,
+                  valuations.length,
+                  leaseInterestStatusLabel(detail.status),
+                )}
+              </p>
+            )}
+            {currentValuation ? (
+              <p
+                className={
+                  panelMode === "readonly" && detail.status === 6
+                    ? styles.valuationRecorded
+                    : styles.valuationLatest
+                }
+                role="status"
+              >
+                {panelMode === "readonly" && detail.status === 6 ? (
+                  <>
+                    <strong>Valuation recorded</strong>
+                    {" · "}
+                  </>
+                ) : (
+                  <>Recorded value: </>
+                )}
+                <strong>
+                  LKR{" "}
+                  {currentValuation.assessedLandValueLkr.toLocaleString("en-LK", {
+                    minimumFractionDigits: 2,
+                  })}
+                </strong>
+                {` · ${currentValuation.worksheet?.leaseFileNumber ?? currentValuation.valuationReference ?? "No file number"}`}
+              </p>
+            ) : (
+              <p className={styles.valuationPending}>Valuation pending officer inspection.</p>
+            )}
+            {valuationError ? <ErrorMessage id="valuation-error" message={valuationError} /> : null}
+            {panelMode === "unavailable" ? (
+              <p className={styles.valuationPending}>
+                {workflowMode === "readonly"
+                  ? "No officer valuation has been recorded for this request yet."
+                  : unavailableValuationMessage(detail.status)}
+              </p>
+            ) : null}
+            {panelMode === "readonly" && currentValuation ? (
+              <div className={styles.readOnlyWorksheet}>
+                <AuthorityValuationWorksheet valuation={currentValuation} />
+                <HistoricalValuationRecords
+                  valuations={historicalValuations}
+                  formatRecordedAt={formatDate}
+                />
+              </div>
+            ) : null}
+            {panelMode === "editable" ? <form className={styles.valuationForm} aria-describedby={valuationError ? "valuation-error" : undefined} onSubmit={(event) => { event.preventDefault(); openValuationConfirmDialog(); }}>
+              <div className={styles.valuationGrid}>
+                <div className={styles.field}>
+                  <label htmlFor="valuation-type">Paper form type *</label>
+                  <select
+                    id="valuation-type"
+                    className={styles.input}
+                    value={requiredFormType}
+                    disabled
+                    aria-readonly="true"
+                  >
+                    <option value={requiredFormType}>
+                      {valuationFormTypeLabel(requiredFormType)}
+                    </option>
+                  </select>
+                  <p className={styles.fieldHelp}>
+                    Matches the requested purpose (
+                    {landUseTypeLabels[detail.proposal.requestedPurpose] ?? "Unknown"}
+                    ).
+                  </p>
+                </div>
+                <div className={styles.field}><label htmlFor="lease-file-number">Lease file number *</label><input id="lease-file-number" className={styles.input} maxLength={128} required {...valuationFieldA11y} value={valuationForm.leaseFileNumber} onChange={(event) => updateValuation("leaseFileNumber", event.target.value)} /></div>
+                <div className={styles.field}><label htmlFor="divisional-secretariat">Divisional Secretariat division *</label><input id="divisional-secretariat" className={styles.input} maxLength={200} required {...valuationFieldA11y} value={valuationForm.divisionalSecretariat} onChange={(event) => updateValuation("divisionalSecretariat", event.target.value)} /></div>
+                <div className={styles.field}><label htmlFor="lease-approval-date">Lease approval date</label><input id="lease-approval-date" className={styles.input} type="date" value={valuationForm.leaseApprovalDate} onChange={(event) => updateValuation("leaseApprovalDate", event.target.value)} /></div>
+                <div className={styles.field}><label htmlFor="lease-commencement-date">Lease commencement date</label><input id="lease-commencement-date" className={styles.input} type="date" value={valuationForm.leaseCommencementDate} onChange={(event) => updateValuation("leaseCommencementDate", event.target.value)} /></div>
+                <div className={styles.field}><label htmlFor="valuation-report-date">Valuation report issued date</label><input id="valuation-report-date" className={styles.input} type="date" value={valuationForm.valuationReportDate} onChange={(event) => updateValuation("valuationReportDate", event.target.value)} /></div>
+                <div className={styles.field}><label htmlFor="lease-agreement-date">Lease agreement date</label><input id="lease-agreement-date" className={styles.input} type="date" value={valuationForm.leaseAgreementDate} onChange={(event) => updateValuation("leaseAgreementDate", event.target.value)} /></div>
+              </div>
+              <h4 className={styles.worksheetHeading}>Valuation and lease figures — officer entry</h4>
+              <div className={styles.valuationGrid}>
+                <div className={styles.field}><label htmlFor="assessed-value">Assessed land value (LKR) *</label><input id="assessed-value" className={styles.input} type="number" min="0.01" step="0.01" required {...valuationFieldA11y} value={valuationForm.assessedLandValueLkr} onChange={(event) => updateValuation("assessedLandValueLkr", event.target.value)} /></div>
+                <div className={styles.field}><label htmlFor="previous-value">Previous assessed value (LKR)</label><input id="previous-value" className={styles.input} type="number" min="0" step="0.01" value={valuationForm.previousAssessedValueLkr} onChange={(event) => updateValuation("previousAssessedValueLkr", event.target.value)} /></div>
+                <div className={styles.field}><label htmlFor="lease-percentage">Lease percentage (%) — manual</label><input id="lease-percentage" className={styles.input} type="number" min="0" max="100" step="0.0001" value={valuationForm.leaseRatePercent} onChange={(event) => updateValuation("leaseRatePercent", event.target.value)} /></div>
+                <div className={styles.field}><label htmlFor="annual-lease-amount">Annual lease amount (LKR) — manual</label><input id="annual-lease-amount" className={styles.input} type="number" min="0" step="0.01" value={valuationForm.annualLeaseAmountLkr} onChange={(event) => updateValuation("annualLeaseAmountLkr", event.target.value)} /></div>
+                <div className={styles.field}><label htmlFor="first-period-amount">First lease period amount (LKR) — manual</label><input id="first-period-amount" className={styles.input} type="number" min="0" step="0.01" value={valuationForm.firstPeriodAmountLkr} onChange={(event) => updateValuation("firstPeriodAmountLkr", event.target.value)} /></div>
+                <div className={styles.field}><label htmlFor="second-period-amount">Second lease period amount (LKR) — manual</label><input id="second-period-amount" className={styles.input} type="number" min="0" step="0.01" value={valuationForm.secondPeriodAmountLkr} onChange={(event) => updateValuation("secondPeriodAmountLkr", event.target.value)} /></div>
+                {valuationForm.formType === "Residential" ? <div className={styles.field}><label htmlFor="second-period-annual">Second period annual amount (LKR) — manual</label><input id="second-period-annual" className={styles.input} type="number" min="0" step="0.01" value={valuationForm.secondPeriodAnnualAmountLkr} onChange={(event) => updateValuation("secondPeriodAnnualAmountLkr", event.target.value)} /></div> : null}
+                {valuationForm.formType === "AgriculturalCommercial" ? <><div className={styles.field}><label htmlFor="circular-2018-amount">01/2018 circular amount (LKR) — manual</label><input id="circular-2018-amount" className={styles.input} type="number" min="0" step="0.01" value={valuationForm.circular2018AmountLkr} onChange={(event) => updateValuation("circular2018AmountLkr", event.target.value)} /></div><div className={styles.field}><label htmlFor="circular-2020-adjustment">2020/6 circular adjustment (LKR) — manual</label><input id="circular-2020-adjustment" className={styles.input} type="number" min="0" step="0.01" value={valuationForm.circular2020SixAdjustmentLkr} onChange={(event) => updateValuation("circular2020SixAdjustmentLkr", event.target.value)} /></div></> : null}
+              </div>
+              {(["firstPeriodLines", "secondPeriodLines"] as const).map((group) => <section key={group} className={styles.worksheetTable} aria-label={group === "firstPeriodLines" ? "First lease period rows" : "Second lease period rows"}>
+                <h4 className={styles.worksheetHeading}>{group === "firstPeriodLines" ? "First lease period entries" : "Second lease period entries"}</h4>
+                <p className={styles.fieldHelp}>Enter each period and amount exactly as recorded by the officer. No total is calculated.</p>
+                {valuationForm[group].map((row, index) => <div className={styles.worksheetRow} key={`${group}-${index}`}>
+                  <div className={styles.field}><label htmlFor={`${group}-period-${index}`}>Year / period {index + 1}</label><input id={`${group}-period-${index}`} className={styles.input} maxLength={120} value={row.period} onChange={(event) => updatePeriodLine(group, index, "period", event.target.value)} /></div>
+                  <div className={styles.field}><label htmlFor={`${group}-amount-${index}`}>Amount (LKR)</label><input id={`${group}-amount-${index}`} className={styles.input} type="number" min="0" step="0.01" value={row.amountLkr} onChange={(event) => updatePeriodLine(group, index, "amountLkr", event.target.value)} /></div>
+                  <button className={styles.rowRemove} type="button" onClick={() => removePeriodLine(group, index)} aria-label={`Remove ${group === "firstPeriodLines" ? "first" : "second"} period row ${index + 1}`}>Remove</button>
+                </div>)}
+                <button className={styles.rowAdd} type="button" disabled={valuationForm[group].length >= 12} onClick={() => addPeriodLine(group)}>+ Add period row</button>
+              </section>)}
+              <div className={styles.field}><label htmlFor="worksheet-notes">Worksheet notes (optional)</label><textarea id="worksheet-notes" className={styles.input} rows={3} maxLength={4000} value={valuationForm.worksheetNotes} onChange={(event) => updateValuation("worksheetNotes", event.target.value)} /></div>
+              <Button type="submit" variant="primary" disabled={savingValuation}>
+                {savingValuation ? "Recording…" : "Review and record valuation"}
+              </Button>
+            </form> : null}
+          </section>
+          ) : null}
+          {detail.latestAuthorityDecision ? (
+            <section className={styles.card} aria-labelledby="authority-outcome-title">
+              <div className={styles.sectionHeading}>
+                <div>
+                  <p className={styles.eyebrow}>Authority outcome</p>
+                  <h3 id="authority-outcome-title">
+                    {detail.latestAuthorityDecision.decisionLabel}
+                  </h3>
+                </div>
+              </div>
+              <p className={styles.valuationLatest} role="status">
+                Recorded {formatDate(detail.latestAuthorityDecision.recordedAtUtc)}
+              </p>
+              <p className={styles.fieldHelp}>
+                {detail.latestAuthorityDecision.applicantFacingReason}
+              </p>
+              {detail.latestAuthorityDecision.decision === 1 || detail.status === 7 ? (
+                <p className={styles.notice}>
+                  Formal lease processing is still required. This preliminary
+                  approval does not create a lease or reserve land.
+                </p>
+              ) : null}
+            </section>
+          ) : null}
           <section className={styles.card} aria-labelledby="review-history-title">
             <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>History</p><h3 id="review-history-title">Activity timeline</h3></div></div>
             <ol className={styles.timeline}>
@@ -112,9 +967,13 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
             </ol>
           </section>
         </div>
+        {showVerificationAside ? (
         <aside className={styles.decisionCard} aria-labelledby="review-decision-title">
-          <p className={styles.eyebrow}>Officer action</p>
+          <p className={styles.eyebrow}>Verification officer</p>
           <h3 id="review-decision-title">Record a decision</h3>
+          <p className={styles.fieldHelp}>
+            Preliminary verification only — not lease approval or land reservation.
+          </p>
           {canReview ? (
             <form onSubmit={(event) => { event.preventDefault(); void handleStatusUpdate(); }}>
               <div className={styles.field}>
@@ -128,17 +987,37 @@ export function OfficerLeaseInterestReviewView({ requestId }: { requestId: strin
               <div className={styles.field}>
                 <label htmlFor="officer-note">Note to applicant <span aria-hidden="true">*</span></label>
                 <textarea id="officer-note" className={styles.input} rows={5} value={note} required disabled={saving}
+                  aria-describedby={error ? "officer-note-help officer-review-error" : "officer-note-help"}
                   onChange={(event) => setNote(event.target.value)} placeholder="Explain the decision and what happens next." />
-                <p className={styles.fieldHelp}>This note will appear in the applicant’s request timeline.</p>
+                <p id="officer-note-help" className={styles.fieldHelp}>This note will appear in the applicant’s request timeline.</p>
               </div>
               <Button type="submit" variant="primary" className={styles.submitButton} disabled={saving || !note.trim()}>
                 {saving ? "Saving decision…" : "Record decision"}
               </Button>
             </form>
           ) : (
-            <p className={styles.closedMessage} role="status">This review is closed. No further officer decision is available for this request.</p>
+            <p className={styles.closedMessage} role="status">This review is closed. No further verification decision is available for this request.</p>
           )}
         </aside>
+        ) : workflowMode === "valuation" ? (
+        <aside className={styles.decisionCard} aria-labelledby="valuation-officer-title">
+          <p className={styles.eyebrow}>Valuation officer</p>
+          <h3 id="valuation-officer-title">One-time worksheet</h3>
+          <p className={styles.fieldHelp}>
+            Record the land valuation once after another officer has completed verification.
+            This is a preliminary research workflow step — not a lease or formal approval.
+          </p>
+          {!valuationEligible && valuations.length === 0 ? (
+            <p className={styles.closedMessage} role="status">
+              {detail.verificationCompletedByOfficerId
+                && detail.currentOfficerActorId
+                && detail.verificationCompletedByOfficerId === detail.currentOfficerActorId
+                ? "You completed verification for this request. Sign in as a different officer to record the valuation."
+                : "This request is not available for valuation with your current officer identity."}
+            </p>
+          ) : null}
+        </aside>
+        ) : null}
       </div>
     </div>
   );

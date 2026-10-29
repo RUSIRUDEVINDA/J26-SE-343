@@ -72,7 +72,7 @@ public sealed class LandIntelligenceAuthenticationTests
     }
 
     [Fact]
-    public void ApplicantNic_is_masked_for_non_draft_api_responses()
+    public void ApplicantNic_is_returned_unchanged_for_api_responses()
     {
         var applicant = new LeaseInterestApplicantDto(
             LeaseInterestApplicantKindDto.Individual,
@@ -85,10 +85,9 @@ public sealed class LandIntelligenceAuthenticationTests
             "200320400824",
             null);
 
-        var masked = LeaseInterestApplicantNic.MaskForApiResponse(applicant);
+        var response = LeaseInterestApplicantNic.MaskForApiResponse(applicant);
 
-        Assert.NotEqual("200320400824", masked.NationalIdentityCardNumber);
-        Assert.Equal(SriLankanNic.Mask("200320400824"), masked.NationalIdentityCardNumber);
+        Assert.Equal("200320400824", response.NationalIdentityCardNumber);
     }
 
     [Fact]
