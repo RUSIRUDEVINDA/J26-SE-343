@@ -1,0 +1,16 @@
+{
+  "Utc": "2026-10-23T08:33:02.826046+00:00",
+  "ExpectedOldName": "c4_handover_local",
+  "ExpectedOid": 34144,
+  "ApprovedNewName": "state_land_governance_c4",
+  "ObservedDatabases": [
+    {
+      "name": "c4_handover_local",
+      "oid": "34144",
+      "owner": "postgres"
+    }
+  ],
+  "ApprovedReviewSourceAndPackageManifestsMatch": true,
+  "NoOrdinaryMutation": true,
+  "StoppedGate": "Exact existing database OID mismatch; remaining preflight not reached"
+}

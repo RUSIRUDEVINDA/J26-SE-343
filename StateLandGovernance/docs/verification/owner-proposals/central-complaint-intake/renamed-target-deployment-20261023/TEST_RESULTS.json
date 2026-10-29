@@ -1,0 +1,20 @@
+{
+  "Backend": {
+    "Passed": 275,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Frontend": {
+    "Passed": 143,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "InitialTestHarnessError": "Wrong environment variable; six missing-config failures retained, corrected isolated-only invocation passed",
+  "OrdinaryRuntime": "Stopped on officer-assessment Commissioner403",
+  "Browser": "Pending manual; API offline"
+}
