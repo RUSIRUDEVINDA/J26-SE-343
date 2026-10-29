@@ -1,0 +1,31 @@
+{
+  "Utc": "2026-10-23T08:56:44.820109+00:00",
+  "Status": "Passed",
+  "Identity": {
+    "name": "state_land_governance_c4",
+    "oid": "34144",
+    "owner": "postgres",
+    "acl": [
+      "=Tc/postgres",
+      "postgres=CTc/postgres",
+      "slg_c4_regulatory_runtime=c/postgres"
+    ],
+    "encoding": 6,
+    "collate": "English_United States.1252",
+    "ctype": "English_United States.1252",
+    "limit": -1,
+    "allow": true
+  },
+  "All38TablesAnd19MigrationsExact": true,
+  "SchemaSettingsGrantsSequencesExact": true,
+  "PeerAndAccountsExact": true,
+  "FrozenModelsExact": true,
+  "NoStartupMigrations": true,
+  "CandidateSha256": "406bc96165e33c6c8d778322e2470d7abc3978da605b6791af72bb5aaaededd0",
+  "BackupSha256": "e702a55f70fe1e22059b65f9672cb98dea2a380b89e9aba10c33de54400d530f",
+  "BackupStillReadableListable": true,
+  "FreshBackupRequired": false,
+  "BothGrantDocumentsMatch": true,
+  "OnlyApprovedControllerAndTestChanges": true,
+  "NoOrdinaryWrites": true
+}

@@ -1,0 +1,13 @@
+{
+  "BackendPassed": 298,
+  "NewControllerTests": 23,
+  "ArchitecturePassed": 7,
+  "FrontendPassed": 143,
+  "IsolatedChecks": 69,
+  "IsolatedSavedReports": 30,
+  "ModelCalls": 0,
+  "WriteCommandsInvoked": 0,
+  "ReleasePublish": "Passed",
+  "WholeProductionBuild": "Not claimed; three previously documented unrelated C1 TypeScript errors remain",
+  "Browser": "Pending manual"
+}
