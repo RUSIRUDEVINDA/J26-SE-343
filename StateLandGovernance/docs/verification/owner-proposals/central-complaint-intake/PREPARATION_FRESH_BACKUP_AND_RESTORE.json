@@ -1,0 +1,521 @@
+{
+  "verifiedUtc": "2026-10-23T05:44:39.206260+00:00",
+  "backupPath": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\central-activation-preparation-20261023_053654\\c4_handover_local.dump",
+  "bytes": 315322,
+  "sha256": "ab6780784f2cf36b405b33c81d9e1a81da5e215f7cbcdc0418b61f988da433d4",
+  "lastWriteUtc": "2026-10-23T05:36:55.606672+00:00",
+  "isolatedDatabase": "c4_central_restore_preparation_20261023_053654",
+  "isolatedPort": 57657,
+  "ArchiveListValid": true,
+  "ReadableByPreparationAccount": true,
+  "DirectoryAcl": "current account and SYSTEM only; inheritance disabled on new folder only",
+  "AllUserSchemaMatches": true,
+  "AllOriginalTablesMatch": true,
+  "TableCount": 36,
+  "Comparison": "UTC session, canonical row JSON and explicit C ordering collation; MD5 comparison digests, SHA256 archive identity",
+  "InitialMismatchDiagnosis": "Different session timezones and default ordering collations; equal decoded synthetic rows, then explicit UTC/C comparisons match without changing stored data",
+  "baseline": {
+    "component4_synthetic_demo.component1_handoff": {
+      "count": 10,
+      "digest": "782327680f3179e5ac5d511debae5f24"
+    },
+    "component4_synthetic_demo.payloads": {
+      "count": 120,
+      "digest": "b6cf493d55ee15c547957207403e3d0d"
+    },
+    "governance_intelligence.__ef_migrations_history": {
+      "count": 17,
+      "digest": "54cff33cecb6bafbdf6f8ee9a2b6b0a6"
+    },
+    "governance_intelligence.complaint_classification_assessments": {
+      "count": 58,
+      "digest": "eb541524e076851757601f0ca4e1ffb7"
+    },
+    "governance_intelligence.compliance_evaluations": {
+      "count": 71,
+      "digest": "68b0b92b5c2c2e6ce6c936047bf040f6"
+    },
+    "governance_intelligence.compliance_rules": {
+      "count": 24,
+      "digest": "e83eef5e70c270e228f12c2d4f0041c3"
+    },
+    "governance_intelligence.component1_case_projections": {
+      "count": 11,
+      "digest": "9cb4b40ba9e682f27e9aed7897b4dc68"
+    },
+    "governance_intelligence.component3_workflow_projections": {
+      "count": 20,
+      "digest": "16f48bb419a21f6e33ec4e16117933bf"
+    },
+    "governance_intelligence.condition_results": {
+      "count": 56,
+      "digest": "96ee9d63338af6999cc56427106a519e"
+    },
+    "governance_intelligence.conditional_verification_evaluations": {
+      "count": 28,
+      "digest": "174d7b112c7f2ab96ace33fb9ef9c03d"
+    },
+    "governance_intelligence.conflict_evaluations": {
+      "count": 23,
+      "digest": "92ebee874cda00eb481de46b710e2b63"
+    },
+    "governance_intelligence.conflict_findings": {
+      "count": 19,
+      "digest": "24afd45d7954226ca8a3ffbf08a70249"
+    },
+    "governance_intelligence.consensus_evaluations": {
+      "count": 28,
+      "digest": "fbcfc8e25b33ee7a57b315b35c425b36"
+    },
+    "governance_intelligence.consolidated_screening_assessments": {
+      "count": 1,
+      "digest": "497f8ae5a54d36d73f53bfdc0b1155e4"
+    },
+    "governance_intelligence.early_governance_referrals": {
+      "count": 5,
+      "digest": "9c0abb45707f61551a8801428b183bba"
+    },
+    "governance_intelligence.early_governance_screening_evaluations": {
+      "count": 41,
+      "digest": "920d9bd6512f0f67664e1c7240263849"
+    },
+    "governance_intelligence.governance_audit_anchor_outbox": {
+      "count": 103,
+      "digest": "d722c12158e8471f0e51386ee7c2dc8d"
+    },
+    "governance_intelligence.governance_audit_anchor_receipts": {
+      "count": 86,
+      "digest": "60bb62448b5d0de6b064e2a9a048d390"
+    },
+    "governance_intelligence.governance_audit_records": {
+      "count": 226,
+      "digest": "eda621407ac262e1b4187a0d68aaa053"
+    },
+    "governance_intelligence.governance_explanation_items": {
+      "count": 154,
+      "digest": "b15d95bfeb9cc65be0b14e00559c995e"
+    },
+    "governance_intelligence.governance_explanations": {
+      "count": 41,
+      "digest": "29977b6fa09fb3e60f95aef3d45b98b5"
+    },
+    "governance_intelligence.institution_positions": {
+      "count": 65,
+      "digest": "7d4cbcc3403d37ea5502c99e5878cd73"
+    },
+    "governance_intelligence.kiwula_assessment_provenance": {
+      "count": 3,
+      "digest": "0f0449b5841610c51f02774e3c49722f"
+    },
+    "governance_intelligence.lease_approval_timing_assessments": {
+      "count": 10,
+      "digest": "21ae1f263482913c4b98738c40249a33"
+    },
+    "governance_intelligence.officer_action_events": {
+      "count": 30,
+      "digest": "f02a946d5aeb86ae3c637ba3d2b2f38c"
+    },
+    "governance_intelligence.officer_assessment_requests": {
+      "count": 11,
+      "digest": "bef4da724272b2efae0cdc487f3af5bb"
+    },
+    "governance_intelligence.officer_investigations": {
+      "count": 2,
+      "digest": "31da2ee74cb0593759f8bf726f7e0431"
+    },
+    "governance_intelligence.post_workflow_demonstrations": {
+      "count": 3,
+      "digest": "81b6bc13f8a5a08b672e04b978cb61d3"
+    },
+    "governance_intelligence.registered_complaint_classifications": {
+      "count": 3,
+      "digest": "af13d93597418c2939f9176cf8a4c9b0"
+    },
+    "governance_intelligence.registered_complaints": {
+      "count": 3,
+      "digest": "b40a78d4a86d30f78370aa20ef0692cf"
+    },
+    "governance_intelligence.regulatory_evaluation_provenance": {
+      "count": 13,
+      "digest": "14cbefb8bb7cb6fc58ccea12f63dbead"
+    },
+    "governance_intelligence.regulatory_sources": {
+      "count": 1,
+      "digest": "3f824210f9707d40a9812bebe5a27038"
+    },
+    "governance_intelligence.risk_evaluations": {
+      "count": 35,
+      "digest": "92e1b33b362d9e420892ec482ce23914"
+    },
+    "governance_intelligence.risk_indicators": {
+      "count": 45,
+      "digest": "e0d0b3b7a9ff3fdcce839da7d0dca284"
+    },
+    "governance_intelligence.rule_parameters": {
+      "count": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "governance_intelligence.workflow_anomaly_assessments": {
+      "count": 18,
+      "digest": "80516f596d36e0956b1c57945ed21855"
+    }
+  },
+  "history": [
+    "20260815105012_GovernanceIntelligence_InitialCreate",
+    "20260821151154_GovernanceIntelligence_AddStructuredEvaluations",
+    "20260825131541_GovernanceIntelligence_AddRichComplianceSnapshot",
+    "20260825141654_GovernanceIntelligence_RemoveLegacyComplianceChildTables",
+    "20260918072800_GovernanceIntelligence_AddEarlyGovernanceScreeningEvaluations",
+    "20261008062258_GovernanceIntelligence_AddComplaintClassificationAssessments",
+    "20261008074415_GovernanceIntelligence_AddEarlyGovernanceCommissionerReferrals",
+    "20261009082924_GovernanceIntelligence_AddAuditAnchorReceiptAndOutbox",
+    "20261011180225_GovernanceIntelligence_AddAuditHashVersion",
+    "20261011193437_GovernanceIntelligence_AddPhase3AProjectionsAndAssessments",
+    "20261012091358_GovernanceIntelligence_AddComplianceCaseCorrelation",
+    "20261016123700_AddDurableConsolidatedScreening",
+    "20261021170456_AddRegisteredComplaints",
+    "20261021173048_AddOwnedRegulatoryProvenance",
+    "20261022060432_AddPostWorkflowDemonstrations",
+    "20261022093623_AddKiwulaAssessmentProvenance",
+    "20261022152556_AddOfficerInvestigationsAndAssessmentRequests"
+  ],
+  "runtimeTableGrants": [
+    {
+      "schema": "governance_intelligence",
+      "table": "__ef_migrations_history",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "complaint_classification_assessments",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "complaint_classification_assessments",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "compliance_evaluations",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "compliance_evaluations",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "compliance_rules",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "component1_case_projections",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "component3_workflow_projections",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "component3_workflow_projections",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "condition_results",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "conditional_verification_evaluations",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "conflict_evaluations",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "conflict_evaluations",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "conflict_findings",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "conflict_findings",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "consensus_evaluations",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "consolidated_screening_assessments",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "early_governance_referrals",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "early_governance_screening_evaluations",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "early_governance_screening_evaluations",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "governance_audit_anchor_outbox",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "governance_audit_anchor_outbox",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "governance_audit_anchor_receipts",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "governance_audit_records",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "governance_audit_records",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "governance_explanation_items",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "governance_explanations",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "institution_positions",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "kiwula_assessment_provenance",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "kiwula_assessment_provenance",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "lease_approval_timing_assessments",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_action_events",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_action_events",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_assessment_requests",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_assessment_requests",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_investigations",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_investigations",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "post_workflow_demonstrations",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "post_workflow_demonstrations",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "registered_complaint_classifications",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "registered_complaint_classifications",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "registered_complaints",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "registered_complaints",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "regulatory_evaluation_provenance",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "regulatory_evaluation_provenance",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "regulatory_sources",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "risk_evaluations",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "risk_indicators",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "rule_parameters",
+      "privilege": "SELECT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "workflow_anomaly_assessments",
+      "privilege": "INSERT"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "workflow_anomaly_assessments",
+      "privilege": "SELECT"
+    }
+  ],
+  "runtimeColumnUpdateGrants": [
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_assessment_requests",
+      "column": "AnomalyAssessmentId",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_assessment_requests",
+      "column": "EarlyAssessmentId",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_assessment_requests",
+      "column": "FailureCode",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_assessment_requests",
+      "column": "FinishedAtUtc",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_assessment_requests",
+      "column": "Revision",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "officer_assessment_requests",
+      "column": "State",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "post_workflow_demonstrations",
+      "column": "AssessmentId",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "post_workflow_demonstrations",
+      "column": "Attempt",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "post_workflow_demonstrations",
+      "column": "AttemptsJson",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "post_workflow_demonstrations",
+      "column": "Failure",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "post_workflow_demonstrations",
+      "column": "State",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "registered_complaints",
+      "column": "PayloadJson",
+      "privilege": "UPDATE"
+    },
+    {
+      "schema": "governance_intelligence",
+      "table": "registered_complaints",
+      "column": "Revision",
+      "privilege": "UPDATE"
+    }
+  ],
+  "RestoreSkippedOwnershipAndAcl": true,
+  "ArchiveIncludesOriginalAcl": true
+}

@@ -1,0 +1,68 @@
+{
+  "Status": "Passed",
+  "Target": "c4_central_restore_preparation_20261023_053654",
+  "Port": 57657,
+  "OrdinarySqlApplied": false,
+  "OriginalRowsPreserved": {
+    "component4_synthetic_demo.component1_handoff": true,
+    "component4_synthetic_demo.payloads": true,
+    "governance_intelligence.__ef_migrations_history": true,
+    "governance_intelligence.complaint_classification_assessments": true,
+    "governance_intelligence.compliance_evaluations": true,
+    "governance_intelligence.compliance_rules": true,
+    "governance_intelligence.component1_case_projections": true,
+    "governance_intelligence.component3_workflow_projections": true,
+    "governance_intelligence.condition_results": true,
+    "governance_intelligence.conditional_verification_evaluations": true,
+    "governance_intelligence.conflict_evaluations": true,
+    "governance_intelligence.conflict_findings": true,
+    "governance_intelligence.consensus_evaluations": true,
+    "governance_intelligence.consolidated_screening_assessments": true,
+    "governance_intelligence.early_governance_referrals": true,
+    "governance_intelligence.early_governance_screening_evaluations": true,
+    "governance_intelligence.governance_audit_anchor_outbox": true,
+    "governance_intelligence.governance_audit_anchor_receipts": true,
+    "governance_intelligence.governance_audit_records": true,
+    "governance_intelligence.governance_explanation_items": true,
+    "governance_intelligence.governance_explanations": true,
+    "governance_intelligence.institution_positions": true,
+    "governance_intelligence.kiwula_assessment_provenance": true,
+    "governance_intelligence.lease_approval_timing_assessments": true,
+    "governance_intelligence.officer_action_events": true,
+    "governance_intelligence.officer_assessment_requests": true,
+    "governance_intelligence.officer_investigations": true,
+    "governance_intelligence.post_workflow_demonstrations": true,
+    "governance_intelligence.registered_complaint_classifications": true,
+    "governance_intelligence.registered_complaints": true,
+    "governance_intelligence.regulatory_evaluation_provenance": true,
+    "governance_intelligence.regulatory_sources": true,
+    "governance_intelligence.risk_evaluations": true,
+    "governance_intelligence.risk_indicators": true,
+    "governance_intelligence.rule_parameters": true,
+    "governance_intelligence.workflow_anomaly_assessments": true
+  },
+  "NewTablesEmpty": true,
+  "ExactNewGrants": [
+    {
+      "table": "complaint_assignment_events",
+      "privilege": "INSERT"
+    },
+    {
+      "table": "complaint_assignment_events",
+      "privilege": "SELECT"
+    },
+    {
+      "table": "complaint_handling_events",
+      "privilege": "INSERT"
+    },
+    {
+      "table": "complaint_handling_events",
+      "privilege": "SELECT"
+    }
+  ],
+  "HistoryCount": 19,
+  "Scripts": {
+    "COMBINED_REVIEWED_FORWARD.sql": "76aeb2a3c57d3ee0db05e657004f7e7f927695829111a3e9092599dc5d181f2b",
+    "COMBINED_REVIEWED_ADDITIONAL_PERMISSIONS.sql": "af43e6e34ca44ea83579cb67785e3b7a0f11d45fc1b322d9d0a769f8c4589a4c"
+  }
+}
