@@ -1,0 +1,77 @@
+{
+  "Status": "Independent pre-reply edits retained; further implementation paused",
+  "Files": [
+    {
+      "Path": "StateLandGovernance.Web/tests/component-04-final-improvements.test.ts",
+      "BeforeSha256": "ebd036fe1a0f113d91a19228997977cff679936626cd096fa6e6ac193c395049",
+      "AfterSha256": "d4975b077e34593867957d7395f6d377bc33a2a02dd4c1050ca67e0f5cfe2933"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/CentralComplaints.tsx",
+      "BeforeSha256": "5bed8b63c22a45125fbaeefba916faa69cc075fd48a0022b81aff8bf4960d3aa",
+      "AfterSha256": "f3b9a20727908b73e42a318688e368aaab69b2007f2ba893c523f678ff714d4e"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/ComplaintHandlingPanel.tsx",
+      "BeforeSha256": "185e5b80bb749a0dc1ec4fd86fe840b646b4206f49bd076009daf9a108914158",
+      "AfterSha256": "d3542328745c7ad5b84d793b46d33421bcd7134715880cf822d5c2ddc8578b72"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/MeasuredWorkflowFeatures.module.css",
+      "BeforeSha256": "98ecf331e6af55d72343e6d10e52ddf95086f9e0b9ff1d7579d0b84e3e1adabd",
+      "AfterSha256": "fd61d92ca70f52ecba325ae619772dd6bbbea27d14e2968fb87ceae8df4f6ab4"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/MeasuredWorkflowFeatures.tsx",
+      "BeforeSha256": "1a477776aaf6b1db6368621232de032a97fd143de93fefbd6f9c20b4ee164d8a",
+      "AfterSha256": "3bd6314c6f919519064346b569cd6ee094ebc1728bb9200ee1606203bfb5c230"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/PostWorkflowDemonstrations.tsx",
+      "BeforeSha256": "c4259b9bd02c598d0bcd834f72152a0c0c58003a1f58df4e809ebbc36d6fcc6e",
+      "AfterSha256": "cf2d76f94d00e668a1423998aec6d6e0accf05877f270d9699ca91e866c18899"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.tsx",
+      "BeforeSha256": "4fd0c12514a22885aec9a2d0a01b39409b22aa62f42db038e6d00f266e7c81dc",
+      "AfterSha256": "edd8daf7feb2c8df0db85527e93bcf3bd5b3d1e2d0f7ee911c529cd45ef30837"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/services/registeredComplaints.ts",
+      "BeforeSha256": "8a76c2c9cbe848d4824fd85a3e68166caceabc679647d0f9d13d19f8983cc9da",
+      "AfterSha256": "38fe5226a63bc852ac6a0e784130ecc6a64adac1089da7a6bdad3fc7d0124a84"
+    },
+    {
+      "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/RegisteredComplaintTests.cs",
+      "BeforeSha256": "8571bdd3b8fab5b665e94f717c308e714d68d78af046f49f114438829d178613",
+      "AfterSha256": "3e657ec9f836ae3ebae6ed0b432596532198eab74ccae1d4d4af0a2f941a76a3"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/RegisteredComplaintsController.cs",
+      "BeforeSha256": "bb346caff581825ae8df511ffad3cdac645b9229fb4adc2228d7863d25f04e7c",
+      "AfterSha256": "a78451c7df73c6db08747a865a86fe21f75124a2b4b14acb198e5ecd69d75a82"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/RegisteredComplaintStore.cs",
+      "BeforeSha256": "ca5141b6cfda4f5b71c0fdcc141f8b4fdd8b49d55da4f6a9cdafaf3203ce9d94",
+      "AfterSha256": "2aac4cbec71a0d41610348256c4089054b1e10466439561b50e0be6cbaf551b3"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Complaints/RegisteredComplaints.cs",
+      "BeforeSha256": "bb5dd64af8fb02610dc94ff5d4c65bb79a681e49d42441c6660a8cacef0615bb",
+      "AfterSha256": "dfba311d4165fb89f3e170bfe27f4a93841a433a0f693de90f3037d5851acb49"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/ComplaintHandlingHistory.tsx",
+      "BeforeSha256": null,
+      "AfterSha256": "68349f7721f31e239813458583d4606ff500248fe949c11e5c0f1d0a4f2770a2"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/ComplaintHistory.module.css",
+      "BeforeSha256": null,
+      "AfterSha256": "2299e515b4135db205b1e3bc4cbac6ab2bd13fa32be1b67bf803e070c08bed79"
+    }
+  ],
+  "BackendPublished": false,
+  "NewSchemaOrGateImplementation": false
+}
