@@ -399,6 +399,7 @@
 
 .requestOverview,
 .timelinePanel,
+.progressPanel,
 .evaluationPanel,
 .authorityPanel,
 .requestDetail .valuationSection {
@@ -406,6 +407,90 @@
   border: 1px solid var(--color-card-border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-soft);
+}
+
+.progressPanel {
+  padding: clamp(1.15rem, 2.3vw, 1.55rem);
+}
+
+.progressSteps {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.progressSteps > li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.progressMarker {
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.progressStepComplete .progressMarker {
+  background: #e8f4ea;
+  border: 1px solid #3d7a47;
+  color: #2d5c35;
+}
+
+.progressStepCurrent .progressMarker {
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: #fff;
+}
+
+.progressStepUpcoming .progressMarker {
+  background: #f4f4f4;
+  border: 1px solid var(--color-card-border);
+  color: var(--color-muted);
+}
+
+.progressStepBody {
+  min-width: 0;
+  padding-top: 0.1rem;
+}
+
+.progressStepLabel {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.progressStepUpcoming .progressStepLabel {
+  color: var(--color-muted);
+  font-weight: 550;
+}
+
+.progressStepTime {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.76rem;
+  color: var(--color-muted);
+}
+
+.progressStepCurrentHint {
+  display: inline-block;
+  margin-top: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-primary);
 }
 
 .evaluationPanel,

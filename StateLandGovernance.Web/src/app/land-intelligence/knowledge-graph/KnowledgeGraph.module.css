@@ -33,6 +33,18 @@
   width: 100%;
 }
 
+.inputInvalid {
+  border-color: #c45c58;
+}
+
+.fieldError {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #850906;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 .parcelSummary {
   margin: 0 0 0.9rem;
   font-size: 0.9rem;
