@@ -71,11 +71,11 @@ public sealed class LeaseInterestStatusTransitionsTests
     }
 
     [Fact]
-    public void ApplicantOutcomeSummary_PendingVerification_IsEmpty()
+    public void ApplicantOutcomeSummary_PendingVerification_MentionsVerification()
     {
         var summary = LeaseInterestStatusTransitions.ApplicantOutcomeSummary(
             LeaseInterestRequestStatus.PendingVerification);
-        Assert.Equal(string.Empty, summary);
+        Assert.Contains("verification", summary, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

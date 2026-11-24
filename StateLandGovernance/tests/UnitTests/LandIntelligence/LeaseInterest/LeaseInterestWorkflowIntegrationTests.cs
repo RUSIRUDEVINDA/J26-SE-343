@@ -9,7 +9,6 @@ using StateLandGovernance.LandIntelligence.Domain.Enums;
 using StateLandGovernance.LandIntelligence.Domain.ValueObjects;
 using StateLandGovernance.LandIntelligence.Infrastructure.DependencyInjection;
 using StateLandGovernance.LandIntelligence.Infrastructure.Persistence;
-using StateLandGovernance.Shared.Infrastructure.Configuration;
 
 namespace StateLandGovernance.UnitTests.LandIntelligence.LeaseInterest;
 
@@ -19,7 +18,8 @@ public sealed class LeaseInterestWorkflowIntegrationTests : IAsyncLifetime
     private ServiceProvider? _serviceProvider;
     private readonly Guid _applicantId = Guid.NewGuid();
     private readonly Guid _officerId = Guid.NewGuid();
-    private Guid _parcelId;
+    private readonly List<Guid> _createdParcelIds = [];
+    private string? _testConnectionString;
 
     public async Task InitializeAsync()
     {
@@ -30,7 +30,14 @@ public sealed class LeaseInterestWorkflowIntegrationTests : IAsyncLifetime
             "LEASE_INTEREST_NIC_LOOKUP_KEY",
             "DnzU7bYHy9HbizdNuixJVKbvQNMG8zXiCuKQVQ4DJFA=");
 
-        EnvFileLoader.LoadFromRepositoryRoot(AppContext.BaseDirectory);
+        _testConnectionString = LandIntelligenceIntegrationTestConnection.TryGetValidatedConnectionString();
+        if (_testConnectionString is null)
+        {
+            return;
+        }
+
+        Environment.SetEnvironmentVariable("LAND_INTELLIGENCE_CONNECTION", _testConnectionString);
+
         var configuration = new ConfigurationBuilder()
             .AddEnvironmentVariables()
             .Build();
@@ -45,44 +52,34 @@ public sealed class LeaseInterestWorkflowIntegrationTests : IAsyncLifetime
 
         _serviceProvider = services.BuildServiceProvider();
 
-        if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("LAND_INTELLIGENCE_CONNECTION")))
-        {
-            var db = _serviceProvider.GetRequiredService<LandIntelligenceDbContext>();
-            await db.Database.MigrateAsync();
-        }
+        var db = _serviceProvider.GetRequiredService<LandIntelligenceDbContext>();
+        await db.Database.MigrateAsync();
     }
 
     public async Task DisposeAsync()
     {
-        if (_serviceProvider is null || _parcelId == Guid.Empty)
+        if (_serviceProvider is not null)
         {
-            if (_serviceProvider is not null)
+            try
             {
-                await _serviceProvider.DisposeAsync();
+                var db = _serviceProvider.GetRequiredService<LandIntelligenceDbContext>();
+                await LeaseInterestWorkflowIntegrationTestCleanup.RemoveTestParcelsAsync(
+                    db,
+                    _createdParcelIds);
+            }
+            catch
+            {
+                // Best-effort cleanup; do not mask test failures.
             }
 
-            return;
+            await _serviceProvider.DisposeAsync();
         }
-
-        var db = _serviceProvider.GetRequiredService<LandIntelligenceDbContext>();
-        var requests = await db.LeaseInterestRequests
-            .Where(x => x.LandParcelId == _parcelId)
-            .ToListAsync();
-        db.LeaseInterestRequests.RemoveRange(requests);
-        var parcel = await db.LandParcels.FindAsync(_parcelId);
-        if (parcel is not null)
-        {
-            db.LandParcels.Remove(parcel);
-        }
-
-        await db.SaveChangesAsync();
-        await _serviceProvider.DisposeAsync();
     }
 
     [Fact]
     public async Task Applicant_submit_officer_review_applicant_sees_outcome_and_idempotent_replay()
     {
-        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("LAND_INTELLIGENCE_CONNECTION")))
+        if (_testConnectionString is null || _serviceProvider is null)
         {
             return;
         }
@@ -92,7 +89,8 @@ public sealed class LeaseInterestWorkflowIntegrationTests : IAsyncLifetime
         var applicant = _serviceProvider.GetRequiredService<ILeaseInterestRequestService>();
         var officer = _serviceProvider.GetRequiredService<ILeaseInterestOfficerReviewService>();
 
-        var cadastral = $"LI-E2E-{Guid.NewGuid():N}"[..24];
+        var cadastral =
+            $"{LeaseInterestWorkflowIntegrationTestCleanup.TestParcelCadastralPrefix}{Guid.NewGuid():N}"[..24];
         var parcel = new LandParcel(
             new ParcelIdentifier(cadastral, "E2E-SURVEY"),
             new LandCategory(LandCategoryType.StateLand, "E2E lease interest"),
@@ -101,10 +99,10 @@ public sealed class LeaseInterestWorkflowIntegrationTests : IAsyncLifetime
             new SpatialReference(6.93, 79.86, "EPSG:4326"),
             new LandUse(LandUseType.Agricultural, "E2E"),
             new LandCharacteristics("Loam", "Flat", 10m));
-        _parcelId = parcel.Id;
+        _createdParcelIds.Add(parcel.Id);
         await parcels.AddAsync(parcel);
 
-        var draftDetail = await applicant.GetDraftOrCreateAsync(_parcelId, CancellationToken.None);
+        var draftDetail = await applicant.GetDraftOrCreateAsync(parcel.Id, CancellationToken.None);
         var submitBody = ValidSubmitDraft();
         var idempotencyKey = Guid.NewGuid().ToString("N");
 
