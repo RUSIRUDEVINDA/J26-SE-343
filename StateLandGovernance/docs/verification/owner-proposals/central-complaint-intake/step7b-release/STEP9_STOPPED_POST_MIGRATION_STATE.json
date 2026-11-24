@@ -1,0 +1,13 @@
+{
+  "database": "state_land_governance_c4",
+  "oid": "34144",
+  "tables": 42,
+  "migrations": 23,
+  "step1": true,
+  "step2": true,
+  "attachments": 0,
+  "runtime_grants": [
+    "INSERT",
+    "SELECT"
+  ]
+}

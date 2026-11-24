@@ -1,0 +1,22 @@
+{
+  "Utc": "2026-10-23T09:33:39.858830+00:00",
+  "Identity": {
+    "name": "state_land_governance_c4",
+    "oid": "34144",
+    "owner": "postgres",
+    "acl": [
+      "=Tc/postgres",
+      "postgres=CTc/postgres",
+      "slg_c4_regulatory_runtime=c/postgres"
+    ]
+  },
+  "BackupPath": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\c4-evidence-backup-20261023_0940\\state_land_governance_c4.dump",
+  "Bytes": 337062,
+  "Sha256": "8dc27214f4070e072e7522930214c8c8426ce1fa559b085af2986b6ed2d94df3",
+  "CreatedUtc": "2026-10-23T09:33:32.726986+00:00",
+  "ReadableArchiveListValid": true,
+  "IsolatedDatabase": "c4_evidence_test_20261023",
+  "All38OriginalTablesMatch": true,
+  "SchemaHistoryMatch": true,
+  "FullBaseline": "Retained locally in FRESH_BACKUP_BASELINE.json; excluded from the scoped commit to avoid publishing the full database/peer ACL inventory."
+}

@@ -1,0 +1,9 @@
+{
+  "reviewedAtUtc": "2026-10-22T20:43:14.723907+00:00",
+  "scope": "source/manifests only; no database access or runtime actions",
+  "manifests": {
+    "IMPLEMENTATION_SOURCE_SHA256.json": "5e6454548b1288105b4005678b1d8a49f72c1f2e427e1fb4c76f402c1ee713fa",
+    "ACTIVATION_REVIEW_SHA256.json": "0c965b6f84fc1a44ad0e1725a2fe09bf57a2e22d50e8c63855899dbd03b877a6"
+  },
+  "tests": "Prior evidence inspected, not rerun. New lifecycle unimplemented and untested."
+}

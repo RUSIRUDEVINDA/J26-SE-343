@@ -30,16 +30,19 @@ test("Component 4 landing dashboard contains only the business overview", () => 
   }
 });
 
-test("Component 4 layout forwards its complete module navigation to the shared sidebar", () => {
-  const layoutSource = fs.readFileSync("src/app/component-04/layout.tsx", "utf8");
+test("Component 4 layout keeps the journeys and hides report history from navigation", () => {
+  const layoutSource = fs.readFileSync("src/app/component-04/layout.tsx", "utf8")+fs.readFileSync("src/modules/component-04/services/c4Navigation.ts", "utf8");
   const pageLayoutSource = fs.readFileSync("src/shared/components/PageLayout.tsx", "utf8");
 
-  for (const label of [
-    "Overview", "Progressive screening", "Assessment history", "Complaint intelligence",
-    "Post-workflow analysis", "Governance follow-up", "Integrity and audit",
-  ]) {
-    assert.match(layoutSource, new RegExp(`label: "${label}"`));
+  for (const label of ["Proposals", "Regulatory Screening", "Conflict Detection", "Early Governance", "Institutional Workflow Preview", "Post-Workflow Anomaly", "Complaint Inbox"]) {
+    assert.ok(layoutSource.includes(`label:"${label}"`), `Missing destination ${label}`);
   }
+  for (const route of ["/component-04/assessments", "/component-04/post-workflow", "/component-04/complaint-inbox"]) assert.ok(layoutSource.includes(route));
+  const {c4NavigationFor} = loadCommonJs("../src/modules/component-04/services/c4Navigation.ts");
+  for (const commissioner of [true, false]) assert.ok(c4NavigationFor(commissioner).every(item => item.href !== "/component-04/assessments/history"));
+  assert.ok(fs.existsSync("src/app/component-04/assessments/history/page.tsx"));
+  assert.doesNotMatch(layoutSource, /More governance tools and evidence|label:"Governance Overview"/);
+  assert.match(fs.readFileSync("src/app/component-04/[...view]/page.tsx", "utf8"), /IndependentGovernance/);
 
   assert.match(pageLayoutSource, /items=\{navigationItems\}/);
   assert.match(pageLayoutSource, /label=\{navigationLabel\}/);
@@ -77,7 +80,7 @@ test("Live dashboard success renders only the real response", async () => {
   const live = { summary: { totalCases: 0, totalAssessments: 0, clearCount: 0, reviewRequiredCount: 0, insufficientInfoCount: 0, lastUpdated: "2026-10-11T00:00:00Z" }, cases: [] };
   global.fetch = async url => {
     assert.equal(url, "http://governance.test/api/governance-intelligence/dashboard");
-    return { ok: true, json: async () => live };
+    return new Response(JSON.stringify(live), { status: 200 });
   };
   try {
     assert.deepEqual(await getGovernanceService("live").getDashboard(), live);
@@ -324,7 +327,7 @@ test("Early-screening status and blockchain receipt responses are validated", as
   const original = global.fetch;
   const screening = { caseId: "FICTIONAL-C4-001", inputVersion: "v1", overallStatus: "ReviewRequired", hasIncompleteEvidence: false, indicatorResults: [{ indicatorType: "LegalDispute", evidenceState: "VerifiedPresent", requiresReview: true, needsEvidence: false, reasonCode: "LEGAL_DISPUTE", message: "Review required.", evidenceReference: "FICTIONAL-EVIDENCE", recordedAtUtc: "2026-10-11T00:00:00Z" }] };
   const receipt = { recordId: "0199b9bc-9898-7000-8000-000000000002", engineType: "Compliance", actionName: "Evaluate", governanceStatus: "ReviewRequired", decisionRecordedAt: "2026-10-11T00:00:00Z", recordHash: "abc", verificationStatus: "Match", anchorStatus: "Anchored", ledgerTransactionReference: "0x123", blockNumber: 1, anchoredAtUtc: "2026-10-11T00:00:01Z", verifiedAtUtc: "2026-10-11T00:00:02Z", explanation: "Digest matched.", recordVersion: "AUDIT-V2" };
-  global.fetch = async url => ({ ok: true, json: async () => url.includes("screen-early-governance") ? screening : receipt });
+  global.fetch = async url => new Response(JSON.stringify(url.includes("screen-early-governance") ? screening : receipt), { status: 200 });
   try {
     const screened = await screenEarlyGovernance({ assessmentId: crypto.randomUUID(), workflowRunId: crypto.randomUUID(), caseId: screening.caseId, inputVersion: "v1", indicators: [] });
     assert.equal(screened.overallStatus, "ReviewRequired");

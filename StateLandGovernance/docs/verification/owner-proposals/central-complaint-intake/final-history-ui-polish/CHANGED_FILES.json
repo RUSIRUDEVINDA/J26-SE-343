@@ -1,0 +1,72 @@
+{
+  "TaskOnlyFiles": [
+    {
+      "Path": "StateLandGovernance/docs/verification/FINAL_C4_COMPLETION_REPORT.md",
+      "BeforeSha256": "ead9c8bb629c634d79459bb6ca66205cd73d34416049831872dfe547c4a0dde3",
+      "AfterSha256": "f5f8f51b8b96afe3e096ea4557d56743972e87f5a35315e1e17b400628d5d4a8"
+    },
+    {
+      "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/HANDOVER_GUIDE.md",
+      "BeforeSha256": "8e1c086f995ad76d001c4267745a8b16a6f89dd5d6095739cae4d8227e0b2f76",
+      "AfterSha256": "f504a488964a3a347bec616132b57d80daa2addb41680b3711144593ac958522"
+    },
+    {
+      "Path": "StateLandGovernance.Web/tests/component-04-history-form.test.ts",
+      "BeforeSha256": "e1d992ad1816819f403a453761086ab64c9100bb5602fa5808183744302c9de4",
+      "AfterSha256": "97ac0e4c4cd03fd738b2cee46a6c4df8424c67ba651014da3e1746cd595570d2"
+    },
+    {
+      "Path": "StateLandGovernance.Web/tests/component-04-manual-feedback.test.ts",
+      "BeforeSha256": "bdc16dd2eadc0acf1f54db673ea720f312990432b1d36d8ee7246cc0ee595096",
+      "AfterSha256": "00bc6bcf288c3270bf3c83a565daa582118145c1ee59f05083a0657fcc41fb44"
+    },
+    {
+      "Path": "StateLandGovernance.Web/tests/component-04-previous-evidence.test.ts",
+      "BeforeSha256": "dc7e49ef4f0037a552bfd2d41965f76e0d4d4bbfb718eeffb504dbb7c1ed2f64",
+      "AfterSha256": "5006845d71812effab55ffadbcf7afdd11a9612145dca7426132eacb7fa38615"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/ManualEvidenceVerification.tsx",
+      "BeforeSha256": "90a1f04944aaa1a6b08d20cfcf0ca099964590a721951cd212b61d0858c18287",
+      "AfterSha256": "3161ef1cf7b60826be70fca0da440b1fef197612776ce287d0e9fe04c06b9581"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/OfficerAssessmentResult.tsx",
+      "BeforeSha256": "e659bab542a0be1e6db58a9991c759e0db745e749d98eef9e31b88afffc6462b",
+      "AfterSha256": "23ce7b2d9c092d0bda19e6c138447856d03174001e8b833fb2aad777b9d9e702"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/PreviousEarlyEvidence.tsx",
+      "BeforeSha256": "ecaa208af17ce2bf3da4af4cd344c2372cd8b1096df5c9c27ec93181830b341b",
+      "AfterSha256": "f669aea8026ad5bdf071e771f4808e0f52878f4109fd5bda261d089c63974387"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/PreviousRegulatoryFollowups.tsx",
+      "BeforeSha256": "a707055e444a6e5364510027eee500757cbf4706645facef432d0b51fee2f7d5",
+      "AfterSha256": "0ef43a9ad625d1e67d21262d37eec4c71fbbd419e40722f0afe9d91acfb4d92d"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFollowups.tsx",
+      "BeforeSha256": "326f47a68e76dc9e2c2bbc8f880ece9d3313a81cdd868e41ee2281dbb2a4c8c3",
+      "AfterSha256": "9c8781bbbf6a1abf45100b1f6a965122dc3787c37d9a4cc67eeae534d5d346db"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/AssessmentHistory.module.css",
+      "BeforeSha256": null,
+      "AfterSha256": "2225ff2788394ab047ea5ef04b9359a504edaccae39526bf0f32ded78f341e1c"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFollowupHistory.tsx",
+      "BeforeSha256": null,
+      "AfterSha256": "efc56b67c1206e5683ee9e700e2598d4962097dfc01966de58ecee2e8da99835"
+    },
+    {
+      "Path": "StateLandGovernance.Web/tests/component-04-history-polish.test.ts",
+      "BeforeSha256": null,
+      "AfterSha256": "18b6e83235275c3e1f882cf84171bb183878af81fbc6026a00824d5339ee65d4"
+    }
+  ],
+  "NewEvidenceFolder": "StateLandGovernance\\docs\\verification\\owner-proposals\\central-complaint-intake\\final-history-ui-polish",
+  "BackendServicesDatabasePolicyModelsChanged": false,
+  "PreExistingUnrelatedChangesExcluded": true
+}

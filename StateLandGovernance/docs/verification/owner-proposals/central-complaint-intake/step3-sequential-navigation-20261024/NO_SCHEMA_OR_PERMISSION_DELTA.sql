@@ -1,0 +1,2 @@
+-- Step 3 adds NO tables, migrations or grants. Existing regulatory_followup_events SELECT/INSERT remain sufficient.
+-- Step 1 prerequisite grants were reconstructed only in this NEW isolated copy.

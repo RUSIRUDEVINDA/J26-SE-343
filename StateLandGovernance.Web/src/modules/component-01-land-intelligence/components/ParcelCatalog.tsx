@@ -1,4 +1,7 @@
-import type { LandSearchResultResponse } from "../types/landIntelligence";
+import type {
+  LandSearchResultResponse,
+  ResearchSupplementParcelResponse,
+} from "../types/landIntelligence";
 import { landUseTypeLabels } from "../utils/enumMappings";
 import { sourceReportedLandUseDisplay } from "../utils/sourceReportedCadastre";
 import { displayOrUnavailable, formatArea } from "../utils/formatters";
@@ -22,16 +25,19 @@ export function ParcelCatalog({
   totalCount: number;
   selectedId?: string | null;
   onSelect: (id: string) => void;
+  supplementByParcelId?: Map<string, ResearchSupplementParcelResponse>;
   currentPage?: number;
   pageSize?: number;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: ParcelCatalogPageSize) => void;
+  onCadastralSearch?: (query: string) => void;
 }) {
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
   const activePage = Math.min(Math.max(1, currentPage), totalPages);
   const rangeStart = totalCount === 0 ? 0 : (activePage - 1) * pageSize + 1;
   const rangeEnd = Math.min(activePage * pageSize, totalCount);
   const showPager = Boolean(onPageChange);
+
   const pageSizeControl = showPager ? (
     <div className={styles.pageSizeControl}>
       <label htmlFor="parcel-catalog-page-size">Rows per page</label>
@@ -41,9 +47,7 @@ export function ParcelCatalog({
         value={pageSize}
         disabled={!onPageSizeChange}
         onChange={(e) =>
-          onPageSizeChange?.(
-            Number(e.target.value) as ParcelCatalogPageSize,
-          )
+          onPageSizeChange?.(Number(e.target.value) as ParcelCatalogPageSize)
         }
       >
         {PARCEL_CATALOG_PAGE_SIZES.map((size) => (
@@ -66,6 +70,7 @@ export function ParcelCatalog({
         <h2 className={styles.title}>Indexed land parcels</h2>
         {pageSizeControl}
       </div>
+
       <div className={styles.tableScroll}>
         <table className={styles.table}>
           <thead>
@@ -80,9 +85,11 @@ export function ParcelCatalog({
               </th>
             </tr>
           </thead>
+
           <tbody>
             {parcels.map((parcel) => {
               const selected = selectedId === parcel.id;
+
               return (
                 <tr
                   key={parcel.id}
@@ -97,7 +104,9 @@ export function ParcelCatalog({
                       {parcel.cadastralNumber}
                     </button>
                   </td>
+
                   <td>{parcel.district}</td>
+
                   <td>
                     {parcel.cadastralSource
                       ? sourceReportedLandUseDisplay(parcel.cadastralSource) ||
@@ -107,10 +116,13 @@ export function ParcelCatalog({
                           "Not recorded")
                         : "Not recorded"}
                   </td>
+
                   <td>
                     {displayOrUnavailable(parcel.cadastralSource?.gnIndex)}
                   </td>
+
                   <td>{formatArea(parcel.areaValue, parcel.areaUnit)}</td>
+
                   <td className={styles.actionsCell}>
                     <button
                       type="button"
@@ -119,6 +131,7 @@ export function ParcelCatalog({
                     >
                       View details
                     </button>
+
                     <a
                       className={styles.viewLink}
                       href={`/land-intelligence/knowledge-graph?parcelId=${parcel.id}`}
@@ -132,10 +145,12 @@ export function ParcelCatalog({
           </tbody>
         </table>
       </div>
+
       <div className={styles.pagination}>
         <p className={styles.count} role="status">
           {rangeSummary}
         </p>
+
         {showPager ? (
           <div className={styles.pageNav}>
             <button
@@ -147,9 +162,11 @@ export function ParcelCatalog({
             >
               Previous
             </button>
+
             <span className={styles.pageInfo}>
               Page {activePage} of {totalPages}
             </span>
+
             <button
               type="button"
               className={styles.pageButton}

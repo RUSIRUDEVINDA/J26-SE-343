@@ -1,0 +1,18 @@
+{
+  "CheckedUtc": "2026-10-24T02:46:33.895101+00:00",
+  "OrdinaryApplicationListeners": {
+    "5264": false,
+    "3000": false,
+    "8104": false
+  },
+  "NativePostgres": {
+    "Port": 5432,
+    "Pid": 7024
+  },
+  "OrdinaryServiceActionsByTask": 0,
+  "IsolatedContainer": "slg-central-complaint-test-20261023",
+  "IsolatedContainerStoppedSuccessfully": true,
+  "IsolatedDataRetained": true,
+  "OrdinaryDeployment": false,
+  "GitStageCommitPush": false
+}

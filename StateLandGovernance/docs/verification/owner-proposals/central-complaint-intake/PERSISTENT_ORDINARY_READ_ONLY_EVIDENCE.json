@@ -1,0 +1,52 @@
+{
+  "inspectedAtUtc": "2026-10-23T06:24:45.379585+00:00",
+  "method": "SELECT/catalogue only; forced transaction_read_only=on; no backup or activation",
+  "identity": {
+    "database": "c4_handover_local",
+    "port": 5432,
+    "readOnly": "on"
+  },
+  "history": [
+    "20260815105012_GovernanceIntelligence_InitialCreate",
+    "20260821151154_GovernanceIntelligence_AddStructuredEvaluations",
+    "20260825131541_GovernanceIntelligence_AddRichComplianceSnapshot",
+    "20260825141654_GovernanceIntelligence_RemoveLegacyComplianceChildTables",
+    "20260918072800_GovernanceIntelligence_AddEarlyGovernanceScreeningEvaluations",
+    "20261008062258_GovernanceIntelligence_AddComplaintClassificationAssessments",
+    "20261008074415_GovernanceIntelligence_AddEarlyGovernanceCommissionerReferrals",
+    "20261009082924_GovernanceIntelligence_AddAuditAnchorReceiptAndOutbox",
+    "20261011180225_GovernanceIntelligence_AddAuditHashVersion",
+    "20261011193437_GovernanceIntelligence_AddPhase3AProjectionsAndAssessments",
+    "20261012091358_GovernanceIntelligence_AddComplianceCaseCorrelation",
+    "20261016123700_AddDurableConsolidatedScreening",
+    "20261021170456_AddRegisteredComplaints",
+    "20261021173048_AddOwnedRegulatoryProvenance",
+    "20261022060432_AddPostWorkflowDemonstrations",
+    "20261022093623_AddKiwulaAssessmentProvenance",
+    "20261022152556_AddOfficerInvestigationsAndAssessmentRequests"
+  ],
+  "complaint_assignment_eventsAbsent": true,
+  "complaint_handling_eventsAbsent": true,
+  "complaintFingerprints": {
+    "registered_complaints": {
+      "count": 3,
+      "digest": "b3f80f7f6777af555ed920331b10b101"
+    },
+    "registered_complaint_classifications": {
+      "count": 3,
+      "digest": "26ccb9308012572317dc0705bca12306"
+    },
+    "complaint_classification_assessments": {
+      "count": 58,
+      "digest": "a93e3bec8255ffc8808620cb11ed6302"
+    }
+  },
+  "complaintsUnchanged": true,
+  "historyUnchanged": true,
+  "proposedExistingCentralIdentity": {
+    "ActorId": "0ab669fe-d0ab-5695-ad55-10f6b3b5aab3",
+    "TokenRole": "Officer",
+    "Institution": "COMMISSIONER",
+    "ProfileActorMatches": true
+  }
+}

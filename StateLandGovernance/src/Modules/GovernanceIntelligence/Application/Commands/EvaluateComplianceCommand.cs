@@ -1,3 +1,5 @@
+using System.Text.Json;
+using StateLandGovernance.GovernanceIntelligence.Application.RegulatoryReports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +24,16 @@ public sealed record EvaluateComplianceCommand(
     decimal LeaseAmount = 0m,
     string? ZoningArea = null,
     ProposalComplianceInputDto? Input = null,
-    string? CaseId = null
-);
+    string? CaseId = null,
+    Guid? SubmissionKey = null,
+    string? InputVersion = null,
+    string? SchemaVersion = null,
+    string? SourceReference = null,
+    RegulatoryCaseBinding? C3Binding = null
+){
+    [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public Guid? EarlyRequestId {get;init;}
+}
 
 /// <summary>
 /// Handler for the EvaluateComplianceCommand.
@@ -50,7 +60,7 @@ public sealed class EvaluateComplianceCommandHandler
         _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
-    public async Task<ComplianceResultDto> HandleAsync(EvaluateComplianceCommand command, CancellationToken cancellationToken = default)
+    public async Task<ComplianceResultDto> HandleAsync(EvaluateComplianceCommand command, CancellationToken cancellationToken = default, SavedRegulatoryProvenance? provenance = null)
     {
         if (command == null) throw new ArgumentNullException(nameof(command));
 
@@ -64,22 +74,31 @@ public sealed class EvaluateComplianceCommandHandler
             throw new ArgumentException("CaseId cannot exceed 100 characters.", nameof(command));
         }
         string catalogueSource = "InMemoryDefault";
+        Guid? storedId=null;
 
         if (command.Input != null)
         {
-            var domainInput = MapDtoToDomainInput(command.Input);
+            var domainInput = ProposalComplianceInputMapper.Map(command.Input);
+            if(provenance!=null)provenance=provenance with{EvaluatedInputHash=RegulatoryJson.Hash(JsonSerializer.Serialize(domainInput,RegulatoryJson.Options))};
             if (_ruleCatalogue != null)
             {
                 try
                 {
                     var activeRules = await _ruleCatalogue.GetActiveRulesAsync(utcTimestamp, cancellationToken);
+                    if(provenance!=null&&activeRules.Count==0)throw new RegulatorySubmissionUnavailableException();
+                    if(provenance!=null){
+                        var ordered=activeRules.OrderBy(x=>x.RuleCode,StringComparer.Ordinal).ThenBy(x=>x.RuleVersion,StringComparer.Ordinal).Select(x=>x with{Parameters=x.Parameters.OrderBy(p=>p.Key,StringComparer.Ordinal).ToDictionary(p=>p.Key,p=>p.Value,StringComparer.Ordinal)}).ToArray();
+                        provenance=provenance with{CatalogueDigest=RegulatoryJson.Hash(JsonSerializer.Serialize(ordered,RegulatoryJson.Options)),CatalogueVersion=string.Join(";",ordered.Select(x=>x.RuleVersion).Distinct().OrderBy(x=>x,StringComparer.Ordinal))};
+                    }
                     catalogueSource = _ruleCatalogue.GetType().Name.Contains("Postgres", StringComparison.OrdinalIgnoreCase)
                         ? "PostgreSQL"
                         : "InMemoryTest";
                     result = _complianceEngine.EvaluateNpd(domainInput, activeRules, utcTimestamp);
                 }
+                catch (OperationCanceledException) { throw; }
                 catch (Exception ex)
                 {
+                    if(provenance!=null)throw new RegulatorySubmissionUnavailableException();
                     catalogueSource = "PostgreSQL (Unavailable/Misconfigured)";
                     var sysFinding = new ComplianceFinding(
                         "SYS-CATALOGUE-001",
@@ -105,6 +124,7 @@ public sealed class EvaluateComplianceCommandHandler
             }
             else
             {
+                if(provenance!=null)throw new RegulatorySubmissionUnavailableException();
                 result = _complianceEngine.EvaluateNpd(domainInput, utcTimestamp);
             }
         }
@@ -129,7 +149,8 @@ public sealed class EvaluateComplianceCommandHandler
             $"Findings: {result.Findings.Count}, Violations: {result.Violations.Count}, Conditions: {result.Conditions.Count}, CatalogueSource={catalogueSource}",
             utcTimestamp);
 
-        await _evaluationStore.StoreComplianceEvaluationAsync(auditRecord, result, command.ActionName ?? "EvaluateCompliance", proposalId, caseId, cancellationToken);
+        if(provenance==null){await _evaluationStore.StoreComplianceEvaluationAsync(auditRecord, result, command.ActionName ?? "EvaluateCompliance", proposalId, caseId, cancellationToken);}
+        else storedId=await _evaluationStore.StoreOwnedComplianceEvaluationAsync(auditRecord,result,command.ActionName ?? "EvaluateCompliance",proposalId,command.C3Binding?.CaseId.ToString(),provenance,cancellationToken);
 
         // Map to result DTO
         var violationDtos = result.Violations
@@ -166,7 +187,7 @@ public sealed class EvaluateComplianceCommandHandler
             violationDtos,
             conditionDtos,
             findingDtos,
-            result.DeterministicEvaluationId
+            result.DeterministicEvaluationId, storedId
         );
     }
 
@@ -205,40 +226,4 @@ public sealed class EvaluateComplianceCommandHandler
         );
     }
 
-    private static ProposalComplianceInput MapDtoToDomainInput(ProposalComplianceInputDto dto)
-    {
-        CashFlowPeriod period = CashFlowPeriod.Annual;
-        if (!string.IsNullOrWhiteSpace(dto.EconomicAppraisal?.CashFlowPeriod) &&
-            Enum.TryParse<CashFlowPeriod>(dto.EconomicAppraisal.CashFlowPeriod, true, out var parsedPeriod))
-        {
-            period = parsedPeriod;
-        }
-
-        CostBenefitRatioConvention cbrConvention = CostBenefitRatioConvention.Unresolved;
-        if (!string.IsNullOrWhiteSpace(dto.EconomicAppraisal?.CbrConvention) &&
-            Enum.TryParse<CostBenefitRatioConvention>(dto.EconomicAppraisal.CbrConvention, true, out var parsedCbr))
-        {
-            cbrConvention = parsedCbr;
-        }
-
-        return new ProposalComplianceInput(
-            dto.ProposalId ?? string.Empty,
-            dto.Location != null ? new ProjectLocationInput(dto.Location.Province, dto.Location.District, dto.Location.DivisionalSecretariatDivision, dto.Location.GramaNiladhariDivision, dto.Location.Description) : null,
-            dto.LandRequirement != null ? new LandRequirementInput(dto.LandRequirement.RequiresLand, dto.LandRequirement.ExtentHectares, dto.LandRequirement.LandType, dto.LandRequirement.AllocationDetails, dto.LandRequirement.ResettlementApplicable) : null,
-            dto.PreliminaryAssessment != null ? new PreliminaryAssessmentInput(dto.PreliminaryAssessment.PreFeasibilityDone, dto.PreliminaryAssessment.PreFeasibilityRef, dto.PreliminaryAssessment.EiaDone, dto.PreliminaryAssessment.EiaRef, dto.PreliminaryAssessment.AssessmentReportReferences) : null,
-            dto.PolicyAlignment != null ? new PolicyAlignmentInput(dto.PolicyAlignment.DeclaredPolicies, dto.PolicyAlignment.AlignmentExplanation) : null,
-            dto.Stakeholders != null ? new StakeholderInput(dto.Stakeholders.ExpectedStakeholders, dto.Stakeholders.ConsultedStakeholders, dto.Stakeholders.DuplicationAssessmentSupplied, dto.Stakeholders.OverlapMitigationRef) : null,
-            dto.ResultFramework != null && dto.ResultFramework.Nodes != null ? new ResultFrameworkInput(dto.ResultFramework.Nodes.Select(n => new ResultFrameworkNodeInput(n.NodeId, n.NodeType, n.Title, n.ParentNodeId, n.KpiReferences)).ToList()) : null,
-            dto.ImpactAssessment != null ? new ImpactAssessmentInput(dto.ImpactAssessment.ImpactAssessmentApplicable, dto.ImpactAssessment.NegativeImpacts?.Select(i => new NegativeImpactItemInput(i.ImpactId, i.Description, i.MitigationPlanRef)).ToList()) : null,
-            dto.RiskFramework != null && dto.RiskFramework.Risks != null ? new RiskFrameworkInput(dto.RiskFramework.Risks.Select(r => new RiskItemInput(r.RiskId, r.Description, r.MitigationStrategy, r.IsAssumption)).ToList()) : null,
-            dto.DisasterRiskAssessment != null ? new DisasterRiskAssessmentInput(dto.DisasterRiskAssessment.Applicable, dto.DisasterRiskAssessment.AssessmentCompleted, dto.DisasterRiskAssessment.AssessmentReference, dto.DisasterRiskAssessment.HazardsConsidered, dto.DisasterRiskAssessment.MitigationMeasures, dto.DisasterRiskAssessment.ResponsibleRole, dto.DisasterRiskAssessment.Remarks) : null,
-            dto.MonitoringPlan != null && dto.MonitoringPlan.Kpis != null ? new MonitoringPlanInput(dto.MonitoringPlan.Kpis.Select(k => new KpiInput(k.KpiId, k.OutputOrOutcomeRef, k.UnitOfMeasure, k.BaselineValue, k.BaselineYear, k.TargetValue, k.MeansOfVerification, k.DataSource, k.ResponsibleRole)).ToList()) : null,
-            dto.Budget != null ? new BudgetInput(dto.Budget.SubmittedProjectBudget, dto.Budget.CostComponents?.Select(c => new CostComponentInput(c.ComponentId, c.Name, c.Amount)).ToList()) : null,
-            dto.Financing != null ? new FinancingInput(dto.Financing.FinancingSources?.Select(f => new FinancingSourceInput(f.SourceId, f.Name, f.Amount)).ToList(), dto.Financing.RevenueExpected, dto.Financing.RevenueForecastAmount) : null,
-            dto.SocialSafeguard != null ? new SocialSafeguardInput(dto.SocialSafeguard.ResettlementApplicable, dto.SocialSafeguard.ResettlementCost, dto.SocialSafeguard.GenderConsidered, dto.SocialSafeguard.AccessibilityConsidered) : null,
-            dto.Implementation != null ? new ImplementationInput(dto.Implementation.Activities?.Select(a => new ImplementationActivityInput(a.ActivityId, a.Name, a.ResponsibleRole)).ToList(), dto.Implementation.OAndMArrangement, dto.Implementation.OAndMCost, dto.Implementation.OAndMFundingSource) : null,
-            dto.EconomicAppraisal != null ? new EconomicAppraisalInput(dto.EconomicAppraisal.SelectedMethod, dto.EconomicAppraisal.DiscountRate, dto.EconomicAppraisal.CashFlows, period, dto.EconomicAppraisal.SubmittedNpv, dto.EconomicAppraisal.SubmittedIrr, dto.EconomicAppraisal.SubmittedPaybackPeriod, dto.EconomicAppraisal.SubmittedCbr, dto.EconomicAppraisal.SubmittedPvBenefits, dto.EconomicAppraisal.SubmittedPvCosts, cbrConvention) : null,
-            dto.EvidenceReferences != null ? dto.EvidenceReferences.Select(e => new EvidenceReferenceInput(e.EvidenceId, e.ReferenceNumber, Enum.TryParse<EvidenceStatus>(e.VerificationStatus, true, out var status) ? status : EvidenceStatus.Provided)).ToList() : null
-        );
-    }
 }

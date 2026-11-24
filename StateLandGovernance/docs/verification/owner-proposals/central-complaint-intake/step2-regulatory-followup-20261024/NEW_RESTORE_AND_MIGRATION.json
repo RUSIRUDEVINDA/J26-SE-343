@@ -1,0 +1,17 @@
+{
+  "Status": "Passed",
+  "Database": "c4_step2_restore_20261024",
+  "Host": "127.0.0.1",
+  "Port": 57657,
+  "Archive": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\c4-step1-backup-20261024-finalization\\state_land_governance_c4.dump",
+  "BackupSha256": "1b5f7ba0872f0cf59fe9f118c06cb3079f9c6a965120b568e31647e3f3032dd0",
+  "Original41TablesRowsAndSchemaMatchedBeforeMigration": true,
+  "OriginalRowsUnchangedAfterBothMigrations": true,
+  "Step1Prerequisite": "20261024000805_AddInvestigationEvidenceAndFinalization",
+  "Step2Migration": "20261024022733_AllowRegulatoryNoFollowupRequired",
+  "Step2SqlSha256": "bf2bf502852ecc08e4abdd63f108955cb7a397ffae27a5bdb2020f070f029489",
+  "IsolatedTables": 42,
+  "IsolatedMigrations": 23,
+  "Step2AdditionalGrants": [],
+  "OrdinaryWrites": 0
+}

@@ -1,0 +1,187 @@
+{
+  "label": "Demonstration adaptation - includes assumed additions.",
+  "inputVersion": "kiulakale-english-adaptation-v1",
+  "schemaVersion": "c4-regulatory-input/1",
+  "sourceReference": "English demonstration adaptation of Kiulakale Proposal1; additional assumptions per source/assumption appendix; no applicant confirmation, approval or verified external evidence.",
+  "preparedInputSha256": "146af028a902f7ec5966ae07a4c1081fe1a5379adff7e63b5bc88700b9828166",
+  "originalPdfSha256": "7d047f9e2e357a78909594db164af96703682e703ee2075b5a7fcf25b81692c3",
+  "notes": [
+    "Source facts retain original page references in the prepared adaptation and appendix.",
+    "17 acres;16 planted acres;1280 palms and102400 mature nuts/year are adaptation values.",
+    "15-year requested lease,11.8m funding and phased schedules are explicit assumptions.",
+    "Province, stakeholder consultations/resettlement and missing approvals remain unknown.",
+    "No real case, snapshot or proposal-version binding."
+  ],
+  "englishProposalSha256": "6d2127ce4f0d438803f7f2387a7f4a81918d69bc0ec4cea3773a1f30d9c2cca0",
+  "proposalText": "# Kiwula Kale Estates - English PP1 proposal\n\n**Demonstration adaptation \u2014 includes assumed additions.**\n\nPrepared for a separate Development demonstration only. This readable English adaptation is not an applicant-confirmed translation, signed application, permission to occupy, official letter or verified evidence. Source page references mean PDF pages of the original 18-page Sinhala Proposal1.pdf, unchanged SHA-256 7d047f9e2e357a78909594db164af96703682e703ee2075b5a7fcf25b81692c3. The source/assumption appendix identifies every substantive addition and change. No existing case or snapshot is assigned to this package.\n\n## 1. Applicant and project\n\nThe demonstration applicant is **Nimal Wijesinghe**, an individual farm operator. This is a fictional replacement identity, not the original applicant. His demonstration residential locality is Kuda Kiwula, Kottukachchiya; his residential GN is assumed to be 614/F Kiwula No. 01 and residential DS Mahakumbukkadawala. These are residence-profile assumptions, not the basis for the land location. An exact postal address, telephone, identity number and date of birth are **Unknown** and are not fabricated. For the exercise he is assumed to be a 67-year-old married man, educated up to GCE Advanced Level, with practical agricultural experience. These are adaptation profile assumptions; no real identity or certificate is reproduced.\n\nThe project name is **Kiwula Kale Estates**. The source describes agricultural development through coconut cultivation on 17 acres (pp1,4-6). The adaptation retains that purpose and proposes a monitored coconut holding with an option to investigate dairy activity later. Proposed development is conditional on lawful tenure, access, technical studies and any required permissions.\n\nThe enterprise is assumed not yet to trade, so no existing business-registration number is supplied. Whether registration is required must be determined through the normal process; no exemption or existing registration is claimed.\n\n## 2. Land location and requested tenure\n\nThe project land, separately from the residence, is in **Puttalam district, Mahakumbukkadawala DS, 614/F Kiwula No. 01 GN**, within the **Anamaduwa local-authority area** (pp4-5). Province, survey/parcel number, authoritative boundaries, access rights and physical land classification remain **Unknown**. This document does not invent a road name, cadastral parcel or jurisdictional grant. Page6 provides a rough road/location sketch only.\n\nGross area is 17 acres, approximately **6.8797 hectares** using the existing adapter's four-decimal normalization. A **15-year requested lease** is an explicit adaptation assumption; the original's 15-year future-development discussion does not establish requested tenure. For scheduling only, year1 is assumed to begin in 2027 and year15 to end in 2041. Delayed permission rebases every date; no actual start or lease grant is recorded.\n\n## 3. Proposed initial and future layouts\n\nThe following is a **conceptual allocation, not a survey or approved drawing**. Orientation, boundaries, setback distances and road entry must be established from a genuine survey. The initial/future drawings are in layout.svg; they are a diagram of the areas below, not scaled geometry.\n\n| Area | Acres | Proposed use |\n| --- | ---: | --- |\n| Coconut planting blocks | 16.00 | 1,280 palms at a planning density of 80 per planted acre; soil cover and access within blocks |\n| Service area | 0.35 | Watch hut/store, water equipment, internal access and handling space |\n| Conservation/drainage allocation | 0.15 | Vegetated margins and drainage facilities, locations subject to survey |\n| Reserved future-development area | 0.50 | Unbuilt during the coconut establishment phase; possible dairy feasibility exercise |\n| Total | **17.00** | No extra land assumed |\n\nThe source's proposed watch hut/store is 25ft by 15ft (p5), about 34.84m\u00b2, retained as a planned footprint. The adaptation adds separation of crop inputs from produce, covered waste handling, step-free access and a 1.2m clear doorway as design intentions; these require design review.\n\nNo dairy activity, milk income or dairy construction is included in this phase's budget or output targets. At year10, review whether a separate dairy project is feasible. A later concept could place a 12m by 8m animal shelter, a 4m by 4m manure-handling area and a 10m by 8m service yard within the reserved 0.5 acre, subject to layout, water, animal-welfare, drainage and planning review. The dairy option has **Unknown cost/funding and no assumed approval**, and must not proceed solely because it appears here. No residence is proposed or authorized by this adaptation.\n\n## 4. Production, employment and market\n\nThe original expects 1,360 seedlings, eight annual harvests, 800 nuts per acre per harvest, annual 108,800 nuts across 17 acres, and prices around Rs50-60 per nut (pp7-11). These are applicant forecasts, not established yield or current market prices.\n\nBecause this adaptation reserves one acre for other uses, it changes the planted area to 16 acres and the initial planting target to **1,280 palms**. Its mature forecast is therefore **16 \u00d7 800 \u00d7 8 = 102,400 nuts/year**, not the original 108,800. The assumed selling price is **LKR60 per nut**, the upper end of the source's stated range, without claiming it is today's price. Mature annual sales are **LKR6,144,000**. Eight harvests mean an assumed average 12,800 nuts and LKR768,000 per harvest. These are **harvest events, not quarters**, resolving the original table-heading inconsistency without changing its source transcription.\n\nNo coconut sales are assumed in years1-5. Year6 uses 50% mature yield (51,200 nuts), year7 75% (76,800), and year8 onward full mature yield. All sales are planned for domestic buyers. The original indirect foreign-market aspiration (p9) is retained as source history but no export sales, contract or certification is assumed in this financial model.\n\nThe source's six tabulated positions include three female and three male workers, with seasonal variation (p7). The adaptation plans the same six positions at maturity: one watchman, one driver and four field-worker positions, of which two are seasonal. Recruitment is based on competence and equal pay for equivalent work; there are no recorded hires. The mature labour budget is LKR1.8m: four permanent positions at LKR30,000/month plus two seasonal positions each budgeted for 60 days at LKR3,000/day. Years1-5 use a smaller seasonal/supervision budget, not six paid full-time posts. The project manager/owner contribution to supervision is not a seventh salaried position.\n\nCoconut seedlings and agronomic advice are intended to be sought from the appropriate coconut/agricultural services; other inputs may be purchased from suppliers. These source intentions (p7) are not purchase agreements or institutional commitments. Supplier names and quotations remain Unknown.\n\n## 5. Investment budget and financing plan\n\nThe original p11 gives a total **Rs5,050,000**: land/development 3m, buildings 0.5m, machinery 1.5m, other 0.05m, with a dashed furniture/equipment row. The adaptation keeps these monetary starting points but treats the first line as **proposed development/infrastructure**, not a land purchase or official lease premium. It adds separately identified allowances and a five-year reserve. It does not equate total original investment with capital works or applicant equity.\n\n| Adaptation initial allocation | LKR | Basis |\n| --- | ---: | --- |\n| Development and infrastructure | 3,000,000 | Original p11 amount; scope is an adaptation assumption |\n| Watch hut/store | 500,000 | Original p11 amount; proposed building only |\n| Machinery and irrigation equipment | 1,500,000 | Original p11 amount; allocation assumption |\n| Other establishment | 50,000 | Original p11 amount; scope requires quotation |\n| Planning/design allowance | 150,000 | Added assumption |\n| Environmental/worker-safety setup | 150,000 | Added assumption |\n| Contingency | 450,000 | Added assumption |\n| Establishment subtotal | **5,800,000** | Excludes operating reserve |\n| Five-year pre-bearing operating reserve | **6,000,000** | Added assumption: 5 \u00d7 LKR1.2m |\n| Total initial funding requirement | **11,800,000** | Includes the reserve once |\n\nThe financing plan **assumes**, rather than proves, an owner contribution of LKR5.8m for establishment plus a separately earmarked LKR6m operating reserve at time0. No loan, interest, grant, bank letter or actual availability of funds is asserted. The two planned contributions total LKR11.8m and are independently stated assumptions, not inferred from the cost total. If funding is unavailable, expenditure must not begin.\n\n## 6. Annual operating plan and reconciliation\n\nAll values use hypothetical constant 2026 LKR prices, not researched quotations. Taxes, statutory charges and actual rent terms are Unknown. A provisional LKR100,000 rent allowance is included in every modeled year; it is not a departmental rate or lease offer. Real affordability needs reassessment once actual charges are known.\n\n| Mature operating cash cost | LKR/year |\n| --- | ---: |\n| Labour | 1,800,000 |\n| Fertilizer/crop-protection inputs | 1,000,000 |\n| Transport/collection | 300,000 |\n| Energy/pumping | 240,000 |\n| Repairs/preventive maintenance | 240,000 |\n| Administration/insurance | 164,000 |\n| Environmental monitoring/safeguards | 100,000 |\n| Provisional rent allowance | 100,000 |\n| Total | **3,944,000** |\n\nMature revenue 6,144,000 less cash costs 3,944,000 gives **2,200,000 before tax, unpriced charges and unmodeled replacement capital**; this is scenario arithmetic, not an engine result or promised net profit. O&M repairs of 240,000 are already within the operating total and are not deducted twice.\n\nYears1-5 each require LKR1.2m: labour/supervision 600,000; crop inputs 200,000; energy 100,000; repairs 100,000; administration 50,000; monitoring 50,000; provisional rent 100,000. This is LKR100,000/month on an annual-average basis, not a claim of uniform monthly invoices. It is paid from the LKR6m reserve, which falls to zero by the end of year5. Year6 cost is 2.2m, year7 3.2m; the component schedules are in financial-schedule.json.\n\nThe original p8 raw-material costs, p10/year1 costs and p17 fertilizer/fuel figures are **not silently corrected as source facts**. The adaptation replaces their conflicting scopes with the above explicit phase budgets. It does not borrow the unrelated papaya finances.\n\n## 7. Financial-appraisal input assumptions\n\nThe supplied annual appraisal vector spans time0 and years1-15. Time0 is -11.8m, including the reserve. In years1-5, the -1.2m operating expenditure and +1.2m release of already funded reserve net to zero in this funding-inclusive appraisal. Charging -1.2m again without the reserve release would double-count its prefunding. This is a declared simplified convention, not a statutory economic-appraisal method.\n\nYear6 surplus is 872,000 (3.072m revenue less 2.2m cost); year7 is 1.408m (4.608m less 3.2m); years8-14 each 2.2m. Year15 includes an assumed LKR400,000 restoration provision, leaving 1.8m. No terminal resale value or lease extension is assumed. The complete annual ledger reconciles to the JSON vector. No dairy revenue is included.\n\nNPV is the selected demonstration calculation method; the **assumed annual discount rate is 10%**. Submitted NPV, IRR, payback and CBR metrics remain null. No calculated appraisal outcome is presented. CBR convention remains unresolved because no submitted benefit/cost ratio is supplied. Inflation, tax, actual official charges, major replacement schedules and real price/yield evidence remain limitations, not zeros established by the original proposal.\n\n## 8. Implementation, roles and monitoring\n\n| Period, conditional on permissions | Activity | Responsible role |\n| --- | --- | --- |\n| Pre-start | Confirm tenure/access, survey, required assessments, funding and design | Project manager; authorities make their own decisions |\n| Year1 Q1 | Final layout, safeguards, limited preparation and planting plan | Project manager / field supervisor |\n| Year1 Q2-Q3 | Approved infrastructure, planting and erosion controls | Field supervisor |\n| Year1 Q4 and year2 | Survival checks, replacements, records and maintenance | Field supervisor / farm records officer |\n| Years3-5 | Maintain young palms and review reserve spending | Project manager |\n| Years6-7 | Phased harvest, buyer comparison and cost review | Farm records officer |\n| Years8-15 | Mature operations and annual maintenance | Field supervisor |\n| Year10 | Optional separate dairy go/no-go feasibility review | Project manager; no approval assumed |\n| Year15 | Restoration and normal end-of-term handback planning | Project manager / actual land custodian |\n\nBaselines below are **assumed zero at the 2026 pre-start planning point**, not measured observations on the actual land. Palm count target is 1,280 by end of year2; survival is checked quarterly and dead palms require a revised plan. Target annual production is 102,400 nuts from year8; six positions at maturity are reviewed through payroll/seasonal records. Maintain at least 90% soil cover in planted blocks, assessed quarterly from year2. Record measured water consumption and maintain it within an assessor-established limit; that limit remains Unknown and is not invented here. A farm records officer is a responsibility assigned within existing staff/owner duties, not another funded employee. The KPI hierarchy and identifiers are in the structured JSON.\n\n## 9. Environment, safeguards, accessibility and maintenance\n\nThe original p14 makes applicant claims of limited environmental harm and no nearby departmental constraints. Those claims are retained in the appendix but **not adopted as verified absence of constraints**. This adaptation assumes potential runoff, erosion and water-demand impacts require planning. Proposed controls include vegetated margins, contour drainage, soil-moisture-led irrigation, controlled fertilizer application, safe input storage and recorded waste handling. No EIA, water authorization or DRR study is said to be completed.\n\nMaintain drip lines weekly, drainage and structures monthly, with an annual repair plan. Before revenue begins use the funded early-operation budget; thereafter planned sales fund the operating budget. Revenue is expected but not secured, so there is no revenueExpected=false contradiction.\n\nResettlement/occupancy/claims applicability is **Unknown** pending a genuine source assessment. Do not infer no resettlement from the source's scrub-land description. DRR applicability, required institutional review set, completed consultations, concurrent applications and complaint coverage remain Unknown in the base scenario. Separate simulated external context is not part of the applicant's declarations.\n\nApplicant-controlled inclusion intentions are equal opportunity/pay and three female/three male planned positions; step-free hut/store access, a 1.2m clear doorway, firm stable paths and accessible record/reporting arrangements are proposed subject to design review. These intentions are not a certified accessibility or gender assessment.\n\n## 10. Declaration and annexes\n\nThere is **no applicant signature, officer signature, official letter or approval** in this adaptation. No real NIC/phone is fabricated. Source p18's departmental handwriting remains unverified and is not converted into a success claim. If this adaptation is later uploaded as a separate demonstration source, normal review/publication must be expressly authorized and must never attach it to either real-case lineage.\n\nAnnexes: source/assumption table; conceptual initial/future layout; investment and annual financial schedules; structured regulatory DTO; separate simulated external context; 37-requirement and 24-rule coverage; activation/runtime plan. Unknown personal identifiers, actual jurisdiction/parcel evidence, policy references, statutory conditions and official verification remain explicit gaps.\n",
+  "sourceAssumptionRows": [
+    {
+      "topic": "Identity",
+      "source": "p3 has original applicant particulars; private details not republished",
+      "adaptation": "Fictional Nimal Wijesinghe replaces identity; exact address, phone, NIC, DOB Unknown",
+      "limitation": "Profile substitution, not an assertion about the original person"
+    },
+    {
+      "topic": "Residential locality",
+      "source": "p3: Kuda Kiwula, Kottukachchiya; residential GN/DS supplied",
+      "adaptation": "Fictional residence uses that locality; residential GN 614/F Kiwula No.01 and DS Mahakumbukkadawala as profile assumptions",
+      "limitation": "Never used instead of land location"
+    },
+    {
+      "topic": "Project name/nature",
+      "source": "pp1,4: Kiwula Kale Estates; coconut agriculture",
+      "adaptation": "Retained",
+      "limitation": "Working transliteration, not certified translation"
+    },
+    {
+      "topic": "Land location",
+      "source": "pp4-5: Puttalam; Mahakumbukkadawala; 614/F Kiwula No.01; Anamaduwa local authority",
+      "adaptation": "Retained; province and parcel geometry Unknown",
+      "limitation": "No inferred jurisdiction, road or land grant"
+    },
+    {
+      "topic": "Area",
+      "source": "pp4-6: 17 acres",
+      "adaptation": "17 acres / 6.8797 ha",
+      "limitation": "Existing conversion and rounding; not a survey"
+    },
+    {
+      "topic": "Tenure",
+      "source": "No explicit requested lease duration; p5 discusses development over 15 years",
+      "adaptation": "Assumed request of 15 years; illustrative 2027-2041 calendar",
+      "limitation": "Addition, not translation of the development horizon"
+    },
+    {
+      "topic": "Site layout",
+      "source": "p5 explicitly no construction plan; p6 rough route sketch",
+      "adaptation": "16 coconut +0.35 service +0.15 conservation +0.50 future reserve acres",
+      "limitation": "New conceptual, non-scaled design; boundaries/access Unknown"
+    },
+    {
+      "topic": "Initial building",
+      "source": "p5 watch hut/store 25ft x15ft",
+      "adaptation": "Retained footprint; inclusion/safe-storage design additions",
+      "limitation": "No building approval"
+    },
+    {
+      "topic": "Future dairy",
+      "source": "pp5,9 describe later dairy development",
+      "adaptation": "Optional year10 feasibility decision; 0.5 acre reserve; concept shelter/service dimensions",
+      "limitation": "No dairy costs/revenue in coconut phase; feasibility/funding Unknown"
+    },
+    {
+      "topic": "Planting",
+      "source": "pp7-8: 1,360 seedlings across source 17-acre concept",
+      "adaptation": "1,280 palms across adapted 16 planted acres at 80/acre",
+      "limitation": "Explicit change to fit layout; source figure not overwritten"
+    },
+    {
+      "topic": "Yield and price",
+      "source": "pp9-11: 800 nuts/acre/harvest, eight harvests, 108,800/year; Rs50-60/nut",
+      "adaptation": "102,400 nuts/year; LKR60 assumed; mature sales6,144,000",
+      "limitation": "Changed planted area; no current-market verification"
+    },
+    {
+      "topic": "Sales period",
+      "source": "p10 quarterly label conflicts with eight harvests",
+      "adaptation": "Use harvest events, not quarters; half maturity year6, three-quarters year7, full year8",
+      "limitation": "Explicit reconciled forecast, not source correction"
+    },
+    {
+      "topic": "Employment",
+      "source": "p7 three female/three male positions; seasonality noted",
+      "adaptation": "Six mature planned positions; four permanent and two seasonal; staged early labour",
+      "limitation": "Wages/hiring schedule added; no recorded employment"
+    },
+    {
+      "topic": "Capital starting points",
+      "source": "p11 components3m +0.5m +1.5m +0.05m =5.05m",
+      "adaptation": "Keep amounts as cost baselines, clarify development scope; add planning150k, safety150k, contingency450k",
+      "limitation": "Adapted establishment5.8m; not land purchase or total capital works"
+    },
+    {
+      "topic": "Operating reserve",
+      "source": "Original periods/scope need reconciliation",
+      "adaptation": "Added6m = five years x1.2m pre-bearing operation",
+      "limitation": "Included once in11.8m total initial funding"
+    },
+    {
+      "topic": "Funding",
+      "source": "p11 narrative own provision/intended funds, no numeric financing allocations",
+      "adaptation": "Assumed owner contributions5.8m establishment +6m reserve; no debt/grant",
+      "limitation": "Entire financing allocation is fictional, not inferred equity or proof of funds"
+    },
+    {
+      "topic": "Operating costs",
+      "source": "pp8,10,12,17 inconsistent scope/periods",
+      "adaptation": "Phase budgets1.2m,2.2m,3.2m,3.944m; mature repairs240k already included",
+      "limitation": "Replaces source inconsistencies for exercise only"
+    },
+    {
+      "topic": "Rent and tax",
+      "source": "p12 rent100k; actual terms not established",
+      "adaptation": "Assume100k annual provision; tax/official charges remain Unknown",
+      "limitation": "Not official price; model is before unpriced obligations"
+    },
+    {
+      "topic": "Economics",
+      "source": "P&L exists, not a full discounted cash-flow appraisal",
+      "adaptation": "Annual15-year vector; 10% assumed discount; submitted metrics null",
+      "limitation": "No model outputs calculated; reserve-release convention explicit"
+    },
+    {
+      "topic": "Rationale/policy",
+      "source": "pp4,8-9 contain crop/demand rationale; no declared national policy/version",
+      "adaptation": "Rationale retained and expanded; policy list null",
+      "limitation": "Catalogue policy approval cannot be invented by applicant"
+    },
+    {
+      "topic": "Risks/environment",
+      "source": "p14 applicant claims no major harm; source discusses climate/water/market",
+      "adaptation": "Add runoff/water controls and risk register; impacts considered applicable for planning",
+      "limitation": "No EIA/DRR completion, no accepted no-constraint assertion"
+    },
+    {
+      "topic": "Stakeholders",
+      "source": "pp14-15 intended advice; p18 one handwritten recommendation",
+      "adaptation": "Required stakeholder set, consultations, duplication evidence Unknown",
+      "limitation": "No fabricated official evidence; no empty-list NotApplicable claim"
+    },
+    {
+      "topic": "Social safeguards",
+      "source": "Sex counts present; occupancy/resettlement and disability plans not established",
+      "adaptation": "Add equal-pay/access design intentions; resettlement/cost remain null",
+      "limitation": "Applicant-controlled design intentions only"
+    },
+    {
+      "topic": "M&E/schedule",
+      "source": "p13 first-year chart; no full linked KPI plan",
+      "adaptation": "Add calendar/roles, linked results and quarterly/annual KPIs with assumed2026 zero baseline",
+      "limitation": "Baselines are planning assumptions, not observations"
+    },
+    {
+      "topic": "O&M",
+      "source": "pp14-15 general supervision and advice",
+      "adaptation": "Quantified phase maintenance; early reserve then expected sales funding",
+      "limitation": "No guaranteed revenue or contradictory revenueExpected=false"
+    },
+    {
+      "topic": "Recommendation/declaration",
+      "source": "p18 signed recommendation; conclusion not confidently translated",
+      "adaptation": "No reconstructed signature, letter or approval; applicant declaration unsigned",
+      "limitation": "Genuine issuing-officer clarification remains needed"
+    },
+    {
+      "topic": "External coverage",
+      "source": "No authoritative complaint/spatial/concurrent/departmental clearance established",
+      "adaptation": "Separate pending-context JSON and optional unselected empty-coverage exercise",
+      "limitation": "No merging into real records or this base applicant input"
+    },
+    {
+      "topic": "Binding",
+      "source": "Two real lineages plus unrelated synthetic case exist",
+      "adaptation": "All binding IDs null; standalone proposalId is descriptive only",
+      "limitation": "No case/snapshot reuse or authority inferred"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "ObservedListenersAfterIsolatedContainerStop": [
+    {
+      "LocalPort": 5432,
+      "OwningProcess": 7024
+    }
+  ],
+  "OrdinaryApi5264Listener": false,
+  "OrdinaryFrontend3000Listener": false,
+  "OrdinaryMl8104Listener": false,
+  "OrdinaryServiceActions": 0,
+  "IsolatedContainerStoppedSuccessfully": true,
+  "IsolatedStorageRetained": true
+}

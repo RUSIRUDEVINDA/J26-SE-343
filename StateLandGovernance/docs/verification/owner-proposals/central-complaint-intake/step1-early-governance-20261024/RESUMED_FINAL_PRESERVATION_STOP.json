@@ -1,0 +1,157 @@
+{
+  "Status": "STOPPED_BASELINE_DRIFT",
+  "Database": "state_land_governance_c4",
+  "Oid": 34144,
+  "Tables": 41,
+  "Migrations": 21,
+  "FingerprintDifferences": {},
+  "SchemaMatches": true,
+  "MetadataMatches": false,
+  "MetadataSectionsChanged": [
+    "TableGrants",
+    "ColumnGrants"
+  ],
+  "ApplicationListenersAtResumedCheck": [],
+  "DockerEngineAvailable": false,
+  "OrdinaryWritesByTask": 0,
+  "OrdinaryServiceActionsByTask": 0,
+  "TableGrantsRemoved": [
+    {
+      "g": "postgres",
+      "grantable": "YES",
+      "p": "DELETE",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "g": "postgres",
+      "grantable": "YES",
+      "p": "INSERT",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "g": "postgres",
+      "grantable": "YES",
+      "p": "REFERENCES",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "g": "postgres",
+      "grantable": "YES",
+      "p": "SELECT",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "g": "postgres",
+      "grantable": "YES",
+      "p": "TRIGGER",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "g": "postgres",
+      "grantable": "YES",
+      "p": "TRUNCATE",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "g": "postgres",
+      "grantable": "YES",
+      "p": "UPDATE",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    }
+  ],
+  "TableGrantsAdded": [],
+  "ColumnGrantsRemoved": [
+    {
+      "c": "column_name",
+      "g": "postgres",
+      "p": "INSERT",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "column_name",
+      "g": "postgres",
+      "p": "REFERENCES",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "column_name",
+      "g": "postgres",
+      "p": "SELECT",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "column_name",
+      "g": "postgres",
+      "p": "UPDATE",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "matching_rows",
+      "g": "postgres",
+      "p": "INSERT",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "matching_rows",
+      "g": "postgres",
+      "p": "REFERENCES",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "matching_rows",
+      "g": "postgres",
+      "p": "SELECT",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "matching_rows",
+      "g": "postgres",
+      "p": "UPDATE",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "table_name",
+      "g": "postgres",
+      "p": "INSERT",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "table_name",
+      "g": "postgres",
+      "p": "REFERENCES",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "table_name",
+      "g": "postgres",
+      "p": "SELECT",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    },
+    {
+      "c": "table_name",
+      "g": "postgres",
+      "p": "UPDATE",
+      "s": "pg_temp_38",
+      "t": "evidence_search_results"
+    }
+  ],
+  "ColumnGrantsAdded": []
+}

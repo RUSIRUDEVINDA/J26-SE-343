@@ -1,0 +1,15 @@
+{
+  "CheckedUtc": "2026-10-23T07:56:02.213156+00:00",
+  "Username": "commissioner",
+  "ActorId": "0ab669fe-d0ab-5695-ad55-10f6b3b5aab3",
+  "TokenRole": "Officer",
+  "Institution": "COMMISSIONER",
+  "ActiveUnderExistingProfileContract": true,
+  "SignInStatus": 200,
+  "DocumentedDevelopmentCredentialMatches": true,
+  "CredentialSource": "StateLandGovernance/src/Api/Security/DemoAccountProfiles.cs: Password constant; inspect locally, do not copy into reports",
+  "Authentication": "Existing password PBKDF2 verification + JWT and live 30-minute server session",
+  "LoginUrl": "http://localhost:3000/sign-in",
+  "DashboardUrl": "http://localhost:3000/component-04/central-complaints",
+  "CredentialChanged": false
+}

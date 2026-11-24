@@ -1,0 +1,19 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Start Investigation manualReplay returns identical event",
+    "Changed same-key handling action denied",
+    "Start Investigation persisted once with current lifecycle state",
+    "Stale repeated triage request conflicts without duplicate",
+    "Two intentional triage submissions retain separate IDs/revisions",
+    "Triage mirror events do not duplicate Start Investigation",
+    "Applicant handling history remains public only",
+    "Unassigned DS denied handling history",
+    "No classifier/anomaly inference in manual feedback proof",
+    "New host retrieves the persisted Start Investigation event"
+  ],
+  "Database": "c4_handling_test_complete",
+  "IsolatedFixtureId": "a9f42660-6830-449c-ac2d-831ed5b9c72f",
+  "StartInvestigationId": "5c25cfd2-4946-41ef-828f-b3f233a0c91b",
+  "ModelCalls": 0
+}

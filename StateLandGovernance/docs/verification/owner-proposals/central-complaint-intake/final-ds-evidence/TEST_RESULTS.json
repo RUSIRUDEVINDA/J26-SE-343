@@ -1,0 +1,16 @@
+{
+  "BackendPassed": 308,
+  "FrontendPassed": 146,
+  "ArchitecturePassed": 7,
+  "FocusedLint": "0 errors",
+  "IsolatedHttpStorageChecks": 38,
+  "OrdinaryAuthenticatedChecks": 387,
+  "SavedReportsRetrieved": 36,
+  "OrdinaryEligibleEarlyEvidenceWorkspaces": 7,
+  "IsolatedModelCalls": 0,
+  "OrdinaryModelCallsRequested": 0,
+  "OrdinaryEvidenceFixtures": 0,
+  "TypeScript": "Only3existing C1 errors: RecommendationsView309 TS2345; ParcelCatalog131/143 TS18048",
+  "Browser": "Automated SSR/HTTP readiness only; visual/keyboard/responsive pending",
+  "InitialProofIssues": "First proof before migration preparation completed; SQL guard initially matched ON DELETE RESTRICT, corrected to leading statements only. JSONB property order assertion corrected to structural equivalence. Initial UI ref/effect lint corrected; all final runs pass."
+}

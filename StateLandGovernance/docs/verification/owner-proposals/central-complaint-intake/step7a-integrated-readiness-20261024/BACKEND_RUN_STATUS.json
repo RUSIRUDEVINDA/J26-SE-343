@@ -1,0 +1,18 @@
+[
+  {
+    "Scope": "broad",
+    "ExitCode": 0
+  },
+  {
+    "Scope": "early",
+    "ExitCode": 1
+  },
+  {
+    "Scope": "complaint",
+    "ExitCode": 0
+  },
+  {
+    "Scope": "phase3b",
+    "ExitCode": 0
+  }
+]

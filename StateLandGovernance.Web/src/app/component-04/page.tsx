@@ -1,10 +1,7 @@
-import type { Metadata } from "next";
-import { IndependentGovernance } from "@/modules/component-04/components/IndependentGovernance";
+import {redirect} from "next/navigation";
+import type {Metadata} from "next";
 
-export const metadata: Metadata = { title: "Governance Intelligence", description: "Governance assessments and advisory evidence for state land lease review." };
+export const metadata:Metadata={title:"Governance Intelligence",description:"Governance assessments and advisory evidence for state land lease review."};
 
-export default function Component04Page() {
-  return (
-    <IndependentGovernance />
-  );
-}
+// Existing governance overview implementation is retained; only its default navigation is hidden.
+export default function Component04Page(){redirect("/component-04/assessments");}

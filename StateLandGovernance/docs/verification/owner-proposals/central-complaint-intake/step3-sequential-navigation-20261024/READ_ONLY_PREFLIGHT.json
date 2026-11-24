@@ -1,0 +1,19 @@
+{
+  "Status": "Passed durable database preservation; services offline at resumed observation",
+  "Database": "state_land_governance_c4",
+  "Oid": 34144,
+  "Tables": 41,
+  "Migrations": 21,
+  "AllOriginalRowsSchemaHistorySequencesAndDurableGrantsUnchanged": true,
+  "RawMetadataDifference": "Only vanished pg_temp_38.evidence_search_results grants; diagnostic retained separately",
+  "PrivateConfigurationPermissionsAndExistingApiPackageUnchanged": true,
+  "Models": {
+    "Complaint": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+    "Anomaly": "59ed4a73d56d9f06798c4ebc4684a633afe72841c41ed0b3ba4e7bb658782b46"
+  },
+  "BackupSha256Rechecked": "1b5f7ba0872f0cf59fe9f118c06cb3079f9c6a965120b568e31647e3f3032dd0",
+  "OrdinaryWritesByTask": 0,
+  "OrdinaryServiceActionsByTask": 0,
+  "ApplicationListenersAtResumedCheck": [],
+  "DockerEngineAvailable": false
+}

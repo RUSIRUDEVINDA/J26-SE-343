@@ -1,0 +1,32 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Anonymous complaint submission denied",
+    "Officer cannot submit an applicant complaint",
+    "Existing address capability contract available",
+    "Free-text address accepted with absent parcel/case and unavailable peers",
+    "Original address and authenticated ownership persisted without trusted links",
+    "Unavailable classifier is recorded honestly; original complaint text is unchanged",
+    "Same-key replay preserves saved record and makes no extra classifier attempt",
+    "Changed address conflicts for same idempotency key",
+    "Unknown optional references remain unverified assertions without blocking submission",
+    "No C1/C3 reference validation or lookup called",
+    "Invalid address rejected before persistence/classifier",
+    "Invalid address rejected before persistence/classifier",
+    "Rejected inputs never call the classifier adapter",
+    "Other applicant cannot read saved address/complaint",
+    "Unassigned DS cannot read saved address/complaint",
+    "Anonymous detail denied",
+    "Owner saved history contains the persisted complaint once",
+    "Other applicant list excludes saved complaint",
+    "New host reload retains exact saved address and owner",
+    "Failed classification never fabricates probabilities/model output",
+    "Reload/list/detail perform no classification attempts"
+  ],
+  "IsolatedComplaintId": "0d126732-d367-4925-ae83-45afca02c63e",
+  "ApplicantId": "08c017ba-89e9-4583-9d1e-0501559e1004",
+  "TestAdapterCalls": 2,
+  "RealModelCalls": 0,
+  "PeerLookupCalls": 0,
+  "OrdinaryWrites": 0
+}

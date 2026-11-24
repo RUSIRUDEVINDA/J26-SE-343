@@ -1,0 +1,50 @@
+"use client";
+import Link from "next/link";
+import {ComplaintHandlingPanel} from "./ComplaintHandlingPanel";
+import {useEffect,useRef,useState} from "react";
+import {centralComplaintsApi as api,type CentralDetail,type CentralItem,type Officer,type Assignment,type AssignmentInput} from "../services/centralComplaints";
+import {useOfficerSession} from "./OfficerFlowSession";
+import {sriLankaTime,statusLabel} from "../services/presentation";
+import shared from "./RegisteredComplaints.module.css";
+import dashboard from "./CentralComplaints.module.css";
+const styles={...shared,...dashboard};
+
+export function CentralComplaintLink(){
+ const session=useOfficerSession();const epoch=session.epoch;const [allowed,setAllowed]=useState(false);
+ useEffect(()=>{let active=true;const e=epoch.current;queueMicrotask(()=>{if(!active)return;setAllowed(false);if(session.actor)void api.capabilities().then(x=>{if(active&&e===epoch.current)setAllowed(x.canRead);}).catch(()=>{});});return()=>{active=false;};},[session.actor,session.generation,epoch]);
+ return allowed?<Link href="/component-04/central-complaints">Central complaint intake</Link>:null;
+}
+export function CentralComplaints(){
+ const session=useOfficerSession();const epoch=session.epoch;const [tab,setTab]=useState<"unassigned"|"commissioner"|"ds"|"terminal">("unassigned");
+ const [items,setItems]=useState<CentralItem[]>([]),[detail,setDetail]=useState<CentralDetail|null>(null),[officers,setOfficers]=useState<Officer[]>([]);
+ const [history,setHistory]=useState<Assignment[]>([]),[cursor,setCursor]=useState<string|null>(null),[target,setTarget]=useState(""),[reason,setReason]=useState("");
+ const [cap,setCap]=useState<{canRead:boolean;canAssign:boolean}|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
+ const [retained,setRetained]=useState(false);
+ const generation=useRef(0),pending=useRef<{id:string;input:AssignmentInput}|null>(null),writing=useRef(false);
+ useEffect(()=>{
+  const g=++generation.current,e=epoch.current;
+  queueMicrotask(()=>{
+   if((g!==generation.current||e!==epoch.current))return;
+   setItems([]);setDetail(null);setHistory([]);setOfficers([]);setCap(null);setError("");setMessage("");setRetained(false);pending.current=null;
+   if(!session.actor)return;setBusy(true);
+   void (async()=>{try{const c=await api.capabilities();if((g!==generation.current||e!==epoch.current))return;setCap(c);const [page,ds]=await Promise.all([api.queue(tab),c.canAssign?api.officers():Promise.resolve([])]);if((g!==generation.current||e!==epoch.current))return;setItems(page.items);setCursor(page.nextCursor);setOfficers(ds);}catch{if((g===generation.current&&e===epoch.current))setError("Central access is unavailable or has not been granted to this session.");}finally{if((g===generation.current&&e===epoch.current))setBusy(false);}})();
+  });
+  return()=>{generation.current=g+1;};
+ },[session.actor,session.generation,tab,epoch]);
+ async function refresh(next?:string){const g=generation.current,e=epoch.current;setBusy(true);setError("");try{const page=await api.queue(tab,next);if((g!==generation.current||e!==epoch.current))return;setItems(old=>next?[...old,...page.items]:page.items);setCursor(page.nextCursor);}catch{if((g===generation.current&&e===epoch.current)){setItems([]);setDetail(null);setError("Queue access changed or the request failed. Sign in and refresh.");}}finally{if((g===generation.current&&e===epoch.current))setBusy(false);}}
+ async function open(id:string,retain=false){const g=generation.current,e=epoch.current;setBusy(true);setError("");if(!retain)setDetail(null);setHistory([]);setTarget("");setReason("");if(!retain)setMessage("");pending.current=null;setRetained(false);try{const [d,h]=await Promise.all([api.detail(id),api.history(id)]);if((g!==generation.current||e!==epoch.current))return;setDetail(d);setHistory(h);}catch(caught){if((g===generation.current&&e===epoch.current)){setDetail(null);setError("This complaint is unavailable to the current session.");}if(retain)throw caught;}finally{if((g===generation.current&&e===epoch.current))setBusy(false);}}
+ async function assign(){if(!detail||!target||!reason.trim()||writing.current)return;const g=generation.current,e=epoch.current;const id=detail.detail.complaint.id;
+  // Keep the exact key/body for an uncertain response; editing starts no replacement write.
+  const request=pending.current??{id,input:{submissionKey:crypto.randomUUID(),expectedAssignmentRevision:detail.assignment?.revision??0,expectedHandlingRevision:detail.handling.state.revision,targetActorId:target,reason}};
+  pending.current=request;setRetained(true);writing.current=true;setBusy(true);setError("");try{const saved=await api.assign(request.id,request.input);if((g!==generation.current||e!==epoch.current))return;pending.current=null;setRetained(false);await open(id);if((g===generation.current&&e===epoch.current))setMessage(saved.reused?"Saved assignment retrieved; current assignment refreshed.":"Assignment saved.");}catch{if((g===generation.current&&e===epoch.current))setError("Assignment was not confirmed. The exact request is retained for replay. Refresh the complaint before a new routing choice.");}finally{writing.current=false;if((g===generation.current&&e===epoch.current))setBusy(false);}}
+ return <main className={styles.surface}><header className={dashboard.heading}><p className={dashboard.eyebrow}>Commissioner workspace</p><h1>Complaint management</h1><p>Review complaints, coordinate DS investigation and record reasoned decisions.</p><details><summary>Responsibility and evidence</summary><p>Routing does not verify allegations or establish land jurisdiction. Investigation records and final decisions remain separate from classifier predictions.</p></details></header>
+ {error&&<p role="alert">{error}</p>}{message&&<p role="status">{message}</p>}{busy&&<p role="status">Loading saved information...</p>}
+ {cap?.canRead&&<><div className={dashboard.queues} role="group" aria-label="Handling queues">{([['unassigned','Unassigned'],['commissioner','Under Commissioner Review'],['ds','Assigned to DS'],['terminal','Resolved / Closed']] as const).map(([value,label])=><button key={value} aria-pressed={tab===value} disabled={busy} onClick={()=>setTab(value)}>{label}</button>)} <button disabled={busy} onClick={()=>void refresh()}>Refresh queue</button></div>
+ <div className={styles.inbox}><section className={dashboard.queuePanel} aria-label="Complaints"><h2>Complaints <span>({items.length} loaded)</span></h2><p>Received date: newest first.</p><ul className={styles.list}>{items.map(x=><li key={x.complaint.id}><button className={styles.complaintChoice} disabled={busy} aria-pressed={detail?.detail.complaint.id===x.complaint.id} onClick={()=>void open(x.complaint.id)}><strong>{x.complaint.subject}</strong><small>Received {sriLankaTime(x.complaint.submittedAtUtc)} / {statusLabel(x.complaint.classificationState)} / {statusLabel(x.complaint.reviewStatus)}</small>{x.handling&&<small>{statusLabel(x.handling.status)}</small>}{x.assignment&&<small>{x.assignment.targetOfficeCode}{!x.targetEligible?" / Officer eligibility changed":""}</small>}</button></li>)}</ul>{!items.length&&!busy&&<p>No complaints in this queue.</p>}{cursor&&<button disabled={busy} onClick={()=>void refresh(cursor)}>Load more</button>}</section>
+ <section className={dashboard.detailPanel} aria-label="Complaint detail">{detail?<><h2>{detail.detail.complaint.subject}</h2><div className={styles.original} tabIndex={0}>{detail.detail.complaint.complaintText}</div>{detail.detail.complaint.landAddress&&<><h3>Land address / location</h3><p>{detail.detail.complaint.landAddress}</p><small>Applicant-provided and unverified.</small></>}<p>Classification: {statusLabel(detail.detail.complaint.classificationState)} / Review: {statusLabel(detail.detail.complaint.reviewStatus)}</p>{detail.detail.classifications.map(c=><section key={c.assessmentId}><h3>Classification and probabilities</h3><p><strong>{statusLabel(c.predictedCategory)}</strong></p><dl className={styles.probabilities}>{Object.entries(c.classProbabilities).map(([label,value])=><div key={label}><dt>{statusLabel(label)}</dt><dd>{(value*100).toFixed(2)}%</dd></div>)}</dl><p>{c.advisoryNote}</p><p>{c.closedSetNote}</p></section>)}
+ <p>Assignment history reference (may no longer grant access): {detail.assignment?`${detail.assignment.targetOfficeCode} / revision ${detail.assignment.revision}`:"Unassigned"}{detail.assignment&&!detail.targetEligible?" - selected officer is no longer eligible; reassignment is needed.":""}</p>
+ {cap.canAssign&&detail.handling?.allowedActions.includes("AssignDs")&&<form className={dashboard.assignment} onSubmit={e=>{e.preventDefault();void assign();}}><h3>DS assignment</h3><label>DS officer<select required disabled={busy||retained} value={target} onChange={e=>setTarget(e.target.value)}><option value="">Select an eligible officer</option>{officers.map(o=><option key={o.actorId} value={o.actorId}>{o.displayName} / {o.officeCode}</option>)}</select></label><label>Routing reason<textarea required maxLength={2000} disabled={busy||retained} value={reason} onChange={e=>setReason(e.target.value)}/></label><button disabled={busy||!target||!reason.trim()}>{retained?"Replay retained request":detail.assignment?"Reassign complaint":"Assign complaint"}</button></form>}
+ {detail.handling&&<ComplaintHandlingPanel key={detail.detail.complaint.id} id={detail.detail.complaint.id} view={detail.handling} central onSaved={async message=>{if(message)setMessage(message);await open(detail.detail.complaint.id,true);}}/>}
+ <details><summary>Assignment history ({history.length})</summary><ol>{history.map(h=><li key={h.id}>Revision {h.revision} / {h.targetOfficeCode} / {sriLankaTime(h.assignedAtUtc)}<p>{h.reason}</p></li>)}</ol></details></>:<div className={dashboard.empty}><h2>Select a complaint</h2><p>Choose a saved item to review its content, classification, responsibility and history.</p></div>}</section></div></>}
+ </main>;
+}

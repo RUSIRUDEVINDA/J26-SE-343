@@ -1,0 +1,27 @@
+{
+  "Backend": {
+    "Passed": 312,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Frontend": {
+    "Passed": 156,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "TypeScript": "Three pre-existing C1 errors only; not a green production build",
+  "RegulatoryFollowupPersistence": "Not implemented; approved schema required",
+  "BrowserVisual": "Not performed; manual",
+  "LogSha256": {
+    "frontend-final": "2a723067d32bbc1bff4a4e5530cfc2d9e8c000270aeca6cefe162373055dc7cd",
+    "backend": "0fc763113062d132df8ab9b003572d3ef5e194c82645f6ed1dd4378ef176cf37",
+    "architecture": "a7f9c3fb31c7521d12d5676191de71126e4f380612b186cf8c6907da42eef44d",
+    "lint-final": "955d644813febb9a0089f17772f948e5ce7892504f52747a00b94a68bf92989e",
+    "typescript": "13d22aca0a699221943bba0d5914797af3104f724d502bb63705ab1f62bee1b6"
+  }
+}

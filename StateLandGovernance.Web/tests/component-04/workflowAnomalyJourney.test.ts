@@ -82,6 +82,11 @@ describe("Commissioner workflow anomaly journey", () => {
     for (const label of ["Event count", "Elapsed days", "Maximum gap hours", "Mean gap hours", "Unique activities", "Repeated activity count", "Resource handoffs", "Institution switches", "Distinct resources"]) {
       assert.ok(html.includes(label), `missing ${label}`);
     }
+    for (const description of ["recorded steps are in the completed workflow", "first recorded step to the last recorded step", "longest wait", "average wait", "different types of work", "repeated an activity", "responsibility moved", "one institution to another", "different recorded people or resources"]) {
+      assert.ok(html.includes(description), `missing plain-English description: ${description}`);
+    }
+    assert.match(html, /Send results to Workflow Governance/);
+    assert.match(html, /<button[^>]*disabled=""[^>]*>Send results to Workflow Governance<\/button>/);
   });
 
   it("renders flagged and unflagged guidance without probability or confidence labels", () => {

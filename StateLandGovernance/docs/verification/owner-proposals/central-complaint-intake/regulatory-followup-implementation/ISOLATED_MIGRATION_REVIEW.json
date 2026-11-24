@@ -1,0 +1,11 @@
+{
+  "Status": "Passed",
+  "Migration": "20261023121903_AddRegulatoryFollowupEvents",
+  "OnlyOneNewTable": true,
+  "InitiallyEmptyNoBackfill": true,
+  "AllOriginalRowsUnchanged": true,
+  "OnlyExtraRights": "SELECT/INSERT on regulatory_followup_events",
+  "IsolatedRole": "followup_runtime_20261023",
+  "HistoryCount": 21,
+  "OrdinaryWrites": 0
+}

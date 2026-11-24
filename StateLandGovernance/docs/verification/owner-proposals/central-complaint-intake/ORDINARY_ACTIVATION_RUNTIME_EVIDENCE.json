@@ -1,0 +1,223 @@
+{
+  "Status": "Passed",
+  "AtUtc": "2026-10-23T07:19:23.161453+00:00",
+  "Checks": [
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/COMMISSIONER sign-in",
+    "Health is200",
+    "Anonymous central capabilities denied401",
+    "Exact Commissioner Read/Assign/Review and nine operation capabilities",
+    "Fresh eligible DS directory available",
+    "Central unassigned queue readable",
+    "Central commissioner queue readable",
+    "Central ds queue readable",
+    "Central terminal queue readable",
+    "Central existing complaint detail c79fa287-ae81-43ce-8c06-19fd7aabaa37",
+    "Direct and assignment entry controls available without mutation c79fa287-ae81-43ce-8c06-19fd7aabaa37",
+    "No fabricated assignment history c79fa287-ae81-43ce-8c06-19fd7aabaa37",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Applicant/None sign-in",
+    "Owner retrieves original/classification c79fa287-ae81-43ce-8c06-19fd7aabaa37",
+    "Owner public-only handling contract c79fa287-ae81-43ce-8c06-19fd7aabaa37",
+    "Applicant central queue denied403",
+    "Central existing complaint detail 17f97817-edf1-47b2-893b-c7d7d133bbb6",
+    "Direct and assignment entry controls available without mutation 17f97817-edf1-47b2-893b-c7d7d133bbb6",
+    "No fabricated assignment history 17f97817-edf1-47b2-893b-c7d7d133bbb6",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Applicant/None sign-in",
+    "Owner retrieves original/classification 17f97817-edf1-47b2-893b-c7d7d133bbb6",
+    "Owner public-only handling contract 17f97817-edf1-47b2-893b-c7d7d133bbb6",
+    "Applicant central queue denied403",
+    "Central existing complaint detail 38bf34fc-b1e0-408c-9570-1bb1dd6e8334",
+    "Direct and assignment entry controls available without mutation 38bf34fc-b1e0-408c-9570-1bb1dd6e8334",
+    "No fabricated assignment history 38bf34fc-b1e0-408c-9570-1bb1dd6e8334",
+    "Owner retrieves original/classification 38bf34fc-b1e0-408c-9570-1bb1dd6e8334",
+    "Owner public-only handling contract 38bf34fc-b1e0-408c-9570-1bb1dd6e8334",
+    "Applicant central queue denied403",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/DS sign-in",
+    "DS lacks central authority",
+    "Unassigned DS inbox empty; no old case fallback",
+    "Unassigned DS complaint scope denied404",
+    "Unassigned DS complaint scope denied404",
+    "Unassigned DS complaint scope denied404",
+    "Existing credential available without account/password changes",
+    "Existing authenticated Officer/DS sign-in",
+    "DS lacks central authority",
+    "Unassigned DS inbox empty; no old case fallback",
+    "Unassigned DS complaint scope denied404",
+    "Unassigned DS complaint scope denied404",
+    "Unassigned DS complaint scope denied404",
+    "Saved regulatory report GET 0ffae4e0-f1a1-4a5a-ae14-6bb88fc52385",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET 5f0b8dda-cfdc-4136-9e7d-b87640ba4de6",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET 1b3c3bdd-8641-4155-bd75-5c24c3bbfcf8",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET edd3d36c-3a7e-4984-bf56-1764ed572fe6",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET 15ebb0e0-5e84-4ccb-a03f-e9dfb795460b",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET c10e9a1b-58b8-4d66-a28c-e8bdacbec3ed",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET 1641b788-a8d9-47ff-9d0e-3dd55b9858b6",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET c08db467-2b27-42e7-8251-dce45f7fda6b",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET 8d4765b0-fe41-477a-ac89-2e7c012b5a9e",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET 2f02dac9-6989-4724-8c64-75195de330da",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET a677914e-29b4-46d4-8301-d7ca86a033bb",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET 1ba5e80a-d5b5-4e2f-bbcb-cc377c4861ea",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved regulatory report GET 8ebf5f10-2eef-484f-a68b-4f8b0b2c59e8",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved conflict report GET 03a17f88-de88-4bd0-9806-eade481697a3",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved early report GET d95e7443-be83-4a99-ae44-e55e8ede95c2",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved early report GET 1cb309d5-9b74-46f0-b1ec-71424beb7839",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved anomaly report GET fad5c3ef-829f-42d0-9df0-ca045709b879",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved anomaly report GET 096b3a1a-0eef-454f-955c-d68b880678fb",
+    "Independent report ownership remains separate from central complaint grant",
+    "Saved anomaly report GET e602eb00-e621-416d-a356-02cf59b04751",
+    "Independent report ownership remains separate from central complaint grant",
+    "Same live Commissioner session immediately denied after server grant revocation",
+    "Exact approved permission bytes restored and same-session access works"
+  ],
+  "Reports": [
+    {
+      "Engine": "regulatory",
+      "Id": "0ffae4e0-f1a1-4a5a-ae14-6bb88fc52385",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/0ffae4e0-f1a1-4a5a-ae14-6bb88fc52385",
+      "BodySha256": "598e6491337f5b8ff7b8b0aa92cb86d3d8c59b52bc78059a846d4647620a8b06"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "5f0b8dda-cfdc-4136-9e7d-b87640ba4de6",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/5f0b8dda-cfdc-4136-9e7d-b87640ba4de6",
+      "BodySha256": "0fc4130210e949902ebf9114e5305848093cafb7ad26730ca2fc0738c560c068"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "1b3c3bdd-8641-4155-bd75-5c24c3bbfcf8",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/1b3c3bdd-8641-4155-bd75-5c24c3bbfcf8",
+      "BodySha256": "8b901863437eb3fb2ef59cf3f3b5950cb017d1f0e3641163690475fdcdfe31b6"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "edd3d36c-3a7e-4984-bf56-1764ed572fe6",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/edd3d36c-3a7e-4984-bf56-1764ed572fe6",
+      "BodySha256": "4c36004232c59364773b6a1ab92cc4127de42114b4cbf4a6a7825e0edc9551be"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "15ebb0e0-5e84-4ccb-a03f-e9dfb795460b",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/15ebb0e0-5e84-4ccb-a03f-e9dfb795460b",
+      "BodySha256": "a67ddbe45432369b0668c0c4a710560b2e0ca42dd1ede902278e1ff64bc96eb2"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "c10e9a1b-58b8-4d66-a28c-e8bdacbec3ed",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/c10e9a1b-58b8-4d66-a28c-e8bdacbec3ed",
+      "BodySha256": "2cfeca9e160d999748460511fa774ab966c9ac6f00c043a40f9e10ec1b32b05a"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "1641b788-a8d9-47ff-9d0e-3dd55b9858b6",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/1641b788-a8d9-47ff-9d0e-3dd55b9858b6",
+      "BodySha256": "2ca6a1055f1f06e0ba5ba6dfb435144bd731b8b2a048b49056d17d905e00df28"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "c08db467-2b27-42e7-8251-dce45f7fda6b",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/c08db467-2b27-42e7-8251-dce45f7fda6b",
+      "BodySha256": "4d92d3662d06f96c27fb823c8768a04039bac99894c556f22daacdac1c5db159"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "8d4765b0-fe41-477a-ac89-2e7c012b5a9e",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/8d4765b0-fe41-477a-ac89-2e7c012b5a9e",
+      "BodySha256": "45efee33454b9f234ddb6cc9907e240cc3fbb6791f1e1a30bda760ef382b1328"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "2f02dac9-6989-4724-8c64-75195de330da",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/2f02dac9-6989-4724-8c64-75195de330da",
+      "BodySha256": "143fb65f8be7613d7561953a663d3e3fa42253b644ae15998e44e311e1bc88bc"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "a677914e-29b4-46d4-8301-d7ca86a033bb",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/a677914e-29b4-46d4-8301-d7ca86a033bb",
+      "BodySha256": "34439b27cd748bafdc9087f204d7fa3a90eebd5a885989871e1e3e27ddf6847a"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "1ba5e80a-d5b5-4e2f-bbcb-cc377c4861ea",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/1ba5e80a-d5b5-4e2f-bbcb-cc377c4861ea",
+      "BodySha256": "29b9f4e8fbe7fb42c9f93701e09c79c7a75f3671f0d82e25028b3807fc10a24d"
+    },
+    {
+      "Engine": "regulatory",
+      "Id": "8ebf5f10-2eef-484f-a68b-4f8b0b2c59e8",
+      "ApiPath": "/api/governance-intelligence/regulatory-assessments/8ebf5f10-2eef-484f-a68b-4f8b0b2c59e8",
+      "BodySha256": "94e02494426e00dc704bb443317e8a3884d5e3cab867acd22bb05fbfe7818204"
+    },
+    {
+      "Engine": "conflict",
+      "Id": "03a17f88-de88-4bd0-9806-eade481697a3",
+      "ApiPath": "/api/governance-intelligence/kiwula-assessments/03a17f88-de88-4bd0-9806-eade481697a3",
+      "BodySha256": "7f1e1ea291885ea22277c8811565b948393ce428bb8d19d17e003f889a233243"
+    },
+    {
+      "Engine": "early",
+      "Id": "d95e7443-be83-4a99-ae44-e55e8ede95c2",
+      "ApiPath": "/api/governance-intelligence/kiwula-assessments/d95e7443-be83-4a99-ae44-e55e8ede95c2",
+      "BodySha256": "625ef1f019db2c9e0dae2468dac26e53dc66f4728a940997af8341c4b5a85ac5"
+    },
+    {
+      "Engine": "early",
+      "Id": "1cb309d5-9b74-46f0-b1ec-71424beb7839",
+      "ApiPath": "/api/governance-intelligence/kiwula-assessments/1cb309d5-9b74-46f0-b1ec-71424beb7839",
+      "BodySha256": "30a9eb8d2794d10e6caac7e6d8131c82192f44e1c97615f8bcf5dbfa0ceb4872"
+    },
+    {
+      "Engine": "anomaly",
+      "Id": "fad5c3ef-829f-42d0-9df0-ca045709b879",
+      "ApiPath": "/api/governance-intelligence/post-workflow-demonstrations/fad5c3ef-829f-42d0-9df0-ca045709b879",
+      "BodySha256": "a0ca7dfb171eddc2e80f5d27bab2f1379ea75bd78f727ea39cfddc5b40ae4357"
+    },
+    {
+      "Engine": "anomaly",
+      "Id": "096b3a1a-0eef-454f-955c-d68b880678fb",
+      "ApiPath": "/api/governance-intelligence/post-workflow-demonstrations/096b3a1a-0eef-454f-955c-d68b880678fb",
+      "BodySha256": "960050453e8e2d46b3aaae605e65cc8d01b3cdeec113b4cc4029080b0297e982"
+    },
+    {
+      "Engine": "anomaly",
+      "Id": "e602eb00-e621-416d-a356-02cf59b04751",
+      "ApiPath": "/api/governance-intelligence/post-workflow-demonstrations/e602eb00-e621-416d-a356-02cf59b04751",
+      "BodySha256": "ee665c1090a7f04c2661b0381ec387b961beb9e0f75ae37df2d3236ad61e9cca"
+    }
+  ],
+  "LiveRevocation": [
+    {
+      "Revoked": true,
+      "Utc": "2026-10-23T07:19:23.091200+00:00"
+    },
+    {
+      "Revoked": false,
+      "Utc": "2026-10-23T07:19:23.146180+00:00"
+    }
+  ],
+  "OrdinaryComplaintWrites": 0,
+  "InferenceCalls": 0,
+  "GrantFinalRevoked": false,
+  "NoApiRestartNeededForRevocation": true,
+  "HandlingPathExecution": "Isolated proof only; ordinary entry controls verified without complaint mutations"
+}

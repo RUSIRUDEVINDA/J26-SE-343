@@ -1,0 +1,34 @@
+{
+  "FocusedBackend": {
+    "Passed": 402,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0
+  },
+  "FullFrontend": {
+    "Passed": 241,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "IsolatedComplaintAddressHttp": {
+    "Passed": 21,
+    "Failed": 0
+  },
+  "IsolatedEvidenceDownloadSequenceHttp": {
+    "Passed": 59,
+    "Failed": 0
+  },
+  "FocusedLint": {
+    "Errors": 0,
+    "ExistingWarnings": 2
+  },
+  "TypeScript": {
+    "ExistingC1Errors": 3
+  },
+  "RealClassifierOrAnomalyCalls": 0,
+  "OrdinaryWrites": 0,
+  "OrdinaryServiceActions": 0
+}

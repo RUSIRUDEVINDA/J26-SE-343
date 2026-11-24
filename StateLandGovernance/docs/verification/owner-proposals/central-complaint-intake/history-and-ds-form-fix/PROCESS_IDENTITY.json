@@ -1,0 +1,23 @@
+﻿{
+    "ExeSha256":  "4b2acb6ec1bf56f2f9e75d0bf16fcac4fe2d0eb094cfa166c0ab3a915be1be5d",
+    "ApiPath":  "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\c4-history-form-api\\StateLandGovernance.Api.exe",
+    "ApiPid":  16456,
+    "Listeners":  [
+                      {
+                          "LocalPort":  5264,
+                          "OwningProcess":  16456
+                      },
+                      {
+                          "LocalPort":  8104,
+                          "OwningProcess":  36612
+                      },
+                      {
+                          "LocalPort":  5264,
+                          "OwningProcess":  16456
+                      },
+                      {
+                          "LocalPort":  3000,
+                          "OwningProcess":  16692
+                      }
+                  ]
+}

@@ -27,18 +27,25 @@ public class DependencyInjectionTests
         public Microsoft.Extensions.FileProviders.IFileProvider ContentRootFileProvider { get; set; } = null!;
     }
 
-    [Fact]
-    public void AddGovernanceIntelligenceInfrastructure_ShouldRegisterAuditAnchorOutboxProcessor()
+    [Theory]
+    [InlineData(null, true)]
+    [InlineData("true", true)]
+    [InlineData("false", false)]
+    public void AddGovernanceIntelligenceInfrastructure_OutboxWorkerSetting_ControlsRegistration(string? enabled, bool expected)
     {
         var services = new ServiceCollection();
-        var configuration = new ConfigurationBuilder().Build();
+        var configuration = new ConfigurationBuilder().AddInMemoryCollection(
+            new Dictionary<string, string?>
+            {
+                ["GovernanceIntelligence:Blockchain:OutboxWorker:Enabled"] = enabled
+            }).Build();
         var environment = new TestHostEnvironment { EnvironmentName = Environments.Development };
 
         services.AddGovernanceIntelligenceInfrastructure(configuration, environment);
 
-        Assert.Contains(services, descriptor =>
+        Assert.Equal(expected, services.Any(descriptor =>
             descriptor.ServiceType == typeof(IHostedService)
-            && descriptor.ImplementationType == typeof(GovernanceAuditAnchorOutboxProcessor));
+            && descriptor.ImplementationType == typeof(GovernanceAuditAnchorOutboxProcessor)));
     }
 
     [Fact]

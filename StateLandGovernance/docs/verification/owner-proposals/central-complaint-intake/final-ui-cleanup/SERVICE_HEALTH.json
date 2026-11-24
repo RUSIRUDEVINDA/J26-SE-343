@@ -1,0 +1,24 @@
+{
+  "ObservedUtc": "2026-10-23T15:38:37.165983+00:00",
+  "Health": {
+    "Api": {
+      "Status": 200,
+      "Body": {
+        "status": "Healthy",
+        "service": "StateLandGovernance.Api",
+        "dataMode": "Live"
+      }
+    },
+    "Ml": {
+      "Status": 200,
+      "Body": {
+        "status": "ready",
+        "model_version": "v2"
+      }
+    }
+  },
+  "ApiPid": 16456,
+  "FrontendPid": 16692,
+  "MlPid": 36612,
+  "Restarted": false
+}

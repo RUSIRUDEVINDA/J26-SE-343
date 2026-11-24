@@ -1,0 +1,10 @@
+{
+  "StateLandGovernance.Web/src/modules/component-04/components/ManualEvidenceVerification.tsx": "ca092bd48888ce93f05ec080d9ff7b6eae93f08988fc9cb4bbddcc1e05e7dca2",
+  "StateLandGovernance.Web/src/modules/component-04/components/ManualEvidenceVerification.module.css": "408efa0fe7a8cfbfbdd40ed326decd5b14c44c5ed1b53fef5454057ad4fdbf66",
+  "StateLandGovernance.Web/src/modules/component-04/services/manualEvidence.ts": "ec75b92878fc9e031c29078bf2866f64530a3093c90104d983d201ac03a35ddb",
+  "StateLandGovernance.Web/src/modules/component-04/components/ComplaintHandlingPanel.tsx": "afc9c81622acf28877769a7ff65b72d4832f48ba9c414d7812ed1684d3b90bd7",
+  "StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.tsx": "9cbaa432c7cec46392698e70cc3960d8554c393554e4993c0a80883c558fb79c",
+  "StateLandGovernance.Web/src/modules/component-04/components/CentralComplaints.tsx": "b2636e10c0d05ad717222794648fc92d77ca5542d6eb9053a982af23181eeb1d",
+  "StateLandGovernance.Web/src/shared/components/DevelopmentSessionBar.tsx": "3a1bb756140f5385f975d36d7bc5c42453ceedb74c1f1c0fa2ff345c76332587",
+  "StateLandGovernance.Web/src/modules/component-04/services/applicantComplaintReturn.ts": "21e4d7a9ecbeef6fe38b262b6e501d05e64e0fbdfae969e4143db4b883acc893"
+}

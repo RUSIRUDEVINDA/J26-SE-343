@@ -1,3 +1,5 @@
+using StateLandGovernance.GovernanceIntelligence.Application.RegulatoryReports;
+using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -5,6 +7,8 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using StateLandGovernance.GovernanceIntelligence.Application.Commands;
 using StateLandGovernance.GovernanceIntelligence.Application.ComplaintClassification;
 using StateLandGovernance.GovernanceIntelligence.Application.DTOs;
@@ -23,6 +27,7 @@ namespace StateLandGovernance.GovernanceIntelligence.Presentation.Controllers;
 /// API Controller boundary for the GovernanceIntelligence module.
 /// </summary>
 [ApiController]
+[Authorize(Roles="Officer,ComplianceOfficer,LandOfficer")]
 [Route("api/governance-intelligence")]
 [ApiExplorerSettings(GroupName = "governance-intelligence")]
 public class GovernanceIntelligenceController : ControllerBase
@@ -56,39 +61,39 @@ public class GovernanceIntelligenceController : ControllerBase
     /// <summary>
     /// Evaluates regulatory compliance for a proposed land action.
     /// </summary>
+    [Authorize(Roles="Officer,ComplianceOfficer,LandOfficer")]
     [HttpPost("evaluate-compliance")]
-    [ProducesResponseType(typeof(ComplianceResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(RegulatoryRunResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ComplianceResultDto>> EvaluateCompliance(
         [FromBody] EvaluateComplianceCommand command,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        [FromServices] RegulatorySubmissionService? submissions=null)
     {
-        if (command is null || string.IsNullOrWhiteSpace(command.ActionName))
-        {
-            return BadRequest("Invalid command details provided.");
-        }
-
-        try
-        {
-            var result = await _complianceHandler.HandleAsync(command, cancellationToken);
-            return Ok(result);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        if(User.Identity?.IsAuthenticated!=true)return Unauthorized();
+        if(!(User.IsInRole("Officer")||User.IsInRole("ComplianceOfficer")||User.IsInRole("LandOfficer"))||!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier)??User.FindFirstValue("sub"),out var actor))return Forbid();
+        Response.Headers.CacheControl="no-store";
+        if(command==null||submissions==null)return BadRequest("Structured regulatory submission is required. Open New regulatory assessment.");
+        try{return Ok(await submissions.RunAsync(actor,command,cancellationToken));}
+        catch(ArgumentException e){return BadRequest(new ProblemDetails{Status=400,Title="Invalid regulatory input",Detail=e.Message});}
+        catch(UnauthorizedAccessException){return Forbid();}
+        catch(RegulatorySubmissionConflictException){return Conflict(new ProblemDetails{Status=409,Title="Submission key already used for different input",Detail="Retrieve the saved report or start a deliberately new assessment."});}
+        catch(RegulatorySubmissionUnavailableException){return StatusCode(503,new ProblemDetails{Status=503,Title="Regulatory submission unavailable",Detail="Writes are disabled or the catalogue is unavailable. No successful evaluation is claimed."});}
     }
 
     /// <summary>
     /// Detects jurisdictional or regulatory conflicts across a set of decisions.
     /// </summary>
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles="Officer,ComplianceOfficer,LandOfficer")]
     [HttpPost("detect-conflicts")]
     [ProducesResponseType(typeof(ConflictDetectionResultDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ConflictDetectionResultDto>> DetectConflicts(
         [FromBody] DetectConflictsCommand command,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken, [FromServices] IConfiguration? sandboxConfiguration = null)
     {
+        if (User.Identity?.IsAuthenticated != true) return Unauthorized();
+        if (sandboxConfiguration?.GetValue<bool>("GovernanceIntelligence:ConflictSandbox:WritesEnabled") != true) return StatusCode(503);
         if (command is null || string.IsNullOrWhiteSpace(command.ActionName))
         {
             return BadRequest("Invalid command details provided.");
@@ -212,6 +217,7 @@ public class GovernanceIntelligenceController : ControllerBase
     /// <summary>
     /// Classifies an incoming land lease complaint into the 4-class governance taxonomy.
     /// </summary>
+    [Authorize(Roles = "Officer,ComplianceOfficer,LandOfficer")]
     [HttpPost("classify-complaint")]
     [ProducesResponseType(typeof(ComplaintClassificationAssessment), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -219,8 +225,19 @@ public class GovernanceIntelligenceController : ControllerBase
     public async Task<IActionResult> ClassifyComplaint(
         [FromBody] ClassifyComplaintCommand command,
         [FromServices] ClassifyComplaintCommandHandler? complaintHandler,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        [FromServices] IConfiguration? sandboxConfiguration = null,
+        [FromServices] IHostEnvironment? sandboxEnvironment = null)
     {
+        // Shared assessment-table INSERT does not implicitly activate the legacy sandbox.
+        // Registered complaints have their own authenticated ownership/assignment flow.
+        if (sandboxEnvironment?.IsDevelopment() != true ||
+            sandboxConfiguration?.GetValue<bool>("GovernanceIntelligence:ComplaintSandbox:WritesEnabled") != true)
+        {
+            return Problem(statusCode: StatusCodes.Status503ServiceUnavailable,
+                title: "Complaint classifier sandbox writes are disabled",
+                detail: "Use registered complaints. Sandbox persistence requires a separate Development-only server opt-in.");
+        }
         if (complaintHandler is null)
         {
             return StatusCode(StatusCodes.Status503ServiceUnavailable, "Complaint classifier handler is not configured.");
@@ -239,6 +256,7 @@ public class GovernanceIntelligenceController : ControllerBase
     /// Evaluates a completed workflow event trace for execution anomalies using the frozen Isolation Forest model.
     /// </summary>
     [HttpPost("predict-workflow-anomaly")]
+    [Authorize(Roles = "Officer,ComplianceOfficer,LandOfficer")]
     [ProducesResponseType(typeof(WorkflowAnomalyPrediction), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
@@ -269,6 +287,7 @@ public class GovernanceIntelligenceController : ControllerBase
     /// <summary>
     /// Performs deterministic early governance screening on applicant/case indicators.
     /// </summary>
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles="Officer,ComplianceOfficer,LandOfficer")]
     [HttpPost("screen-early-governance")]
     [ProducesResponseType(typeof(EarlyGovernanceScreeningResultDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -276,8 +295,10 @@ public class GovernanceIntelligenceController : ControllerBase
     public async Task<IActionResult> ScreenEarlyGovernance(
         [FromBody] ScreenEarlyGovernanceCommand command,
         [FromServices] ScreenEarlyGovernanceCommandHandler? screeningHandler,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken, [FromServices] IConfiguration? sandboxConfiguration = null)
     {
+        if (User.Identity?.IsAuthenticated != true) return Unauthorized();
+        if (sandboxConfiguration?.GetValue<bool>("GovernanceIntelligence:EarlyScreeningSandbox:WritesEnabled") != true) return StatusCode(503);
         if (screeningHandler is null)
         {
             return StatusCode(StatusCodes.Status503ServiceUnavailable, "Early screening handler is not configured.");
@@ -303,8 +324,11 @@ public class GovernanceIntelligenceController : ControllerBase
     public async Task<IActionResult> GetAuditReceipt(
         Guid auditRecordId,
         [FromServices] GetAuditReceiptQueryHandler? receiptQueryHandler,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        [FromServices] IRegulatorySubmissionStore? ownership=null,
+        [FromServices] IIndependentRegulatoryReadAssignments? grants=null)
     {
+        var denial=await DenyProtectedAuditAsync(auditRecordId,ownership,grants,cancellationToken);if(denial!=null)return denial;
         if (receiptQueryHandler is null)
         {
             return NotFound("Receipt query handler is not configured.");
@@ -343,8 +367,12 @@ public class GovernanceIntelligenceController : ControllerBase
     public async Task<IActionResult> AnchorAuditRecord(
         Guid auditRecordId,
         [FromServices] AnchorAuditRecordCommandHandler handler,
-        CancellationToken cancellationToken) =>
-        Ok(await handler.HandleAsync(new AnchorAuditRecordCommand(auditRecordId), cancellationToken));
+        CancellationToken cancellationToken,
+        [FromServices] IRegulatorySubmissionStore? ownership=null,
+        [FromServices] IIndependentRegulatoryReadAssignments? grants=null){
+        var denial=await DenyProtectedAuditAsync(auditRecordId,ownership,grants,cancellationToken);if(denial!=null)return denial;
+        return Ok(await handler.HandleAsync(new AnchorAuditRecordCommand(auditRecordId),cancellationToken));
+    }
 
     /// <summary>
     /// Verifies the on-chain ledger integrity for an off-chain audit record against the blockchain service.
@@ -355,8 +383,11 @@ public class GovernanceIntelligenceController : ControllerBase
     public async Task<IActionResult> VerifyAuditIntegrity(
         Guid auditRecordId,
         [FromServices] VerifyAuditIntegrityQueryHandler? verifyIntegrityHandler,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        [FromServices] IRegulatorySubmissionStore? ownership=null,
+        [FromServices] IIndependentRegulatoryReadAssignments? grants=null)
     {
+        var denial=await DenyProtectedAuditAsync(auditRecordId,ownership,grants,cancellationToken);if(denial!=null)return denial;
         if (verifyIntegrityHandler is null)
         {
             return NotFound("Verify integrity handler is not configured.");
@@ -369,6 +400,15 @@ public class GovernanceIntelligenceController : ControllerBase
         }
 
         return Ok(result);
+    }
+
+    private async Task<IActionResult?> DenyProtectedAuditAsync(Guid auditId,IRegulatorySubmissionStore? ownership,IIndependentRegulatoryReadAssignments? grants,CancellationToken ct){
+        if(ownership==null)return null;var evaluation=await ownership.ProtectedEvaluationForAuditAsync(auditId,ct);if(evaluation==null)return null;
+        if(User.Identity?.IsAuthenticated!=true)return Unauthorized();
+        if(!(User.IsInRole("Officer")||User.IsInRole("ComplianceOfficer")||User.IsInRole("LandOfficer"))||!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier)??User.FindFirstValue("sub"),out var actor))return Forbid();
+        if((await ownership.OwnedIdsAsync(actor,ct)).Contains(evaluation.Value))return null;
+        if(grants!=null&&(await grants.ReadAllowedIdsAsync(actor,ct)).Contains(evaluation.Value))return null;
+        return Forbid();
     }
 
     /// <summary>
@@ -391,11 +431,19 @@ public class GovernanceIntelligenceController : ControllerBase
     }
 
     [HttpPost("workflow-anomalies/assess")]
+    [Authorize(Roles = "Officer,ComplianceOfficer,LandOfficer")]
     public async Task<IActionResult> AssessWorkflowAnomaly(
         [FromBody] AssessWorkflowAnomalyRequestDto request,
         [FromServices] AssessWorkflowAnomalyCommandHandler handler,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        [FromServices] IConfiguration? sandboxConfiguration = null,
+        [FromServices] IHostEnvironment? sandboxEnvironment = null)
     {
+        if (sandboxEnvironment?.IsDevelopment() != true ||
+            sandboxConfiguration?.GetValue<bool>("GovernanceIntelligence:WorkflowAnomalySandbox:WritesEnabled") != true)
+            return Problem(statusCode: 503, title: "Persisted anomaly sandbox writes are disabled");
+        // Standalone demonstration ownership is enforced only by its dedicated controller.
+        if (PostWorkflowDemonstrations.IsDemonstration(request.CaseId)) return Forbid();
         var result = await handler.HandleAsync(
             AssessWorkflowAnomalyCommand.FromProjection(request.WorkflowProjectionId, request.CaseId, request.WorkflowRunId),
             cancellationToken);
@@ -409,6 +457,7 @@ public class GovernanceIntelligenceController : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await handler.HandleAsync(new GetWorkflowAnomalyAssessmentQuery(assessmentId), cancellationToken);
+        if (result != null && PostWorkflowDemonstrations.IsDemonstration(result.CaseId)) return Forbid();
         return result is null ? NotFound() : Ok(result);
     }
 
@@ -417,6 +466,7 @@ public class GovernanceIntelligenceController : ControllerBase
         string caseId, [FromQuery] int limit,
         [FromServices] GetWorkflowAnomalyHistoryByCaseQueryHandler handler,
         CancellationToken cancellationToken) =>
+        PostWorkflowDemonstrations.IsDemonstration(caseId) ? Forbid() :
         Ok(await handler.HandleAsync(new GetWorkflowAnomalyHistoryByCaseQuery(caseId, NormalizeLimit(limit)), cancellationToken));
 
     [HttpGet("workflow-anomalies/history/workflow-runs/{workflowRunId:guid}")]
@@ -424,7 +474,8 @@ public class GovernanceIntelligenceController : ControllerBase
         Guid workflowRunId, [FromQuery] int limit,
         [FromServices] GetWorkflowAnomalyHistoryByWorkflowRunQueryHandler handler,
         CancellationToken cancellationToken) =>
-        Ok(await handler.HandleAsync(new GetWorkflowAnomalyHistoryByWorkflowRunQuery(workflowRunId, NormalizeLimit(limit)), cancellationToken));
+        Ok((await handler.HandleAsync(new GetWorkflowAnomalyHistoryByWorkflowRunQuery(workflowRunId, NormalizeLimit(limit)), cancellationToken))
+            .Where(x => !PostWorkflowDemonstrations.IsDemonstration(x.CaseId)).ToArray());
 
     [HttpGet("workflow-projections/cases/{caseId}")]
     [ProducesResponseType(typeof(WorkflowProjectionJourneyDto), StatusCodes.Status200OK)]
@@ -434,6 +485,7 @@ public class GovernanceIntelligenceController : ControllerBase
         [FromServices] GetWorkflowProjectionJourneyByCaseQueryHandler handler,
         CancellationToken cancellationToken)
     {
+        if (PostWorkflowDemonstrations.IsDemonstration(caseId)) return Forbid();
         var result = await handler.HandleAsync(
             new GetWorkflowProjectionJourneyByCaseQuery(caseId),
             cancellationToken);
@@ -507,6 +559,7 @@ public class GovernanceIntelligenceController : ControllerBase
         CancellationToken cancellationToken) =>
         Ok(await handler.HandleAsync(new DeliverEarlyGovernanceReferralCommand(referralId), cancellationToken));
 
+    [Authorize]
     [HttpGet("complaints/{assessmentId:guid}")]
     public async Task<IActionResult> GetComplaintAssessment(
         Guid assessmentId,
@@ -514,15 +567,17 @@ public class GovernanceIntelligenceController : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await handler.HandleAsync(new GetComplaintClassificationAssessmentQuery(assessmentId), cancellationToken);
+        if(result?.CaseId.StartsWith("registered-complaint:",StringComparison.Ordinal)==true)return Forbid();
         return result is null ? NotFound() : Ok(result);
     }
 
+    [Authorize]
     [HttpGet("complaints/history/cases/{caseId}")]
     public async Task<IActionResult> GetComplaintHistory(
         string caseId, [FromQuery] int limit,
         [FromServices] GetComplaintClassificationHistoryQueryHandler handler,
         CancellationToken cancellationToken) =>
-        Ok(await handler.HandleAsync(new GetComplaintClassificationHistoryQuery(caseId, NormalizeLimit(limit)), cancellationToken));
+        caseId.StartsWith("registered-complaint:",StringComparison.Ordinal) ? Forbid() : Ok(await handler.HandleAsync(new GetComplaintClassificationHistoryQuery(caseId, NormalizeLimit(limit)), cancellationToken));
 
     [HttpPost("pp1/seeds")]
     public async Task<IActionResult> ApplyPp1Seed(

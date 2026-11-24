@@ -1,0 +1,24 @@
+{
+  "Backend": {
+    "Passed": 319,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Frontend": {
+    "Passed": 158,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "IsolatedHttpChecks": 34,
+  "FocusedLintErrors": 0,
+  "TypeScript": "Three pre-existing C1 errors only",
+  "GraphicalBrowserVerification": "Not performed; manual pending",
+  "OrdinaryActivation": false,
+  "InferenceCalls": 0,
+  "IsolatedContainerStoppedStorageRetained": true
+}

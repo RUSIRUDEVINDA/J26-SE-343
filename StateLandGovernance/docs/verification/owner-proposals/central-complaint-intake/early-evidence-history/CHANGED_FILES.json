@@ -1,0 +1,61 @@
+{
+  "ImplementationTestLauncherAndExistingDocumentChanges": [
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/OfficerFlows/ManualEvidence.cs",
+      "BeforeSha256": "86e7a7d19b352084ca90fceeeddd7ca99643d0be7d669b2428258f18a39d2589",
+      "AfterSha256": "1fc0dfe6d47453bb9d4ff96a6e8c07e31008da51c3d694d75a45393ee7329fbc"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/ManualEvidenceStore.cs",
+      "BeforeSha256": "3d04ad57678cd34d7409117a44b16ab910f3373bcadb05f90a9dce53424d5b0a",
+      "AfterSha256": "87d6feca1993d8f2033a92d5c58b96f68c88a522115d2503dca59750fcf96680"
+    },
+    {
+      "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/ManualEvidenceController.cs",
+      "BeforeSha256": "ee25a05b98984e2a128ff7dc8d1530c27a0b136cf2aaeff7d9d39ba35dcb63ce",
+      "AfterSha256": "cde081d6f72df6d183e927ba50eb8949a2acce81e3117b9cda600b3ff891ac9f"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/ManualEvidenceVerification.tsx",
+      "BeforeSha256": "c0bf4c25b6513140c36864c6fbc73de318e699cf11a8eec4d7326de1dff15f87",
+      "AfterSha256": "90a1f04944aaa1a6b08d20cfcf0ca099964590a721951cd212b61d0858c18287"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/services/manualEvidence.ts",
+      "BeforeSha256": "3cc50a9081ea486b6bdb245ccf62f5a9640a7c0a145f95fbf3fbecea3981d869",
+      "AfterSha256": "f2ef20e20706152cf502d5e6f5717a9acbce1f7707e335040b37ba36ffa41041"
+    },
+    {
+      "Path": "StateLandGovernance/tests/IntegrationTests/ManualEvidenceProof/Program.cs",
+      "BeforeSha256": "6470cc474169ac8979416f5dbed48f6d064a909b3b9aa5af3a0108f56b5545b9",
+      "AfterSha256": "9ad3d86918f37b09a9e86b5283944cb52e51314251215be7309198bd25735cc8"
+    },
+    {
+      "Path": "StateLandGovernance\\docs\\verification\\FINAL_C4_COMPLETION_REPORT.md",
+      "BeforeSha256": "1b0a89ac8d0056b307588ee5727ba74ff3bf5f62e2c218d9761e14cd0e5bae74",
+      "AfterSha256": "ead9c8bb629c634d79459bb6ca66205cd73d34416049831872dfe547c4a0dde3"
+    },
+    {
+      "Path": "StateLandGovernance\\docs\\verification\\owner-proposals\\central-complaint-intake\\final-handover-readiness\\HANDOVER_GUIDE.md",
+      "BeforeSha256": "2cfcaa25ebca6d539518ece9fc3033149072fbdbd1fa39d9c208afda65245a05",
+      "AfterSha256": "8e1c086f995ad76d001c4267745a8b16a6f89dd5d6095739cae4d8227e0b2f76"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/components/PreviousEarlyEvidence.tsx",
+      "BeforeSha256": null,
+      "AfterSha256": "ecaa208af17ce2bf3da4af4cd344c2372cd8b1096df5c9c27ec93181830b341b"
+    },
+    {
+      "Path": "StateLandGovernance.Web/tests/component-04-previous-evidence.test.ts",
+      "BeforeSha256": null,
+      "AfterSha256": "dc7e49ef4f0037a552bfd2d41965f76e0d4d4bbfb718eeffb504dbb7c1ed2f64"
+    },
+    {
+      "Path": "StateLandGovernance/tools/development/Start-C4EarlyEvidenceHistoryApprovedApi.ps1",
+      "BeforeSha256": null,
+      "AfterSha256": "702df668e3b39ef607c9d9e468521f586d36d23c9f5c1111c7f4d85f26fe8bb5"
+    }
+  ],
+  "NewEvidenceFolder": "StateLandGovernance\\docs\\verification\\owner-proposals\\central-complaint-intake\\early-evidence-history",
+  "PreExistingWorkingTreeChangesNotIncluded": true
+}

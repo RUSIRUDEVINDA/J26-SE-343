@@ -1,0 +1,11 @@
+{
+  "Tables": 41,
+  "Migrations": 21,
+  "Oid": "34144",
+  "ProtectedSourceFiles": 2162,
+  "Models": {
+    "Complaint": "63b37eb7175e74a8dcde82bf042fcf9dcbb4f0432fbe3b4677aac037007a20ae",
+    "Anomaly": "59ed4a73d56d9f06798c4ebc4684a633afe72841c41ed0b3ba4e7bb658782b46"
+  },
+  "OrdinaryWrites": 0
+}

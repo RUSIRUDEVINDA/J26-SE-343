@@ -1,0 +1,20 @@
+{
+  "Utc": "2026-10-23T08:37:14.799987+00:00",
+  "BackupPath": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\c4-rename-backup-20261023_0840\\c4_handover_local.dump",
+  "Bytes": 334801,
+  "LastWriteUtc": "2026-10-23T08:37:07.728148+00:00",
+  "Sha256": "e702a55f70fe1e22059b65f9672cb98dea2a380b89e9aba10c33de54400d530f",
+  "ArchiveListValid": true,
+  "ReadByActivationAccount": true,
+  "SecureDirectory": "Only current Windows account and SYSTEM; inheritance disabled on new directory",
+  "IsolatedDatabase": "c4_rename_restore_20261023_0840",
+  "Port": 57657,
+  "AllTablesMatch": 38,
+  "SchemaMatches": true,
+  "HistoryMatches": true,
+  "SequenceStateMatches": true,
+  "ArchiveIncludesOriginalAcl": true,
+  "RestoreSkippedOwnerAcl": "Isolated cluster identities differ; archive includes ACL/ownership; original ordinary ACL metadata captured and will be compared exactly after in-place rename",
+  "OrdinaryUnchangedDuringBackup": true,
+  "NormalizedSchemaSha256": "61c9cf79187baec33c53d2f5fc21919324dc7a054212ab8bfc3d3285ca99c066"
+}

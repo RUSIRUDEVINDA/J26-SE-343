@@ -1,0 +1,298 @@
+--- a/StateLandGovernance.Web/src/app/component-04/page.tsx
++++ b/StateLandGovernance.Web/src/app/component-04/page.tsx
+@@ -1,10 +1,7 @@
+-import type { Metadata } from "next";
+-import { IndependentGovernance } from "@/modules/component-04/components/IndependentGovernance";
++import {redirect} from "next/navigation";
++import type {Metadata} from "next";
+ 
+-export const metadata: Metadata = { title: "Governance Intelligence", description: "Governance assessments and advisory evidence for state land lease review." };
++export const metadata:Metadata={title:"Governance Intelligence",description:"Governance assessments and advisory evidence for state land lease review."};
+ 
+-export default function Component04Page() {
+-  return (
+-    <IndependentGovernance />
+-  );
+-}
++// Existing governance overview implementation is retained; only its default navigation is hidden.
++export default function Component04Page(){redirect("/component-04/assessments");}
+--- a/StateLandGovernance.Web/src/app/component-04/layout.tsx
++++ b/StateLandGovernance.Web/src/app/component-04/layout.tsx
+@@ -1,10 +1,9 @@
+ import {GovernanceSessionBoundary} from "@/modules/component-04/components/GovernanceSessionBoundary";
+ import type {ReactNode} from "react";
+-import Link from "next/link";
+ import {CentralComplaintLink} from "@/modules/component-04/components/CentralComplaints";
+ import {PageLayout} from "@/shared/components/PageLayout";
+ import {GovernanceWorkspace} from "@/modules/component-04/components/GovernanceWorkspace";
+ import {c4NavigationFor} from "@/modules/component-04/services/c4Navigation";
+ import {headers} from "next/headers";
+ import {redirect} from "next/navigation";
+-export default async function Component04Layout({children}:{children:ReactNode}){const trusted=await headers();if(trusted.get("x-c4-admitted")!=="true")redirect("/sign-in");const navigation=c4NavigationFor(trusted.get("x-c4-commissioner")==="true");return <GovernanceSessionBoundary><PageLayout compactPresentation navigationItems={navigation} navigationLabel="Governance Intelligence" navigationBasePath="/component-04" navigationCompactMobile><GovernanceWorkspace><CentralComplaintLink/>{children}<details><summary>More governance tools and evidence</summary><nav aria-label="Additional governance tools" style={{display:"flex",gap:12,flexWrap:"wrap",padding:"10px 0"}}>{[["New structured assessment","regulatory-assessments/new"],["Regulatory reports","regulatory-assessments"],["Consolidated screening","screening"],["Case history","history"],["Follow-up","follow-up"],["Integrity and audit","integrity"],["Evaluation evidence","evaluation"],["Development tools","development"]].map(([label,href])=><Link key={href} href={`/component-04/${href}`}>{label}</Link>)}</nav></details></GovernanceWorkspace></PageLayout></GovernanceSessionBoundary>;}
++export default async function Component04Layout({children}:{children:ReactNode}){const trusted=await headers();if(trusted.get("x-c4-admitted")!=="true")redirect("/sign-in");const navigation=c4NavigationFor(trusted.get("x-c4-commissioner")==="true");return <GovernanceSessionBoundary><PageLayout compactPresentation navigationItems={navigation} navigationLabel="Governance Intelligence" navigationBasePath="/component-04" navigationCompactMobile><GovernanceWorkspace><CentralComplaintLink/>{children}</GovernanceWorkspace></PageLayout></GovernanceSessionBoundary>;}
+--- a/StateLandGovernance.Web/src/modules/component-04/services/c4Navigation.ts
++++ b/StateLandGovernance.Web/src/modules/component-04/services/c4Navigation.ts
+@@ -1,12 +1,11 @@
+ export const c4Navigation=[
+- {label:"Governance Overview",href:"/component-04",icon:"01"},
+- {label:"Proposals",href:"/component-04/assessments",icon:"02",primary:true},
+- {label:"Regulatory Screening",href:"/component-04/assessments/regulatory",icon:"02a"},
+- {label:"Conflict Detection",href:"/component-04/assessments/conflict",icon:"03"},
+- {label:"Early Governance",href:"/component-04/assessments/early",icon:"04"},
+- {label:"Institutional Workflow Preview",href:"/component-04/institutional-workflow",icon:"05"},
+- {label:"Post-Workflow Anomaly",href:"/component-04/post-workflow",icon:"06"},
+- {label:"Complaint Inbox",href:"/component-04/complaint-inbox",icon:"07"},
+- {label:"Assessment History / Reports",href:"/component-04/assessments/history",icon:"08"}
++ {label:"Proposals",href:"/component-04/assessments",icon:"",primary:true},
++ {label:"Regulatory Screening",href:"/component-04/assessments/regulatory",icon:""},
++ {label:"Conflict Detection",href:"/component-04/assessments/conflict",icon:""},
++ {label:"Early Governance",href:"/component-04/assessments/early",icon:""},
++ {label:"Institutional Workflow Preview",href:"/component-04/institutional-workflow",icon:""},
++ {label:"Post-Workflow Anomaly",href:"/component-04/post-workflow",icon:""},
++ {label:"Complaint Inbox",href:"/component-04/complaint-inbox",icon:""},
++ {label:"Assessment History / Reports",href:"/component-04/assessments/history",icon:""}
+ ];
+ export function c4NavigationFor(isCommissioner:boolean){return c4Navigation.map(item=>item.label==="Complaint Inbox"&&isCommissioner?{...item,href:"/component-04/central-complaints"}:item);}
+--- a/StateLandGovernance.Web/src/shared/components/Sidebar.tsx
++++ b/StateLandGovernance.Web/src/shared/components/Sidebar.tsx
+@@ -176,9 +176,9 @@
+               className={className}
+               aria-current={active ? "page" : undefined}
+             >
+-              <span className={styles.icon} aria-hidden="true">
++              {item.icon&&<span className={styles.icon} aria-hidden="true">
+                 {item.icon}
+-              </span>
++              </span>}
+               <span className={styles.label}>{item.label}</span>
+             </Link>
+           );
+--- a/StateLandGovernance.Web/src/shared/components/PageLayout.tsx
++++ b/StateLandGovernance.Web/src/shared/components/PageLayout.tsx
+@@ -1,5 +1,4 @@
+ import compact from "./CompactPresentation.module.css";
+-import { DevelopmentSessionBar } from "./DevelopmentSessionBar";
+ import type { ReactNode } from "react";
+ import { AppHeader } from "./AppHeader";
+ import { Sidebar } from "./Sidebar";
+@@ -25,8 +24,7 @@
+ }) {
+   return (
+     <div className={`${styles.shell} ${compactPresentation?compact.surface:""}`}>
+-      <AppHeader unifiedAccount={compactPresentation} />
+-      {!compactPresentation&&<DevelopmentSessionBar />}
++      <AppHeader unifiedAccount />
+       <div className={showSidebar ? styles.bodyWithSidebar : styles.body}>
+         {showSidebar ? (
+           <Sidebar
+--- a/StateLandGovernance.Web/src/shared/components/DevelopmentSessionBar.tsx
++++ b/StateLandGovernance.Web/src/shared/components/DevelopmentSessionBar.tsx
+@@ -12,5 +12,5 @@
+  useEffect(()=>{if(!session)return;void fetch(`${developmentApiBase()}/api/auth/me`,{headers:{Authorization:`Bearer ${session.accessToken}`}}).then(r=>{if(r.status===401){clearDevelopmentSession();setNotice("Session expired. Sign in again.");}});},[session?.accessToken]);
+  if(compact)return <div className={styles.account} aria-label="Account">{session?<><span className={styles.identity}><strong>{session.user.displayName}</strong><small>{session.user.role}</small></span><button className={styles.signIn} onClick={async()=>{try{await signOutDevelopment();router.push("/sign-in");router.refresh();}catch(e){setNotice(e instanceof Error?e.message:"Sign-out failed");}}}>Sign out</button></>:<Link className={styles.signIn} href="/sign-in">Sign in</Link>}{notice&&<span role="status">{notice}</span>}</div>;
+  if(!enabled)return null;
+- return <div aria-label="Session" style={{padding:"0.7rem",background:"#fff6dc"}}><strong>Signed in</strong>{session?<><span> — {session.user.displayName} · {session.user.role}</span> <Link href={session.user.home}>My assigned work</Link> <small>Expires {new Date(session.expiresAtUtc).toLocaleTimeString()}</small> <button onClick={async()=>{try{await signOutDevelopment();router.push("/sign-in");router.refresh();}catch(e){setNotice(e instanceof Error?e.message:"Sign-out failed");}}}>Sign out</button></>:<> <Link href="/sign-in">Sign in</Link>{notice&&<span role="status"> {notice}</span>}</>}</div>;
++ return notice?<p role="status">{notice}</p>:null;
+ }
+--- a/StateLandGovernance.Web/src/shared/components/AppHeader.module.css
++++ b/StateLandGovernance.Web/src/shared/components/AppHeader.module.css
+@@ -21,6 +21,9 @@
+   text-decoration: none;
+ }
+ .signIn:focus-visible { outline: 3px solid #b76b27; outline-offset: 3px; }
++.header .signIn,.header .signIn:visited{display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;color:#fff!important;background:#850906;border:1px solid #850906;border-radius:6px;padding:.65rem 1rem;line-height:1.4;text-align:center;white-space:nowrap;text-decoration:none}
++.header .signIn:hover{background:#690704;border-color:#690704}
++.header .signIn:disabled{opacity:.55;cursor:not-allowed}
+ 
+ .brand {
+   display: flex;
+--- a/StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.tsx
++++ b/StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.tsx
+@@ -20,8 +20,8 @@
+  async function select(id:string){const current=epoch.current;setBusy(true);setDetail(null);setError("");try{const result=await complaintsApi.detail(id);if(current===epoch.current)setDetail(result);}catch(e){setError(e instanceof Error?e.message:"Complaint unavailable.");}finally{if(current===epoch.current)setBusy(false);if(current===epoch.current)flight.current=false;}}
+  async function action(work:()=>Promise<Complaint>){if(flight.current)return;flight.current=true;const current=epoch.current;setBusy(true);setError("");try{const saved=await work();if(current!==epoch.current)return;await refresh();const result=await complaintsApi.detail(saved.id);if(current===epoch.current)setDetail(result);}catch(e){setError(e instanceof Error?e.message:"Request failed. Refresh history before resubmitting; the complaint may already be saved.");}finally{if(current===epoch.current)setBusy(false);if(current===epoch.current)flight.current=false;}}
+  return <div className={`${styles.stack} ${inboxStyles.surface}`}><header><h1>{officer?"Complaint Inbox":"My complaints"}</h1><p className={styles.muted}>{officer?"Read assigned submissions and record authorized review actions.":"Submit a concern and follow its saved classification and review status."}</p>{!officer&&<Link href="/workflow-governance/applicant/cases">My applications</Link>}</header>
+- {!session&&<section className={styles.card}><h2>Sign in to manage complaints</h2><p>Sign-in is required to submit a complaint or view your saved submissions.</p><Link className={styles.primary} href="/sign-in?returnTo=%2Fworkflow-governance%2Fapplicant%2Fcomplaints">Sign in</Link></section>}
+- {session&&loading&&<PendingIndicator>Loading saved complaints?</PendingIndicator>}{busy&&<PendingIndicator>Saving or retrieving complaint?</PendingIndicator>}{session&&error&&<div role="alert" className={styles.error}>{error}</div>}
++ {!session&&<section className={styles.card}><h2>Sign in to manage complaints</h2><p>Sign-in is required to submit a complaint or view your saved submissions.</p><Link className={inboxStyles.primary} href="/sign-in?returnTo=%2Fworkflow-governance%2Fapplicant%2Fcomplaints">Sign in</Link></section>}
++ {session&&loading&&<PendingIndicator>Loading saved complaints…</PendingIndicator>}{busy&&<PendingIndicator>Saving or retrieving complaint…</PendingIndicator>}{session&&error&&<div role="alert" className={styles.error}>{error}</div>}
+  {!officer&&session&&<form className={styles.card} onSubmit={e=>{e.preventDefault();void action(async()=>{const saved=await complaintsApi.submit({submissionKey:submissionKey(),subject,complaintText:text,caseReference:reference||null,parcelId:parcel||null});clearSubmissionKey();setSubject("");setText("");setReference("");setParcel("");return saved;});}}><h2>Register a complaint</h2><label className={styles.field}>Subject<input required maxLength={200} disabled={busy} value={subject} onChange={e=>setSubject(e.target.value)}/></label><label className={styles.field}>Complaint in English<textarea required maxLength={10000} disabled={busy} value={text} onChange={e=>setText(e.target.value)}/></label><label className={styles.field}>Known application reference or case ID (optional)<input maxLength={100} disabled={busy} value={reference} onChange={e=>setReference(e.target.value)}/></label><label className={styles.field}>Known parcel reference (optional)<input maxLength={100} disabled={busy} value={parcel} onChange={e=>setParcel(e.target.value)}/></label><p className={styles.muted}>Leave unknown references blank. A link is validated by the server; it is not inferred from complaint text.</p><button className={styles.primary} disabled={busy||loading}>Register complaint</button></form>}
+  {session&&<div className={officer?inboxStyles.inbox:styles.stack}><section className={styles.card}><div className={inboxStyles.sectionHeading}><h2>{officer?"Assigned complaints":"Your saved submissions"}</h2><button disabled={busy} onClick={()=>void refresh()}>Refresh</button></div>{!loading&&rows.length===0&&!error&&<p>No accessible complaints returned for this account.</p>}<ul className={inboxStyles.list}>{rows.map(c=><li key={c.id}><button className={inboxStyles.complaintChoice} aria-pressed={detail?.complaint.id===c.id} disabled={busy} onClick={()=>void select(c.id)}><strong>{c.subject}</strong><small>{sriLankaTime(c.submittedAtUtc)}</small><span><StatusBadge status={c.classificationState}/><StatusBadge status={c.reviewStatus}/></span></button></li>)}</ul><small className={styles.muted}>Newest 100 accessible records.</small></section>
+  {officer&&!detail&&<section className={styles.card}><h2>Complaint details</h2><p>Select an assigned complaint to read the original text and saved classification.</p></section>}{detail&&<section className={styles.card}><div className={inboxStyles.sectionHeading}><h2>{detail.complaint.subject}</h2><StatusBadge status={detail.complaint.reviewStatus}/></div><p className={styles.muted}>Submitted {sriLankaTime(detail.complaint.submittedAtUtc)} ? Sri Lanka</p><h3>Original complaint</h3><div className={inboxStyles.original} role="region" aria-label="Original complaint text" tabIndex={0}>{detail.complaint.complaintText}</div><p className={styles.muted}>{classificationMessage(detail.complaint)}</p>{canRetry(detail.complaint)&&<button disabled={busy} onClick={()=>void action(()=>complaintsApi.retry(detail.complaint))}>Retry classification of this saved complaint</button>}
+--- a/StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.module.css
++++ b/StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.module.css
+@@ -1,2 +1,3 @@
+ .surface{max-width:1080px;margin:auto;width:100%;font-size:13px}.inbox{display:grid;grid-template-columns:minmax(230px,.85fr) minmax(0,1.75fr);gap:14px;align-items:start}.inbox>section{min-width:0}.list{list-style:none;margin:8px 0;padding:0;display:grid;gap:0}.list li{border-bottom:1px solid #eee7df;padding:0}.complaintChoice{width:100%;display:grid;gap:5px;text-align:left;padding:11px 8px!important;border:0!important;border-left:3px solid transparent!important;background:transparent!important;color:#332b28!important}.complaintChoice[aria-pressed=true]{border-left-color:#850906!important;background:#faf2ef!important}.complaintChoice strong{font-weight:600;font-size:13px;overflow-wrap:anywhere}.complaintChoice small{color:#655e58;font-size:11px}.complaintChoice>span{display:flex;gap:5px;flex-wrap:wrap}.complaintChoice>span>span{margin-left:0;max-width:100%}.sectionHeading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.sectionHeading h2{margin:0}.original{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;font-size:13px;padding:12px;background:#faf8f5;border-radius:6px;border:1px solid #eee7df;max-height:360px;overflow:auto}.probabilities{display:grid;gap:5px;margin:10px 0}.probabilities>div{display:flex;gap:12px;justify-content:space-between;border-bottom:1px solid #eee7df;padding:6px 0;align-items:start}.probabilities dt{font-size:12px;max-width:65%}.probabilities dd{font-size:12px;margin:0;text-align:right}.probabilities small{display:block;color:#655e58;font-size:11px}.surface form{display:grid;gap:8px}.surface form button{justify-self:start}.surface form>p{font-size:12px}.surface details{margin:9px 0}.surface details>summary{font-size:12px}.surface header>p{margin:6px 0}.surface button:focus-visible{outline:2px solid #850906;outline-offset:3px}@media(max-width:850px){.inbox{grid-template-columns:1fr}.list{max-height:300px;overflow:auto}}
+ .primary{display:inline-flex;align-items:center;justify-content:center;background:#850906;color:#fff!important;padding:.65rem 1rem;border-radius:.4rem;font-weight:600;text-decoration:none}.primary:focus-visible{outline:3px solid #850906;outline-offset:3px}
++.primary,.primary:visited{min-height:44px;box-sizing:border-box;color:#fff!important;line-height:1.4;text-align:center;border:1px solid #850906;white-space:normal}.primary:hover{background:#690704;border-color:#690704}.primary[aria-disabled=true]{opacity:.55;pointer-events:none}
+--- a/StateLandGovernance.Web/src/modules/component-04/components/OfficerAnomalyPanel.tsx
++++ b/StateLandGovernance.Web/src/modules/component-04/components/OfficerAnomalyPanel.tsx
+@@ -17,6 +17,6 @@
+  async function run(){if(flight.current||!ready||uncertain)return;flight.current=true;setBusy(true);setError("");const v=epoch.current;try{const key=pendingOfficerKey(actor,"anomaly",sessionStorage);const saved=await officerApi<RequestReport>("officer-assessments/anomaly",{scenario:namedScenario,submissionKey:key});if(v!==epoch.current)return;setReport(saved);if(saved.state==="Saved")clearOfficerKey(actor,"anomaly");await refresh();}catch(e){if(v===epoch.current)setError((e instanceof Error?e.message:"Unavailable")+" The same request key is retained. Refresh history before any further analysis.");}finally{if(v===epoch.current){flight.current=false;setBusy(false);}}}
+  return <>{!actor&&<p>Sign in to view accessible analyses. Running an analysis requires separate officer authorization. <Link href="/sign-in">Sign in</Link></p>}<div className={styles.toolbar}><button className={styles.primary} disabled={!ready||busy||uncertain} onClick={()=>void run()}>Run Anomaly Analysis</button><button disabled={!actor||busy} onClick={()=>void refresh()}>Refresh Saved Analyses</button></div>
+  <p className={styles.secondary}>The model assesses the entire sequence. A deliberate new run saves a separate analysis; refresh only retrieves saved results.</p>
+- {busy&&<PendingIndicator>Analysing the prepared workflow?</PendingIndicator>}{error&&<p role="alert">{error}</p>}{uncertain&&<p role="status">A request is Pending or Unknown. No new inference is permitted until its outcome is investigated.</p>}{report&&<OfficerAssessmentResult report={report}/>}
+- <details><summary>Analysis history ({history.length})</summary>{history.length===0?<p>No saved analyses returned for this account.</p>:<div className={styles.scroll}><table><thead><tr><th>Workflow</th><th>Date / time (Sri Lanka)</th><th>Status</th><th>Report</th></tr></thead><tbody>{history.map(r=><tr key={r.id}><td>Kiwula Kale ? Named route v2</td><td>{sriLankaTime(r.createdAtUtc)}</td><td><StatusBadge status={r.state}/></td><td><Link href={`/component-04/officer-assessments/${r.id}`}>View Report</Link></td></tr>)}</tbody></table></div>}</details></>;
++ {busy&&<PendingIndicator>Analysing the prepared workflow…</PendingIndicator>}{error&&<p role="alert">{error}</p>}{uncertain&&<p role="status">A request is Pending or Unknown. No new inference is permitted until its outcome is investigated.</p>}{report&&<OfficerAssessmentResult report={report}/>}
++ <details><summary>Analysis history ({history.length})</summary>{history.length===0?<p>No saved analyses returned for this account.</p>:<div className={styles.scroll}><table><thead><tr><th>Workflow</th><th>Date / time (Sri Lanka)</th><th>Status</th><th>Report</th></tr></thead><tbody>{history.map(r=><tr key={r.id}><td>Kiwula Kale — Named route v2</td><td>{sriLankaTime(r.createdAtUtc)}</td><td><StatusBadge status={r.state}/></td><td><Link href={`/component-04/officer-assessments/${r.id}`}>View Report</Link></td></tr>)}</tbody></table></div>}</details></>;
+ }
+--- a/StateLandGovernance.Web/src/modules/component-04/components/OfficerSavedReports.tsx
++++ b/StateLandGovernance.Web/src/modules/component-04/components/OfficerSavedReports.tsx
+@@ -12,5 +12,5 @@
+  async function refresh(){const v=epoch.current;try{const rows=id?[await officerApi<RequestReport>(`officer-assessments/${encodeURIComponent(id)}`)]:await officerApi<RequestReport[]>("officer-assessments");const investigation=id&&rows[0]?.investigationId?await officerApi<Investigation>(`officer-investigations/${rows[0].investigationId}`):null;if(v===epoch.current){setRows(rows);setInvestigation(investigation);setError("");}}catch(e){if(v===epoch.current)setError(e instanceof Error?e.message:"Report unavailable");}}
+  useEffect(()=>{let active=true;queueMicrotask(()=>{if(!active)return;setRows([]);setInvestigation(null);setError("");if(actor)void refresh();});return()=>{active=false;};/* account change invalidates responses */ // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[actor,id,generation]);
+- return <section className={styles.workspace}><div className={styles.resultHeader}><h2>{id?"Saved officer assessment":"Officer assessments"}</h2><button disabled={!actor} onClick={()=>void refresh()}>Refresh Saved Reports</button></div>{error&&<p role="alert">{error}</p>}{!actor&&<p>Sign in as the DS officer. <Link href="/sign-in">Sign in</Link></p>}{investigation&&<details className={styles.card}><summary>Original saved officer selections and remarks</summary><ProgressiveSteps label="Saved investigation observations">{investigation.findings.map(f=><ProgressiveStep key={f.concern} title={statusLabel(f.concern)} status={f.choice} tone="neutral" description={f.remarks||"No remarks supplied."}/>)}</ProgressiveSteps><p className={styles.secondary}>These selections remain observations; the engine&apos;s evidence states are shown in the result.</p></details>}{id?rows.map(r=><OfficerAssessmentResult key={r.id} report={r}/>):<div className={styles.card}><div className={styles.scroll}><table><thead><tr><th>Assessment</th><th>Proposal / workflow</th><th>Date / time (Sri Lanka)</th><th>Status</th><th>Report</th></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td>{r.kind==="early"?"Early Governance":"Workflow Anomaly"}</td><td>Kiwula Kale{r.kind==="anomaly"?" ? Named route v2":""}</td><td>{sriLankaTime(r.createdAtUtc)}</td><td><StatusBadge status={r.state}/></td><td><Link href={`/component-04/officer-assessments/${r.id}`}>View Report</Link></td></tr>)}</tbody></table></div>{actor&&rows.length===0&&!error&&<p>No saved officer assessments returned for this account.</p>}</div>}<p className={styles.secondary}>Retrieval does not rerun an engine.</p></section>;
++ return <section className={styles.workspace}><div className={styles.resultHeader}><h2>{id?"Saved officer assessment":"Officer assessments"}</h2><button disabled={!actor} onClick={()=>void refresh()}>Refresh Saved Reports</button></div>{error&&<p role="alert">{error}</p>}{!actor&&<p>Sign in as the DS officer. <Link href="/sign-in">Sign in</Link></p>}{investigation&&<details className={styles.card}><summary>Original saved officer selections and remarks</summary><ProgressiveSteps label="Saved investigation observations">{investigation.findings.map(f=><ProgressiveStep key={f.concern} title={statusLabel(f.concern)} status={f.choice} tone="neutral" description={f.remarks||"No remarks supplied."}/>)}</ProgressiveSteps><p className={styles.secondary}>These selections remain observations; the engine&apos;s evidence states are shown in the result.</p></details>}{id?rows.map(r=><OfficerAssessmentResult key={r.id} report={r}/>):<div className={styles.card}><div className={styles.scroll}><table><thead><tr><th>Assessment</th><th>Proposal / workflow</th><th>Date / time (Sri Lanka)</th><th>Status</th><th>Report</th></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td>{r.kind==="early"?"Early Governance":"Workflow Anomaly"}</td><td>Kiwula Kale{r.kind==="anomaly"?" — Named route v2":""}</td><td>{sriLankaTime(r.createdAtUtc)}</td><td><StatusBadge status={r.state}/></td><td><Link href={`/component-04/officer-assessments/${r.id}`}>View Report</Link></td></tr>)}</tbody></table></div>{actor&&rows.length===0&&!error&&<p>No saved officer assessments returned for this account.</p>}</div>}<p className={styles.secondary}>Retrieval does not rerun an engine.</p></section>;
+ }
+--- a/StateLandGovernance.Web/src/modules/component-04/components/ProgressiveSteps.module.css
++++ b/StateLandGovernance.Web/src/modules/component-04/components/ProgressiveSteps.module.css
+@@ -1,2 +1,4 @@
+-.steps{list-style:none;margin:8px 0;padding:0;min-width:0;font-size:13px;line-height:1.45}.step{position:relative;margin:0;padding:0;min-width:0}.step:not(:last-child)::before{content:"";position:absolute;left:8px;top:23px;bottom:-8px;width:1px;background:#ddd5cf}.row{display:flex!important;align-items:flex-start;gap:12px;position:relative;min-height:52px;padding:11px 0!important;list-style:none;border:0!important;background:transparent!important}.row::-webkit-details-marker{display:none}.indicator{width:17px;height:17px;flex:0 0 17px;border:1.5px solid #b6aaa0;border-radius:50%;background:#fff;position:relative;margin-top:1px;z-index:1}.indicator::after{content:"";position:absolute;inset:4px;border-radius:50%;background:#aea298}.copy{display:grid;gap:3px;min-width:0;flex:1}.title{font-weight:600;color:#332b28;overflow-wrap:anywhere}.description{font-size:12px;font-weight:400;color:#665c56;line-height:1.5;overflow-wrap:anywhere}.badge{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-left:auto;max-width:40%;padding:3px 8px;border:1px solid #ddd5cf;border-radius:5px;background:#f6f4f1;color:#544b46;font-size:11px;font-weight:500;line-height:1.4;text-align:right;overflow-wrap:anywhere}.badge[data-tone=positive]{color:#27624c;background:#edf6f0;border-color:#bed6c7}.badge[data-tone=warning]{color:#77501c;background:#fff6e5;border-color:#e5cfaa}.badge[data-tone=danger]{color:#850906;background:#fff0ed;border-color:#eac5bf}.badge[data-tone=active]{color:#850906;background:#f8eae9;border-color:#dcb7b4}.step[data-current]>.row .indicator,.step[data-current]>details>.row .indicator{border-color:#850906}.step[data-current] .indicator::after{background:#850906}.detail{padding:0 0 14px 29px;font-size:13px;min-width:0}.step details{border:0!important;padding:0!important;margin:0!important}.step summary{cursor:pointer}.step summary .title::after{content:" +";color:#887568;font-weight:400}.step details[open] summary .title::after{content:" ?"}.row:focus-visible{outline:2px solid #850906;outline-offset:2px;border-radius:5px}.title button{border:0!important;background:none!important;padding:0!important;color:inherit!important;font:inherit;cursor:pointer;text-align:left;min-height:22px}.detail p{margin:.4rem 0}.detail textarea{min-height:76px}.detail label{display:grid;gap:5px}.detail select{width:min(100%,300px)}@media(max-width:540px){.row{gap:9px;flex-wrap:wrap}.copy{flex-basis:calc(100% - 30px)}.badge{margin-left:26px;max-width:calc(100% - 26px);text-align:left}.row{min-height:58px}.detail{padding-left:26px}}
++.steps{list-style:none;margin:8px 0;padding:0;min-width:0;font-size:13px;line-height:1.45}.step{position:relative;margin:0;padding:0;min-width:0}.step:not(:last-child)::before{content:"";position:absolute;left:8px;top:23px;bottom:-8px;width:1px;background:#ddd5cf}.row{display:flex!important;align-items:flex-start;gap:12px;position:relative;min-height:52px;padding:11px 0!important;list-style:none;border:0!important;background:transparent!important}.row::-webkit-details-marker{display:none}.indicator{width:17px;height:17px;flex:0 0 17px;border:1.5px solid #b6aaa0;border-radius:50%;background:#fff;position:relative;margin-top:1px;z-index:1}.indicator::after{content:"";position:absolute;inset:4px;border-radius:50%;background:#aea298}.copy{display:grid;gap:3px;min-width:0;flex:1}.title{font-weight:600;color:#332b28;overflow-wrap:anywhere}.description{font-size:12px;font-weight:400;color:#665c56;line-height:1.5;overflow-wrap:anywhere}.badge{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-left:auto;max-width:40%;padding:3px 8px;border:1px solid #ddd5cf;border-radius:5px;background:#f6f4f1;color:#544b46;font-size:11px;font-weight:500;line-height:1.4;text-align:right;overflow-wrap:anywhere}.badge[data-tone=positive]{color:#27624c;background:#edf6f0;border-color:#bed6c7}.badge[data-tone=warning]{color:#77501c;background:#fff6e5;border-color:#e5cfaa}.badge[data-tone=danger]{color:#850906;background:#fff0ed;border-color:#eac5bf}.badge[data-tone=active]{color:#850906;background:#f8eae9;border-color:#dcb7b4}.step[data-current]>.row .indicator,.step[data-current]>details>.row .indicator{border-color:#850906}.step[data-current] .indicator::after{background:#850906}.detail{padding:0 0 14px 29px;font-size:13px;min-width:0}.step details{border:0!important;padding:0!important;margin:0!important}.step summary{cursor:pointer}.step summary .title::after{content:" +";color:#887568;font-weight:400}.step details[open] summary .title::after{content:" −"}.row:focus-visible{outline:2px solid #850906;outline-offset:2px;border-radius:5px}.title button{border:0!important;background:none!important;padding:0!important;color:inherit!important;font:inherit;cursor:pointer;text-align:left;min-height:22px}.detail p{margin:.4rem 0}.detail textarea{min-height:76px}.detail label{display:grid;gap:5px}.detail select{width:min(100%,300px)}@media(max-width:540px){.row{gap:9px;flex-wrap:wrap}.copy{flex-basis:calc(100% - 30px)}.badge{margin-left:26px;max-width:calc(100% - 26px);text-align:left}.row{min-height:58px}.detail{padding-left:26px}}
+ .step[data-tone=positive] .indicator{border-color:#7f9e8b}.step[data-tone=positive] .indicator::after{background:#41755b}.step[data-tone=warning] .indicator{border-color:#b78d46}.step[data-tone=warning] .indicator::after{background:#b78d46}.step[data-tone=danger] .indicator{border-color:#b2635c}.step[data-tone=danger] .indicator::after{background:#850906}
++
++.badge{white-space:nowrap;overflow-wrap:normal;word-break:normal;max-width:100%}
+--- a/StateLandGovernance.Web/src/modules/component-04/components/KiwulaAssessmentWorkspace.tsx
++++ b/StateLandGovernance.Web/src/modules/component-04/components/KiwulaAssessmentWorkspace.tsx
+@@ -87,7 +87,7 @@
+ 
+  {loading&&<PendingIndicator>Retrieving saved information…</PendingIndicator>}{error&&<p role="alert" className={styles.notice}>{error}</p>}{busy&&<PendingIndicator>Evaluating and saving this assessment…</PendingIndicator>}
+ 
+- {!id&&selection==="proposal"&&<section className={styles.card}><h2>Proposals</h2><p>Select a proposal to begin live screening. Nothing runs until you choose Run Regulatory Screening.</p><div className={styles.scroll}><table><thead><tr>{["Proposal name","Location","Land extent","Proposed use","Screening status","Action"].map(x=><th key={x}>{x}</th>)}</tr></thead><tbody><tr><th scope="row">{proposal?.displayName??"Project_Proposal_Kiwula Kale"}</th><td>Puttalam · Mahakumbukkadawala</td><td>{proposal?.extent??`${prepared.landRequirement.extentHectares} ha / 17 stated acres`}</td><td>{proposal?.proposedUse??"Coconut cultivation"}</td><td>{loading?"Loading":error?"Unavailable":currentRegulatory?"Regulatory screening completed":"Ready to screen"}</td><td><button aria-expanded={showProposal} aria-controls="proposal-details" onClick={()=>setShowProposal(value=>!value)}>View Proposal Data</button><button className={styles.primary} disabled={loading||!!error} onClick={()=>move("regulatory")}>Start Screening</button></td></tr></tbody></table></div></section>}
++ {!id&&selection==="proposal"&&<section className={styles.card}><h2>Proposals</h2><p>Select a proposal to begin live screening. Nothing runs until you choose Run Regulatory Screening.</p><div className={styles.scroll}><table><thead><tr>{["Proposal name","Location","Land extent","Proposed use","Screening status","Action"].map(x=><th key={x}>{x}</th>)}</tr></thead><tbody><tr><th scope="row">{proposal?.displayName??"Project_Proposal_Kiwula Kale"}</th><td>Puttalam · Mahakumbukkadawala</td><td>{proposal?.extent??`${prepared.landRequirement.extentHectares} ha / 17 stated acres`}</td><td>{proposal?.proposedUse??"Coconut cultivation"}</td><td>{loading?"Loading":error?"Unavailable":currentRegulatory?"Regulatory screening completed":"Ready to screen"}</td><td><div className={styles.proposalActions}><button aria-expanded={showProposal} aria-controls="proposal-details" onClick={()=>setShowProposal(value=>!value)}>View Proposal Data</button><button className={styles.primary} disabled={loading||!!error} onClick={()=>move("regulatory")}>Start Screening</button></div></td></tr></tbody></table></div></section>}
+ 
+  {!id&&selection==="proposal"&&showProposal&&<div id="proposal-details"><button onClick={()=>setShowProposal(false)}>Close Proposal Data</button><section className={styles.card}><h2>Proposal information</h2><label>Proposal<select aria-label="Select proposal" defaultValue={prepared.proposalId}><option value={prepared.proposalId}>Project_Proposal_Kiwula Kale</option></select></label><dl><dt>Original source</dt><dd>Kiwula Kale English adaptation</dd><dt>Land location</dt><dd>Puttalam; Mahakumbukkadawala DS; GN 614/F Kiwula No. 01; Anamaduwa local-authority area. Province unknown.</dd><dt>Land and use</dt><dd>17 acres / {prepared.landRequirement.extentHectares} ha; coconut cultivation; dairy is a future feasibility option only.</dd><dt>Presentation label</dt><dd>Kiwula Kale State Land · Lot 17 (user-provided presentation label; not a verified cadastral identifier).</dd><dt>Tenure</dt><dd>15-year request is an adaptation assumption. Land classification, parcel, ownership and lawful tenure unknown.</dd></dl><details><summary>Source, versions and assumptions</summary><p>{source.sourceReference}</p><ul>{source.notes.map(note=><li key={note}>{note}</li>)}</ul><p>Input version {source.inputVersion}; schema {source.schemaVersion}; prepared hash {source.preparedInputSha256}.</p><p>Fictional replacement proponent, not the original applicant; no real case or parcel binding.</p><pre>{source.proposalText}</pre></details></section>
+ 
+--- a/StateLandGovernance.Web/src/modules/component-04/components/KiwulaAssessmentWorkspace.module.css
++++ b/StateLandGovernance.Web/src/modules/component-04/components/KiwulaAssessmentWorkspace.module.css
+@@ -1 +1,2 @@
+-.workspace{display:grid;gap:14px;max-width:1080px;margin:auto;min-width:0;color:#332b28;font-size:13px}.workspace h1{font-size:22px;line-height:1.3;margin:0 0 8px}.workspace h2{font-size:16px}.workspace h3{font-size:14px;margin:14px 0 8px}.workspace p{line-height:1.6}.eyebrow{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#785b32;margin:0 0 5px}.steps{display:block;background:#fff;border:1px solid #e7dfd7;border-radius:10px;padding:8px 14px}.workspace button{border:1px solid #cbbab0;border-radius:6px;background:#fff;padding:7px 11px;color:#850906;cursor:pointer;font:inherit;font-weight:500;text-align:left}.workspace button:disabled{opacity:.55;cursor:not-allowed}.workspace button:focus-visible,.workspace a:focus-visible{outline:2px solid #850906;outline-offset:3px}.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;margin:10px 0}.toolbar a{padding:5px 0}.card{border:1px solid #e7dfd7;background:#fff;border-radius:10px;padding:16px;min-width:0;box-shadow:0 2px 5px #50382004}.card .card{border:0;border-top:1px solid #e7dfd7;border-radius:0;padding:14px 0 0;margin-top:14px;box-shadow:none}.notice{background:#fcf7eb;border:1px solid #e6d6b5;padding:9px 11px;border-radius:6px;color:#665231;font-size:12px}.workspace details{border-top:1px solid #eee7df;padding:9px 0}.workspace summary{cursor:pointer;font-weight:500;font-size:12px}.workspace dl{display:grid;gap:5px;margin:8px 0}.workspace dt{font-size:12px;color:#655e58;font-weight:500}.workspace dd{margin:0 0 5px;overflow-wrap:anywhere}.workspace select{display:block;padding:7px 9px;border:1px solid #cfc6bd;border-radius:6px;max-width:100%;margin:5px 0;background:white;min-height:34px}.scroll{overflow-x:auto}.workspace table{border-collapse:collapse;width:100%;min-width:480px;text-align:left;font-size:12px}.workspace td,.workspace th{padding:9px 10px;border-bottom:1px solid #eee7df;vertical-align:top;line-height:1.5}.workspace th{font-weight:600;background:#faf8f5}.workspace pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;max-height:360px;overflow:auto}.workspace a{color:#850906;text-underline-offset:3px}.workspace article{padding:8px 0}.pending{display:flex;align-items:center;gap:9px;color:#850906;font-size:12px;padding:9px 0}.spinner{display:inline-block;flex-shrink:0;width:16px;height:16px;border:2px solid #e5d8c9;border-top-color:#850906;border-radius:50%;animation:c4-spin .8s linear infinite}@keyframes c4-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.spinner{animation:none;border-style:dotted}}.json{white-space:pre-wrap;overflow-wrap:anywhere}.heading p{max-width:80ch}.summaryGrid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.summaryGrid article{border:1px solid #e7dfd7;border-radius:6px;padding:8px 12px;background:#faf8f5;flex:1;min-width:130px}.summaryGrid strong{font-size:20px;color:#850906;font-weight:600}.summaryGrid p{font-size:12px;margin:2px 0}.investigations{display:grid;gap:0}.investigations label{display:block;font-size:12px;font-weight:500}.investigations textarea{display:block;width:100%;font:inherit;border:1px solid #cfc6bd;border-radius:6px;padding:8px;box-sizing:border-box}.investigations p{font-size:12px}.investigations select{width:min(100%,230px)}.workspace button.primary,.primary{background:#850906;color:#fff;border-color:#850906}.resultHeader{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.resultHeader h3{margin:0}.countLine{display:flex;flex-wrap:wrap;gap:8px;font-size:12px;color:#655e58}.findingTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.compactForm{display:grid;gap:10px}.historyTable{overflow-x:auto}.historyTable table{min-width:460px}.secondary{font-size:12px;color:#655e58}@media(max-width:600px){.card{padding:12px}.steps{padding:4px 10px}.workspace h1{font-size:20px}.summaryGrid{gap:6px}.summaryGrid article{min-width:100px;padding:7px}.toolbar{gap:7px}}+.workspace{display:grid;gap:14px;max-width:1080px;margin:auto;min-width:0;color:#332b28;font-size:13px}.workspace h1{font-size:22px;line-height:1.3;margin:0 0 8px}.workspace h2{font-size:16px}.workspace h3{font-size:14px;margin:14px 0 8px}.workspace p{line-height:1.6}.eyebrow{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#785b32;margin:0 0 5px}.steps{display:block;background:#fff;border:1px solid #e7dfd7;border-radius:10px;padding:8px 14px}.workspace button{border:1px solid #cbbab0;border-radius:6px;background:#fff;padding:7px 11px;color:#850906;cursor:pointer;font:inherit;font-weight:500;text-align:left}.workspace button:disabled{opacity:.55;cursor:not-allowed}.workspace button:focus-visible,.workspace a:focus-visible{outline:2px solid #850906;outline-offset:3px}.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;margin:10px 0}.toolbar a{padding:5px 0}.card{border:1px solid #e7dfd7;background:#fff;border-radius:10px;padding:16px;min-width:0;box-shadow:0 2px 5px #50382004}.card .card{border:0;border-top:1px solid #e7dfd7;border-radius:0;padding:14px 0 0;margin-top:14px;box-shadow:none}.notice{background:#fcf7eb;border:1px solid #e6d6b5;padding:9px 11px;border-radius:6px;color:#665231;font-size:12px}.workspace details{border-top:1px solid #eee7df;padding:9px 0}.workspace summary{cursor:pointer;font-weight:500;font-size:12px}.workspace dl{display:grid;gap:5px;margin:8px 0}.workspace dt{font-size:12px;color:#655e58;font-weight:500}.workspace dd{margin:0 0 5px;overflow-wrap:anywhere}.workspace select{display:block;padding:7px 9px;border:1px solid #cfc6bd;border-radius:6px;max-width:100%;margin:5px 0;background:white;min-height:34px}.scroll{overflow-x:auto}.workspace table{border-collapse:collapse;width:100%;min-width:480px;text-align:left;font-size:12px}.workspace td,.workspace th{padding:9px 10px;border-bottom:1px solid #eee7df;vertical-align:top;line-height:1.5}.workspace th{font-weight:600;background:#faf8f5}.workspace pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;max-height:360px;overflow:auto}.workspace a{color:#850906;text-underline-offset:3px}.workspace article{padding:8px 0}.pending{display:flex;align-items:center;gap:9px;color:#850906;font-size:12px;padding:9px 0}.spinner{display:inline-block;flex-shrink:0;width:16px;height:16px;border:2px solid #e5d8c9;border-top-color:#850906;border-radius:50%;animation:c4-spin .8s linear infinite}@keyframes c4-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.spinner{animation:none;border-style:dotted}}.json{white-space:pre-wrap;overflow-wrap:anywhere}.heading p{max-width:80ch}.summaryGrid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.summaryGrid article{border:1px solid #e7dfd7;border-radius:6px;padding:8px 12px;background:#faf8f5;flex:1;min-width:130px}.summaryGrid strong{font-size:20px;color:#850906;font-weight:600}.summaryGrid p{font-size:12px;margin:2px 0}.investigations{display:grid;gap:0}.investigations label{display:block;font-size:12px;font-weight:500}.investigations textarea{display:block;width:100%;font:inherit;border:1px solid #cfc6bd;border-radius:6px;padding:8px;box-sizing:border-box}.investigations p{font-size:12px}.investigations select{width:min(100%,230px)}.workspace button.primary,.primary{background:#850906;color:#fff;border-color:#850906}.resultHeader{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.resultHeader h3{margin:0}.countLine{display:flex;flex-wrap:wrap;gap:8px;font-size:12px;color:#655e58}.findingTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.compactForm{display:grid;gap:10px}.historyTable{overflow-x:auto}.historyTable table{min-width:460px}.secondary{font-size:12px;color:#655e58}@media(max-width:600px){.card{padding:12px}.steps{padding:4px 10px}.workspace h1{font-size:20px}.summaryGrid{gap:6px}.summaryGrid article{min-width:100px;padding:7px}.toolbar{gap:7px}}
++.proposalActions{display:grid;grid-template-columns:repeat(2,minmax(10rem,1fr));gap:.65rem;min-width:21rem;align-items:stretch}.proposalActions button{width:100%;text-align:center;box-sizing:border-box;min-height:42px}.workspace button{min-height:40px;box-sizing:border-box;max-width:100%;white-space:normal}.toolbar{align-items:stretch;gap:.65rem}.toolbar>button,.toolbar>a{display:inline-flex;align-items:center;justify-content:center;text-align:center;min-height:40px;min-width:9rem;max-width:100%;padding:.55rem .85rem;box-sizing:border-box;line-height:1.4}.toolbar>a{border:1px solid #cbbab0;border-radius:6px;background:#fff;text-decoration:none}.scroll{min-width:0;max-width:100%}.workspace table{min-width:640px}.workspace td:has(>[data-tone]){min-width:8rem;white-space:nowrap}.workspace td:last-child>a{display:inline-flex;align-items:center;min-height:40px;white-space:nowrap}.workspace td,.workspace th{word-break:normal;overflow-wrap:normal}@media(max-width:600px){.proposalActions{grid-template-columns:minmax(0,1fr);min-width:11rem}.toolbar>button,.toolbar>a{flex:1 1 11rem;min-width:0}}
+--- a/StateLandGovernance.Web/src/modules/component-04/components/GovernanceWorkspace.module.css
++++ b/StateLandGovernance.Web/src/modules/component-04/components/GovernanceWorkspace.module.css
+@@ -51,3 +51,4 @@
+ 
+ /* Compact C4 presentation; behavior and existing routes remain unchanged. */
+ .card{border-radius:10px;padding:16px;border-color:#e7dfd7;box-shadow:0 2px 5px #50382004}.stack{gap:14px}.header{margin-bottom:12px}.heading{margin-bottom:12px}.notice{border-radius:6px;padding:9px 11px;font-size:12px}.stats,.grid{gap:10px}.stat{border-radius:8px;padding:12px}.stat strong{font-size:22px}.field{gap:5px;margin-bottom:10px;font-size:13px}.field input,.field textarea,.field select{padding:8px 9px;border-radius:6px}.field textarea{min-height:90px}.stack input:not([type=checkbox]),.stack select,.stack textarea{padding:8px 9px;border-radius:6px}.primary{border-radius:6px;background:#850906;padding:8px 13px}.nav{gap:6px}.nav a,.tabs a{border-radius:6px;padding:6px 9px}.stack h1{font-size:22px}.card p,.card li{font-size:13px;line-height:1.6}.json{border-radius:6px;font-size:12px}.metrics div{border-radius:6px;padding:9px 12px}.twoColumn{gap:14px}.footer{font-size:11px;max-width:1080px;margin:18px auto 0}.workspace{max-width:1080px;margin:0 auto}.table td,.table th{padding:9px 10px}@media(max-width:650px){.card{padding:12px}}
++.workspace :where(button){min-height:40px;box-sizing:border-box;max-width:100%;white-space:normal}.workspace :where(form>button){justify-self:start}.workspace .actions{align-items:stretch;gap:.65rem}.workspace .actions :is(button,a){display:inline-flex;align-items:center;justify-content:center;min-height:40px;box-sizing:border-box;padding:.55rem .85rem;max-width:100%;line-height:1.4}.workspace .scroll{min-width:0;max-width:100%}.workspace table td:has(>[data-tone]){min-width:8rem;white-space:nowrap}.workspace table td:last-child>a{white-space:nowrap}
+--- a/StateLandGovernance.Web/src/proxy.ts
++++ b/StateLandGovernance.Web/src/proxy.ts
+@@ -5,6 +5,9 @@
+  try{
+   const response=await governanceAdmission(token);if(response.status===401)return NextResponse.redirect(new URL("/sign-in",request.url));if(response.status>=500)return new NextResponse("Governance authentication is temporarily unavailable.",{status:503,headers:{"Cache-Control":"no-store"}});const body=await response.json() as GovernanceAdmission;
+   if(!response.ok||!body.allowed)return NextResponse.redirect(new URL(applicantDestination(body),request.url));
++  if(request.nextUrl.pathname==="/component-04"||request.nextUrl.pathname==="/component-04/"){
++   const redirect=NextResponse.redirect(new URL("/component-04/assessments",request.url));redirect.headers.set("Cache-Control","private, no-store");return redirect;
++  }
+   const headers=new Headers(request.headers);headers.set("x-c4-admitted","true");headers.set("x-c4-commissioner",body.isCommissioner===true?"true":"false");
+   return NextResponse.next({request:{headers},headers:{"Cache-Control":"private, no-store"}});
+  }catch{return new NextResponse("Governance authentication is temporarily unavailable.",{status:503,headers:{"Cache-Control":"no-store"}});}
+--- a/StateLandGovernance.Web/tests/component-04.test.mjs
++++ b/StateLandGovernance.Web/tests/component-04.test.mjs
+@@ -34,12 +34,12 @@
+   const layoutSource = fs.readFileSync("src/app/component-04/layout.tsx", "utf8")+fs.readFileSync("src/modules/component-04/services/c4Navigation.ts", "utf8");
+   const pageLayoutSource = fs.readFileSync("src/shared/components/PageLayout.tsx", "utf8");
+ 
+-  for (const label of ["Governance Overview", "Proposals", "Regulatory Screening", "Conflict Detection", "Early Governance", "Institutional Workflow Preview", "Post-Workflow Anomaly", "Complaint Inbox", "Assessment History / Reports"]) {
++  for (const label of ["Proposals", "Regulatory Screening", "Conflict Detection", "Early Governance", "Institutional Workflow Preview", "Post-Workflow Anomaly", "Complaint Inbox", "Assessment History / Reports"]) {
+     assert.ok(layoutSource.includes(`label:"${label}"`), `Missing destination ${label}`);
+   }
+   for (const route of ["/component-04/assessments", "/component-04/post-workflow", "/component-04/complaint-inbox", "/component-04/assessments/history"]) assert.ok(layoutSource.includes(route));
+-  assert.match(layoutSource, /More governance tools and evidence/);
+-  assert.match(layoutSource, /regulatory-assessments/);
++  assert.doesNotMatch(layoutSource, /More governance tools and evidence|label:"Governance Overview"/);
++  assert.match(fs.readFileSync("src/app/component-04/[...view]/page.tsx", "utf8"), /IndependentGovernance/);
+ 
+   assert.match(pageLayoutSource, /items=\{navigationItems\}/);
+   assert.match(pageLayoutSource, /label=\{navigationLabel\}/);
+--- a/StateLandGovernance.Web/tests/component-04-route-access.test.ts
++++ b/StateLandGovernance.Web/tests/component-04-route-access.test.ts
+@@ -17,7 +17,7 @@
+ });
+ test("Server route validates current bearer on every request and replaces browser-supplied identity headers",async()=>{
+  const saved=globalThis.fetch;let allowed=true;globalThis.fetch=async(_url,init)=>{assert.equal(new Headers(init?.headers).get("authorization"),"Bearer test-token");assert.equal(init?.cache,"no-store");return Response.json(allowed?{allowed:true,isCommissioner:false}:{allowed:false,applicant:true},{status:allowed?200:403});};
+- try{const request=()=>new NextRequest("http://localhost:3000/component-04",{headers:{cookie:`${governanceCookie}=test-token`,"x-c4-commissioner":"true"}});const ok=await proxy(request());assert.equal(ok.headers.get("x-middleware-request-x-c4-commissioner"),"false");allowed=false;assert.equal((await proxy(request())).status,307);}finally{globalThis.fetch=saved;}
++ try{const request=()=>new NextRequest("http://localhost:3000/component-04/assessments",{headers:{cookie:`${governanceCookie}=test-token`,"x-c4-commissioner":"true"}});const ok=await proxy(request());assert.equal(ok.headers.get("x-middleware-request-x-c4-commissioner"),"false");allowed=false;assert.equal((await proxy(request())).status,307);}finally{globalThis.fetch=saved;}
+ });
+ test("Anonymous and revoked sessions fail closed; admission outage renders no protected children",async()=>{
+  const saved=globalThis.fetch;try{assert.equal((await proxy(new NextRequest("http://localhost:3000/component-04"))).headers.get("location"),"http://localhost:3000/sign-in");globalThis.fetch=async()=>new Response(null,{status:401});const request=new NextRequest("http://localhost:3000/component-04",{headers:{cookie:`${governanceCookie}=revoked`}});assert.equal((await proxy(request)).headers.get("location"),"http://localhost:3000/sign-in");globalThis.fetch=async()=>{throw new Error("unavailable");};assert.equal((await proxy(request)).status,503);}finally{globalThis.fetch=saved;}
+--- a/StateLandGovernance.Web/src/modules/component-04/components/EarlyGovernanceInvestigation.tsx
++++ b/StateLandGovernance.Web/src/modules/component-04/components/EarlyGovernanceInvestigation.tsx
+@@ -27,6 +27,6 @@
+  </ProgressiveStep>;})}</ProgressiveSteps></details>
+  <p role="status" className={styles.secondary}>{saved?(unchanged?"Saved snapshot. Screening will use these findings.":"Modified findings. Save a new snapshot before screening."):"Unsaved draft. Save before screening."}</p>
+  <div className={styles.toolbar}><button className={!unchanged?styles.primary:undefined} disabled={!actor||busy||unchanged||findings.some(f=>!!investigationError(f))} onClick={()=>void submit(false)}>Save Investigation Findings</button><button className={unchanged&&report?.state!=="Saved"?styles.primary:undefined} disabled={!saved||!unchanged||busy||report?.state==="Unknown"||report?.state==="Pending"} onClick={()=>void submit(true)}>Run Early Governance Screening</button><Link href="/component-04/assessments/history">History / Reports</Link></div>
+- {busy&&<PendingIndicator>Saving or screening the investigation?</PendingIndicator>}{error&&<p role="alert">{error}</p>}{report&&<OfficerAssessmentResult report={report}/>}
++ {busy&&<PendingIndicator>Saving or screening the investigation…</PendingIndicator>}{error&&<p role="alert">{error}</p>}{report&&<OfficerAssessmentResult report={report}/>}
+  <details><summary>How evidence states are used</summary><p>Issue Found and No Issue Found both remain Unverified. Not Yet Verified without remarks is Missing; with remarks it remains Unverified. Saved corrections preserve previous snapshots. No selection establishes verified presence, absence or clearance.</p></details></section>;
+ }
+--- /dev/null
++++ b/StateLandGovernance.Web/tests/component-04-ui-cleanup.test.ts
+@@ -0,0 +1,66 @@
++import {test} from "node:test";
++import assert from "node:assert/strict";
++import {readFileSync} from "node:fs";
++import {c4NavigationFor} from "../src/modules/component-04/services/c4Navigation";
++import {NextRequest} from "next/server";
++import {proxy} from "../src/proxy";
++import {governanceCookie} from "../src/modules/component-04/services/governanceRouteAccess";
++
++const source=(path:string)=>readFileSync(`src/${path}`,"utf8");
++test("Only currently admitted Commissioner/DS receive the uncached root redirect",async()=>{
++ const original=globalThis.fetch;
++ try{
++  for(const isCommissioner of [true,false]){
++   globalThis.fetch=async()=>Response.json({allowed:true,isCommissioner});
++   for(const path of ["/component-04","/component-04/"]){
++    const response=await proxy(new NextRequest("http://localhost:3000"+path,{headers:{cookie:`${governanceCookie}=valid-session`}}));
++    assert.equal(response.status,307);
++    assert.equal(response.headers.get("location"),"http://localhost:3000/component-04/assessments");
++    assert.equal(response.headers.get("cache-control"),"private, no-store");
++   }
++  }
++ }finally{globalThis.fetch=original;}
++});
++test("C4 navigation starts at Proposals without numbered icons and preserves complaint destinations",()=>{
++ for(const commissioner of [true,false]){
++  const items=c4NavigationFor(commissioner);
++  assert.equal(items[0].href,"/component-04/assessments");
++  assert.ok(items.every(item=>item.icon===""&&!/Overview|^\d/.test(item.label)));
++  assert.equal(items.find(item=>item.label==="Complaint Inbox")?.href,commissioner?"/component-04/central-complaints":"/component-04/complaint-inbox");
++  assert.equal(new Set(items.map(item=>item.href)).size,items.length);
++ }
++});
++test("Default C4 entry redirects inside the guarded layout without the tools disclosure",()=>{
++ assert.match(source("app/component-04/page.tsx"),/redirect\("\/component-04\/assessments"\)/);
++ const layout=source("app/component-04/layout.tsx");
++ assert.doesNotMatch(layout,/More governance tools and evidence/);
++ assert.match(layout,/GovernanceSessionBoundary/);
++ assert.match(layout,/x-c4-admitted/);
++ const proxy=source("proxy.ts");
++ assert.ok(proxy.indexOf('if(!response.ok||!body.allowed)')<proxy.indexOf('if(request.nextUrl.pathname==='));
++ assert.match(proxy,/NextResponse.redirect\(new URL\("\/component-04\/assessments",request.url\)\)/);
++});
++test("Shared account header keeps signout and expiry messages without the redundant signed-in banner",()=>{
++ assert.match(source("shared/components/PageLayout.tsx"),/<AppHeader unifiedAccount/);
++ const session=source("shared/components/DevelopmentSessionBar.tsx");
++ assert.doesNotMatch(session,/<strong>Signed in<\/strong>|#fff6dc/);
++ assert.match(session,/signOutDevelopment/);
++ assert.match(session,/Session expired\. Sign in again\./);
++ assert.match(session,/role="status"/);
++});
++test("Applicant complaint sign-in retains its allowed return destination and readable button class",()=>{
++ const complaints=source("modules/component-04/components/RegisteredComplaints.tsx");
++ assert.match(complaints,/className=\{inboxStyles.primary\} href="\/sign-in\?returnTo=%2Fworkflow-governance%2Fapplicant%2Fcomplaints"/);
++ assert.match(source("modules/component-04/components/RegisteredComplaints.module.css"),/\.primary,\.primary:visited\{[^}]*color:#fff!important/);
++});
++test("Named workflow labels and saved-status layout avoid the reported punctuation and wrapping defects",()=>{
++ for(const file of ["OfficerAnomalyPanel.tsx","OfficerSavedReports.tsx"]){
++  const text=source("modules/component-04/components/"+file);
++  assert.doesNotMatch(text,/\? Named route v2/);
++  assert.match(text,/— Named route v2/);
++ }
++ assert.match(source("modules/component-04/components/ProgressiveSteps.module.css"),/\.badge\{white-space:nowrap/);
++ assert.match(source("modules/component-04/components/KiwulaAssessmentWorkspace.tsx"),/className=\{styles.proposalActions\}/);
++ for(const file of ["EarlyGovernanceInvestigation.tsx","OfficerAnomalyPanel.tsx","RegisteredComplaints.tsx"])
++  assert.doesNotMatch(source("modules/component-04/components/"+file),/<PendingIndicator>[^<]*\?<\/PendingIndicator>/);
++});

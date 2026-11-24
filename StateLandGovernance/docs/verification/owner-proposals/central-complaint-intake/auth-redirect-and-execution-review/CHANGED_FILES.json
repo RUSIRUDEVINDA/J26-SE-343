@@ -1,0 +1,41 @@
+{
+  "ApplicationAndTestFiles": [
+    {
+      "Path": "StateLandGovernance.Web/src/shared/components/DevelopmentSessionBar.tsx",
+      "BeforeSha256": "112024a302d03eaaa16445e4e7fc94875d7877308ebba4a2cae2aa89296d8500",
+      "AfterSha256": "3a1bb756140f5385f975d36d7bc5c42453ceedb74c1f1c0fa2ff345c76332587"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/shared/components/AppHeader.tsx",
+      "BeforeSha256": "2bae85e3f7977846d2f26b20704e7dcb2f329040704620622b8e90d3ccf3486d",
+      "AfterSha256": "2e69aa344342e6d833f90ab57da7ba101c8ac14c2ed5b545caf1bd2f012c73e3"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/modules/component-04/services/applicantComplaintReturn.ts",
+      "BeforeSha256": "c0d16ea31cc809976d4fb961859cc0ae5e55d2438a7d04b67fa07dffaa3eb817",
+      "AfterSha256": "21e4d7a9ecbeef6fe38b262b6e501d05e64e0fbdfae969e4143db4b883acc893"
+    },
+    {
+      "Path": "StateLandGovernance.Web/tests/loader.mjs",
+      "BeforeSha256": "52a35780a3e98815c6303d3ba058d33a0a5a4c301b8467a3a3dc8b0e66ef1f71",
+      "AfterSha256": "09c9a711c0b22293f482e925d8287584b8712c6de06ff0f81d818608e90ab89d"
+    },
+    {
+      "Path": "StateLandGovernance.Web/src/shared/components/SignInLink.tsx",
+      "BeforeSha256": null,
+      "AfterSha256": "b3f0071090182c7109ce3bcb2b90db77edc02d3c6a728b0a2ad9343f55c3936f"
+    },
+    {
+      "Path": "StateLandGovernance.Web/tests/component-04-auth-return.test.ts",
+      "BeforeSha256": null,
+      "AfterSha256": "76d0fefe32c996accea7aa6122b44d0bffd7e2840cdd8f4e5ad17ba461d7e788"
+    }
+  ],
+  "NewEvidenceDirectory": "StateLandGovernance\\docs\\verification\\owner-proposals\\central-complaint-intake\\auth-redirect-and-execution-review",
+  "EvidenceOnlyUpdatedDocuments": [
+    "StateLandGovernance/docs/verification/FINAL_C4_COMPLETION_REPORT.md",
+    "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/HANDOVER_GUIDE.md"
+  ],
+  "BackendOrPermissionChanges": false,
+  "StageCommitPush": false
+}

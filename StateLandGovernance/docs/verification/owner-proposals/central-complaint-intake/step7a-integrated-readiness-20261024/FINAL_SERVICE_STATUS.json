@@ -1,0 +1,35 @@
+﻿{
+    "FinalOrdinaryListeners":  [
+                                   {
+                                       "LocalPort":  5432,
+                                       "OwningProcess":  7024
+                                   },
+                                   {
+                                       "LocalPort":  5432,
+                                       "OwningProcess":  7024
+                                   }
+                               ],
+    "IsolatedContainerStopped":  true,
+    "OrdinaryPorts5264_3000_8104":  "Remain offline; not started by Step7A",
+    "StoppedIsolatedProcesses":  [
+                                     {
+                                         "Name":  "api-final",
+                                         "Pid":  34060
+                                     },
+                                     {
+                                         "Name":  "frontend-webpack",
+                                         "Pid":  16416
+                                     },
+                                     {
+                                         "Name":  "proxy-retry",
+                                         "Pid":  28848
+                                     },
+                                     {
+                                         "Name":  "ml",
+                                         "Pid":  29416
+                                     }
+                                 ],
+    "OrdinaryServiceActions":  0,
+    "Status":  "Passed",
+    "IsolatedStorageRetained":  true
+}

@@ -1,0 +1,33 @@
+{
+  "Utc": "2026-10-22T20:33:19.472355+00:00",
+  "BackendFocusedPassed": 93,
+  "ArchitecturePassed": 5,
+  "FrontendPassed": 136,
+  "FinalHttpProofChecks": 39,
+  "StorageChecks": 10,
+  "ActualClassifierCallsTotal": 2,
+  "OrdinaryWrites": 0,
+  "Browser": {
+    "apps": [],
+    "browsers": []
+  },
+  "ApiBuildErrors": 0,
+  "ModelPendingChanges": false,
+  "FocusedLintErrors": 0,
+  "TypeScriptFailures": [
+    "RecommendationsView.tsx:309 TS2345",
+    "ParcelCatalog.tsx:131 TS18048",
+    "ParcelCatalog.tsx:143 TS18048"
+  ],
+  "LogSha256": {
+    ".tmp/central-regression.log": "45b8745f9be6cb74be53259ec33cbb856b050f5fdfef7b35faf0b80f9160dffb",
+    ".tmp/central-architecture.log": "a4249b502096f45529911709509b18c09bf79deceee05f28e4babffefdfaa1f7",
+    ".tmp/central-web-tests.log": "3eabe0818587b40ce1922d9459174b9e120e0e9c53ebfd10f1b1bc3352cb56d3",
+    ".tmp/central-lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".tmp/central-tsc.log": "13d22aca0a699221943bba0d5914797af3104f724d502bb63705ab1f62bee1b6",
+    ".tmp/central-api-final-build.log": "b57d509755db9f32f3ee2ebbb267b7801ee3bbbd36952b03f7bd7c46c018056e",
+    ".tmp/central-model-check.log": "388f8374f65a0fa9ed7c6cb381e8a97bd712a5db8219857e3c70ce4434ef5b88",
+    ".tmp/central-proof-final.log": "2d6bcfd9dd22206f6909722946fcd5c5888a942d1d5cdbce19d7b788bfefa933",
+    ".tmp/central-storage-proof.log": "586b71ea14e6087caff9b3094549288a786250240d79cfd14526c3a773d9ce20"
+  }
+}

@@ -163,7 +163,8 @@ public class ArchitectureTests
         foreach (var csprojPath in csprojFiles)
         {
             var fileName = Path.GetFileName(csprojPath);
-            var doc = System.Xml.Linq.XDocument.Load(csprojPath);
+            using var projectFile = File.OpenRead(csprojPath);
+            var doc = System.Xml.Linq.XDocument.Load(projectFile);
             var packageRefs = doc.Descendants("PackageReference")
                 .Select(el => el.Attribute("Include")?.Value)
                 .Where(val => !string.IsNullOrEmpty(val))

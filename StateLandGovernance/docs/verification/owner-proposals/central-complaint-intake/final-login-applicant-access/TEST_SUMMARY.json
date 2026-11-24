@@ -1,0 +1,18 @@
+{
+  "BackendPassed": 312,
+  "FrontendPassed": 151,
+  "ArchitecturePassed": 7,
+  "FocusedLintErrors": 0,
+  "ProtectedEndpointMethodsTestedInIsolation": 69,
+  "IsolatedHttpChecks": 141,
+  "OrdinaryRuntimeChecks": 444,
+  "SavedReportsRead": 38,
+  "ActualApplicantApi403": 69,
+  "ActualApplicantFrontend307": 10,
+  "DsEvidenceChecks": 61,
+  "DsEvidenceWorkspaces": 8,
+  "Supplemental": "Actual cross-origin bridge403; Commissioner dashboard data200",
+  "NoOrdinaryFixtureOrInferenceWrites": true,
+  "TypeScript": "Only3existing C1 errors (RecommendationsView309 TS2345,ParcelCatalog131/143 TS18048)",
+  "BrowserVisualKeyboardResponsive": "Not automated; actual HTTP/Next route tests and unit tests only"
+}

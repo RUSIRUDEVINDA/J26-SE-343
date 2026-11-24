@@ -26,5 +26,12 @@ public sealed class DevelopmentAccountsTests
  [Fact] public void LiveSessionCannotInjectCapabilityRoleOrAnotherOwner(){var s=Service();var response=JsonSerializer.SerializeToElement(s.SignIn("test-only","TEST-only"));var jwt=new JwtSecurityTokenHandler().ReadJwtToken(response.GetProperty("accessToken").GetString());
  var id=new ClaimsIdentity(jwt.Claims,"test-token");var p=new ClaimsPrincipal(id);Assert.True(s.Validate(Http(),p));id.AddClaim(new("capability","WorkflowPlanApprover"));Assert.False(s.Validate(Http(),p));id.RemoveClaim(id.FindFirst("capability")!);id.AddClaim(new(ClaimTypes.Role,"Administrator"));Assert.False(s.Validate(Http(),p));id.RemoveClaim(id.FindAll(ClaimTypes.Role).Last());id.RemoveClaim(id.FindFirst("land_intelligence_owner_id")!);id.AddClaim(new("land_intelligence_owner_id",Guid.NewGuid().ToString()));Assert.False(s.Validate(Http(),p));}
  [Fact] public void SignOutRevokesTheActualSessionAndRestartAlsoInvalidates(){var s=Service();var response=JsonSerializer.SerializeToElement(s.SignIn("test-only","TEST-only"));var jwt=new JwtSecurityTokenHandler().ReadJwtToken(response.GetProperty("accessToken").GetString());var p=new ClaimsPrincipal(new ClaimsIdentity(jwt.Claims,"test-token"));Assert.True(s.Validate(Http(),p));Assert.False(Service().Validate(Http(),p));s.SignOut(p);Assert.False(s.Validate(Http(),p));}
+ [Fact] public void NormalProductionLoginRequiresExplicitConfigurationAndHttpsWithoutEnablingResearchAccess()
+ {
+  var config=new ConfigurationBuilder().AddConfiguration(Config(false)).AddInMemoryCollection(new Dictionary<string,string?> { ["PortalAuthentication:Enabled"]="true" }).Build();
+  var service=new DevelopmentAccounts(config,new Env("Production"),new LandIntelligenceJwtTokenService(Options.Create(new LandIntelligenceAuthenticationOptions {JwtSigningKeyBase64=Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))})));
+  var http=Http();Assert.True(service.Enabled);Assert.False(service.CanSignIn(http));
+  http.Request.Scheme="https";Assert.True(service.CanSignIn(http));Assert.False(service.Local(http));
+ }
  private sealed class Env(string name):IHostEnvironment{public string EnvironmentName{get;set;}=name;public string ApplicationName{get;set;}="TEST-ONLY";public string ContentRootPath{get;set;}=".";public IFileProvider ContentRootFileProvider{get;set;}=new NullFileProvider();}
 }

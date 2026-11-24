@@ -1,0 +1,135 @@
+--- a/StateLandGovernance.Web/src/shared/components/DevelopmentSessionBar.tsx
++++ b/StateLandGovernance.Web/src/shared/components/DevelopmentSessionBar.tsx
+@@ -1,5 +1,5 @@
+ "use client";
+-import Link from "next/link";
++import {SignInLink} from "./SignInLink";
+ import {useEffect,useState} from "react";
+ import {useRouter} from "next/navigation";
+ import {developmentEnabled,developmentApiBase,readDevelopmentSession,clearDevelopmentSession,signOutDevelopment,type DevelopmentSession} from "@/lib/developmentSession";
+@@ -10,7 +10,7 @@
+  const timer=setInterval(()=>{const prior=readDevelopmentSession();refresh();if(!prior && session)setNotice("Session expired. Sign in again.");},1000);
+  window.addEventListener("development-session-changed",refresh);return()=>{active=false;clearInterval(timer);window.removeEventListener("development-session-changed",refresh);};},[session?.accessToken]);
+  useEffect(()=>{if(!session)return;void fetch(`${developmentApiBase()}/api/auth/me`,{headers:{Authorization:`Bearer ${session.accessToken}`}}).then(r=>{if(r.status===401){clearDevelopmentSession();setNotice("Session expired. Sign in again.");}});},[session?.accessToken]);
+- if(compact)return <div className={styles.account} aria-label="Account">{session?<><span className={styles.identity}><strong>{session.user.displayName}</strong><small>{session.user.role}</small></span><button className={styles.signIn} onClick={async()=>{try{await signOutDevelopment();router.push("/sign-in");router.refresh();}catch(e){setNotice(e instanceof Error?e.message:"Sign-out failed");}}}>Sign out</button></>:<Link className={styles.signIn} href="/sign-in">Sign in</Link>}{notice&&<span role="status">{notice}</span>}</div>;
++ if(compact)return <div className={styles.account} aria-label="Account">{session?<><span className={styles.identity}><strong>{session.user.displayName}</strong><small>{session.user.role}</small></span><button className={styles.signIn} onClick={async()=>{try{await signOutDevelopment();router.push("/sign-in");router.refresh();}catch(e){setNotice(e instanceof Error?e.message:"Sign-out failed");}}}>Sign out</button></>:<SignInLink className={styles.signIn}/>}{notice&&<span role="status">{notice}</span>}</div>;
+  if(!enabled)return null;
+  return notice?<p role="status">{notice}</p>:null;
+ }
+--- a/StateLandGovernance.Web/src/shared/components/AppHeader.tsx
++++ b/StateLandGovernance.Web/src/shared/components/AppHeader.tsx
+@@ -1,6 +1,6 @@
+ import {DevelopmentSessionBar} from "./DevelopmentSessionBar";
+ import Image from "next/image";
+-import Link from "next/link";
++import {SignInLink} from "./SignInLink";
+ import {
+   SYSTEM_TITLE,
+   SYSTEM_TITLE_SINHALA,
+@@ -32,7 +32,7 @@
+           </p>
+         </div>
+       </div>
+-      {unifiedAccount?<DevelopmentSessionBar compact/>:<Link className={styles.signIn} href="/sign-in">Sign in</Link>}
++      {unifiedAccount?<DevelopmentSessionBar compact/>:<SignInLink className={styles.signIn}/>}
+     </header>
+   );
+ }
+--- a/StateLandGovernance.Web/src/modules/component-04/services/applicantComplaintReturn.ts
++++ b/StateLandGovernance.Web/src/modules/component-04/services/applicantComplaintReturn.ts
+@@ -1,5 +1,8 @@
+ // Exact allowlist: never treat query-string paths or browser claims as authority.
+ const complaintPath = "/workflow-governance/applicant/complaints";
++export function applicantComplaintSignIn(pathname:string|null|undefined):string {
++  return pathname===complaintPath?`/sign-in?returnTo=${encodeURIComponent(complaintPath)}`:"/sign-in";
++}
+ export function applicantComplaintReturn(user: {home?: string}, candidate: string | null): string | null {
+   return user.home?.startsWith("/workflow-governance/applicant/") && candidate === complaintPath
+     ? complaintPath : null;
+--- a/StateLandGovernance.Web/tests/loader.mjs
++++ b/StateLandGovernance.Web/tests/loader.mjs
+@@ -27,6 +27,7 @@
+ export async function resolve(specifier, context, nextResolve) {
+   if (specifier === "next/link") return nextResolve("next/link.js", context);
+   if (specifier === "next/server") return nextResolve("next/server.js", context);
++  if (specifier === "next/navigation") return nextResolve("next/navigation.js", context);
+   if (specifier.startsWith("@/")) {
+     const subpath = specifier.slice(2);
+     const candidateBase = path.join(srcDir, subpath);
+--- /dev/null
++++ b/StateLandGovernance.Web/src/shared/components/SignInLink.tsx
+@@ -0,0 +1,11 @@
++"use client";
++import Link from "next/link";
++import {usePathname} from "next/navigation";
++import {applicantComplaintSignIn} from "@/modules/component-04/services/applicantComplaintReturn";
++
++export function SignInDestinationLink({pathname,className}:{pathname:string|null;className?:string}){
++ return <Link className={className} href={applicantComplaintSignIn(pathname)}>Sign in</Link>;
++}
++export function SignInLink({className}:{className?:string}){
++ return <SignInDestinationLink pathname={usePathname()} className={className}/>;
++}
+--- /dev/null
++++ b/StateLandGovernance.Web/tests/component-04-auth-return.test.ts
+@@ -0,0 +1,60 @@
++import {test} from "node:test";
++import assert from "node:assert/strict";
++import {createElement} from "react";
++import {renderToStaticMarkup} from "react-dom/server";
++import {readFileSync} from "node:fs";
++import {SignInDestinationLink} from "../src/shared/components/SignInLink";
++import {applicantComplaintReturn,applicantComplaintSignIn} from "../src/modules/component-04/services/applicantComplaintReturn";
++import {c4PostLoginPath} from "../src/modules/component-04/services/postLogin";
++import {signInToPlatform,readDevelopmentSession} from "../src/lib/developmentSession";
++const complaints="/workflow-governance/applicant/complaints";
++test("Header and page complaint sign-in entries carry the identical exact return destination",()=>{
++ const header=renderToStaticMarkup(createElement(SignInDestinationLink,{pathname:complaints,className:"signIn"}));
++ const href=applicantComplaintSignIn(complaints);
++ assert.match(header,/href="\/sign-in\?returnTo=%2Fworkflow-governance%2Fapplicant%2Fcomplaints"/);
++ const page=readFileSync("src/modules/component-04/components/RegisteredComplaints.tsx","utf8");
++ assert.ok(page.includes(`href="${href}"`));
++ const destination=new URL(href,"http://localhost:3000").searchParams.get("returnTo");
++ assert.equal(applicantComplaintReturn({home:"/workflow-governance/applicant/cases"},destination),complaints);
++});
++test("Shared header does not turn other pages into a complaint return",()=>{
++ for(const path of [null,undefined,"/","/component-04","/workflow-governance/applicant/cases","//evil.test",complaints+"/",complaints+"?x=1"])
++  assert.equal(applicantComplaintSignIn(path),"/sign-in");
++ for(const file of ["AppHeader.tsx","DevelopmentSessionBar.tsx"])
++  assert.match(readFileSync("src/shared/components/"+file,"utf8"),/<SignInLink className=\{styles.signIn\}/);
++});
++test("Failed login keeps the current return URL and non-applicants retain their existing routing",()=>{
++ const page=readFileSync("src/app/sign-in/page.tsx","utf8");
++ assert.match(page,/new URLSearchParams\(window.location.search\).get\("returnTo"\)/);
++ assert.match(page,/catch\(e\)\{setError/);
++ assert.doesNotMatch(page,/history.replaceState|searchParams.delete/);
++ const commissioner={actorId:"0ab669fe-d0ab-5695-ad55-10f6b3b5aab3",institution:"COMMISSIONER",home:"/"};
++ assert.equal(applicantComplaintReturn(commissioner,complaints),null);
++ assert.equal(c4PostLoginPath(commissioner,"/"),"/component-04");
++ assert.equal(c4PostLoginPath({actorId:"ds",home:"/workflow-governance/cases"},"/"),"/");
++ assert.equal(c4PostLoginPath({actorId:"applicant",home:"/workflow-governance/applicant/cases"},"/"),"/workflow-governance/applicant/cases");
++});
++test("External, encoded, malformed and non-allowlisted return URLs remain rejected",()=>{
++ const user={home:"/workflow-governance/applicant/cases"};
++ for(const value of ["https://evil.test", "//evil.test", "/\\evil.test", "%2Fworkflow-governance%2Fapplicant%2Fcomplaints", complaints+"#x",complaints+"?x=1","/component-04","javascript:alert(1)",complaints+"\n",complaints+"%00"])
++  assert.equal(applicantComplaintReturn(user,value),null);
++});
++test("Successful applicant authentication retains the session across complaint view refresh",async()=>{
++ const originalFetch=globalThis.fetch,originalWindow=Object.getOwnPropertyDescriptor(globalThis,"window");
++ const values=new Map<string,string>();
++ Object.defineProperty(globalThis,"window",{configurable:true,value:{sessionStorage:{getItem:(key:string)=>values.get(key)??null,setItem:(key:string,value:string)=>values.set(key,value),removeItem:(key:string)=>values.delete(key)},dispatchEvent:()=>true}});
++ try{
++  globalThis.fetch=async()=>Response.json({accessToken:"isolated-test-token",expiresAtUtc:new Date(Date.now()+60000).toISOString(),user:{actorId:"fictional-applicant",home:"/workflow-governance/applicant/cases",role:"Applicant"}});
++  let fallback="unchanged";
++  const session=await signInToPlatform("isolated-user","isolated-password",value=>{fallback=value;});
++  assert.equal(fallback,"/");
++  const returnTo=new URL(applicantComplaintSignIn(complaints),"http://localhost:3000").searchParams.get("returnTo");
++  assert.equal(applicantComplaintReturn(session.user,returnTo),complaints);
++  assert.equal(readDevelopmentSession()?.user.actorId,"fictional-applicant");
++  assert.equal(readDevelopmentSession()?.accessToken,"isolated-test-token");
++  values.clear();globalThis.fetch=async()=>new Response(null,{status:401});fallback="unchanged";
++  await assert.rejects(signInToPlatform("isolated-user","wrong",value=>{fallback=value;}),/Incorrect username or password/);
++  assert.equal(fallback,"unchanged");assert.equal(readDevelopmentSession(),null);
++  assert.equal(returnTo,complaints);
++ }finally{globalThis.fetch=originalFetch;if(originalWindow)Object.defineProperty(globalThis,"window",originalWindow);else Reflect.deleteProperty(globalThis,"window");}
++});

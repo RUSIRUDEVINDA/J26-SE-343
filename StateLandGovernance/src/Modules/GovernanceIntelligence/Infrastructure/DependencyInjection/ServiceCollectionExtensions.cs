@@ -1,4 +1,6 @@
+using StateLandGovernance.GovernanceIntelligence.Application.Complaints;
 using System;
+using StateLandGovernance.GovernanceIntelligence.Application.RegulatoryReports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,8 +51,29 @@ public static class ServiceCollectionExtensions
             throw new ArgumentNullException(nameof(environment));
         }
 
+        services.TryAddScoped<IComplaintActorContext, UnavailableComplaintActor>();
+        services.TryAddScoped<IComplaintOfficerDirectory, UnavailableComplaintDirectory>();
+        services.Configure<CentralComplaintOptions>(configuration.GetSection("GovernanceIntelligence:CentralComplaints"));
+        services.AddScoped(sp => sp.GetRequiredService<IOptionsSnapshot<CentralComplaintOptions>>().Value);
+        services.AddScoped<ComplaintAssignmentAuditInterceptor>();
+        services.AddScoped<ScreeningEvidenceAuditInterceptor>();
+        services.AddScoped<InvestigationEvidenceAuditInterceptor>();
+        services.AddScoped<OfficerSequenceStore>();
+        services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.OfficerFlows.IOfficerSequenceStore>(sp=>sp.GetRequiredService<OfficerSequenceStore>());
+        services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.OfficerFlows.IOfficerSequencePrerequisites>(sp=>sp.GetRequiredService<OfficerSequenceStore>());
+        services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.OfficerFlows.IInvestigationEvidenceStore, InvestigationEvidenceStore>();
+        services.AddScoped<RegulatoryFollowupAuditInterceptor>();
+        services.AddScoped<IRegulatoryFollowupStore, RegulatoryFollowupStore>();
+        services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.OfficerFlows.IManualEvidenceStore, ManualEvidenceStore>();
+        services.AddScoped<ComplaintRoutingPolicy>();
+        services.AddScoped<CentralComplaintService>();
+        services.AddScoped<IComplaintRoutingStore, ComplaintRoutingStore>();
+        services.AddScoped<IComplaintHandlingStore, ComplaintHandlingStore>();
         services.AddComplaintClassifier(configuration);
         services.AddWorkflowAnomalyClient(configuration);
+        services.Configure<PostWorkflowDemonstrationOptions>(configuration.GetSection("GovernanceIntelligence:PostWorkflowDemonstrations"));
+        services.AddScoped<IPostWorkflowDemonstrationStore, PostWorkflowDemonstrationStore>();
+        services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.OfficerFlows.IOfficerFlowStore, OfficerFlowStore>();
         services.AddGroqExplainability(configuration);
         var enablePp1SyntheticIntegration = environment.IsDevelopment() &&
             configuration.GetValue<bool>("GovernanceIntelligence:Pp1:EnableSyntheticIntegration", false);
@@ -70,8 +93,8 @@ public static class ServiceCollectionExtensions
 
         if (!string.IsNullOrWhiteSpace(connectionString))
         {
-            services.AddDbContext<GovernanceIntelligenceDbContext>(options =>
-                options.UseNpgsql(connectionString, npgsqlOptions =>
+            services.AddDbContext<GovernanceIntelligenceDbContext>((sp, options) =>
+                options.AddInterceptors(sp.GetRequiredService<InvestigationEvidenceAuditInterceptor>(),sp.GetRequiredService<ComplaintAssignmentAuditInterceptor>(),sp.GetRequiredService<ScreeningEvidenceAuditInterceptor>(),sp.GetRequiredService<RegulatoryFollowupAuditInterceptor>()).UseNpgsql(connectionString, npgsqlOptions =>
                 {
                     npgsqlOptions.MigrationsHistoryTable("__ef_migrations_history", GovernanceIntelligenceDbContext.SchemaName);
                 }));
@@ -80,6 +103,9 @@ public static class ServiceCollectionExtensions
             services.AddScoped<IGovernanceAuditCaseHistoryReader, PostgresGovernanceAuditRepository>();
             services.AddScoped<IGovernanceEvaluationStore, PostgresGovernanceEvaluationStore>();
             services.AddScoped<IComplianceRuleCatalogue, PostgresComplianceRuleCatalogue>();
+            services.AddScoped<IIndependentRegulatoryReportStore, IndependentRegulatoryReportStore>();
+            services.AddScoped<IRegulatorySubmissionStore,RegulatorySubmissionStore>();
+            services.AddScoped<IRegisteredComplaintStore, RegisteredComplaintStore>();
             services.AddScoped<IConsolidatedGovernanceScreeningStore, PostgresConsolidatedGovernanceScreeningStore>();
             services.AddScoped<IEarlyGovernanceScreeningStore, PostgresEarlyGovernanceScreeningStore>();
             services.AddScoped<IComplaintClassificationAssessmentStore, PostgresComplaintClassificationAssessmentStore>();
@@ -144,8 +170,20 @@ public static class ServiceCollectionExtensions
             });
 
         // Dispatches persisted audit hashes asynchronously; evaluations remain independent of ledger availability.
-        services.AddHostedService<GovernanceAuditAnchorOutboxProcessor>();
+        if (configuration.GetValue<bool>("GovernanceIntelligence:Blockchain:OutboxWorker:Enabled", true))
+        {
+            services.AddHostedService<GovernanceAuditAnchorOutboxProcessor>();
+        }
 
+        services.TryAddScoped<IIndependentRegulatoryReportStore, UnavailableIndependentRegulatoryReportStore>();
+        services.TryAddScoped<IIndependentRegulatoryReadAssignments, DenyIndependentRegulatoryReadAssignments>();
+        services.AddScoped<IndependentRegulatoryReportQueries>();
+        services.TryAddScoped<IRegulatoryCaseBindingValidator,UnavailableRegulatoryCaseBindingValidator>();
+        services.AddScoped<RegulatorySubmissionService>();
+        services.TryAddScoped<IComplaintReferenceAccess, UnavailableComplaintReferenceAccess>();
+        services.AddScoped<RegisteredComplaintService>();
+        services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Demonstrations.IKiwulaAssessmentStore, KiwulaAssessmentStore>();
+        services.AddScoped<StateLandGovernance.GovernanceIntelligence.Application.Demonstrations.KiwulaAssessmentService>();
         return services;
     }
 

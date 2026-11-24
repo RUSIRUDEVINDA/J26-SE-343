@@ -1,0 +1,16 @@
+{
+  "Utc": "2026-10-23T08:43:24.134249+00:00",
+  "Target": "state_land_governance_c4",
+  "Oid": "34144",
+  "All38TableFingerprintsExact": true,
+  "AllMetadataGrantsSequencesHistoryExact": true,
+  "SchemaExact": true,
+  "PeerAndAccountsFingerprintsExact": true,
+  "BackupChecksumStillMatches": true,
+  "BothPermissionFilesExactApprovedBytes": true,
+  "OldPrivateCandidateUnchanged": true,
+  "FrozenModelsUnchanged": true,
+  "NoOrdinaryComplaintInferenceOrAssessmentWrites": true,
+  "ApiStoppedAfterMandatoryFailure": true,
+  "NoRollbackRenameOrOlderApiStarted": true
+}

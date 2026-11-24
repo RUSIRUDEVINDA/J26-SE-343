@@ -1,0 +1,16 @@
+{
+  "Status": "Passed",
+  "Utc": "2026-10-23T10:09:33.261249+00:00",
+  "Target": "state_land_governance_c4",
+  "Oid": "34144",
+  "Tables": 40,
+  "Migrations": 20,
+  "NoSqlOrPrivilegeChanges": true,
+  "FreshBackupStillMatches": true,
+  "AllRecordsSchemaGrantsAndPeerAccountsExact": true,
+  "FrozenArtifactsExact": true,
+  "NoStartupSchemaCalls": true,
+  "BackendTestsPassed": 312,
+  "ArchitectureTestsPassed": 7,
+  "IsolatedProtectedEndpointDenials": 69
+}

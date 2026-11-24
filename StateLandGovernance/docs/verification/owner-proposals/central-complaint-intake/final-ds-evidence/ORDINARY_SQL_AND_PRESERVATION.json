@@ -1,0 +1,186 @@
+{
+  "Utc": "2026-10-23T09:40:19.849564+00:00",
+  "Target": "state_land_governance_c4",
+  "Oid": "34144",
+  "AppliedOnlyMigration": "20261023093022_AddScreeningEvidenceVerification",
+  "MigrationCount": 20,
+  "TableCount": 40,
+  "Original37DataTablesExact": true,
+  "OriginalMetadataGrantsExact": true,
+  "TwoNewTablesEmpty": true,
+  "ExactNewRuntimePrivileges": [
+    {
+      "table": "screening_evidence_attachments",
+      "privilege": "INSERT"
+    },
+    {
+      "table": "screening_evidence_attachments",
+      "privilege": "SELECT"
+    },
+    {
+      "table": "screening_evidence_verifications",
+      "privilege": "INSERT"
+    },
+    {
+      "table": "screening_evidence_verifications",
+      "privilege": "SELECT"
+    }
+  ],
+  "SchemaMatchesIsolatedMigration": true,
+  "PeerAccountsPreserved": true,
+  "NoOrdinaryVerificationOrAttachmentFixture": true,
+  "OriginalFingerprints": {
+    "component4_synthetic_demo.component1_handoff": {
+      "count": 10,
+      "digest": "782327680f3179e5ac5d511debae5f24"
+    },
+    "component4_synthetic_demo.payloads": {
+      "count": 120,
+      "digest": "b6cf493d55ee15c547957207403e3d0d"
+    },
+    "governance_intelligence.__ef_migrations_history": {
+      "count": 19,
+      "digest": "7c36b636c1961a36cdfa4cd43dab2a78"
+    },
+    "governance_intelligence.complaint_assignment_events": {
+      "count": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "governance_intelligence.complaint_classification_assessments": {
+      "count": 59,
+      "digest": "92e7baa0d5a448da94311e240156fc1e"
+    },
+    "governance_intelligence.complaint_handling_events": {
+      "count": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "governance_intelligence.compliance_evaluations": {
+      "count": 73,
+      "digest": "e2069610f1e240214cfa137fafe8d698"
+    },
+    "governance_intelligence.compliance_rules": {
+      "count": 24,
+      "digest": "e83eef5e70c270e228f12c2d4f0041c3"
+    },
+    "governance_intelligence.component1_case_projections": {
+      "count": 11,
+      "digest": "9cb4b40ba9e682f27e9aed7897b4dc68"
+    },
+    "governance_intelligence.component3_workflow_projections": {
+      "count": 22,
+      "digest": "ac64f03712cbf36a1b9fd44310625a4b"
+    },
+    "governance_intelligence.condition_results": {
+      "count": 56,
+      "digest": "96ee9d63338af6999cc56427106a519e"
+    },
+    "governance_intelligence.conditional_verification_evaluations": {
+      "count": 28,
+      "digest": "174d7b112c7f2ab96ace33fb9ef9c03d"
+    },
+    "governance_intelligence.conflict_evaluations": {
+      "count": 23,
+      "digest": "92ebee874cda00eb481de46b710e2b63"
+    },
+    "governance_intelligence.conflict_findings": {
+      "count": 19,
+      "digest": "24afd45d7954226ca8a3ffbf08a70249"
+    },
+    "governance_intelligence.consensus_evaluations": {
+      "count": 28,
+      "digest": "fbcfc8e25b33ee7a57b315b35c425b36"
+    },
+    "governance_intelligence.consolidated_screening_assessments": {
+      "count": 1,
+      "digest": "497f8ae5a54d36d73f53bfdc0b1155e4"
+    },
+    "governance_intelligence.early_governance_referrals": {
+      "count": 5,
+      "digest": "9c0abb45707f61551a8801428b183bba"
+    },
+    "governance_intelligence.early_governance_screening_evaluations": {
+      "count": 43,
+      "digest": "4321a0402052f75aaa1026cc2cec92e9"
+    },
+    "governance_intelligence.governance_audit_anchor_outbox": {
+      "count": 105,
+      "digest": "033f43e1a68d79082bf4e5a780204879"
+    },
+    "governance_intelligence.governance_audit_anchor_receipts": {
+      "count": 86,
+      "digest": "60bb62448b5d0de6b064e2a9a048d390"
+    },
+    "governance_intelligence.governance_audit_records": {
+      "count": 228,
+      "digest": "13daa7b6455b13e40c2095d000e6a293"
+    },
+    "governance_intelligence.governance_explanation_items": {
+      "count": 154,
+      "digest": "b15d95bfeb9cc65be0b14e00559c995e"
+    },
+    "governance_intelligence.governance_explanations": {
+      "count": 41,
+      "digest": "29977b6fa09fb3e60f95aef3d45b98b5"
+    },
+    "governance_intelligence.institution_positions": {
+      "count": 65,
+      "digest": "7d4cbcc3403d37ea5502c99e5878cd73"
+    },
+    "governance_intelligence.kiwula_assessment_provenance": {
+      "count": 3,
+      "digest": "0f0449b5841610c51f02774e3c49722f"
+    },
+    "governance_intelligence.lease_approval_timing_assessments": {
+      "count": 10,
+      "digest": "21ae1f263482913c4b98738c40249a33"
+    },
+    "governance_intelligence.officer_action_events": {
+      "count": 40,
+      "digest": "504d216e6289941d0836dbe71d8eec26"
+    },
+    "governance_intelligence.officer_assessment_requests": {
+      "count": 15,
+      "digest": "3d3dcf0ca5c9c3ff0b8b64ed79b1cc61"
+    },
+    "governance_intelligence.officer_investigations": {
+      "count": 2,
+      "digest": "31da2ee74cb0593759f8bf726f7e0431"
+    },
+    "governance_intelligence.post_workflow_demonstrations": {
+      "count": 3,
+      "digest": "81b6bc13f8a5a08b672e04b978cb61d3"
+    },
+    "governance_intelligence.registered_complaint_classifications": {
+      "count": 4,
+      "digest": "1a575ed9157e4255080d97bda1cca017"
+    },
+    "governance_intelligence.registered_complaints": {
+      "count": 4,
+      "digest": "016f090ac85c48575e953ae8345f4bad"
+    },
+    "governance_intelligence.regulatory_evaluation_provenance": {
+      "count": 15,
+      "digest": "869c94473d5d29f15201bbb263e4dba5"
+    },
+    "governance_intelligence.regulatory_sources": {
+      "count": 1,
+      "digest": "3f824210f9707d40a9812bebe5a27038"
+    },
+    "governance_intelligence.risk_evaluations": {
+      "count": 35,
+      "digest": "92e1b33b362d9e420892ec482ce23914"
+    },
+    "governance_intelligence.risk_indicators": {
+      "count": 45,
+      "digest": "e0d0b3b7a9ff3fdcce839da7d0dca284"
+    },
+    "governance_intelligence.rule_parameters": {
+      "count": 0,
+      "digest": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "governance_intelligence.workflow_anomaly_assessments": {
+      "count": 20,
+      "digest": "b3b7cdc1409cbef77ce7324326d2e92e"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "Utc": "2026-10-23T08:40:33.503815+00:00",
+  "Sql": "ALTER DATABASE \"c4_handover_local\" RENAME TO \"state_land_governance_c4\"",
+  "OriginalIdentity": {
+    "name": "c4_handover_local",
+    "oid": "34144",
+    "owner": "postgres",
+    "acl": [
+      "=Tc/postgres",
+      "postgres=CTc/postgres",
+      "slg_c4_regulatory_runtime=c/postgres"
+    ],
+    "encoding": 6,
+    "collate": "English_United States.1252",
+    "ctype": "English_United States.1252",
+    "limit": -1,
+    "allow": true
+  },
+  "FinalIdentity": {
+    "name": "state_land_governance_c4",
+    "oid": "34144",
+    "owner": "postgres",
+    "acl": [
+      "=Tc/postgres",
+      "postgres=CTc/postgres",
+      "slg_c4_regulatory_runtime=c/postgres"
+    ],
+    "encoding": 6,
+    "collate": "English_United States.1252",
+    "ctype": "English_United States.1252",
+    "limit": -1,
+    "allow": true
+  },
+  "SameOid": true,
+  "All38TablesExact": true,
+  "SchemaExact": true,
+  "All19MigrationsUnchanged": true,
+  "AllDatabaseSchemaTableColumnGrantsUnchanged": true,
+  "SequencesAndSettingsUnchanged": true,
+  "RestrictedRuntimeReadOnlyConnect": true,
+  "PeerAccountTablesExact": true,
+  "NoSessionsTerminated": true,
+  "NoMigrationOrGrantApplied": true,
+  "RootEnvOnlyC4NameChanged": true,
+  "RootEnvBeforeSha256": "874b1dc7813847bbc540320c516ed9d1db408c2bbf15f1d5ea29847615d5ec58",
+  "RootEnvAfterSha256": "d51f84280819e1687adc824b119606063861955113a60528ec9807b3e843e9f9"
+}

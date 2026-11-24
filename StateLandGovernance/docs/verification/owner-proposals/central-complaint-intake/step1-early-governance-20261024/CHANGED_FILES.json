@@ -1,0 +1,107 @@
+[
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/InvestigationEvidenceController.cs",
+    "BeforeSha256": null,
+    "Sha256": "319dd7b7a55f6422a0908d9936fc85144359340b3ddd4402d0c2dd476c516b88"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/DependencyInjection/ServiceCollectionExtensions.cs",
+    "BeforeSha256": "0c9e07cd70e2e19d747ba233037fd32752daa86843490ef0c535a941dfe250a5",
+    "Sha256": "b9bfec2602650936f39229bf39eb76f7748472384b464785766c883da73fc36d"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/InvestigationEvidenceAuditInterceptor.cs",
+    "BeforeSha256": null,
+    "Sha256": "d65eee3ca8a8e836006ff74f8060fb4d1a34e24429cc7adda0da071eea7ea1a5"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/InvestigationEvidenceStore.cs",
+    "BeforeSha256": null,
+    "Sha256": "dc13fbc1911e0b41fb36a7a2df9478c7e64f46ba02260b7ee731b3675753a01c"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/OfficerFlowStore.cs",
+    "BeforeSha256": "2d4bc1e9ca8147139fd79adc782490470eb402c464c515b46d09ef168b0a71a3",
+    "Sha256": "5f7e77aef7284c16d19d7a9925ba88ebd8707764754851be9101d481408d457d"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/InvestigationAttachmentConfiguration.cs",
+    "BeforeSha256": null,
+    "Sha256": "4936fb4a54f8de5090aa51fe403c9510f5fd63752a7f955eb3b6a38a59b3cd5d"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/OfficerFlowConfigurations.cs",
+    "BeforeSha256": "fd53e396b3f3d36293a1ef14796cf4beef812732d64e057c8792e142a9a1a614",
+    "Sha256": "88860074e7bdb8c7bdb6d78ede6a9462c260fad9fd95552eb40df3f97b356604"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Entities/InvestigationAttachmentEntity.cs",
+    "BeforeSha256": null,
+    "Sha256": "bfb409ddc77074a5a8239331e4e0be17e6bbb371f53e5fe1e444d868f5c84547"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261024000805_AddInvestigationEvidenceAndFinalization.cs",
+    "BeforeSha256": null,
+    "Sha256": "3601d247ee5975672c5639a7f85ad647a92045246ccee85f31831d04f1eab869"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261024000805_AddInvestigationEvidenceAndFinalization.Designer.cs",
+    "BeforeSha256": null,
+    "Sha256": "9e9dc3bf6de7e3140c9f9e737bb89b9000eae55cd101a9ac7997cf64447fb699"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/GovernanceIntelligenceDbContextModelSnapshot.cs",
+    "BeforeSha256": "7115e16293b7f16e3b1f26fd1d894a38cbbc07a526887fd4d29ab68b31ca5135",
+    "Sha256": "f8eff9925d94a2a86f6bc165a0d1dcddb4833e600f54e9a73f9ec678844ef679"
+  },
+  {
+    "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/OfficerFlows/InvestigationEvidence.cs",
+    "BeforeSha256": null,
+    "Sha256": "cf5a74dfb41d597b4adb7d06129e793de1c04c3ddc657e4e4fe208d2ea6a0923"
+  },
+  {
+    "Path": "StateLandGovernance.Web/src/modules/component-04/components/EarlyGovernanceInvestigation.tsx",
+    "BeforeSha256": "58fd66786970381399f37798f71cbed9f98abdac144dd42c7114b4e7f16bcfb5",
+    "Sha256": "30a7b0f94d235421ed209f8a77e2d18c91b93a02c060dbc1aff5d01d9af44caf"
+  },
+  {
+    "Path": "StateLandGovernance.Web/src/modules/component-04/components/EarlyGovernanceStepOne.tsx",
+    "BeforeSha256": null,
+    "Sha256": "bbb226d77a2527fc60ac7b7dd5e908955d59e581de8f7f53b71dcad8e35e64bb"
+  },
+  {
+    "Path": "StateLandGovernance.Web/src/modules/component-04/components/InvestigationCompletion.tsx",
+    "BeforeSha256": null,
+    "Sha256": "74366203b54982a10c32f9795f6604b34ae0ce9508cca56a9a1f7607d190025b"
+  },
+  {
+    "Path": "StateLandGovernance.Web/src/modules/component-04/components/OfficerAssessmentResult.tsx",
+    "BeforeSha256": "23ce7b2d9c092d0bda19e6c138447856d03174001e8b833fb2aad777b9d9e702",
+    "Sha256": "a9ac34232a8e0176f1d8875b1f6ccb9d4cc112323eb0302061882d1ab068104e"
+  },
+  {
+    "Path": "StateLandGovernance.Web/src/modules/component-04/services/investigationEvidence.ts",
+    "BeforeSha256": null,
+    "Sha256": "83cec08064059a067731daa0257366945773a37e7772cac08fbd976f521cb899"
+  },
+  {
+    "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/InvestigationFinalizationTests.cs",
+    "Sha256": "eff9c14b871441b0cc7a1d4731edb686862bccf18aa0083faf5935f8734d9abc"
+  },
+  {
+    "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/EarlyGovernanceScreeningPostgresIntegrationTests.cs",
+    "Sha256": "c96479358bd96236bae9e78e08a1534a8c3298a3a5320596519edf5a339dbd48"
+  },
+  {
+    "Path": "StateLandGovernance.Web/tests/component-04-investigation-finalization.test.ts",
+    "Sha256": "6f3826e6cff8a32be20dd4f25ae5f9dc9d14604ccb67e4c54853f1b3376eafeb"
+  },
+  {
+    "Path": "StateLandGovernance/tests/IntegrationTests/InvestigationEvidenceProof/Program.cs",
+    "Sha256": "efce6d58c3a52c29835bd350e45db2b4bdcacc2c2f5ab3b26b539fc86ae2e0dd"
+  },
+  {
+    "Path": "StateLandGovernance/tests/IntegrationTests/InvestigationEvidenceProof/InvestigationEvidenceProof.csproj",
+    "Sha256": "f8dfa5b79a6b5bd58da80b569da27f6dcd1d3d14f6e2641b70c124937e5d6648"
+  }
+]

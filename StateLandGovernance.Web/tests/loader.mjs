@@ -25,6 +25,9 @@ function findFileCandidate(candidateBase) {
 }
 
 export async function resolve(specifier, context, nextResolve) {
+  if (specifier === "next/link") return nextResolve("next/link.js", context);
+  if (specifier === "next/server") return nextResolve("next/server.js", context);
+  if (specifier === "next/navigation") return nextResolve("next/navigation.js", context);
   if (specifier.startsWith("@/")) {
     const subpath = specifier.slice(2);
     const candidateBase = path.join(srcDir, subpath);
@@ -45,6 +48,9 @@ export async function resolve(specifier, context, nextResolve) {
 }
 
 export async function load(url, context, nextLoad) {
+  if (url.endsWith(".json")) {
+    return {format:"module",shortCircuit:true,source:`export default ${JSON.stringify(JSON.parse(fs.readFileSync(fileURLToPath(url),"utf8")))};`};
+  }
   if (url.endsWith(".css")) {
     return {
       format: "module",

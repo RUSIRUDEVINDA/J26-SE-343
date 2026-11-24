@@ -1,0 +1,19 @@
+{
+  "Utc": "2026-10-23T13:32:17.589212+00:00",
+  "Target": "state_land_governance_c4",
+  "Oid": "34144",
+  "Tables": 40,
+  "Migrations": 20,
+  "BackupPath": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\c4-followup-deployment-backup-20261023\\state_land_governance_c4.dump",
+  "Bytes": 361178,
+  "Sha256": "5f7c8362491e6195ab663bd091c5b5a296d3e34aa57e9213d02e423439040681",
+  "IsolatedDatabase": "c4_followup_deploy_restore_20261023",
+  "All40TablesSchemaHistoryMatchRestore": true,
+  "RuntimeGrantsUnchanged": true,
+  "PeerAccountsUnchanged": true,
+  "PrivateConfigurationAndGrantDocumentsMatch": true,
+  "ActualPriorApiPid": 19008,
+  "OriginalRecordsPreserved": true,
+  "BaselinePrivatePath": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\c4-followup-deployment-backup-20261023\\baseline.private.json",
+  "NoOrdinaryWrites": true
+}

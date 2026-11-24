@@ -1,0 +1,167 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Separate process retrieves completed handling history with no model call",
+    "Injected post-assignment failure is observed",
+    "Assignment and handling rollback together; no partial assignment",
+    "Correct complaint revision cannot bypass stale handling revision after reopening/reassignment",
+    "Injected post-review failure is observed",
+    "Legacy triage and handling rollback together without altering complaint payload",
+    "DS review has only valid ordering outcomes against decision",
+    "Resolution serializes with review using handling revision",
+    "Committed resolution revokes DS detail and action history",
+    "Applicant final state and timeline remain safe after concurrency",
+    "Handling migration has exactly the approved 22 columns",
+    "All three handling foreign keys restrict deletion",
+    "Four constraint indexes and exactly three reviewed query indexes",
+    "No schema CREATE for runtime",
+    "Actual handling DELETE denied by restricted database role",
+    "Actual handling UPDATE denied by restricted database role",
+    "Final persisted action fields/details recompute every canonical hash",
+    "Separate-process verification makes zero inference calls and preserves the single original prediction"
+  ],
+  "NewModelCalls": 0,
+  "IsolatedComplaintId": "2c86e0f8-540f-4c17-a8a0-d3bf524c656c",
+  "FinalState": {
+    "Revision": 21,
+    "Status": "Resolved",
+    "Mode": "None",
+    "ResponsibleActorId": null,
+    "AssignmentEventId": null,
+    "Source": "HandlingEvent"
+  },
+  "EventIds": [
+    {
+      "Id": "5e23b0b8-d39c-4ca2-9a5d-eaf6fe86d599",
+      "Operation": "AssignDs",
+      "Revision": 1,
+      "EventSha256": "ca44c9a8be9a3a7f1d1ef488cb94782c7930a131b8f18bc0712927af9d01e49a"
+    },
+    {
+      "Id": "91437275-f4ac-4edb-bc67-eb2094eb4adf",
+      "Operation": "DsReviewRecorded",
+      "Revision": 2,
+      "EventSha256": "59afaa58fdcc7dfab551d1ba2a446fbaac9d98cce62733f4e10520600601355c"
+    },
+    {
+      "Id": "d562b8b7-9490-4816-83d6-4163d2f81b32",
+      "Operation": "ReassignDs",
+      "Revision": 3,
+      "EventSha256": "83a21766df703b5e313b06cdc2ea69254b2ff9c59518e8025fdff3c246b95d2f"
+    },
+    {
+      "Id": "4fbc9dc1-ab76-4c89-b9df-be6bdc2a4dea",
+      "Operation": "AssignDs",
+      "Revision": 1,
+      "EventSha256": "79562bb945933cf6c4ee0b3469804c43649641ba04ac671081de5e0f4c7a7ba3"
+    },
+    {
+      "Id": "c6a28eaf-6ebe-4e95-877d-ed7eedfd2bae",
+      "Operation": "ReassignDs",
+      "Revision": 4,
+      "EventSha256": "cb3dd0ee99688057501e99df7573b30881ee081d6bc9a1581f69b005db14a483"
+    },
+    {
+      "Id": "46daf140-415f-4a96-b9fa-a480ca55534c",
+      "Operation": "TakeDirect",
+      "Revision": 5,
+      "EventSha256": "46f13f047b81b2d9005ceb5999ecd650250f0c77c2974c74ec207d7aaeea2f6a"
+    },
+    {
+      "Id": "4dfb14e0-c623-4c22-b314-7ce2f5474f65",
+      "Operation": "RecordNote",
+      "Revision": 6,
+      "EventSha256": "b25ba534f265c65f73848e3d636c0913a2f2336d0ec138da09c1004eee0f4d3f"
+    },
+    {
+      "Id": "c101f257-22e7-44fc-a1d1-1d6565797ce4",
+      "Operation": "RecordFindings",
+      "Revision": 9,
+      "EventSha256": "4aefcb8296839b6b1bb5cbbe7f3ffc6f4720ab38acb196dbdd0e4214327ce26d"
+    },
+    {
+      "Id": "7c929b32-102b-4e44-8c06-46da51b10fbe",
+      "Operation": "Close",
+      "Revision": 11,
+      "EventSha256": "eede356270fe4e042d75ff42a863d2e34d5289cb5deb0b3d383248555d3e7728"
+    },
+    {
+      "Id": "b2934bac-3182-426c-ae2b-3ac179a40c9a",
+      "Operation": "AssignDs",
+      "Revision": 13,
+      "EventSha256": "20d67bbba3bfb232bfa2cf1af157ae9bae250c8d4b0aa834c64e17bb1e878a3d"
+    },
+    {
+      "Id": "2fb98c52-87a1-45f0-9bbd-cd5eabad8f1b",
+      "Operation": "RequestInformation",
+      "Revision": 7,
+      "EventSha256": "c4dfee9157d03babb277441526985a612f4a8df1860d75b134b845f78f09b851"
+    },
+    {
+      "Id": "93491821-5170-47b9-88ce-2930ceca1448",
+      "Operation": "StartInvestigation",
+      "Revision": 8,
+      "EventSha256": "ca805a8ac1d2e8e6a1432752ce61e4ad611f057100998dca9464f58e53b7690c"
+    },
+    {
+      "Id": "36fa7f5e-0baa-46ba-9ce1-bec5fe9efc13",
+      "Operation": "Resolve",
+      "Revision": 10,
+      "EventSha256": "221e846298a6a0ded8c66535a41bef5ce783ad91f691623e1608c4d2ecb67b66"
+    },
+    {
+      "Id": "5119a685-9233-412c-aae7-9206e08970a5",
+      "Operation": "Reopen",
+      "Revision": 12,
+      "EventSha256": "9b40ef154ee8538759755b17a40188a7d6ce457daa8f04155fd4b0a858ff6768"
+    },
+    {
+      "Id": "13d411ea-c45d-4e9b-87cd-f649a1a70d06",
+      "Operation": "StartInvestigation",
+      "Revision": 14,
+      "EventSha256": "7191562cd55b3b1539099129811ef7a662109e021d4bf72a58d2c01d04adadf7"
+    },
+    {
+      "Id": "a7882be8-3760-437f-bd7d-b21276707084",
+      "Operation": "RecordFindings",
+      "Revision": 15,
+      "EventSha256": "bb982425fd226f06d66bce6d71e79248f877ca3a754c3671dc5b78b0e42d7469"
+    },
+    {
+      "Id": "07d45fc0-5423-4faf-aab1-9ea9eaaf9c7a",
+      "Operation": "Reopen",
+      "Revision": 17,
+      "EventSha256": "f239f1f1675e8d9690ffaace8fb48077b374476dc192a76d46d9e9277280d2e9"
+    },
+    {
+      "Id": "a62691f6-e402-491a-8beb-496af62ddf64",
+      "Operation": "Resolve",
+      "Revision": 16,
+      "EventSha256": "33a201a1a86bf296c9ed1f43797c8458b9e0991b9e04b691db110ec95d66807a"
+    },
+    {
+      "Id": "fab20b3a-f96c-4f99-b8a0-71cd8915dff8",
+      "Operation": "RecordNote",
+      "Revision": 18,
+      "EventSha256": "82ad87fd1518075568b74f3633075535c5eefdfc6636f15b8f64a1f6234a5fdd"
+    },
+    {
+      "Id": "c2445e3c-bd61-4924-bfe9-59babd0922db",
+      "Operation": "AssignDs",
+      "Revision": 19,
+      "EventSha256": "1e2939e1afaa91682a1ca8efb8e237465fa27aa3daa13a2f7b6ac24249061f28"
+    },
+    {
+      "Id": "a55f279e-3a11-47b8-89fb-972102fc5cd6",
+      "Operation": "StartInvestigation",
+      "Revision": 20,
+      "EventSha256": "befced5d1112eb84dbe927c2bbc12f4c7c1687d277b896d415eaaa2fed5a60c1"
+    },
+    {
+      "Id": "5cb5bee4-279b-43d0-9cee-5040f51718e9",
+      "Operation": "Resolve",
+      "Revision": 21,
+      "EventSha256": "fbe2cfd7de7b14b7c51bf9ebc95f4ecbc68c1fb274dd9d49f8d66545d6945b23"
+    }
+  ]
+}

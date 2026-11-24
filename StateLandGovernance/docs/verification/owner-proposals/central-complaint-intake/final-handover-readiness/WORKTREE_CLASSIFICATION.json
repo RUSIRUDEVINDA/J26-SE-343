@@ -1,0 +1,2439 @@
+{
+  "Branch": "Component_03_VI",
+  "Head": "2aa0fcfeb931c066f2b17c29e286fbcac046de94",
+  "StagedPaths": [],
+  "HeuristicGroupsRequireHumanDiffReview": {
+    "NewFinalC4OrMinimalSharedChanges": [
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/app/sign-in/page.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/ManualEvidenceVerification.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/MeasuredWorkflowFeatures.module.css"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/MeasuredWorkflowFeatures.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/docs/verification/FINAL_C4_COMPLETION_REPORT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/IndependentRegulatoryReports.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.module.css"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/RegisteredComplaints.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFindingExplanation.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/RegulatoryScreening.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/applicantComplaintReturn.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-handover.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/ARCHITECTURE_TEST_LOG.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/BACKEND_TEST_LOG.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/BACKUP_AND_PREFLIGHT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/BEFORE_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/CHANGED_FILES.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/CURRENT_RUNTIME_GRANTS_REFERENCE.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/DS_MANUAL_EVIDENCE_READBACK.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/FINAL_HANDOVER_STATUS.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/FINAL_PRESERVATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/FRONTEND-FINAL_TEST_LOG.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/HANDOVER_GUIDE.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/ISOLATED_ENDPOINT_AUTHORIZATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/LINT-FINAL_TEST_LOG.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/ORDINARY_RUNTIME_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/REGULATORY_FOLLOWUP_DESIGN_CHECKPOINT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/RUNTIME_HEALTH.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/SANITIZED_ENVIRONMENT.example.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/SQL_EXECUTION_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/TEST_COMMANDS.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/TEST_SUMMARY.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/TYPESCRIPT_TEST_LOG.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/VERIFIED_COLUMN_CATALOGUE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/VERIFY_READ_ONLY.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/WORKTREE_CLASSIFICATION.json"
+      }
+    ],
+    "PreexistingC4Work": [
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/app/component-04/[...view]/page.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/app/component-04/layout.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/AssessmentReport.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/ComplaintAnalysis.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/ConsolidatedCaseScreening.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/GovernanceWorkspace.module.css"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/GovernanceWorkspace.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/IndependentGovernance.module.css"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/IndependentGovernance.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/postLogin.ts"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/reportPresentation.ts"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/tests/component-04-final-improvements.test.ts"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/tests/component-04.test.mjs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/docs/verification/C4_BACKEND_CHANGELOG.md"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Commands/EvaluateComplianceCommand.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/DTOs/ComplianceResultDto.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Interfaces/IGovernanceEvaluationStore.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Screening/Commands/OrchestrateGovernanceScreeningCommand.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Screening/Contracts/GovernanceScreeningContracts.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Domain/Services/NpdRuleCatalogue.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Domain/ValueObjects/RuleSourceMetadata.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/GovernanceDashboardReader.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/PostgresComplianceRuleCatalogue.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/PostgresGovernanceAuditRepository.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/PostgresGovernanceEvaluationStore.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/GovernanceIntelligenceController.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/DependencyInjectionTests.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/GovernanceIntelligenceControllerTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/assessments/conflict/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/assessments/early/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/assessments/history/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/assessments/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/assessments/regulatory/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/assessments/reports/[id]/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/central-complaints/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/complaint-inbox/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/institutional-workflow/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/officer-assessments/[id]/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/component-04/regulatory-assessments/new/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/ComplaintHandlingPanel.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/GovernanceModuleLink.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/GovernanceSessionBoundary.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/KiwulaAssessmentWorkspace.module.css"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/KiwulaAssessmentWorkspace.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/NewRegulatoryAssessment.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/OfficerAnomalyPanel.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/OfficerFlowSession.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/OfficerSavedReports.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/PendingIndicator.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/PostWorkflowDemonstrations.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/ProgressiveSteps.module.css"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/components/ProgressiveSteps.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/evidence/kiulakale-input-provenance.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/evidence/kiulakale-regulatory-input.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/evidence/kiwula-named-workflow-v2.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/c4Navigation.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/centralComplaints.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/complaintHandling.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/earlyInvestigation.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/governanceRouteAccess.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/independentRegulatoryReports.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/kiwulaAssessments.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/officerFlows.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/postWorkflowDemonstrations.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/presentation.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/registeredComplaints.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/regulatorySubmission.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/modules/component-04/services/screeningPrerequisites.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-catalogue-findings.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-central-complaints.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-complaint-handling.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-independent-regulatory.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-investigation.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-kiwula.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-officer-flow.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-polish.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-post-workflow.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-prerequisites.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-progressive-ui.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-registered-complaints.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-regulatory-submission.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/component-04-route-access.test.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/C3_C4_COMPLETE_SYSTEM_UNDERSTANDING.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/C4_KIWULA_KALE_FULL_DEMONSTRATION_GUIDE.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ACTIVATED_CENTRAL_COMPLAINT_MANUAL_GUIDE.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ACTIVATED_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ACTIVATED_VERIFY_READ_ONLY.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ACTIVATION_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/AUDIT_AND_APPROVAL_CHECKPOINT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/AUDIT_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/CHANGED_FILES.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/COMBINED_ACTIVATION_CHECKPOINT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/COMBINED_ACTIVATION_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/COMBINED_PROPOSED_ACTIVATION_SETTINGS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/COMBINED_REVIEWED_ADDITIONAL_PERMISSIONS.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/COMBINED_REVIEWED_FORWARD.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/DIRECT_HANDLING_DESIGN_APPROVAL_CHECKPOINT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/DIRECT_HANDLING_DESIGN_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/DIRECT_HANDLING_REVIEW_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/FINAL_ACTIVATION_PREPARATION_GO_NO_GO.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/FINAL_C4_COMPLETION_REPORT_BEFORE_ORDINARY_ACTIVATION.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/FRESH_BACKUP_AND_ACTIVATION_PLAN.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/HANDLING_CHANGED_FILES.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/HANDLING_CONCURRENCY_AND_ROLLBACK_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/HANDLING_HTTP_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/HANDLING_IMPLEMENTATION_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/HANDLING_ORDINARY_READ_ONLY_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/HANDLING_PROTECTED_SOURCE_VERIFICATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/HANDLING_RESTART_RETRIEVAL_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/HANDLING_REVIEWED_FORWARD.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/HANDLING_TEST_SUMMARY.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/IMPLEMENTATION_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/IMPLEMENTATION_TEST_RESULTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/IMPLEMENTED_AND_ACTIVATION_CHECKPOINT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/INITIAL_ISOLATED_HTTP_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ISOLATED_HTTP_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ISOLATED_STORAGE_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATED_AND_VERIFIED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_FINAL_PRESERVATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_IMMEDIATE_PREFLIGHT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_RUNTIME_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_SERVICE_READINESS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_SQL_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_STARTUP_GATE_STOP.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ORDINARY_ACTIVATION_STOPPED_STARTUP_MIGRATION.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_AUTHORIZATION_CONFIGURATION_CHECKPOINT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_CHANGED_FILES.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_LOGIN_AND_REVOCATION_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_OPERATION_AUDIT_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_ORDINARY_READ_ONLY_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_PACKAGE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_PRIVATE_CONFIGURATION_BASELINE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_PROPOSED_GRANTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_PROPOSED_SETTINGS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_SAVED_RETRIEVAL_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PERSISTENT_TEST_AND_PRESERVATION_SUMMARY.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/POST_IMPLEMENTATION_READ_ONLY_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_CENTRAL_IDENTITY_READ_ONLY.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_EXACT_GRANT_POLICY_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_FRESH_BACKUP_AND_RESTORE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_ISOLATED_MIGRATION_AND_GRANTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_PACKAGE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_PRESERVATION_AND_ROLLBACK.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_PRIVATE_CONFIGURATION_BASELINE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_PROTECTED_ARTIFACT_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_RESTORED_HTTP_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PREPARATION_TEST_AND_PACKAGE_SUMMARY.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PROPOSED_ACTIVATION_SETTINGS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PROPOSED_HANDLING_PERMISSIONS.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PROPOSED_HANDLING_SCHEMA.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PROPOSED_PERMISSIONS.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PROPOSED_SCHEMA.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/PROTECTED_SOURCE_VERIFICATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/READ_ONLY_METADATA.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/REVIEWED_ADDITIONAL_PERMISSIONS.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/REVIEWED_FORWARD.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/STARTUP_CORRECTED_PACKAGE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/STARTUP_CORRECTED_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/TEST_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/ACTIVATED_AND_VERIFIED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/AUTHENTICATED_RUNTIME_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/CONFIGURATION_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/FINAL_C4_REPORT_BEFORE_CORRECTED_DEPLOYMENT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/FINAL_EVIDENCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/FINAL_PRESERVATION_AND_PROCESS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/FINAL_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/FINAL_TEST_RESULTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/IMMEDIATE_PREFLIGHT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/ISOLATED_AUTHENTICATED_HTTP_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/LAUNCHER_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/MANUAL_WALKTHROUGH.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/PACKAGE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/SAVED_REPORT_URLS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/controller-corrected-deployment-20261023/TEST_RESULTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-ds-evidence/AUTHENTICATED_RUNTIME_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-ds-evidence/FINAL_REPORT_BEFORE_THIS_TASK.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-ds-evidence/FRESH_BACKUP_BASELINE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-ds-evidence/STAGING_CANDIDATES.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/BACKUP_AND_PREFLIGHT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/CHANGED_FILES_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/COMPLETED_AND_VERIFIED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/DS_MANUAL_EVIDENCE_READBACK.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/EVIDENCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/FINAL_PRESERVATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/FINAL_REPORT_BEFORE_ROUTING_FIX.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/IMMEDIATE_PREFLIGHT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/ISOLATED_ENDPOINT_AUTHORIZATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/LAUNCHER_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/MANUAL_WALKTHROUGH.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/ORDINARY_RUNTIME_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/PACKAGE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/SUPPLEMENTAL_HTTP_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-login-applicant-access/TEST_SUMMARY.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/CONFIGURATION_REVIEW.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/CUTOVER_READY.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/DEPLOYED_PACKAGE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/DEPLOYMENT_RENAME_STOPPED_CONTROLLER_GATE.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/EVIDENCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/FINAL_C4_REPORT_BEFORE_RENAME_ATTEMPT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/FINAL_STOPPED_PRESERVATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/FRESH_BACKUP_AND_RESTORE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/IMMEDIATE_PREFLIGHT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/MANDATORY_RUNTIME_GATE_STOP.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/RENAME_AND_PRESERVATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/SOURCE_AND_LAUNCHER_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/STOPPED_DATABASE_IDENTITY.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/renamed-target-deployment-20261023/TEST_RESULTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/ACTIVATION_BASELINE_COMPARISON.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/CHANGED_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/DATABASE_RENAME_AUDIT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/DATABASE_RENAME_REFERENCE_INDEX.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/EXISTING_COMMISSIONER_LOGIN.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/FINAL_C4_REPORT_BEFORE_READ_REVIEW.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/FRONTEND_HTTP_READINESS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/FROZEN_ARTIFACTS_UNCHANGED.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/IMPLEMENTED_AND_DEPLOYMENT_APPROVAL_CHECKPOINT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/ISOLATED_REPORT_READ_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/ORDINARY_PRESERVATION_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/POSTGRES_RENAME_METADATA_AUDIT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/PROPOSED_REPORT_READ_GRANT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/PROPOSED_REPORT_READ_SETTINGS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/RESEARCH_RECORD_DIFFERENCES.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/REVIEW_PACKAGE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/ui-polish-and-report-read-review/TEST_SUMMARY.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_FINAL_EVIDENCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_FINAL_LIVE_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_FINAL_PP1_DEMONSTRATION.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_FINAL_PP1_VERIFY_READ_ONLY.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_FINAL_PP1_VERIFY_READ_ONLY_OUTPUT.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_PP1_FLOW_FIX_AND_APPROVAL_CHECKPOINT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_PP1_UI_UX_CHANGED_FILES.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_PP1_UI_UX_CONTRAST_CHECK.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_PP1_UI_UX_REDESIGN.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/C4_PP1_UI_UX_ROUTE_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Complaints/CentralComplaints.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Complaints/ComplaintHandling.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Complaints/RegisteredComplaints.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/DTOs/ProposalComplianceInputMapper.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/Demonstrations/KiwulaAssessments.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/OfficerFlows/OfficerFlows.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/RegulatoryReports/CommissionerReportReadAccess.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/RegulatoryReports/IndependentRegulatoryReports.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/RegulatoryReports/RegulatorySubmissions.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/WorkflowAnomaly/PostWorkflowDemonstrations.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/ComplaintAssignmentAuditInterceptor.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/ComplaintAssignmentConfiguration.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/ComplaintHandlingConfiguration.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/KiwulaAssessmentConfiguration.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/OfficerFlowConfigurations.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/PostWorkflowDemonstrationConfiguration.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/RegisteredComplaintEntityConfiguration.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Configurations/RegulatoryEvaluationProvenanceConfiguration.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Entities/ComplaintAssignmentEntity.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Entities/ComplaintHandlingEntity.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Entities/KiwulaAssessmentEntity.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Entities/OfficerFlowEntities.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Entities/PostWorkflowDemonstrationEntity.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Entities/RegisteredComplaintEntity.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Entities/RegulatoryEvaluationProvenanceEntity.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261021170456_AddRegisteredComplaints.Designer.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261021170456_AddRegisteredComplaints.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261021173048_AddOwnedRegulatoryProvenance.Designer.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261021173048_AddOwnedRegulatoryProvenance.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261022060432_AddPostWorkflowDemonstrations.Designer.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261022060432_AddPostWorkflowDemonstrations.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261022093623_AddKiwulaAssessmentProvenance.Designer.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261022093623_AddKiwulaAssessmentProvenance.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261022152556_AddOfficerInvestigationsAndAssessmentRequests.Designer.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261022152556_AddOfficerInvestigationsAndAssessmentRequests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261022200907_AddCentralComplaintAssignments.Designer.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261022200907_AddCentralComplaintAssignments.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261022205550_AddComplaintHandlingEvents.Designer.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Persistence/Migrations/20261022205550_AddComplaintHandlingEvents.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/ComplaintHandlingStore.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/ComplaintRoutingStore.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/IndependentRegulatoryReportStore.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/KiwulaAssessmentStore.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/OfficerFlowStore.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/PostWorkflowDemonstrationStore.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/RegisteredComplaintStore.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/RegulatorySubmissionStore.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/UnavailableComplaintDirectory.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/CentralComplaintsController.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/GovernanceAccessController.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/IndependentRegulatoryReportsController.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/KiwulaAssessmentsController.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/OfficerFlowsController.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/PostWorkflowDemonstrationsController.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/RegisteredComplaintsController.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/CentralComplaintPolicyTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/CommissionerReportReadTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/ComplaintAssignmentAuditTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/ComplaintHandlingRulesTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/ComplaintSandboxWriteGateTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/DevelopmentCatalogueSourceMetadataTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/GovernanceAccessTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/IndependentRegulatoryReportTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/KiwulaCatalogueTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/NpdStakeholderApplicabilityTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/OfficerFlowTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/OfficerReportControllerAuthorizationTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/PersistentCentralComplaintPolicyTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/PostWorkflowDemonstrationTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/RegisteredComplaintTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/GovernanceIntelligence/Screening/DevelopmentCatalogueContractTests.cs"
+      }
+    ],
+    "PreexistingSharedAuthOrHostWork": [
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/lib/apiClient.ts"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/lib/developmentSession.ts"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/shared/components/AppHeader.module.css"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/shared/components/AppHeader.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/shared/components/DevelopmentSessionBar.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/shared/components/PageLayout.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/shared/components/Sidebar.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Api/Controllers/DevelopmentAuthController.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Api/Program.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Api/Security/DevelopmentAccounts.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Api/Security/PortalResearchScreening.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/shared/components/CompactPresentation.module.css"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/CentralComplaintDirectory.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/CentralComplaintGrantFile.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/CommissionerReportGrantFile.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/ComplaintReferenceAccess.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/DemoAccountProfiles.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/DevelopmentCataloguePolicy.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/DevelopmentRegulatoryInputSource.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/DevelopmentRegulatoryReportAssignments.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/PortalAccountModelSnapshot.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/PortalAccountStore.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Api/Security/RegulatoryCaseBindingValidator.cs"
+      }
+    ],
+    "OtherPreexistingWork": [
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/app/page.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/src/app/workflow-governance/applicant/cases/page.tsx"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/tests/loader.mjs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance.Web/tests/workflow-governance/developmentSession.test.ts"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/src/Modules/WorkflowGovernance/Infrastructure/Integrations/ConsolidatedCaseScreeningAdapter.cs"
+      },
+      {
+        "Status": " M",
+        "Path": "StateLandGovernance/tests/UnitTests/Api/DevelopmentAccountsTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/public/fonts/inter/InterVariable.woff2"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/public/fonts/inter/LICENSE.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/api/c4-session/route.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/app/workflow-governance/applicant/complaints/page.tsx"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/src/proxy.ts"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance.Web/tests/fixtures/independent-regulatory-findings.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/configuration/examples/independent-regulatory-read.example.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/C3_SHARED_CATALOGUE_CHANGE_REGISTER.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/SHARED_AUTH_CHANGE_REGISTER.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/PP1_FULL_CATALOGUE_PROPOSED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/PP1_FULL_CATALOGUE_PROPOSED.patch"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/PP1_FULL_CATALOGUE_PROPOSED.sources.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/ACTIVATED_DEMONSTRATION.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/ACTIVATION_PREPARATION_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/COMPLAINTS_CONTROLLED_ACTIVATION_PREPARATION.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/FORWARD_ONLY_NOT_APPLIED.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/IMPLEMENTED.sources.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/IMPLEMENTED_AND_ACTIVATION_PLAN.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/LIVE_COMPLAINT_DEMONSTRATION_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/LIVE_DEMONSTRATION_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/LIVE_DEMONSTRATION_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/POSTGRES_PROOF.sources.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/PREPARATION_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/REVIEWED_ADDITIONAL_CONFIGURATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/complaints/REVIEWED_ADDITIONAL_RUNTIME_PERMISSIONS.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/independent-regulatory-reports/ACTIVATED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/independent-regulatory-reports/ACTIVATION_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/independent-regulatory-reports/IMPLEMENTED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/independent-regulatory-reports/IMPLEMENTED.sources.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/independent-regulatory-reports/PROPOSED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/independent-regulatory-reports/independent-regulatory-reports.patch"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/independent-regulatory-reports/sources.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ACTIVATED_AND_VERIFIED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ACTIVATION_ATTEMPT_STOPPED.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ACTIVATION_ATTEMPT_STOPPED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ACTIVATION_BASELINE_V2_20261022.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ACTIVATION_CONTINUATION_STOPPED_DATA_DRIFT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ACTIVATION_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ADDITIONAL_REGULATORY_PROVENANCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/BACKUP_AND_RESTORE_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/CHANGED_FILES_AND_ACTIONS.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/CONTROLLED_ACTIVATION_CHECKPOINT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/EXISTING_REGULATORY_PROVENANCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/EXISTING_SERVICE_HEALTH.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/FRONTEND_HTTP_ROUTE_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/FRONTEND_POLISH_AND_MANUAL_GUIDE.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/FRONTEND_POLISH_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ISOLATED_CONSTRAINTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ISOLATED_ENGINE_AND_RETRIEVAL_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ISOLATED_RUNTIME_PERMISSIONS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_ACTION_AND_FILE_REGISTER.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_ACTIVATION_DATA_DRIFT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_APPLIED_SQL.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_EVIDENCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_EXISTING_REPORT_PRESERVATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_FINAL_RUNTIME_AND_TESTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_KIWULA_RESULTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_MANUAL_WALKTHROUGH.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_ML_METRICS_AFTER_ONE_INFERENCE.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_ML_METRICS_BEFORE.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_POSTGRESQL_VERIFICATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_PREFLIGHT_BEFORE_FINAL_CHECK.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_RESTART_AUTHORIZATION_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_REUSED_REGULATORY_REPORT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_RUNTIME_PERMISSIONS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_STOP_RECOVERY_REPORT_CHECK.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_V2_PREFLIGHT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_VERIFY_READ_ONLY.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/LIVE_VERIFY_READ_ONLY_OUTPUT.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ML_METRICS_AFTER.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/MODEL_VERIFICATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_ACTIVATED_AND_VERIFIED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_ACTIVATION_BACKUP_V2.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_ACTIVATION_PREFLIGHT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_BACKUP_AND_BASELINE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_FINAL_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_IMPLEMENTATION_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_IMPLEMENTATION_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_ISOLATED_RUNTIME_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_LIVE_READINESS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_LIVE_RESULTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_LIVE_VERIFY_READ_ONLY.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_MANUAL_WALKTHROUGH.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_ORDINARY_SQL_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_POSTGRESQL_VERIFICATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_PUBLISHED_PACKAGE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_RESTART_AND_ROUTE_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_REVIEWED_FORWARD.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_REVIEWED_PERMISSIONS.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/OFFICER_FLOW_UI_VERIFICATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ORDINARY_CONFIGURATION_BASELINE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ORDINARY_NAMESPACE_COLLISION_CHECK.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ORDINARY_READONLY_INSPECTION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ORDINARY_RUNTIME_GRANTS_BASELINE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ORDINARY_SCHEMA_BASELINE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/PROPOSED_OFFICER_FLOW_PERMISSIONS.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/PROPOSED_OFFICER_FLOW_SCHEMA.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/REGULATORY_DRIFT_INVESTIGATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/REVIEWED_ADDITIONAL_PERMISSIONS.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/REVIEWED_FORWARD.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/ROUTING_REFERENCE_DB_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/kiwula-assessment-workspace/VALIDATION_RESULTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/ACTIVATED_STATUS.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/ACTIVATION_RESTORE_VERIFICATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/ACTIVATION_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/CONTROLLED_ACTIVATION_APPROVAL.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/EXISTING_REPORT_PRESERVATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/IMPLEMENTED.sources.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/IMPLEMENTED_AND_ACTIVATION_PLAN.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/ISOLATED_POSTGRESQL_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/LIVE_ACTIVATION_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/LIVE_ACTIVATION_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/MANUAL_DEMONSTRATION.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/MANUAL_DEMONSTRATION_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/MANUAL_DEMONSTRATION_VERIFICATION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/PROVENANCE_FORWARD_NOT_APPLIED.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/REVIEWED_CONFIGURATION_CHANGES.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/REVIEWED_ORDERED_FORWARD.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/live-regulatory-assessments/REVIEWED_RUNTIME_PERMISSIONS.psql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/ACTIVATED_AND_VERIFIED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/ACTIVATION_ATTEMPT_BLOCKED.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/ACTIVATION_ATTEMPT_BLOCKED.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/ACTIVATION_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/BACKUP_AND_MIGRATION_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/CHANGED_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/CONTROLLED_ACTIVATION_CHECKPOINT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/IMPLEMENTED_AND_ACTIVATION_PLAN.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/ISOLATED_INFERENCE_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_ACTIVATION_EVIDENCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_ACTIVATION_PREFLIGHT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_APPLIED_SQL_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_BACKUP_ACCESS_RESOLUTION.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_INFERENCE_CHECKS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_ML_METRICS_AFTER.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_ML_METRICS_BEFORE.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_POSTGRES_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_PRESERVATION_AND_RESTART.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_READINESS_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_RUNTIME_GRANTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/LIVE_SAVED_REPORTS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/REPAIR_ACTIVATION_REVIEW_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/REPAIR_BACKUP_RESTORE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/REPAIR_HTTP_DIAGNOSIS.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/REPAIR_ISOLATED_INFERENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/REPAIR_RESTART_RETRIEVAL.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/REPAIR_SOURCE_SHA256.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/RESTART_RETRIEVAL_EVIDENCE.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/REVIEWED_ADDITIONAL_PERMISSIONS.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/docs/verification/owner-proposals/post-workflow-analysis/REVIEWED_FORWARD.sql"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/src/Modules/WorkflowGovernance/Application/Interfaces/IDevelopmentRegulatoryInputSource.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/ArchitectureTests/ApiStartupSchemaBoundaryTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/ArchitectureTests/CentralComplaintBoundaryTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/CentralComplaintProof/CentralComplaintProof.csproj"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/CentralComplaintProof/Program.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/ComplaintHandlingProof/ComplaintHandlingProof.csproj"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/ComplaintHandlingProof/Program.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/GovernanceAccessProof/GovernanceAccessProof.csproj"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/GovernanceAccessProof/Program.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/KiwulaAssessmentProof/KiwulaAssessmentProof.csproj"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/KiwulaAssessmentProof/Program.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/OfficerFlowProof/OfficerFlowProof.csproj"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/OfficerFlowProof/Program.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/PersistentComplaintAuthorizationProof/PersistentComplaintAuthorizationProof.csproj"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/PersistentComplaintAuthorizationProof/Program.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/PostWorkflowPersistenceProof/HttpProof.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/PostWorkflowPersistenceProof/PostWorkflowPersistenceProof.csproj"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/PostWorkflowPersistenceProof/Program.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/RegisteredComplaintPersistenceProof/Program.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/RegisteredComplaintPersistenceProof/README.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/RegisteredComplaintPersistenceProof/RegisteredComplaintPersistenceProof.csproj"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/RegulatoryAssessmentPersistenceProof/Program.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/RegulatoryAssessmentPersistenceProof/README.md"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/RegulatoryAssessmentPersistenceProof/RegulatoryAssessmentPersistenceProof.csproj"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/RegulatoryAssessmentPersistenceProof/catalogue-input.json"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/ReportReadProof/Program.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/IntegrationTests/ReportReadProof/ReportReadProof.csproj"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/Api/DevelopmentCatalogueSelectionTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/Api/IndependentRegulatoryAssignmentTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/Api/PortalAccountTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tests/UnitTests/Api/RegisteredComplaintHttpTests.cs"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tools/development/Setup-DemoAccounts.ps1"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tools/development/Start-C4ControllerCorrectedApprovedApi.ps1"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tools/development/Start-C4NavigationAccessApprovedApi.ps1"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tools/development/Start-C4RenamedTargetApprovedApi.ps1"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tools/development/Start-CentralComplaintsApprovedApi.ps1"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tools/development/Start-CentralComplaintsPersistentApprovedApi.ps1"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tools/development/Start-CentralComplaintsStartupCorrectedApprovedApi.ps1"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tools/development/Start-KiwulaApprovedApi.ps1"
+      },
+      {
+        "Status": "??",
+        "Path": "StateLandGovernance/tools/verification/inspect_c4_kiwula.py"
+      },
+      {
+        "Status": "??",
+        "Path": "independent-report-frontend-focused.log"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/ACTIVATION_AND_SESSION_PLAN.md"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/COVERAGE.md"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/ENGLISH_DEMONSTRATION_PROPOSAL.md"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/README.md"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/SOURCE_AND_ASSUMPTIONS.md"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/c4-regulatory-input.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/dto-validation.txt"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/financial-schedule.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/layout.svg"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/manifest.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/provenance.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/ACTUAL_RESULT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/actual-response.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/api-audit-history.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/api-dashboard-retrieval.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/api-retrieval-after-readonly-restart.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/c3-preservation.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/c4-existing-history-preservation.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/database-audit-record.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/database-evaluation-readback.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/database-outbox-record.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/dispatch-attempt.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/final-checks.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/manifest.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/readonly-session-postflight.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/scoped-session-preflight.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/ui-verification.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/run/verification-summary.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/simulated-external-context.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/standalone-regulatory-request.DRAFT.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/validate_package.py"
+      },
+      {
+        "Status": "??",
+        "Path": "output/kiulakale-pp1-demonstration/validation.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/proposal1-review/ENGLISH_ADDENDUM_DRAFT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "output/proposal1-review/GAP_REVIEW.md"
+      },
+      {
+        "Status": "??",
+        "Path": "output/proposal1-review/PP1_DEMONSTRATION_SUPPLEMENT_DRAFT.md"
+      },
+      {
+        "Status": "??",
+        "Path": "output/proposal1-review/c3-gap-table.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/proposal1-review/c4-gap-table.json"
+      },
+      {
+        "Status": "??",
+        "Path": "output/proposal1-review/review-manifest.json"
+      }
+    ]
+  }
+}

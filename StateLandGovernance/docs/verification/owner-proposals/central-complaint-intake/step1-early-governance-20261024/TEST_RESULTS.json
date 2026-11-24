@@ -1,0 +1,38 @@
+{
+  "Scope": "Step1 isolated only",
+  "BackendFocused": {
+    "Passed": 385,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "ExistingPostgresRegressionsSeparateIsolatedRuns": {
+    "Passed": 2,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "FinalHttpChecks": 60,
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "NewFrontend": {
+    "Passed": 5,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "FullFrontend": {
+    "Passed": 192,
+    "Failed": 2,
+    "Skipped": 0,
+    "Failures": "Unchanged Post-Workflow heading and technical-details expectations; component untouched in Step1"
+  },
+  "FocusedLintErrors": 0,
+  "TypeScript": "Three pre-existing C1 errors only",
+  "Browser": "apps=[]/browsers=[]; no graphical success claimed",
+  "ClassifierAnomalyInferenceCalls": 0,
+  "OrdinaryWrites": 0,
+  "OrdinaryDeployment": false,
+  "Step2Started": false,
+  "GitStageCommitPush": false
+}

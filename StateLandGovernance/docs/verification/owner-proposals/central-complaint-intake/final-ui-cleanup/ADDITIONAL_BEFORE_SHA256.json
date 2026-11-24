@@ -1,0 +1,6 @@
+{
+  "StateLandGovernance.Web/src/proxy.ts": "fe59aab86ff0c24d5e6fbc17ed42c0be86c7ad8652c4aa36580123c904f186d5",
+  "StateLandGovernance.Web/tests/component-04.test.mjs": "6945f9b68fd60b198fecf7cd3911554b4e4ed803dbd53918fcba2ed953c3976e",
+  "StateLandGovernance.Web/tests/component-04-route-access.test.ts": "1a3b32898422605e13aeb348178fd0d71dd2682c58fdc3706aad664477981a7a",
+  "StateLandGovernance.Web/src/modules/component-04/components/EarlyGovernanceInvestigation.tsx": "c1bfc990f814982b92b6f268b2b1ad097d477e4c7a9d936203beb8a47ad8a828"
+}

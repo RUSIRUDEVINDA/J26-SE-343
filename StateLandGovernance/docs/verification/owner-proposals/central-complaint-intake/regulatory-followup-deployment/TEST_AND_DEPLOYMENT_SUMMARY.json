@@ -1,0 +1,18 @@
+{
+  "MandatoryDeploymentGates": "Passed",
+  "FreshCurrentRestoreHttpChecks": 34,
+  "RecordedMatchingImplementationBackend": 319,
+  "RecordedMatchingImplementationFrontend": 158,
+  "RecordedMatchingImplementationArchitecture": 7,
+  "BroadSuitesRerunDuringDeployment": false,
+  "OrdinaryRuntimeChecks": 509,
+  "SavedReports": 50,
+  "FollowupReadChecks": 182,
+  "OwnedWriteEligibleWorkspaces": 21,
+  "ManualEvidenceChecks": 79,
+  "OrdinaryFollowupWrites": 0,
+  "InferenceCalls": 0,
+  "BrowserGraphicalVerification": "Manual pending",
+  "TypeScript": "Three existing C1 errors",
+  "IsolatedContainerStoppedStorageRetained": true
+}

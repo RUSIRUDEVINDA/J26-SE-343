@@ -10,6 +10,7 @@ import styles from "./GovernanceWorkspace.module.css";
 import { useGovernanceMode } from "./GovernanceWorkspace";
 
 import { AssessmentReport } from "./AssessmentReport";
+import { checkScreeningPrerequisites, type PrerequisiteFeedback } from "../services/screeningPrerequisites";
 
 const sections = ["Regulatory", "Conflict", "Early Governance", "Summary"] as const;
 export function ConsolidatedCaseScreening({ caseId, snapshotId }: { caseId: string; snapshotId?: string }) {
@@ -44,6 +45,8 @@ export function ConsolidatedCaseScreening({ caseId, snapshotId }: { caseId: stri
   const [dispatchNotice,setDispatchNotice]=useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [prerequisiteFeedback, setPrerequisiteFeedback] = useState<PrerequisiteFeedback>({kind:"idle",message:""});
+  useEffect(()=>{request.current++;setPrerequisiteFeedback({kind:"idle",message:""});},[caseId,snapshotId,parcel]);
   useEffect(() => {
     let active = true;
     setState(null); setError(null);
@@ -53,8 +56,9 @@ export function ConsolidatedCaseScreening({ caseId, snapshotId }: { caseId: stri
     return () => { active = false; };
   }, [caseId, snapshotId, mode]);
   useEffect(() => {
-    if (mode !== "live") return;
+    if (mode !== "live" || busy) return;
     const recheck = () => {
+      setPrerequisiteFeedback({kind:"idle",message:""});
       const sequence=++request.current;
       getCaseScreening(caseId, state?.verifiedFactSnapshotId || snapshotId, scenario?.available && !mockSelected && !parcel ? "00000000-0000-0000-0000-000000000000" : parcel || undefined)
         .then(data=>{if(scope.current===caseId && sequence===request.current)setState(data);}).catch(err => {
@@ -65,12 +69,15 @@ export function ConsolidatedCaseScreening({ caseId, snapshotId }: { caseId: stri
     };
     window.addEventListener("focus", recheck);
     return () => window.removeEventListener("focus", recheck);
-  }, [caseId, snapshotId, state?.verifiedFactSnapshotId, parcel, mode, scenario?.available, mockSelected]);
+  }, [caseId, snapshotId, state?.verifiedFactSnapshotId, parcel, mode, scenario?.available, mockSelected, busy]);
   async function refresh(run = false) {
     const sequence=++request.current;
     setBusy(true); setError(null);
     try {
-      const current = await getCaseScreening(caseId, state?.verifiedFactSnapshotId || snapshotId, scenario?.available && !mockSelected && !parcel ? "00000000-0000-0000-0000-000000000000" : parcel || undefined);
+      const load = () => getCaseScreening(caseId, state?.verifiedFactSnapshotId || snapshotId, scenario?.available && !mockSelected && !parcel ? "00000000-0000-0000-0000-000000000000" : parcel || undefined);
+      const current = run ? await load() : await checkScreeningPrerequisites(load, feedback => {
+        if(scope.current===caseId && sequence===request.current)setPrerequisiteFeedback(feedback);
+      });
       if(scope.current!==caseId||sequence!==request.current)return;
       setState(current);
       if (run && current.missingInputs.length === 0) {const started=Date.now();const result=await runCaseScreening(current);if(scope.current===caseId&&sequence===request.current){setState(result);setDispatchNotice(Date.parse(result.latestAssessment?.assessment.evaluatedAtUtc||"")<started?"Reused persisted assessment returned. No fresh engine execution is claimed.":"Assessment returned and recorded by C3.");}}
@@ -103,14 +110,15 @@ export function ConsolidatedCaseScreening({ caseId, snapshotId }: { caseId: stri
         }}><option value="real">Actual C1 parcel evidence</option><option value="mock">{scenario.label}</option>{scenario.noConflictSpatialParcelId&&<option value="no-conflict">Development mock 12-acre no-conflict inputs (synthetic; engine outcome not predetermined)</option>}</select></label>
         {mockSelected&&<p>Test parcel context selected; no real C1 association.</p>}
         {mockSelected&&selectedCoverageId&&<label><input type="checkbox" checked={syntheticCoverage&&explicitCoverageConsent} onChange={e=>{request.current++;setExplicitCoverageConsent(e.target.checked);setSyntheticCoverage(e.target.checked);setParcel(e.target.checked?selectedCoverageId!:selectedSpatialId!);setState(s=>s?{...s,isCurrent:false,status:s.latestAssessment?"Stale":"BlockedIncomplete",missingInputs:["Check prerequisites for the newly selected Development scenario."]}:s);}}/> Explicitly use synthetic governance, complaint and concurrent-application coverage for this explicitly designated synthetic research case. Not real clearance.</label>}
-        {!selectedCoverageId&&<p>Governance and complaint coverage remain unknown on this real case. <Link href="/sign-in?account=research">Open separate Development research scenario</Link> (sign in as research using the documented local test password). {scenario.researchLabel}</p>}
+        {!selectedCoverageId&&<p>Governance and complaint coverage remain unknown for this case. Authorized, source-backed coverage is required before screening can proceed. {scenario.researchLabel}</p>}
         {scenario.syntheticEvidenceParcelId&&<p role="alert">Research NPD policy only. Source facts and completeness remain unchanged.</p>}
       </fieldset></details>}
       <form onSubmit={event => { event.preventDefault(); void refresh(); }} className={styles.actions}>
         {!mockSelected && <label>C1 parcel ID <input aria-label="C1 parcel ID" value={parcel} placeholder="Actual parcel UUID" onChange={e => { request.current++;setParcel(e.target.value); setState(previous => previous ? { ...previous, isCurrent: false, status: "Stale" } : null); }} /></label>}
-        <Button type="submit" variant="secondary" disabled={busy}>Check prerequisites</Button>
+        <Button type="submit" variant="secondary" disabled={busy}>{prerequisiteFeedback.kind==="loading"?"Checking prerequisites…":"Check prerequisites"}</Button>
       <Button disabled={busy || state.missingInputs.length > 0 || !state.verifiedFactSnapshotId || Boolean(mockSelected&&selectedCoverageId&&!explicitCoverageConsent)} onClick={() => void refresh(true)}>{busy ? "Checking…" : "Run consolidated screening"}</Button>
       </form>
+      {prerequisiteFeedback.kind!=="idle"&&<p role={prerequisiteFeedback.kind==="error"?"alert":"status"} aria-live="polite">{prerequisiteFeedback.message}</p>}
       {state.missingInputs.length > 0 && <section className={styles.card}><h2>Screening blocked / incomplete</h2><ul>{state.missingInputs.map(reason => <li key={reason}>{reason} {(/completeness|template|classification/i.test(reason)) ? <button onClick={()=>openCaseView("completeness")}>Open completeness review</button> : /snapshot|investment|verified fact/i.test(reason) ? <button onClick={()=>openCaseView("facts")}>Open fact review</button> : null}</li>)}</ul><p>No C4 evaluation was substituted for missing evidence.</p></section>}
       {dispatchNotice&&<p role="status">{dispatchNotice}</p>}
       <nav className={styles.tabs} aria-label="Screening sections">{sections.map(name => <button key={name} type="button" aria-current={tab === name ? "step" : undefined} onClick={() => setTab(name)}>{name}</button>)}</nav>

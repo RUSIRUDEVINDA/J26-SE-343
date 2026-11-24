@@ -1,0 +1,13 @@
+{
+  "Date": "2026-10-24",
+  "ObservedListenersAfterIsolatedContainerStop": [
+    {"LocalPort": 5432, "OwningProcess": 7024}
+  ],
+  "OrdinaryApi5264Listener": false,
+  "OrdinaryFrontend3000Listener": false,
+  "OrdinaryMl8104Listener": false,
+  "OrdinaryServiceActionsByTask": 0,
+  "IsolatedContainer": "slg-central-complaint-test-20261023",
+  "IsolatedContainerStoppedSuccessfully": true,
+  "IsolatedStorageRetained": true
+}

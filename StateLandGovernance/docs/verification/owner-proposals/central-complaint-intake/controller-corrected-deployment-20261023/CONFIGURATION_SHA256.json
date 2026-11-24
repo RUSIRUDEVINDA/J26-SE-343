@@ -1,0 +1,16 @@
+{
+  "OriginalCandidateSha256": "b03a6c955b50c3ecd2db4f3dc390ffe6b31439314ee722916197a9172430fb09",
+  "NewCandidateSha256": "406bc96165e33c6c8d778322e2470d7abc3978da605b6791af72bb5aaaededd0",
+  "PrivateBaselinePath": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\c4-rename-backup-20261023_0840\\renamed-private-baseline.local.json",
+  "PrivateBaselineSha256": "4470d0257df8ddf42607b3f2a01cd1d6b402d7ab9456c84bb8ca28c08b34915f",
+  "ChangedKeys": [
+    "GOVERNANCE_INTELLIGENCE_CONNECTION",
+    "GovernanceIntelligence__CommissionerReportReads__Enabled",
+    "GovernanceIntelligence__CommissionerReportReads__GrantFilePath"
+  ],
+  "OldDatabase": "c4_handover_local",
+  "NewDatabase": "state_land_governance_c4",
+  "OtherSettingsExactlyPreserved": true,
+  "ReportGrantSha256": "8b0dc0a80d54bcbc2d44f01a025172f3e27a5d413700276935275972a0bab3cf",
+  "ComplaintGrantUnchanged": true
+}

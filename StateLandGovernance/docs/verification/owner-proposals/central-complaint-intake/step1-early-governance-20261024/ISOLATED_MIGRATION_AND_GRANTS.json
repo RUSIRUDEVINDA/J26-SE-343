@@ -1,0 +1,17 @@
+{
+  "Status": "Passed",
+  "Database": "c4_step1_restore_20261024_finalization",
+  "RuntimeRole": "step1_runtime",
+  "Migration": "20261024000805_AddInvestigationEvidenceAndFinalization",
+  "SqlSha256": "5af0fe8d358b9c22cad2c8a68007b8503f492230d155e46a0c7b34a191916c6f",
+  "OnlyNewTable": "officer_investigation_attachments",
+  "OriginalRowsUnchanged": true,
+  "NewTableInitiallyEmpty": true,
+  "Tables": 42,
+  "Migrations": 22,
+  "AdditionalPrivileges": [
+    "SELECT",
+    "INSERT"
+  ],
+  "OrdinaryWrites": 0
+}

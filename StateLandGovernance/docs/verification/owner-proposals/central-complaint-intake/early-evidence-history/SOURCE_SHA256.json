@@ -1,0 +1,13 @@
+{
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Application/OfficerFlows/ManualEvidence.cs": "1fc0dfe6d47453bb9d4ff96a6e8c07e31008da51c3d694d75a45393ee7329fbc",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Infrastructure/Repositories/ManualEvidenceStore.cs": "87d6feca1993d8f2033a92d5c58b96f68c88a522115d2503dca59750fcf96680",
+  "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/ManualEvidenceController.cs": "cde081d6f72df6d183e927ba50eb8949a2acce81e3117b9cda600b3ff891ac9f",
+  "StateLandGovernance.Web/src/modules/component-04/components/ManualEvidenceVerification.tsx": "90a1f04944aaa1a6b08d20cfcf0ca099964590a721951cd212b61d0858c18287",
+  "StateLandGovernance.Web/src/modules/component-04/services/manualEvidence.ts": "f2ef20e20706152cf502d5e6f5717a9acbce1f7707e335040b37ba36ffa41041",
+  "StateLandGovernance/tests/IntegrationTests/ManualEvidenceProof/Program.cs": "9ad3d86918f37b09a9e86b5283944cb52e51314251215be7309198bd25735cc8",
+  "StateLandGovernance\\docs\\verification\\FINAL_C4_COMPLETION_REPORT.md": "ead9c8bb629c634d79459bb6ca66205cd73d34416049831872dfe547c4a0dde3",
+  "StateLandGovernance\\docs\\verification\\owner-proposals\\central-complaint-intake\\final-handover-readiness\\HANDOVER_GUIDE.md": "8e1c086f995ad76d001c4267745a8b16a6f89dd5d6095739cae4d8227e0b2f76",
+  "StateLandGovernance.Web/src/modules/component-04/components/PreviousEarlyEvidence.tsx": "ecaa208af17ce2bf3da4af4cd344c2372cd8b1096df5c9c27ec93181830b341b",
+  "StateLandGovernance.Web/tests/component-04-previous-evidence.test.ts": "dc7e49ef4f0037a552bfd2d41965f76e0d4d4bbfb718eeffb504dbb7c1ed2f64",
+  "StateLandGovernance/tools/development/Start-C4EarlyEvidenceHistoryApprovedApi.ps1": "702df668e3b39ef607c9d9e468521f586d36d23c9f5c1111c7f4d85f26fe8bb5"
+}

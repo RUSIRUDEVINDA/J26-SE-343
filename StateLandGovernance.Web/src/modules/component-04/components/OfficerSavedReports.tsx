@@ -1,0 +1,16 @@
+"use client";
+import {useEffect,useState} from "react";
+import styles from "./KiwulaAssessmentWorkspace.module.css";
+import {ProgressiveSteps,ProgressiveStep,StatusBadge} from "./ProgressiveSteps";
+import {statusLabel,sriLankaTime} from "../services/presentation";
+import Link from "next/link";
+import {officerApi,loadOwnedReportInvestigation,type RequestReport,type Investigation} from "../services/officerFlows";
+import {useOfficerSession} from "./OfficerFlowSession";
+import {OfficerAssessmentResult} from "./OfficerAssessmentResult";
+export function OfficerSavedReports({id}:{id?:string}){
+ const {actor,epoch,generation}=useOfficerSession();const [rows,setRows]=useState<RequestReport[]>([]),[error,setError]=useState(""),[investigation,setInvestigation]=useState<Investigation|null>(null);
+ async function refresh(){const v=epoch.current;try{const rows=id?[await officerApi<RequestReport>(`officer-assessments/${encodeURIComponent(id)}`)]:await officerApi<RequestReport[]>("officer-assessments");const investigation=id?await loadOwnedReportInvestigation(rows[0],actor):null;if(v===epoch.current){setRows(rows);setInvestigation(investigation);setError("");}}catch(e){if(v===epoch.current)setError(e instanceof Error?e.message:"Report unavailable");}}
+ useEffect(()=>{let active=true;queueMicrotask(()=>{if(!active)return;setRows([]);setInvestigation(null);setError("");if(actor)void refresh();});return()=>{active=false;};/* account change invalidates responses */ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[actor,id,generation]);
+ return <section className={styles.workspace}><div className={styles.resultHeader}><h2>{id?"Saved officer assessment":"Officer assessments"}</h2><button disabled={!actor} onClick={()=>void refresh()}>Refresh Saved Reports</button></div>{error&&<p role="alert">{error}</p>}{!actor&&<p>Sign in as the DS officer. <Link href="/sign-in">Sign in</Link></p>}{investigation&&<details className={styles.card}><summary>Original saved officer selections and remarks</summary><ProgressiveSteps label="Saved investigation observations">{investigation.findings.map(f=><ProgressiveStep key={f.concern} title={statusLabel(f.concern)} status={f.choice} tone="neutral" description={f.remarks||"No remarks supplied."}/>)}</ProgressiveSteps><p className={styles.secondary}>These selections remain observations; the engine&apos;s evidence states are shown in the result.</p></details>}{id?rows.map(r=><OfficerAssessmentResult key={r.id} report={r}/>):<div className={styles.card}><div className={styles.scroll}><table><thead><tr><th>Assessment</th><th>Proposal / workflow</th><th>Date / time (Sri Lanka)</th><th>Status</th><th>Report</th></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td>{r.kind==="early"?"Early Governance":"Workflow Anomaly"}</td><td>Kiwula Kale{r.kind==="anomaly"?" — Named route v2":""}</td><td>{sriLankaTime(r.createdAtUtc)}</td><td><StatusBadge status={r.state}/></td><td><Link href={`/component-04/officer-assessments/${r.id}`}>View Report</Link></td></tr>)}</tbody></table></div>{actor&&rows.length===0&&!error&&<p>No saved officer assessments returned for this account.</p>}</div>}<p className={styles.secondary}>Retrieval does not rerun an engine.</p></section>;
+}

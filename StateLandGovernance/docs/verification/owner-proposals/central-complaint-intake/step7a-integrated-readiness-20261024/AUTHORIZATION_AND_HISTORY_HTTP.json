@@ -1,0 +1,50 @@
+{
+  "Security": {
+    "Status": "Passed",
+    "Checks": [
+      "Actual complete Early/Regulatory chain is ready after persisted required reviews",
+      "Cross-user otherds denied afe6da0a-830f-45fc-9355-3efc511c9905",
+      "Cross-user otherds denied 8b56d6b0-ed4e-4230-a3df-b977a3d868b4",
+      "Cross-user otherds denied manual-evidence",
+      "Cross-user otherds denied 99c1e8bc-36b4-47fa-b395-14a946261325",
+      "Cross-user otherds denied officer-sequence",
+      "Cross-user applicant denied afe6da0a-830f-45fc-9355-3efc511c9905",
+      "Cross-user applicant denied 8b56d6b0-ed4e-4230-a3df-b977a3d868b4",
+      "Cross-user applicant denied manual-evidence",
+      "Cross-user applicant denied 99c1e8bc-36b4-47fa-b395-14a946261325",
+      "Cross-user applicant denied officer-sequence",
+      "Anonymous saved officer report denied",
+      "Explicit Commissioner saved read afe6da0a-830f-45fc-9355-3efc511c9905",
+      "Explicit Commissioner saved read 8b56d6b0-ed4e-4230-a3df-b977a3d868b4",
+      "Explicit Commissioner saved read manual-evidence",
+      "Explicit Commissioner saved read 99c1e8bc-36b4-47fa-b395-14a946261325",
+      "Commissioner evidence read-only",
+      "Commissioner cannot execute DS screening",
+      "Terminal handling revokes former DS detail access",
+      "Foreign applicant complaint ownership denied",
+      "Owner saved actual classification retrievable",
+      "Applicant API history omits private notes",
+      "Independent Early rerun persists separate request and result",
+      "Earlier saved result unchanged after verification and rerun",
+      "Unfinalized draft cannot execute Early screening",
+      "Same JWT observes live isolated report-permissions.json revocation",
+      "Exact isolated report-permissions.json restored and reauthorized",
+      "Same JWT observes live isolated central-permissions.json revocation",
+      "Exact isolated central-permissions.json restored and reauthorized"
+    ],
+    "Count": 29,
+    "EarlyRequestId": "afe6da0a-830f-45fc-9355-3efc511c9905",
+    "RegulatoryEvaluationId": "99c1e8bc-36b4-47fa-b395-14a946261325",
+    "RerunRequestId": "6d6c8bbc-f688-4f3b-9736-d1b1f97cbd64"
+  },
+  "HistoryAndReplay": {
+    "Status": "Passed",
+    "Checks": [
+      "Independent rerun current evidence is empty and does not inherit previous evidence",
+      "Previous assessment evidence and verification retained in explicitly separate request group",
+      "Explicit persisted finalization same-key replay returns the original event",
+      "Pre-screening evidence remains on the exact original investigation"
+    ]
+  },
+  "TotalChecks": 33
+}

@@ -1,0 +1,274 @@
+--- before/StateLandGovernance/docs/verification/FINAL_C4_COMPLETION_REPORT.md
++++ after/StateLandGovernance/docs/verification/FINAL_C4_COMPLETION_REPORT.md
+@@ -1,3 +1,9 @@
++# Latest C4 status — compact assessment-history presentation
++
++2026-10-24. Frontend-only cleanup is active on the existing development portal: clear Current Assessment/Previous Assessments, compact read-only history cards, one explanation per previous section and optional technical disclosures; current forms and all revisions retained.189frontend tests and7architecture tests pass; focused lint clean.113authenticated read checks confirm all64saved report bodies/evidence remain unchanged. Database OID34144/41tables/21migrations, backend/package, permissions, models and services unchanged; no API restart, ordinary fixtures/inference, staging, commit or push. Manual graphical acceptance remains pending. See [UI report and exact diff](owner-proposals/central-complaint-intake/final-history-ui-polish/COMPLETED_AND_VERIFIED.md). Earlier reports below remain historical.
++
++---
++
+ # Latest C4 status — previous Early Governance evidence visible
+ 
+ 2026-10-24. Implemented and deployed an authorized, paginated read-only historical section. The original PNG and Verified revision1 remain on their original assessment; the newer assessment remains independently empty/Unverified/revision0. 185frontend/35focusedbackend/7architecture tests,66restored-copy HTTP/storage checks and113ordinary authenticated read checks pass. All64saved report bodies and all41ordinary tables/21migrations/OID34144 are preserved. API11064 healthy; frontend/ML reused. No SQL/grant/model/private configuration change, ordinary fixture, inference, staging, commit or push. Graphical browser checks remain manual. See [evidence and walkthrough](owner-proposals/central-complaint-intake/early-evidence-history/COMPLETED_AND_VERIFIED.md). Earlier statuses below are historical.
+--- before/StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/HANDOVER_GUIDE.md
++++ after/StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/HANDOVER_GUIDE.md
+@@ -1,3 +1,9 @@
++# Current UI acceptance checkpoint — 2026-10-24
++
++[Final history presentation polish](../final-history-ui-polish/COMPLETED_AND_VERIFIED.md) is frontend-only and active on the reused portal. Current versus previous records are distinct, technical metadata is optional, and existing forms/downloads/pagination remain. [Manual acceptance](../final-history-ui-polish/MANUAL_ACCEPTANCE.md) is pending before any selective staging/commit. API/package/launcher/private settings/database/models are unchanged; do not restart healthy services for this task. Prior deployment/handover evidence remains below.
++
++---
++
+ # Current launcher and evidence-history update — 2026-10-24
+ 
+ Use `Start-C4EarlyEvidenceHistoryApprovedApi.ps1` and `.tmp/c4-early-evidence-history-api` for the necessary compatible restart, preserving the existing renamed-target candidate and both grant files. API11064/5264, portal16692/3000 and ML36612/8104 were healthy; inspect before reuse. Earlier launchers below are historical. No database deployment belongs to startup.
+--- before/StateLandGovernance.Web/tests/component-04-history-form.test.ts
++++ after/StateLandGovernance.Web/tests/component-04-history-form.test.ts
+@@ -22,7 +22,7 @@
+  }
+ });
+ test("Previous workspace is explicitly read-only and separate from current revisions",()=>{
+- const html=renderToStaticMarkup(createElement(PreviousRegulatoryFollowups,{evaluationId:"B"}));assert.match(html,/Previous Regulatory Follow-ups/);assert.match(html,/Historical — Read-only/);assert.match(html,/independent revision/);assert.doesNotMatch(html,/<form|<textarea/);
++ const html=renderToStaticMarkup(createElement(PreviousRegulatoryFollowups,{evaluationId:"B"}));assert.match(html,/Previous Regulatory Follow-ups/);assert.equal(html.split("Previous assessments are shown for reference. Changes can only be made to the current assessment.").length-1,1);assert.doesNotMatch(html,/Historical — Read-only/);assert.doesNotMatch(html,/<form|<textarea/);
+  const source=readFileSync("src/modules/component-04/components/PreviousRegulatoryFollowups.tsx","utf8");assert.match(source,/development-session-changed/);assert.match(source,/AbortController/);assert.match(source,/state.actorId===actorId/);assert.match(source,/Load more previous follow-ups/);assert.doesNotMatch(source,/\.record\(|method:"POST"/);
+ });
+ test("All handling states use the same stacked full-width field styles and preserve payloads",()=>{
+--- before/StateLandGovernance.Web/tests/component-04-manual-feedback.test.ts
++++ after/StateLandGovernance.Web/tests/component-04-manual-feedback.test.ts
+@@ -57,7 +57,7 @@
+ test("Upload status is an accessible indeterminate announcement without fake percentages",()=>{
+  const html=renderToStaticMarkup(createElement(UploadFeedback,{state:{phase:"uploading",fileName:"Proposal1.pdf",bytes:42,concern:"LegalDispute",message:"Uploading Proposal1.pdf…"}}));
+  assert.match(html,/role="status"/);assert.match(html,/aria-live="polite"/);assert.match(html,/Uploading Proposal1.pdf/);assert.doesNotMatch(html,/aria-valuenow|\d+%/);
+- const text=readFileSync("src/modules/component-04/components/ManualEvidenceVerification.tsx","utf8");assert.match(text,/pendingDecision/);assert.doesNotMatch(text,/pending.current.form/);assert.match(text,/This is not an evidence upload/);assert.match(text,/<details open><summary>Evidence attachments/);
++ const text=readFileSync("src/modules/component-04/components/ManualEvidenceVerification.tsx","utf8");assert.match(text,/pendingDecision/);assert.doesNotMatch(text,/pending.current.form/);assert.match(text,/This is not an evidence upload/);assert.match(text,/<h4>Evidence attachments/);assert.match(text,/view.canVerify&&<fieldset/);
+ });
+ test("Handling deduplicates only identical event IDs, preserves repeated triage writes and never guesses hidden states",()=>{
+  const event={id:"a",revision:2,operation:"DsReviewRecorded",status:"AssignedToDs",atUtc:"2026-10-23T00:00:00Z",publicSummary:"",actorId:null,reason:null,details:null,evidenceReferences:null};
+--- before/StateLandGovernance.Web/tests/component-04-previous-evidence.test.ts
++++ after/StateLandGovernance.Web/tests/component-04-previous-evidence.test.ts
+@@ -2,12 +2,12 @@
+ import assert from "node:assert/strict";
+ import {createElement} from "react";
+ import {renderToStaticMarkup} from "react-dom/server";
+-import {HistoricalEvidenceGroup} from "../src/modules/component-04/components/PreviousEarlyEvidence";
++import {HistoricalEvidenceGroup,PreviousEarlyEvidence} from "../src/modules/component-04/components/PreviousEarlyEvidence";
+ import {type PreviousEvidence} from "../src/modules/component-04/services/manualEvidence";
+ const item:PreviousEvidence={requestId:"original-request",assessmentId:"original-assessment",createdAtUtc:"2026-10-23T00:00:00Z",evidence:{canVerify:false,attachments:[{id:"attachment-a",requestId:"original-request",concern:"LegalDispute",actorId:"responsible-ds",createdAtUtc:"2026-10-23T00:01:00Z",fileName:"State Land Development Proposal Form.png",contentType:"image/png",bytes:1487486,sha256:"original-hash"}],history:[{id:"decision-a",requestId:"original-request",concern:"LegalDispute",revision:1,previousStatus:"Unverified",status:"Verified",actorId:"responsible-ds",createdAtUtc:"2026-10-23T00:02:00Z",remarks:"Original reviewed evidence remarks.",attachmentIds:["attachment-a"],evidenceReferences:["Original document reference"],eventSha256:"event-hash"}]}};
+ test("Historical group preserves provenance and original report without write controls",()=>{
+  const html=renderToStaticMarkup(createElement(HistoricalEvidenceGroup,{item,onDownload:()=>{}}));
+- for(const value of ["Historical — Read-only","original-request","original-assessment","State Land Development Proposal Form.png","responsible-ds","Verified","revision 1","Original reviewed evidence remarks.","Original document reference","/component-04/officer-assessments/original-request"])assert.ok(html.includes(value),value);
++ for(const value of ["original-request","original-assessment","State Land Development Proposal Form.png","responsible-ds","Verified","revision 1","Original reviewed evidence remarks.","Original document reference","/component-04/officer-assessments/original-request"])assert.ok(html.includes(value),value);
+  assert.ok(html.includes("Download State Land Development Proposal Form.png"));assert.ok(!html.includes('type="file"'));assert.ok(!html.includes("Save verification"));assert.ok(!html.includes('href="http'));
+ });
+ test("Historical rendering never mutates current assessment counts",()=>{
+@@ -16,3 +16,12 @@
+ test("Historical group provides separate empty states",()=>{
+  const html=renderToStaticMarkup(createElement(HistoricalEvidenceGroup,{item:{...item,evidence:{canVerify:false,attachments:[],history:[]}},onDownload:()=>{}}));assert.match(html,/No attachments saved on this assessment/);assert.match(html,/No verification decisions saved on this assessment/);
+ });
++
++test("Previous Assessments explains read-only once, with one technical disclosure per group",()=>{
++ const section=renderToStaticMarkup(createElement(PreviousEarlyEvidence,{requestId:"current"}));
++ assert.equal(section.split("Previous assessments are shown for reference. Changes can only be made to the current assessment.").length-1,1);
++ assert.match(section,/Previous Assessments/);assert.doesNotMatch(section,/Historical — Read-only/);
++ const group=renderToStaticMarkup(createElement(HistoricalEvidenceGroup,{item,onDownload:()=>{}}));
++ assert.equal((group.match(/<details/g)||[]).length,1);assert.match(group,/<summary>Technical details<\/summary>/);assert.match(group,/Attachments: 1/);assert.match(group,/Verification history: 1/);assert.match(group,/Legal Dispute/);
++ assert.doesNotMatch(group,/Historical — Read-only|type="file"|<textarea|Save verification/);
++});
+--- before/StateLandGovernance.Web/src/modules/component-04/components/ManualEvidenceVerification.tsx
++++ after/StateLandGovernance.Web/src/modules/component-04/components/ManualEvidenceVerification.tsx
+@@ -8,6 +8,8 @@
+ import {sriLankaTime,statusLabel} from "../services/presentation";
+ import styles from "./ManualEvidenceVerification.module.css";
+ import {PreviousEarlyEvidence} from "./PreviousEarlyEvidence";
++import historyStyles from "./AssessmentHistory.module.css";
++import {StatusBadge} from "./ProgressiveSteps";
+ export function UploadFeedback({state}:{state:UploadState}){
+  const pending=["validating","uploading","confirming"].includes(state.phase)||state.refreshing;
+  return <div role="status" aria-live="polite" aria-atomic="true" data-upload-state={state.phase} className={styles.feedback}>{pending&&<span className={styles.spinner} aria-hidden="true"/>}<span>{state.message}</span>{state.fileName&&<small>{state.fileName} · {state.bytes?.toLocaleString()} bytes · {statusLabel(state.concern??"")}</small>}</div>;
+@@ -49,13 +51,13 @@
+  {!view&&!error&&<p role="status">Loading evidence history…</p>}
+  {!view&&error&&<button disabled={busy} onClick={()=>void refresh()}>Retry loading evidence history</button>}
+  {view&&<><div className={styles.toolbar}><button disabled={busy} onClick={()=>void refresh()}>Refresh attachments and verification history</button><span>{view.canVerify?"Responsible DS workspace":"Read-only verification history"}</span></div>
+- {view.canVerify&&<fieldset disabled={busy||unresolved}><legend>Review a governance concern</legend><label>Concern<select value={concern} onChange={e=>{setConcern(e.target.value);setSelected([]);uploader.current?.select(file.current?.files?.[0]??null,e.target.value);}}>{investigationConcerns.map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label><p>Current manual status: <strong>{statusLabel(latest?.status??"Unverified")}</strong> · revision {latest?.revision??0}</p><p>Screening request: {requestId}</p>
++ {view.canVerify&&<fieldset disabled={busy||unresolved}><legend>Review a governance concern</legend><label>Concern<select value={concern} onChange={e=>{setConcern(e.target.value);setSelected([]);uploader.current?.select(file.current?.files?.[0]??null,e.target.value);}}>{investigationConcerns.map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label><p>Current manual status: <strong>{statusLabel(latest?.status??"Unverified")}</strong> · revision {latest?.revision??0}</p>
+  <label>Attach evidence (PDF, PNG, JPEG or UTF-8 text, maximum 5 MiB)<input ref={file} type="file" accept="application/pdf,image/png,image/jpeg,text/plain" onChange={e=>uploader.current?.select(e.target.files?.[0]??null,concern)}/></label><button type="button" disabled={upload.phase==="empty"||upload.phase==="saved"||upload.phase==="loaded"} onClick={()=>{if(!decisionFlight.current)void uploader.current?.start(concern);}}>Save evidence attachment</button>
+  <label>Verification decision<select value={decision} onChange={e=>setDecision(e.target.value)}><option value="Verified">Verified</option><option value="Rejected">Rejected</option><option value="MoreInformationRequired">More Information Required</option></select></label><label>Verification remarks (required, 20–2000 characters)<textarea minLength={20} maxLength={2000} value={remarks} onChange={e=>setRemarks(e.target.value)}/></label><label>Evidence/document references (one per line, maximum 10)<textarea value={references} onChange={e=>setReferences(e.target.value)}/></label><div>Attachments reviewed{view.attachments.filter(a=>a.concern===concern).map(a=><label key={a.id}><input type="checkbox" checked={selected.includes(a.id)} onChange={e=>setSelected(old=>e.target.checked?[...old,a.id]:old.filter(x=>x!==a.id))}/>{a.fileName}</label>)}</div><button type="button" disabled={remarks.trim().length<20||(decision==="Verified"&&!selected.length&&!references.trim())} onClick={()=>void saveDecision()}>Save verification decision</button></fieldset>}
+  {upload.phase==="uncertain"&&<div role="status"><p>Refresh saved attachments first. Never create a new key automatically for an unconfirmed upload.</p><button disabled={busy} onClick={()=>void refresh()}>Refresh attachment history</button><button disabled={busy||!upload.canReplay} onClick={()=>void uploader.current?.replay()}>Replay the same upload request</button>{!upload.canReplay&&<p>The original file payload is unavailable after reload. Exact replay cannot be performed here; investigate saved history before another upload.</p>}</div>}
+  {decisionUncertain&&<p role="status">The unconfirmed verification decision retains its exact key and payload. Refresh history, then <button disabled={busy} onClick={()=>void saveDecision()}>Replay the same verification decision</button>. This is not an evidence upload.</p>}
+- <details open><summary>Evidence attachments ({view.attachments.length})</summary><p>Only saved attachments returned by the server appear here. A selected file or a verification decision does not establish an upload.</p>{!view.attachments.length&&<p>No saved evidence attachments exist for this screening request.</p>}<ul>{view.attachments.map(a=><li key={a.id}><strong>{a.fileName}</strong> · {a.bytes.toLocaleString()} bytes · {statusLabel(a.concern)} · {sriLankaTime(a.createdAtUtc)}<button onClick={()=>void manualEvidence.download(requestId,a).catch(caught=>setError(caught.message))}>Download {a.fileName}</button><small>Recorded DS: {a.actorId} · attachment {a.id} · SHA256 {a.sha256}</small></li>)}</ul></details>
+- <details open><summary>Verification history ({view.history.length})</summary>{view.history.map(h=><article key={h.id}><h4>{statusLabel(h.concern)} · {statusLabel(h.status)}</h4><p>{statusLabel(h.previousStatus)} → {statusLabel(h.status)} · revision {h.revision} · {sriLankaTime(h.createdAtUtc)}</p><p>{h.remarks}</p><p>Attachments referenced: {h.attachmentIds.length}; document references: {h.evidenceReferences.length}.</p>{h.evidenceReferences.map((r,i)=><p key={i}>{r}</p>)}<small>Recorded DS: {h.actorId} · event {h.id}</small></article>)}{!view.history.length&&<p>No manual verification has been recorded.</p>}</details></>}
++ <section className={historyStyles.section}><h4>Evidence attachments ({view.attachments.length})</h4><p>Only saved attachments returned by the server appear here. A selected file or a verification decision does not establish an upload.</p>{!view.attachments.length&&<p>No saved evidence attachments exist for this screening request.</p>}<ul>{view.attachments.map(a=><li key={a.id}><strong>{a.fileName}</strong> · {a.bytes.toLocaleString()} bytes · {statusLabel(a.concern)} · {sriLankaTime(a.createdAtUtc)}<button onClick={()=>void manualEvidence.download(requestId,a).catch(caught=>setError(caught.message))}>Download {a.fileName}</button></li>)}</ul></section>
++ <section className={historyStyles.section}><h4>Verification history ({view.history.length})</h4>{view.history.map(h=><article key={h.id}><div className={historyStyles.concerns}><strong>{statusLabel(h.concern)}</strong><StatusBadge status={h.status}/></div><p className={historyStyles.meta}>revision {h.revision} · {sriLankaTime(h.createdAtUtc)}</p><p>{h.remarks}</p><p>Attachments referenced: {h.attachmentIds.length}; document references: {h.evidenceReferences.length}.</p>{h.evidenceReferences.map((r,i)=><p key={i}>{r}</p>)}<p className={historyStyles.meta}>Recorded by responsible DS</p></article>)}{!view.history.length&&<p>No manual verification has been recorded.</p>}</section><details className={historyStyles.technical}><summary>Technical details</summary><p>Request: {requestId}</p>{view.attachments.map(a=><p key={a.id}>Attachment {a.id} · uploader {a.actorId} · SHA256 {a.sha256}</p>)}{view.history.map(h=><p key={h.id}>Event {h.id} · recorded officer {h.actorId} · {statusLabel(h.previousStatus)} → {statusLabel(h.status)} · SHA256 {h.eventSha256}</p>)}</details></>}
+  {view&&<PreviousEarlyEvidence key={`${session.actor}:${session.generation}:${requestId}`} requestId={requestId}/>}
+  </section>;
+ }
+--- before/StateLandGovernance.Web/src/modules/component-04/components/OfficerAssessmentResult.tsx
++++ after/StateLandGovernance.Web/src/modules/component-04/components/OfficerAssessmentResult.tsx
+@@ -10,7 +10,7 @@
+ const readable=statusLabel;
+ export function OfficerAssessmentResult({report}:{report:RequestReport}){
+  const result=report.result;
+- return <section className={styles.card}><div className={styles.resultHeader}><h3>{report.kind==="early"?"Early Governance result":"Workflow analysis result"}</h3><StatusBadge status={report.state}/></div>
++ return <section className={styles.card}><div className={styles.resultHeader}><h3>{report.kind==="early"?"Early Governance Result":"Workflow analysis result"}</h3><StatusBadge status={report.state}/></div>
+  {report.state!=="Saved"&&<p role="status">This request has no confirmed saved result. Refresh history for its status. Pending or Unknown requests must be investigated before another analysis; do not retry.</p>}
+  {report.state==="Saved"&&result&&("anomalyScore" in result?<AnomalyDetails result={result}/>:<><h4>{readable(result.result.overallStatus)}</h4><EvidenceStatusSummary states={result.result.indicatorResults.map(i=>i.evidenceState)}/><ProgressiveSteps label="Early Governance screening findings">{result.result.indicatorResults.map(i=><ProgressiveStep key={i.indicatorType} title={readable(i.indicatorType)} description={i.message} status={i.evidenceState}/>)}</ProgressiveSteps></>)}
+  {report.kind==="early"&&report.state==="Saved"&&<ManualEvidenceVerification requestId={report.id}/>}
+--- before/StateLandGovernance.Web/src/modules/component-04/components/PreviousEarlyEvidence.tsx
++++ after/StateLandGovernance.Web/src/modules/component-04/components/PreviousEarlyEvidence.tsx
+@@ -3,11 +3,17 @@
+ import {manualEvidence,type PreviousEvidence} from "../services/manualEvidence";
+ import {useOfficerSession} from "./OfficerFlowSession";
+ import {sriLankaTime,statusLabel} from "../services/presentation";
++import {StatusBadge} from "./ProgressiveSteps";
++import styles from "./AssessmentHistory.module.css";
+ 
+ export function HistoricalEvidenceGroup({item,onDownload}:{item:PreviousEvidence;onDownload:(item:PreviousEvidence,attachment:PreviousEvidence["evidence"]["attachments"][number])=>void}){
+- return <article><h4>Historical — Read-only</h4><p>Assessment date: {sriLankaTime(item.createdAtUtc)}</p><p>Request {item.requestId} · assessment {item.assessmentId}</p><a href={`/component-04/officer-assessments/${encodeURIComponent(item.requestId)}`}>Open original saved report</a>
+- <details open><summary>Previous attachments ({item.evidence.attachments.length})</summary><ul>{item.evidence.attachments.map(a=><li key={a.id}><strong>{a.fileName}</strong> · {a.bytes.toLocaleString()} bytes · {statusLabel(a.concern)}<p>Uploaded by {a.actorId} · {sriLankaTime(a.createdAtUtc)}</p><button type="button" onClick={()=>onDownload(item,a)}>Download {a.fileName}</button></li>)}</ul>{!item.evidence.attachments.length&&<p>No attachments saved on this assessment.</p>}</details>
+- <details open><summary>Previous verification history ({item.evidence.history.length})</summary>{item.evidence.history.map(h=><article key={h.id}><h5>{statusLabel(h.concern)} · {statusLabel(h.status)} · revision {h.revision}</h5><p>{statusLabel(h.previousStatus)} → {statusLabel(h.status)}</p><p>{h.remarks}</p>{h.evidenceReferences.map((r,i)=><p key={i}>Document reference: {r}</p>)}<p>Attachments referenced: {h.attachmentIds.length}</p><p>Recorded by {h.actorId} · {sriLankaTime(h.createdAtUtc)}</p></article>)}{!item.evidence.history.length&&<p>No verification decisions saved on this assessment.</p>}</details></article>;
++ const concerns=[...new Set([...item.evidence.attachments.map(x=>x.concern),...item.evidence.history.map(x=>x.concern)])];
++ return <article className={styles.card} aria-label={`Previous assessment ${sriLankaTime(item.createdAtUtc)}`}><header className={styles.header}><h4>{sriLankaTime(item.createdAtUtc)}</h4><a href={`/component-04/officer-assessments/${encodeURIComponent(item.requestId)}`}>Open original saved report</a></header>
++ <div className={styles.concerns}>{concerns.map(concern=>{const latest=item.evidence.history.filter(h=>h.concern===concern).reduce<typeof item.evidence.history[number]|undefined>((a,b)=>!a||b.revision>a.revision?b:a,undefined);return <span key={concern}>{statusLabel(concern)} <StatusBadge status={latest?.status??"Unverified"}/></span>;})}</div>
++ <p className={styles.counts}><span>Attachments: {item.evidence.attachments.length}</span><span>Verification history: {item.evidence.history.length}</span></p>
++ <h5>Evidence attachments</h5><ul className={styles.files}>{item.evidence.attachments.map(a=><li key={a.id}><strong>{a.fileName}</strong> · {a.bytes.toLocaleString()} bytes · {statusLabel(a.concern)}<span className={styles.meta}>Uploaded by responsible DS · {sriLankaTime(a.createdAtUtc)}</span><button type="button" onClick={()=>onDownload(item,a)}>Download {a.fileName}</button></li>)}</ul>{!item.evidence.attachments.length&&<p>No attachments saved on this assessment.</p>}
++ <h5>Verification history</h5>{item.evidence.history.map(h=><article className={styles.entry} key={h.id}><div className={styles.concerns}><strong>{statusLabel(h.concern)}</strong><StatusBadge status={h.status}/><span className={styles.meta}>revision {h.revision}</span></div><p>{h.remarks}</p>{h.evidenceReferences.map((r,i)=><p key={i}>Document reference: {r}</p>)}<p className={styles.meta}>Attachments reviewed: {h.attachmentIds.length} · Recorded by responsible DS · {sriLankaTime(h.createdAtUtc)}</p></article>)}{!item.evidence.history.length&&<p>No verification decisions saved on this assessment.</p>}
++ <details className={styles.technical}><summary>Technical details</summary><p>Request: {item.requestId}</p><p>Assessment: {item.assessmentId}</p>{item.evidence.attachments.map(a=><p key={a.id}>Attachment {a.id} · uploader {a.actorId} · SHA256 {a.sha256}</p>)}{item.evidence.history.map(h=><p key={h.id}>Event {h.id} · recorded officer {h.actorId} · {statusLabel(h.previousStatus)} → {statusLabel(h.status)} · revision {h.revision} · attachment IDs: {h.attachmentIds.join(", ")||"None"} · SHA256 {h.eventSha256}</p>)}</details></article>;
+ }
+ export function PreviousEarlyEvidence({requestId}:{requestId:string}){
+  const session=useOfficerSession(),epoch=session.epoch;
+@@ -21,5 +27,5 @@
+  async function more(){if(flight.current)return;flight.current=true;const e=epoch.current;setState(old=>({...old,busy:true,error:""}));try{const page=await manualEvidence.previous(requestId,state.cursor??undefined);if(e===epoch.current)setState(old=>({...old,items:[...old.items,...page.items.filter(item=>!old.items.some(x=>x.requestId===item.requestId))],cursor:page.nextCursor,busy:false,error:"",loaded:true}));}catch(caught){if(e===epoch.current)setState(old=>({...old,busy:false,error:caught instanceof Error?caught.message:"Could not load historical evidence."}));}finally{if(e===epoch.current)flight.current=false;}}
+  async function download(item:PreviousEvidence,attachment:PreviousEvidence["evidence"]["attachments"][number]){const e=epoch.current;try{await manualEvidence.download(item.requestId,attachment);}catch(caught){if(e===epoch.current)setState(old=>({...old,error:caught instanceof Error?caught.message:"Download unavailable."}));}}
+  const current=state.scope===scope;
+- return <section aria-label="Previous Early Governance Evidence and Verifications"><h3>Previous Early Governance Evidence and Verifications</h3><p>Historical — Read-only. Earlier evidence and decisions belong to their original assessments. They do not change this assessment’s attachment count, Unverified status or revision, and are never automatically carried forward.</p>{(!current||state.busy)&&<p role="status">Loading previous evidence…</p>}{current&&<>{state.error&&<p role="alert">{state.error}</p>}{state.items.map(item=><HistoricalEvidenceGroup key={item.requestId} item={item} onDownload={(group,attachment)=>void download(group,attachment)}/>)}{state.loaded&&!state.items.length&&<p>No authorized earlier evidence or verifications exist for this proposal.</p>}{(state.cursor||!state.loaded)&&<button disabled={state.busy} type="button" onClick={()=>void more()}>{state.loaded?"Load more previous assessments":"Retry previous evidence"}</button>}</>}</section>;
++ return <section className={styles.section} aria-label="Previous Assessments"><h3>Previous Assessments</h3><p className={styles.intro}>Previous assessments are shown for reference. Changes can only be made to the current assessment.</p>{(!current||state.busy)&&<p role="status">Loading previous evidence…</p>}{current&&<>{state.error&&<p role="alert">{state.error}</p>}{state.items.map(item=><HistoricalEvidenceGroup key={item.requestId} item={item} onDownload={(group,attachment)=>void download(group,attachment)}/>)}{state.loaded&&!state.items.length&&<p>No authorized earlier evidence or verifications exist for this proposal.</p>}{(state.cursor||!state.loaded)&&<button disabled={state.busy} type="button" onClick={()=>void more()}>{state.loaded?"Load more previous assessments":"Retry previous evidence"}</button>}</>}</section>;
+ }
+--- before/StateLandGovernance.Web/src/modules/component-04/components/PreviousRegulatoryFollowups.tsx
++++ after/StateLandGovernance.Web/src/modules/component-04/components/PreviousRegulatoryFollowups.tsx
+@@ -2,14 +2,25 @@
+ import Link from "next/link";
+ import {useEffect,useRef,useState} from "react";
+ import {regulatoryFollowups,type PreviousFollowup} from "../services/regulatoryFollowups";
+-import {sriLankaTime,statusLabel} from "../services/presentation";
++import {sriLankaTime} from "../services/presentation";
+ import {readDevelopmentSession} from "@/lib/developmentSession";
++import {getRegulatoryReport,type RegulatoryFinding} from "../services/independentRegulatoryReports";
++import {RegulatoryFollowupEntries,FollowupTechnicalDetails} from "./RegulatoryFollowupHistory";
++import styles from "./AssessmentHistory.module.css";
+ 
+ type HistoryState={evaluationId:string;actorId:string;items:PreviousFollowup[];next:string|null};
+ export function groupPreviousFollowups(items:PreviousFollowup[]){
+  const groups=new Map<string,{timestamp:string;events:PreviousFollowup["event"][]}>();
+  for(const item of items){let group=groups.get(item.evaluationId);if(!group){group={timestamp:item.evaluationTimestamp,events:[]};groups.set(item.evaluationId,group);}if(!group.events.some(x=>x.id===item.event.id))group.events.push(item.event);}
+  return [...groups].map(([id,value])=>({id,...value}));
++}
++export function RegulatoryHistoryCard({group,findings,loading=false}:{group:ReturnType<typeof groupPreviousFollowups>[number];findings?:RegulatoryFinding[]|null;loading?:boolean}){
++ return <article className={styles.card}><header className={styles.header}><h4>{sriLankaTime(group.timestamp)}</h4><Link href={`/component-04/regulatory-assessments/${group.id}`}>Open original saved report</Link></header><p className={styles.counts}>Follow-up history: {group.events.length}</p><RegulatoryFollowupEntries events={group.events} findings={findings} loading={loading}/><FollowupTechnicalDetails evaluationId={group.id} events={group.events}/></article>;
++}
++function OriginalRegulatoryGroup({group}:{group:ReturnType<typeof groupPreviousFollowups>[number]}){
++ const [findings,setFindings]=useState<RegulatoryFinding[]|null>(null),[loading,setLoading]=useState(true);
++ useEffect(()=>{let active=true;const abort=new AbortController();void getRegulatoryReport(group.id,abort.signal).then(report=>{if(active)setFindings(report.findings);}).catch(()=>{/* Keep the authorized history; never infer missing original finding metadata. */}).finally(()=>{if(active)setLoading(false);});return()=>{active=false;abort.abort();};},[group.id]);
++ return <RegulatoryHistoryCard group={group} findings={findings} loading={loading}/>;
+ }
+ export function PreviousRegulatoryFollowups({evaluationId}:{evaluationId:string}){
+  const [state,setState]=useState<HistoryState|null>(null),[loading,setLoading]=useState(false),[error,setError]=useState("");
+@@ -26,11 +37,11 @@
+  }
+  const latestLoad=useRef(load);useEffect(()=>{latestLoad.current=load;});
+  useEffect(()=>{let active=true;const cancel=()=>{epoch.current++;abort.current?.abort();};const refresh=()=>{if(active)void latestLoad.current(true);};queueMicrotask(refresh);window.addEventListener("development-session-changed",refresh);return()=>{active=false;cancel();window.removeEventListener("development-session-changed",refresh);};},[evaluationId]);
+- return <section aria-label="Previous Regulatory Follow-ups"><h3>Previous Regulatory Follow-ups</h3><p>Historical — Read-only. These events belong to their original saved assessments for the same internal proposal. The current assessment keeps its own independent revision.</p>
++ return <section className={styles.section} aria-label="Previous Regulatory Follow-ups"><h3>Previous Regulatory Follow-ups</h3><p className={styles.intro}>Previous assessments are shown for reference. Changes can only be made to the current assessment.</p>
+   <button type="button" disabled={loading} onClick={()=>void load(true)}>Refresh previous follow-ups</button>
+   {loading&&<p role="status">Loading authorized previous follow-ups…</p>}{error&&<p role="alert">{error}</p>}
+   {current&&current.items.length===0&&!loading&&<p>No authorized previous follow-ups were found for this proposal.</p>}
+-  {current&&groupPreviousFollowups(current.items).map(group=><article key={group.id}><h4>Original assessment {group.id}</h4><p>{sriLankaTime(group.timestamp)} · Historical — Read-only</p><Link href={`/component-04/regulatory-assessments/${group.id}`}>Open original saved report</Link>{group.events.map(event=><article key={event.id}><h5>{event.ruleCode} · rule version {event.ruleVersion}</h5><p>{statusLabel(event.operation)}{event.reviewOutcome?` — ${statusLabel(event.reviewOutcome)}`:""}</p>{event.missingInformation&&<p>Missing information: {event.missingInformation}</p>}<p>{event.remarks}</p>{event.references.map((reference,i)=><p key={i}>{reference}</p>)}<p>Responsible officer: {event.actorId}</p><p>{sriLankaTime(event.createdAtUtc)} · revision {event.revision}</p><small>Original event {event.id}</small></article>)}</article>)}
++  {current&&groupPreviousFollowups(current.items).map(group=><OriginalRegulatoryGroup key={group.id} group={group}/>)}
+   {current?.next&&<button type="button" disabled={loading} onClick={()=>void load(false)}>Load more previous follow-ups</button>}
+  </section>;
+ }
+--- before/StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFollowups.tsx
++++ after/StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFollowups.tsx
+@@ -2,9 +2,11 @@
+ import {useEffect,useRef,useState} from "react";
+ import type {RegulatoryFinding} from "../services/independentRegulatoryReports";
+ import {FollowupRejectedError,followupDraftKey,followupOperations,followupRevision,humanReviewOutcomes,regulatoryFollowups,type FollowupHistory,type FollowupInput} from "../services/regulatoryFollowups";
+-import {statusLabel,sriLankaTime} from "../services/presentation";
++import {statusLabel} from "../services/presentation";
+ import styles from "./RegulatoryFollowups.module.css";
+ import {PreviousRegulatoryFollowups} from "./PreviousRegulatoryFollowups";
++import {RegulatoryFollowupEntries,FollowupTechnicalDetails} from "./RegulatoryFollowupHistory";
++import historyStyles from "./AssessmentHistory.module.css";
+ 
+ export function RegulatoryFollowups({evaluationId,findings}:{evaluationId:string;findings:RegulatoryFinding[]}){
+  const [view,setView]=useState<FollowupHistory|null>(null),[error,setError]=useState(""),[notice,setNotice]=useState(""),[busy,setBusy]=useState(false),[pending,setPending]=useState<FollowupInput|null>(null);
+@@ -26,7 +28,7 @@
+   }catch(e){if(version===epoch.current){if(e instanceof FollowupRejectedError){sessionStorage.removeItem(followupDraftKey(evaluationId));setPending(null);await refresh();setError(e.message+" The server rejected this request. Review the current history before a new deliberate submission.");}else setError((e instanceof Error?e.message:"Save not confirmed.")+" The exact pending request is retained. Refresh history and deliberately replay; do not invent another key.");}}
+   finally{if(version===epoch.current){flight.current=false;setBusy(false);}}
+  }
+- return <section className={styles.panel} aria-label="Regulatory follow-up"><h2>Regulatory follow-up</h2><p>Internal clarification and reasoned human-review records. Original findings remain unchanged. This does not deliver a request to an applicant or grant legal approval.</p>
++ return <section className={styles.panel} aria-label="Regulatory follow-up"><h2>Current Regulatory Follow-ups</h2><p>Internal clarification and reasoned human-review records. Original findings remain unchanged. This does not deliver a request to an applicant or grant legal approval.</p>
+   {error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}{!view&&!error&&<p role="status">Reading follow-up history…</p>}
+   {view&&<><button type="button" disabled={busy} onClick={()=>void refresh()}>Refresh follow-up history</button>
+    {!view.canWrite&&<p>Read-only. Only the currently eligible responsible DS who created this assessment can record follow-up.</p>}
+@@ -40,7 +42,7 @@
+      <button type="submit">{operation==="ClarificationRequested"?"Request Clarification":"Record Human Review"}</button></>}
+    </fieldset></form>}
+    {busy&&<p role="status">Saving or retrieving the exact follow-up request…</p>}
+-   <details open><summary>Saved follow-up history ({view.history.length})</summary>{view.history.map(x=><article key={x.id}><h3>{x.ruleCode} — {statusLabel(x.operation)}</h3><p>Rule version {x.ruleVersion} · revision {x.revision} · {sriLankaTime(x.createdAtUtc)} · {x.status}</p>{x.reviewOutcome&&<p>{statusLabel(x.reviewOutcome)}</p>}{x.missingInformation&&<p>Missing information: {x.missingInformation}</p>}<p>{x.remarks}</p>{x.references.map((r,i)=><p key={i}>{r}</p>)}<details><summary>Recorded officer and event provenance</summary><p>Officer {x.actorId}; event {x.id}</p><p>SHA256 {x.eventSha256}</p></details></article>)}{!view.history.length&&<p>No internal follow-up events recorded.</p>}</details>
++   <section className={historyStyles.section}><h3>Saved follow-up history ({view.history.length})</h3><RegulatoryFollowupEntries events={view.history} findings={findings}/>{!view.history.length&&<p>No internal follow-up events recorded.</p>}<FollowupTechnicalDetails evaluationId={evaluationId} events={view.history}/></section>
+   </>}
+  <PreviousRegulatoryFollowups evaluationId={evaluationId}/></section>;
+ }
+--- /dev/null
++++ after/StateLandGovernance.Web/src/modules/component-04/components/AssessmentHistory.module.css
+@@ -0,0 +1 @@
++.section{margin-top:1.5rem;min-width:0;max-width:100%;overflow-wrap:anywhere}.section h3{margin:0 0 .5rem}.intro{color:#675b56;line-height:1.6;margin:.5rem 0 1rem}.section .card{border:1px solid #e4dbd5;border-radius:.6rem;padding:1rem;margin:1rem 0;background:#fff;min-width:0;max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}.header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:start;gap:.65rem}.header h4{margin:0;font-size:1rem}.counts,.meta{font-size:.875rem;color:#675b56;line-height:1.6}.counts{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin:.5rem 0}.concerns{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;margin:.5rem 0}.section .entry{padding:.8rem 0;border:0;border-top:1px solid #eee1d9;min-width:0;overflow-wrap:anywhere}.entry h5,.entry h4{margin:.25rem 0}.entry p{margin:.4rem 0;line-height:1.6}.files{list-style:none;margin:0;padding:0}.files li{min-width:0;max-width:100%;overflow-wrap:anywhere}.technical{margin-top:.75rem;font-size:.875rem}.technical summary{cursor:pointer;font-weight:600}.technical p{overflow-wrap:anywhere}.section a,.section button{max-width:100%;overflow-wrap:anywhere}.section :focus-visible{outline:3px solid #a64e37;outline-offset:3px}.section button{min-height:40px}.section h4,.section h5{line-height:1.5}@media(max-width:600px){.section .card{padding:.8rem}.header{display:grid;grid-template-columns:minmax(0,1fr)}.counts{gap:.25rem .75rem}.section{margin-top:1rem}}
+--- /dev/null
++++ after/StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFollowupHistory.tsx
+@@ -0,0 +1,18 @@
++import type {FollowupEvent} from "../services/regulatoryFollowups";
++import type {RegulatoryFinding} from "../services/independentRegulatoryReports";
++import {sriLankaTime,statusLabel} from "../services/presentation";
++import {StatusBadge} from "./ProgressiveSteps";
++import styles from "./AssessmentHistory.module.css";
++
++export function RegulatoryFollowupEntries({events,findings,loading=false}:{events:FollowupEvent[];findings?:RegulatoryFinding[]|null;loading?:boolean}){
++ return <>{events.map(event=>{const finding=findings?.find(f=>f.ruleCode===event.ruleCode&&f.ruleVersion===event.ruleVersion);return <article className={styles.entry} key={event.id}>
++  <h5>{event.ruleCode}{finding?` · ${finding.expectedRequirement||statusLabel(finding.category)}`:""}</h5>
++  <div className={styles.concerns}><span>Original screening outcome:</span>{finding?<StatusBadge status={finding.status}/>:<span>{loading?"Loading original finding…":"Unavailable in the loaded report"}</span>}</div>
++  <div className={styles.concerns}><strong>{event.operation==="ClarificationRequested"?"Request Clarification":event.operation==="HumanReviewRecorded"?"Record Human Review":statusLabel(event.operation)}</strong>{event.reviewOutcome&&<StatusBadge status={event.reviewOutcome}/>}<span className={styles.meta}>revision {event.revision}</span></div>
++  {event.missingInformation&&<p><strong>Missing information:</strong> {event.missingInformation}</p>}<p>{event.remarks}</p>{event.references.length>0&&<ul>{event.references.map((r,i)=><li key={i}>Document reference: {r}</li>)}</ul>}
++  <p className={styles.meta}>Recorded by responsible DS · {sriLankaTime(event.createdAtUtc)}</p>
++ </article>;})}</>;
++}
++export function FollowupTechnicalDetails({evaluationId,events}:{evaluationId:string;events:FollowupEvent[]}){
++ return <details className={styles.technical}><summary>Technical details</summary><p>Assessment: {evaluationId}</p>{events.map(event=><p key={event.id}>Event {event.id} · rule {event.ruleCode} / {event.ruleVersion} · revision {event.revision} · officer {event.actorId} · recorded state {event.status} · previous event {event.previousEventId??"None"} · SHA256 {event.eventSha256}</p>)}</details>;
++}
+--- /dev/null
++++ after/StateLandGovernance.Web/tests/component-04-history-polish.test.ts
+@@ -0,0 +1,25 @@
++import {test} from "node:test";
++import assert from "node:assert/strict";
++import {createElement} from "react";
++import {renderToStaticMarkup} from "react-dom/server";
++import {RegulatoryHistoryCard,groupPreviousFollowups} from "../src/modules/component-04/components/PreviousRegulatoryFollowups";
++import {RegulatoryFollowupEntries} from "../src/modules/component-04/components/RegulatoryFollowupHistory";
++import type {FollowupEvent} from "../src/modules/component-04/services/regulatoryFollowups";
++import type {RegulatoryFinding} from "../src/modules/component-04/services/independentRegulatoryReports";
++const event:FollowupEvent={id:"original-event-a",evaluationId:"original-assessment",ruleCode:"RULE-1",ruleVersion:"1",actorId:"original-officer",createdAtUtc:"2026-10-23T00:00:00Z",operation:"ClarificationRequested",reviewOutcome:null,missingInformation:"Original missing information description.",remarks:"Original officer clarification remarks.",references:["Document reference A"],status:"Recorded",revision:1,previousEventId:null,eventSha256:"original-event-sha"};
++const finding={ruleCode:"RULE-1",ruleVersion:"1",expectedRequirement:"Original saved rule requirement",status:"InsufficientInformation",category:"Legal"} as RegulatoryFinding;
++test("Regulatory cards show original finding and preserve multiple revisions without editing",()=>{
++ const second={...event,id:"original-event-b",revision:2,operation:"HumanReviewRecorded",reviewOutcome:"AdditionalInformationRequired",previousEventId:event.id};
++ const group=groupPreviousFollowups([{evaluationId:event.evaluationId,evaluationTimestamp:event.createdAtUtc,event},{evaluationId:event.evaluationId,evaluationTimestamp:event.createdAtUtc,event:second}])[0];
++ const html=renderToStaticMarkup(createElement(RegulatoryHistoryCard,{group,findings:[finding]}));
++ for(const text of ["Original saved rule requirement","Original screening outcome:","Insufficient information","Request Clarification","Record Human Review","revision 1","revision 2","Original missing information description.","Original officer clarification remarks.","Document reference A","original-officer","original-event-sha","/component-04/regulatory-assessments/original-assessment"])assert.ok(html.includes(text),text);
++ assert.equal((html.match(/<details/g)||[]).length,1);assert.match(html,/<summary>Technical details<\/summary>/);assert.doesNotMatch(html,/<form|<textarea|<input|Historical — Read-only/);
++ assert.deepEqual(group.events.map(x=>x.id),["original-event-a","original-event-b"]);
++});
++test("A different rule version never supplies a fabricated original outcome",()=>{
++ const html=renderToStaticMarkup(createElement(RegulatoryFollowupEntries,{events:[event],findings:[{...finding,ruleVersion:"2",status:"Compliant"}]}));
++ assert.match(html,/Unavailable in the loaded report/);assert.doesNotMatch(html,/Original saved rule requirement|Compliant/);
++});
++test("No original report metadata is invented when only historical events are available",()=>{
++ const html=renderToStaticMarkup(createElement(RegulatoryFollowupEntries,{events:[event]}));assert.match(html,/RULE-1/);assert.match(html,/Unavailable in the loaded report/);assert.match(html,/Original officer clarification remarks/);
++});

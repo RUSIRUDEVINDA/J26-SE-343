@@ -1,0 +1,15 @@
+{
+  "StateLandGovernance/docs/verification/FINAL_C4_COMPLETION_REPORT.md": "f5f8f51b8b96afe3e096ea4557d56743972e87f5a35315e1e17b400628d5d4a8",
+  "StateLandGovernance/docs/verification/owner-proposals/central-complaint-intake/final-handover-readiness/HANDOVER_GUIDE.md": "f504a488964a3a347bec616132b57d80daa2addb41680b3711144593ac958522",
+  "StateLandGovernance.Web/tests/component-04-history-form.test.ts": "97ac0e4c4cd03fd738b2cee46a6c4df8424c67ba651014da3e1746cd595570d2",
+  "StateLandGovernance.Web/tests/component-04-manual-feedback.test.ts": "00bc6bcf288c3270bf3c83a565daa582118145c1ee59f05083a0657fcc41fb44",
+  "StateLandGovernance.Web/tests/component-04-previous-evidence.test.ts": "5006845d71812effab55ffadbcf7afdd11a9612145dca7426132eacb7fa38615",
+  "StateLandGovernance.Web/src/modules/component-04/components/ManualEvidenceVerification.tsx": "3161ef1cf7b60826be70fca0da440b1fef197612776ce287d0e9fe04c06b9581",
+  "StateLandGovernance.Web/src/modules/component-04/components/OfficerAssessmentResult.tsx": "23ce7b2d9c092d0bda19e6c138447856d03174001e8b833fb2aad777b9d9e702",
+  "StateLandGovernance.Web/src/modules/component-04/components/PreviousEarlyEvidence.tsx": "f669aea8026ad5bdf071e771f4808e0f52878f4109fd5bda261d089c63974387",
+  "StateLandGovernance.Web/src/modules/component-04/components/PreviousRegulatoryFollowups.tsx": "0ef43a9ad625d1e67d21262d37eec4c71fbbd419e40722f0afe9d91acfb4d92d",
+  "StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFollowups.tsx": "9c8781bbbf6a1abf45100b1f6a965122dc3787c37d9a4cc67eeae534d5d346db",
+  "StateLandGovernance.Web/src/modules/component-04/components/AssessmentHistory.module.css": "2225ff2788394ab047ea5ef04b9359a504edaccae39526bf0f32ded78f341e1c",
+  "StateLandGovernance.Web/src/modules/component-04/components/RegulatoryFollowupHistory.tsx": "efc56b67c1206e5683ee9e700e2598d4962097dfc01966de58ecee2e8da99835",
+  "StateLandGovernance.Web/tests/component-04-history-polish.test.ts": "18b6e83235275c3e1f882cf84171bb183878af81fbc6026a00824d5339ee65d4"
+}

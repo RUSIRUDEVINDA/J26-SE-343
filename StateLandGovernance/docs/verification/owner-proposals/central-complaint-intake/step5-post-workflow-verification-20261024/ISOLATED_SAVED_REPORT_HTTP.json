@@ -1,0 +1,581 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Commissioner reads foreign regulatory report with original provenance",
+    "Kiwula conflict retains original creator",
+    "Kiwula early retains original creator",
+    "Kiwula early retains original creator",
+    "Workflow report preserves creator and actual saved assessment",
+    "Workflow report preserves creator and actual saved assessment",
+    "Workflow report preserves creator and actual saved assessment",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved anomaly preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Officer saved early preserves original creator",
+    "Cross-creator listings use actual saved records",
+    "Live report grant revocation removes every cross-creator listing while retaining legitimate own records",
+    "Inactive profile denied",
+    "Unactivated feature fails closed",
+    "All isolated repository checks enforced read-only",
+    "Saved requests exist in isolated restored data",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved anomaly GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner saved early GET",
+    "HTTP explicit Commissioner history",
+    "HTTP foreign nonsaved request remains denied",
+    "HTTP private investigation denied",
+    "HTTP private investigation denied",
+    "HTTP private investigation denied",
+    "HTTP private investigation denied",
+    "HTTP private investigation denied",
+    "HTTP private investigation denied",
+    "HTTP private investigation denied",
+    "HTTP private investigation denied",
+    "HTTP private investigation denied",
+    "HTTP private investigation denied",
+    "HTTP private investigation denied",
+    "HTTP private draft listing denied",
+    "HTTP DS catalogue unchanged",
+    "HTTP report permission cannot POST officer-investigations",
+    "HTTP report permission cannot POST officer-assessments/early",
+    "HTTP report permission cannot POST officer-assessments/anomaly",
+    "HTTP DS owner unchanged",
+    "HTTP other DS denied",
+    "HTTP unrelated Officer denied",
+    "HTTP applicant denied",
+    "HTTP anonymous denied",
+    "HTTP same identity immediate revoked grant GET denial",
+    "HTTP revoked history denial",
+    "HTTP expired report grant denied",
+    "HTTP malformed grant fails closed",
+    "HTTP unavailable grant fails closed",
+    "HTTP inactive current profile denied",
+    "HTTP absent grant denied",
+    "HTTP institution alone cannot grant access",
+    "HTTP restored exact grant reads saved report again",
+    "HTTP Commissioner independent workflow preview",
+    "HTTP owning DS legacy saved anomaly detail independently readable",
+    "HTTP DS preview has no sequential-stage prerequisite",
+    "HTTP explicit Commissioner legacy saved anomaly read",
+    "HTTP other DS legacy anomaly denied",
+    "HTTP applicant legacy anomaly denied",
+    "HTTP anonymous legacy anomaly denied",
+    "HTTP legacy saved anomaly read observes immediate report-grant revocation",
+    "HTTP owning DS legacy saved anomaly detail independently readable",
+    "HTTP DS preview has no sequential-stage prerequisite",
+    "HTTP explicit Commissioner legacy saved anomaly read",
+    "HTTP other DS legacy anomaly denied",
+    "HTTP applicant legacy anomaly denied",
+    "HTTP anonymous legacy anomaly denied",
+    "HTTP legacy saved anomaly read observes immediate report-grant revocation",
+    "HTTP owning DS legacy saved anomaly detail independently readable",
+    "HTTP DS preview has no sequential-stage prerequisite",
+    "HTTP explicit Commissioner legacy saved anomaly read",
+    "HTTP other DS legacy anomaly denied",
+    "HTTP applicant legacy anomaly denied",
+    "HTTP anonymous legacy anomaly denied",
+    "HTTP legacy saved anomaly read observes immediate report-grant revocation",
+    "HTTP Commissioner has no named-anomaly execution authority",
+    "HTTP read-only proof gates legacy execution before any engine/store write"
+  ],
+  "Reports": [
+    {
+      "kind": "regulatory",
+      "id": "0ffae4e0-f1a1-4a5a-ae14-6bb88fc52385"
+    },
+    {
+      "kind": "regulatory",
+      "id": "5f0b8dda-cfdc-4136-9e7d-b87640ba4de6"
+    },
+    {
+      "kind": "regulatory",
+      "id": "1b3c3bdd-8641-4155-bd75-5c24c3bbfcf8"
+    },
+    {
+      "kind": "regulatory",
+      "id": "edd3d36c-3a7e-4984-bf56-1764ed572fe6"
+    },
+    {
+      "kind": "regulatory",
+      "id": "15ebb0e0-5e84-4ccb-a03f-e9dfb795460b"
+    },
+    {
+      "kind": "regulatory",
+      "id": "c10e9a1b-58b8-4d66-a28c-e8bdacbec3ed"
+    },
+    {
+      "kind": "regulatory",
+      "id": "1641b788-a8d9-47ff-9d0e-3dd55b9858b6"
+    },
+    {
+      "kind": "regulatory",
+      "id": "c08db467-2b27-42e7-8251-dce45f7fda6b"
+    },
+    {
+      "kind": "regulatory",
+      "id": "8d4765b0-fe41-477a-ac89-2e7c012b5a9e"
+    },
+    {
+      "kind": "regulatory",
+      "id": "2f02dac9-6989-4724-8c64-75195de330da"
+    },
+    {
+      "kind": "regulatory",
+      "id": "a677914e-29b4-46d4-8301-d7ca86a033bb"
+    },
+    {
+      "kind": "regulatory",
+      "id": "1ba5e80a-d5b5-4e2f-bbcb-cc377c4861ea"
+    },
+    {
+      "kind": "regulatory",
+      "id": "8ebf5f10-2eef-484f-a68b-4f8b0b2c59e8"
+    },
+    {
+      "kind": "regulatory",
+      "id": "a6eaf34f-f719-442d-ad7f-2a4b6aef6aed"
+    },
+    {
+      "kind": "regulatory",
+      "id": "d125fbfc-7f34-4b6c-aa22-e4f58452f7f4"
+    },
+    {
+      "kind": "regulatory",
+      "id": "c3aaa788-3a74-4020-a5f9-a4a26b347663"
+    },
+    {
+      "kind": "regulatory",
+      "id": "6a96bdbc-8835-4a2c-9793-7cb06ddec93e"
+    },
+    {
+      "kind": "regulatory",
+      "id": "07b0c7e6-3f89-44cc-9285-39a0472adaf6"
+    },
+    {
+      "kind": "regulatory",
+      "id": "05f0ac73-869b-46dd-8d8d-b06814f9f164"
+    },
+    {
+      "kind": "regulatory",
+      "id": "8075650d-dedb-462b-9a21-48ef4d92ce44"
+    },
+    {
+      "kind": "regulatory",
+      "id": "b5a456d9-84f4-4374-8534-8abd413fb63d"
+    },
+    {
+      "kind": "regulatory",
+      "id": "39fd4bf7-0e93-444b-a55f-330fa6b122b9"
+    },
+    {
+      "kind": "regulatory",
+      "id": "d4e358c1-148c-41e0-b80c-6c8899413056"
+    },
+    {
+      "kind": "regulatory",
+      "id": "7a64edd4-1cd0-4da8-bd34-00d0e3fd4a73"
+    },
+    {
+      "kind": "regulatory",
+      "id": "0774ba27-b40e-4bfa-96fc-12ff2f8c52f9"
+    },
+    {
+      "kind": "regulatory",
+      "id": "da225fa3-42ff-45fc-861c-af1f8a09c619"
+    },
+    {
+      "kind": "regulatory",
+      "id": "6c6a27b9-6c55-405b-b879-2b9e40cf3ec7"
+    },
+    {
+      "kind": "regulatory",
+      "id": "4e8ad72a-1a08-4ce0-bdcb-d6763a7fd1ff"
+    },
+    {
+      "kind": "regulatory",
+      "id": "db1a77ad-ded3-4d7c-8820-e6dd78c996df"
+    },
+    {
+      "kind": "regulatory",
+      "id": "70bec557-e9bc-4954-80f2-5f12528795ac"
+    },
+    {
+      "kind": "regulatory",
+      "id": "ead86cc8-d75c-4150-9d22-50af10ecc0f4"
+    },
+    {
+      "kind": "regulatory",
+      "id": "c0bdd2de-712b-4069-84f4-b10988c83830"
+    },
+    {
+      "kind": "regulatory",
+      "id": "ede56655-6f58-4c87-b59d-1772b1df7501"
+    },
+    {
+      "kind": "regulatory",
+      "id": "bf0984fa-5c8a-44d9-abf2-cfc1dac60f59"
+    },
+    {
+      "kind": "regulatory",
+      "id": "7225523d-5b9e-4ba0-ac89-fb4d13a77c48"
+    },
+    {
+      "kind": "regulatory",
+      "id": "67a8d247-1b9e-4ab9-9a66-205aaef4d776"
+    },
+    {
+      "kind": "regulatory",
+      "id": "cf8ed552-a32f-4074-9832-29ab2ec2e156"
+    },
+    {
+      "kind": "regulatory",
+      "id": "2064c719-8c41-434b-ba9d-640b31c645bb"
+    },
+    {
+      "kind": "regulatory",
+      "id": "62e85797-c614-47fd-bb92-252bff440af5"
+    },
+    {
+      "kind": "regulatory",
+      "id": "0fd4738d-4167-4060-8646-63463e419e83"
+    },
+    {
+      "kind": "regulatory",
+      "id": "9dc0cccb-48f8-40a6-ac5c-c0846fa9ab6d"
+    },
+    {
+      "kind": "regulatory",
+      "id": "14518818-f0bc-443b-b831-ef6cb3267f14"
+    },
+    {
+      "kind": "regulatory",
+      "id": "b2be2a86-812a-4bf5-8d39-41e69ddc6d13"
+    },
+    {
+      "kind": "regulatory",
+      "id": "f5c89455-e105-46c0-bd32-b644f3c2a861"
+    },
+    {
+      "kind": "conflict",
+      "id": "03a17f88-de88-4bd0-9806-eade481697a3"
+    },
+    {
+      "kind": "early",
+      "id": "d95e7443-be83-4a99-ae44-e55e8ede95c2"
+    },
+    {
+      "kind": "early",
+      "id": "1cb309d5-9b74-46f0-b1ec-71424beb7839"
+    },
+    {
+      "kind": "workflow",
+      "id": "fad5c3ef-829f-42d0-9df0-ca045709b879"
+    },
+    {
+      "kind": "workflow",
+      "id": "096b3a1a-0eef-454f-955c-d68b880678fb"
+    },
+    {
+      "kind": "workflow",
+      "id": "e602eb00-e621-416d-a356-02cf59b04751"
+    },
+    {
+      "kind": "early",
+      "id": "29f53e56-9e9a-4e04-9ed3-350d1a7518d3"
+    },
+    {
+      "kind": "anomaly",
+      "id": "d4cd2468-3ded-4aa8-b4af-d987cd1abdeb"
+    },
+    {
+      "kind": "anomaly",
+      "id": "329bd3c0-8258-4c17-9791-b4eac057fc04"
+    },
+    {
+      "kind": "anomaly",
+      "id": "9230b50a-30f1-409b-a165-d09dc69711e7"
+    },
+    {
+      "kind": "anomaly",
+      "id": "8c4b2b27-a909-4982-879f-ffe76bd16c9e"
+    },
+    {
+      "kind": "early",
+      "id": "848f3b0f-37c7-4142-a61f-14dbac51893d"
+    },
+    {
+      "kind": "early",
+      "id": "a5f1574f-e4f4-4461-ad49-d69474c24b1b"
+    },
+    {
+      "kind": "anomaly",
+      "id": "f2c1541e-3c95-4bae-a608-aeeffc16473f"
+    },
+    {
+      "kind": "early",
+      "id": "f623d66c-021f-40ee-8360-d047b5f07b76"
+    },
+    {
+      "kind": "early",
+      "id": "1a0280e0-8bad-4bc0-a3a1-d195f5020a91"
+    },
+    {
+      "kind": "anomaly",
+      "id": "ec3f7c3a-1b4d-4aa6-a5bb-30452dfb0842"
+    },
+    {
+      "kind": "early",
+      "id": "9c49c6e0-4317-431d-8614-01a214c258d9"
+    },
+    {
+      "kind": "anomaly",
+      "id": "9aa03236-4f7d-4ae0-ba17-35b51ecdc5e6"
+    },
+    {
+      "kind": "anomaly",
+      "id": "31bcac9b-2cd4-46e8-b5e6-218238473c24"
+    },
+    {
+      "kind": "early",
+      "id": "6eb61b8e-2c2e-45d2-b7ab-896104657cdb"
+    },
+    {
+      "kind": "anomaly",
+      "id": "9a5b03db-3fb3-43f7-b5f9-2d650923b8b6"
+    },
+    {
+      "kind": "early",
+      "id": "8a52705d-5e88-4a91-bb50-5fb2a5b82949"
+    },
+    {
+      "kind": "early",
+      "id": "6dc53d1e-f3c6-4446-9cbe-ea254f4ff3ce"
+    },
+    {
+      "kind": "early",
+      "id": "4675150b-1676-42fd-ba54-e6e22bf11c89"
+    },
+    {
+      "kind": "early",
+      "id": "def33d46-60a5-4efe-bfff-8475556b261b"
+    },
+    {
+      "kind": "anomaly",
+      "id": "16f8490a-e025-4062-94f0-5442c8493a3b"
+    },
+    {
+      "kind": "anomaly",
+      "id": "d6a65487-e1b1-49f1-8cbc-0205655af99f"
+    },
+    {
+      "kind": "anomaly",
+      "id": "e8e9db3f-42ae-4d97-852e-4e918641db2e"
+    },
+    {
+      "kind": "early",
+      "id": "03f3938c-be81-443c-adbd-fc663d741c79"
+    },
+    {
+      "kind": "anomaly",
+      "id": "53265697-78fc-478a-ba18-ba74b84240dd"
+    },
+    {
+      "kind": "early",
+      "id": "64105595-9f53-499c-8276-e71daec4af6c"
+    },
+    {
+      "kind": "early",
+      "id": "24ee4aa7-bca8-43d7-90b9-69eb8158ad3d"
+    },
+    {
+      "kind": "early",
+      "id": "284e96a3-6744-45b4-8777-7f062336f7d5"
+    },
+    {
+      "kind": "early",
+      "id": "3ae73d0e-0271-485a-b307-52d603019679"
+    },
+    {
+      "kind": "early",
+      "id": "cfce87b6-4711-4d33-9aee-df74425d33a6"
+    },
+    {
+      "kind": "early",
+      "id": "92665621-e790-48ea-91e2-172579fd4baa"
+    },
+    {
+      "kind": "early",
+      "id": "f9b29e3a-162e-4208-b414-25dc4b6bd801"
+    },
+    {
+      "kind": "early",
+      "id": "973a15fc-234e-4d68-b96c-471b584bc8de"
+    },
+    {
+      "kind": "early",
+      "id": "aa5dac03-2446-4bc3-8392-2327b9f55ebe"
+    },
+    {
+      "kind": "early",
+      "id": "dafaac4e-4995-4ab3-bd91-27cde4d8a043"
+    },
+    {
+      "kind": "early",
+      "id": "153f2647-56ef-4f59-933b-501f42c7a0a0"
+    },
+    {
+      "kind": "anomaly",
+      "id": "cf8bbf35-0ca0-4a96-9bd2-dea10edf565d"
+    },
+    {
+      "kind": "early",
+      "id": "5267b49f-c100-4901-b548-c7b75e4e8568"
+    },
+    {
+      "kind": "early",
+      "id": "ec16831b-8e83-4315-a48f-af0c46b882ba"
+    },
+    {
+      "kind": "early",
+      "id": "e217c5ca-7a9e-454b-b6b7-86428eb91558"
+    },
+    {
+      "kind": "early",
+      "id": "ed6d71ac-2d0b-49e7-950c-80f3f67e6766"
+    },
+    {
+      "kind": "early",
+      "id": "378e9b2c-ba98-44ce-a3fe-4c4710f89e5b"
+    },
+    {
+      "kind": "early",
+      "id": "353cf915-13b6-4adc-a95d-5714128671a2"
+    }
+  ],
+  "Database": "c4_step3_restore_20261024",
+  "OrdinaryChanges": false,
+  "ModelCalls": 0,
+  "WriteCommandsInvoked": 0
+}

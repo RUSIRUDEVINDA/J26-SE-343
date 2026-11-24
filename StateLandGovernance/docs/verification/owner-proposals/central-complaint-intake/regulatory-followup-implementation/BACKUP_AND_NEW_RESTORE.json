@@ -1,0 +1,11 @@
+{
+  "Status": "Passed",
+  "BackupPath": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\c4-handover-backup-20261023\\state_land_governance_c4.dump",
+  "Bytes": 360140,
+  "Sha256": "d904779c03f0d40c5b96a23005ff66840405b744786a6b96395a8f706001e430",
+  "IsolatedTarget": "c4_regulatory_followup_restore_20261023",
+  "Port": 57657,
+  "All40TablesSchema20MigrationsMatch": true,
+  "OrdinaryChangedSinceBackup": true,
+  "OrdinaryWrites": 0
+}

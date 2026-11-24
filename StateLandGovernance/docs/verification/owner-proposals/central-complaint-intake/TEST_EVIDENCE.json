@@ -1,0 +1,9 @@
+{
+  "command": "dotnet test StateLandGovernance/tests/UnitTests/GovernanceIntelligence/StateLandGovernance.UnitTests.GovernanceIntelligence.csproj --no-build --filter FullyQualifiedName~RegisteredComplaintTests",
+  "passed": 9,
+  "failed": 0,
+  "skipped": 0,
+  "scope": "Existing mocks/EF InMemory only; no central implementation or real model call",
+  "newIntegrationProof": false,
+  "ordinaryTestSubmissions": 0
+}

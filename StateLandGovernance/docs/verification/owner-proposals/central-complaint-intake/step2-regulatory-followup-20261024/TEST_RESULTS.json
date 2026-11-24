@@ -1,0 +1,32 @@
+{
+  "Backend": {
+    "Passed": 395,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "RegulatoryHttpChecks": 83,
+  "Step1HttpChecks": 60,
+  "FocusedFrontend": {
+    "Passed": 11,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "FullFrontend": {
+    "Passed": 196,
+    "Failed": 2,
+    "Skipped": 0,
+    "Failures": "Two pre-existing unrelated Post-Workflow presentation expectations"
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "LintErrors": 0,
+  "EfPendingModelChanges": false,
+  "TypeScript": "Three pre-existing C1 errors only",
+  "Browser": "Graphical checks pending; no success claimed",
+  "ClassifierAnomalyCalls": 0,
+  "OrdinaryWrites": 0,
+  "Step3Started": false
+}

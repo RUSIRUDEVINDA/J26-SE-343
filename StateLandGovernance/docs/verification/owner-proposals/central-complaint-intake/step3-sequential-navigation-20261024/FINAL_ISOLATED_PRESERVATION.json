@@ -1,0 +1,14 @@
+{
+  "Database": "c4_step3_restore_20261024",
+  "Original41TableRowHashMultisetsPreserved": true,
+  "Tables": 42,
+  "Migrations": 23,
+  "Step3Migrations": [],
+  "Step3AdditionalGrants": [],
+  "HttpChecks": {
+    "ISOLATED_SEQUENCE_HTTP.json": 89,
+    "STEP2_HTTP_REGRESSION.json": 83
+  },
+  "ClassifierOrAnomalyCalls": 0,
+  "OrdinaryWrites": 0
+}

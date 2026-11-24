@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Configuration;
+using StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,28 +14,32 @@ namespace StateLandGovernance.GovernanceIntelligence.Infrastructure.Persistence;
 public sealed class GovernanceDashboardReader : IGovernanceDashboardReader
 {
     private readonly GovernanceIntelligenceDbContext _dbContext;
+    private readonly IConfiguration? _configuration;
 
-    public GovernanceDashboardReader(GovernanceIntelligenceDbContext dbContext)
+    public GovernanceDashboardReader(GovernanceIntelligenceDbContext dbContext,IConfiguration? configuration=null)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _configuration=configuration;
     }
 
     public async Task<GovernanceDashboardDto> GetDashboardAsync(CancellationToken cancellationToken = default)
     {
-        var complianceList = await _dbContext.ComplianceEvaluations
-            .AsNoTracking()
+        var complianceQuery = _dbContext.ComplianceEvaluations.AsNoTracking();
+        if(_configuration?.GetValue<bool>("GovernanceIntelligence:RegulatoryProvenance:Enabled")==true)
+            complianceQuery=complianceQuery.Where(x=>!_dbContext.Set<RegulatoryEvaluationProvenanceEntity>().Any(p=>p.EvaluationId==x.Id));
+        var complianceList = await complianceQuery
             .OrderByDescending(c => c.EvaluationTimestamp)
             .Take(100)
             .ToListAsync(cancellationToken);
 
-        var conflictList = await _dbContext.ConflictEvaluations
+        var conflictList = await _dbContext.ConflictEvaluations.Where(x => !x.ActionName.StartsWith("C4-KIWULA-EXAMPLE:"))
             .Include(c => c.Findings)
             .AsNoTracking()
             .OrderByDescending(c => c.EvaluationTimestamp)
             .Take(100)
             .ToListAsync(cancellationToken);
 
-        var screeningList = await _dbContext.EarlyGovernanceScreeningEvaluations
+        var screeningList = await _dbContext.EarlyGovernanceScreeningEvaluations.Where(x => !x.CaseId.StartsWith("C4-KIWULA-EXAMPLE:"))
             .AsNoTracking()
             .OrderByDescending(s => s.CreatedAtUtc)
             .Take(100)

@@ -1,0 +1,1 @@
+GRANT SELECT, INSERT ON TABLE governance_intelligence.officer_investigation_attachments TO slg_c4_regulatory_runtime;

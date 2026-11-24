@@ -1,0 +1,16 @@
+{
+  "BackendPassed": 298,
+  "NewControllerTests": 23,
+  "ArchitecturePassed": 7,
+  "FrontendPassed": 143,
+  "IsolatedChecks": 69,
+  "IsolatedSavedReports": 30,
+  "ModelCalls": 0,
+  "WriteCommandsInvoked": 0,
+  "ReleasePublish": "Passed",
+  "WholeProductionBuild": "Not claimed; three previously documented unrelated C1 TypeScript errors remain",
+  "Browser": "Pending manual",
+  "FinalControllerAndUncertainRepositoryBoundaryTests": 25,
+  "AdditionalPendingUnknownTests": 2,
+  "Note": "298 focused regressions passed before two additional tests; final25 boundary tests passed (23 overlap). No failure/skips;300 distinct backend cases passed across the runs."
+}

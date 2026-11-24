@@ -1,0 +1,9 @@
+{
+  "Routes": {
+    "/component-04/assessments": 200,
+    "/component-04/assessments/regulatory": 200,
+    "/component-04/post-workflow": 200
+  },
+  "BrowserVisualVerified": false,
+  "ApiReplaced": false
+}

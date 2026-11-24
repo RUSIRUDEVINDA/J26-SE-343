@@ -1,0 +1,590 @@
+{
+  "inspectedAtUtc": "2026-10-22T19:46:35.281279+00:00",
+  "method": "SELECT/catalogue only; every psql connection forces default_transaction_read_only=on",
+  "c4Identity": {
+    "database": "c4_handover_local",
+    "role": "slg_c4_regulatory_runtime",
+    "readOnly": "on",
+    "port": 5432
+  },
+  "history": [
+    "20260815105012_GovernanceIntelligence_InitialCreate",
+    "20260821151154_GovernanceIntelligence_AddStructuredEvaluations",
+    "20260825131541_GovernanceIntelligence_AddRichComplianceSnapshot",
+    "20260825141654_GovernanceIntelligence_RemoveLegacyComplianceChildTables",
+    "20260918072800_GovernanceIntelligence_AddEarlyGovernanceScreeningEvaluations",
+    "20261008062258_GovernanceIntelligence_AddComplaintClassificationAssessments",
+    "20261008074415_GovernanceIntelligence_AddEarlyGovernanceCommissionerReferrals",
+    "20261009082924_GovernanceIntelligence_AddAuditAnchorReceiptAndOutbox",
+    "20261011180225_GovernanceIntelligence_AddAuditHashVersion",
+    "20261011193437_GovernanceIntelligence_AddPhase3AProjectionsAndAssessments",
+    "20261012091358_GovernanceIntelligence_AddComplianceCaseCorrelation",
+    "20261016123700_AddDurableConsolidatedScreening",
+    "20261021170456_AddRegisteredComplaints",
+    "20261021173048_AddOwnedRegulatoryProvenance",
+    "20261022060432_AddPostWorkflowDemonstrations",
+    "20261022093623_AddKiwulaAssessmentProvenance",
+    "20261022152556_AddOfficerInvestigationsAndAssessmentRequests"
+  ],
+  "complaintSchema": [
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "assessment_id",
+      "ordinal_position": 1,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "case_id",
+      "ordinal_position": 2,
+      "data_type": "character varying",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "complaint_text",
+      "ordinal_position": 3,
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "model_version",
+      "ordinal_position": 4,
+      "data_type": "character varying",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "predicted_category",
+      "ordinal_position": 5,
+      "data_type": "character varying",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "administrative_procedural_integrity_probability",
+      "ordinal_position": 6,
+      "data_type": "numeric",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "lease_revenue_payment_enforcement_probability",
+      "ordinal_position": 7,
+      "data_type": "numeric",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "unauthorized_allocation_transfer_use_probability",
+      "ordinal_position": 8,
+      "data_type": "numeric",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "protected_environmental_lease_misuse_probability",
+      "ordinal_position": 9,
+      "data_type": "numeric",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "advisory_note",
+      "ordinal_position": 10,
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "closed_set_note",
+      "ordinal_position": 11,
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "assessed_at_utc",
+      "ordinal_position": 12,
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "Id",
+      "ordinal_position": 1,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "CreatorActorId",
+      "ordinal_position": 2,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "InvestigationId",
+      "ordinal_position": 3,
+      "data_type": "uuid",
+      "is_nullable": "YES"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "RequestId",
+      "ordinal_position": 4,
+      "data_type": "uuid",
+      "is_nullable": "YES"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "Operation",
+      "ordinal_position": 5,
+      "data_type": "character varying",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "CreatedAtUtc",
+      "ordinal_position": 6,
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "DetailsJson",
+      "ordinal_position": 7,
+      "data_type": "jsonb",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "EventSha256",
+      "ordinal_position": 8,
+      "data_type": "character varying",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "registered_complaint_classifications",
+      "column_name": "AssessmentId",
+      "ordinal_position": 1,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "registered_complaint_classifications",
+      "column_name": "ComplaintId",
+      "ordinal_position": 2,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "Id",
+      "ordinal_position": 1,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "ApplicantId",
+      "ordinal_position": 2,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "SubmissionKey",
+      "ordinal_position": 3,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "CaseId",
+      "ordinal_position": 4,
+      "data_type": "uuid",
+      "is_nullable": "YES"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "SubmittedAtUtc",
+      "ordinal_position": 5,
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "Revision",
+      "ordinal_position": 6,
+      "data_type": "integer",
+      "is_nullable": "NO"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "PayloadJson",
+      "ordinal_position": 7,
+      "data_type": "jsonb",
+      "is_nullable": "NO"
+    }
+  ],
+  "assignmentTables": [],
+  "complaintCounts": {
+    "total": 3,
+    "unlinked": 2,
+    "linked": 1
+  },
+  "complaintStateCounts": [
+    {
+      "classification": "Classified",
+      "review": "Open",
+      "records": 3
+    }
+  ],
+  "runtimeComplaintPrivileges": [
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "administrative_procedural_integrity_probability",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "advisory_note",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "assessed_at_utc",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "assessment_id",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "case_id",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "closed_set_note",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "complaint_text",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "lease_revenue_payment_enforcement_probability",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "model_version",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "predicted_category",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "protected_environmental_lease_misuse_probability",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "unauthorized_allocation_transfer_use_probability",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "administrative_procedural_integrity_probability",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "advisory_note",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "assessed_at_utc",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "assessment_id",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "case_id",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "closed_set_note",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "complaint_text",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "lease_revenue_payment_enforcement_probability",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "model_version",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "predicted_category",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "protected_environmental_lease_misuse_probability",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "complaint_classification_assessments",
+      "column_name": "unauthorized_allocation_transfer_use_probability",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "CreatedAtUtc",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "CreatorActorId",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "DetailsJson",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "EventSha256",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "Id",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "InvestigationId",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "Operation",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "RequestId",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "CreatedAtUtc",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "CreatorActorId",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "DetailsJson",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "EventSha256",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "Id",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "InvestigationId",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "Operation",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "officer_action_events",
+      "column_name": "RequestId",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "registered_complaint_classifications",
+      "column_name": "AssessmentId",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "registered_complaint_classifications",
+      "column_name": "ComplaintId",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "registered_complaint_classifications",
+      "column_name": "AssessmentId",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "registered_complaint_classifications",
+      "column_name": "ComplaintId",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "ApplicantId",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "CaseId",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "Id",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "PayloadJson",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "Revision",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "SubmissionKey",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "SubmittedAtUtc",
+      "privilege_type": "INSERT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "ApplicantId",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "CaseId",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "Id",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "PayloadJson",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "Revision",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "SubmissionKey",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "SubmittedAtUtc",
+      "privilege_type": "SELECT"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "PayloadJson",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "table_name": "registered_complaints",
+      "column_name": "Revision",
+      "privilege_type": "UPDATE"
+    }
+  ],
+  "complaintFingerprints": {
+    "registered_complaints": {
+      "count": 3,
+      "digest": "b3f80f7f6777af555ed920331b10b101"
+    },
+    "registered_complaint_classifications": {
+      "count": 3,
+      "digest": "26ccb9308012572317dc0705bca12306"
+    },
+    "complaint_classification_assessments": {
+      "count": 58,
+      "digest": "a93e3bec8255ffc8808620cb11ed6302"
+    }
+  },
+  "accountIdentity": {
+    "database": "portal_accounts_local",
+    "readOnly": "on"
+  },
+  "profileCounts": {
+    "officerCommissionerProfiles": 1,
+    "officerDSProfiles": 2
+  },
+  "trustedSettingKeys": [
+    "LocalDevelopmentSignIn",
+    "WorkflowGovernance"
+  ],
+  "trustedDirectoryCounts": {
+    "configuredReviewers": 2,
+    "configuredCoordinators": 1,
+    "dsProfileDirectoryMatches": 2
+  },
+  "storedClassificationIntegrity": {
+    "unlinkedComplaintsWithStoredClassification": 2,
+    "allLinkedAssessmentBindingsMatch": true,
+    "allOriginalTextMatchesStoredAssessment": true,
+    "storedModelVersions": [
+      "v2"
+    ],
+    "allProbabilitySumsValid": true
+  },
+  "complaintFingerprintsUnchangedAtAuditEnd": true
+}

@@ -1,0 +1,17 @@
+{
+  "Utc": "2026-10-23T08:42:44.568307+00:00",
+  "Status": "STOPPED: mandatory runtime authorization gate failed",
+  "AuthenticatedCommissionerOfficerReportHttpStatus": 403,
+  "ApiPath": "/api/governance-intelligence/officer-assessments/29f53e56-9e9a-4e04-9ed3-350d1a7518d3",
+  "Cause": "OfficerFlowsController.Execute requires IsDs() for GET/history as well as writes. Explicit C4AssessmentReadAll is implemented in stores but controller blocks Commissioner before repository execution.",
+  "Source": "StateLandGovernance/src/Modules/GovernanceIntelligence/Presentation/Controllers/OfficerFlowsController.cs",
+  "DatabaseRenamedSuccessfully": true,
+  "NewDatabase": "state_land_governance_c4",
+  "Oid": "34144",
+  "NewApiPidBeforeFailClosedStop": 37768,
+  "NoOrdinaryComplaintOrInferenceActions": true,
+  "NoGrantRevocationTestReached": true,
+  "PermissionDocumentsNotChangedByRuntimeTest": true,
+  "Recovery": "Stop the new verified API; retain database/new name/data/grants/history. Do not launch older incompatible API or rename back automatically. No source workaround performed.",
+  "NextRequirement": "Review a narrow read-only controller gate correction with authenticated HTTP tests; retain DS-only write/draft guards. Repeat immediate deployment and preservation checks before restarting."
+}

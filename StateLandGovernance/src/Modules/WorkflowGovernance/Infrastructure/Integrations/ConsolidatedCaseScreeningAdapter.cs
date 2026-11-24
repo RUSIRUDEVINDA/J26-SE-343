@@ -35,7 +35,8 @@ public sealed class ConsolidatedCaseScreeningAdapter(HttpClient http, IOptions<C
     IScreeningEvidenceProvider evidence, IRegulatoryRuleProvider? policy = null,
     OrchestrateGovernanceScreeningCommandHandler? handler = null,
     IConsolidatedGovernanceScreeningStore? consolidatedStore = null,
-    IDevelopmentSpatialInputProvider? developmentSpatial = null) : IConsolidatedCaseScreeningAdapter
+    IDevelopmentSpatialInputProvider? developmentSpatial = null,
+    IDevelopmentRegulatoryInputSource? developmentRegulatory = null) : IConsolidatedCaseScreeningAdapter
 {
     private static readonly JsonSerializerOptions Json = CaseScreeningService.JsonOptions;
     public static string Fingerprint<T>(T value) => Convert.ToHexString(SHA256.HashData(
@@ -89,7 +90,15 @@ public sealed class ConsolidatedCaseScreeningAdapter(HttpClient http, IOptions<C
         var policyHash = Fingerprint(policyBinding);
         if (approvedPolicy == null)
             missing.Add("C4 approved active catalogue policy manifest/version is not configured; the legacy baseline cannot establish approval.");
-        var bindings = new { source, parcel, constraints, relationships, review, policy = policyBinding,
+        DevelopmentRegulatoryInput? regulatory = null;
+        if (approvedPolicy?.Version.StartsWith("DEV-CATALOGUE:",StringComparison.Ordinal)==true)
+        {
+            if(mock==null || source.Snapshot==null || developmentRegulatory==null)
+                missing.Add("Structured catalogue demonstration requires a designated Development source and reviewed snapshot.");
+            else regulatory=await developmentRegulatory.ReadAsync(source.CaseId,source.Snapshot.Id,source.Snapshot.DocumentVersionId,ct);
+            if(regulatory==null) missing.Add("Structured catalogue demonstration inputs are unavailable.");
+        }
+        var bindings = new { source, parcel, constraints, relationships, review, regulatory, policy = policyBinding,
             isDevelopmentMock = mock != null, spatialProvenance = mock };
         var bindingJson = JsonSerializer.Serialize(bindings, Json);
         var hash = Fingerprint(bindings);
@@ -107,7 +116,10 @@ public sealed class ConsolidatedCaseScreeningAdapter(HttpClient http, IOptions<C
                 try { inputJson = BuildInput(source, parcel.Value, review, hash);
                     var input = JsonSerializer.Deserialize<GovernanceScreeningCaseInputDto>(inputJson, Json)!;
                     inputJson = JsonSerializer.Serialize(input with { FullInputFingerprint = hash, EffectivePolicyVersion = approvedPolicy!.Version,
-                        EvidenceVersion = review.Version, IsDevelopmentSpatialMock = mock != null }, Json); }
+                        EvidenceVersion = review.Version, IsDevelopmentSpatialMock = mock != null,
+                        DevelopmentRegulatoryInput = regulatory==null ? null : JsonSerializer.Deserialize<StateLandGovernance.GovernanceIntelligence.Application.DTOs.ProposalComplianceInputDto>(regulatory.InputJson,Json),
+                        DevelopmentRegulatoryInputVersion = regulatory?.Version,
+                        DevelopmentRegulatorySourceReference = regulatory?.SourceReference }, Json); }
                 catch (Exception ex) when (ex is InvalidOperationException or KeyNotFoundException or FormatException or JsonException)
                 { missing.Add("C4 input contract is incomplete: " + ex.Message); }
             }

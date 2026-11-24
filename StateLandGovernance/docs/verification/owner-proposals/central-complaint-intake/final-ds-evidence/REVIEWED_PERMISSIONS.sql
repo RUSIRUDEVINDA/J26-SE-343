@@ -1,0 +1,3 @@
+BEGIN;
+GRANT SELECT, INSERT ON governance_intelligence.screening_evidence_attachments, governance_intelligence.screening_evidence_verifications TO slg_c4_regulatory_runtime;
+COMMIT;

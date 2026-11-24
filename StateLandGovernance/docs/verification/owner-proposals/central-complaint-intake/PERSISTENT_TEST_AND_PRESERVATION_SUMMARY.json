@@ -1,0 +1,38 @@
+{
+  "Date": "2026-10-23 Asia/Colombo",
+  "BackendFocused": {
+    "Passed": 258,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Frontend": {
+    "Passed": 139,
+    "Failed": 0
+  },
+  "Architecture": {
+    "Passed": 6,
+    "Failed": 0
+  },
+  "IsolatedLoginAndRevocationChecks": 13,
+  "IsolatedPersistedOperationChecks": 5,
+  "ClassifierCalls": 0,
+  "AnomalyCalls": 0,
+  "BackupOriginalSha256StillMatches": "ab6780784f2cf36b405b33c81d9e1a81da5e215f7cbcdc0418b61f988da433d4",
+  "OriginalTwoMigrationAndGrantSqlUnchanged": true,
+  "ExistingPrivateConfigurationUnchanged": true,
+  "OrdinaryActivationPerformed": false,
+  "OrdinaryAccountOrPasswordChanges": false,
+  "ApiPackagePublishedNotStarted": true,
+  "KnownLimitations": [
+    "3 existing C1 TypeScript errors remain; no production frontend build rerun",
+    "No ordinary Commissioner login or browser proof before separately approved activation",
+    "No browser tool available",
+    "Persistent permission does not make existing 30-minute login session permanent"
+  ],
+  "TestHarnessCorrections": [
+    "Windows apphost path limit: proof output placed in short ignored path",
+    "Corrected a test-local variable collision before executing rebuilt proof; initial stale proof exited fresh-target guard without writes"
+  ],
+  "FinalPersistentSavedRetrievalChecks": 9,
+  "RevisedLauncherValidateOnly": "Passed; Revoked=False; no environment loaded or process started"
+}

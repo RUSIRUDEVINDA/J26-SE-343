@@ -1,0 +1,11 @@
+{
+  "Status": "Passed",
+  "RestrictedRuntimeSqlExecutedReadOnly": true,
+  "HealthHttp": {
+    "Api": 200,
+    "Frontend": 200,
+    "Ml": 200
+  },
+  "OrdinaryFollowupWrites": 0,
+  "InferenceCalls": 0
+}

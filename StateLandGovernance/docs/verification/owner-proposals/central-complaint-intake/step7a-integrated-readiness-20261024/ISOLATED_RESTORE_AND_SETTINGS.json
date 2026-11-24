@@ -1,0 +1,18 @@
+{
+  "Database": "c4_step7a_restore_20261024",
+  "AccountsDatabase": "c4_step7a_accounts_20261024",
+  "EmptyReadOnlyPeerDatabase": "c4_step7a_peer_empty_20261024",
+  "Port": 57657,
+  "BackupSha256": "1b5f7ba0872f0cf59fe9f118c06cb3079f9c6a965120b568e31647e3f3032dd0",
+  "Original41TablesMatchBeforeApprovedMigrations": true,
+  "IsolatedTables": 42,
+  "IsolatedMigrations": 23,
+  "OrdinaryWrites": 0,
+  "SyntheticAccounts": 5,
+  "Ports": {
+    "Api": 5807,
+    "FrontendInternal": 3158,
+    "BrowserProxy": 3157,
+    "Ml": 8187
+  }
+}

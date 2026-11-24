@@ -1,4 +1,4 @@
-import { DevelopmentSessionBar } from "./DevelopmentSessionBar";
+import compact from "./CompactPresentation.module.css";
 import type { ReactNode } from "react";
 import { AppHeader } from "./AppHeader";
 import { Sidebar } from "./Sidebar";
@@ -15,7 +15,7 @@ export function PageLayout({
   navigationLabel,
   navigationBasePath,
   navigationCompactMobile,
-  appendResearchDemoNav,
+  compactPresentation = false,
 }: {
   children: ReactNode;
   showSidebar?: boolean;
@@ -26,21 +26,11 @@ export function PageLayout({
   navigationLabel?: string;
   navigationBasePath?: string;
   navigationCompactMobile?: boolean;
-  appendResearchDemoNav?: boolean;
+  compactPresentation?: boolean;
 }) {
   return (
-    <div className={styles.shell}>
-      <AppHeader
-        actions={
-          headerActions || sessionBar ? (
-            <>
-              {headerActions}
-              {sessionBar}
-            </>
-          ) : null
-        }
-      />
-      {showDevelopmentSessionBar ? <DevelopmentSessionBar /> : null}
+    <div className={`${styles.shell} ${compactPresentation?compact.surface:""}`}>
+      <AppHeader unifiedAccount />
       <div className={showSidebar ? styles.bodyWithSidebar : styles.body}>
         {showSidebar ? (
           <Sidebar

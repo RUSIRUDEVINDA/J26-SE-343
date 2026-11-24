@@ -1,0 +1,10 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "UPDATE denied by actual isolated runtime permissions",
+    "DELETE denied by actual isolated runtime permissions",
+    "DDL denied by actual isolated runtime permissions"
+  ],
+  "Target": "127.0.0.1:57657/c4_step7a_restore_20261024",
+  "OrdinaryPermissionChanges": 0
+}

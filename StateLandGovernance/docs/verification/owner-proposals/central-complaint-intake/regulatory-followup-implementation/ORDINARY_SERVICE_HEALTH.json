@@ -1,0 +1,15 @@
+{
+  "Services": {
+    "Api": {
+      "HttpStatus": 200
+    },
+    "Frontend": {
+      "HttpStatus": 200
+    },
+    "Ml": {
+      "HttpStatus": 200
+    }
+  },
+  "RestartedByThisTask": false,
+  "OrdinaryApiPackageReplaced": false
+}

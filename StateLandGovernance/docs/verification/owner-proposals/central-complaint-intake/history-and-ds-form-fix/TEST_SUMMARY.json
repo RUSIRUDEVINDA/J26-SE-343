@@ -1,0 +1,32 @@
+{
+  "Backend": {
+    "Passed": 324,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Frontend": {
+    "Passed": 162,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "Architecture": {
+    "Passed": 7,
+    "Failed": 0,
+    "Skipped": 0
+  },
+  "IsolatedHttpChecks": 47,
+  "OrdinaryHistoryChecks": 227,
+  "OwnedAnchors": 24,
+  "ExistingClarificationVisibleFromOtherAssessments": 23,
+  "OrdinaryRuntimeChecks": 530,
+  "SavedReports": 53,
+  "ManualEvidenceChecks": 79,
+  "ManualEvidenceWorkspaces": 11,
+  "FocusedLintErrors": 0,
+  "FocusedLintWarnings": 0,
+  "NoSchemaOrGrantChange": true,
+  "GraphicalBrowser": "No apps/browsers available; manual pending",
+  "TypeScript": "Three pre-existing C1 errors only",
+  "OrdinaryWritesOrInferenceCalls": 0,
+  "IsolatedContainerStoppedStorageRetained": true
+}

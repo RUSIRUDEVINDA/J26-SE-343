@@ -1,0 +1,14 @@
+{
+  "Status": "Passed",
+  "Checks": [
+    "Actual persisted handling operation retains persistent grant/source/document-digest provenance",
+    "Persistent permission provenance participates in canonical handling hash",
+    "Revoked file denies actual write in same running host",
+    "Revoked operation appends no history",
+    "Persistent operation verification preserves existing assessments and invokes no models"
+  ],
+  "Database": "c4_handling_test_complete",
+  "IsolatedFixtureId": "d80f40a9-524c-4d96-b68d-a2df14f15b49",
+  "HandlingEventId": "4c7eb364-9915-4966-91e3-243fb434d26e",
+  "ModelCalls": 0
+}

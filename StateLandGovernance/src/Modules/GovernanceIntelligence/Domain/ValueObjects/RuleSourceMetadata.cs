@@ -14,5 +14,7 @@ public sealed record RuleSourceMetadata(
     string? SourcePage = null,
     string? SourceVersion = null,
     DateTime? EffectiveFrom = null,
-    DateTime? EffectiveTo = null
+    DateTime? EffectiveTo = null,
+    string? SourceDocumentReference = null,
+    string? SourceChecksumLabel = null // Opaque imported label; not a verified cryptographic checksum.
 );

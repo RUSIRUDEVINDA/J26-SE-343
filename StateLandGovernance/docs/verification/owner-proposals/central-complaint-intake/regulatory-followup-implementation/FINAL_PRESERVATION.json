@@ -1,0 +1,39 @@
+{
+  "Status": "Passed",
+  "OrdinaryOid": 34144,
+  "OrdinaryTables": 40,
+  "OrdinaryMigrations": 20,
+  "AllArchivedOriginalRowsStillPresentUnchanged": true,
+  "OrdinarySchemaGrantsUnchanged": true,
+  "ConcurrentOrdinaryAdditions": [
+    {
+      "Table": "governance_intelligence.compliance_evaluations",
+      "BeforeCount": 78,
+      "CurrentCount": 79
+    },
+    {
+      "Table": "governance_intelligence.governance_audit_anchor_outbox",
+      "BeforeCount": 110,
+      "CurrentCount": 111
+    },
+    {
+      "Table": "governance_intelligence.governance_audit_records",
+      "BeforeCount": 233,
+      "CurrentCount": 234
+    },
+    {
+      "Table": "governance_intelligence.regulatory_evaluation_provenance",
+      "BeforeCount": 20,
+      "CurrentCount": 21
+    }
+  ],
+  "FreshOrdinaryBackupRequiredBeforeDeployment": true,
+  "PeerAccountsUnchanged": true,
+  "RestoredOriginalRowsUnchanged": true,
+  "RestrictedNewTableRights": [
+    "INSERT",
+    "SELECT"
+  ],
+  "FrozenModelsUnchanged": true,
+  "OrdinaryWrites": 0
+}

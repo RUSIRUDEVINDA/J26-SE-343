@@ -203,6 +203,11 @@ public class EarlyGovernanceScreeningPostgresIntegrationTests
 
         using (var writeContext = CreateDbContext(connectionString))
         {
+            // Historical DDL assertions above target the original screening migration.
+            // The current repository also maps workflow_run_id, added by the referral
+            // migration. Bring this isolated fixture to that dependency before using
+            // the current model; do not assert that today's store supports old DDL.
+            await writeContext.Database.GetService<IMigrator>().MigrateAsync(ReferralMigration);
             var store = new PostgresEarlyGovernanceScreeningStore(writeContext);
             await store.AddAsync(assessmentId1, SampleUtcTime, sampleResult1);
         }

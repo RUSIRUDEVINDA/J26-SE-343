@@ -43,9 +43,13 @@ public sealed class PortalResearchPolicy(IComplianceRuleCatalogue catalogue,ICon
     (caseId==PortalResearchEvidence.ManualProposalCase && context.User.HasClaim("development_account","reviewtest")) ||
     (context.Items["UploadedSyntheticScreeningCase"] is Guid uploadedCase && uploadedCase==caseId)) &&
    context.User.HasClaim("authority_case_id",caseId.ToString("D")))
+  {
+   if(config.GetValue<bool>("GovernanceIntelligence:DevelopmentCatalogue:Enabled"))
+    return await DevelopmentCataloguePolicy.ReadAsync(catalogue,config,at,ct);
    return new ApprovedScreeningPolicy("DEVELOPMENT RESEARCH POLICY ONLY; existing labelled NPD research-rule scenario, not statutory approval","DEV-RESEARCH-NPD-1",
     [NpdRuleCatalogue.GetDefaultRuleDefinitions().First() with { SourceReference=new(RuleSourceType.ResearchConfiguration,
       "DEVELOPMENT RESEARCH ONLY","Prototype scenario rule","Synthetic",null,"1") }]);
+  }
   return await new ApprovedScreeningPolicySource(catalogue,config).ReadAsync(at,ct);
  }
 }

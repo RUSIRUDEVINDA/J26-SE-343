@@ -1,0 +1,39 @@
+{
+  "Date": "2026-10-23 Asia/Colombo",
+  "FocusedBackendEarlierConfiguredRun": {
+    "passed": 241,
+    "failed": 0,
+    "skipped": 0
+  },
+  "FocusedBackendFinalRerun": {
+    "passed": 235,
+    "failed": 6,
+    "reason": "isolated PostgreSQL connection refused; Docker Desktop Linux engine subsequently unavailable"
+  },
+  "Architecture": {
+    "passed": 5,
+    "failed": 0
+  },
+  "Frontend": {
+    "passed": 139,
+    "failed": 0
+  },
+  "HttpProofCheckCounts": {
+    "HANDLING_HTTP_EVIDENCE.json": 64,
+    "HANDLING_CONCURRENCY_AND_ROLLBACK_EVIDENCE.json": 18,
+    "HANDLING_RESTART_RETRIEVAL_EVIDENCE.json": 9
+  },
+  "GenuineClassifierCallsThisTask": 3,
+  "CompleteProofDatabaseCalls": 1,
+  "SupplementalAndRestartCalls": 0,
+  "OrdinaryModelCalls": 0,
+  "AnomalyCalls": 0,
+  "KnownLimitations": [
+    "Docker unavailable at final rerun; no successful final container stop claimed",
+    "3 pre-existing C1 TypeScript errors",
+    "1 existing ref cleanup ESLint warning; 0 errors",
+    "NuGet vulnerability feed unavailable warning",
+    "No browser tool available; visual/keyboard/responsive verification pending",
+    "No whole-repository green claim"
+  ]
+}

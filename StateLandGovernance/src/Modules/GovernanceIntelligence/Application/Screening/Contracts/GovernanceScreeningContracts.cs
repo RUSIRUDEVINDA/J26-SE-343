@@ -38,7 +38,10 @@ public sealed record GovernanceScreeningCaseInputDto(
     string? FullInputFingerprint = null,
     string? EffectivePolicyVersion = null,
     string? EvidenceVersion = null,
-    bool IsDevelopmentSpatialMock = false
+    bool IsDevelopmentSpatialMock = false,
+    StateLandGovernance.GovernanceIntelligence.Application.DTOs.ProposalComplianceInputDto? DevelopmentRegulatoryInput = null,
+    string? DevelopmentRegulatoryInputVersion = null,
+    string? DevelopmentRegulatorySourceReference = null
 );
 
 public sealed record ScreeningDocumentReferenceDto(

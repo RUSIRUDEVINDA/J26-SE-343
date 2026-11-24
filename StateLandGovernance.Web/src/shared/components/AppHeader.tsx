@@ -1,5 +1,6 @@
+import {DevelopmentSessionBar} from "./DevelopmentSessionBar";
 import Image from "next/image";
-import type { ReactNode } from "react";
+import {SignInLink} from "./SignInLink";
 import {
   SYSTEM_TITLE,
   SYSTEM_TITLE_SINHALA,
@@ -7,7 +8,7 @@ import {
 } from "@/shared/constants/navigation";
 import styles from "./AppHeader.module.css";
 
-export function AppHeader({ actions }: { actions?: ReactNode }) {
+export function AppHeader({unifiedAccount=false}:{unifiedAccount?:boolean}) {
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
@@ -31,7 +32,7 @@ export function AppHeader({ actions }: { actions?: ReactNode }) {
           </p>
         </div>
       </div>
-      {actions ? <div className={styles.actions}>{actions}</div> : null}
+      {unifiedAccount?<DevelopmentSessionBar compact/>:<SignInLink className={styles.signIn}/>}
     </header>
   );
 }

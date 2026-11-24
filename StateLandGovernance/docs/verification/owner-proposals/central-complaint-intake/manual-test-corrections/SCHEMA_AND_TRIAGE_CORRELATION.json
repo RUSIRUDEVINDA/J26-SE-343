@@ -1,0 +1,544 @@
+{
+  "Constraints": [
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "AK_complaint_handling_event_parent",
+      "Definition": "UNIQUE (\"Id\", \"ComplaintId\")"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "CK_complaint_handling_authority",
+      "Definition": "CHECK ((((\"AuthorizationGrantId\" IS NULL) AND (\"AuthorizationSourceReference\" IS NULL) AND ((\"HandlingMode\")::text = 'Ds'::text) AND ((\"Operation\")::text = ANY ((ARRAY['StartInvestigation'::character varying, 'RecordNote'::character varying, 'RequestInformation'::character varying, 'RecordFindings'::character varying, 'DsReviewRecorded'::character varying])::text[]))) OR ((\"AuthorizationGrantId\" IS NOT NULL) AND (\"AuthorizationSourceReference\" IS NOT NULL) AND (length(btrim((\"AuthorizationSourceReference\")::text)) > 0))))"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "CK_complaint_handling_canonical",
+      "Definition": "CHECK ((length(btrim(\"EventCanonicalJson\")) > 0))"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "CK_complaint_handling_details",
+      "Definition": "CHECK (((jsonb_typeof(\"DetailsJson\") = 'object'::text) AND (octet_length((\"DetailsJson\")::text) <= 32768)))"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "CK_complaint_handling_evidence",
+      "Definition": "CHECK (\nCASE\n    WHEN (jsonb_typeof(\"EvidenceReferencesJson\") = 'array'::text) THEN (jsonb_array_length(\"EvidenceReferencesJson\") <= 20)\n    ELSE false\nEND)"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "CK_complaint_handling_hashes",
+      "Definition": "CHECK ((((\"InputSha256\")::text ~ '^[0-9a-f]{64}$'::text) AND ((\"EventSha256\")::text ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "CK_complaint_handling_operation",
+      "Definition": "CHECK (((\"Operation\")::text = ANY ((ARRAY['TakeDirect'::character varying, 'AssignDs'::character varying, 'ReassignDs'::character varying, 'StartInvestigation'::character varying, 'RecordNote'::character varying, 'RequestInformation'::character varying, 'RecordFindings'::character varying, 'Resolve'::character varying, 'Close'::character varying, 'Reopen'::character varying, 'DsReviewRecorded'::character varying])::text[])))"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "CK_complaint_handling_reason",
+      "Definition": "CHECK ((length(btrim((\"Reason\")::text)) > 0))"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "CK_complaint_handling_responsibility",
+      "Definition": "CHECK (((((\"HandlingMode\")::text = 'Commissioner'::text) AND (\"ResponsibleActorId\" IS NOT NULL) AND (\"AssignmentEventId\" IS NULL) AND ((\"ToState\")::text = ANY ((ARRAY['UnderCommissionerReview'::character varying, 'InformationRequested'::character varying, 'UnderInvestigation'::character varying, 'Reopened'::character varying])::text[]))) OR (((\"HandlingMode\")::text = 'Ds'::text) AND (\"ResponsibleActorId\" IS NOT NULL) AND (\"AssignmentEventId\" IS NOT NULL) AND ((\"ToState\")::text = ANY ((ARRAY['AssignedToDs'::character varying, 'InformationRequested'::character varying, 'UnderInvestigation'::character varying])::text[]))) OR (((\"HandlingMode\")::text = 'None'::text) AND (\"ResponsibleActorId\" IS NULL) AND (\"AssignmentEventId\" IS NULL) AND ((\"ToState\")::text = ANY ((ARRAY['Resolved'::character varying, 'Closed'::character varying])::text[])))))"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "CK_complaint_handling_revision",
+      "Definition": "CHECK ((((\"Revision\" = 1) AND (\"PreviousEventId\" IS NULL)) OR ((\"Revision\" > 1) AND (\"PreviousEventId\" IS NOT NULL))))"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "CK_complaint_handling_states",
+      "Definition": "CHECK ((((\"FromState\")::text = ANY ((ARRAY['Unassigned'::character varying, 'UnderCommissionerReview'::character varying, 'AssignedToDs'::character varying, 'InformationRequested'::character varying, 'UnderInvestigation'::character varying, 'Resolved'::character varying, 'Closed'::character varying, 'Reopened'::character varying])::text[])) AND ((\"ToState\")::text = ANY ((ARRAY['Unassigned'::character varying, 'UnderCommissionerReview'::character varying, 'AssignedToDs'::character varying, 'InformationRequested'::character varying, 'UnderInvestigation'::character varying, 'Resolved'::character varying, 'Closed'::character varying, 'Reopened'::character varying])::text[]))))"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "FK_complaint_handling_assignment",
+      "Definition": "FOREIGN KEY (\"AssignmentEventId\", \"ComplaintId\") REFERENCES governance_intelligence.complaint_assignment_events(\"Id\", \"ComplaintId\") ON DELETE RESTRICT"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "FK_complaint_handling_complaint",
+      "Definition": "FOREIGN KEY (\"ComplaintId\") REFERENCES governance_intelligence.registered_complaints(\"Id\") ON DELETE RESTRICT"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "FK_complaint_handling_previous",
+      "Definition": "FOREIGN KEY (\"PreviousEventId\", \"ComplaintId\") REFERENCES governance_intelligence.complaint_handling_events(\"Id\", \"ComplaintId\") ON DELETE RESTRICT"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "PK_complaint_handling_events",
+      "Definition": "PRIMARY KEY (\"Id\")"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "UQ_complaint_handling_revision",
+      "Definition": "UNIQUE (\"ComplaintId\", \"Revision\")"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "UQ_complaint_handling_submission",
+      "Definition": "UNIQUE (\"ActorId\", \"SubmissionKey\")"
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_ActedAtUtc_not_null",
+      "Definition": "NOT NULL \"ActedAtUtc\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_ActorId_not_null",
+      "Definition": "NOT NULL \"ActorId\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_ComplaintId_not_null",
+      "Definition": "NOT NULL \"ComplaintId\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_DetailsJson_not_null",
+      "Definition": "NOT NULL \"DetailsJson\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_EventCanonicalJson_not_null",
+      "Definition": "NOT NULL \"EventCanonicalJson\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_EventSha256_not_null",
+      "Definition": "NOT NULL \"EventSha256\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_EvidenceReferencesJson_not_null",
+      "Definition": "NOT NULL \"EvidenceReferencesJson\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_FromState_not_null",
+      "Definition": "NOT NULL \"FromState\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_HandlingMode_not_null",
+      "Definition": "NOT NULL \"HandlingMode\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_Id_not_null",
+      "Definition": "NOT NULL \"Id\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_InputSha256_not_null",
+      "Definition": "NOT NULL \"InputSha256\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_Operation_not_null",
+      "Definition": "NOT NULL \"Operation\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_PublicSummary_not_null",
+      "Definition": "NOT NULL \"PublicSummary\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_Reason_not_null",
+      "Definition": "NOT NULL \"Reason\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_Revision_not_null",
+      "Definition": "NOT NULL \"Revision\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_SubmissionKey_not_null",
+      "Definition": "NOT NULL \"SubmissionKey\""
+    },
+    {
+      "Table": "governance_intelligence.complaint_handling_events",
+      "Name": "complaint_handling_events_ToState_not_null",
+      "Definition": "NOT NULL \"ToState\""
+    },
+    {
+      "Table": "governance_intelligence.registered_complaints",
+      "Name": "PK_registered_complaints",
+      "Definition": "PRIMARY KEY (\"Id\")"
+    },
+    {
+      "Table": "governance_intelligence.registered_complaints",
+      "Name": "registered_complaints_ApplicantId_not_null",
+      "Definition": "NOT NULL \"ApplicantId\""
+    },
+    {
+      "Table": "governance_intelligence.registered_complaints",
+      "Name": "registered_complaints_Id_not_null",
+      "Definition": "NOT NULL \"Id\""
+    },
+    {
+      "Table": "governance_intelligence.registered_complaints",
+      "Name": "registered_complaints_PayloadJson_not_null",
+      "Definition": "NOT NULL \"PayloadJson\""
+    },
+    {
+      "Table": "governance_intelligence.registered_complaints",
+      "Name": "registered_complaints_Revision_not_null",
+      "Definition": "NOT NULL \"Revision\""
+    },
+    {
+      "Table": "governance_intelligence.registered_complaints",
+      "Name": "registered_complaints_SubmissionKey_not_null",
+      "Definition": "NOT NULL \"SubmissionKey\""
+    },
+    {
+      "Table": "governance_intelligence.registered_complaints",
+      "Name": "registered_complaints_SubmittedAtUtc_not_null",
+      "Definition": "NOT NULL \"SubmittedAtUtc\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "FK_screening_evidence_attachments_officer_assessment_requests_~",
+      "Definition": "FOREIGN KEY (\"RequestId\", \"CreatorActorId\") REFERENCES governance_intelligence.officer_assessment_requests(\"Id\", \"CreatorActorId\") ON DELETE RESTRICT"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "PK_screening_evidence_attachments",
+      "Definition": "PRIMARY KEY (\"Id\")"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "ck_screening_attachment_bytes",
+      "Definition": "CHECK (((octet_length(\"Content\") >= 1) AND (octet_length(\"Content\") <= 5242880)))"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "ck_screening_attachment_hashes",
+      "Definition": "CHECK (((length((\"ContentSha256\")::text) = 64) AND (length((\"InputSha256\")::text) = 64)))"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "ck_screening_attachment_type",
+      "Definition": "CHECK (((\"ContentType\")::text = ANY ((ARRAY['application/pdf'::character varying, 'image/png'::character varying, 'image/jpeg'::character varying, 'text/plain'::character varying])::text[])))"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_Concern_not_null",
+      "Definition": "NOT NULL \"Concern\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_ContentSha256_not_null",
+      "Definition": "NOT NULL \"ContentSha256\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_ContentType_not_null",
+      "Definition": "NOT NULL \"ContentType\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_Content_not_null",
+      "Definition": "NOT NULL \"Content\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_CreatedAtUtc_not_null",
+      "Definition": "NOT NULL \"CreatedAtUtc\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_CreatorActorId_not_null",
+      "Definition": "NOT NULL \"CreatorActorId\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_FileName_not_null",
+      "Definition": "NOT NULL \"FileName\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_Id_not_null",
+      "Definition": "NOT NULL \"Id\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_InputSha256_not_null",
+      "Definition": "NOT NULL \"InputSha256\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_RequestId_not_null",
+      "Definition": "NOT NULL \"RequestId\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_attachments",
+      "Name": "screening_evidence_attachments_SubmissionKey_not_null",
+      "Definition": "NOT NULL \"SubmissionKey\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "AK_screening_evidence_verifications_Id_RequestId_Concern_Creat~",
+      "Definition": "UNIQUE (\"Id\", \"RequestId\", \"Concern\", \"CreatorActorId\")"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "FK_screening_evidence_verifications_officer_assessment_request~",
+      "Definition": "FOREIGN KEY (\"RequestId\", \"CreatorActorId\") REFERENCES governance_intelligence.officer_assessment_requests(\"Id\", \"CreatorActorId\") ON DELETE RESTRICT"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "FK_screening_evidence_verifications_screening_evidence_verific~",
+      "Definition": "FOREIGN KEY (\"PreviousEventId\", \"RequestId\", \"Concern\", \"CreatorActorId\") REFERENCES governance_intelligence.screening_evidence_verifications(\"Id\", \"RequestId\", \"Concern\", \"CreatorActorId\") ON DELETE RESTRICT"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "PK_screening_evidence_verifications",
+      "Definition": "PRIMARY KEY (\"Id\")"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "ck_screening_verification_hash",
+      "Definition": "CHECK (((length((\"InputSha256\")::text) = 64) AND (length((\"EventSha256\")::text) = 64)))"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "ck_screening_verification_refs",
+      "Definition": "CHECK (((jsonb_typeof(\"AttachmentIdsJson\") = 'array'::text) AND (jsonb_typeof(\"ReferencesJson\") = 'array'::text) AND (jsonb_array_length(\"AttachmentIdsJson\") <= 10) AND (jsonb_array_length(\"ReferencesJson\") <= 10)))"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "ck_screening_verification_remarks",
+      "Definition": "CHECK (((length((\"Remarks\")::text) >= 20) AND (length((\"Remarks\")::text) <= 2000)))"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "ck_screening_verification_revision",
+      "Definition": "CHECK (((\"Revision\" > 0) AND (((\"Revision\" = 1) AND (\"PreviousEventId\" IS NULL) AND ((\"PreviousStatus\")::text = 'Unverified'::text)) OR ((\"Revision\" > 1) AND (\"PreviousEventId\" IS NOT NULL)))))"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "ck_screening_verification_status",
+      "Definition": "CHECK ((((\"Status\")::text = ANY ((ARRAY['Verified'::character varying, 'Rejected'::character varying, 'MoreInformationRequired'::character varying])::text[])) AND ((\"PreviousStatus\")::text = ANY ((ARRAY['Unverified'::character varying, 'Verified'::character varying, 'Rejected'::character varying, 'MoreInformationRequired'::character varying])::text[]))))"
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_AttachmentIdsJson_not_null",
+      "Definition": "NOT NULL \"AttachmentIdsJson\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_CanonicalJson_not_null",
+      "Definition": "NOT NULL \"CanonicalJson\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_Concern_not_null",
+      "Definition": "NOT NULL \"Concern\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_CreatedAtUtc_not_null",
+      "Definition": "NOT NULL \"CreatedAtUtc\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_CreatorActorId_not_null",
+      "Definition": "NOT NULL \"CreatorActorId\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_EventSha256_not_null",
+      "Definition": "NOT NULL \"EventSha256\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_Id_not_null",
+      "Definition": "NOT NULL \"Id\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_InputSha256_not_null",
+      "Definition": "NOT NULL \"InputSha256\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_PreviousStatus_not_null",
+      "Definition": "NOT NULL \"PreviousStatus\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_ReferencesJson_not_null",
+      "Definition": "NOT NULL \"ReferencesJson\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_Remarks_not_null",
+      "Definition": "NOT NULL \"Remarks\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_RequestId_not_null",
+      "Definition": "NOT NULL \"RequestId\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_Revision_not_null",
+      "Definition": "NOT NULL \"Revision\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_Status_not_null",
+      "Definition": "NOT NULL \"Status\""
+    },
+    {
+      "Table": "governance_intelligence.screening_evidence_verifications",
+      "Name": "screening_evidence_verifications_SubmissionKey_not_null",
+      "Definition": "NOT NULL \"SubmissionKey\""
+    }
+  ],
+  "Indexes": [
+    {
+      "Table": "complaint_handling_events",
+      "Name": "AK_complaint_handling_event_parent",
+      "Definition": "CREATE UNIQUE INDEX \"AK_complaint_handling_event_parent\" ON governance_intelligence.complaint_handling_events USING btree (\"Id\", \"ComplaintId\")"
+    },
+    {
+      "Table": "complaint_handling_events",
+      "Name": "PK_complaint_handling_events",
+      "Definition": "CREATE UNIQUE INDEX \"PK_complaint_handling_events\" ON governance_intelligence.complaint_handling_events USING btree (\"Id\")"
+    },
+    {
+      "Table": "complaint_handling_events",
+      "Name": "UQ_complaint_handling_revision",
+      "Definition": "CREATE UNIQUE INDEX \"UQ_complaint_handling_revision\" ON governance_intelligence.complaint_handling_events USING btree (\"ComplaintId\", \"Revision\")"
+    },
+    {
+      "Table": "complaint_handling_events",
+      "Name": "UQ_complaint_handling_submission",
+      "Definition": "CREATE UNIQUE INDEX \"UQ_complaint_handling_submission\" ON governance_intelligence.complaint_handling_events USING btree (\"ActorId\", \"SubmissionKey\")"
+    },
+    {
+      "Table": "complaint_handling_events",
+      "Name": "ix_complaint_handling_responsible",
+      "Definition": "CREATE INDEX ix_complaint_handling_responsible ON governance_intelligence.complaint_handling_events USING btree (\"ResponsibleActorId\", \"ComplaintId\", \"Revision\" DESC)"
+    },
+    {
+      "Table": "complaint_handling_events",
+      "Name": "ix_complaint_handling_status",
+      "Definition": "CREATE INDEX ix_complaint_handling_status ON governance_intelligence.complaint_handling_events USING btree (\"ToState\", \"ComplaintId\", \"Revision\" DESC)"
+    },
+    {
+      "Table": "complaint_handling_events",
+      "Name": "ux_complaint_handling_one_successor",
+      "Definition": "CREATE UNIQUE INDEX ux_complaint_handling_one_successor ON governance_intelligence.complaint_handling_events USING btree (\"PreviousEventId\") WHERE (\"PreviousEventId\" IS NOT NULL)"
+    },
+    {
+      "Table": "registered_complaints",
+      "Name": "IX_registered_complaints_ApplicantId_SubmissionKey",
+      "Definition": "CREATE UNIQUE INDEX \"IX_registered_complaints_ApplicantId_SubmissionKey\" ON governance_intelligence.registered_complaints USING btree (\"ApplicantId\", \"SubmissionKey\")"
+    },
+    {
+      "Table": "registered_complaints",
+      "Name": "IX_registered_complaints_CaseId_SubmittedAtUtc",
+      "Definition": "CREATE INDEX \"IX_registered_complaints_CaseId_SubmittedAtUtc\" ON governance_intelligence.registered_complaints USING btree (\"CaseId\", \"SubmittedAtUtc\")"
+    },
+    {
+      "Table": "registered_complaints",
+      "Name": "PK_registered_complaints",
+      "Definition": "CREATE UNIQUE INDEX \"PK_registered_complaints\" ON governance_intelligence.registered_complaints USING btree (\"Id\")"
+    },
+    {
+      "Table": "screening_evidence_attachments",
+      "Name": "IX_screening_evidence_attachments_CreatorActorId_SubmissionKey",
+      "Definition": "CREATE UNIQUE INDEX \"IX_screening_evidence_attachments_CreatorActorId_SubmissionKey\" ON governance_intelligence.screening_evidence_attachments USING btree (\"CreatorActorId\", \"SubmissionKey\")"
+    },
+    {
+      "Table": "screening_evidence_attachments",
+      "Name": "IX_screening_evidence_attachments_RequestId_CreatedAtUtc",
+      "Definition": "CREATE INDEX \"IX_screening_evidence_attachments_RequestId_CreatedAtUtc\" ON governance_intelligence.screening_evidence_attachments USING btree (\"RequestId\", \"CreatedAtUtc\")"
+    },
+    {
+      "Table": "screening_evidence_attachments",
+      "Name": "IX_screening_evidence_attachments_RequestId_CreatorActorId",
+      "Definition": "CREATE INDEX \"IX_screening_evidence_attachments_RequestId_CreatorActorId\" ON governance_intelligence.screening_evidence_attachments USING btree (\"RequestId\", \"CreatorActorId\")"
+    },
+    {
+      "Table": "screening_evidence_attachments",
+      "Name": "PK_screening_evidence_attachments",
+      "Definition": "CREATE UNIQUE INDEX \"PK_screening_evidence_attachments\" ON governance_intelligence.screening_evidence_attachments USING btree (\"Id\")"
+    },
+    {
+      "Table": "screening_evidence_verifications",
+      "Name": "AK_screening_evidence_verifications_Id_RequestId_Concern_Creat~",
+      "Definition": "CREATE UNIQUE INDEX \"AK_screening_evidence_verifications_Id_RequestId_Concern_Creat~\" ON governance_intelligence.screening_evidence_verifications USING btree (\"Id\", \"RequestId\", \"Concern\", \"CreatorActorId\")"
+    },
+    {
+      "Table": "screening_evidence_verifications",
+      "Name": "IX_screening_evidence_verifications_CreatorActorId_SubmissionK~",
+      "Definition": "CREATE UNIQUE INDEX \"IX_screening_evidence_verifications_CreatorActorId_SubmissionK~\" ON governance_intelligence.screening_evidence_verifications USING btree (\"CreatorActorId\", \"SubmissionKey\")"
+    },
+    {
+      "Table": "screening_evidence_verifications",
+      "Name": "IX_screening_evidence_verifications_PreviousEventId",
+      "Definition": "CREATE UNIQUE INDEX \"IX_screening_evidence_verifications_PreviousEventId\" ON governance_intelligence.screening_evidence_verifications USING btree (\"PreviousEventId\")"
+    },
+    {
+      "Table": "screening_evidence_verifications",
+      "Name": "IX_screening_evidence_verifications_PreviousEventId_RequestId_~",
+      "Definition": "CREATE INDEX \"IX_screening_evidence_verifications_PreviousEventId_RequestId_~\" ON governance_intelligence.screening_evidence_verifications USING btree (\"PreviousEventId\", \"RequestId\", \"Concern\", \"CreatorActorId\")"
+    },
+    {
+      "Table": "screening_evidence_verifications",
+      "Name": "IX_screening_evidence_verifications_RequestId_Concern_Revision",
+      "Definition": "CREATE UNIQUE INDEX \"IX_screening_evidence_verifications_RequestId_Concern_Revision\" ON governance_intelligence.screening_evidence_verifications USING btree (\"RequestId\", \"Concern\", \"Revision\")"
+    },
+    {
+      "Table": "screening_evidence_verifications",
+      "Name": "IX_screening_evidence_verifications_RequestId_CreatorActorId",
+      "Definition": "CREATE INDEX \"IX_screening_evidence_verifications_RequestId_CreatorActorId\" ON governance_intelligence.screening_evidence_verifications USING btree (\"RequestId\", \"CreatorActorId\")"
+    },
+    {
+      "Table": "screening_evidence_verifications",
+      "Name": "PK_screening_evidence_verifications",
+      "Definition": "CREATE UNIQUE INDEX \"PK_screening_evidence_verifications\" ON governance_intelligence.screening_evidence_verifications USING btree (\"Id\")"
+    }
+  ],
+  "ReviewMetadata": [
+    {
+      "Id": "a9a6b26c-fb2a-4ef9-a91a-a4c9fe578838",
+      "AtUtc": "2026-10-23T17:05:04.4340687+00:00",
+      "ReasonSha256": "e0f7a478507cd83e9497cc28fa74128416c08bd45ffd176306f7263dfcd4707e"
+    },
+    {
+      "Id": "c74a1f28-8fa2-4203-9637-276e8738a8f7",
+      "AtUtc": "2026-10-23T17:05:11.6899846+00:00",
+      "ReasonSha256": "e0f7a478507cd83e9497cc28fa74128416c08bd45ffd176306f7263dfcd4707e"
+    }
+  ],
+  "HandlingReviewBindings": [
+    {
+      "HandlingEventId": "24f57c4b-d538-4fd3-8eeb-c6d70f865765",
+      "Revision": 2,
+      "ReviewId": "a9a6b26c-fb2a-4ef9-a91a-a4c9fe578838",
+      "SubmissionKey": "a9a6b26c-fb2a-4ef9-a91a-a4c9fe578838"
+    },
+    {
+      "HandlingEventId": "0be187f1-96a8-4783-a3e3-cf938d502b55",
+      "Revision": 3,
+      "ReviewId": "c74a1f28-8fa2-4203-9637-276e8738a8f7",
+      "SubmissionKey": "c74a1f28-8fa2-4203-9637-276e8738a8f7"
+    }
+  ],
+  "TwoReasonsIdentical": true,
+  "TriageContract": "Expected complaint/handling revision CAS; no triage submission key. Distinct review IDs generate distinct DsReviewRecorded mirror events."
+}

@@ -1,0 +1,13 @@
+{
+  "Database": "c4_step1_restore_20261024_finalization",
+  "Host": "127.0.0.1",
+  "Port": 57657,
+  "Archive": "D:\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\AI-Driven-Digital-Lease-Governance-for-State-Land-Management\\.tmp\\c4-step1-backup-20261024-finalization\\state_land_governance_c4.dump",
+  "Bytes": 1815584,
+  "Sha256": "1b5f7ba0872f0cf59fe9f118c06cb3079f9c6a965120b568e31647e3f3032dd0",
+  "All41OriginalTablesMatch": true,
+  "SchemaMatch": true,
+  "Migrations": 21,
+  "OrdinaryWrites": 0,
+  "RestoreSkippedOwnershipAndAcl": true
+}
