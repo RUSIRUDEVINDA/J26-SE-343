@@ -19,7 +19,7 @@ export function leaseInterestStatusLabel(status: LeaseInterestRequestStatus): st
     case 8:
       return "Closed — other request approved";
     case 9:
-      return "Awaiting valuation";
+      return "Request for valuation";
     default:
       return "Unknown";
   }

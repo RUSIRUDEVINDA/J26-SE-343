@@ -614,6 +614,7 @@ export interface LeaseInterestRequestDetail {
   statusHistory: LeaseInterestStatusHistoryEntry[];
   costSummary: LeaseInterestCostSummary;
   latestAuthorityDecision?: LeaseInterestApplicantAuthorityDecision | null;
+  hasOfficerValuation?: boolean;
 }
 
 export interface LeaseInterestRequestSummary {
@@ -627,6 +628,7 @@ export interface LeaseInterestRequestSummary {
   requestedPurpose: LandUseType;
   requestedDurationYears?: number | null;
   cadastralNumber?: string | null;
+  hasOfficerValuation?: boolean;
 }
 
 export interface ParcelShortlistItem {

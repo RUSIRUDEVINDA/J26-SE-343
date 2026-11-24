@@ -35,7 +35,8 @@ export async function findLeaseInterestForParcel(
 }
 
 /**
- * Explicit Start request — creates a draft only when none exists for this parcel.
+ * Explicit Save draft — creates a draft row only when none exists for this parcel.
+ * Must not be called on page load or navigation; only from the Save draft action.
  */
 export async function startLeaseInterestDraft(
   landParcelId: string,
@@ -70,6 +71,19 @@ export async function submitLeaseInterest(
 ): Promise<LeaseInterestRequestDetail> {
   return apiPost<LeaseInterestRequestDetail>(
     `/api/v1/land/me/lease-interest/requests/${requestId}/submit`,
+    draft,
+    { headers: { "Idempotency-Key": idempotencyKey } },
+  );
+}
+
+/** Submit without a prior Save draft; reuses an existing draft for the parcel when present. */
+export async function submitLeaseInterestForParcel(
+  landParcelId: string,
+  draft: UpsertLeaseInterestDraft,
+  idempotencyKey: string,
+): Promise<LeaseInterestRequestDetail> {
+  return apiPost<LeaseInterestRequestDetail>(
+    `/api/v1/land/me/parcels/${landParcelId}/lease-interest/submit`,
     draft,
     { headers: { "Idempotency-Key": idempotencyKey } },
   );
