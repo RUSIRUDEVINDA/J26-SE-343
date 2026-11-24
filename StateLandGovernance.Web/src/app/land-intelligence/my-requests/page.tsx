@@ -21,11 +21,12 @@ import {
 import type { LeaseInterestRequestSummary } from "@/modules/component-01-land-intelligence/types/landIntelligence";
 import { leaseInterestPurposeDisplay } from "@/modules/component-01-land-intelligence/utils/leaseInterestPurposeDisplay";
 import { useModalDialogA11y } from "@/modules/component-01-land-intelligence/hooks/useModalDialogA11y";
+import { isLeaseInterestDraftStatus } from "@/modules/component-01-land-intelligence/utils/leaseInterestStatus";
 import {
-  isLeaseInterestDraftStatus,
-  leaseInterestStatusBadgeTone,
-  leaseInterestStatusLabel,
-} from "@/modules/component-01-land-intelligence/utils/leaseInterestStatus";
+  buildApplicantWorkflowContext,
+  leaseInterestApplicantBadgeTone,
+  leaseInterestApplicantStatusLabel,
+} from "@/modules/component-01-land-intelligence/utils/leaseInterestApplicantProgress";
 import styles from "./MyRequests.module.css";
 
 const MY_REQUESTS_PAGE_SIZES = [10, 20, 30] as const;
@@ -129,6 +130,9 @@ function RequestRow({
     busy: deleting,
   });
   const isDraft = isLeaseInterestDraftStatus(item.status);
+  const applicantContext = isDraft
+    ? null
+    : buildApplicantWorkflowContext(item.status, [], item.hasOfficerValuation === true);
   const purpose = leaseInterestPurposeDisplay(
     item.requestedPurpose,
     item.status,
@@ -214,9 +218,13 @@ function RequestRow({
             <span className={styles.srOnly}>Parcel </span>
             {parcelLabel}
           </p>
-          <StatusBadge tone={leaseInterestStatusBadgeTone(item.status)}>
-            {leaseInterestStatusLabel(item.status)}
-          </StatusBadge>
+          {isDraft ? (
+            <StatusBadge tone="neutral">Draft</StatusBadge>
+          ) : applicantContext ? (
+            <StatusBadge tone={leaseInterestApplicantBadgeTone(applicantContext)}>
+              {leaseInterestApplicantStatusLabel(applicantContext)}
+            </StatusBadge>
+          ) : null}
         </div>
         <dl className={styles.rowMeta}>
           <div>
