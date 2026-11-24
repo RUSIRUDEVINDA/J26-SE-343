@@ -1,10 +1,15 @@
 import Link from "next/link";
+import { HeaderSignInAction } from "@/shared/components/HeaderSignInAction";
 import { PageLayout, PageHeading } from "@/shared/components/PageLayout";
 import { moduleLandingLinks } from "@/shared/constants/navigation";
 
 export default function HomePage() {
   return (
-    <PageLayout showSidebar={false}>
+    <PageLayout
+      showSidebar={false}
+      showDevelopmentSessionBar={false}
+      headerActions={<HeaderSignInAction />}
+    >
       <PageHeading
         title="State Land Lease Information and Management System"
         subtitle="Select a platform module. Explore Land Intelligence or the Financial Intelligence design preview."
