@@ -8,22 +8,39 @@ import type { NavItem } from "@/shared/constants/navigation";
 export function PageLayout({
   children,
   showSidebar = true,
+  showDevelopmentSessionBar = true,
+  headerActions,
+  sessionBar,
   navigationItems,
   navigationLabel,
   navigationBasePath,
   navigationCompactMobile,
+  appendResearchDemoNav,
 }: {
   children: ReactNode;
   showSidebar?: boolean;
+  showDevelopmentSessionBar?: boolean;
+  headerActions?: ReactNode;
+  sessionBar?: ReactNode;
   navigationItems?: NavItem[];
   navigationLabel?: string;
   navigationBasePath?: string;
   navigationCompactMobile?: boolean;
+  appendResearchDemoNav?: boolean;
 }) {
   return (
     <div className={styles.shell}>
-      <AppHeader />
-      <DevelopmentSessionBar />
+      <AppHeader
+        actions={
+          headerActions || sessionBar ? (
+            <>
+              {headerActions}
+              {sessionBar}
+            </>
+          ) : null
+        }
+      />
+      {showDevelopmentSessionBar ? <DevelopmentSessionBar /> : null}
       <div className={showSidebar ? styles.bodyWithSidebar : styles.body}>
         {showSidebar ? (
           <Sidebar
@@ -31,6 +48,7 @@ export function PageLayout({
             label={navigationLabel}
             basePath={navigationBasePath}
             compactMobile={navigationCompactMobile}
+            appendResearchDemoNav={appendResearchDemoNav}
           />
         ) : null}
         <main className={styles.main}>{children}</main>

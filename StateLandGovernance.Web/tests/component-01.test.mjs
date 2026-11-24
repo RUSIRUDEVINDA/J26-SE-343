@@ -23,8 +23,19 @@ const {
 } = loadCommonJs(
   "../src/modules/component-01-land-intelligence/utils/leaseInterestStatus.ts",
 );
+const {
+  buildApplicantWorkflowContext,
+  buildApplicantProgressSteps,
+  leaseInterestApplicantStatusLabel,
+  expandApplicantTimelineForDisplay,
+} = loadCommonJs(
+  "../src/modules/component-01-land-intelligence/utils/leaseInterestApplicantProgress.ts",
+);
 const { leaseInterestPurposeDisplay } = loadCommonJs(
   "../src/modules/component-01-land-intelligence/utils/leaseInterestPurposeDisplay.ts",
+);
+const { parcelConnectionDescription } = loadCommonJs(
+  "../src/modules/component-01-land-intelligence/utils/parcelRelationshipDisplay.ts",
 );
 const { formatRuleScore, formatCriterionScore } = loadCommonJs(
   "../src/modules/component-01-land-intelligence/utils/formatters.ts",
@@ -195,6 +206,92 @@ test("lease interest status labels cover officer workflow states", () => {
   assert.equal(leaseInterestStatusLabel(4), "Needs information");
   assert.equal(leaseInterestApplicantOutcome(3), "");
   assert.match(leaseInterestApplicantOutcome(5), /rejected/i);
+});
+
+test("applicant timeline splits verification complete into two events", () => {
+  const rows = expandApplicantTimelineForDisplay([
+    { status: 2, changedAtUtc: "2026-01-01T10:00:00Z" },
+    {
+      status: 9,
+      changedAtUtc: "2026-10-25T13:12:00Z",
+      note: "all ok",
+    },
+  ]);
+  assert.equal(rows.length, 3);
+  assert.equal(rows[1].label, "Verification complete");
+  assert.equal(rows[1].note, "all ok");
+  assert.equal(rows[2].label, "Awaiting valuation record");
+  assert.equal(rows[2].note, null);
+});
+
+test("applicant status treats valuation saved while status still awaiting valuation", () => {
+  const ctx = buildApplicantWorkflowContext(
+    9,
+    [
+      { status: 2, changedAtUtc: "2026-01-01T10:00:00Z" },
+      { status: 9, changedAtUtc: "2026-01-02T10:00:00Z" },
+    ],
+    true,
+  );
+  assert.match(
+    leaseInterestApplicantStatusLabel(ctx),
+    /valuation recorded/i,
+  );
+  const steps = buildApplicantProgressSteps(ctx);
+  const current = steps.filter((s) => s.state === "current");
+  assert.equal(current.length, 1);
+  assert.match(current[0].label, /authority decision/i);
+});
+
+test("knowledge graph has category connection shows source-reported land use", () => {
+  const label = parcelConnectionDescription(
+    {
+      relationshipType: "HAS_CATEGORY",
+      sourceNodeType: "LandParcel",
+      sourceNodeId: "p1",
+      targetNodeType: "LandCategory",
+      targetNodeId: "c1",
+      description: "StateLand",
+    },
+    {
+      id: "p1",
+      category: { type: 1 },
+      cadastralSource: {
+        sourceReportedLandUseDisplay: "Lowland paddy",
+      },
+    },
+  );
+  assert.equal(label, "Lowland paddy");
+});
+
+test("knowledge graph has category falls back to claimant when land use missing and category Other", () => {
+  const label = parcelConnectionDescription(
+    {
+      relationshipType: "HAS_CATEGORY",
+      sourceNodeType: "LandParcel",
+      sourceNodeId: "p1",
+      targetNodeType: "LandCategory",
+      targetNodeId: "c1",
+      description: "Other",
+    },
+    {
+      id: "p1",
+      category: { type: 99 },
+      cadastralSource: {
+        sourceReportedClaimantCategoryDisplay: "Government",
+      },
+    },
+  );
+  assert.equal(label, "Government");
+});
+
+test("applicant timeline sorts same timestamp by workflow order", () => {
+  const sorted = sortApplicantStatusHistory([
+    { status: 3, changedAtUtc: "2026-01-01T10:00:00Z" },
+    { status: 2, changedAtUtc: "2026-01-01T10:00:00Z" },
+  ]);
+  assert.equal(sorted[0].status, 2);
+  assert.equal(sorted[1].status, 3);
 });
 
 test("GIS coverage badges treat missing data as neutral unavailable", () => {

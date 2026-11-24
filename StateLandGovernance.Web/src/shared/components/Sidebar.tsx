@@ -15,6 +15,10 @@ import {
 } from "@/shared/constants/navigation";
 import styles from "./Sidebar.module.css";
 
+/** Temporarily hidden from the sidebar; routes remain available by direct URL. */
+const SHOW_OFFICER_VALUATION_QUEUE_IN_SIDEBAR = false;
+const SHOW_AUTHORITY_REVIEW_QUEUE_IN_SIDEBAR = false;
+
 function isActive(pathname: string, href: string, basePath: string): boolean {
   if (href === basePath) {
     return pathname === href;
@@ -34,11 +38,13 @@ export function Sidebar({
   label = "Land Intelligence navigation",
   basePath = LAND_INTELLIGENCE_BASE,
   compactMobile = false,
+  appendResearchDemoNav = true,
 }: {
   items?: NavItem[];
   label?: string;
   basePath?: string;
   compactMobile?: boolean;
+  appendResearchDemoNav?: boolean;
 }) {
   const pathname = usePathname();
   const [officerLookupEnabled, setOfficerLookupEnabled] = useState(false);
@@ -46,7 +52,7 @@ export function Sidebar({
   const isLandIntelligenceNav = basePath === LAND_INTELLIGENCE_BASE;
 
   useEffect(() => {
-    if (!isLandIntelligenceNav) {
+    if (!isLandIntelligenceNav || !appendResearchDemoNav) {
       return;
     }
     let cancelled = false;
@@ -68,30 +74,37 @@ export function Sidebar({
     return () => {
       cancelled = true;
     };
-  }, [isLandIntelligenceNav]);
+  }, [isLandIntelligenceNav, appendResearchDemoNav]);
 
   const navItems = useMemo((): NavItem[] => {
-    if (!isLandIntelligenceNav) {
+    if (!isLandIntelligenceNav || !appendResearchDemoNav) {
       return items;
     }
     const extras: NavItem[] = [];
     if (officerLookupEnabled) {
       if (!items.some((item) => item.href === officerLeaseInterestQueueNavItem.href)) {
-        extras.push(
-          officerLeaseInterestQueueNavItem,
-          officerLeaseInterestValuationQueueNavItem,
-          officerLeaseInterestLookupNavItem,
-        );
+        extras.push(officerLeaseInterestQueueNavItem);
+        if (SHOW_OFFICER_VALUATION_QUEUE_IN_SIDEBAR) {
+          extras.push(officerLeaseInterestValuationQueueNavItem);
+        }
+        extras.push(officerLeaseInterestLookupNavItem);
       }
     }
     if (
+      SHOW_AUTHORITY_REVIEW_QUEUE_IN_SIDEBAR &&
       authorityReviewEnabled &&
       !items.some((item) => item.href === authorityLeaseInterestQueueNavItem.href)
     ) {
       extras.push(authorityLeaseInterestQueueNavItem);
     }
     return extras.length ? [...items, ...extras] : items;
-  }, [items, isLandIntelligenceNav, officerLookupEnabled, authorityReviewEnabled]);
+  }, [
+    items,
+    isLandIntelligenceNav,
+    appendResearchDemoNav,
+    officerLookupEnabled,
+    authorityReviewEnabled,
+  ]);
 
   return (
     <aside
