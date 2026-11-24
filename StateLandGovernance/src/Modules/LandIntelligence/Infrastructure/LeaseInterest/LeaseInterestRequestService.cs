@@ -47,7 +47,6 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             [
                 new("nic", "National Identity Card (individual)", "Requested during verification."),
                 new("registration", "Business registration certificate (organization)", "Requested during verification."),
-                new("survey", "Survey plan or cadastral extract", "If available from your records."),
                 new("project", "Project brief or feasibility summary", "Optional at this stage."),
                 new("financial", "Financial capacity evidence", "Optional at this stage."),
             ],
@@ -77,52 +76,12 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
         await EnsureParcelExistsAsync(landParcelId, cancellationToken);
         await _parcelEligibility.EnsureEligibleForLeaseInterestAsync(landParcelId, cancellationToken);
 
-        var entity = await _dbContext.LeaseInterestRequests
-            .Include(x => x.StatusHistory)
-            .Where(x =>
-                x.OwnerId == ownerId
-                && x.LandParcelId == landParcelId
-                && x.Status == LeaseInterestRequestStatus.Draft)
-            .OrderByDescending(x => x.UpdatedAtUtc)
-            .FirstOrDefaultAsync(cancellationToken);
+        var entity = await FindOwnedDraftForParcelAsync(ownerId, landParcelId, cancellationToken);
 
-        var now = _timeProvider.GetUtcNow();
         if (entity is null)
         {
-            var emptyDraft = new UpsertLeaseInterestDraftDto(
-                new LeaseInterestApplicantDto(
-                    LeaseInterestApplicantKindDto.Individual,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    null,
-                    null,
-                    null,
-                    null),
-                new LeaseInterestProposalDto(
-                    default,
-                    string.Empty,
-                    null,
-                    string.Empty,
-                    1,
-                    string.Empty),
-                new LeaseInterestSupportingInfoDto(string.Empty),
-                false);
-
-            entity = new LeaseInterestRequestEntity
-            {
-                Id = Guid.NewGuid(),
-                OwnerId = ownerId,
-                LandParcelId = landParcelId,
-                Status = LeaseInterestRequestStatus.Draft,
-                PayloadJson = LeaseInterestPayloadSerializer.Serialize(emptyDraft),
-                RequestedPurpose = 0,
-                ConsentToPreliminaryAssessment = false,
-                CreatedAtUtc = now,
-                UpdatedAtUtc = now,
-            };
-
+            var now = _timeProvider.GetUtcNow();
+            entity = CreateDraftEntity(ownerId, landParcelId, now);
             _dbContext.LeaseInterestRequests.Add(entity);
             AppendStatusHistory(
                 entity.Id,
@@ -184,103 +143,90 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             throw new ValidationException(errors);
         }
 
-        if (!string.IsNullOrWhiteSpace(idempotencyKey))
+        var priorByKey = await TryGetPriorSubmitByIdempotencyKeyAsync(
+            ownerId,
+            idempotencyKey,
+            cancellationToken);
+        if (priorByKey is not null)
         {
-            var prior = await _dbContext.LeaseInterestRequests
-                .Include(x => x.StatusHistory)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(
-                    x => x.OwnerId == ownerId && x.SubmitIdempotencyKey == idempotencyKey,
-                    cancellationToken);
-
-            if (prior is not null)
-            {
-                return MapDetail(prior);
-            }
+            return priorByKey;
         }
 
         var entity = await LoadOwnedRequestAsync(requestId, ownerId, cancellationToken);
-        if (entity.Status != LeaseInterestRequestStatus.Draft)
-        {
-            if (!string.IsNullOrWhiteSpace(idempotencyKey)
-                && entity.SubmitIdempotencyKey == idempotencyKey)
-            {
-                return MapDetail(entity);
-            }
-
-            throw new LeaseInterestInvalidStateException("This request has already been submitted.");
-        }
-
         await EnsureParcelExistsAsync(entity.LandParcelId, cancellationToken);
         await _parcelEligibility.EnsureEligibleForLeaseInterestAsync(entity.LandParcelId, cancellationToken);
 
-        var now = _timeProvider.GetUtcNow();
-        entity.PayloadJson = LeaseInterestPayloadSerializer.Serialize(draft);
-        ApplyApplicantIdentityFromDraft(entity, draft);
-        entity.RequestedPurpose = (int)draft.Proposal.RequestedPurpose;
-        entity.RequestedDurationYears = draft.Proposal.RequestedDurationYears;
-        entity.ConsentToPreliminaryAssessment = draft.ConsentToPreliminaryAssessment;
-        entity.SubmittedAtUtc = now;
-        entity.UpdatedAtUtc = now;
-        entity.SubmitIdempotencyKey = string.IsNullOrWhiteSpace(idempotencyKey) ? null : idempotencyKey.Trim();
-        entity.AcknowledgementReference = LeaseInterestReferenceGenerator.Create(now);
-        entity.Status = LeaseInterestRequestStatus.PendingVerification;
-
-        AppendStatusHistory(
-            entity.Id,
-            LeaseInterestRequestStatus.Submitted,
-            now,
-            "Submitted by applicant. Preliminary expression of interest only.",
-            LeaseInterestStatusActorKind.Applicant,
+        return await CompleteSubmitAsync(
+            entity,
+            draft,
+            idempotencyKey,
             ownerId,
-            true);
-        AppendStatusHistory(
-            entity.Id,
-            LeaseInterestRequestStatus.PendingVerification,
-            now,
-            "Queued for officer verification.",
-            LeaseInterestStatusActorKind.System,
-            null,
-            true);
+            requestId,
+            cancellationToken);
+    }
 
-        try
+    public async Task<LeaseInterestRequestDetailDto> SubmitForParcelAsync(
+        Guid landParcelId,
+        UpsertLeaseInterestDraftDto draft,
+        string? idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        var ownerId = RequireOwnerId();
+        var errors = _validator.Validate(draft, forSubmit: true);
+        if (errors.Count > 0)
         {
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            throw new ValidationException(errors);
         }
-        catch (DbUpdateException)
+
+        var priorByKey = await TryGetPriorSubmitByIdempotencyKeyAsync(
+            ownerId,
+            idempotencyKey,
+            cancellationToken);
+        if (priorByKey is not null)
         {
-            _dbContext.ChangeTracker.Clear();
+            return priorByKey;
+        }
 
-            if (!string.IsNullOrWhiteSpace(idempotencyKey))
-            {
-                var existing = await _dbContext.LeaseInterestRequests
-                    .Include(x => x.StatusHistory)
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(
-                        x => x.OwnerId == ownerId && x.SubmitIdempotencyKey == idempotencyKey,
-                        cancellationToken);
-                if (existing is not null)
-                {
-                    return MapDetail(existing);
-                }
-            }
+        await EnsureParcelExistsAsync(landParcelId, cancellationToken);
+        await _parcelEligibility.EnsureEligibleForLeaseInterestAsync(landParcelId, cancellationToken);
 
-            var reloaded = await _dbContext.LeaseInterestRequests
-                .Include(x => x.StatusHistory)
+        var entity = await FindOwnedDraftForParcelAsync(ownerId, landParcelId, cancellationToken);
+        if (entity is null)
+        {
+            var hasSubmitted = await _dbContext.LeaseInterestRequests
                 .AsNoTracking()
-                .FirstOrDefaultAsync(
-                    x => x.Id == requestId && x.OwnerId == ownerId,
+                .AnyAsync(
+                    x =>
+                        x.OwnerId == ownerId
+                        && x.LandParcelId == landParcelId
+                        && x.Status != LeaseInterestRequestStatus.Draft,
                     cancellationToken);
-            if (reloaded is not null && reloaded.Status != LeaseInterestRequestStatus.Draft)
+            if (hasSubmitted)
             {
-                return MapDetail(reloaded);
+                throw new LeaseInterestInvalidStateException(
+                    "This parcel already has a submitted preliminary interest request.");
             }
 
-            throw;
+            var now = _timeProvider.GetUtcNow();
+            entity = CreateDraftEntity(ownerId, landParcelId, now);
+            _dbContext.LeaseInterestRequests.Add(entity);
+            AppendStatusHistory(
+                entity.Id,
+                LeaseInterestRequestStatus.Draft,
+                now,
+                "Draft created.",
+                LeaseInterestStatusActorKind.System,
+                null,
+                true);
         }
 
-        await _dbContext.Entry(entity).Collection(e => e.StatusHistory).LoadAsync(cancellationToken);
-        return MapDetail(entity);
+        return await CompleteSubmitAsync(
+            entity,
+            draft,
+            idempotencyKey,
+            ownerId,
+            entity.Id,
+            cancellationToken);
     }
 
     public async Task<IReadOnlyList<LeaseInterestRequestSummaryDto>> ListMineAsync(
@@ -294,11 +240,25 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             .OrderByDescending(x => x.UpdatedAtUtc)
             .ToListAsync(cancellationToken);
 
+        var requestIds = rows.Select(x => x.Id).ToList();
+        var valuedRequestIds = requestIds.Count == 0
+            ? new HashSet<Guid>()
+            : (await _dbContext.LeaseInterestValuations
+                .AsNoTracking()
+                .Where(x => requestIds.Contains(x.LeaseInterestRequestId))
+                .Select(x => x.LeaseInterestRequestId)
+                .Distinct()
+                .ToListAsync(cancellationToken))
+            .ToHashSet();
+
         var result = new List<LeaseInterestRequestSummaryDto>(rows.Count);
         foreach (var row in rows)
         {
             var parcel = await _parcelRepository.GetByIdAsync(row.LandParcelId, cancellationToken);
-            result.Add(MapSummary(row, parcel?.Identifier.CadastralNumber));
+            result.Add(MapSummary(
+                row,
+                parcel?.Identifier.CadastralNumber,
+                valuedRequestIds.Contains(row.Id)));
         }
 
         return result;
@@ -310,6 +270,7 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
     {
         var ownerId = RequireOwnerId();
         var entity = await LoadOwnedRequestAsync(requestId, ownerId, cancellationToken);
+        await ReconcileStatusAfterValuationAsync(entity, cancellationToken);
         return MapDetail(entity);
     }
 
@@ -333,6 +294,164 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
         {
             throw new LandParcelNotFoundException(landParcelId);
         }
+    }
+
+    private static UpsertLeaseInterestDraftDto EmptyDraftPayload() =>
+        new(
+            new LeaseInterestApplicantDto(
+                LeaseInterestApplicantKindDto.Individual,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                null,
+                null,
+                null,
+                null),
+            new LeaseInterestProposalDto(
+                default,
+                string.Empty,
+                null,
+                string.Empty,
+                1,
+                string.Empty),
+            new LeaseInterestSupportingInfoDto(string.Empty),
+            false);
+
+    private static LeaseInterestRequestEntity CreateDraftEntity(
+        Guid ownerId,
+        Guid landParcelId,
+        DateTimeOffset now)
+    {
+        var emptyDraft = EmptyDraftPayload();
+        return new LeaseInterestRequestEntity
+        {
+            Id = Guid.NewGuid(),
+            OwnerId = ownerId,
+            LandParcelId = landParcelId,
+            Status = LeaseInterestRequestStatus.Draft,
+            PayloadJson = LeaseInterestPayloadSerializer.Serialize(emptyDraft),
+            RequestedPurpose = 0,
+            ConsentToPreliminaryAssessment = false,
+            CreatedAtUtc = now,
+            UpdatedAtUtc = now,
+        };
+    }
+
+    private async Task<LeaseInterestRequestEntity?> FindOwnedDraftForParcelAsync(
+        Guid ownerId,
+        Guid landParcelId,
+        CancellationToken cancellationToken) =>
+        await _dbContext.LeaseInterestRequests
+            .Include(x => x.StatusHistory)
+            .Where(x =>
+                x.OwnerId == ownerId
+                && x.LandParcelId == landParcelId
+                && x.Status == LeaseInterestRequestStatus.Draft)
+            .OrderByDescending(x => x.UpdatedAtUtc)
+            .FirstOrDefaultAsync(cancellationToken);
+
+    private async Task<LeaseInterestRequestDetailDto?> TryGetPriorSubmitByIdempotencyKeyAsync(
+        Guid ownerId,
+        string? idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(idempotencyKey))
+        {
+            return null;
+        }
+
+        var prior = await _dbContext.LeaseInterestRequests
+            .Include(x => x.StatusHistory)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                x => x.OwnerId == ownerId && x.SubmitIdempotencyKey == idempotencyKey,
+                cancellationToken);
+
+        return prior is null ? null : MapDetail(prior);
+    }
+
+    private async Task<LeaseInterestRequestDetailDto> CompleteSubmitAsync(
+        LeaseInterestRequestEntity entity,
+        UpsertLeaseInterestDraftDto draft,
+        string? idempotencyKey,
+        Guid ownerId,
+        Guid requestIdForReload,
+        CancellationToken cancellationToken)
+    {
+        if (entity.Status != LeaseInterestRequestStatus.Draft)
+        {
+            if (!string.IsNullOrWhiteSpace(idempotencyKey)
+                && entity.SubmitIdempotencyKey == idempotencyKey)
+            {
+                return MapDetail(entity);
+            }
+
+            throw new LeaseInterestInvalidStateException("This request has already been submitted.");
+        }
+
+        var now = _timeProvider.GetUtcNow();
+        entity.PayloadJson = LeaseInterestPayloadSerializer.Serialize(draft);
+        ApplyApplicantIdentityFromDraft(entity, draft);
+        entity.RequestedPurpose = (int)draft.Proposal.RequestedPurpose;
+        entity.RequestedDurationYears = draft.Proposal.RequestedDurationYears;
+        entity.ConsentToPreliminaryAssessment = draft.ConsentToPreliminaryAssessment;
+        entity.SubmittedAtUtc = now;
+        entity.UpdatedAtUtc = now;
+        entity.SubmitIdempotencyKey = string.IsNullOrWhiteSpace(idempotencyKey) ? null : idempotencyKey.Trim();
+        entity.AcknowledgementReference = LeaseInterestReferenceGenerator.Create(now);
+        entity.Status = LeaseInterestRequestStatus.PendingVerification;
+
+        AppendStatusHistory(
+            entity.Id,
+            LeaseInterestRequestStatus.Submitted,
+            now,
+            "Submitted by applicant.",
+            LeaseInterestStatusActorKind.Applicant,
+            ownerId,
+            true);
+        AppendStatusHistory(
+            entity.Id,
+            LeaseInterestRequestStatus.PendingVerification,
+            now,
+            "Queued for officer verification.",
+            LeaseInterestStatusActorKind.System,
+            null,
+            true);
+
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            _dbContext.ChangeTracker.Clear();
+
+            var existing = await TryGetPriorSubmitByIdempotencyKeyAsync(
+                ownerId,
+                idempotencyKey,
+                cancellationToken);
+            if (existing is not null)
+            {
+                return existing;
+            }
+
+            var reloaded = await _dbContext.LeaseInterestRequests
+                .Include(x => x.StatusHistory)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(
+                    x => x.Id == requestIdForReload && x.OwnerId == ownerId,
+                    cancellationToken);
+            if (reloaded is not null && reloaded.Status != LeaseInterestRequestStatus.Draft)
+            {
+                return MapDetail(reloaded);
+            }
+
+            throw;
+        }
+
+        await _dbContext.Entry(entity).Collection(e => e.StatusHistory).LoadAsync(cancellationToken);
+        return MapDetail(entity);
     }
 
     private async Task<LeaseInterestRequestEntity> LoadOwnedRequestAsync(
@@ -359,7 +478,8 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
 
     private static LeaseInterestRequestSummaryDto MapSummary(
         LeaseInterestRequestEntity entity,
-        string? cadastralNumber) =>
+        string? cadastralNumber,
+        bool hasOfficerValuation) =>
         new(
             entity.Id,
             entity.LandParcelId,
@@ -370,7 +490,8 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             entity.SubmittedAtUtc,
             (LandUseType)entity.RequestedPurpose,
             entity.RequestedDurationYears,
-            cadastralNumber);
+            cadastralNumber,
+            hasOfficerValuation);
 
     private void ApplyApplicantIdentityFromDraft(
         LeaseInterestRequestEntity entity,
@@ -475,6 +596,10 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
                 LeaseInterestAuthorityDecisionLabels.DecisionLabel(latestAuthority.Decision),
                 LeaseInterestAuthorityDecisionLabels.NextActionHint(latestAuthority.Decision));
 
+        var hasOfficerValuation = _dbContext.LeaseInterestValuations
+            .AsNoTracking()
+            .Any(x => x.LeaseInterestRequestId == entity.Id);
+
         return new LeaseInterestRequestDetailDto(
             entity.Id,
             entity.LandParcelId,
@@ -489,7 +614,54 @@ public sealed class LeaseInterestRequestService : ILeaseInterestRequestService
             entity.ConsentToPreliminaryAssessment,
             history,
             _costAssessment.BuildCostSummary(entity.LandParcelId),
-            authoritySummary);
+            authoritySummary,
+            hasOfficerValuation);
+    }
+
+    /// <summary>
+    /// Repairs requests that have a saved valuation but still show awaiting valuation.
+    /// </summary>
+    private async Task ReconcileStatusAfterValuationAsync(
+        LeaseInterestRequestEntity entity,
+        CancellationToken cancellationToken)
+    {
+        if (entity.Status != LeaseInterestRequestStatus.AwaitingValuation)
+        {
+            return;
+        }
+
+        var valuation = await _dbContext.LeaseInterestValuations
+            .AsNoTracking()
+            .Where(x => x.LeaseInterestRequestId == entity.Id)
+            .OrderByDescending(x => x.RecordedAtUtc)
+            .Select(x => new { x.RecordedAtUtc, x.RecordedByOfficerId })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (valuation is null)
+        {
+            return;
+        }
+
+        var alreadyReferred = entity.StatusHistory.Any(
+            x => x.Status == LeaseInterestRequestStatus.ReferredToAuthority);
+        var referredAt = valuation.RecordedAtUtc;
+        entity.Status = LeaseInterestRequestStatus.ReferredToAuthority;
+        entity.UpdatedAtUtc = referredAt;
+
+        if (!alreadyReferred)
+        {
+            AppendStatusHistory(
+                entity.Id,
+                LeaseInterestRequestStatus.ReferredToAuthority,
+                referredAt,
+                LeaseInterestOfficerWorkflowRules.ValuationReferralNote,
+                LeaseInterestStatusActorKind.Officer,
+                valuation.RecordedByOfficerId,
+                true);
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.Entry(entity).Collection(e => e.StatusHistory).LoadAsync(cancellationToken);
     }
 
     private void AppendStatusHistory(
