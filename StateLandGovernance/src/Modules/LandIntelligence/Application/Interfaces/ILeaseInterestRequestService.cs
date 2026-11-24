@@ -33,6 +33,16 @@ public interface ILeaseInterestRequestService
         string? idempotencyKey,
         CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Submits a new or existing draft for the parcel in one transaction.
+    /// Does not require a prior explicit save; reuses an in-progress draft when present.
+    /// </summary>
+    Task<LeaseInterestRequestDetailDto> SubmitForParcelAsync(
+        Guid landParcelId,
+        UpsertLeaseInterestDraftDto draft,
+        string? idempotencyKey,
+        CancellationToken cancellationToken);
+
     Task<IReadOnlyList<LeaseInterestRequestSummaryDto>> ListMineAsync(
         CancellationToken cancellationToken);
 

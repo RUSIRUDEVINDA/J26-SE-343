@@ -1,5 +1,7 @@
 # Colombo experimental GIS / ML path — documentation and readiness
 
+> **Retired experiment.** This document is retained only as historical research context. Its synthetic-labelled model artifacts and Python service were removed during the Colombo 400 ML cleanup. The commands below are no longer runnable. Current inference uses the [Colombo 400 expert-reviewed research model](../ML/COLOMBO400_RESEARCH_INFERENCE.md).
+
 **Readiness decision:** Available for opt-in local research demonstration; **not** validated for real-world suitability decisions.
 
 **Default activation:** `LandIntelligence:ExperimentalColomboMl:Enabled` is `false` in

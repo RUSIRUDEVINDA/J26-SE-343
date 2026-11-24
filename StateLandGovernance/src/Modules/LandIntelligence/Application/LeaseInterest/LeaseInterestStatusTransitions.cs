@@ -87,15 +87,16 @@ public static class LeaseInterestStatusTransitions
                 "Draft — not submitted.",
             LeaseInterestRequestStatus.Submitted =>
                 "Submitted — awaiting officer queue (preliminary interest only).",
-            LeaseInterestRequestStatus.PendingVerification => string.Empty,
+            LeaseInterestRequestStatus.PendingVerification =>
+                "Submitted — awaiting officer verification (preliminary interest only).",
             LeaseInterestRequestStatus.NeedsInformation =>
                 "More information is required before officer verification can continue.",
             LeaseInterestRequestStatus.Declined =>
                 "Rejected after review.",
             LeaseInterestRequestStatus.AwaitingValuation =>
-                "Preliminary verification is complete. A valuation officer will record the land worksheet next.",
+                "Verification complete — awaiting officer valuation.",
             LeaseInterestRequestStatus.ReferredToAuthority =>
-                "Referred for authority follow-up after officer valuation (preliminary only).",
+                "Valuation recorded — awaiting authority decision (preliminary only; not a lease or reservation).",
             LeaseInterestRequestStatus.ApprovedInPrinciple => string.Empty,
             LeaseInterestRequestStatus.ClosedAnotherPreliminaryApproved =>
                 "Closed — another preliminary request for this parcel was approved in principle. " +

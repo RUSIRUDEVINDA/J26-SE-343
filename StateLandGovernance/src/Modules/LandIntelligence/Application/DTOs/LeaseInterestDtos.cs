@@ -86,7 +86,8 @@ public sealed record LeaseInterestRequestSummaryDto(
     DateTimeOffset? SubmittedAtUtc,
     LandUseType RequestedPurpose,
     int? RequestedDurationYears,
-    string? CadastralNumber = null);
+    string? CadastralNumber = null,
+    bool HasOfficerValuation = false);
 
 public sealed record LeaseInterestRequestDetailDto(
     Guid Id,
@@ -102,7 +103,8 @@ public sealed record LeaseInterestRequestDetailDto(
     bool ConsentToPreliminaryAssessment,
     IReadOnlyList<LeaseInterestStatusHistoryEntryDto> StatusHistory,
     LeaseInterestCostSummaryDto CostSummary,
-    LeaseInterestApplicantAuthorityDecisionDto? LatestAuthorityDecision = null);
+    LeaseInterestApplicantAuthorityDecisionDto? LatestAuthorityDecision = null,
+    bool HasOfficerValuation = false);
 
 public sealed record ParcelShortlistItemDto(
     Guid LandParcelId,
