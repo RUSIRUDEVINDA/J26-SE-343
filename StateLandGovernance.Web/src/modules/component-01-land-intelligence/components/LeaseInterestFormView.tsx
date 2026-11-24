@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
@@ -12,6 +12,7 @@ import {
   saveLeaseInterestDraft,
   startLeaseInterestDraft,
   submitLeaseInterest,
+  submitLeaseInterestForParcel,
 } from "../services/citizenWorkspaceApi";
 import {
   getParcelById,
@@ -54,6 +55,7 @@ import {
   sourceReportedLandUseDisplay,
 } from "../utils/sourceReportedCadastre";
 import { useModalDialogA11y } from "../hooks/useModalDialogA11y";
+import { buildPathPreservingResultsReturn } from "../utils/suitableLandResultsReturn";
 import { LeaseInterestReviewStep } from "./LeaseInterestReviewStep";
 import styles from "./LeaseInterestFormView.module.css";
 
@@ -129,11 +131,14 @@ function controlClass(
 export function LeaseInterestFormView({
   parcelId,
   onReviewStepChange,
+  onDirtyChange,
 }: {
   parcelId: string;
   onReviewStepChange?: (onReview: boolean) => void;
+  onDirtyChange?: (dirty: boolean) => void;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(0);
   const [parcel, setParcel] = useState<LandParcelResponse | null>(null);
   const [request, setRequest] = useState<LeaseInterestRequestDetail | null>(
@@ -143,7 +148,7 @@ export function LeaseInterestFormView({
   const [checklist, setChecklist] =
     useState<LeaseInterestDocumentChecklist | null>(null);
   const [loading, setLoading] = useState(true);
-  const [starting, setStarting] = useState(false);
+  const [formStarted, setFormStarted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrorsById, setFieldErrorsById] = useState<
     Partial<Record<LeaseInterestFormFieldId, string>>
@@ -158,6 +163,7 @@ export function LeaseInterestFormView({
     Awaited<ReturnType<typeof getParcelConstraints>>
   >([]);
   const idempotencyKeyRef = useRef<string | null>(null);
+  const saveDraftInFlightRef = useRef(false);
   const redirectedSubmittedRef = useRef(false);
 
   const readOnly = request != null && !isLeaseInterestDraftStatus(request.status);
@@ -235,13 +241,21 @@ export function LeaseInterestFormView({
 
       if (existing) {
         applyExistingRequest(existing, parcelRes);
+        setFormStarted(true);
       } else if (loadEligibilityBlock) {
         setRequest(null);
         setDraft(emptyDraft());
         setDirty(false);
+        setFormStarted(false);
       } else {
-        const created = await startLeaseInterestDraft(parcelId);
-        applyExistingRequest(created, parcelRes);
+        const initial = emptyDraft();
+        setRequest(null);
+        setDraft({
+          ...initial,
+          proposal: proposalWithParcelArea(initial.proposal, parcelRes),
+        });
+        setDirty(false);
+        setFormStarted(false);
       }
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -264,38 +278,30 @@ export function LeaseInterestFormView({
     onReviewStepChange?.(step === 3);
   }, [step, onReviewStepChange]);
 
+  useEffect(() => {
+    onDirtyChange?.(dirty);
+  }, [dirty, onDirtyChange]);
+
   const { dialogRef: submitSuccessDialogRef } = useModalDialogA11y({
     open: submitSuccessOpen,
     onClose: () => setSubmitSuccessOpen(false),
   });
 
-  async function handleStartRequest() {
-    if (starting || request) {
+  function handleStartRequest() {
+    if (formStarted || request) {
       return;
     }
-    setStarting(true);
     setError(null);
     setFieldErrorsById({});
     setApiFieldErrors([]);
-    try {
-      const created = await startLeaseInterestDraft(parcelId);
-      if (!parcel) {
-        const parcelRes = await getParcelById(parcelId);
-        setParcel(parcelRes);
-        applyExistingRequest(created, parcelRes);
-      } else {
-        applyExistingRequest(created, parcel);
-      }
-      setStep(0);
-    } catch (err) {
-      if (err instanceof ApiClientError) {
-        setError(err.detail || err.title);
-      } else {
-        setError("Could not start a lease interest request.");
-      }
-    } finally {
-      setStarting(false);
+    if (parcel) {
+      setDraft((prev) => ({
+        ...prev,
+        proposal: proposalWithParcelArea(prev.proposal, parcel),
+      }));
     }
+    setFormStarted(true);
+    setStep(0);
   }
 
   useEffect(() => {
@@ -362,9 +368,10 @@ export function LeaseInterestFormView({
   }
 
   async function handleSaveDraft() {
-    if (readOnly || saving) {
+    if (readOnly || saving || saveDraftInFlightRef.current) {
       return;
     }
+    saveDraftInFlightRef.current = true;
     setSaving(true);
     setError(null);
     setSaveNotice(null);
@@ -403,12 +410,13 @@ export function LeaseInterestFormView({
         setError("Could not save draft.");
       }
     } finally {
+      saveDraftInFlightRef.current = false;
       setSaving(false);
     }
   }
 
   async function handleSubmit() {
-    if (!request || readOnly || submitting) {
+    if (readOnly || submitting) {
       return;
     }
     const clientErrors = validateLeaseInterestDraftForSubmit(draft);
@@ -429,12 +437,20 @@ export function LeaseInterestFormView({
     setApiFieldErrors([]);
     setError(null);
     try {
-      const updated = await submitLeaseInterest(
-        request.id,
-        draftPayloadForSave(),
-        idempotencyKeyRef.current,
-      );
+      const payload = draftPayloadForSave();
+      const updated = request
+        ? await submitLeaseInterest(
+            request.id,
+            payload,
+            idempotencyKeyRef.current,
+          )
+        : await submitLeaseInterestForParcel(
+            parcelId,
+            payload,
+            idempotencyKeyRef.current,
+          );
       setRequest(updated);
+      setFormStarted(true);
       setDirty(false);
       setStep(3);
       setSubmitSuccessOpen(true);
@@ -496,7 +512,9 @@ export function LeaseInterestFormView({
     return <ErrorMessage message={error} />;
   }
 
-  if (!request) {
+  const formActive = request != null || formStarted;
+
+  if (!formActive) {
     return (
       <div className={styles.startLayout}>
         <section className={`${styles.panel} ${styles.startPanel}`} aria-labelledby="start-request-heading">
@@ -536,10 +554,10 @@ export function LeaseInterestFormView({
             <Button
               type="button"
               variant="primary"
-              disabled={starting || Boolean(eligibilityBlock)}
-              onClick={() => void handleStartRequest()}
+              disabled={Boolean(eligibilityBlock)}
+              onClick={handleStartRequest}
             >
-              {starting ? "Starting…" : "Start request"}
+              Start request
             </Button>
           </div>
         </section>
@@ -579,7 +597,7 @@ export function LeaseInterestFormView({
           </p>
         ) : null}
 
-        {readOnly ? (
+        {readOnly && request ? (
           <>
             <p className={styles.notice} role="status">
               Reference:{" "}
@@ -1125,7 +1143,7 @@ export function LeaseInterestFormView({
           </div>
         ) : null}
 
-        {step === 3 && request && parcel ? (
+        {step === 3 && parcel ? (
           <LeaseInterestReviewStep
             parcel={parcel}
             parcelId={parcelId}
@@ -1136,7 +1154,12 @@ export function LeaseInterestFormView({
             onEditProposal={() => setStep(1)}
             onEditDocuments={() => setStep(2)}
             onViewParcel={() =>
-              router.push(`/land-intelligence/parcels/${parcelId}`)
+              router.push(
+                buildPathPreservingResultsReturn(
+                  `/land-intelligence/parcels/${parcelId}`,
+                  searchParams,
+                ),
+              )
             }
             consentChecked={draft.consentToPreliminaryAssessment}
             consentError={fieldErrorsById.consent}
@@ -1237,12 +1260,7 @@ export function LeaseInterestFormView({
               <dd>{formatArea(parcel.area.value, parcel.area.unit)}</dd>
               <dt>Source-reported land use</dt>
               <dd>{landUseDisplay}</dd>
-              {claimantDisplay ? (
-                <>
-                  <dt>Source-reported claimant</dt>
-                  <dd>{claimantDisplay}</dd>
-                </>
-              ) : null}
+              
               {parcel.availability?.projectLeaseReady ? (
                 <>
                   <dt>Project designation</dt>
@@ -1263,7 +1281,7 @@ export function LeaseInterestFormView({
         ) : null}
       </aside>
 
-      {submitSuccessOpen && request.acknowledgementReference ? (
+      {submitSuccessOpen && request?.acknowledgementReference ? (
         <div
           className={styles.modalOverlay}
           role="presentation"

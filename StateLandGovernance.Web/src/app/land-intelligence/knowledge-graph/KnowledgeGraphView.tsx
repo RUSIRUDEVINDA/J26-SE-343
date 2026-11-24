@@ -18,6 +18,7 @@ import type {
   LandSearchResultResponse,
 } from "@/modules/component-01-land-intelligence/types/landIntelligence";
 import { sourceReportedLandUseDisplay } from "@/modules/component-01-land-intelligence/utils/sourceReportedCadastre";
+import { parcelConnectionDescription } from "@/modules/component-01-land-intelligence/utils/parcelRelationshipDisplay";
 import styles from "./KnowledgeGraph.module.css";
 
 type GraphNode = {
@@ -43,6 +44,12 @@ function shortId(value: string): string {
 }
 
 function formatNodeType(type: string): string {
+  if (type === "HAS_CATEGORY") {
+    return "Has land use";
+  }
+  if (type === "LandCategory") {
+    return "Land use";
+  }
   const words = type
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .replace(/_/g, " ")
@@ -59,6 +66,7 @@ function neighborLabelFromRelationship(
   parcelId: string,
   nodeType: string,
   nodeId: string,
+  parcel: LandParcelResponse | null,
 ): string | null {
   const parcelKey = nodeKey("LandParcel", parcelId);
   const key = nodeKey(nodeType, nodeId);
@@ -82,6 +90,9 @@ function neighborLabelFromRelationship(
   if (!matchesNeighbor) {
     return null;
   }
+  if (rel.relationshipType === "HAS_CATEGORY" && nodeType === "LandCategory") {
+    return parcelConnectionDescription(rel, parcel);
+  }
   const desc = rel.description?.trim();
   return desc || null;
 }
@@ -90,6 +101,7 @@ function buildGraphLayout(
   parcelId: string,
   parcelLabel: string,
   relationships: LandRelationshipResponse[],
+  parcel: LandParcelResponse | null,
 ): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const nodes = new Map<string, GraphNode>();
   const centerKey = nodeKey("LandParcel", parcelId);
@@ -142,7 +154,13 @@ function buildGraphLayout(
     ]) {
       const key = nodeKey(type, id);
       const node = nodes.get(key);
-      const humanLabel = neighborLabelFromRelationship(rel, parcelId, type, id);
+      const humanLabel = neighborLabelFromRelationship(
+        rel,
+        parcelId,
+        type,
+        id,
+        parcel,
+      );
       if (node && humanLabel) {
         node.label = humanLabel;
       }
@@ -199,14 +217,16 @@ function RelationshipGraph({
   parcelId,
   parcelLabel,
   relationships,
+  parcel,
 }: {
   parcelId: string;
   parcelLabel: string;
   relationships: LandRelationshipResponse[];
+  parcel: LandParcelResponse | null;
 }) {
   const { nodes, edges } = useMemo(
-    () => buildGraphLayout(parcelId, parcelLabel, relationships),
-    [parcelId, parcelLabel, relationships],
+    () => buildGraphLayout(parcelId, parcelLabel, relationships, parcel),
+    [parcelId, parcelLabel, relationships, parcel],
   );
   const centerKey = nodeKey("LandParcel", parcelId);
 
@@ -269,6 +289,9 @@ export function KnowledgeGraphView({
   const [parcel, setParcel] = useState<LandParcelResponse | null>(null);
   const [loadedParcelId, setLoadedParcelId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [cadastralFieldError, setCadastralFieldError] = useState<string | null>(
+    null,
+  );
   const [serviceUnavailable, setServiceUnavailable] = useState(false);
 
   const parcelLabel = useMemo(() => {
@@ -289,6 +312,7 @@ export function KnowledgeGraphView({
 
     setLoading(true);
     setError(null);
+    setCadastralFieldError(null);
     setCadastralMatches([]);
     setRelationships([]);
     setLoadedParcelId(null);
@@ -342,12 +366,16 @@ export function KnowledgeGraphView({
     async (cadastralNumber: string) => {
       const trimmed = cadastralNumber.trim();
       if (!trimmed) {
-        setError("Enter a cadastral number.");
+        setCadastralFieldError(
+          "Enter a cadastral number to load relationships.",
+        );
+        setError(null);
         return;
       }
 
       setLoading(true);
       setError(null);
+      setCadastralFieldError(null);
       setCadastralMatches([]);
       setServiceUnavailable(false);
 
@@ -357,7 +385,10 @@ export function KnowledgeGraphView({
           setRelationships([]);
           setLoadedParcelId(null);
           setParcel(null);
-          setError("No parcel was found with this cadastral number.");
+          setError(null);
+          setCadastralFieldError(
+            "No parcel was found with this cadastral number. Check the number or browse the catalog.",
+          );
           return;
         }
         if (response.results.length === 1) {
@@ -414,16 +445,37 @@ export function KnowledgeGraphView({
         <label className={styles.field}>
           <span className={styles.fieldLabel}>Cadastral number</span>
           <input
-            className={styles.input}
+            id="kg-cadastral-input"
+            className={
+              cadastralFieldError
+                ? `${styles.input} ${styles.inputInvalid}`
+                : styles.input
+            }
             value={cadastralQuery}
             onChange={(e) => {
               setCadastralQuery(e.target.value);
               setCadastralMatches([]);
+              if (cadastralFieldError) {
+                setCadastralFieldError(null);
+              }
             }}
             placeholder="Enter cadastral number"
             autoComplete="off"
             aria-label="Cadastral number"
+            aria-invalid={cadastralFieldError ? true : undefined}
+            aria-describedby={
+              cadastralFieldError ? "kg-cadastral-field-error" : undefined
+            }
           />
+          {cadastralFieldError ? (
+            <p
+              id="kg-cadastral-field-error"
+              className={styles.fieldError}
+              role="alert"
+            >
+              {cadastralFieldError}
+            </p>
+          ) : null}
         </label>
         <div className={styles.actions}>
           <Button type="submit" variant="primary" disabled={loading}>
@@ -461,8 +513,8 @@ export function KnowledgeGraphView({
             <div className={styles.startGuideItem}>
               <span className={styles.startGuideNumber}>01</span>
               <div>
-                <strong>Land category</strong>
-                <p>How the parcel is classified in the available records.</p>
+                <strong>Land use</strong>
+                <p>Source-reported or indexed land use for the parcel.</p>
               </div>
             </div>
             <div className={styles.startGuideItem}>
@@ -598,6 +650,7 @@ export function KnowledgeGraphView({
               parcelId={loadedParcelId}
               parcelLabel={parcelLabel}
               relationships={relationships}
+              parcel={parcel}
             />
             <p className={styles.graphNote}>
               These connections describe available records. They do not confirm

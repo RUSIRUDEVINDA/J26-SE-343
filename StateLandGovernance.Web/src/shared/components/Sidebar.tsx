@@ -45,11 +45,13 @@ export function Sidebar({
   label = "Land Intelligence navigation",
   basePath = LAND_INTELLIGENCE_BASE,
   compactMobile = false,
+  appendResearchDemoNav = true,
 }: {
   items?: NavItem[];
   label?: string;
   basePath?: string;
   compactMobile?: boolean;
+  appendResearchDemoNav?: boolean;
 }) {
   const pathname = usePathname();
 
@@ -98,10 +100,10 @@ export function Sidebar({
     return () => {
       cancelled = true;
     };
-  }, [isLandIntelligenceNav]);
+  }, [isLandIntelligenceNav, appendResearchDemoNav]);
 
   const navItems = useMemo((): NavItem[] => {
-    if (!isLandIntelligenceNav) {
+    if (!isLandIntelligenceNav || !appendResearchDemoNav) {
       return items;
     }
 

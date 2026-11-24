@@ -1,1 +1,121 @@
-.background{display:grid;place-items:center;min-height:70vh;padding:36px 16px;background:radial-gradient(ellipse at bottom right,#ead4d4,transparent 65%);border-radius:28px}.card{width:min(100%,460px);padding:40px;background:#fff;border:1px solid #eee4e4;border-radius:22px;box-shadow:0 12px 50px #68252a0a}.card h1{font-size:1.7rem;margin:18px 0 12px}.card p{font-size:.85rem;line-height:1.7;color:#6d6268}.badge{font-size:.68rem;letter-spacing:.13em;color:#850606}.card label{display:grid;gap:8px;color:#30282c;font-size:.85rem}.card input{width:100%;border:1px solid #e2d6d8;border-radius:12px;padding:12px;font:inherit}.card button{width:100%;padding:13px;border:0;border-radius:99px;color:white;background:#850606;font:inherit;cursor:pointer;margin:10px 0}.card button:disabled{opacity:.45;cursor:not-allowed}.card input:focus-visible,.card button:focus-visible{outline:2px solid #850606;outline-offset:3px}.card summary{font-size:.82rem;color:#850606;cursor:pointer}.card [role=alert]{background:#fff2e7;padding:12px;border-radius:10px}@media(max-width:550px){.card{padding:24px}.background{padding:16px 0}}
+.background {
+  display: grid;
+  place-items: center;
+  min-height: 70vh;
+  padding: 2rem 1rem;
+  background: radial-gradient(ellipse at bottom right, #ead4d4, transparent 65%);
+  border-radius: 28px;
+}
+
+.card {
+  width: min(100%, 460px);
+  padding: 2.5rem 2.25rem;
+  background: #fff;
+  border: 1px solid #eee4e4;
+  border-radius: 22px;
+  box-shadow: 0 12px 50px rgba(104, 37, 42, 0.04);
+}
+
+.badge {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #850606;
+}
+
+.title {
+  margin: 1.1rem 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #1a1416;
+}
+
+.subtitle {
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: #6d6268;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #30282c;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #e2d6d8;
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  font: inherit;
+  color: #1a1416;
+  background: #f8fafc;
+}
+
+.input:focus-visible {
+  outline: 2px solid #850606;
+  outline-offset: 2px;
+  border-color: #850606;
+  background: #fff;
+}
+
+.submit {
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.85rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: #850606;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submit:focus-visible {
+  outline: 2px solid #850606;
+  outline-offset: 3px;
+}
+
+.alert {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: #5c2a00;
+  background: #fff2e7;
+  border-radius: 10px;
+}
+
+@media (max-width: 550px) {
+  .card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .background {
+    padding: 1rem 0;
+  }
+}

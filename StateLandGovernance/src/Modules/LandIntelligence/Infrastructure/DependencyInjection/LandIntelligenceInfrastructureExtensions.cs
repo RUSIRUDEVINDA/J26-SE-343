@@ -34,8 +34,9 @@ public static class LandIntelligenceInfrastructureExtensions
 
         services.Configure<GisEnrichmentCoverageOptions>(
             configuration.GetSection(GisEnrichmentCoverageOptions.SectionName));
-        services.Configure<ExperimentalColomboMlOptions>(
-            configuration.GetSection(ExperimentalColomboMlOptions.SectionName));
+        // The former synthetic-labelled GIS experiment is retired. Its adapter stays
+        // registered for historical data compatibility, but cannot be activated.
+        services.Configure<ExperimentalColomboMlOptions>(options => options.Enabled = false);
         services.Configure<ResearchDemoOptions>(
             configuration.GetSection(ResearchDemoOptions.SectionName));
         services.Configure<LeaseInterestOptions>(

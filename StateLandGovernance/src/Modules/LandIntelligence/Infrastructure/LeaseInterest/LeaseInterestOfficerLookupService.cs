@@ -76,7 +76,7 @@ public sealed class LeaseInterestOfficerLookupService : ILeaseInterestOfficerLoo
             query,
             page,
             pageSize,
-            revealApplicantIdentifiers: false,
+            revealApplicantIdentifiers: true,
             normalizedNic: null,
             normalizedBrn: null,
             cancellationToken);

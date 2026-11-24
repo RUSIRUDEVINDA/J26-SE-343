@@ -1,7 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
@@ -15,7 +22,6 @@ import {
 } from "../services/landIntelligenceApi";
 import {
   FIND_SUITABLE_LAND_FORM_SESSION_KEY,
-  FIND_SUITABLE_LAND_RESTORE_ONCE_KEY,
   isSupportedLandUseType,
   LandUseType,
   RECOMMENDATIONS_SESSION_KEY,
@@ -138,15 +144,22 @@ function subscribeFormStore(onStoreChange: () => void) {
 
 function writeFormStore(next: FindSuitableLandFormState | null) {
   formSnapshot = { raw: null, value: next ?? initialState };
+  try {
+    if (next === null) {
+      sessionStorage.removeItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY);
+    } else {
+      sessionStorage.setItem(
+        FIND_SUITABLE_LAND_FORM_SESSION_KEY,
+        JSON.stringify(next),
+      );
+    }
+  } catch {
+    // ignore private mode
+  }
   window.dispatchEvent(new Event(FORM_STORE_EVENT));
 }
 
 function resetFormStoreToDefaults() {
-  try {
-    sessionStorage.removeItem(FIND_SUITABLE_LAND_FORM_SESSION_KEY);
-  } catch {
-    // ignore private mode
-  }
   writeFormStore(null);
 }
 
@@ -191,6 +204,21 @@ function buildSummary(form: FindSuitableLandFormState): string {
   return parts.join(" • ");
 }
 
+function hasValidTargetArea(form: FindSuitableLandFormState): boolean {
+  const areaValue = form.targetAreaValue.trim();
+  if (areaValue === "") {
+    return false;
+  }
+  if (!/^[0-9]*\.?[0-9]+$/.test(areaValue)) {
+    return false;
+  }
+  const parsedArea = Number.parseFloat(areaValue);
+  if (Number.isNaN(parsedArea) || parsedArea <= 0) {
+    return false;
+  }
+  return convertTargetAreaToHectares(parsedArea, form.targetAreaUnit) !== null;
+}
+
 export function FindSuitableLandForm() {
   const router = useRouter();
   const stored = useSyncExternalStore(
@@ -214,6 +242,11 @@ export function FindSuitableLandForm() {
   const [gisCoverage, setGisCoverage] = useState<LandIntelligenceGisCoverageResponse | null>(null);
   const [gnDivisionOptions, setGnDivisionOptions] = useState<string[]>([]);
   const [gnOptionsLoading, setGnOptionsLoading] = useState(false);
+  const [gnDivisionInput, setGnDivisionInput] = useState("");
+  const [gnDivisionOpen, setGnDivisionOpen] = useState(false);
+  const [gnDivisionMenuAbove, setGnDivisionMenuAbove] = useState(false);
+  const gnDivisionDropdownRef = useRef<HTMLDivElement>(null);
+  const gnDivisionInputRef = useRef<HTMLInputElement>(null);
   const [landUseOpen, setLandUseOpen] = useState(false);
   const [landUseMenuAbove, setLandUseMenuAbove] = useState(false);
   const landUseDropdownRef = useRef<HTMLDivElement>(null);
@@ -225,19 +258,7 @@ export function FindSuitableLandForm() {
   }, []);
 
   useEffect(() => {
-    try {
-      const restoreOnce =
-        sessionStorage.getItem(FIND_SUITABLE_LAND_RESTORE_ONCE_KEY) === "1";
-      sessionStorage.removeItem(FIND_SUITABLE_LAND_RESTORE_ONCE_KEY);
-      if (restoreOnce) {
-        restoreFormStoreFromSession();
-        setDraft(null);
-        return;
-      }
-    } catch {
-      // ignore private mode
-    }
-    resetFormStoreToDefaults();
+    restoreFormStoreFromSession();
     setDraft(null);
   }, []);
 
@@ -305,6 +326,78 @@ export function FindSuitableLandForm() {
       cancelled = true;
     };
   }, [form.preferredDistrict]);
+
+  useEffect(() => {
+    setGnDivisionInput(form.preferredGramaNiladhariDivision);
+  }, [form.preferredGramaNiladhariDivision]);
+
+  const gnDivisionFilter = gnDivisionInput.trim().toLowerCase();
+  const filteredGnDivisionOptions = useMemo(() => {
+    const matches = gnDivisionFilter
+      ? gnDivisionOptions.filter((name) =>
+          name.toLowerCase().includes(gnDivisionFilter),
+        )
+      : gnDivisionOptions;
+    return matches.slice(0, 60);
+  }, [gnDivisionOptions, gnDivisionFilter]);
+  const gnDivisionMatchesTruncated =
+    gnDivisionFilter.length > 0 &&
+    gnDivisionOptions.filter((name) =>
+      name.toLowerCase().includes(gnDivisionFilter),
+    ).length > filteredGnDivisionOptions.length;
+
+  useEffect(() => {
+    if (!gnDivisionOpen) {
+      return;
+    }
+    const closeOnOutside = (event: PointerEvent | FocusEvent) => {
+      if (!gnDivisionDropdownRef.current?.contains(event.target as Node)) {
+        setGnDivisionOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", closeOnOutside);
+    document.addEventListener("focusin", closeOnOutside);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutside);
+      document.removeEventListener("focusin", closeOnOutside);
+    };
+  }, [gnDivisionOpen]);
+
+  function showGnDivisionMenu() {
+    const rect = gnDivisionInputRef.current?.getBoundingClientRect();
+    if (rect) {
+      const roomBelow = window.innerHeight - rect.bottom;
+      setGnDivisionMenuAbove(
+        roomBelow < Math.min(280, window.innerHeight * 0.4) &&
+          rect.top > roomBelow,
+      );
+    }
+    setGnDivisionOpen(true);
+  }
+
+  function selectGnDivision(name: string) {
+    setGnDivisionInput(name);
+    updateField("preferredGramaNiladhariDivision", name);
+    setGnDivisionOpen(false);
+    gnDivisionInputRef.current?.focus();
+  }
+
+  function commitGnDivisionInputOnBlur() {
+    const trimmed = gnDivisionInput.trim();
+    if (!trimmed) {
+      updateField("preferredGramaNiladhariDivision", "");
+      return;
+    }
+    const exact = gnDivisionOptions.find(
+      (name) => name.toLowerCase() === trimmed.toLowerCase(),
+    );
+    if (exact) {
+      setGnDivisionInput(exact);
+      updateField("preferredGramaNiladhariDivision", exact);
+      return;
+    }
+    updateField("preferredGramaNiladhariDivision", "");
+  }
 
   // One canonical list; counts are distinct parcel ids supplied by the API.
   const landUseChoices = buildCanonicalLandUseChoices(canonicalLandUseOptions);
@@ -383,7 +476,7 @@ export function FindSuitableLandForm() {
       label: "Hard legal / environmental restrictions",
       status: gisCoverage.intelligenceLayers.some(l => l.layerKey === "legal_restrictions")
         ? "Available"
-        : "Partial coverage",
+        : "Unavailable",
     });
     evidence.push({
       label: "Source-reported claimant screening",
@@ -414,18 +507,16 @@ export function FindSuitableLandForm() {
       next.requiredPurpose = "Select a required purpose to continue.";
     }
     const areaValue = form.targetAreaValue.trim();
-    if (areaValue !== "") {
-      // Reject if contains non-numeric characters (except decimal point)
-      if (!/^[0-9]*\.?[0-9]+$/.test(areaValue)) {
-        next.targetAreaValue = "Enter a valid positive number (e.g., 0.05 or 5).";
-      } else {
-        const parsedArea = Number.parseFloat(areaValue);
-        if (Number.isNaN(parsedArea) || parsedArea <= 0) {
-          next.targetAreaValue =
-            "Enter a target area greater than zero, or leave blank.";
-        } else if (convertTargetAreaToHectares(parsedArea, form.targetAreaUnit) === null) {
-          next.targetAreaValue = "Could not convert the target area to hectares.";
-        }
+    if (areaValue === "") {
+      next.targetAreaValue = "Enter a target area to continue.";
+    } else if (!/^[0-9]*\.?[0-9]+$/.test(areaValue)) {
+      next.targetAreaValue = "Enter a valid positive number (e.g., 0.05 or 5).";
+    } else {
+      const parsedArea = Number.parseFloat(areaValue);
+      if (Number.isNaN(parsedArea) || parsedArea <= 0) {
+        next.targetAreaValue = "Enter a target area greater than zero.";
+      } else if (convertTargetAreaToHectares(parsedArea, form.targetAreaUnit) === null) {
+        next.targetAreaValue = "Could not convert the target area to hectares.";
       }
     }
     patchFieldErrors(["requiredPurpose", "targetAreaValue"], next);
@@ -454,8 +545,8 @@ export function FindSuitableLandForm() {
   }
 
   function handleClear() {
-    setDraft(initialState);
-    writeFormStore(null);
+    resetFormStoreToDefaults();
+    setDraft(null);
     setError(null);
     setFieldErrors({});
   }
@@ -492,6 +583,7 @@ export function FindSuitableLandForm() {
         RECOMMENDATIONS_SESSION_KEY,
         JSON.stringify(payload),
       );
+      writeFormStore(submitForm);
       window.dispatchEvent(new Event("component01.recommendations"));
 
       const params = buildRecommendationSearchParams(request, submitForm);
@@ -510,7 +602,10 @@ export function FindSuitableLandForm() {
   }
 
   const summary = buildSummary(form);
-  const canSearch = isSupportedLandUseType(form.requiredPurpose) && !submitting;
+  const canSearch =
+    isSupportedLandUseType(form.requiredPurpose) &&
+    hasValidTargetArea(form) &&
+    !submitting;
 
   return (
     <form className={styles.layout} onSubmit={handleSubmit} noValidate>
@@ -569,8 +664,10 @@ export function FindSuitableLandForm() {
 
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="targetAreaValue">
-                  Target Area
-                  <span className={styles.optionalTag}>Optional</span>
+                  Target Area{" "}
+                  <span className={styles.required} aria-hidden="true">
+                    *
+                  </span>
                 </label>
                 <div className={styles.areaWrap}>
                   <input
@@ -582,6 +679,8 @@ export function FindSuitableLandForm() {
                       updateField("targetAreaValue", e.target.value)
                     }
                     placeholder="e.g. 0.05"
+                    required
+                    aria-required="true"
                     aria-invalid={Boolean(fieldErrors.targetAreaValue)}
                     aria-describedby="target-area-hint target-area-error"
                   />
@@ -628,7 +727,6 @@ export function FindSuitableLandForm() {
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="preferredProvince">
                   Preferred Province
-                  <span className={styles.optionalTag}>Optional</span>
                 </label>
                 {gisCoverage && gisCoverage.indexedDistricts.length > 0 ? (
                   <select
@@ -662,7 +760,6 @@ export function FindSuitableLandForm() {
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="preferredDistrict">
                   Preferred District
-                  <span className={styles.optionalTag}>Optional</span>
                 </label>
                 {availableDistricts.length > 0 ? (
                   <select
@@ -710,37 +807,127 @@ export function FindSuitableLandForm() {
                   htmlFor="preferredGramaNiladhariDivision"
                 >
                   Grama Niladhari Division
-                  <span className={styles.optionalTag}>Optional</span>
                 </label>
-                <select
-                  id="preferredGramaNiladhariDivision"
-                  className={styles.select}
-                  value={form.preferredGramaNiladhariDivision}
-                  onChange={(e) =>
-                    updateField(
-                      "preferredGramaNiladhariDivision",
-                      e.target.value,
-                    )
-                  }
-                  disabled={gnOptionsLoading}
+                <div
+                  className={styles.landUseDropdown}
+                  ref={gnDivisionDropdownRef}
                 >
-                  <option value="">
-                    {gnOptionsLoading
-                      ? "Loading divisions…"
-                      : "Any GN Division"}
-                  </option>
-                  {gnDivisionOptions.map((name) => (
-                    <option key={name} value={name}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
+                  <input
+                    id="preferredGramaNiladhariDivision"
+                    ref={gnDivisionInputRef}
+                    type="text"
+                    className={styles.input}
+                    role="combobox"
+                    aria-expanded={gnDivisionOpen}
+                    aria-controls="gn-division-options"
+                    aria-autocomplete="list"
+                    aria-describedby="gn-division-hint"
+                    disabled={gnOptionsLoading}
+                    placeholder={
+                      gnOptionsLoading
+                        ? "Loading divisions…"
+                        : "Type to search GN division"
+                    }
+                    value={gnDivisionInput}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setGnDivisionInput(value);
+                      showGnDivisionMenu();
+                      const exact = gnDivisionOptions.find(
+                        (name) =>
+                          name.toLowerCase() === value.trim().toLowerCase(),
+                      );
+                      updateField(
+                        "preferredGramaNiladhariDivision",
+                        exact ?? "",
+                      );
+                    }}
+                    onFocus={() => showGnDivisionMenu()}
+                    onBlur={() => {
+                      window.setTimeout(() => {
+                        if (
+                          gnDivisionDropdownRef.current?.contains(
+                            document.activeElement,
+                          )
+                        ) {
+                          return;
+                        }
+                        commitGnDivisionInputOnBlur();
+                        setGnDivisionOpen(false);
+                      }, 0);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Escape") {
+                        event.preventDefault();
+                        setGnDivisionOpen(false);
+                      } else if (
+                        event.key === "ArrowDown" &&
+                        !gnDivisionOpen &&
+                        !gnOptionsLoading
+                      ) {
+                        event.preventDefault();
+                        showGnDivisionMenu();
+                      }
+                    }}
+                  />
+                  {gnDivisionOpen && !gnOptionsLoading ? (
+                    <div
+                      id="gn-division-options"
+                      className={`${styles.landUseMenu} ${gnDivisionMenuAbove ? styles.landUseMenuAbove : ""}`}
+                      role="listbox"
+                      aria-label="Grama Niladhari division"
+                    >
+                      <button
+                        type="button"
+                        role="option"
+                        className={styles.landUseOption}
+                        aria-selected={!form.preferredGramaNiladhariDivision}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => selectGnDivision("")}
+                      >
+                        <span>Any GN division</span>
+                      </button>
+                      {filteredGnDivisionOptions.length === 0 ? (
+                        <p className={styles.landUseEmpty} role="status">
+                          No divisions match your search.
+                        </p>
+                      ) : (
+                        filteredGnDivisionOptions.map((name) => (
+                          <button
+                            key={name}
+                            type="button"
+                            role="option"
+                            className={styles.landUseOption}
+                            aria-selected={
+                              form.preferredGramaNiladhariDivision === name
+                            }
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => selectGnDivision(name)}
+                          >
+                            <span>{name}</span>
+                          </button>
+                        ))
+                      )}
+                      {gnDivisionMatchesTruncated ? (
+                        <p className={styles.landUseEmpty} role="status">
+                          Keep typing to narrow the list.
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+                <p id="gn-division-hint" className={styles.hint}>
+                  {gnOptionsLoading
+                    ? ""
+                    : gnDivisionOptions.length === 0
+                      ? "No GN divisions for the selected district."
+                      : "Type part of the name, then choose a match from the list."}
+                </p>
               </div>
 
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="maxResults">
                   Maximum Results to Show
-                  <span className={styles.optionalTag}>Optional</span>
                 </label>
                 <input
                   id="maxResults"
@@ -774,7 +961,6 @@ export function FindSuitableLandForm() {
               <div className={`${styles.field} ${styles.fullWidth}`}>
                 <label className={styles.label} htmlFor="sourceReportedLandUse">
                   Land Use
-                  <span className={styles.optionalTag}>Optional</span>
                 </label>
                 <div className={styles.landUseDropdown} ref={landUseDropdownRef}>
                   <button
@@ -853,13 +1039,7 @@ export function FindSuitableLandForm() {
                     Land-use options could not be loaded. Refresh the page after
                     confirming that the Land Intelligence API is running.
                   </p>
-                ) : (
-                  <p id="source-land-use-hint" className={styles.hint}>
-                    {selectedLandUseChoice
-                      ? "Matches the original cadastral land use or the project GIS classification. Both stay visible in parcel details."
-                      : ""}
-                  </p>
-                )}
+                ) : null}
                 {fieldErrors.sourceReportedLandUse ? (
                   <p className={styles.fieldError} role="alert">
                     {fieldErrors.sourceReportedLandUse}
@@ -914,6 +1094,10 @@ export function FindSuitableLandForm() {
           {form.requiredPurpose === "" ? (
             <span className={styles.summaryMuted}>
               Select a required purpose to enable search.
+            </span>
+          ) : !hasValidTargetArea(form) ? (
+            <span className={styles.summaryMuted}>
+              Enter a target area to enable search.
             </span>
           ) : (
             <span>{summary}</span>

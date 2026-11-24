@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/shared/components/Button";
 import { EmptyState } from "@/shared/components/EmptyState";
@@ -13,7 +13,6 @@ import {
 } from "@/modules/component-01-land-intelligence/services/landIntelligenceApi";
 import {
   FIND_SUITABLE_LAND_FORM_SESSION_KEY,
-  FIND_SUITABLE_LAND_RESTORE_ONCE_KEY,
   RECOMMENDATIONS_SESSION_KEY,
   type FindSuitableLandFormState,
   type LandRecommendationSearchRequest,
@@ -28,6 +27,10 @@ import {
   sessionMatchesUrlFingerprint,
 } from "@/modules/component-01-land-intelligence/utils/recommendationSearchState";
 import { targetAreaUnitShortLabel } from "@/modules/component-01-land-intelligence/utils/targetAreaUnits";
+import {
+  RESULTS_FOCUS_PARCEL_QUERY_KEY,
+  buildRecommendationsResultsPath,
+} from "@/modules/component-01-land-intelligence/utils/suitableLandResultsReturn";
 import styles from "./RecommendationsView.module.css";
 
 const REC_STORE_EVENT = "component01.recommendations";
@@ -183,7 +186,6 @@ function writeFormForEdit(formState: FindSuitableLandFormState) {
       FIND_SUITABLE_LAND_FORM_SESSION_KEY,
       JSON.stringify(formState),
     );
-    sessionStorage.setItem(FIND_SUITABLE_LAND_RESTORE_ONCE_KEY, "1");
     window.dispatchEvent(new Event(FORM_STORE_EVENT));
   } catch {
     // Session write can fail in private mode.
@@ -380,6 +382,37 @@ export function RecommendationsView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- URL + session driven
   }, [hydrated, searchParams, payload]);
 
+  const resultsReturnPathByParcelId = useMemo(() => {
+    if (!searchContext) {
+      return new Map<string, string>();
+    }
+    const { request, formState, response } = searchContext;
+    const map = new Map<string, string>();
+    for (const item of response.recommendations) {
+      map.set(
+        item.parcelId,
+        buildRecommendationsResultsPath(request, formState, item.parcelId),
+      );
+    }
+    return map;
+  }, [searchContext]);
+
+  const focusParcelId = searchParams.get(RESULTS_FOCUS_PARCEL_QUERY_KEY)?.trim();
+
+  useEffect(() => {
+    if (!searchContext || !focusParcelId) {
+      return;
+    }
+    const target = document.getElementById(`recommendation-${focusParcelId}`);
+    if (!target) {
+      return;
+    }
+    const frame = requestAnimationFrame(() => {
+      target.scrollIntoView({ block: "center", behavior: "smooth" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [searchContext, focusParcelId]);
+
   const supplementByParcelId = new Map(
     researchSupplement.map((row) => [row.parcelId, row]),
   );
@@ -452,7 +485,6 @@ export function RecommendationsView() {
   }
 
   const { request, formState, response } = searchContext;
-  const transparency = response.transparency;
   const chips = buildSummaryChips(request, formState);
   const canClearFilters = hasRestrictiveFilters(formState);
   const searchDistrict = request.preferredLocation?.district?.trim() || null;
@@ -489,10 +521,6 @@ export function RecommendationsView() {
       <section className={styles.summaryBar} aria-label="Search summary">
         <div className={styles.summaryHeader}>
           <h2 className={styles.summaryTitle}>Search summary</h2>
-          <span className={`${styles.chip} ${styles.chipMuted}`}>
-            {response.recommendations.length} shown · {response.candidateCount}{" "}
-            candidates after filters
-          </span>
         </div>
 
         <div className={styles.chipRow}>
@@ -547,6 +575,9 @@ export function RecommendationsView() {
                 recommendation={item}
                 searchDistrict={searchDistrict}
                 researchCover={supplementByParcelId.get(item.parcelId)}
+                resultsReturnPath={
+                  resultsReturnPathByParcelId.get(item.parcelId) ?? null
+                }
               />
             ))}
           </div>

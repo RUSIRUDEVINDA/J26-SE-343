@@ -5,8 +5,9 @@ namespace StateLandGovernance.LandIntelligence.Application.RealParcels;
 
 public static class ParcelGnDivisionMappingProjector
 {
+
     public const string AgreedProvenanceLabel =
-        "Matched against DCS code and NSDI map marker.";
+        "DCS administrative code and NSDI map-marker evidence agree.";
 
     public const string ReviewProvenanceLabel =
         "DCS administrative code and NSDI map-marker evidence disagree or are incomplete; requires administrative review.";

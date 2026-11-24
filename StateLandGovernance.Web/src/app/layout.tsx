@@ -15,9 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      {/* Grammar extensions can add attributes before hydration. Limit tolerance to
-          this element; descendant hydration mismatches must still be reported. */}
+    <html lang="en" suppressHydrationWarning>
+      {/* Browser extensions (e.g. data-qb-installed) may mutate <html> before hydration. */}
       <body suppressHydrationWarning>{children}</body>
     </html>
   );

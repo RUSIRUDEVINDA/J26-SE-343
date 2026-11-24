@@ -1,6 +1,5 @@
 using System.Net.Mail;
 using StateLandGovernance.LandIntelligence.Application.Configuration;
-using StateLandGovernance.LandIntelligence.Application.LeaseInterest;
 using StateLandGovernance.LandIntelligence.Application.DTOs;
 using StateLandGovernance.LandIntelligence.Application.LeaseInterest;
 using StateLandGovernance.LandIntelligence.Domain.Enums;

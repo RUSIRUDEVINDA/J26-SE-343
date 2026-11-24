@@ -130,8 +130,8 @@ public sealed class LandCitizenWorkspaceController : ControllerBase
     }
 
     /// <summary>
-    /// Explicitly starts a draft for the parcel, or resumes the existing draft without duplicating.
-    /// Viewing the form must use GET parcels/{{id}}/lease-interest instead.
+    /// Explicit Save draft only: creates or resumes the parcel draft without duplicating.
+    /// Viewing the form must use GET parcels/{{id}}/lease-interest (no persistence).
     /// </summary>
     [HttpPost("parcels/{landParcelId:guid}/lease-interest/draft")]
     [ProducesResponseType(typeof(LeaseInterestRequestDetailDto), StatusCodes.Status200OK)]
@@ -178,6 +178,25 @@ public sealed class LandCitizenWorkspaceController : ControllerBase
 
         var detail = await _leaseInterest.SubmitAsync(
             requestId,
+            draft,
+            idempotencyKey,
+            cancellationToken);
+        return Ok(detail);
+    }
+
+    [HttpPost("parcels/{landParcelId:guid}/lease-interest/submit")]
+    [ProducesResponseType(typeof(LeaseInterestRequestDetailDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<LeaseInterestRequestDetailDto>> SubmitForParcelAsync(
+        Guid landParcelId,
+        [FromBody] UpsertLeaseInterestDraftDto draft,
+        CancellationToken cancellationToken)
+    {
+        var idempotencyKey = Request.Headers.TryGetValue("Idempotency-Key", out var values)
+            ? values.FirstOrDefault()
+            : null;
+
+        var detail = await _leaseInterest.SubmitForParcelAsync(
+            landParcelId,
             draft,
             idempotencyKey,
             cancellationToken);

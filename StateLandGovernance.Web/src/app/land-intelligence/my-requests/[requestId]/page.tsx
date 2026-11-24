@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
@@ -20,11 +20,16 @@ import { formatApplicantDateTime } from "@/modules/component-01-land-intelligenc
 import { leaseInterestPurposeDisplay } from "@/modules/component-01-land-intelligence/utils/leaseInterestPurposeDisplay";
 import {
   isLeaseInterestDraftStatus,
-  leaseInterestApplicantOutcome,
-  leaseInterestStatusBadgeTone,
-  leaseInterestStatusLabel,
   formatApplicantTimelineNote,
 } from "@/modules/component-01-land-intelligence/utils/leaseInterestStatus";
+import {
+  buildApplicantWorkflowContext,
+  leaseInterestApplicantBadgeTone,
+  leaseInterestApplicantOutcomeMessage,
+  leaseInterestApplicantStatusLabel,
+  expandApplicantTimelineForDisplay,
+} from "@/modules/component-01-land-intelligence/utils/leaseInterestApplicantProgress";
+import { ApplicantRequestProgress } from "@/modules/component-01-land-intelligence/components/ApplicantRequestProgress";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import {
   ApplicantAuthorityDecision,
@@ -102,8 +107,31 @@ export default function MyRequestDetailPage() {
   const purpose = detail
     ? leaseInterestPurposeDisplay(detail.proposal.requestedPurpose, detail.status)
     : null;
-  const applicantOutcome = detail
-    ? leaseInterestApplicantOutcome(detail.status)
+
+  const hasOfficerValuation =
+    detail?.hasOfficerValuation === true ||
+    valuationState.kind === "available";
+
+  const workflowContext = useMemo(() => {
+    if (!detail) {
+      return null;
+    }
+    return buildApplicantWorkflowContext(
+      detail.status,
+      detail.statusHistory,
+      hasOfficerValuation,
+    );
+  }, [detail, hasOfficerValuation]);
+
+  const timelineEntries = useMemo(() => {
+    if (!detail) {
+      return [];
+    }
+    return expandApplicantTimelineForDisplay(detail.statusHistory);
+  }, [detail]);
+
+  const applicantOutcome = workflowContext
+    ? leaseInterestApplicantOutcomeMessage(workflowContext)
     : "";
 
   return (
@@ -130,9 +158,13 @@ export default function MyRequestDetailPage() {
                   {detail.acknowledgementReference ?? "Lease interest request"}
                 </h2>
               </div>
-              <StatusBadge tone={leaseInterestStatusBadgeTone(detail.status)}>
-                {leaseInterestStatusLabel(detail.status)}
-              </StatusBadge>
+              {workflowContext ? (
+                <StatusBadge
+                  tone={leaseInterestApplicantBadgeTone(workflowContext)}
+                >
+                  {leaseInterestApplicantStatusLabel(workflowContext)}
+                </StatusBadge>
+              ) : null}
             </div>
             {applicantOutcome.trim() ? (
               <p className={styles.requestOutcome}>{applicantOutcome}</p>
@@ -140,7 +172,11 @@ export default function MyRequestDetailPage() {
             <dl className={styles.requestFacts}>
               <div>
                 <dt>Current status</dt>
-                <dd>{leaseInterestStatusLabel(detail.status)}</dd>
+                <dd>
+                  {workflowContext
+                    ? leaseInterestApplicantStatusLabel(workflowContext)
+                    : "—"}
+                </dd>
               </div>
               {purpose ? (
                 <div>
@@ -165,6 +201,9 @@ export default function MyRequestDetailPage() {
 
           <div className={styles.requestColumns}>
             <div className={styles.requestMainColumn}>
+              {workflowContext ? (
+                <ApplicantRequestProgress context={workflowContext} />
+              ) : null}
               <ApplicantOfficerEvaluation
                 state={valuationState}
                 onRetry={() => setValuationAttempt((n) => n + 1)}
@@ -204,24 +243,22 @@ export default function MyRequestDetailPage() {
                   Activity timeline
                 </h2>
                 <ol className={styles.detailTimeline}>
-                  {detail.statusHistory.map((entry, index) => (
-                    <li key={`${entry.changedAtUtc}-${index}`}>
+                  {timelineEntries.map((entry) => (
+                    <li key={entry.key}>
                       <span
                         className={styles.timelineMarker}
                         aria-hidden="true"
                       />
                       <div className={styles.timelineEntry}>
                         <div className={styles.timelineEntryTop}>
-                          <strong>
-                            {leaseInterestStatusLabel(entry.status)}
-                          </strong>
+                          <strong>{entry.label}</strong>
                           <time dateTime={entry.changedAtUtc}>
                             {formatApplicantDateTime(entry.changedAtUtc)}
                           </time>
                         </div>
                         {(() => {
                           const timelineNote = formatApplicantTimelineNote(
-                            entry.status,
+                            entry.noteStatus,
                             entry.note,
                           );
                           if (!timelineNote) {

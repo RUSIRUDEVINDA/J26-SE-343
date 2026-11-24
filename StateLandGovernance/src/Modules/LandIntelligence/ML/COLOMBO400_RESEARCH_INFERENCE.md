@@ -1,9 +1,9 @@
 # Colombo 400 two-stage research inference
 
-This is an opt-in Component 1 research model. It uses the 400-parcel expert-reviewed
+This is the retained Component 1 research model. It uses the 400-parcel expert-reviewed
 workbook and does **not** replace the rule score, hard restrictions, lease status,
-officer assessment, or authority decision. The existing standard ML service remains
-the default when `COLOMBO400_RESEARCH_ML_ENABLED` is unset.
+officer assessment, or authority decision. The old synthetic-trained service and
+model artifacts have been removed.
 
 ## Frozen inputs and provenance
 
@@ -38,18 +38,16 @@ Use a Python installation that supports the pinned training packages. On the API
 host, set these values in the repository `.env`, then restart the API:
 
 ```dotenv
-COLOMBO400_RESEARCH_ML_ENABLED=true
 COLOMBO400_RESEARCH_ML_URL=http://127.0.0.1:8502
 ```
 
-For a local research demonstration, the flag may be enabled while predictions remain clearly labelled as research evidence. Keep it disabled for production use until an independent expert-labelled validation set has been
-reviewed. When enabled, only Colombo parcels with a research record ID and a matching
+Predictions must remain clearly labelled as research evidence. Do not use this model for production decisions until an independent expert-labelled validation set has been
+reviewed. Only Colombo parcels with a research record ID and a matching
 frozen cadastral number can receive this research prediction. The model service returns
 `Insufficient Evidence` from Stage A without running Stage B. It rejects a Commercial
 `Suitable` prediction with HTTP 409; the .NET adapter independently refuses that
 result as a second guard. Service errors leave rule-based recommendations available.
-Keep `ExperimentalColomboMl:Enabled` off for this path; when that separate experiment
-suppresses the standard ML client, it also suppresses this opt-in client.
+The former experimental GIS ML artifacts are no longer part of the runnable ML path.
 
 Check `GET http://127.0.0.1:8502/health` for the loaded model and parcel count.
 

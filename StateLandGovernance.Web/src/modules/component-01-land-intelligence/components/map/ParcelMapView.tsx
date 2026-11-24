@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { BackToSuitableLandResultsLink } from "../BackToSuitableLandResultsLink";
 import dynamic from "next/dynamic";
 import { ApiClientError } from "@/lib/apiClient";
 import { Button } from "@/shared/components/Button";
@@ -154,6 +155,7 @@ export function ParcelMapView({ parcelId }: { parcelId: string }) {
       <PageHeading
         title="Parcel map"
         subtitle="See where this parcel is recorded on the map."
+        action={<BackToSuitableLandResultsLink />}
       />
 
       {loadState.status === "loading" ? (

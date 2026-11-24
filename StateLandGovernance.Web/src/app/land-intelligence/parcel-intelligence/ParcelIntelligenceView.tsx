@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   useCallback,
   useEffect,
@@ -14,6 +14,8 @@ import { EmptyState } from "@/shared/components/EmptyState";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { PageHeading } from "@/shared/components/PageLayout";
+import { BackToSuitableLandResultsLink } from "@/modules/component-01-land-intelligence/components/BackToSuitableLandResultsLink";
+import { buildPathPreservingResultsReturn } from "@/modules/component-01-land-intelligence/utils/suitableLandResultsReturn";
 import {
   ApprovedParcelsCatalog,
   type ApprovedParcelsPageSize,
@@ -24,7 +26,6 @@ import {
 } from "@/modules/component-01-land-intelligence/components/ParcelCatalog";
 import { ParcelDetails } from "@/modules/component-01-land-intelligence/components/ParcelDetails";
 import {
-  findParcelsByCadastralNumber,
   listApprovedPreliminaryParcels,
   getLandIntelligenceGisCoverage,
   getParcelById,
@@ -49,13 +50,13 @@ import {
   CANONICAL_FORM_VALUE_PREFIX,
   normalizeLandUseFilterValue,
 } from "@/modules/component-01-land-intelligence/utils/canonicalLandUse";
-import { sourceReportedLandUseDisplay } from "@/modules/component-01-land-intelligence/utils/sourceReportedCadastre";
 import filterStyles from "./ParcelIntelligenceFilters.module.css";
 
 type AppliedFilters = {
   district: string;
   landUseValue: string;
   landUseLabel: string;
+  cadastralNumber: string;
 };
 
 type ParcelIntelligenceTab = "indexed" | "approved";
@@ -84,6 +85,7 @@ export function ParcelIntelligenceView({
   showCatalog?: boolean;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [detailLoading, setDetailLoading] = useState(
     Boolean(initialParcelId.trim()),
   );
@@ -124,12 +126,6 @@ export function ParcelIntelligenceView({
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<ParcelCatalogPageSize>(20);
   const [cadastralQuery, setCadastralQuery] = useState("");
-  const [cadastralLoading, setCadastralLoading] = useState(false);
-  const [cadastralError, setCadastralError] = useState<string | null>(null);
-  const [cadastralEmpty, setCadastralEmpty] = useState(false);
-  const [cadastralMatches, setCadastralMatches] = useState<
-    LandSearchResultResponse[]
-  >([]);
   const loadedRouteId = useRef<string | null>(null);
   const initialCatalogLoadedRef = useRef(false);
   const [workspaceTab, setWorkspaceTab] =
@@ -210,9 +206,11 @@ export function ParcelIntelligenceView({
       setListError(null);
       try {
         const landUseLabel = landUseLabelFromValue(filters.landUseValue);
+        const cadastral = filters.cadastralNumber.trim();
         const response = await listAllParcels({
           district: filters.district,
           researchLandCoverGroup: landUseLabel || undefined,
+          cadastralNumber: cadastral || undefined,
         });
         setParcels(response.results);
         setPage(1);
@@ -289,6 +287,7 @@ export function ParcelIntelligenceView({
       district: "",
       landUseValue: "",
       landUseLabel: "",
+      cadastralNumber: "",
     });
   }, [showCatalog, loadCatalog]);
 
@@ -437,10 +436,13 @@ export function ParcelIntelligenceView({
   function handleDistrictChange(next: string) {
     setDistrictDraft(next);
     setLandUseDraft("");
-    setFiltersApplied(false);
-    setApplied(null);
-    setParcels([]);
     setListError(null);
+    void loadCatalog({
+      district: next.trim(),
+      landUseValue: "",
+      landUseLabel: "",
+      cadastralNumber: cadastralQuery.trim(),
+    });
   }
 
   function handleClearFilters() {
@@ -449,59 +451,23 @@ export function ParcelIntelligenceView({
     setListError(null);
     setPage(1);
     setCadastralQuery("");
-    setCadastralError(null);
-    setCadastralEmpty(false);
-    setCadastralMatches([]);
     void loadCatalog({
       district: "",
       landUseValue: "",
       landUseLabel: "",
+      cadastralNumber: "",
     });
   }
 
-  function handleApplyFilters() {
+  function handleApplyFilters(event?: FormEvent) {
+    event?.preventDefault();
     const landUseValue = normalizeLandUseFilterValue(landUseDraft);
     void loadCatalog({
       district: districtDraft.trim(),
       landUseValue,
       landUseLabel: landUseLabelFromValue(landUseValue),
+      cadastralNumber: cadastralQuery.trim(),
     });
-  }
-
-  async function handleFindParcel(event?: FormEvent) {
-    event?.preventDefault();
-    const trimmed = cadastralQuery.trim();
-    setCadastralError(null);
-    setCadastralEmpty(false);
-    setCadastralMatches([]);
-    if (!trimmed) {
-      setCadastralError("Enter a cadastral number.");
-      return;
-    }
-
-    setCadastralLoading(true);
-    try {
-      const response = await findParcelsByCadastralNumber(trimmed);
-      if (response.totalCount === 0 || response.results.length === 0) {
-        setCadastralEmpty(true);
-        return;
-      }
-      if (response.results.length === 1) {
-        await loadParcelDetails(response.results[0].id);
-        return;
-      }
-      setCadastralMatches(response.results);
-    } catch (err) {
-      if (err instanceof ApiClientError) {
-        setCadastralError(err.detail || err.title);
-      } else if (err instanceof Error) {
-        setCadastralError(err.message);
-      } else {
-        setCadastralError("Unable to search by cadastral number.");
-      }
-    } finally {
-      setCadastralLoading(false);
-    }
   }
 
   const catalogTotal = parcels.length;
@@ -516,10 +482,21 @@ export function ParcelIntelligenceView({
       ? [
           applied.district.trim() ? applied.district : "All districts",
           applied.landUseLabel || null,
+          applied.cadastralNumber.trim()
+            ? `Cadastral ${applied.cadastralNumber.trim()}`
+            : null,
           `${catalogTotal} matching parcel${catalogTotal === 1 ? "" : "s"}`,
         ]
           .filter(Boolean)
           .join(" · ")
+      : null;
+
+  const leaseInterestHref =
+    parcel != null
+      ? buildPathPreservingResultsReturn(
+          `/land-intelligence/parcels/${parcel.id}/lease-interest`,
+          searchParams,
+        )
       : null;
 
   return (
@@ -527,6 +504,7 @@ export function ParcelIntelligenceView({
       <PageHeading
         title="Parcel Intelligence"
         subtitle=""
+        action={!showCatalog ? <BackToSuitableLandResultsLink /> : undefined}
       />
 
       {showCatalog ? (
@@ -565,13 +543,7 @@ export function ParcelIntelligenceView({
           role="tabpanel"
           aria-labelledby="pi-tab-approved"
         >
-          <p className={filterStyles.approvedNotice} role="note">
-            These parcels have a current authority-approved preliminary lease
-            interest request (Approved in principle). This is not an executed
-            lease, reserved land, or verified official lease availability.
-            Parcels remain viewable here and in the catalog; they are excluded
-            only from Find Suitable Land search candidates.
-          </p>
+
           {approvedLoading ? (
             <LoadingState message="Loading approved parcels…" />
           ) : null}
@@ -607,7 +579,7 @@ export function ParcelIntelligenceView({
         <form
           className={filterStyles.panel}
           aria-label="Parcel intelligence filters"
-          onSubmit={(event) => void handleFindParcel(event)}
+          onSubmit={handleApplyFilters}
         >
           <div className={filterStyles.row}>
             <div className={filterStyles.field}>
@@ -679,21 +651,13 @@ export function ParcelIntelligenceView({
                 id="pi-cadastral"
                 className={filterStyles.input}
                 value={cadastralQuery}
-                onChange={(e) => {
-                  setCadastralQuery(e.target.value);
-                  setCadastralEmpty(false);
-                  setCadastralError(null);
-                  setCadastralMatches([]);
-                }}
+                onChange={(e) => setCadastralQuery(e.target.value)}
                 placeholder="Enter cadastral number"
                 autoComplete="off"
-                disabled={cadastralLoading}
                 aria-describedby="pi-cadastral-hint"
               />
               <p id="pi-cadastral-hint" className={filterStyles.hint}>
-                {cadastralLoading
-                  ? "Searching…"
-                  : ""}
+               .
               </p>
             </div>
 
@@ -716,44 +680,6 @@ export function ParcelIntelligenceView({
             </div>
           </div>
         </form>
-      ) : null}
-
-      {showCatalog && workspaceTab === "indexed" && cadastralError ? (
-        <ErrorMessage message={cadastralError} />
-      ) : null}
-      {showCatalog && workspaceTab === "indexed" && cadastralEmpty ? (
-        <EmptyState
-          title="No parcel was found with this cadastral number."
-          description="Check the number and try again. Do not use a parcel UUID."
-        />
-      ) : null}
-      {showCatalog && workspaceTab === "indexed" && cadastralMatches.length > 1 ? (
-        <div className={filterStyles.matchesList} role="region" aria-label="Matching parcels">
-          <p className={filterStyles.matchesTitle}>
-            {cadastralMatches.length} parcels share this cadastral number. Select
-            one:
-          </p>
-          <ul className={filterStyles.matchesItems}>
-            {cadastralMatches.map((match) => (
-              <li key={match.id}>
-                <button
-                  type="button"
-                  className={filterStyles.matchButton}
-                  onClick={() => void loadParcelDetails(match.id)}
-                >
-                  <span>{match.cadastralNumber}</span>
-                  <span className={filterStyles.matchMeta}>
-                    {match.district}
-                  </span>
-                  <span className={filterStyles.matchMeta}>
-                    {sourceReportedLandUseDisplay(match.cadastralSource) ||
-                      "Source land use not recorded"}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
       ) : null}
 
       {showCatalog && workspaceTab === "indexed" && activeSummary ? (
@@ -815,7 +741,7 @@ export function ParcelIntelligenceView({
             style={{ marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}
           >
             <Button
-              href={`/land-intelligence/parcels/${parcel.id}/lease-interest`}
+              href={leaseInterestHref ?? `/land-intelligence/parcels/${parcel.id}/lease-interest`}
               variant="primary"
             >
               Express preliminary interest

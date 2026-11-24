@@ -17,6 +17,7 @@ public sealed class HttpColombo400ResearchMlClient : IMlSuitabilityClient
     private readonly HttpClient _httpClient;
     private readonly IRecommendationParcelContext _parcelContext;
     private readonly ILogger<HttpColombo400ResearchMlClient> _logger;
+    private bool _serviceUnavailableForRequest;
 
     public HttpColombo400ResearchMlClient(
         HttpClient httpClient,
@@ -33,6 +34,11 @@ public sealed class HttpColombo400ResearchMlClient : IMlSuitabilityClient
         LandUseType requestedPurpose,
         CancellationToken cancellationToken = default)
     {
+        if (_serviceUnavailableForRequest)
+        {
+            return null;
+        }
+
         var source = _parcelContext.GetSource(parcel.Id);
         if (!string.Equals(parcel.Location.District, "Colombo", StringComparison.OrdinalIgnoreCase)
             || string.IsNullOrWhiteSpace(source?.ResearchRecordId)
@@ -75,6 +81,7 @@ public sealed class HttpColombo400ResearchMlClient : IMlSuitabilityClient
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
+            _serviceUnavailableForRequest = true;
             _logger.LogWarning(ex, "Colombo 400 research ML is unavailable; rule-based recommendation continues.");
             return null;
         }

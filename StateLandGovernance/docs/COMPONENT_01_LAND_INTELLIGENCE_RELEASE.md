@@ -73,7 +73,7 @@ Run via API startup migrate or `dotnet ef database update` against the Land Inte
 | `LEASE_INTEREST_NIC_LOOKUP_KEY` | Yes for officer NIC lookup | Base64 32-byte key — do not commit secrets |
 | `LAND_INTELLIGENCE_JWT_SIGNING_KEY` | Production | Dev fallback in `appsettings.Development.json` |
 | `NEO4J_*` | Optional | Knowledge graph; see [knowledge-graph/README.md](./knowledge-graph/README.md) |
-| `ML_SUITABILITY_SERVICE_URL` | Optional | Supplementary ML only (`http://localhost:8500`) |
+| `COLOMBO400_RESEARCH_ML_URL` | Optional | Colombo 400 research ML service (`http://localhost:8502`) |
 
 ### `StateLandGovernance.Web/.env.local`
 
@@ -92,7 +92,6 @@ Copy from `StateLandGovernance.Web/.env.local.example`.
 | `LandIntelligence:ResearchDemo:Enabled` | `true` to expose simulated workflow + officer gates |
 | `LandIntelligence:Authentication:AllowDevelopmentSessionEndpoint` | Dev JWT bootstrap |
 | `LandIntelligence:Authentication:AllowDemoOwnerHeader` | Align with web demo header flag |
-| `LandIntelligence:ExperimentalColomboMl:Enabled` | **`false`** — keep experimental Colombo ML separate |
 
 ### Production `appsettings.json` (must stay locked down)
 
@@ -100,7 +99,6 @@ Copy from `StateLandGovernance.Web/.env.local.example`.
 | --- | --- |
 | `AllowDemoOwnerHeader` | **`false`** |
 | `AllowDevelopmentSessionEndpoint` | **`false`** |
-| `ExperimentalColomboMl:Enabled` | **`false`** |
 
 Officer NIC lookup and lease-interest **review** APIs remain gated like the research demo (non-production RBAC).
 
@@ -158,17 +156,17 @@ Applicant / officer / authority calls use bearer tokens via research-demo sessio
 - Road, water, and soil preferences are **not** part of search or rule scoring.
 - Missing GIS / environmental evidence → **not assessed** (never a positive match).
 
-## ML status (standard service)
+## ML status (Colombo 400 research service)
 
 | Item | Current |
 | --- | --- |
 | Role | Supplementary evidence only — does not override rules |
-| Held-out RF accuracy | ~**76.5%** on a **synthetic, rule-labelled held-out sample** — **not** validated on real Colombo parcels; **80% target not achieved** |
-| Area input | ML requests always send area in **hectares** (converted from the parcel's stored unit) |
-| Road / water / soil | Excluded from standard model (not invented) |
-| Colombo experimental ML | Separate service/artifacts; default **disabled** |
+| Dataset | 400 expert-reviewed Colombo parcels, three purposes per parcel |
+| Held-out evaluation | **95.63%** chained accuracy on 61 parcel-grouped test parcels (183 purpose assessments); **not external real-world validation** |
+| Stages | Evidence sufficiency (Gradient Boosting), then suitability (Random Forest) |
+| Area input | ML requests send area in **hectares** (converted from the parcel's stored unit) |
 
-Details: [ai/README.md](./ai/README.md), `src/Modules/LandIntelligence/ML/README.md`.
+Details: [ai/README.md](./ai/README.md), `src/Modules/LandIntelligence/ML/COLOMBO400_RESEARCH_INFERENCE.md`.
 
 ## End-to-end flow (happy path)
 
@@ -227,7 +225,7 @@ Restart the API after backend or `appsettings.Development.json` changes.
 - Official lease availability remains **unknown / not verified**.
 - Neo4j optional; empty when unset or unsynced — [knowledge-graph/README.md](./knowledge-graph/README.md).
 - Officer tools are pilot/demo gated, not production identity/RBAC.
-- Standard ML below 80% held-out accuracy; keep supplementary.
+- Colombo 400 ML has no independent external validation; keep supplementary.
 - No payments, no authority-issued lease instruments.
 
 ## Related docs

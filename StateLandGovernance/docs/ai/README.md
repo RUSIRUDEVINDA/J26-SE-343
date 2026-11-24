@@ -1,9 +1,5 @@
 # AI / ML (Component 1)
 
-Land Intelligence uses a supplementary Random Forest suitability model. The model does **not** override rule-based recommendation scoring or hard constraints.
+The only retained ML model is the [Colombo 400 expert-reviewed research model](../../src/Modules/LandIntelligence/ML/COLOMBO400_RESEARCH_INFERENCE.md). It supplies supplementary evidence and never overrides rule-based scoring, hard constraints, officer assessment, or an authority decision.
 
-**Standard service (port 8500):** held-out accuracy is below the 80% research target (~76.5% after excluding invented road/water/soil). Keep ML supplementary; do not present 80% as achieved. See metrics in `src/Modules/LandIntelligence/ML/output/`.
-
-**Colombo experimental GIS ML** is a separate opt-in path (port 8501) and must not replace the standard `output/` artifacts.
-
-See [src/Modules/LandIntelligence/ML/README.md](../../src/Modules/LandIntelligence/ML/README.md) for training, serving, and `.env` configuration (`ML_SUITABILITY_SERVICE_URL`).
+The previous synthetic-trained standard and experimental model datasets and artifacts have been removed. The Colombo model's recorded 95.63% end-to-end accuracy is on a parcel-grouped held-out split from the same 400-parcel review, not an independent real-world validation result.

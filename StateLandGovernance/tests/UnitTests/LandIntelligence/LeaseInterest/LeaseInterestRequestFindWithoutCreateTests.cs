@@ -144,6 +144,41 @@ public sealed class LeaseInterestRequestFindWithoutCreateTests : IDisposable
     }
 
     [Fact]
+    public async Task SubmitForParcel_without_prior_draft_creates_submitted_request_only()
+    {
+        var body = ValidSubmitDraft();
+        var submitted = await _service.SubmitForParcelAsync(
+            _parcel.Id,
+            body,
+            Guid.NewGuid().ToString("N"),
+            CancellationToken.None);
+
+        Assert.Equal(LeaseInterestRequestStatus.PendingVerification, submitted.Status);
+        Assert.Equal(1, await _db.LeaseInterestRequests.CountAsync());
+        var row = await _db.LeaseInterestRequests.SingleAsync();
+        Assert.Equal(LeaseInterestRequestStatus.PendingVerification, row.Status);
+        var found = await _service.FindForParcelAsync(_parcel.Id, CancellationToken.None);
+        Assert.NotNull(found);
+        Assert.Equal(LeaseInterestRequestStatus.PendingVerification, found!.Status);
+    }
+
+    [Fact]
+    public async Task SubmitForParcel_reuses_existing_draft_and_leaves_no_draft_row()
+    {
+        var draft = await _service.GetDraftOrCreateAsync(_parcel.Id, CancellationToken.None);
+        var body = ValidSubmitDraft();
+        var submitted = await _service.SubmitForParcelAsync(
+            _parcel.Id,
+            body,
+            Guid.NewGuid().ToString("N"),
+            CancellationToken.None);
+
+        Assert.Equal(draft.Id, submitted.Id);
+        Assert.Equal(1, await _db.LeaseInterestRequests.CountAsync());
+        Assert.Equal(LeaseInterestRequestStatus.PendingVerification, submitted.Status);
+    }
+
+    [Fact]
     public async Task DeleteDraft_rejects_submitted_request()
     {
         var now = DateTimeOffset.UtcNow;
@@ -166,6 +201,28 @@ public sealed class LeaseInterestRequestFindWithoutCreateTests : IDisposable
         await Assert.ThrowsAsync<LeaseInterestInvalidStateException>(() =>
             _service.DeleteDraftAsync(entity.Id, CancellationToken.None));
     }
+
+    private static UpsertLeaseInterestDraftDto ValidSubmitDraft() =>
+        new(
+            new LeaseInterestApplicantDto(
+                LeaseInterestApplicantKindDto.Individual,
+                "Test Applicant",
+                "+94111222333",
+                "test.applicant@example.com",
+                "123 Test Lane, Colombo",
+                null,
+                null,
+                "199512345678",
+                null),
+            new LeaseInterestProposalDto(
+                LandUseType.Agricultural,
+                "Pilot crop trial",
+                1.0m,
+                "2026-Q3",
+                5,
+                "Unit test preliminary interest."),
+            new LeaseInterestSupportingInfoDto("Unit test supporting notes."),
+            true);
 
     private sealed class StubCaller(Guid ownerId) : ILandIntelligenceCallerContext
     {

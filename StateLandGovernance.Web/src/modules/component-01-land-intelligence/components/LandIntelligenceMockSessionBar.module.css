@@ -1,0 +1,20 @@
+.signOut {
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  font: inherit;
+  cursor: pointer;
+}
+
+.signOut:hover {
+  background: #fbf2f0;
+}
+
+.signOut:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}

@@ -59,7 +59,7 @@ export async function load(url, context, nextLoad) {
     };
   }
 
-  if (url.endsWith(".tsx")) {
+  if (url.endsWith(".tsx") || url.endsWith(".ts")) {
     const filePath = fileURLToPath(url);
     const sourceCode = fs.readFileSync(filePath, "utf-8");
     const transpiled = ts.transpileModule(sourceCode, {

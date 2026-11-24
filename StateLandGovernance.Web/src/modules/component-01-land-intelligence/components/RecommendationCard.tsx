@@ -26,6 +26,7 @@ import {
   customerRecommendationIntro,
   customerVisibleCriteria,
 } from "../utils/recommendationCardCustomer";
+import { buildParcelResultsActionHref } from "../utils/suitableLandResultsReturn";
 import { EvidenceList } from "./EvidenceList";
 import styles from "./RecommendationCard.module.css";
 
@@ -87,10 +88,13 @@ export function RecommendationCard({
   recommendation,
   searchDistrict,
   researchCover,
+  resultsReturnPath,
 }: {
   recommendation: LandParcelRecommendationResponse;
   searchDistrict?: string | null;
   researchCover?: ResearchSupplementParcelResponse;
+  /** Internal path to return to this results list (with search criteria). */
+  resultsReturnPath?: string | null;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [tab, setTab] = useState<DetailTab>("why");
@@ -123,12 +127,24 @@ export function RecommendationCard({
   const isTied = recommendation.isTiedOnRuleScore === true;
   const tieCount = recommendation.ruleScoreTieCount ?? 0;
   const orderingLabel = isTied
-    ? `Tied · rule score rank ${ruleScoreRank} (${tieCount} parcel${tieCount === 1 ? "" : "s"})`
-    : `Rule score rank ${ruleScoreRank}`;
+    ? `Tied · score rank ${ruleScoreRank} (${tieCount} parcel${tieCount === 1 ? "" : "s"})`
+    : `Score rank ${ruleScoreRank}`;
   const orderingAria = `${orderingLabel}. Display order ${displayOrder} (suitability score ranking; cadastral number breaks ties).`;
+
+  const parcelId = recommendation.parcelId;
+  const mapHref = resultsReturnPath
+    ? buildParcelResultsActionHref(parcelId, "map", resultsReturnPath)
+    : `/land-intelligence/parcels/${parcelId}/map`;
+  const parcelHref = resultsReturnPath
+    ? buildParcelResultsActionHref(parcelId, "parcel", resultsReturnPath)
+    : `/land-intelligence/parcels/${parcelId}`;
+  const leaseHref = resultsReturnPath
+    ? buildParcelResultsActionHref(parcelId, "lease-interest", resultsReturnPath)
+    : `/land-intelligence/parcels/${parcelId}/lease-interest`;
 
   return (
     <article
+      id={`recommendation-${parcelId}`}
       className={`${styles.card} ${
         recommendation.hardConstraintRejected ? styles.cardRejected : ""
       }`}
@@ -203,23 +219,17 @@ export function RecommendationCard({
 
       <div className={styles.actionsRow}>
         <Button
-          href={`/land-intelligence/parcels/${recommendation.parcelId}/map`}
+          href={mapHref}
           variant="secondary"
           className={styles.mapButton}
         >
           <MapPin size={16} aria-hidden />
           View on map
         </Button>
-        <Button
-          href={`/land-intelligence/parcels/${recommendation.parcelId}`}
-          variant="primary"
-        >
+        <Button href={parcelHref} variant="primary">
           Parcel intelligence
         </Button>
-        <Button
-          href={`/land-intelligence/parcels/${recommendation.parcelId}/lease-interest`}
-          variant="secondary"
-        >
+        <Button href={leaseHref} variant="secondary">
           Express preliminary interest
         </Button>
       </div>

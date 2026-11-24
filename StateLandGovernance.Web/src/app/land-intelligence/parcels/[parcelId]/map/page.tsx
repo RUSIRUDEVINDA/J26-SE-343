@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { LoadingState } from "@/shared/components/LoadingState";
 import { ParcelMapView } from "@/modules/component-01-land-intelligence/components/map/ParcelMapView";
 
 export default async function ParcelMapPage({
@@ -6,5 +8,9 @@ export default async function ParcelMapPage({
   params: Promise<{ parcelId: string }>;
 }) {
   const { parcelId } = await params;
-  return <ParcelMapView parcelId={parcelId} />;
+  return (
+    <Suspense fallback={<LoadingState message="Loading map…" />}>
+      <ParcelMapView parcelId={parcelId} />
+    </Suspense>
+  );
 }

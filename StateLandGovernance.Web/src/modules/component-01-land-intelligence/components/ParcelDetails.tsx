@@ -1,13 +1,10 @@
 import Link from "next/link";
-import {
-  LandCategoryType,
-  type LandParcelResponse,
-  type LandRelationshipResponse,
+import type {
+  LandParcelResponse,
+  LandRelationshipResponse,
 } from "../types/landIntelligence";
-import {
-  landCategoryTypeLabels,
-  landUseTypeLabels,
-} from "../utils/enumMappings";
+import { landUseTypeLabels } from "../utils/enumMappings";
+import { parcelConnectionDescription } from "../utils/parcelRelationshipDisplay";
 import { displayOrUnavailable, displayOrUnknown, formatArea } from "../utils/formatters";
 import {
   sourceReportedClaimantCategoryDisplay,
@@ -35,35 +32,6 @@ function readableType(value: string): string {
     .replace(/_/g, " ")
     .trim();
   return words.charAt(0).toUpperCase() + words.slice(1).toLowerCase();
-}
-
-function landCategoryConnectionLabel(raw: string): string {
-  const enumValue = LandCategoryType[raw as keyof typeof LandCategoryType];
-  if (typeof enumValue === "number") {
-    return landCategoryTypeLabels[enumValue as LandCategoryType] ?? raw;
-  }
-  return readableType(raw);
-}
-
-/** Graph "Has category" uses governance enum on the parcel row, not cadastre land-use codes. */
-function parcelConnectionDescription(
-  item: LandRelationshipResponse,
-  parcel: LandParcelResponse,
-): string {
-  const raw = item.description?.trim() ?? "";
-  if (item.relationshipType === "HAS_CATEGORY") {
-    const categoryLabel = landCategoryConnectionLabel(raw);
-    if (raw === "Other" && parcel.cadastralSource) {
-      const cadastreLandUse = sourceReportedLandUseEnglishDisplay(
-        parcel.cadastralSource,
-      );
-      if (cadastreLandUse) {
-        return `cadastre land use: ${cadastreLandUse}`;
-      }
-    }
-    return categoryLabel;
-  }
-  return raw || "No descriptive label recorded";
 }
 
 export function ParcelDetails({
