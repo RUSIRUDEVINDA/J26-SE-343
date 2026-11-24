@@ -28,26 +28,7 @@ function formatDate(iso: string | null | undefined): string {
   }
 }
 
-function maskIdentifier(value: string | null | undefined): string {
-  const trimmed = value?.trim();
-  if (!trimmed) {
-    return "—";
-  }
-  if (trimmed.length <= 4) {
-    return "*".repeat(trimmed.length);
-  }
-  return `${"*".repeat(trimmed.length - 4)}${trimmed.slice(-4)}`;
-}
-
-function applicantIdentifier(
-  row: LeaseInterestOfficerLookupItem,
-  identifiersRevealed: boolean,
-): string {
-  if (!identifiersRevealed) {
-    return row.applicantKind === 2
-      ? maskIdentifier(row.businessRegistrationNumber)
-      : maskIdentifier(row.nationalIdentityCardNumber);
-  }
+function applicantIdentifier(row: LeaseInterestOfficerLookupItem): string {
   return row.applicantKind === 2
     ? row.businessRegistrationNumber ?? "—"
     : row.nationalIdentityCardNumber ?? "—";
@@ -125,7 +106,7 @@ export function OfficerLeaseInterestLookupView() {
       >
         <div className={styles.field}>
           <label htmlFor="officer-lookup-id">
-            NIC or business registration number (BRN)
+            NIC / Business Registration Number (BRN)
           </label>
           <input
             id="officer-lookup-id"
@@ -134,7 +115,7 @@ export function OfficerLeaseInterestLookupView() {
             onChange={(e) => setIdentifierInput(e.target.value)}
             autoComplete="off"
             spellCheck={false}
-            placeholder="Optional — filter by NIC or BRN"
+            placeholder="Filter by NIC / BRN"
           />
         </div>
         <div className={styles.searchActions}>
@@ -230,7 +211,7 @@ export function OfficerLeaseInterestLookupView() {
                     </td>
                     <td>{row.requestedDurationYears ?? "—"}</td>
                     <td className={styles.mono}>
-                      {applicantIdentifier(row, filterActive)}
+                      {applicantIdentifier(row)}
                     </td>
                     <td>
                       <div className={styles.rowActions}>

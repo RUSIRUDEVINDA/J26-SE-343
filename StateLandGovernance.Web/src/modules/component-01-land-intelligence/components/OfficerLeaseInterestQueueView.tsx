@@ -118,7 +118,7 @@ export function OfficerLeaseInterestQueueView({
           <p className={styles.queueEmptyEyebrow}>OFFICER VERIFICATION</p>
           <h2 id="queue-empty-title">
             {queueKind === "valuation"
-              ? "No requests awaiting valuation"
+              ? "No requests for valuation"
               : "No requests to review right now"}
           </h2>
           <p className={styles.queueEmptyDescription}>

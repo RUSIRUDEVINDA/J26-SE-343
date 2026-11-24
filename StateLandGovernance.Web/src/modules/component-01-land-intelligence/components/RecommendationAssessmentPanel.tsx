@@ -1,18 +1,7 @@
 import { Button } from "@/shared/components/Button";
-import type { RecommendationSearchTransparencyResponse } from "../types/landIntelligence";
 import styles from "./RecommendationAssessmentPanel.module.css";
 
-export function RecommendationAssessmentPanel({
-  candidateCount,
-  resultCount,
-  transparency,
-}: {
-  candidateCount: number;
-  resultCount: number;
-  transparency?: RecommendationSearchTransparencyResponse | null;
-}) {
-  const unavailable = transparency?.unavailableCriteria ?? [];
-
+export function RecommendationAssessmentPanel() {
   return (
     <aside className={styles.panel} aria-labelledby="assessment-panel-title">
       <h2 id="assessment-panel-title" className={styles.title}>
@@ -53,44 +42,6 @@ export function RecommendationAssessmentPanel({
             </div>
           </li>
         </ul>
-      </section>
-
-      <section className={styles.section}>
-        <h3 className={styles.sectionTitle}>GIS data limitations</h3>
-        <p className={styles.copy}>
-          Source-reported land use is Survey Department/iLAS metadata — not a
-          legal availability determination. Mapped conservation intersections
-          apply only where enrichment coverage exists. Road/water/soil layers
-          may appear on parcel details but do not score the ranking.
-        </p>
-        {unavailable.length > 0 ? (
-          <ul className={styles.bullets} aria-label="Not assessed criteria">
-            {unavailable.map((item) => (
-              <li key={item.key}>
-                <strong>{item.key}</strong>: {item.reason} (not assessed)
-              </li>
-            ))}
-          </ul>
-        ) : null}
-      </section>
-
-      <section className={styles.section}>
-        <h3 className={styles.sectionTitle}>Candidate summary</h3>
-        <p className={styles.copy}>
-          Showing {resultCount} result{resultCount === 1 ? "" : "s"} from{" "}
-          {candidateCount} candidate{candidateCount === 1 ? "" : "s"} after
-          filters.
-        </p>
-        {transparency?.filterStages && transparency.filterStages.length > 0 ? (
-          <ol className={styles.stages}>
-            {transparency.filterStages.map((stage) => (
-              <li key={`${stage.name}-${stage.candidateCount}`}>
-                <span className={styles.stageCount}>{stage.candidateCount}</span>
-                <span>{stage.name}</span>
-              </li>
-            ))}
-          </ol>
-        ) : null}
       </section>
 
       <div className={styles.actions}>

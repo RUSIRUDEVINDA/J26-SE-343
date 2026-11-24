@@ -715,7 +715,7 @@ export function OfficerLeaseInterestReviewView({
         </div>
       ) : null}
       <Link href="/land-intelligence/officer/lease-interest-lookup" className={styles.backLink}>
-        ← Back to applicant lookup
+        ← Back to Applicants lookup
       </Link>
       <header className={styles.caseHeader}>
         <div>
